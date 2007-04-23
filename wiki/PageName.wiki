@@ -1,0 +1,39 @@
+#summary Frequently asked questions
+#labels FAQ,Phase-Support,Phase-Requirements
+
+= Introduction =
+
+This page is a temporary host for email queries about TopMod
+
+= Emails =
+
+* Email from Acrisio Elias (Apr 23, 2007)
+  Dear Dr. Srinivasan,
+
+  Please, I downloaded your TOP MOD and I d like to know how can I move the
+  shapes as I saw in the training video showned in
+  http://www-viz.tamu.edu/faculty/ergun/research/topology/TopMod/Introduction/menu.html 
+  The presenter ~Stouch~T and rotate, zoom etc the cube (in file
+  cube.obj) and I don~Rt know how can I do the same.
+
+  Is there another professional/commercial version with more commands or
+  funtionalities blocked in this demo version distributed? How can I learn to
+  use you software. I am reading all articles writed by you and I need to know
+  where can I download the correct program.
+
+  Thanks
+
+  Acr\uffffsio Jos\uffff Elias
+
+* Email from Pete Brush (Apr 23, 2007)
+  Dear Sir,
+  I am sorry to bother you, but I was wondering where or if I could get the
+  source or a binary of TopMod for Linux. I can only seem to find it for
+  Windows. I read that it was originally written for Linux in C++. Is there
+  somewhere I can download it? I have searched but have come up empty.
+  Thank You for your time.
+
+  Pete Brush
+  petebru@gmail.com
+
+* 
