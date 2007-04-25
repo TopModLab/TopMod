@@ -1,0 +1,64 @@
+#!/usr/sbin/smake
+
+# Makefile for the Date library
+
+#CC = /usr/local/grad/gnu/bin/g++
+CC = CC
+C = cc
+AR = CC -ar
+
+# Installation
+LIBRARY = libdate.a
+LIBRARY_DIR = $(HOME)/lib/$(OSTYPE)
+HEADERS_DIR = $(HOME)/include
+
+# Locations for non-standard libraries and header files. For test programs
+
+LIBDIR = -L$(HOME)/lib -L$(HOME)/lib/$(OSTYPE)
+INCDIR = -I$(HOME)/include
+TESTPROGS = dtest
+LIBS =
+
+DBGFLAG = -g
+CFLAGS = $(OPTFLAG) $(DBGFLAG)
+
+OBJS = Date.o
+
+HEADERS = Date.hh
+
+default :
+	@echo "Makefile for building the Date class library"
+	@echo "    make date : Build the Date library"
+	@echo "    make test : Build test programs for Date library"
+	@echo "    make install : Install the library and header files"
+	@echo "    make clean : Remove object files"
+	@echo "    make realclean : Remove object files, executables and libraries"
+	@echo "    make uninstall : Remove installed files"
+
+date : $(OBJS)
+	$(AR) $(OBJS) -o $(LIBRARY) 
+
+install :
+	cp $(HEADERS) $(HEADERS_DIR)
+	cp $(LIBRARY) $(LIBRARY_DIR)
+
+test : $(TESTPROGS)
+
+dtest : dtest.o $(OBJS)
+	$(CC) $(CFLAGS) dtest.o $(OBJS) $(LIBDIR) $(LIBS) -o dtest
+
+dtest.o : dtest.cc Date.hh
+	$(CC) $(CFLAGS) -c dtest.cc $(INCDIR)
+
+Date.o : Date.cc Date.hh
+	$(CC) $(CFLAGS) -c Date.cc $(INCDIR) -o Date.o
+
+clean :
+	-rm -f *.o
+
+realclean :
+	-rm -f *.o $(LIBRARY) $(TESTPROGS)
+
+uninstall :
+	-rm -f $(LIBRARY_DIR)/$(LIBRARY)
+	-cd $(HEADERS_DIR); rm -f $(HEADERS);
