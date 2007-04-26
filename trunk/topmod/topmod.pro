@@ -34,9 +34,12 @@ INCLUDEPATH += . \
                include/Graphics/Windows \
 
 macx: {
- INCLUDEPATH += /Library/Frameworks/Python.framework/Versions/2.5/include/python2.5 /Library/Frameworks/3DconnexionClient.framework/Versions/A/Headers
- QMAKE_LFLAGS += -L/Library/Frameworks/Python.framework -L/Library/Frameworks/3DconnexionClient.framework 
- LIBS += -framework Python -framework 3DconnexionClient
+ INCLUDEPATH += /Library/Frameworks/Python.framework/Versions/2.5/include/python2.5 
+# /Library/Frameworks/3DconnexionClient.framework/Versions/A/Headers
+ QMAKE_LFLAGS += -L/Library/Frameworks/Python.framework 
+# -L/Library/Frameworks/3DconnexionClient.framework 
+ LIBS += -framework Python 
+# -framework 3DconnexionClient
 }
 unix: {
  # INCLUDEPATH += /usr/include/python2.5
