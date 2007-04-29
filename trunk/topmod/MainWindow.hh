@@ -126,32 +126,16 @@ protected:
 	static TexturedLitRendererPtr texturedlit; // TexturedLitRenderer
 	static PatchRendererPtr patch;		      // PatchRenderer
 
-  //Push Buttons
-  // QPushButton *modeBasicsButton, *modeExtrusionButton, *modeRemeshingButton,
-	//    *modeTexturingButton, *modeHighgenusButton;
-  // QToolButton 	*modeBasicsButton, *modeExtrusionButton, *modeRemeshingButton,
-  // 				*modeTexturingButton, *modeHighgenusButton;
-
-  //Tab Bar to replace buttons
-	QTabWidget *modesTabWidget;
-	//groups to display content in each tab
-	QGroupBox *basicsGroup;
-	QGroupBox *extrusionGroup;
-	QGroupBox *remeshingGroup;
-	QGroupBox *highgenusGroup;
-	QGroupBox *texturingGroup;
 	
-	BasicsMode *basicsMode;
-	ExtrusionMode *extrusionMode;
-	ConicalMode *conicalMode;
-	RemeshingMode *remeshingMode;
-	HighgenusMode *highgenusMode;
-	TexturingMode *texturingMode;
+	BasicsMode *mBasicsMode;
+	ExtrusionMode *mExtrusionMode;
+	ConicalMode *mConicalMode;
+	RemeshingMode *mRemeshingMode;
+	HighgenusMode *mHighgenusMode;
+	TexturingMode *mTexturingMode;
 	
   //Stuff for the shortcut manager test
   QShortcutManager *sm;
-  //GLWidget *glWidget;
-  void modeButtons( QBoxLayout *layout );
 
 private:
   void createActions();
@@ -177,14 +161,6 @@ private:
   QMenu *selectionMenu;
   QMenu *settingsMenu;
   QMenu *languageMenu;
-
-  //QToolbars
-  QToolBar *primitivesToolBar;
-  //QToolBar *modesToolBar;
-
-	//QActionGroups
-	QActionGroup *rendererActionGroup;
-	QActionGroup *modesActionGroup;
 	
   //File Menu Actions
   QAction *newAct;
@@ -264,28 +240,28 @@ private:
   QAction *frenchAct;
   QAction *turkishAct;
   QAction *catalanAct;
-	
-	//boxLayout widgets
-	QVBoxLayout *basicsBoxLayout;
-	QVBoxLayout *extrusionsBoxLayout;
-	QVBoxLayout *remeshingBoxLayout;
-	QVBoxLayout *highgenusBoxLayout;
-	QVBoxLayout *texturingBoxLayout;
-	
-	//main comboboxes
-	QComboBox *basicsComboBox;
-	
-  //test slider actions
-  QGroupBox *spinBoxesGroup;
-  QGroupBox *modesGroup;
 
   QString curFile;
 
   DLFLScriptEditor *mScriptEditor;
+	QDockWidget *mScriptEditorDockWidget;
+	QDockWidget *mToolOptionsDockWidget;
+	QStackedWidget *mToolOptionsStackedWidget;
+	
+  //QToolbars
+  QToolBar *mPrimitivesToolBar;
+	QToolBar *mToolsToolBar;
+
+	//QActionGroups
+	QActionGroup *mToolsActionGroup;
+	QActionGroup *rendererActionGroup;
+	QActionGroup *modesActionGroup;
+	
+	//the status bar
+	QStatusBar *mStatusBar;
 
   QAction *showScriptEditorAct;
   QAction *mFullscreenAct;
-
 
   StyleSheetEditor *mStyleSheetEditor;
   QAction *mEditStyleSheetAct;
@@ -299,15 +275,9 @@ public slots:
   void about();
   void documentWasModified();
 
-  void switchBasicsMode();
-  void switchExtrusionMode();
-  void switchConicalMode();
-  void switchRemeshingMode();
-  void switchHighgenusMode();
-  void switchTexturingMode();
-
-	void tabChanged(int index);
-
+	void showHideScriptEditor();
+	
+	
 //--- Callbacks for the controls and menu items ---//
 //--- The source for these methods are in DLFLAppWindowCallbacks.cc ---//
 // The DLFLAppWindow instance initiating the callback
@@ -473,7 +443,8 @@ public slots:
 	void mouseMoveEvent(QMouseEvent * event);
 	void paintEvent(QPaintEvent * event);
 	
-	// void loadCube();
+	void setToolOptions(QWidget *optionsWidget);
+	
 };
 
 #endif

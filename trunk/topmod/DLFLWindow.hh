@@ -22,7 +22,7 @@
 typedef StringStream * StringStreamPtr;
 typedef list<StringStreamPtr> StringStreamPtrList;
 
-class DLFLWindow : public QTabWidget {
+class DLFLWindow : public QWidget {
 	Q_OBJECT        // must include this if you use Qt signals/slots
   
   public :
@@ -192,11 +192,14 @@ class DLFLWindow : public QTabWidget {
 		   // Initialize the viewports, etc.
 		void initialize(int x, int y, int w, int h, DLFLRendererPtr rp);
 
+private:
+	QVBoxLayout *layout;
+
   public :
 
 		   // Constructor
-		DLFLWindow(int x, int y, int w, int h, QTabWidget *parent=0)
-		  :  QTabWidget(parent), top(NULL), persp(NULL), front(NULL), right(NULL), active(NULL),
+		DLFLWindow(int x, int y, int w, int h, QWidget *parent=0)
+		  :  QWidget(parent), top(NULL), persp(NULL), front(NULL), right(NULL), active(NULL),
 		    object(), mode(NormalMode), plight(), undoList(), redoList(), undolimit(20), useUndo(true)
 		  {
 		       // Default renderer is NULL
@@ -204,8 +207,8 @@ class DLFLWindow : public QTabWidget {
 		  }
 
 		   // Constructor
-		DLFLWindow(int x, int y, int w, int h, DLFLRendererPtr rp, QTabWidget *parent=0)
-		  :  QTabWidget(parent), top(NULL), persp(NULL), front(NULL), right(NULL), active(NULL),
+		DLFLWindow(int x, int y, int w, int h, DLFLRendererPtr rp, QWidget *parent=0)
+		  :  QWidget(parent), top(NULL), persp(NULL), front(NULL), right(NULL), active(NULL),
 		    object(), mode(NormalMode), plight(), undoList(), redoList(), undolimit(20), useUndo(true)
 		  {
 		    initialize(x,y,w,h,rp);

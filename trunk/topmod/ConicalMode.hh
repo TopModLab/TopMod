@@ -17,20 +17,36 @@
 class MainWindow;
 class DLFLWindow;
 
-class QComboBox;
-class QStackedWidget;
-class QGroupBox;
-class QVBoxLayout;
-class QCheckBox;
-class QLabel;
-
 class ConicalMode : public QWidget {
 	Q_OBJECT
 
 public:
 	ConicalMode(QWidget *parent = 0);
-	void insertTab(QTabWidget *tabWidget);
-	int getLastMode();
+	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
+	
+	QWidget *mCutbyEdgeWidget;
+	QWidget *mCutbyVertexWidget;
+	QWidget *mCutbyEdgeVertexWidget;
+	QWidget *mCutbyFaceWidget;
+	QWidget *mTruncateEdgeWidget;
+	QWidget *mTruncateVertexWidget; 
+	QWidget *mDualConvexHullWidget; 
+
+	QAction *mCutbyEdgeAction;
+	QAction *mCutbyVertexAction;
+	QAction *mCutbyEdgeVertexAction;
+	QAction *mCutbyFaceAction;
+	QAction *mTruncateEdgeAction;
+	QAction *mTruncateVertexAction; 
+	QAction *mDualConvexHullAction;
+	
+	QBoxLayout *mCutbyEdgeLayout;
+	QBoxLayout *mCutbyVertexLayout;
+	QBoxLayout *mCutbyEdgeVertexLayout;
+	QBoxLayout *mCutbyFaceLayout;
+	QBoxLayout *mTruncateEdgeLayout;
+	QBoxLayout *mTruncateVertexLayout; 
+	QBoxLayout *mDualConvexHullLayout;
 	
 protected:
 	void setupCutbyEdge();
@@ -42,40 +58,22 @@ protected:
 	void setupDualConvexHull();
 	
 public slots:
-	void switchMode(int index);
 	void changeCutOffsetE(double value);
 	void changeCutOffsetV(double value);
 	void toggleGlobalCut(int state);
 	void toggleSelectedCut(int state);
 	void changeTiltPlane1(double value);
-	void changeTiltPlane2(double value);	
+	void changeTiltPlane2(double value);
 	
-private:
-	
-	int lastMode;
-	
-	QLabel *conicalLabel;
-	QGroupBox *conicalGroup;
-	QVBoxLayout *conicalBoxLayout;
-	QComboBox *conicalComboBox;
-	
-	QStackedWidget *stackedWidget;
-	
-	QWidget *cutbyEdgeWidget;
-	QWidget *cutbyVertexWidget;
-	QWidget *cutbyEdgeVertexWidget;
-	QWidget *cutbyFaceWidget;
-	QWidget *truncateEdgeWidget;
-	QWidget *truncateVertexWidget; 
-	QWidget *dualConvexHullWidget; 
-	
-	QVBoxLayout *cutbyEdgeLayout;
-	QVBoxLayout *cutbyVertexLayout;
-	QVBoxLayout *cutbyEdgeVertexLayout;
-	QVBoxLayout *cutbyFaceLayout;
-	QVBoxLayout *truncateEdgeLayout;
-	QVBoxLayout *truncateVertexLayout; 
-	QVBoxLayout *dualConvexHullLayout; 
+	void triggerCutbyEdge();
+	void triggerCutbyVertex();
+	void triggerCutbyEdgeVertex();
+	void triggerCutbyFace();
+	void triggerTruncateEdge();
+	void triggerTruncateVertex();
+	void triggerDualConvexHull();
+
+private: 
 
 	QDoubleSpinBox *cutbyEdgeOffsetSpinBox;
 	QDoubleSpinBox *cutbyEdgeTiltPlane1SpinBox;

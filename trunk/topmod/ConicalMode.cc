@@ -10,50 +10,16 @@ ConicalMode::ConicalMode(QWidget *parent)
 		: QWidget(parent)
 {		
 	this->setParent(parent);
-	lastMode = DLFLWindow::CutEdge;
-	
-	//mode group. this is the main widget that goes into a TabWidget
-  conicalGroup = new QGroupBox(tr("Conical"));
-	//boxLayout widget to add buttons to within the groupBox widget
-	conicalBoxLayout = new QVBoxLayout;
-
-	//Populate a Q Combo Box with a list of strings
-	conicalLabel = new QLabel(tr("Select Conical Operation"));
-	conicalComboBox = new QComboBox();
-	QStringList conicalList;
-	conicalList << tr("Cut by Edge") << tr("Cut by Vertex") << tr("Cut by Edge/Vertex") << tr("Cut by Face") << tr("Truncate Edge") << tr("Truncate Vertex") << tr("Dual Convex Hull");
-	conicalComboBox->addItems(conicalList);
-	//add the combobox to the layout
-	conicalBoxLayout->addWidget(conicalLabel);
-	conicalBoxLayout->addWidget(conicalComboBox);
 	
 	//create the stacked widget and all child widget pages
-	cutbyEdgeWidget = new QWidget;
-  cutbyVertexWidget = new QWidget;
-  cutbyEdgeVertexWidget = new QWidget;
-  cutbyFaceWidget = new QWidget;
-  truncateEdgeWidget = new QWidget;
-  truncateVertexWidget = new QWidget;
-  dualConvexHullWidget = new QWidget;
+	mCutbyEdgeWidget = new QWidget;
+  mCutbyVertexWidget = new QWidget;
+  mCutbyEdgeVertexWidget = new QWidget;
+  mCutbyFaceWidget = new QWidget;
+  mTruncateEdgeWidget = new QWidget;
+  mTruncateVertexWidget = new QWidget;
+  mDualConvexHullWidget = new QWidget;
 
-  stackedWidget = new QStackedWidget;
-  stackedWidget->addWidget(cutbyEdgeWidget);
-  stackedWidget->addWidget(cutbyVertexWidget);
-  stackedWidget->addWidget(cutbyEdgeVertexWidget);
-  stackedWidget->addWidget(cutbyFaceWidget);
-  stackedWidget->addWidget(truncateEdgeWidget);
-  stackedWidget->addWidget(truncateVertexWidget);
-  stackedWidget->addWidget(dualConvexHullWidget);
-
-	//add the stackedwidget to the layout
-  conicalBoxLayout->addWidget(stackedWidget);
-
-	//connect the combobox to the stacked widget
-  connect(conicalComboBox, SIGNAL(activated(int)),
-          stackedWidget, SLOT(setCurrentIndex(int)));
-	
-	//setup stacked widget pages here, 
-	//each in a separate function to make the code more readable
 	setupCutbyEdge();
 	setupCutbyVertex();
 	setupCutbyEdgeVertex();
@@ -62,40 +28,125 @@ ConicalMode::ConicalMode(QWidget *parent)
 	setupTruncateVertex();
 	setupDualConvexHull();
 
-	//set the layout
-	conicalGroup->setLayout(conicalBoxLayout);
+	mCutbyEdgeAction = new QAction(tr("Cut by Edge"),this);
+	mCutbyEdgeAction->setCheckable(true);
+	// sm->registerAction(mCutbyEdgeAction, "Basics Modes", "9");
+	mCutbyEdgeAction->setStatusTip(tr("Enter Cut by Edge Mode"));
+	mCutbyEdgeAction->setToolTip(tr("Cut by Edge Mode"));
+	connect(mCutbyEdgeAction, SIGNAL(triggered()), this, SLOT(triggerCutbyEdge()));
+
+	mCutbyVertexAction = new QAction(tr("Cut by Vertex"),this);
+	mCutbyVertexAction->setCheckable(true);
+	// sm->registerAction(mCutbyVertexAction, "Basics Modes", "9");
+	mCutbyVertexAction->setStatusTip(tr("Enter Cut by Vertex Mode"));
+	mCutbyVertexAction->setToolTip(tr("Cut by Vertex Mode"));
+	connect(mCutbyVertexAction, SIGNAL(triggered()), this, SLOT(triggerCutbyVertex()));
+
+	mCutbyEdgeVertexAction = new QAction(tr("Cut by Edge-Vertex"),this);
+	mCutbyEdgeVertexAction->setCheckable(true);
+	// sm->registerAction(mCutbyEdgeVertexAction, "Basics Modes", "9");
+	mCutbyEdgeVertexAction->setStatusTip(tr("Enter Cut by Edge-Vertex Mode"));
+	mCutbyEdgeVertexAction->setToolTip(tr("Cut by EdgeVertex Mode"));
+	connect(mCutbyEdgeVertexAction, SIGNAL(triggered()), this, SLOT(triggerCutbyEdgeVertex()));
+
+	mCutbyFaceAction = new QAction(tr("Cut by Face"),this);
+	mCutbyFaceAction->setCheckable(true);
+	// sm->registerAction(mCutbyFaceAction, "Basics Modes", "9");
+	mCutbyFaceAction->setStatusTip(tr("Enter Cut by Face Mode"));
+	mCutbyFaceAction->setToolTip(tr("Cut by Face Mode"));
+	connect(mCutbyFaceAction, SIGNAL(triggered()), this, SLOT(triggerCutbyFace()));
+
+	mTruncateEdgeAction = new QAction(tr("Truncate Edge"),this);
+	mTruncateEdgeAction->setCheckable(true);
+	// sm->registerAction(mTruncateEdgeAction, "Basics Modes", "9");
+	mTruncateEdgeAction->setStatusTip(tr("Enter Truncate Edge Mode"));
+	mTruncateEdgeAction->setToolTip(tr("Truncate Edge Mode"));
+	connect(mTruncateEdgeAction, SIGNAL(triggered()), this, SLOT(triggerTruncateEdge()));
+
+	mTruncateVertexAction = new QAction(tr("Truncate Vertex"),this);
+	mTruncateVertexAction->setCheckable(true);
+	// sm->registerAction(mTruncateVertexAction, "Basics Modes", "9");
+	mTruncateVertexAction->setStatusTip(tr("Enter Truncate Vertex Mode"));
+	mTruncateVertexAction->setToolTip(tr("Truncate Vertex Mode"));
+	connect(mTruncateVertexAction, SIGNAL(triggered()), this, SLOT(triggerTruncateVertex()));
 	
-	connect(conicalComboBox, SIGNAL(currentIndexChanged(int)),
-					this,SLOT(switchMode(int)) );
+	mDualConvexHullAction = new QAction(tr("Dual Convex Hull"),this);
+	mDualConvexHullAction->setCheckable(true);
+	// sm->registerAction(mDualConvexHullAction, "Basics Modes", "9");
+	mDualConvexHullAction->setStatusTip(tr("Enter Dual Convex Hull Mode"));
+	mDualConvexHullAction->setToolTip(tr("Dual Convex Hull Mode"));
+	connect(mDualConvexHullAction, SIGNAL(triggered()), this, SLOT(triggerDualConvexHull()));
+
 }
 
-void ConicalMode::insertTab(QTabWidget *tabWidget){
-	tabWidget->addTab( conicalGroup, QIcon(":/images/mode_conical.png"), "3");
-  tabWidget->setTabToolTip(0,tr("Conical Mode"));
+void ConicalMode::triggerCutbyEdge(){
+	
+	((MainWindow*)parentWidget())->setToolOptions(mCutbyEdgeWidget);
+	((MainWindow*)parentWidget())->setMode(DLFLWindow::CutEdge);
 }
 
-int ConicalMode::getLastMode(){
-	return lastMode;
+void ConicalMode::triggerCutbyVertex(){
+	
+	((MainWindow*)parentWidget())->setToolOptions(mCutbyVertexWidget);
+	((MainWindow*)parentWidget())->setMode(DLFLWindow::CutVertex);
 }
 
-void ConicalMode::switchMode(int index){	
-	switch(index){
-		case 0: lastMode = DLFLWindow::CutEdge;
-		break;
-		case 1: lastMode = DLFLWindow::CutVertex;
-		break;	
-		case 2: lastMode = DLFLWindow::CutFace;
-		break;
-		case 3: lastMode = DLFLWindow::CutEdgeandVertex;
-		break;
-		case 4: lastMode = DLFLWindow::TruncateEdge;
-		break;
-		case 5: lastMode = DLFLWindow::ConvexHullMode;
-		break;
-		default:
-		break;
-	};
-	((MainWindow*)parentWidget())->setMode(lastMode);	
+void ConicalMode::triggerCutbyEdgeVertex(){
+	
+	((MainWindow*)parentWidget())->setToolOptions(mCutbyEdgeVertexWidget);
+	((MainWindow*)parentWidget())->setMode(DLFLWindow::CutEdgeandVertex);
+}
+
+void ConicalMode::triggerCutbyFace(){
+	
+	((MainWindow*)parentWidget())->setToolOptions(mCutbyFaceWidget);
+	((MainWindow*)parentWidget())->setMode(DLFLWindow::CutFace);
+}
+
+void ConicalMode::triggerTruncateEdge(){
+	
+	((MainWindow*)parentWidget())->setToolOptions(mTruncateEdgeWidget);
+	((MainWindow*)parentWidget())->setMode(DLFLWindow::TruncateEdge);
+}
+
+void ConicalMode::triggerTruncateVertex(){
+	
+	((MainWindow*)parentWidget())->setToolOptions(mTruncateVertexWidget);
+	((MainWindow*)parentWidget())->setMode(DLFLWindow::MarkVertex);
+}
+
+void ConicalMode::triggerDualConvexHull(){
+	
+	((MainWindow*)parentWidget())->setToolOptions(mDualConvexHullWidget);
+	((MainWindow*)parentWidget())->setMode(DLFLWindow::ConvexHullMode);
+}
+
+void ConicalMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget){
+	
+	actionGroup->addAction(mCutbyEdgeAction);
+	actionGroup->addAction(mCutbyVertexAction);
+	actionGroup->addAction(mCutbyEdgeVertexAction);
+	actionGroup->addAction(mCutbyFaceAction);
+	actionGroup->addAction(mTruncateEdgeAction);
+	actionGroup->addAction(mTruncateVertexAction); 
+	actionGroup->addAction(mDualConvexHullAction);
+	
+	toolBar->addAction(mCutbyEdgeAction);
+	toolBar->addAction(mCutbyVertexAction);
+	toolBar->addAction(mCutbyEdgeVertexAction);
+	toolBar->addAction(mCutbyFaceAction);
+	toolBar->addAction(mTruncateEdgeAction);
+	toolBar->addAction(mTruncateVertexAction); 
+	toolBar->addAction(mDualConvexHullAction);
+	
+	stackedWidget->addWidget(mCutbyEdgeWidget);
+	stackedWidget->addWidget(mCutbyVertexWidget);
+	stackedWidget->addWidget(mCutbyEdgeVertexWidget); 
+	stackedWidget->addWidget(mCutbyFaceWidget);      	
+	stackedWidget->addWidget(mTruncateEdgeWidget);    
+	stackedWidget->addWidget(mTruncateVertexWidget); 
+	stackedWidget->addWidget(mDualConvexHullWidget); 
+
 }
 
 void ConicalMode::changeCutOffsetE(double value){
@@ -158,312 +209,319 @@ void ConicalMode::changeTiltPlane2(double value){
 
 void ConicalMode::setupCutbyEdge(){
 	
-	cutbyEdgeLayout = new QVBoxLayout;
+	mCutbyEdgeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	
 	QLabel *cutbyEdgeOffsetLabel = new QLabel(tr("Offset:"));
 	cutbyEdgeOffsetSpinBox = new QDoubleSpinBox;
 	cutbyEdgeOffsetSpinBox->setRange(0, 1);
 	cutbyEdgeOffsetSpinBox->setSingleStep(0.01);
 	cutbyEdgeOffsetSpinBox->setValue(0.25);	
+	cutbyEdgeOffsetSpinBox->setMaximumSize(75,25);
 	connect(cutbyEdgeOffsetSpinBox, SIGNAL(valueChanged(double)),
           this, SLOT(changeCutOffsetE(double)));
 	
-	cutbyEdgeLayout->addWidget(cutbyEdgeOffsetLabel);
-  cutbyEdgeLayout->addWidget(cutbyEdgeOffsetSpinBox);
+	mCutbyEdgeLayout->addWidget(cutbyEdgeOffsetLabel);
+  mCutbyEdgeLayout->addWidget(cutbyEdgeOffsetSpinBox);
 
 	QLabel *cutbyEdgeTiltPlane1Label = new QLabel(tr("Tilt plane:"));
 	cutbyEdgeTiltPlane1SpinBox = new QDoubleSpinBox;
 	cutbyEdgeTiltPlane1SpinBox->setRange(-1, 1);
 	cutbyEdgeTiltPlane1SpinBox->setSingleStep(.01);
 	cutbyEdgeTiltPlane1SpinBox->setValue(0);	
+	cutbyEdgeTiltPlane1SpinBox->setMaximumSize(75,25);
 	connect(cutbyEdgeTiltPlane1SpinBox, SIGNAL(valueChanged(double)),
           this, SLOT(changeTiltPlane1(double)));
 	
-	cutbyEdgeLayout->addWidget(cutbyEdgeTiltPlane1Label);
-  cutbyEdgeLayout->addWidget(cutbyEdgeTiltPlane1SpinBox);
+	mCutbyEdgeLayout->addWidget(cutbyEdgeTiltPlane1Label);
+  mCutbyEdgeLayout->addWidget(cutbyEdgeTiltPlane1SpinBox);
 
 	QLabel *cutbyEdgeTiltPlane2Label = new QLabel(tr("Tilt plane:"));
 	cutbyEdgeTiltPlane2SpinBox = new QDoubleSpinBox;
 	cutbyEdgeTiltPlane2SpinBox->setRange(-1, 1);
 	cutbyEdgeTiltPlane2SpinBox->setSingleStep(.01);
 	cutbyEdgeTiltPlane2SpinBox->setValue(0);
+	cutbyEdgeTiltPlane2SpinBox->setMaximumSize(75,25);
 	connect(cutbyEdgeTiltPlane2SpinBox, SIGNAL(valueChanged(double)),
           this, SLOT(changeTiltPlane2(double)));
 	
-	cutbyEdgeLayout->addWidget(cutbyEdgeTiltPlane2Label);
-  cutbyEdgeLayout->addWidget(cutbyEdgeTiltPlane2SpinBox);
+	mCutbyEdgeLayout->addWidget(cutbyEdgeTiltPlane2Label);
+  mCutbyEdgeLayout->addWidget(cutbyEdgeTiltPlane2SpinBox);
 
 	cutbyEdgeGlobalCheckBox = new QCheckBox(tr("global cut"),this);
 	cutbyEdgeGlobalCheckBox->setChecked(Qt::Unchecked);
 	connect(cutbyEdgeGlobalCheckBox, SIGNAL(stateChanged(int)),
           this, SLOT(toggleGlobalCut(int)));
 				
-	cutbyEdgeLayout->addWidget(cutbyEdgeGlobalCheckBox);
+	mCutbyEdgeLayout->addWidget(cutbyEdgeGlobalCheckBox);
 	
 	cutbyEdgeCutSelectedCheckBox = new QCheckBox(tr("cut selected edges"),this);
 	cutbyEdgeCutSelectedCheckBox->setChecked(Qt::Checked);
 	connect(cutbyEdgeCutSelectedCheckBox, SIGNAL(stateChanged(int)),
           this, SLOT(toggleSelectedCut(int)));
 				
-	cutbyEdgeLayout->addWidget(cutbyEdgeCutSelectedCheckBox);
+	mCutbyEdgeLayout->addWidget(cutbyEdgeCutSelectedCheckBox);
 		
 	QPushButton *performCuttingButton = new QPushButton(tr("Perform Cutting"), this);
 	connect(performCuttingButton, SIGNAL(clicked()),
           ((MainWindow*)parentWidget()), SLOT(perform_cutting()));
-
-	cutbyEdgeLayout->addWidget(performCuttingButton);
-
-	cutbyEdgeLayout->addStretch(1);
-	cutbyEdgeWidget->setLayout(cutbyEdgeLayout);	
+	
+	mCutbyEdgeLayout->addWidget(performCuttingButton);
+	mCutbyEdgeLayout->addStretch(1);
+	mCutbyEdgeWidget->setLayout(mCutbyEdgeLayout);	
 	
 }
 
 void ConicalMode::setupCutbyVertex(){
 	
-	cutbyVertexLayout = new QVBoxLayout;
+	mCutbyVertexLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	
 	QLabel *cutbyVertexOffsetLabel = new QLabel(tr("Offset:"));
 	cutbyVertexOffsetSpinBox = new QDoubleSpinBox;
 	cutbyVertexOffsetSpinBox->setRange(0, 1);
 	cutbyVertexOffsetSpinBox->setSingleStep(0.01);
 	cutbyVertexOffsetSpinBox->setValue(0.25);	
+	cutbyVertexOffsetSpinBox->setMaximumSize(75,25);
 	connect(cutbyVertexOffsetSpinBox, SIGNAL(valueChanged(double)),
           this, SLOT(changeCutOffsetV(double)));
 	
-	cutbyVertexLayout->addWidget(cutbyVertexOffsetLabel);
-  cutbyVertexLayout->addWidget(cutbyVertexOffsetSpinBox);
+	mCutbyVertexLayout->addWidget(cutbyVertexOffsetLabel);
+  mCutbyVertexLayout->addWidget(cutbyVertexOffsetSpinBox);
 
 	cutbyVertexGlobalCheckBox = new QCheckBox(tr("global cut"),this);
 	cutbyVertexGlobalCheckBox->setChecked(Qt::Unchecked);
 	connect(cutbyVertexGlobalCheckBox, SIGNAL(stateChanged(int)),
           this, SLOT(toggleGlobalCut(int)));
 				
-	cutbyVertexLayout->addWidget(cutbyVertexGlobalCheckBox);
+	mCutbyVertexLayout->addWidget(cutbyVertexGlobalCheckBox);
 	
 	cutbyVertexCutSelectedCheckBox = new QCheckBox(tr("cut selected edges"),this);
 	cutbyVertexCutSelectedCheckBox->setChecked(Qt::Checked);
 	connect(cutbyVertexCutSelectedCheckBox, SIGNAL(stateChanged(int)),
           this, SLOT(toggleSelectedCut(int)));
 				
-	cutbyVertexLayout->addWidget(cutbyVertexCutSelectedCheckBox);	
+	mCutbyVertexLayout->addWidget(cutbyVertexCutSelectedCheckBox);	
 	
 	QPushButton *performCuttingButton = new QPushButton(tr("Perform Cutting"), this);
 	connect(performCuttingButton, SIGNAL(clicked()),
           ((MainWindow*)parentWidget()), SLOT(perform_cutting()));
 
-	cutbyVertexLayout->addWidget(performCuttingButton);
-	
-	cutbyVertexLayout->addStretch(1);
-	cutbyVertexWidget->setLayout(cutbyVertexLayout);	
+	mCutbyVertexLayout->addWidget(performCuttingButton);
+	mCutbyVertexLayout->addStretch(1);
+	mCutbyVertexWidget->setLayout(mCutbyVertexLayout);	
 	
 }
 
 void ConicalMode::setupCutbyEdgeVertex(){
 	
-	cutbyEdgeVertexLayout = new QVBoxLayout;
+	mCutbyEdgeVertexLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	
 	QLabel *cutbyEdgeVertexOffsetELabel = new QLabel(tr("Offset (Edge):"));
 	cutbyEdgeVertexOffsetESpinBox = new QDoubleSpinBox;
 	cutbyEdgeVertexOffsetESpinBox->setRange(0, 1);
 	cutbyEdgeVertexOffsetESpinBox->setSingleStep(0.01);
 	cutbyEdgeVertexOffsetESpinBox->setValue(0.25);	
+	cutbyEdgeVertexOffsetESpinBox->setMaximumSize(75,25);
 	connect(cutbyEdgeVertexOffsetESpinBox, SIGNAL(valueChanged(double)),
           this, SLOT(changeCutOffsetE(double)));
 	
-	cutbyEdgeVertexLayout->addWidget(cutbyEdgeVertexOffsetELabel);
-  cutbyEdgeVertexLayout->addWidget(cutbyEdgeVertexOffsetESpinBox);
+	mCutbyEdgeVertexLayout->addWidget(cutbyEdgeVertexOffsetELabel);
+  mCutbyEdgeVertexLayout->addWidget(cutbyEdgeVertexOffsetESpinBox);
 
 	QLabel *cutbyEdgeVertexOffsetVLabel = new QLabel(tr("Offset (Vertex):"));
 	cutbyEdgeVertexOffsetVSpinBox = new QDoubleSpinBox;
 	cutbyEdgeVertexOffsetVSpinBox->setRange(0, 1);
 	cutbyEdgeVertexOffsetVSpinBox->setSingleStep(0.01);
 	cutbyEdgeVertexOffsetVSpinBox->setValue(0.25);	
+	cutbyEdgeVertexOffsetVSpinBox->setMaximumSize(75,25);
 	connect(cutbyEdgeVertexOffsetVSpinBox, SIGNAL(valueChanged(double)),
           this, SLOT(changeCutOffsetV(double)));
 	
-	cutbyEdgeVertexLayout->addWidget(cutbyEdgeVertexOffsetVLabel);
-  cutbyEdgeVertexLayout->addWidget(cutbyEdgeVertexOffsetVSpinBox);
+	mCutbyEdgeVertexLayout->addWidget(cutbyEdgeVertexOffsetVLabel);
+  mCutbyEdgeVertexLayout->addWidget(cutbyEdgeVertexOffsetVSpinBox);
 
 	QLabel *cutbyEdgeVertexTiltPlane1Label = new QLabel(tr("Tilt plane:"));
 	cutbyEdgeVertexTiltPlane1SpinBox = new QDoubleSpinBox;
 	cutbyEdgeVertexTiltPlane1SpinBox->setRange(-1, 1);
 	cutbyEdgeVertexTiltPlane1SpinBox->setSingleStep(.01);
 	cutbyEdgeVertexTiltPlane1SpinBox->setValue(0);	
+	cutbyEdgeVertexTiltPlane1SpinBox->setMaximumSize(75,25);
 	connect(cutbyEdgeVertexTiltPlane1SpinBox, SIGNAL(valueChanged(double)),
           this, SLOT(changeTiltPlane1(double)));
 	
-	cutbyEdgeVertexLayout->addWidget(cutbyEdgeVertexTiltPlane1Label);
-  cutbyEdgeVertexLayout->addWidget(cutbyEdgeVertexTiltPlane1SpinBox);
+	mCutbyEdgeVertexLayout->addWidget(cutbyEdgeVertexTiltPlane1Label);
+  mCutbyEdgeVertexLayout->addWidget(cutbyEdgeVertexTiltPlane1SpinBox);
 
 	QLabel *cutbyEdgeVertexTiltPlane2Label = new QLabel(tr("Tilt plane:"));
 	cutbyEdgeVertexTiltPlane2SpinBox = new QDoubleSpinBox;
 	cutbyEdgeVertexTiltPlane2SpinBox->setRange(-1, 1);
 	cutbyEdgeVertexTiltPlane2SpinBox->setSingleStep(0.01);
 	cutbyEdgeVertexTiltPlane2SpinBox->setValue(0);	
+	cutbyEdgeVertexTiltPlane2SpinBox->setMaximumSize(75,25);
 	connect(cutbyEdgeVertexTiltPlane2SpinBox, SIGNAL(valueChanged(double)),
           this, SLOT(changeTiltPlane2(double)));
 	
-	cutbyEdgeVertexLayout->addWidget(cutbyEdgeVertexTiltPlane2Label);
-  cutbyEdgeVertexLayout->addWidget(cutbyEdgeVertexTiltPlane2SpinBox);
+	mCutbyEdgeVertexLayout->addWidget(cutbyEdgeVertexTiltPlane2Label);
+  mCutbyEdgeVertexLayout->addWidget(cutbyEdgeVertexTiltPlane2SpinBox);
 
 	cutbyEdgeVertexGlobalCheckBox = new QCheckBox(tr("global cut"),this);
 	cutbyEdgeVertexGlobalCheckBox->setChecked(Qt::Unchecked);
 	connect(cutbyEdgeVertexGlobalCheckBox, SIGNAL(stateChanged(int)),
           this, SLOT(toggleGlobalCut(int)));
 				
-	cutbyEdgeVertexLayout->addWidget(cutbyEdgeVertexGlobalCheckBox);
+	mCutbyEdgeVertexLayout->addWidget(cutbyEdgeVertexGlobalCheckBox);
 	
 	cutbyEdgeVertexCutSelectedCheckBox = new QCheckBox(tr("cut selected edges"),this);
 	cutbyEdgeVertexCutSelectedCheckBox->setChecked(Qt::Checked);
 	connect(cutbyEdgeVertexCutSelectedCheckBox, SIGNAL(stateChanged(int)),
           this, SLOT(toggleSelectedCut(int)));
 				
-	cutbyEdgeVertexLayout->addWidget(cutbyEdgeVertexCutSelectedCheckBox);
+	mCutbyEdgeVertexLayout->addWidget(cutbyEdgeVertexCutSelectedCheckBox);
 
 	QPushButton *performCuttingButton = new QPushButton(tr("Perform Cutting"), this);
 	connect(performCuttingButton, SIGNAL(clicked()),
           ((MainWindow*)parentWidget()), SLOT(perform_cutting()));
 
-	cutbyEdgeVertexLayout->addWidget(performCuttingButton);
-
-	cutbyEdgeVertexLayout->addStretch(1);
-	cutbyEdgeVertexWidget->setLayout(cutbyEdgeVertexLayout);	
+	mCutbyEdgeVertexLayout->addWidget(performCuttingButton);
+	mCutbyEdgeVertexLayout->addStretch(1);
+	mCutbyEdgeVertexWidget->setLayout(mCutbyEdgeVertexLayout);	
 	
 }
 
 void ConicalMode::setupCutbyFace(){
 	
-	cutbyFaceLayout = new QVBoxLayout;
+	mCutbyFaceLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 
 	QLabel *cutbyFaceOffsetLabel = new QLabel(tr("Offset:"));
 	cutbyFaceOffsetSpinBox = new QDoubleSpinBox;
 	cutbyFaceOffsetSpinBox->setRange(0, 1);
 	cutbyFaceOffsetSpinBox->setSingleStep(0.01);
 	cutbyFaceOffsetSpinBox->setValue(0.25);	
+	cutbyFaceOffsetSpinBox->setMaximumSize(75,25);
 	connect(cutbyFaceOffsetSpinBox, SIGNAL(valueChanged(double)),
           this, SLOT(changeCutOffsetE(double)));
 	
-	cutbyFaceLayout->addWidget(cutbyFaceOffsetLabel);
-  cutbyFaceLayout->addWidget(cutbyFaceOffsetSpinBox);
+	mCutbyFaceLayout->addWidget(cutbyFaceOffsetLabel);
+  mCutbyFaceLayout->addWidget(cutbyFaceOffsetSpinBox);
 
 	cutbyFaceGlobalCheckBox = new QCheckBox(tr("global cut"),this);
 	cutbyFaceGlobalCheckBox->setChecked(Qt::Unchecked);
 	connect(cutbyFaceGlobalCheckBox, SIGNAL(stateChanged(int)),
           this, SLOT(toggleGlobalCut(int)));
-	cutbyFaceLayout->addWidget(cutbyFaceGlobalCheckBox);
+
+	mCutbyFaceLayout->addWidget(cutbyFaceGlobalCheckBox);
 	
 	cutbyFaceCutSelectedCheckBox = new QCheckBox(tr("cut selected faces"),this);
 	cutbyFaceCutSelectedCheckBox->setChecked(Qt::Checked);
 	connect(cutbyFaceCutSelectedCheckBox, SIGNAL(stateChanged(int)),
           this, SLOT(toggleSelectedCut(int)));
 				
-	cutbyFaceLayout->addWidget(cutbyFaceCutSelectedCheckBox);
+	mCutbyFaceLayout->addWidget(cutbyFaceCutSelectedCheckBox);
 
 	QPushButton *performCuttingButton = new QPushButton(tr("Perform Cutting"), this);
 	connect(performCuttingButton, SIGNAL(clicked()),
           ((MainWindow*)parentWidget()), SLOT(perform_cutting()));
 
-	cutbyFaceLayout->addWidget(performCuttingButton);
-
-	cutbyFaceLayout->addStretch(1);
-	cutbyFaceWidget->setLayout(cutbyFaceLayout);	
+	mCutbyFaceLayout->addWidget(performCuttingButton);
+	mCutbyFaceLayout->addStretch(1);
+	mCutbyFaceWidget->setLayout(mCutbyFaceLayout);	
 	
 }
 
 void ConicalMode::setupTruncateEdge(){
 	
-	truncateEdgeLayout = new QVBoxLayout;
+	mTruncateEdgeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	
 	QLabel *truncateEdgeOffsetLabel = new QLabel(tr("Offset:"));
 	truncateEdgeOffsetSpinBox = new QDoubleSpinBox;
 	truncateEdgeOffsetSpinBox->setRange(0, 1);
 	truncateEdgeOffsetSpinBox->setSingleStep(0.01);
 	truncateEdgeOffsetSpinBox->setValue(0.25);	
+	truncateEdgeOffsetSpinBox->setMaximumSize(75,25);
 	connect(truncateEdgeOffsetSpinBox, SIGNAL(valueChanged(double)),
           this, SLOT(changeCutOffsetE(double)));
 	
-	truncateEdgeLayout->addWidget(truncateEdgeOffsetLabel);
-  truncateEdgeLayout->addWidget(truncateEdgeOffsetSpinBox);
+	mTruncateEdgeLayout->addWidget(truncateEdgeOffsetLabel);
+  mTruncateEdgeLayout->addWidget(truncateEdgeOffsetSpinBox);
 
 	truncateEdgeGlobalCheckBox = new QCheckBox(tr("global cut"),this);
 	truncateEdgeGlobalCheckBox->setChecked(Qt::Unchecked);
 	connect(truncateEdgeGlobalCheckBox, SIGNAL(stateChanged(int)),
           this, SLOT(toggleGlobalCut(int)));
-	truncateEdgeLayout->addWidget(truncateEdgeGlobalCheckBox);
+
+	mTruncateEdgeLayout->addWidget(truncateEdgeGlobalCheckBox);
 	
 	truncateEdgeCutSelectedCheckBox = new QCheckBox(tr("cut selected vertices"),this);
 	truncateEdgeCutSelectedCheckBox->setChecked(Qt::Checked);
 	connect(truncateEdgeCutSelectedCheckBox, SIGNAL(stateChanged(int)),
           this, SLOT(toggleSelectedCut(int)));
 				
-	truncateEdgeLayout->addWidget(truncateEdgeCutSelectedCheckBox);	
+	mTruncateEdgeLayout->addWidget(truncateEdgeCutSelectedCheckBox);	
 	
 	QPushButton *performCuttingButton = new QPushButton(tr("Perform Cutting"), this);
 	connect(performCuttingButton, SIGNAL(clicked()),
           ((MainWindow*)parentWidget()), SLOT(perform_cutting()));
 
-	truncateEdgeLayout->addWidget(performCuttingButton);
-
-	truncateEdgeLayout->addStretch(1);
-	truncateEdgeWidget->setLayout(truncateEdgeLayout);	
+	mTruncateEdgeLayout->addWidget(performCuttingButton);
+	mTruncateEdgeLayout->addStretch(1);
+	mTruncateEdgeWidget->setLayout(mTruncateEdgeLayout);	
 	
 }
 
 void ConicalMode::setupTruncateVertex(){
 	
-	truncateVertexLayout = new QVBoxLayout;
+	mTruncateVertexLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	
 	QLabel *truncateVertexOffsetLabel = new QLabel(tr("Offset:"));
 	truncateVertexOffsetSpinBox = new QDoubleSpinBox;
 	truncateVertexOffsetSpinBox->setRange(0, 1);
 	truncateVertexOffsetSpinBox->setSingleStep(0.01);
 	truncateVertexOffsetSpinBox->setValue(0.25);	
+	truncateVertexOffsetSpinBox->setMaximumSize(75,25);
 	connect(truncateVertexOffsetSpinBox, SIGNAL(valueChanged(double)),
           this, SLOT(changeCutOffsetE(double)));
 	
-	truncateVertexLayout->addWidget(truncateVertexOffsetLabel);
-  truncateVertexLayout->addWidget(truncateVertexOffsetSpinBox);
+	mTruncateVertexLayout->addWidget(truncateVertexOffsetLabel);
+  mTruncateVertexLayout->addWidget(truncateVertexOffsetSpinBox);
 
 	truncateVertexGlobalCheckBox = new QCheckBox(tr("global cut"),this);
 	truncateVertexGlobalCheckBox->setChecked(Qt::Unchecked);
 	connect(truncateVertexGlobalCheckBox, SIGNAL(stateChanged(int)),
           this, SLOT(toggleGlobalCut(int)));
-	truncateVertexLayout->addWidget(truncateVertexGlobalCheckBox);
+
+	mTruncateVertexLayout->addWidget(truncateVertexGlobalCheckBox);
 	
 	truncateVertexCutSelectedCheckBox = new QCheckBox(tr("cut selected vertices"),this);
 	truncateVertexCutSelectedCheckBox->setChecked(Qt::Checked);
 	connect(truncateVertexCutSelectedCheckBox, SIGNAL(stateChanged(int)),
           this, SLOT(toggleSelectedCut(int)));
 				
-	truncateVertexLayout->addWidget(truncateVertexCutSelectedCheckBox);	
+	mTruncateVertexLayout->addWidget(truncateVertexCutSelectedCheckBox);	
 
 	QPushButton *performCuttingButton = new QPushButton(tr("Perform Cutting"), this);
 	connect(performCuttingButton, SIGNAL(clicked()),
           ((MainWindow*)parentWidget()), SLOT(perform_cutting()));
 
-	truncateVertexLayout->addWidget(performCuttingButton);
-	
-	truncateVertexLayout->addStretch(1);
-	truncateVertexWidget->setLayout(truncateVertexLayout);
+	mTruncateVertexLayout->addWidget(performCuttingButton);	
+	mTruncateVertexLayout->addStretch(1);
+	mTruncateVertexWidget->setLayout(mTruncateVertexLayout);
 	
 }
 
 void ConicalMode::setupDualConvexHull(){
 	
-	dualConvexHullLayout = new QVBoxLayout;
+	mDualConvexHullLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 
 	QPushButton *convexHullButton = new QPushButton(tr("Create Convex Hull"), this);
 	connect(convexHullButton, SIGNAL(clicked()),
           ((MainWindow*)parentWidget()), SLOT(create_convexhull()));
 
-	dualConvexHullLayout->addWidget(convexHullButton);
+	mDualConvexHullLayout->addWidget(convexHullButton);
 	
 	QPushButton *dualConvexHullButton = new QPushButton(tr("Create Dual Convex Hull"), this);
 	connect(dualConvexHullButton, SIGNAL(clicked()),
           ((MainWindow*)parentWidget()), SLOT(create_dual_convexhull()));
 
-	dualConvexHullLayout->addWidget(dualConvexHullButton);
-	
-	dualConvexHullLayout->addStretch(1);
-	dualConvexHullWidget->setLayout(dualConvexHullLayout);	
+	mDualConvexHullLayout->addWidget(dualConvexHullButton);	
+	mDualConvexHullLayout->addStretch(1);
+	mDualConvexHullWidget->setLayout(mDualConvexHullLayout);	
 }

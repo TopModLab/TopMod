@@ -5,7 +5,8 @@
 TEMPLATE = app
 TARGET = TopMod
 QT += opengl xml
-CONFIG += qt release x86 ppc
+CONFIG += qt 
+#release x86 ppc
 
 #tell it to load a custom info.plist file here:
 QMAKE_INFO_PLIST    = Info.plist
@@ -102,7 +103,6 @@ HEADERS += 	DLFLScriptEditor.hh \
 						include/Light/Light.hh \
 						include/Light/PointLight.hh \
 						include/Light/SpotLight.hh \
-						include/Misc/Date.hh \
 						include/String/Paragraph.hh \
 						include/String/SString.hh \
 						include/vecmat/Matrix3x3.hh \
@@ -162,7 +162,6 @@ SOURCES += 	DLFLScriptEditor.cc \
 						include/arcball/Arcball.cc \
 						include/arcball/BallMath.cc \
 						include/DataStructures/List.cc \
-						include/Misc/Date.cc \
 						include/String/Paragraph.cc \
 						include/String/SString.cc \
 						include/vecmat/Matrix3x3.cc \

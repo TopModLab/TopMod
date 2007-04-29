@@ -17,46 +17,25 @@
 class MainWindow;
 class DLFLWindow;
 
-class QComboBox;
-class QStackedWidget;
-class QGroupBox;
-class QVBoxLayout;
-class QCheckBox;
-class QLabel;
-
 class TexturingMode : public QWidget {
 	Q_OBJECT
 
 public:
 	TexturingMode(QWidget *parent = 0);
-	void insertTab(QTabWidget *tabWidget);
-	int getLastMode();
-	
+	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
+
+	QAction *mTileTexturingAction;
+	QWidget *mTileTexturingWidget;	
+
 protected:
 	void setupTileTexturing();
 	
 public slots:
-	void switchMode(int index);	
-	
-	// void mousePressEvent(QMouseEvent * event);
-	// void mouseReleaseEvent(QMouseEvent * event);
-	// void mouseMoveEvent(QMouseEvent * event);
-	
+	void triggerTileTexturing();
 
 private:
+	QBoxLayout *mTileTexturingLayout;	
 	
-	int lastMode;
-	
-	QLabel *texturingLabel;
-	QGroupBox *texturingGroup;
-	QVBoxLayout *texturingBoxLayout;
-	QComboBox *texturingComboBox;
-	
-	QStackedWidget *stackedWidget;
-	
-	QWidget *tileTexturingWidget;	
-	
-	QVBoxLayout *tileTexturingLayout;
 };
 
 #endif

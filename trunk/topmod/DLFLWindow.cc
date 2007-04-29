@@ -19,7 +19,7 @@ double DLFLWindow::nwt2 = 5.0;
 int DLFLWindow::num_extra_twists = 0;
 
         // Extrusions
-double DLFLWindow::extrude_dist = 1.0;
+double DLFLWindow::extrude_dist = 2.0;
 double DLFLWindow::extrude_rot = 0.0;
 double DLFLWindow::extrude_scale = 1.0;
 int DLFLWindow::num_extrusions = 1;
@@ -118,14 +118,23 @@ void DLFLWindow::initialize(int x, int y, int w, int h, DLFLRendererPtr rp){
 	// as tabs in this QTabWidget
 	int sw=w, sh=h;
 	
+	layout = new QVBoxLayout;
+	layout->setMargin(0);
+	
 	QGLFormat fmt;
 	// fmt.setOverlay(true);
 	persp = new GLWidget(sw,sh,rp,&object,fmt, this);
 	persp->switchTo(VPPersp);
-	this->addTab(persp, "Perspective View");
+	//this->addTab(persp, "Perspective View");
 	persp->setMinimumSize(400,400);
 	persp->resize(1000, 800);
+	persp->setFocusPolicy(Qt::StrongFocus);
 
+	layout->addWidget(persp);
+	
+	this->setContentsMargins(0,0,0,0);
+	
+	setLayout(layout);
 	// if (!persp->format().hasOverlay()){
 	// 	QMessageBox::about(this, tr("About TopMod"),tr("hey it has an overlay context!") );
 	// 	
@@ -135,15 +144,15 @@ void DLFLWindow::initialize(int x, int y, int w, int h, DLFLRendererPtr rp){
 	// 
 	top = new GLWidget(0,0,sw,sh,rp,&object);
 	top->switchTo(VPTop);
-	// this->addTab(top, "Top View");    
-	// 
+	// // this->addTab(top, "Top View");    
+	// // 
 	front = new GLWidget(0,0,sw,sh,rp,&object);
 	front->switchTo(VPFront);
-	// this->addTab(front, "Front View");
-	// 
+	// // this->addTab(front, "Front View");
+	// // 
 	right = new GLWidget(0,0,sw,sh,rp,&object);
 	right->switchTo(VPRight);
-	// this->addTab(right, "Right View");	
+	// // this->addTab(right, "Right View");	
 
 	active = persp;
 	//initialize light color

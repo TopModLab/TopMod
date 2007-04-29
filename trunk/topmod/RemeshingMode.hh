@@ -9,6 +9,7 @@
 #include <QWidget>
 
 #include <QBoxLayout>
+#include <QGridLayout>
 #include <QStackedWidget>
 #include <QComboBox>
 
@@ -86,14 +87,23 @@ private:
 	QWidget *miscellaneousWidget;	
 	
 	QVBoxLayout *dualLayout;
+	QGridLayout *dualGrid;
 	QVBoxLayout *threeConversionLayout;
+	QGridLayout *threeConversionGrid;
 	QVBoxLayout *fourConversionLayout;
+	QGridLayout *fourConversionGrid;
 	QVBoxLayout *fiveConversionLayout; 
+	QGridLayout *fiveConversionGrid; 
 	QVBoxLayout *threePreservationLayout;
+	QGridLayout *threePreservationGrid;
 	QVBoxLayout *fourPreservationLayout;
+	QGridLayout *fourPreservationGrid;
 	QVBoxLayout *fivePreservationLayout; 
+	QGridLayout *fivePreservationGrid; 
 	QVBoxLayout *sixPreservationLayout; 
+	QGridLayout *sixPreservationGrid; 
 	QVBoxLayout *miscellaneousLayout;
+	QGridLayout *miscellaneousGrid;
 	
 	QComboBox *threeConversionComboBox;
 	QComboBox *fourConversionComboBox;

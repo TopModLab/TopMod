@@ -1,4 +1,3 @@
-
 #include "DLFLScriptEditor.hh"
 
 #include <iostream>
@@ -6,9 +5,9 @@
 
 DLFLScriptEditor::DLFLScriptEditor( QWidget *parent, Qt::WindowFlags f ) : QWidget(parent,f)
 {
-  mHideButton = new QPushButton( QIcon(":/images/hide_scripteditor.png"), tr(""), this );
-  mHideButton->setToolTip(tr("Hide Script Editor"));
-  connect(mHideButton, SIGNAL(clicked()), this, SLOT(toggleShowHide()));
+  // mHideButton = new QPushButton( QIcon(":/images/hide_scripteditor.png"), tr(""), this );
+  // mHideButton->setToolTip(tr("Hide Script Editor"));
+  // connect(mHideButton, SIGNAL(clicked()), this, SLOT(toggleShowHide()));
 
   mTextEdit = new QTextEdit;    
   mLineEdit = new QLineEdit;
@@ -21,7 +20,7 @@ DLFLScriptEditor::DLFLScriptEditor( QWidget *parent, Qt::WindowFlags f ) : QWidg
   mLineEdit->setPalette( whiteOnBlack );
 
   QVBoxLayout *mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(mHideButton);
+  // mainLayout->addWidget(mHideButton);
   mainLayout->addWidget(mTextEdit);
   mainLayout->addWidget(mLineEdit);
   setLayout(mainLayout);
@@ -32,11 +31,11 @@ DLFLScriptEditor::DLFLScriptEditor( QWidget *parent, Qt::WindowFlags f ) : QWidg
   // QObject::connect(mShell, SIGNAL(readyRead()), this, SLOT(readStandardOut()));
   //mShell->start("sh", QStringList() << "-i", QIODevice::ReadWrite);
   
-  setWindowTitle(tr("Script Editor"));
-  QSize size( 700, 200 );
-  size = size.expandedTo(minimumSizeHint());
-  setMaximumSize ( size );
-  resize(size);
+  //setWindowTitle(tr("Script Editor"));
+  //QSize size( 700, 200 );
+  //size = size.expandedTo(minimumSizeHint());
+  //setMaximumSize ( size );
+  //resize(size);
 
   PyInit( );
 }
@@ -46,15 +45,15 @@ DLFLScriptEditor::~DLFLScriptEditor( ) {
     Py_Finalize( );
 }
 
-void DLFLScriptEditor::toggleShowHide( )
-{
-  if( isVisible( ) )
-    hide( );
-  else {
-    show( );
-    mLineEdit->setFocus();
-  }
-}
+// void DLFLScriptEditor::toggleShowHide( )
+// {
+//   if( isVisible( ) )
+//     hide( );
+//   else {
+//     show( );
+//     mLineEdit->setFocus();
+//   }
+// }
 
 void DLFLScriptEditor::executeCommand( )
 {

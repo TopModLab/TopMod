@@ -7,257 +7,319 @@
 #include "BasicsMode.hh"
 
 BasicsMode::BasicsMode(QWidget *parent)
-		: QWidget(parent)
-{		
+		: QWidget(parent) {
+		
 	this->setParent(parent);
-	lastMode = DLFLWindow::InsertEdge;
-	//mode group. this is the main widget that goes into a TabWidget
-  basicsGroup = new QGroupBox(tr("Basics"));
-	//boxLayout widget to add buttons to within the groupBox widget
-	basicsLabel = new QLabel(tr("Select Basic Operation"));
-	basicsBoxLayout = new QVBoxLayout;
-
-	//Populate a Q Combo Box with a list of strings
-	basicsComboBox = new QComboBox();
-	QStringList basicsList;
-	basicsList << tr("Insert Edge") << tr("Delete Edge") << tr("Collapse Edge") << tr("Subdivide Edge") 
-						 << tr("Connect Edges") << tr("Splice Corners") << tr("Transforms");
-						
-	basicsComboBox->addItems(basicsList);
-	//add the combobox to the layout
-	basicsBoxLayout->addWidget(basicsLabel);
-	basicsBoxLayout->addWidget(basicsComboBox);
+	//here we set the default mode for when the application is executed.
+	((MainWindow*)parentWidget())->setMode(DLFLWindow::InsertEdge);
 	
-	//create the stacked widget and all child widget pages
-	insertEdgeWidget = new QWidget;
-  deleteEdgeWidget = new QWidget;
-  collapseEdgeWidget = new QWidget;
-  subdivideEdgeWidget = new QWidget;
-  connectEdgesWidget = new QWidget;
-  spliceCornersWidget = new QWidget;
-  transformsWidget = new QWidget;
+	mInsertEdgeWidget = new QWidget;
+  mDeleteEdgeWidget = new QWidget;
+  mCollapseEdgeWidget = new QWidget;
+  mSubdivideEdgeWidget = new QWidget;
+  mConnectEdgesWidget = new QWidget;
+  mSpliceCornersWidget = new QWidget;
+  mTransformsWidget = new QWidget;
 
-  stackedWidget = new QStackedWidget;
-  stackedWidget->addWidget(insertEdgeWidget);
-  stackedWidget->addWidget(deleteEdgeWidget);
-  stackedWidget->addWidget(collapseEdgeWidget);
-  stackedWidget->addWidget(subdivideEdgeWidget);
-  stackedWidget->addWidget(connectEdgesWidget);
-  stackedWidget->addWidget(spliceCornersWidget);
-  stackedWidget->addWidget(transformsWidget);
-
-	//add the stackedwidget to the layout
-  basicsBoxLayout->addWidget(stackedWidget);
-
-	//connect the combobox to the stacked widget
-  connect(basicsComboBox, SIGNAL(activated(int)),
-          stackedWidget, SLOT(setCurrentIndex(int)));
-	
-	//setup stacked widget pages here, 
-	//each in a separate function to make the code more readable
-	//setupInsertEdge();
+	//each mode widget will each be added to the 
+	//ToolOptionsDockWidget of the MainWindow class
+	setupInsertEdge();
 	setupDeleteEdge();
-	//setupCollapseEdge();
+	setupCollapseEdge();
 	setupSubdivideEdge();
-	//setupConnectEdges();
-	//setupSpliceCorners();
+	setupConnectEdges();
+	setupSpliceCorners();
 	setupTransforms();
 	
-	//set the layout
-	basicsGroup->setLayout(basicsBoxLayout);
+	mInsertEdgeAction = new QAction(tr("Insert Edge"),this);
+	mInsertEdgeAction->setCheckable(true);
+	mInsertEdgeAction->setChecked(true);
+	// sm->registerAction(mInsertEdgeAction, "Basics Modes", "9");
+	mInsertEdgeAction->setStatusTip(tr("Enter Insert Edge Mode"));
+	mInsertEdgeAction->setToolTip(tr("Insert Edge Mode"));
+	connect(mInsertEdgeAction, SIGNAL(triggered()), this, SLOT(triggerInsertEdge()));
+
+	mDeleteEdgeAction = new QAction(tr("Delete Edge"),this);
+	mDeleteEdgeAction->setCheckable(true);
+	// sm->registerAction(mDeleteEdgeAction, "Basics Modes", "9");
+	mDeleteEdgeAction->setStatusTip(tr("Enter Delete Edge Mode"));
+	mDeleteEdgeAction->setToolTip(tr("Delete Edge Mode"));
+	connect(mDeleteEdgeAction, SIGNAL(triggered()), this, SLOT(triggerDeleteEdge()));
+
+	mCollapseEdgeAction = new QAction(tr("Collapse Edge"),this);
+	mCollapseEdgeAction->setCheckable(true);
+	// sm->registerAction(mCollapseEdgeAction, "Basics Modes", "9");
+	mCollapseEdgeAction->setStatusTip(tr("Enter Collapse Edge Mode"));
+	mCollapseEdgeAction->setToolTip(tr("Collapse Edge Mode"));
+	connect(mCollapseEdgeAction, SIGNAL(triggered()), this, SLOT(triggerCollapseEdge()));
+
+	mSubdivideEdgeAction = new QAction(tr("Subdivide Edge"),this);
+	mSubdivideEdgeAction->setCheckable(true);
+	// sm->registerAction(mDeleteEdgeAction, "Basics Modes", "9");
+	mSubdivideEdgeAction->setStatusTip(tr("Enter Subdivide Edge Mode"));
+	mSubdivideEdgeAction->setToolTip(tr("Subdivide Edge Mode"));
+	connect(mSubdivideEdgeAction, SIGNAL(triggered()), this, SLOT(triggerSubdivideEdge()));
 	
-	connect(basicsComboBox, SIGNAL(currentIndexChanged(int)),
-					this,SLOT(switchMode(int)) );
-}
+	mConnectEdgesAction = new QAction(tr("Connect Edges"),this);
+	mConnectEdgesAction->setCheckable(true);
+	// sm->registerAction(mDeleteEdgeAction, "Basics Modes", "9");
+	mConnectEdgesAction->setStatusTip(tr("Enter Connect Edges Mode"));
+	mConnectEdgesAction->setToolTip(tr("Connect Edges Mode"));
+	connect(mConnectEdgesAction, SIGNAL(triggered()), this, SLOT(triggerConnectEdges()));
+	
+	mSpliceCornersAction = new QAction(tr("Splice Corners"),this);
+	mSpliceCornersAction->setCheckable(true);
+	// sm->registerAction(mDeleteEdgeAction, "Basics Modes", "9");
+	mSpliceCornersAction->setStatusTip(tr("Enter Splice Corners Mode"));
+	mSpliceCornersAction->setToolTip(tr("Splice Corners Mode"));
+	connect(mSpliceCornersAction, SIGNAL(triggered()), this, SLOT(triggerSpliceCorners()));
 
-void BasicsMode::insertTab(QTabWidget *tabWidget){
-	tabWidget->addTab( basicsGroup, QIcon(":/images/mode_basics.png"), "1");
-  tabWidget->setTabToolTip(0,tr("Basics Mode"));
-	//currentIndexChanged
-}
-
-int BasicsMode::getLastMode(){
-	return lastMode;
-}
-
-void BasicsMode::switchMode(int index){
+	mTransformsAction = new QAction(tr("Transforms"),this);
+	mTransformsAction->setCheckable(true);
+	// sm->registerAction(mDeleteEdgeAction, "Basics Modes", "9");
+	mTransformsAction->setStatusTip(tr("Enter Transforms Mode"));
+	mTransformsAction->setToolTip(tr("Transforms Mode"));
+	connect(mTransformsAction, SIGNAL(triggered()), this, SLOT(triggerTransforms()));
 		
-	switch(index){
-		case 0: lastMode = DLFLWindow::InsertEdge;
-		break;
-		case 1:	lastMode = DLFLWindow::DeleteEdge;
-		break;	
-		case 2: lastMode = DLFLWindow::CollapseEdge;
-		break;
-		case 3: lastMode = DLFLWindow::SubDivideEdge;
-		break;
-		case 4: lastMode = DLFLWindow::ConnectEdges;
-		break;
-		case 5: lastMode = DLFLWindow::SpliceCorners;
-		break;
-		case 6: lastMode = DLFLWindow::NormalMode;
-		break;
-		default:
-		break;
-	}
-	((MainWindow*)parentWidget())->setMode(lastMode);
 }
 
-void BasicsMode::setupInsertEdge(){
+void BasicsMode::triggerInsertEdge(){
 	
-	insertEdgeLayout = new QVBoxLayout;
-	
-	insertEdgeWidget->setLayout(insertEdgeLayout);	
-	
+	((MainWindow*)parentWidget())->setToolOptions(mInsertEdgeWidget);
+	((MainWindow*)parentWidget())->setMode(DLFLWindow::InsertEdge);
 }
 
-void BasicsMode::setupDeleteEdge(){
+void BasicsMode::triggerDeleteEdge(){
 	
-	deleteEdgeLayout = new QVBoxLayout;
+	((MainWindow*)parentWidget())->setToolOptions(mDeleteEdgeWidget);
+	((MainWindow*)parentWidget())->setMode(DLFLWindow::DeleteEdge);
+}
+
+void BasicsMode::triggerCollapseEdge(){
+	
+	((MainWindow*)parentWidget())->setToolOptions(mCollapseEdgeWidget);
+	((MainWindow*)parentWidget())->setMode(DLFLWindow::CollapseEdge);
+}
+
+void BasicsMode::triggerSubdivideEdge(){
+	
+	((MainWindow*)parentWidget())->setToolOptions(mSubdivideEdgeWidget);
+	((MainWindow*)parentWidget())->setMode(DLFLWindow::SubDivideEdge);
+}
+
+void BasicsMode::triggerConnectEdges(){
+	
+	((MainWindow*)parentWidget())->setToolOptions(mConnectEdgesWidget);
+	((MainWindow*)parentWidget())->setMode(DLFLWindow::ConnectEdges);
+}
+
+void BasicsMode::triggerSpliceCorners(){
+	
+	((MainWindow*)parentWidget())->setToolOptions(mSpliceCornersWidget);
+	((MainWindow*)parentWidget())->setMode(DLFLWindow::SpliceCorners);
+}
+
+void BasicsMode::triggerTransforms(){
+	
+	((MainWindow*)parentWidget())->setToolOptions(mTransformsWidget);
+	((MainWindow*)parentWidget())->setMode(DLFLWindow::NormalMode);
+}
+
+void BasicsMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget){
+	
+	actionGroup->addAction(mInsertEdgeAction);
+	actionGroup->addAction(mDeleteEdgeAction);	
+	actionGroup->addAction(mCollapseEdgeAction);	
+	actionGroup->addAction(mSubdivideEdgeAction);	
+	actionGroup->addAction(mConnectEdgesAction);	
+	actionGroup->addAction(mSpliceCornersAction);
+	actionGroup->addAction(mTransformsAction);
+	
+	toolBar->addAction(mInsertEdgeAction);
+	toolBar->addAction(mDeleteEdgeAction);	
+	toolBar->addAction(mCollapseEdgeAction);	
+	toolBar->addAction(mSubdivideEdgeAction);	
+	toolBar->addAction(mConnectEdgesAction);	
+	toolBar->addAction(mSpliceCornersAction);
+	toolBar->addAction(mTransformsAction);
+	
+	stackedWidget->addWidget(mInsertEdgeWidget);
+	stackedWidget->addWidget(mDeleteEdgeWidget);	
+	stackedWidget->addWidget(mCollapseEdgeWidget);	
+	stackedWidget->addWidget(mSubdivideEdgeWidget);	
+	stackedWidget->addWidget(mConnectEdgesWidget);	
+	stackedWidget->addWidget(mSpliceCornersWidget);
+	stackedWidget->addWidget(mTransformsWidget);
+
+}
+
+void BasicsMode::setupInsertEdge() {
+	
+	mInsertEdgeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	mInsertEdgeLayout->setMargin(1);
+	mInsertEdgeWidget->setLayout(mInsertEdgeLayout);	
+}
+
+void BasicsMode::setupDeleteEdge() {
+	
+	mDeleteEdgeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	mDeleteEdgeLayout->setMargin(1);
 	//cleanup checkbox
 	QCheckBox *cleanupCheckBox = new QCheckBox(tr("Cleanup"),this);
 	connect(cleanupCheckBox, SIGNAL(stateChanged(int)),
           ((MainWindow*)parentWidget()), SLOT(toggleDeleteEdgeCleanupFlag(int)));
-	deleteEdgeLayout->addWidget(cleanupCheckBox);	
-	deleteEdgeLayout->addStretch(1);
+	mDeleteEdgeLayout->addWidget(cleanupCheckBox);	
+	mDeleteEdgeLayout->addStretch(1);
 	//set layout
-	deleteEdgeWidget->setLayout(deleteEdgeLayout);	
-	
+	mDeleteEdgeWidget->setLayout(mDeleteEdgeLayout);	
 }
 
-void BasicsMode::setupCollapseEdge(){
+void BasicsMode::setupCollapseEdge() {
 	
-	collapseEdgeLayout = new QVBoxLayout;
-	
-	collapseEdgeWidget->setLayout(collapseEdgeLayout);	
-	
+	mCollapseEdgeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	mCollapseEdgeLayout->setMargin(1);
+	mCollapseEdgeWidget->setLayout(mCollapseEdgeLayout);	
 }
 
-void BasicsMode::setupSubdivideEdge(){
+void BasicsMode::setupSubdivideEdge() {
 	
-	subdivideEdgeLayout = new QVBoxLayout;
+	mSubdivideEdgeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	mSubdivideEdgeLayout->setMargin(1);
 	
 	//number of subdivisions spinbox
-	QLabel *numSubdivsLabel = new QLabel(tr("Number of Subdivisions"));
+	QLabel *numSubdivsLabel = new QLabel(tr("# Subdivisions"));
+	// numSubdivsLabel->setAlignment(Qt::AlignRight);
 	QSpinBox *numSubdivsSpinBox = new QSpinBox;
 	numSubdivsSpinBox->setRange(1, 10);
 	numSubdivsSpinBox->setSingleStep(1);
 	numSubdivsSpinBox->setValue(0);
+	numSubdivsSpinBox->setMaximumSize(50,25);
 	connect(numSubdivsSpinBox, SIGNAL(valueChanged(int)),
           ((MainWindow*)parentWidget()), SLOT(changeNumSubDivs(int)));
 	
-	subdivideEdgeLayout->addWidget(numSubdivsLabel);
-  subdivideEdgeLayout->addWidget(numSubdivsSpinBox);
-	subdivideEdgeLayout->addStretch(1);
-	subdivideEdgeWidget->setLayout(subdivideEdgeLayout);	
+	mSubdivideEdgeLayout->addWidget(numSubdivsLabel);
+	mSubdivideEdgeLayout->addWidget(numSubdivsSpinBox);
+	mSubdivideEdgeLayout->addStretch(1);
+	mSubdivideEdgeWidget->setLayout(mSubdivideEdgeLayout);	
 	
 }
 
 void BasicsMode::setupConnectEdges(){
 	
-	connectEdgesLayout = new QVBoxLayout;
-	
-	connectEdgesWidget->setLayout(connectEdgesLayout);	
+	mConnectEdgesLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	mConnectEdgesLayout->setMargin(1);
+	mConnectEdgesWidget->setLayout(mConnectEdgesLayout);	
 	
 }
 
 void BasicsMode::setupSpliceCorners(){
 	
-	spliceCornersLayout = new QVBoxLayout;
-	
-	spliceCornersWidget->setLayout(spliceCornersLayout);
+	mSpliceCornersLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	mSpliceCornersLayout->setMargin(1);
+	mSpliceCornersWidget->setLayout(mSpliceCornersLayout);
 	
 }
 
 void BasicsMode::setupTransforms(){
 	
-	transformsLayout = new QVBoxLayout;
-
+	mTransformsLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	mTransformsLayout->setMargin(5);
+	QLabel *transformLabel = new QLabel(tr("Translate:"));
+	mTransformsLayout->addWidget(transformLabel);
+	
 	//x transform
-	QLabel *xPosLabel = new QLabel(tr("X Transform"));
+	QLabel *xPosLabel = new QLabel(tr("X"));
 	xPosSpinBox = new QDoubleSpinBox;
 	xPosSpinBox->setRange(-100.0, 100.0);
 	xPosSpinBox->setSingleStep(0.5);
 	xPosSpinBox->setValue(0.0);
 	xPosSpinBox->setDecimals(1);
+	xPosSpinBox->setMaximumSize(50,25);
 	connect(xPosSpinBox, SIGNAL(valueChanged(double)),
           ((MainWindow*)parentWidget()), SLOT(translatex(double)));
 
-	transformsLayout->addWidget(xPosLabel);
-  transformsLayout->addWidget(xPosSpinBox);
+	mTransformsLayout->addWidget(xPosLabel);
+  mTransformsLayout->addWidget(xPosSpinBox);
 
 	//y transform
-	QLabel *yPosLabel = new QLabel(tr("Y Transform"));
+	QLabel *yPosLabel = new QLabel(tr("Y"));
 	yPosSpinBox = new QDoubleSpinBox;
 	yPosSpinBox->setRange(-100.0, 100.0);
 	yPosSpinBox->setSingleStep(0.5);
 	yPosSpinBox->setValue(0.0);
 	yPosSpinBox->setDecimals(1);
+	yPosSpinBox->setMaximumSize(50,25);
 	connect(yPosSpinBox, SIGNAL(valueChanged(double)),
           ((MainWindow*)parentWidget()), SLOT(translatey(double)));
 
-	transformsLayout->addWidget(yPosLabel);
-  transformsLayout->addWidget(yPosSpinBox);
+	mTransformsLayout->addWidget(yPosLabel);
+  mTransformsLayout->addWidget(yPosSpinBox);
 
 	//z transform
-	QLabel *zPosLabel = new QLabel(tr("Z Transform"));
+	QLabel *zPosLabel = new QLabel(tr("Z"));
 	zPosSpinBox = new QDoubleSpinBox;
 	zPosSpinBox->setRange(-100.0, 100.0);
 	zPosSpinBox->setSingleStep(0.5);
 	zPosSpinBox->setValue(0.0);
 	zPosSpinBox->setDecimals(1);
+	zPosSpinBox->setMaximumSize(50,25);
 	connect(zPosSpinBox, SIGNAL(valueChanged(double)),
           ((MainWindow*)parentWidget()), SLOT(translatez(double)));
 
-	transformsLayout->addWidget(zPosLabel);
-  transformsLayout->addWidget(zPosSpinBox);
+	mTransformsLayout->addWidget(zPosLabel);
+  mTransformsLayout->addWidget(zPosSpinBox);
+	
+	QLabel *scaleLabel = new QLabel(tr("Scale:"));
+	mTransformsLayout->addWidget(scaleLabel);
 	
 	//x scale
-	QLabel *xScaleLabel = new QLabel(tr("X Scale"));
+	QLabel *xScaleLabel = new QLabel(tr("X"));
 	xScaleSpinBox = new QDoubleSpinBox;
 	xScaleSpinBox->setRange(0.1, 10.0);
 	xScaleSpinBox->setSingleStep(0.1);
 	xScaleSpinBox->setValue(1.0);
 	xScaleSpinBox->setDecimals(1);	
+	xScaleSpinBox->setMaximumSize(50,25);
 	connect(xScaleSpinBox, SIGNAL(valueChanged(double)),
           ((MainWindow*)parentWidget()), SLOT(scalex(double)));
 
-	transformsLayout->addWidget(xScaleLabel);
-  transformsLayout->addWidget(xScaleSpinBox);
+	mTransformsLayout->addWidget(xScaleLabel);
+  mTransformsLayout->addWidget(xScaleSpinBox);
 	
 	//y scale
-	QLabel *yScaleLabel = new QLabel(tr("Y Scale"));
+	QLabel *yScaleLabel = new QLabel(tr("Y"));
 	yScaleSpinBox = new QDoubleSpinBox;
 	yScaleSpinBox->setRange(0.1, 10.0);
 	yScaleSpinBox->setSingleStep(0.1);
 	yScaleSpinBox->setValue(1.0);
 	yScaleSpinBox->setDecimals(1);
+	yScaleSpinBox->setMaximumSize(50,25);
 	connect(yScaleSpinBox, SIGNAL(valueChanged(double)),
           ((MainWindow*)parentWidget()), SLOT(scaley(double)));
 
-	transformsLayout->addWidget(yScaleLabel);
-  transformsLayout->addWidget(yScaleSpinBox);
+	mTransformsLayout->addWidget(yScaleLabel);
+  mTransformsLayout->addWidget(yScaleSpinBox);
 
 	//z scale
-	QLabel *zScaleLabel = new QLabel(tr("Z Scale"));
+	QLabel *zScaleLabel = new QLabel(tr("Z"));
 	zScaleSpinBox = new QDoubleSpinBox;
 	zScaleSpinBox->setRange(0.1, 10.0);
 	zScaleSpinBox->setSingleStep(0.1);
 	zScaleSpinBox->setValue(1.0);
 	zScaleSpinBox->setDecimals(1);
+	zScaleSpinBox->setMaximumSize(50,25);
 	connect(zScaleSpinBox, SIGNAL(valueChanged(double)),
           ((MainWindow*)parentWidget()), SLOT(scalez(double)));
-	transformsLayout->addWidget(zScaleLabel);
-  transformsLayout->addWidget(zScaleSpinBox);
+	mTransformsLayout->addWidget(zScaleLabel);
+  mTransformsLayout->addWidget(zScaleSpinBox);
 
 	QPushButton *freezeTransformsButton = new QPushButton("&Freeze Transforms", this);
 	connect(freezeTransformsButton, SIGNAL(clicked()),
           this, SLOT(freeze_transforms()));
 	
-	transformsLayout->addWidget(freezeTransformsButton);	
-	transformsLayout->addStretch(1);
-	//set the layout
-	transformsWidget->setLayout(transformsLayout);	
+	mTransformsLayout->addWidget(freezeTransformsButton);	
+	mTransformsLayout->addStretch(1);
+	mTransformsWidget->setLayout(mTransformsLayout);	
 }
 
 void BasicsMode::freeze_transforms()
@@ -270,23 +332,3 @@ void BasicsMode::freeze_transforms()
 	yScaleSpinBox->setValue(1.0);
 	zScaleSpinBox->setValue(1.0);
 }
-
-// 
-// //mouse events
-// void MainWindow::mousePressEvent(QMouseEvent *event) {
-// 	if ( event->buttons() == Qt::RightButton ){
-// 		event->ignore();
-// 	}
-// }
-// 
-// void MainWindow::mouseMoveEvent(QMouseEvent *event) {
-// 	if ( event->buttons() == Qt::RightButton ){
-// 		event->ignore();
-// 	}
-// }
-// 
-// void MainWindow::mouseReleaseEvent(QMouseEvent *event) {
-// 	if ( event->buttons() == Qt::RightButton ){
-// 		event->ignore();
-// 	}
-// }

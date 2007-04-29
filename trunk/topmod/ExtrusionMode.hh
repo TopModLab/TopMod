@@ -8,29 +8,41 @@
 
 #include <QWidget>
 
-#include <QBoxLayout>
-#include <QStackedWidget>
-#include <QComboBox>
-
 #include "MainWindow.hh"
 
 class MainWindow;
 class DLFLWindow;
-
-class QComboBox;
-class QStackedWidget;
-class QGroupBox;
-class QVBoxLayout;
-class QCheckBox;
-class QLabel;
 
 class ExtrusionMode : public QWidget {
 	Q_OBJECT
 
 public:
 	ExtrusionMode(QWidget *parent = 0);
-	void insertTab(QTabWidget *tabWidget);
-	int getLastMode();
+	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
+	
+	QAction *mDooSabinExtrudeAction;
+	QAction *mCubicalExtrudeAction;
+	QAction *mDodecahedralExtrudeAction;
+	QAction *mIcosahedralExtrudeAction;
+	QAction *mOctahedralExtrudeAction;
+	QAction *mStellateExtrudeAction;
+	QAction *mDoubleStellateExtrudeAction;	
+
+	QWidget *mDooSabinExtrudeWidget;
+	QWidget *mCubicalExtrudeWidget;
+	QWidget *mDodecahedralExtrudeWidget;
+	QWidget *mIcosahedralExtrudeWidget;
+	QWidget *mOctahedralExtrudeWidget;
+	QWidget *mStellateExtrudeWidget;
+	QWidget *mDoubleStellateExtrudeWidget;
+	
+	QBoxLayout *mDooSabinExtrudeLayout;
+	QBoxLayout *mCubicalExtrudeLayout;
+	QBoxLayout *mDodecahedralExtrudeLayout;
+	QBoxLayout *mIcosahedralExtrudeLayout;
+	QBoxLayout *mOctahedralExtrudeLayout;
+	QBoxLayout *mStellateExtrudeLayout; 
+	QBoxLayout *mDoubleStellateExtrudeLayout;
 	
 protected:
 	void setupDooSabinExtrude();
@@ -42,38 +54,21 @@ protected:
 	void setupDoubleStellateExtrude();
 	
 public slots:
-	void switchMode(int index);
+
 	void setLength(double value);
 	void setRotation(int value);
 	void setSegments(int value);
 	void setScale(double value);
 	
+	void triggerDooSabinExtrude();
+	void triggerCubicalExtrude();
+	void triggerDodecahedralExtrude();
+	void triggerIcosahedralExtrude();
+	void triggerOctahedralExtrude();
+	void triggerStellateExtrude();
+	void triggerDoubleStellateExtrude();
+	
 private:
-	
-	int lastMode;
-	
-	QLabel *extrusionLabel;
-	QGroupBox *extrusionGroup;
-	QVBoxLayout *extrusionBoxLayout;
-	QComboBox *extrusionComboBox;
-	
-	QStackedWidget *stackedWidget;
-	
-	QWidget *dooSabinExtrudeWidget;
-	QWidget *cubicalExtrudeWidget;
-	QWidget *dodecahedralExtrudeWidget;
-	QWidget *icosehedralExtrudeWidget;
-	QWidget *octahedralExtrudeWidget;
-	QWidget *stellateExtrudeWidget;
-	QWidget *doubleStellateExtrudeWidget;
-	
-	QVBoxLayout *dooSabinExtrudeLayout;
-	QVBoxLayout *cubicalExtrudeLayout;
-	QVBoxLayout *dodecahedralExtrudeLayout;
-	QVBoxLayout *icosahedralExtrudeLayout; 
-	QVBoxLayout *octahedralExtrudeLayout;
-	QVBoxLayout *stellateExtrudeLayout; 
-	QVBoxLayout *doubleStellateExtrudeLayout;
 	
 	//doo sabin extrude
 	QLabel *dooSabinLengthLabel;

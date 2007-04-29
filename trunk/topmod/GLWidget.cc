@@ -21,7 +21,6 @@ GLWidget::GLWidget(int x, int y, int w, int h, QWidget *parent) : QGLWidget(pare
 GLWidget::GLWidget(int x, int y, int w, int h, DLFLRendererPtr rp, DLFLObjectPtr op, QWidget *parent ) : QGLWidget(parent),
 	viewport(w,h), object(op), renderer(rp),  /*grid(ZX,20.0,10),*/	showgrid(false), showaxes(false) {
 		
-		
 	// setupViewport(w,h);
 	// paintGL();
 

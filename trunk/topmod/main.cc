@@ -16,7 +16,7 @@
 #include "MainWindow.hh"
 
 #ifdef __APPLE__
-#include "TdxDeviceWrappers.hh"
+// #include "TdxDeviceWrappers.hh"
 #endif
 
 
@@ -39,7 +39,7 @@ int main( int argc, char **argv ) {
 	MainWindow mainWindow;
 
 	app.processEvents( );
-	mainWindow.resize( 900, 800 );
+	mainWindow.resize( 1000, 800 );
 	mainWindow.show();
 
 	return app.exec( );

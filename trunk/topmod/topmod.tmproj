@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>topmod.pro</string>
+	<string>MainWindow.cc</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -21,6 +21,34 @@
 	<integer>200</integer>
 	<key>metaData</key>
 	<dict>
+		<key>BasicsMode.cc</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>14</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>7</integer>
+		</dict>
+		<key>BasicsMode.hh</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>7</integer>
+		</dict>
 		<key>DLFLObject.hh</key>
 		<dict>
 			<key>caret</key>
@@ -35,7 +63,7 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>MainWindow.cc</key>
+		<key>DLFLViewport.cc</key>
 		<dict>
 			<key>caret</key>
 			<dict>
@@ -47,7 +75,49 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>94</integer>
+			<integer>0</integer>
+		</dict>
+		<key>DLFLWindow.cc</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>6</integer>
+				<key>line</key>
+				<integer>127</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>107</integer>
+		</dict>
+		<key>GLWidget.cc</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>23</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>25</integer>
+		</dict>
+		<key>MainWindow.cc</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>2</integer>
+				<key>line</key>
+				<integer>97</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>59</integer>
 		</dict>
 		<key>MainWindow.hh</key>
 		<dict>
@@ -202,7 +272,7 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>31</integer>
+				<integer>17</integer>
 				<key>line</key>
 				<integer>13</integer>
 			</dict>
@@ -234,6 +304,11 @@
 		<string>TdxDeviceWrappers.cc</string>
 		<string>makedmg.sh</string>
 		<string>topmod.pro</string>
+		<string>GLWidget.cc</string>
+		<string>DLFLViewport.cc</string>
+		<string>DLFLWindow.cc</string>
+		<string>BasicsMode.hh</string>
+		<string>BasicsMode.cc</string>
 		<string>topmod.pro.bak</string>
 		<string>main.cc</string>
 		<string>include/Base/StreamIO.hh</string>

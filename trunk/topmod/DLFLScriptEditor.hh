@@ -21,8 +21,8 @@ public:
 signals :
   //void findNext( const QString &str, Qt::CaseSensitivity cs );
   //void findPrevious( const QString &str, Qt::CaseSensitivity cs );
-public slots :
-  void toggleShowHide( );
+// public slots :
+  // void toggleShowHide( );
 private slots :
   void executeCommand( );
   //void readStandardOut( );

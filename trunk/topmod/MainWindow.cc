@@ -25,118 +25,60 @@ PatchRendererPtr MainWindow::patch;		       // PatchRenderer
 
 //DLFLWindowPtr MainWindow::mainWindowPtr;            // Pointer to the main window
 
-MainWindow::MainWindow()
-	 /*: mainWindow(OPT_W,MENU_H,MIN_W-OPT_W,MIN_H-MENU_H)*/ {
-  move(0,0);
+MainWindow::MainWindow(){
+	
+	// setUnifiedTitleAndToolBarOnMac(true);
+	mStatusBar = new QStatusBar();
+	setStatusBar(mStatusBar);
+  // move(0,0);
   cWidget = new QWidget( );
+	
 	//create a container widget to hold multiple glwidgets
 	mainWindow = new DLFLWindow(OPT_W,MENU_H,MIN_W-OPT_W,MIN_H-MENU_H);
-	mainWindow->setMinimumWidth(600);
+	//mainWindow->setMinimumWidth(600);
 
-  mScriptEditor = new DLFLScriptEditor( );
   /** Setup Layouts **/
   layout = new QBoxLayout( QBoxLayout::TopToBottom, 0 );
-  subTopLayout = new QBoxLayout( QBoxLayout::LeftToRight, 0 );    // Holds GL and Buttons 
-  leftLayout   = new QBoxLayout( QBoxLayout::TopToBottom, 0 );    // Holds Buttons
-  rightLayout  = new QBoxLayout( QBoxLayout::TopToBottom, 0 );    // Holds Buttons
-		
-  layout->addLayout( subTopLayout );
-  subTopLayout->addLayout( leftLayout );
-  subTopLayout->addLayout( rightLayout );
-  rightLayout->addWidget( mainWindow , 10 );
-  rightLayout->addWidget( mScriptEditor, 10 );
-  mScriptEditor->lower( );
-//  glWidget->raise( );
 
-  modeButtons( leftLayout );
-
-  // Add stretch so the buttons clump together
-  leftLayout->addStretch( 10 );
-  //subLowLayout->addStretch( 20 );
+  layout->addWidget( mainWindow , 0 );
+	layout->setMargin(0);
 
   cWidget->setLayout( layout );
   setCentralWidget( cWidget );
+
+	//the script editor widget will be placed into a QDockWidget
+	//and will be dockable in the top and bottom sections of the main window	
+	mScriptEditor = new DLFLScriptEditor( );
+	mScriptEditorDockWidget = new QDockWidget(tr("Script Editor"), this);
+	mScriptEditorDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
+	mScriptEditorDockWidget->setWidget(mScriptEditor);
+	addDockWidget(Qt::BottomDockWidgetArea, mScriptEditorDockWidget);
+	mScriptEditorDockWidget->hide();
+	mScriptEditorDockWidget->setMaximumHeight(200);
+
   //make a new instance of QShortcutManager
   sm = new QShortcutManager();
 
+	mBasicsMode = new BasicsMode(this);
+	mExtrusionMode = new ExtrusionMode(this);
+	mConicalMode = new ConicalMode(this);
+	// mRemeshingMode = new RemeshingMode(this);
+	mHighgenusMode = new HighgenusMode(this);
+	mTexturingMode = new TexturingMode(this);
+
+  createToolBars();
   createActions();
   createMenus();
-  createToolBars();
-	//from dlflappwindow.hh
+
 	MainWindow::createRenderers();
   mainWindow->setRenderer(lit); // Default renderer is LightedRenderer
-	//MainWindow::setMainWindow(mainWindow);
-
+	
+	//style sheet editor
   mStyleSheetEditor = new StyleSheetEditor(this);
-  mScriptEditor->hide( );
-
-	// painter = QPainter(this);
-	startX = -1;
-	startY = -1;
-
-}
-
-void MainWindow::modeButtons( QBoxLayout *layout ) {
-
-  //TabWidget Definition
-  modesTabWidget = new QTabWidget(this);
-	modesTabWidget->setMaximumWidth(350);
-	//Icon Size for the TabWidget Icons
-  QSize modeIconSize(20,20);
-  modesTabWidget->setIconSize(modeIconSize);
-
-	basicsMode = new BasicsMode(this);
-	basicsMode->insertTab(modesTabWidget);
-	
-	extrusionMode = new ExtrusionMode(this);
-	extrusionMode->insertTab(modesTabWidget);
-	
-	conicalMode = new ConicalMode(this);
-	conicalMode->insertTab(modesTabWidget);
-	
-	remeshingMode = new RemeshingMode(this);
-	remeshingMode->insertTab(modesTabWidget);
-	
-	highgenusMode = new HighgenusMode(this);
-	highgenusMode->insertTab(modesTabWidget);
-	
-	texturingMode = new TexturingMode(this);
-	texturingMode->insertTab(modesTabWidget);
-	
-  layout->addWidget(modesTabWidget);
-
-	connect(modesTabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int) ));
-
-	basicsMode->setMouseTracking(true);
-	extrusionMode->setMouseTracking(true);
-	conicalMode->setMouseTracking(true);
-	remeshingMode->setMouseTracking(true);
-	highgenusMode->setMouseTracking(true);
-	texturingMode->setMouseTracking(true);
-	
-	modesTabWidget->setMouseTracking(true);
-}
-
-void MainWindow::tabChanged(int index){
-	
-	switch (index){
-		case 0:	mainWindow->setMode((DLFLWindow::Mode)basicsMode->getLastMode());
-		break;
-		case 1:	mainWindow->setMode((DLFLWindow::Mode)extrusionMode->getLastMode());
-		break;
-		case 2: mainWindow->setMode((DLFLWindow::Mode)conicalMode->getLastMode());
-		break;
-		case 3: mainWindow->setMode((DLFLWindow::Mode)remeshingMode->getLastMode());
-		break;
-		case 4:	mainWindow->setMode((DLFLWindow::Mode)highgenusMode->getLastMode());
-		break;
-		case 5: mainWindow->setMode((DLFLWindow::Mode)texturingMode->getLastMode());
-		default:
-		break;
-		}
 }
 
 void MainWindow::setMode(int m){
+	
 	mainWindow->setMode((DLFLWindow::Mode)m);
 }
 
@@ -146,20 +88,11 @@ void MainWindow::setRemeshingScheme(int m){
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-  // if (maybeSave()) {
-  //     writeSettings();
-  //     event->accept();
-  // } else {
-  //     event->ignore();
-  // }
 }
 
 void MainWindow::newFile()
 {
-  // if (maybeSave()) {
-  //     this->clear();
-  //     setCurrentFile("");
-  // }
+
 }
 
 void MainWindow::open()
@@ -187,30 +120,6 @@ void MainWindow::about()
 
 void MainWindow::documentWasModified(){
   // setWindowModified(this->document()->isModified());
-}
-
-void MainWindow::switchBasicsMode(){	
-  modesTabWidget->setCurrentIndex(0);
-}
-
-void MainWindow::switchExtrusionMode(){	
-  modesTabWidget->setCurrentIndex(1);
-}
-
-void MainWindow::switchConicalMode(){	
-  modesTabWidget->setCurrentIndex(2);
-}
-
-void MainWindow::switchRemeshingMode(){	
-  modesTabWidget->setCurrentIndex(3);
-}
-
-void MainWindow::switchHighgenusMode(){	
-  modesTabWidget->setCurrentIndex(4);
-}
-
-void MainWindow::switchTexturingMode(){	
-  modesTabWidget->setCurrentIndex(5);
 }
 
 void MainWindow::createActions()
@@ -324,7 +233,7 @@ void MainWindow::createActions()
 	showScriptEditorAct = new QAction(tr("Show Script &Editor"), this);
 	showScriptEditorAct->setCheckable(true);
 	showScriptEditorAct->setStatusTip( tr("Show the script editor to execute DLFL commands") );
-	connect(showScriptEditorAct, SIGNAL(triggered()), mScriptEditor, SLOT(toggleShowHide()));
+	connect(showScriptEditorAct, SIGNAL(triggered()), this, SLOT(showHideScriptEditor()));
 	sm->registerAction(showScriptEditorAct, "Display Menu", "SHIFT+CTRL+E");
 
 	//Renderer Menu Actions
@@ -410,52 +319,44 @@ void MainWindow::createActions()
 	pGeodesicAct->setStatusTip(tr("Load a geodesic dome"));
 	connect(pGeodesicAct, SIGNAL(triggered()), mainWindow, SLOT(loadGeodesic()));
 
-	//MODE SWITCHING ACTIONS
-	modeBasicsAct = new QAction(QIcon(":/images/mode_basics.png"), tr("&Basics"), this);
-	modeBasicsAct->setCheckable(true);
-	sm->registerAction(modeBasicsAct, "Modes", "1");
-	modeBasicsAct->setStatusTip(tr("Switch to Basics Mode"));
-	connect(modeBasicsAct, SIGNAL(triggered()), this, SLOT(switchBasicsMode()));
 
 	modeExtrusionAct = new QAction(QIcon(":/images/mode_extrusion.png"), tr("&Extrusion"), this);
 	modeExtrusionAct->setCheckable(true);
 	sm->registerAction(modeExtrusionAct, "Modes", "2");
 	modeExtrusionAct->setStatusTip(tr("Switch to Extrusions Mode"));
-	connect(modeExtrusionAct, SIGNAL(triggered()), this, SLOT(switchExtrusionMode()));
+	//connect(modeExtrusionAct, SIGNAL(triggered()), this, SLOT(switchExtrusionMode()));
 
 	modeConicalAct = new QAction(QIcon(":/images/mode_conical.png"), tr("&Conical Sculpting"), this);
 	modeConicalAct->setCheckable(true);
 	sm->registerAction(modeConicalAct, "Modes", "3");
 	modeConicalAct->setStatusTip(tr("Switch to Conical Sculpting Mode"));
-	connect(modeConicalAct, SIGNAL(triggered()), this, SLOT(switchConicalMode()));
+	// connect(modeConicalAct, SIGNAL(triggered()), this, SLOT(switchConicalMode()));
 
 	modeRemeshingAct = new QAction(QIcon(":/images/mode_remeshing.png"), tr("&Remeshing"), this);
 	modeRemeshingAct->setCheckable(true);
 	sm->registerAction(modeRemeshingAct, "Modes", "4");
 	modeRemeshingAct->setStatusTip(tr("Switch to Remeshing Mode"));
-	connect(modeRemeshingAct, SIGNAL(triggered()), this, SLOT(switchRemeshingMode()));
+	// connect(modeRemeshingAct, SIGNAL(triggered()), this, SLOT(switchRemeshingMode()));
 
 	modeHighgenusAct = new QAction(QIcon(":/images/mode_highgenus.png"), tr("&High Genus"), this);
 	modeHighgenusAct->setCheckable(true);
 	sm->registerAction(modeHighgenusAct, "Modes", "5");
 	modeHighgenusAct->setStatusTip(tr("Switch to High Genus Mode"));
-	connect(modeHighgenusAct, SIGNAL(triggered()), this, SLOT(switchHighgenusMode()));
+	// connect(modeHighgenusAct, SIGNAL(triggered()), this, SLOT(switchHighgenusMode()));
 
 	modeTexturingAct = new QAction(QIcon(":/images/mode_texturing.png"), tr("&Texturing"), this);
 	modeTexturingAct->setCheckable(true);
 	sm->registerAction(modeTexturingAct, "Modes", "6");
 	modeTexturingAct->setStatusTip(tr("Switch to Texturing Mode"));
-	connect(modeTexturingAct, SIGNAL(triggered()), this, SLOT(switchTexturingMode()));
+	// connect(modeTexturingAct, SIGNAL(triggered()), this, SLOT(switchTexturingMode()));
 
 	modesActionGroup = new QActionGroup(this);
 	modesActionGroup->setExclusive(true);
-	modesActionGroup->addAction(modeBasicsAct);
 	modesActionGroup->addAction(modeExtrusionAct);
 	modesActionGroup->addAction(modeConicalAct);
 	modesActionGroup->addAction(modeRemeshingAct);
 	modesActionGroup->addAction(modeHighgenusAct);
 	modesActionGroup->addAction(modeTexturingAct);
-	modeBasicsAct->setChecked(true);
 	
 	//Object Menu Actions
 	subdivideAllEdgesAct = new QAction(tr("Subdivide All &Edges"), this);
@@ -588,7 +489,6 @@ void MainWindow::createMenus(){
 
 	modesMenu = menuBar->addMenu(tr("&Modes"));
 	modesMenu->setTearOffEnabled(true);
-	modesMenu->addAction(modeBasicsAct);
 	modesMenu->addAction(modeExtrusionAct);
 	modesMenu->addAction(modeConicalAct);
 	modesMenu->addAction(modeRemeshingAct);
@@ -658,32 +558,71 @@ void MainWindow::createMenus(){
 	
 }
 
-void MainWindow::createToolBars()
-{	
-  // modesToolBar = addToolBar(tr("Modes"));
-  // modesToolBar->addAction(modeBasicsAct);
-  // modesToolBar->addAction(modeExtrusionAct);
-  // modesToolBar->addAction(modeRemeshingAct);
-  // modesToolBar->addAction(modeHighgenusAct);
-  // modesToolBar->addAction(modeTexturingAct);
+void MainWindow::createToolBars() {	
+	
+	//the main tool options DockWidget
+	mToolOptionsDockWidget = new QDockWidget(tr("Tool Options"),this);
+	mToolOptionsDockWidget->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
+	mToolOptionsDockWidget->setAllowedAreas(Qt::TopDockWidgetArea);
+	mToolOptionsStackedWidget = new QStackedWidget();
+	mToolOptionsDockWidget->setWidget(mToolOptionsStackedWidget);
+	addDockWidget(Qt::TopDockWidgetArea, mToolOptionsDockWidget);
+	
+	mToolsToolBar = new QToolBar(tr("Tools"));
+	addToolBar(Qt::RightToolBarArea,mToolsToolBar);
+	
+	//tools ction group initialization
+	mToolsActionGroup = new QActionGroup(this);
+	mToolsActionGroup->setExclusive(true);
+		
+	mBasicsMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);
+	mToolsToolBar->addSeparator();
+	
+	mExtrusionMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);
+	mToolsToolBar->addSeparator();
 
-  // primitivesToolBar = addToolBar(tr("Primitives"));
-  // primitivesToolBar->addAction(pCubeAct);
-  // primitivesToolBar->addAction(pOctahedronAct);
-  // primitivesToolBar->addAction(pTetrahedronAct);
-  // primitivesToolBar->addAction(pDodecahedronAct);
-  // primitivesToolBar->addAction(pIcosahedronAct);
-  // primitivesToolBar->addAction(pSoccerBallAct);
-  // primitivesToolBar->addAction(pGeodesicAct);
+	mConicalMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);
+	mToolsToolBar->addSeparator();
+	
+	// mRemeshingMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);
+	// mToolsToolBar->addSeparator();
+	
+	mHighgenusMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);
+	mToolsToolBar->addSeparator();
+
+	mTexturingMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);
+
+	// connect( mEditStyleSheetAct, SIGNAL( triggered() ), this, SLOT(on_editStyleAction_triggered()) );
+	
+	// mBasicsToolBar->addAction(mInsertEdgeAction);
+	// mBasicsToolBar->addAction(mDeleteEdgeAction);	
+	// mBasicsToolBar->addAction(mCollapseEdgeAction);	
+	// mBasicsToolBar->addAction(mSubdivideEdgeAction);	
+	// mBasicsToolBar->addAction(mConnectEdgesAction);	
+	// mBasicsToolBar->addAction(mSpliceCornersAction);	
+	
+	// mPrimitivesToolBar = new QToolBar(tr("Primitives"));
+	// addToolBar(Qt::LeftToolBarArea,mPrimitivesToolBar);
+	// mPrimitivesToolBar->addAction(pCubeAct);
+	// mPrimitivesToolBar->addAction(pOctahedronAct);
+	// mPrimitivesToolBar->addAction(pTetrahedronAct);
+	// mPrimitivesToolBar->addAction(pDodecahedronAct);
+	// mPrimitivesToolBar->addAction(pIcosahedronAct);
+	// mPrimitivesToolBar->addAction(pSoccerBallAct);
+	// mPrimitivesToolBar->addAction(pGeodesicAct);
 }
 
-void MainWindow::createStatusBar()
-{
-  //statusBar()->showMessage(tr("This is the statusBar"));
+void MainWindow::setToolOptions(QWidget *optionsWidget) {
+
+	mToolOptionsStackedWidget->setCurrentWidget(optionsWidget);
+
 }
 
-void MainWindow::readSettings()
-{
+void MainWindow::createStatusBar() {
+  statusBar()->showMessage(tr("Welcome to TopMod"));
+}
+
+void MainWindow::readSettings() {
   // QSettings settings("TopMod", "Topological Mesh Modeler");
   // QPoint pos = settings.value("pos", QPoint(100, 100)).toPoint();
   // QSize size = settings.value("size", QSize(800, 600)).toSize();
@@ -691,15 +630,13 @@ void MainWindow::readSettings()
   // move(pos);
 }
 
-void MainWindow::writeSettings()
-{
+void MainWindow::writeSettings() {
   // QSettings settings("TopMod", "Topological Mesh Modeler");
   // settings.setValue("pos", pos());
   // settings.setValue("size", size());
 }
 
-bool MainWindow::maybeSave()
-{
+bool MainWindow::maybeSave() {
   // if (this->document()->isModified()) {
   //     int ret = QMessageBox::warning(this, tr("Application"),
   //                  tr("The document has been modified.\n"
@@ -715,8 +652,7 @@ bool MainWindow::maybeSave()
   return true;
 }
 
-void MainWindow::loadFile(const QString &fileName)
-{
+void MainWindow::loadFile(const QString &fileName) {
   // QFile file(fileName);
   // if (!file.open(QFile::ReadOnly | QFile::Text)) {
   //     QMessageBox::warning(this, tr("Application"),
@@ -735,8 +671,7 @@ void MainWindow::loadFile(const QString &fileName)
   // statusBar()->showMessage(tr("File loaded"), 2000);
 }
 
-bool MainWindow::saveFile(const QString &fileName)
-{
+bool MainWindow::saveFile(const QString &fileName) {
   // QFile file(fileName);
   // if (!file.open(QFile::WriteOnly | QFile::Text)) {
   //     QMessageBox::warning(this, tr("Application"),
@@ -756,8 +691,7 @@ bool MainWindow::saveFile(const QString &fileName)
   return true;
 }
 
-void MainWindow::setCurrentFile(const QString &fileName)
-{
+void MainWindow::setCurrentFile(const QString &fileName) {
   curFile = fileName;
   //this->document()->setModified(false);
   setWindowModified(false);
@@ -771,8 +705,7 @@ void MainWindow::setCurrentFile(const QString &fileName)
   setWindowTitle(tr("%1[*] - %2").arg(shownName).arg(tr("Application")));
 }
 
-void MainWindow::on_editStyleAction_triggered()
-{
+void MainWindow::on_editStyleAction_triggered() {
   mStyleSheetEditor->show();
   mStyleSheetEditor->activateWindow();
 }
@@ -839,4 +772,14 @@ void MainWindow::paintEvent(QPaintEvent *event){
 	// 	painter.end();
 	// }
 
+}
+
+void MainWindow::showHideScriptEditor(){
+
+	if( mScriptEditorDockWidget->isVisible( ) )
+	  mScriptEditorDockWidget->hide( );
+	else {
+	  mScriptEditorDockWidget->show( );
+	  mScriptEditorDockWidget->setFocus();
+	}
 }

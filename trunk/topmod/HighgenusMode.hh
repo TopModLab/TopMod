@@ -6,31 +6,51 @@
 #ifndef HIGHGENUSMODE_H
 #define HIGHGENUSMODE_H
 
-#include <QWidget>
-
-#include <QBoxLayout>
-#include <QStackedWidget>
-#include <QComboBox>
-
 #include "MainWindow.hh"
 
 class MainWindow;
 class DLFLWindow;
-
-class QComboBox;
-class QStackedWidget;
-class QGroupBox;
-class QVBoxLayout;
-class QCheckBox;
-class QLabel;
 
 class HighgenusMode : public QWidget {
 	Q_OBJECT
 
 public:
 	HighgenusMode(QWidget *parent = 0);
-	void insertTab(QTabWidget *tabWidget);
-	int getLastMode();
+	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
+	
+	QAction *mAddHoleHandleAction;
+	QAction *mAddHoleHandleCVAction;
+	QAction *mAddHandleSIAction;
+	QAction *mRindModelingScalingAction; 
+	QAction *mRindModelingThicknessAction;
+	QAction *mWireframeModelingAction; 
+	QAction *mColumnModelingAction;	
+	QAction *mSierpinskyAction;
+	QAction *mMultiFaceHandleAction;
+	QAction *mMengerSpongeAction;
+	
+	QWidget *mAddHoleHandleWidget;
+	QWidget *mAddHoleHandleCVWidget;
+	QWidget *mAddHandleSIWidget;
+	QWidget *mRindModelingScalingWidget; 
+	QWidget *mRindModelingThicknessWidget;
+	QWidget *mWireframeModelingWidget; 
+	QWidget *mColumnModelingWidget;	
+	QWidget *mSierpinskyWidget;
+	QWidget *mMultiFaceHandleWidget;
+	QWidget *mMengerSpongeWidget;
+	
+	QBoxLayout *mAddHoleHandleLayout;
+	QBoxLayout *mAddHoleHandleCVLayout;
+	QBoxLayout *mAddHandleSILayout;
+	QBoxLayout *mRindModelingScalingLayout;
+	QBoxLayout *mRindModelingThicknessLayout;
+	QBoxLayout *mWireframeModelingLayout;
+	QBoxLayout *mColumnModelingLayout; 
+	QBoxLayout *mSierpinskyLayout;
+	QBoxLayout *mMultiFaceHandleLayout; 
+	QBoxLayout *mMengerSpongeLayout;
+	
 
 protected:
 	void setupAddHoleHandle();
@@ -45,7 +65,6 @@ protected:
 	void setupMengerSponge();
 	
 public slots:
-	void switchMode(int index);	
 	void numSegmentsValueChanged(int value);
 	void changeMultiFaceAlgorithm(bool on);
 	void toggleMultiFaceHandleUseMaxOffsetFlag(int state);
@@ -53,39 +72,23 @@ public slots:
 	
 	void toggleCrustCleanupFlag(int state);
 	void numSegmentsConnectValueChanged(int value);
+	
+	void triggerAddHoleHandle();
+	void triggerAddHoleHandleCV();
+	void triggerAddHandleSI();
+	void triggerRindModelingScaling();
+	void triggerRindModelingThickness();
+	void triggerWireframeModeling();
+	void triggerColumnModeling();
+	void triggerSierpinsky();
+	void triggerMultiFaceHandle();
+	void triggerMengerSponge();
 
 private:
 	
-	int lastMode;
+	QBoxLayout *mMultiFaceAlgorithmLayout;
 	
-	QLabel *highgenusLabel;
-	QGroupBox *highgenusGroup;
-	QVBoxLayout *highgenusBoxLayout;
-	QComboBox *highgenusComboBox;
-	
-	QStackedWidget *stackedWidget;
-	
-	QWidget *addHoleHandleWidget;
-	QWidget *addHoleHandleCVWidget;
-	QWidget *addHandleSIWidget;
-	QWidget *rindModelingScalingWidget; 
-	QWidget *rindModelingThicknessWidget;
-	QWidget *wireframeModelingWidget; 
-	QWidget *columnModelingWidget;	
-	QWidget *sierpinskyWidget;
-	QWidget *multiFaceHandleWidget;
-	QWidget *mengerSpongeWidget;
-	
-	QVBoxLayout *addHoleHandleLayout;
-	QVBoxLayout *addHoleHandleCVLayout;
-	QVBoxLayout *addHandleSILayout;
-	QVBoxLayout *rindModelingScalingLayout;
-	QVBoxLayout *rindModelingThicknessLayout;
-	QVBoxLayout *wireframeModelingLayout;
-	QVBoxLayout *columnModelingLayout; 
-	QVBoxLayout *sierpinskyLayout;
-	QVBoxLayout *multiFaceHandleLayout; 
-	QVBoxLayout *mengerSpongeLayout;
+	QButtonGroup *multiFaceAlgorithmButtonGroup;
 	
 	QCheckBox *rindModelingThicknessCleanupCheckBox;
 	QCheckBox *rindModelingScalingCleanupCheckBox;

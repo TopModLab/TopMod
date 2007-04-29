@@ -31,9 +31,32 @@ class BasicsMode : public QWidget {
 
 public:
 	BasicsMode(QWidget *parent = 0);
-	void insertTab(QTabWidget *tabWidget);
-	int getLastMode();
-			
+	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
+
+	QAction *mInsertEdgeAction;
+	QAction *mDeleteEdgeAction;	
+	QAction *mCollapseEdgeAction;	
+	QAction *mSubdivideEdgeAction;	
+	QAction *mConnectEdgesAction;	
+	QAction *mSpliceCornersAction;
+	QAction *mTransformsAction;
+	
+	QWidget *mInsertEdgeWidget;
+	QWidget *mDeleteEdgeWidget;
+	QWidget *mCollapseEdgeWidget;
+	QWidget *mSubdivideEdgeWidget; 
+	QWidget *mConnectEdgesWidget;
+	QWidget *mSpliceCornersWidget; 
+	QWidget *mTransformsWidget;	
+	
+	QBoxLayout *mInsertEdgeLayout;
+	QBoxLayout *mDeleteEdgeLayout;
+	QBoxLayout *mCollapseEdgeLayout;
+	QBoxLayout *mSubdivideEdgeLayout; 
+	QBoxLayout *mConnectEdgesLayout;
+	QBoxLayout *mSpliceCornersLayout; 
+	QBoxLayout *mTransformsLayout;
+
 protected:
 	void setupInsertEdge();
 	void setupDeleteEdge();
@@ -42,36 +65,8 @@ protected:
 	void setupConnectEdges();
 	void setupSpliceCorners();
 	void setupTransforms();
-	
-// public slots:
-// 	void setMode(int index);
-	
+
 private:
-	
-	int lastMode;
-	
-	QLabel *basicsLabel;
-	QGroupBox *basicsGroup;
-	QVBoxLayout *basicsBoxLayout;
-	QComboBox *basicsComboBox;
-	
-	QStackedWidget *stackedWidget;
-	
-	QWidget *insertEdgeWidget;
-	QWidget *deleteEdgeWidget;
-	QWidget *collapseEdgeWidget;
-	QWidget *subdivideEdgeWidget; 
-	QWidget *connectEdgesWidget;
-	QWidget *spliceCornersWidget; 
-	QWidget *transformsWidget;	
-	
-	QVBoxLayout *insertEdgeLayout;
-	QVBoxLayout *deleteEdgeLayout;
-	QVBoxLayout *collapseEdgeLayout;
-	QVBoxLayout *subdivideEdgeLayout; 
-	QVBoxLayout *connectEdgesLayout;
-	QVBoxLayout *spliceCornersLayout; 
-	QVBoxLayout *transformsLayout;
 	
 	//transform spinboxes
 	QDoubleSpinBox *xScaleSpinBox;
@@ -81,15 +76,16 @@ private:
 	QDoubleSpinBox *yPosSpinBox;
 	QDoubleSpinBox *zPosSpinBox;
 	
-	
 public slots:
-	void switchMode(int index);	
 	void freeze_transforms();
-	
-	// void mousePressEvent(QMouseEvent * event);
-	// void mouseReleaseEvent(QMouseEvent * event);
-	// void mouseMoveEvent(QMouseEvent * event);
-	
+		
+	void triggerInsertEdge();
+	void triggerDeleteEdge();
+	void triggerCollapseEdge();
+	void triggerSubdivideEdge();
+	void triggerConnectEdges();
+	void triggerSpliceCorners();
+	void triggerTransforms();
 };
 
 #endif

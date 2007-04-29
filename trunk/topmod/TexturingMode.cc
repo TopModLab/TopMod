@@ -10,65 +10,37 @@ TexturingMode::TexturingMode(QWidget *parent)
 		: QWidget(parent)
 {		
 	this->setParent(parent);
-	lastMode = DLFLWindow::NormalMode;
-	//mode group. this is the main widget that goes into a TabWidget
-  texturingGroup = new QGroupBox(tr("Texturing"));
-	//boxLayout widget to add buttons to within the groupBox widget
-	texturingBoxLayout = new QVBoxLayout;
-
-	//Populate a Q Combo Box with a list of strings
-	texturingLabel = new QLabel(tr("Select Texturing Operation"));
-	texturingComboBox = new QComboBox();
-	QStringList texturingList;
-	texturingList << tr("Tile Texturing");
-	texturingComboBox->addItems(texturingList);
-	//add the combobox to the layout
-	texturingBoxLayout->addWidget(texturingLabel);
-	texturingBoxLayout->addWidget(texturingComboBox);
 	
-	//create the stacked widget and all child widget pages
-	tileTexturingWidget = new QWidget;
-
-  stackedWidget = new QStackedWidget;
-  stackedWidget->addWidget(tileTexturingWidget);
-
-	//add the stackedwidget to the layout
-  texturingBoxLayout->addWidget(stackedWidget);
-	//connect the combobox to the stacked widget
-  connect(texturingComboBox, SIGNAL(activated(int)),
-          stackedWidget, SLOT(setCurrentIndex(int)));
-	
-	//setup stacked widget pages here, 
+	mTileTexturingWidget = new QWidget;
 	setupTileTexturing();
 	
-	connect(texturingComboBox, SIGNAL(currentIndexChanged(int)),
-					this,SLOT(switchMode(int)) );
+	mTileTexturingAction = new QAction(tr("Tile Texturing"),this);
+	mTileTexturingAction->setCheckable(true);
+	// sm->registerAction(mTileTexturingAction, "Basics Modes", "9");
+	mTileTexturingAction->setStatusTip(tr("Enter Tile Texturing Mode"));
+	mTileTexturingAction->setToolTip(tr("Tile Texturing Mode"));
+	connect(mTileTexturingAction, SIGNAL(triggered()), this, SLOT(triggerTileTexturing()));
 
-	//set the layout
-	texturingGroup->setLayout(texturingBoxLayout);
 }
 
-void TexturingMode::insertTab(QTabWidget *tabWidget){
-	tabWidget->addTab( texturingGroup, QIcon(":/images/mode_texturing.png"), "6");
-  tabWidget->setTabToolTip(0,tr("Texturing Mode"));
+void TexturingMode::triggerTileTexturing(){
+	
+	((MainWindow*)parentWidget())->setToolOptions(mTileTexturingWidget);
+	((MainWindow*)parentWidget())->setMode(DLFLWindow::NormalMode);
+	
 }
 
-int TexturingMode::getLastMode(){
-	return lastMode;
-}
-
-void TexturingMode::switchMode(int index){	
-	switch(index){
-		case 0: ((MainWindow*)parentWidget())->setMode(DLFLWindow::NormalMode);
-		break;
-		default:
-		break;
-	}
+void TexturingMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget){
+	
+	actionGroup->addAction(mTileTexturingAction);
+	toolBar->addAction(mTileTexturingAction);
+	stackedWidget->addWidget(mTileTexturingWidget);
+	
 }
 
 void TexturingMode::setupTileTexturing(){
 	
-	tileTexturingLayout = new QVBoxLayout;
+	mTileTexturingLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	
 	//number of segments
 	QLabel *tileTexturingNumTilesLabel = new QLabel(tr("Tiling Number:"));
@@ -76,35 +48,21 @@ void TexturingMode::setupTileTexturing(){
 	tileTexturingNumTilesSpinBox->setRange(2, 8);
 	tileTexturingNumTilesSpinBox->setSingleStep(1);
 	tileTexturingNumTilesSpinBox->setValue(2);
+	tileTexturingNumTilesSpinBox->setMaximumSize(60,25);
+	
 	connect(tileTexturingNumTilesSpinBox, SIGNAL(valueChanged(int)),
           ((MainWindow*)parentWidget()), SLOT(changeTileTexNum(int)));
 
-	tileTexturingLayout->addWidget(tileTexturingNumTilesLabel);
-  tileTexturingLayout->addWidget(tileTexturingNumTilesSpinBox);
+	mTileTexturingLayout->addWidget(tileTexturingNumTilesLabel);
+  mTileTexturingLayout->addWidget(tileTexturingNumTilesSpinBox);
 	//create column button
 	QPushButton *tileTexturingAssignButton = new QPushButton(tr("Assign Texture Coordinates"), this);
-	tileTexturingLayout->addWidget(tileTexturingAssignButton);
 	
-	tileTexturingLayout->addStretch(1);
-	tileTexturingWidget->setLayout(tileTexturingLayout);	
+	connect(tileTexturingAssignButton, SIGNAL(clicked()),
+          ((MainWindow*)parentWidget()), SLOT(assign_texture_coordinates()));
+
+	mTileTexturingLayout->addWidget(tileTexturingAssignButton);
+	mTileTexturingLayout->addStretch(1);
+	mTileTexturingWidget->setLayout(mTileTexturingLayout);	
 	
 }
-// 
-// //mouse events
-// void MainWindow::mousePressEvent(QMouseEvent *event) {
-// 	if ( event->buttons() == Qt::RightButton ){
-// 		event->ignore();
-// 	}
-// }
-// 
-// void MainWindow::mouseMoveEvent(QMouseEvent *event) {
-// 	if ( event->buttons() == Qt::RightButton ){
-// 		event->ignore();
-// 	}
-// }
-// 
-// void MainWindow::mouseReleaseEvent(QMouseEvent *event) {
-// 	if ( event->buttons() == Qt::RightButton ){
-// 		event->ignore();
-// 	}
-// }
