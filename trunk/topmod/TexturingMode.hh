@@ -34,6 +34,9 @@ public slots:
 	void triggerTileTexturing();
 
 private:
+
+	QWidget *mParent;
+	
 	QBoxLayout *mTileTexturingLayout;	
 	
 };

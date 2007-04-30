@@ -9,7 +9,8 @@
 TexturingMode::TexturingMode(QWidget *parent)
 		: QWidget(parent)
 {		
-	this->setParent(parent);
+	setParent(0);
+	mParent = parent;
 	
 	mTileTexturingWidget = new QWidget;
 	setupTileTexturing();
@@ -25,8 +26,8 @@ TexturingMode::TexturingMode(QWidget *parent)
 
 void TexturingMode::triggerTileTexturing(){
 	
-	((MainWindow*)parentWidget())->setToolOptions(mTileTexturingWidget);
-	((MainWindow*)parentWidget())->setMode(DLFLWindow::NormalMode);
+	((MainWindow*)mParent)->setToolOptions(mTileTexturingWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::NormalMode);
 	
 }
 
@@ -51,7 +52,7 @@ void TexturingMode::setupTileTexturing(){
 	tileTexturingNumTilesSpinBox->setMaximumSize(60,25);
 	
 	connect(tileTexturingNumTilesSpinBox, SIGNAL(valueChanged(int)),
-          ((MainWindow*)parentWidget()), SLOT(changeTileTexNum(int)));
+          ((MainWindow*)mParent), SLOT(changeTileTexNum(int)));
 
 	mTileTexturingLayout->addWidget(tileTexturingNumTilesLabel);
   mTileTexturingLayout->addWidget(tileTexturingNumTilesSpinBox);
@@ -59,7 +60,7 @@ void TexturingMode::setupTileTexturing(){
 	QPushButton *tileTexturingAssignButton = new QPushButton(tr("Assign Texture Coordinates"), this);
 	
 	connect(tileTexturingAssignButton, SIGNAL(clicked()),
-          ((MainWindow*)parentWidget()), SLOT(assign_texture_coordinates()));
+          ((MainWindow*)mParent), SLOT(assign_texture_coordinates()));
 
 	mTileTexturingLayout->addWidget(tileTexturingAssignButton);
 	mTileTexturingLayout->addStretch(1);

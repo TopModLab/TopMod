@@ -30,12 +30,11 @@ MainWindow::MainWindow(){
 	// setUnifiedTitleAndToolBarOnMac(true);
 	mStatusBar = new QStatusBar();
 	setStatusBar(mStatusBar);
-  // move(0,0);
+  move(0,0);
   cWidget = new QWidget( );
 	
 	//create a container widget to hold multiple glwidgets
 	mainWindow = new DLFLWindow(OPT_W,MENU_H,MIN_W-OPT_W,MIN_H-MENU_H);
-	//mainWindow->setMinimumWidth(600);
 
   /** Setup Layouts **/
   layout = new QBoxLayout( QBoxLayout::TopToBottom, 0 );
@@ -62,7 +61,7 @@ MainWindow::MainWindow(){
 	mBasicsMode = new BasicsMode(this);
 	mExtrusionMode = new ExtrusionMode(this);
 	mConicalMode = new ConicalMode(this);
-	// mRemeshingMode = new RemeshingMode(this);
+	mRemeshingMode = new RemeshingMode(this);
 	mHighgenusMode = new HighgenusMode(this);
 	mTexturingMode = new TexturingMode(this);
 
@@ -462,8 +461,9 @@ void MainWindow::createActions()
 void MainWindow::createMenus(){
 		
 	menuBar = new QMenuBar(this);
+	setMenuBar(menuBar);
 	
-	fileMenu = menuBar->addMenu(tr("&File"));
+	fileMenu = new QMenu(tr("&File"));
 	menuBar->addMenu(fileMenu);
 	// fileMenu = new QMenu(tr("&File"),this);
 	fileMenu->setTearOffEnabled(true);
@@ -480,23 +480,25 @@ void MainWindow::createMenus(){
 	fileMenu->addSeparator();
 	fileMenu->addAction(exitAct);
 
-	editMenu = menuBar->addMenu(tr("&Edit"));
+	editMenu = new QMenu(tr("&Edit"));
+	menuBar->addMenu(editMenu);
 	editMenu->addAction(undoAct);
 	editMenu->addAction(redoAct);
 	editMenu->setTearOffEnabled(true);
 	// menuBar->addSeparator();
 	
-
-	modesMenu = menuBar->addMenu(tr("&Modes"));
-	modesMenu->setTearOffEnabled(true);
-	modesMenu->addAction(modeExtrusionAct);
-	modesMenu->addAction(modeConicalAct);
-	modesMenu->addAction(modeRemeshingAct);
-	modesMenu->addAction(modeHighgenusAct);
-	modesMenu->addAction(modeTexturingAct);
+	//modesMenu = menuBar->addMenu(tr("&Modes"));
+	//modesMenu->setTearOffEnabled(true);
+	//modesMenu->addAction(modeExtrusionAct);
+	//modesMenu->addAction(modeConicalAct);
+	//modesMenu->addAction(modeRemeshingAct);
+	//modesMenu->addAction(modeHighgenusAct);
+	//modesMenu->addAction(modeTexturingAct);
 	// modesMenu->insertTearOffHandle();
 
-	displayMenu = menuBar->addMenu(tr("&Display"));
+	displayMenu = new QMenu(tr("&Display"));
+	menuBar->addMenu(displayMenu);
+	
 	displayMenu->addAction(showVerticesAct);
 	displayMenu->addAction(showSilhouetteAct);
 	displayMenu->addAction(showWireframeAct);
@@ -507,7 +509,8 @@ void MainWindow::createMenus(){
 	displayMenu->addAction(showScriptEditorAct);
 	displayMenu->addAction(mFullscreenAct);
 
-	rendererMenu = menuBar->addMenu(tr("&Renderer"));
+	rendererMenu = new QMenu(tr("&Renderer"));
+	menuBar->addMenu(rendererMenu);
 	rendererMenu->addAction(normalRendererAct);
 	rendererMenu->addAction(shadedRendererAct);
 	rendererMenu->addAction(lightedRendererAct);
@@ -518,7 +521,8 @@ void MainWindow::createMenus(){
 	rendererMenu->addSeparator()->setText(tr("Special Mode??"));
 	rendererMenu->addAction(patchRendererAct);
 
-	primitivesMenu = menuBar->addMenu(tr("&Primitives"));
+	primitivesMenu = new QMenu(tr("&Primitives"));
+	menuBar->addMenu(primitivesMenu);
 	primitivesMenu->addAction(pCubeAct);
 	primitivesMenu->addAction(pOctahedronAct);
 	primitivesMenu->addAction(pTetrahedronAct);
@@ -527,7 +531,8 @@ void MainWindow::createMenus(){
 	primitivesMenu->addAction(pSoccerBallAct);
 	primitivesMenu->addAction(pGeodesicAct);
 
-	objectMenu = menuBar->addMenu(tr("&Object"));
+	objectMenu = new QMenu(tr("&Object"));
+	menuBar->addMenu(objectMenu);
 	objectMenu->addAction(subdivideAllEdgesAct);
 	objectMenu->addAction(planarizeAllFacesAct);
 	objectMenu->addAction(makeObjectSphericalAct);
@@ -537,18 +542,21 @@ void MainWindow::createMenus(){
 	objectMenu->addAction(computeNormalsAndLightingAct);
 	objectMenu->addAction(assignTextureCoordinatesAct);
 
-	selectionMenu = menuBar->addMenu(tr("&Selection"));
+	selectionMenu = new QMenu(tr("&Selection"));
+	menuBar->addMenu(selectionMenu);
 	selectionMenu->addAction(selectVertexAct);
 	selectionMenu->addAction(selectFaceAct);
 	selectionMenu->addAction(selectEdgeAct);
 	selectionMenu->addAction(selectCornerAct);
 	selectionMenu->addAction(exitSelectionModeAct);
 
-	settingsMenu = menuBar->addMenu(tr("Se&ttings"));
+	settingsMenu = new QMenu(tr("Se&ttings"));
+	menuBar->addMenu(settingsMenu);
 	settingsMenu->addAction(manageShortcutsAct);
 	settingsMenu->addAction(mEditStyleSheetAct);
    
-	languageMenu = menuBar->addMenu(tr("&Language"));
+	languageMenu = new QMenu(tr("&Language"));
+	menuBar->addMenu(languageMenu);
 	languageMenu->addAction(englishAct);
 	languageMenu->addAction(spanishAct);
 	languageMenu->addAction(germanAct);
@@ -565,11 +573,16 @@ void MainWindow::createToolBars() {
 	mToolOptionsDockWidget->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
 	mToolOptionsDockWidget->setAllowedAreas(Qt::TopDockWidgetArea);
 	mToolOptionsStackedWidget = new QStackedWidget();
+	//mToolOptionsDockWidget->setFloating(true);
+	//mToolOptionsDockWidget->show();
 	mToolOptionsDockWidget->setWidget(mToolOptionsStackedWidget);
 	addDockWidget(Qt::TopDockWidgetArea, mToolOptionsDockWidget);
 	
 	mToolsToolBar = new QToolBar(tr("Tools"));
 	addToolBar(Qt::RightToolBarArea,mToolsToolBar);
+	
+	mRemeshingToolBar = new QToolBar(tr("Remeshing"));
+	addToolBar(Qt::RightToolBarArea,mRemeshingToolBar);
 	
 	//tools ction group initialization
 	mToolsActionGroup = new QActionGroup(this);
@@ -584,23 +597,14 @@ void MainWindow::createToolBars() {
 	mConicalMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);
 	mToolsToolBar->addSeparator();
 	
-	// mRemeshingMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);
-	// mToolsToolBar->addSeparator();
+	mRemeshingActionGroup = new QActionGroup(this);
+	mRemeshingMode->addActions(mRemeshingActionGroup, mToolsActionGroup, mRemeshingToolBar, mToolOptionsStackedWidget);
 	
 	mHighgenusMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);
 	mToolsToolBar->addSeparator();
 
 	mTexturingMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);
 
-	// connect( mEditStyleSheetAct, SIGNAL( triggered() ), this, SLOT(on_editStyleAction_triggered()) );
-	
-	// mBasicsToolBar->addAction(mInsertEdgeAction);
-	// mBasicsToolBar->addAction(mDeleteEdgeAction);	
-	// mBasicsToolBar->addAction(mCollapseEdgeAction);	
-	// mBasicsToolBar->addAction(mSubdivideEdgeAction);	
-	// mBasicsToolBar->addAction(mConnectEdgesAction);	
-	// mBasicsToolBar->addAction(mSpliceCornersAction);	
-	
 	// mPrimitivesToolBar = new QToolBar(tr("Primitives"));
 	// addToolBar(Qt::LeftToolBarArea,mPrimitivesToolBar);
 	// mPrimitivesToolBar->addAction(pCubeAct);

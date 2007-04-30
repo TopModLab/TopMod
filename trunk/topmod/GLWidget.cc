@@ -63,7 +63,9 @@ void GLWidget::initializeGL( ) {
   setAutoBufferSwap( true );
   glClearColor(0.29,0.33,0.37,1); // Modo's viewport color
 	viewport.resize(this->size().width(),this->size().height());
-	
+	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);					// Set Line Antialiasing
+	glEnable(GL_BLEND);							// Enable Blending
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);			// Type Of Blending To Use
 }
 
 void GLWidget::paintGL( ) {

@@ -7,10 +7,8 @@
 #define BASICSMODE_H
 
 #include <QWidget>
-
+#include <QPushButton>
 #include <QBoxLayout>
-#include <QStackedWidget>
-#include <QComboBox>
 
 #include "MainWindow.hh"
 
@@ -18,17 +16,15 @@ class MainWindow;
 class DLFLWindow;
 
 class QComboBox;
-class QStackedWidget;
+class QPushButton;
 class QGroupBox;
-class QVBoxLayout;
+class QBoxLayout;
 class QCheckBox;
 class QLabel;
 
-// class MainWindow;
-
 class BasicsMode : public QWidget {
 	Q_OBJECT
-
+	
 public:
 	BasicsMode(QWidget *parent = 0);
 	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
@@ -67,6 +63,8 @@ protected:
 	void setupTransforms();
 
 private:
+	
+	QWidget *mParent;
 	
 	//transform spinboxes
 	QDoubleSpinBox *xScaleSpinBox;

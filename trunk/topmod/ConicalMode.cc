@@ -9,7 +9,8 @@
 ConicalMode::ConicalMode(QWidget *parent)
 		: QWidget(parent)
 {		
-	this->setParent(parent);
+	setParent(0);
+	mParent = parent;
 	
 	//create the stacked widget and all child widget pages
 	mCutbyEdgeWidget = new QWidget;
@@ -81,44 +82,44 @@ ConicalMode::ConicalMode(QWidget *parent)
 
 void ConicalMode::triggerCutbyEdge(){
 	
-	((MainWindow*)parentWidget())->setToolOptions(mCutbyEdgeWidget);
-	((MainWindow*)parentWidget())->setMode(DLFLWindow::CutEdge);
+	((MainWindow*)mParent)->setToolOptions(mCutbyEdgeWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::CutEdge);
 }
 
 void ConicalMode::triggerCutbyVertex(){
 	
-	((MainWindow*)parentWidget())->setToolOptions(mCutbyVertexWidget);
-	((MainWindow*)parentWidget())->setMode(DLFLWindow::CutVertex);
+	((MainWindow*)mParent)->setToolOptions(mCutbyVertexWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::CutVertex);
 }
 
 void ConicalMode::triggerCutbyEdgeVertex(){
 	
-	((MainWindow*)parentWidget())->setToolOptions(mCutbyEdgeVertexWidget);
-	((MainWindow*)parentWidget())->setMode(DLFLWindow::CutEdgeandVertex);
+	((MainWindow*)mParent)->setToolOptions(mCutbyEdgeVertexWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::CutEdgeandVertex);
 }
 
 void ConicalMode::triggerCutbyFace(){
 	
-	((MainWindow*)parentWidget())->setToolOptions(mCutbyFaceWidget);
-	((MainWindow*)parentWidget())->setMode(DLFLWindow::CutFace);
+	((MainWindow*)mParent)->setToolOptions(mCutbyFaceWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::CutFace);
 }
 
 void ConicalMode::triggerTruncateEdge(){
 	
-	((MainWindow*)parentWidget())->setToolOptions(mTruncateEdgeWidget);
-	((MainWindow*)parentWidget())->setMode(DLFLWindow::TruncateEdge);
+	((MainWindow*)mParent)->setToolOptions(mTruncateEdgeWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::TruncateEdge);
 }
 
 void ConicalMode::triggerTruncateVertex(){
 	
-	((MainWindow*)parentWidget())->setToolOptions(mTruncateVertexWidget);
-	((MainWindow*)parentWidget())->setMode(DLFLWindow::MarkVertex);
+	((MainWindow*)mParent)->setToolOptions(mTruncateVertexWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::MarkVertex);
 }
 
 void ConicalMode::triggerDualConvexHull(){
 	
-	((MainWindow*)parentWidget())->setToolOptions(mDualConvexHullWidget);
-	((MainWindow*)parentWidget())->setMode(DLFLWindow::ConvexHullMode);
+	((MainWindow*)mParent)->setToolOptions(mDualConvexHullWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::ConvexHullMode);
 }
 
 void ConicalMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget){
@@ -158,7 +159,7 @@ void ConicalMode::changeCutOffsetE(double value){
 	cutbyEdgeVertexOffsetESpinBox->setValue(value);	
 	cutbyFaceOffsetSpinBox->setValue(value);	
 	
-  ((MainWindow*)parentWidget())->changeCutOffsetE(value);
+  ((MainWindow*)mParent)->changeCutOffsetE(value);
 }
 
 void ConicalMode::changeCutOffsetV(double value){
@@ -166,7 +167,7 @@ void ConicalMode::changeCutOffsetV(double value){
 	cutbyVertexOffsetSpinBox->setValue(value);	
 	cutbyEdgeVertexOffsetVSpinBox->setValue(value);	
 	
-  ((MainWindow*)parentWidget())->changeCutOffsetV(value);
+  ((MainWindow*)mParent)->changeCutOffsetV(value);
 }
 
 void ConicalMode::toggleGlobalCut(int state){    
@@ -178,7 +179,7 @@ void ConicalMode::toggleGlobalCut(int state){
 	cutbyFaceGlobalCheckBox->setChecked(state);
 	truncateEdgeGlobalCheckBox->setChecked(state);
 	
-  ((MainWindow*)parentWidget())->toggleGlobalCut(state);
+  ((MainWindow*)mParent)->toggleGlobalCut(state);
 }
 void ConicalMode::toggleSelectedCut(int state){
 	
@@ -189,7 +190,7 @@ void ConicalMode::toggleSelectedCut(int state){
 	cutbyFaceCutSelectedCheckBox->setChecked(state);
 	truncateEdgeCutSelectedCheckBox->setChecked(state);
 	
-  ((MainWindow*)parentWidget())->toggleSelectedCut(state);
+  ((MainWindow*)mParent)->toggleSelectedCut(state);
 }
 
 void ConicalMode::changeTiltPlane1(double value){
@@ -197,14 +198,14 @@ void ConicalMode::changeTiltPlane1(double value){
 	cutbyEdgeTiltPlane1SpinBox->setValue(value);	
 	cutbyEdgeVertexTiltPlane1SpinBox->setValue(value);	
 	
-	((MainWindow*)parentWidget())->changeTiltPlane1(value);
+	((MainWindow*)mParent)->changeTiltPlane1(value);
 }
 void ConicalMode::changeTiltPlane2(double value){
 	
 	cutbyEdgeTiltPlane2SpinBox->setValue(value);
 	cutbyEdgeVertexTiltPlane2SpinBox->setValue(value);	
 	
-	((MainWindow*)parentWidget())->changeCutOffsetE(value); 
+	((MainWindow*)mParent)->changeCutOffsetE(value); 
 }
 
 void ConicalMode::setupCutbyEdge(){
@@ -263,7 +264,7 @@ void ConicalMode::setupCutbyEdge(){
 		
 	QPushButton *performCuttingButton = new QPushButton(tr("Perform Cutting"), this);
 	connect(performCuttingButton, SIGNAL(clicked()),
-          ((MainWindow*)parentWidget()), SLOT(perform_cutting()));
+          ((MainWindow*)mParent), SLOT(perform_cutting()));
 	
 	mCutbyEdgeLayout->addWidget(performCuttingButton);
 	mCutbyEdgeLayout->addStretch(1);
@@ -303,7 +304,7 @@ void ConicalMode::setupCutbyVertex(){
 	
 	QPushButton *performCuttingButton = new QPushButton(tr("Perform Cutting"), this);
 	connect(performCuttingButton, SIGNAL(clicked()),
-          ((MainWindow*)parentWidget()), SLOT(perform_cutting()));
+          ((MainWindow*)mParent), SLOT(perform_cutting()));
 
 	mCutbyVertexLayout->addWidget(performCuttingButton);
 	mCutbyVertexLayout->addStretch(1);
@@ -379,7 +380,7 @@ void ConicalMode::setupCutbyEdgeVertex(){
 
 	QPushButton *performCuttingButton = new QPushButton(tr("Perform Cutting"), this);
 	connect(performCuttingButton, SIGNAL(clicked()),
-          ((MainWindow*)parentWidget()), SLOT(perform_cutting()));
+          ((MainWindow*)mParent), SLOT(perform_cutting()));
 
 	mCutbyEdgeVertexLayout->addWidget(performCuttingButton);
 	mCutbyEdgeVertexLayout->addStretch(1);
@@ -419,7 +420,7 @@ void ConicalMode::setupCutbyFace(){
 
 	QPushButton *performCuttingButton = new QPushButton(tr("Perform Cutting"), this);
 	connect(performCuttingButton, SIGNAL(clicked()),
-          ((MainWindow*)parentWidget()), SLOT(perform_cutting()));
+          ((MainWindow*)mParent), SLOT(perform_cutting()));
 
 	mCutbyFaceLayout->addWidget(performCuttingButton);
 	mCutbyFaceLayout->addStretch(1);
@@ -459,7 +460,7 @@ void ConicalMode::setupTruncateEdge(){
 	
 	QPushButton *performCuttingButton = new QPushButton(tr("Perform Cutting"), this);
 	connect(performCuttingButton, SIGNAL(clicked()),
-          ((MainWindow*)parentWidget()), SLOT(perform_cutting()));
+          ((MainWindow*)mParent), SLOT(perform_cutting()));
 
 	mTruncateEdgeLayout->addWidget(performCuttingButton);
 	mTruncateEdgeLayout->addStretch(1);
@@ -499,7 +500,7 @@ void ConicalMode::setupTruncateVertex(){
 
 	QPushButton *performCuttingButton = new QPushButton(tr("Perform Cutting"), this);
 	connect(performCuttingButton, SIGNAL(clicked()),
-          ((MainWindow*)parentWidget()), SLOT(perform_cutting()));
+          ((MainWindow*)mParent), SLOT(perform_cutting()));
 
 	mTruncateVertexLayout->addWidget(performCuttingButton);	
 	mTruncateVertexLayout->addStretch(1);
@@ -513,13 +514,13 @@ void ConicalMode::setupDualConvexHull(){
 
 	QPushButton *convexHullButton = new QPushButton(tr("Create Convex Hull"), this);
 	connect(convexHullButton, SIGNAL(clicked()),
-          ((MainWindow*)parentWidget()), SLOT(create_convexhull()));
+          ((MainWindow*)mParent), SLOT(create_convexhull()));
 
 	mDualConvexHullLayout->addWidget(convexHullButton);
 	
 	QPushButton *dualConvexHullButton = new QPushButton(tr("Create Dual Convex Hull"), this);
 	connect(dualConvexHullButton, SIGNAL(clicked()),
-          ((MainWindow*)parentWidget()), SLOT(create_dual_convexhull()));
+          ((MainWindow*)mParent), SLOT(create_dual_convexhull()));
 
 	mDualConvexHullLayout->addWidget(dualConvexHullButton);	
 	mDualConvexHullLayout->addStretch(1);

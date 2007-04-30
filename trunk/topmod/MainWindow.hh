@@ -94,6 +94,7 @@ public:
 	};
 	
 	void setMode(int m);
+	void setToolOptions(QWidget *optionsWidget);
 	void setRemeshingScheme(int m);
 
 protected:
@@ -107,9 +108,15 @@ protected:
 	int startX, startY, endX, endY;
 
   DLFLWindow *mainWindow;            // Window displaying the object
-  //static DLFLWindowPtr mainWindowPtr;               // Pointer to the main window
-
-	   // Default sizes
+	
+  DLFLScriptEditor *mScriptEditor;
+	QDockWidget *mScriptEditorDockWidget;
+	QDockWidget *mToolOptionsDockWidget;
+	QStackedWidget *mToolOptionsStackedWidget;
+	
+	QToolBar *mRemeshingToolBar;
+	
+   // Default sizes
 	static int MIN_W;                 // Minimum width for app window
 	static int MIN_H;                // Minimum height for app window
 	static int OPT_W;                          // Options panel width
@@ -242,11 +249,6 @@ private:
   QAction *catalanAct;
 
   QString curFile;
-
-  DLFLScriptEditor *mScriptEditor;
-	QDockWidget *mScriptEditorDockWidget;
-	QDockWidget *mToolOptionsDockWidget;
-	QStackedWidget *mToolOptionsStackedWidget;
 	
   //QToolbars
   QToolBar *mPrimitivesToolBar;
@@ -256,6 +258,7 @@ private:
 	QActionGroup *mToolsActionGroup;
 	QActionGroup *rendererActionGroup;
 	QActionGroup *modesActionGroup;
+	QActionGroup *mRemeshingActionGroup;
 	
 	//the status bar
 	QStatusBar *mStatusBar;
@@ -443,7 +446,6 @@ public slots:
 	void mouseMoveEvent(QMouseEvent * event);
 	void paintEvent(QPaintEvent * event);
 	
-	void setToolOptions(QWidget *optionsWidget);
 	
 };
 

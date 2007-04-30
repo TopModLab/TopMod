@@ -9,8 +9,9 @@
 ExtrusionMode::ExtrusionMode(QWidget *parent)
 		: QWidget(parent)
 {		
-	this->setParent(parent);
-
+	setParent(0);
+	mParent = parent;
+	
 	//create the stacked widget and all child widget pages
 	mDooSabinExtrudeWidget = new QWidget;
   mCubicalExtrudeWidget = new QWidget;
@@ -111,44 +112,44 @@ void ExtrusionMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 
 void ExtrusionMode::triggerDooSabinExtrude(){
 	
-	((MainWindow*)parentWidget())->setToolOptions(mDooSabinExtrudeWidget);
-	((MainWindow*)parentWidget())->setMode(DLFLWindow::ExtrudeFaceDS);
+	((MainWindow*)mParent)->setToolOptions(mDooSabinExtrudeWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::ExtrudeFaceDS);
 }
 
 void ExtrusionMode::triggerCubicalExtrude(){
 
-	((MainWindow*)parentWidget())->setToolOptions(mCubicalExtrudeWidget);
-	((MainWindow*)parentWidget())->setMode(DLFLWindow::ExtrudeFace);	
+	((MainWindow*)mParent)->setToolOptions(mCubicalExtrudeWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::ExtrudeFace);	
 }
 
 void ExtrusionMode::triggerDodecahedralExtrude(){
 	
-	((MainWindow*)parentWidget())->setToolOptions(mDodecahedralExtrudeWidget);
-	((MainWindow*)parentWidget())->setMode(DLFLWindow::ExtrudeFaceDodeca);
+	((MainWindow*)mParent)->setToolOptions(mDodecahedralExtrudeWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::ExtrudeFaceDodeca);
 }
 
 void ExtrusionMode::triggerIcosahedralExtrude(){
 	
-	((MainWindow*)parentWidget())->setToolOptions(mIcosahedralExtrudeWidget);
-	((MainWindow*)parentWidget())->setMode(DLFLWindow::ExtrudeFaceIcosa);
+	((MainWindow*)mParent)->setToolOptions(mIcosahedralExtrudeWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::ExtrudeFaceIcosa);
 }
 
 void ExtrusionMode::triggerOctahedralExtrude(){
 	
-	((MainWindow*)parentWidget())->setToolOptions(mOctahedralExtrudeWidget);
-	((MainWindow*)parentWidget())->setMode(DLFLWindow::ExtrudeDualFace);
+	((MainWindow*)mParent)->setToolOptions(mOctahedralExtrudeWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::ExtrudeDualFace);
 }
 
 void ExtrusionMode::triggerStellateExtrude(){
 	
-	((MainWindow*)parentWidget())->setToolOptions(mStellateExtrudeWidget);
-	((MainWindow*)parentWidget())->setMode(DLFLWindow::StellateFace);
+	((MainWindow*)mParent)->setToolOptions(mStellateExtrudeWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::StellateFace);
 }
 
 void ExtrusionMode::triggerDoubleStellateExtrude(){
 	
-	((MainWindow*)parentWidget())->setToolOptions(mDoubleStellateExtrudeWidget);
-	((MainWindow*)parentWidget())->setMode(DLFLWindow::DoubleStellateFace);
+	((MainWindow*)mParent)->setToolOptions(mDoubleStellateExtrudeWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::DoubleStellateFace);
 }
 
 void ExtrusionMode::setLength(double value){
@@ -160,14 +161,14 @@ void ExtrusionMode::setLength(double value){
 	stellateLengthSpinBox->setValue(value);
 	doubleStellateLengthSpinBox->setValue(value);
 	
-	((MainWindow*)parentWidget())->changeExtrudeLength(value);
+	((MainWindow*)mParent)->changeExtrudeLength(value);
 }
 void ExtrusionMode::setRotation(int value){
 	dooSabinRotationSpinBox->setValue(value);
 	cubicalRotationSpinBox->setValue(value);
 	octahedralRotationSpinBox->setValue(value);
 	
-	((MainWindow*)parentWidget())->changeExtrudeRotation(value);
+	((MainWindow*)mParent)->changeExtrudeRotation(value);
 }
 
 void ExtrusionMode::setSegments(int value){
@@ -177,7 +178,7 @@ void ExtrusionMode::setSegments(int value){
 	icosahedralSegmentsSpinBox->setValue(value);
 	octahedralSegmentsSpinBox->setValue(value);
 
-	((MainWindow*)parentWidget())->changeNumExtrusions(value);
+	((MainWindow*)mParent)->changeNumExtrusions(value);
 }
 
 void ExtrusionMode::setScale(double value){
@@ -187,7 +188,7 @@ void ExtrusionMode::setScale(double value){
 	icosahedralScaleSpinBox->setValue(value);
 	octahedralScaleSpinBox->setValue(value);
 		
-	((MainWindow*)parentWidget())->changeExtrudeScale(value);
+	((MainWindow*)mParent)->changeExtrudeScale(value);
 }
 
 void ExtrusionMode::setupDooSabinExtrude(){
@@ -406,7 +407,7 @@ void ExtrusionMode::setupDodecahedralExtrude(){
 	//mesh flat edges checkbox
 	hexagonalizeCheckBox = new QCheckBox(tr("Hexagonalize"),this);
 	connect(hexagonalizeCheckBox, SIGNAL(stateChanged(int)),
-          ((MainWindow*)parentWidget()), SLOT(toggleHexagonalizeDodecaExtrudeFlag(int)));
+          ((MainWindow*)mParent), SLOT(toggleHexagonalizeDodecaExtrudeFlag(int)));
 	
 	mDodecahedralExtrudeLayout->addWidget(hexagonalizeCheckBox);
 
@@ -522,7 +523,7 @@ void ExtrusionMode::setupOctahedralExtrude(){
 	//mesh flat edges checkbox
 	meshFlatEdgesCheckBox = new QCheckBox(tr("Mesh Flat Edges"),this);
 	connect(meshFlatEdgesCheckBox, SIGNAL(stateChanged(int)),
-          ((MainWindow*)parentWidget()), SLOT(toggleDualMeshEdgesFlag(int)));
+          ((MainWindow*)mParent), SLOT(toggleDualMeshEdgesFlag(int)));
 
 	mOctahedralExtrudeLayout->addWidget(meshFlatEdgesCheckBox);
 

@@ -9,9 +9,11 @@
 BasicsMode::BasicsMode(QWidget *parent)
 		: QWidget(parent) {
 		
-	this->setParent(parent);
+	setParent(0);
+	mParent = parent;
+	
 	//here we set the default mode for when the application is executed.
-	((MainWindow*)parentWidget())->setMode(DLFLWindow::InsertEdge);
+	((MainWindow*)mParent)->setMode(DLFLWindow::InsertEdge);
 	
 	mInsertEdgeWidget = new QWidget;
   mDeleteEdgeWidget = new QWidget;
@@ -85,44 +87,44 @@ BasicsMode::BasicsMode(QWidget *parent)
 
 void BasicsMode::triggerInsertEdge(){
 	
-	((MainWindow*)parentWidget())->setToolOptions(mInsertEdgeWidget);
-	((MainWindow*)parentWidget())->setMode(DLFLWindow::InsertEdge);
+	((MainWindow*)mParent)->setToolOptions(mInsertEdgeWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::InsertEdge);
 }
 
 void BasicsMode::triggerDeleteEdge(){
 	
-	((MainWindow*)parentWidget())->setToolOptions(mDeleteEdgeWidget);
-	((MainWindow*)parentWidget())->setMode(DLFLWindow::DeleteEdge);
+	((MainWindow*)mParent)->setToolOptions(mDeleteEdgeWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::DeleteEdge);
 }
 
 void BasicsMode::triggerCollapseEdge(){
 	
-	((MainWindow*)parentWidget())->setToolOptions(mCollapseEdgeWidget);
-	((MainWindow*)parentWidget())->setMode(DLFLWindow::CollapseEdge);
+	((MainWindow*)mParent)->setToolOptions(mCollapseEdgeWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::CollapseEdge);
 }
 
 void BasicsMode::triggerSubdivideEdge(){
 	
-	((MainWindow*)parentWidget())->setToolOptions(mSubdivideEdgeWidget);
-	((MainWindow*)parentWidget())->setMode(DLFLWindow::SubDivideEdge);
+	((MainWindow*)mParent)->setToolOptions(mSubdivideEdgeWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::SubDivideEdge);
 }
 
 void BasicsMode::triggerConnectEdges(){
 	
-	((MainWindow*)parentWidget())->setToolOptions(mConnectEdgesWidget);
-	((MainWindow*)parentWidget())->setMode(DLFLWindow::ConnectEdges);
+	((MainWindow*)mParent)->setToolOptions(mConnectEdgesWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::ConnectEdges);
 }
 
 void BasicsMode::triggerSpliceCorners(){
 	
-	((MainWindow*)parentWidget())->setToolOptions(mSpliceCornersWidget);
-	((MainWindow*)parentWidget())->setMode(DLFLWindow::SpliceCorners);
+	((MainWindow*)mParent)->setToolOptions(mSpliceCornersWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::SpliceCorners);
 }
 
 void BasicsMode::triggerTransforms(){
 	
-	((MainWindow*)parentWidget())->setToolOptions(mTransformsWidget);
-	((MainWindow*)parentWidget())->setMode(DLFLWindow::NormalMode);
+	((MainWindow*)mParent)->setToolOptions(mTransformsWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::NormalMode);
 }
 
 void BasicsMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget){
@@ -167,7 +169,7 @@ void BasicsMode::setupDeleteEdge() {
 	//cleanup checkbox
 	QCheckBox *cleanupCheckBox = new QCheckBox(tr("Cleanup"),this);
 	connect(cleanupCheckBox, SIGNAL(stateChanged(int)),
-          ((MainWindow*)parentWidget()), SLOT(toggleDeleteEdgeCleanupFlag(int)));
+          ((MainWindow*)mParent), SLOT(toggleDeleteEdgeCleanupFlag(int)));
 	mDeleteEdgeLayout->addWidget(cleanupCheckBox);	
 	mDeleteEdgeLayout->addStretch(1);
 	//set layout
@@ -195,7 +197,7 @@ void BasicsMode::setupSubdivideEdge() {
 	numSubdivsSpinBox->setValue(0);
 	numSubdivsSpinBox->setMaximumSize(50,25);
 	connect(numSubdivsSpinBox, SIGNAL(valueChanged(int)),
-          ((MainWindow*)parentWidget()), SLOT(changeNumSubDivs(int)));
+          ((MainWindow*)mParent), SLOT(changeNumSubDivs(int)));
 	
 	mSubdivideEdgeLayout->addWidget(numSubdivsLabel);
 	mSubdivideEdgeLayout->addWidget(numSubdivsSpinBox);
@@ -236,7 +238,7 @@ void BasicsMode::setupTransforms(){
 	xPosSpinBox->setDecimals(1);
 	xPosSpinBox->setMaximumSize(50,25);
 	connect(xPosSpinBox, SIGNAL(valueChanged(double)),
-          ((MainWindow*)parentWidget()), SLOT(translatex(double)));
+          ((MainWindow*)mParent), SLOT(translatex(double)));
 
 	mTransformsLayout->addWidget(xPosLabel);
   mTransformsLayout->addWidget(xPosSpinBox);
@@ -250,7 +252,7 @@ void BasicsMode::setupTransforms(){
 	yPosSpinBox->setDecimals(1);
 	yPosSpinBox->setMaximumSize(50,25);
 	connect(yPosSpinBox, SIGNAL(valueChanged(double)),
-          ((MainWindow*)parentWidget()), SLOT(translatey(double)));
+          ((MainWindow*)mParent), SLOT(translatey(double)));
 
 	mTransformsLayout->addWidget(yPosLabel);
   mTransformsLayout->addWidget(yPosSpinBox);
@@ -264,7 +266,7 @@ void BasicsMode::setupTransforms(){
 	zPosSpinBox->setDecimals(1);
 	zPosSpinBox->setMaximumSize(50,25);
 	connect(zPosSpinBox, SIGNAL(valueChanged(double)),
-          ((MainWindow*)parentWidget()), SLOT(translatez(double)));
+          ((MainWindow*)mParent), SLOT(translatez(double)));
 
 	mTransformsLayout->addWidget(zPosLabel);
   mTransformsLayout->addWidget(zPosSpinBox);
@@ -281,7 +283,7 @@ void BasicsMode::setupTransforms(){
 	xScaleSpinBox->setDecimals(1);	
 	xScaleSpinBox->setMaximumSize(50,25);
 	connect(xScaleSpinBox, SIGNAL(valueChanged(double)),
-          ((MainWindow*)parentWidget()), SLOT(scalex(double)));
+          ((MainWindow*)mParent), SLOT(scalex(double)));
 
 	mTransformsLayout->addWidget(xScaleLabel);
   mTransformsLayout->addWidget(xScaleSpinBox);
@@ -295,7 +297,7 @@ void BasicsMode::setupTransforms(){
 	yScaleSpinBox->setDecimals(1);
 	yScaleSpinBox->setMaximumSize(50,25);
 	connect(yScaleSpinBox, SIGNAL(valueChanged(double)),
-          ((MainWindow*)parentWidget()), SLOT(scaley(double)));
+          ((MainWindow*)mParent), SLOT(scaley(double)));
 
 	mTransformsLayout->addWidget(yScaleLabel);
   mTransformsLayout->addWidget(yScaleSpinBox);
@@ -309,11 +311,11 @@ void BasicsMode::setupTransforms(){
 	zScaleSpinBox->setDecimals(1);
 	zScaleSpinBox->setMaximumSize(50,25);
 	connect(zScaleSpinBox, SIGNAL(valueChanged(double)),
-          ((MainWindow*)parentWidget()), SLOT(scalez(double)));
+          ((MainWindow*)mParent), SLOT(scalez(double)));
 	mTransformsLayout->addWidget(zScaleLabel);
   mTransformsLayout->addWidget(zScaleSpinBox);
 
-	QPushButton *freezeTransformsButton = new QPushButton("&Freeze Transforms", this);
+	QPushButton *freezeTransformsButton = new QPushButton(tr("&Freeze Transforms"));
 	connect(freezeTransformsButton, SIGNAL(clicked()),
           this, SLOT(freeze_transforms()));
 	
@@ -324,7 +326,7 @@ void BasicsMode::setupTransforms(){
 
 void BasicsMode::freeze_transforms()
 {
-	((MainWindow*)parentWidget())->freeze_transforms();
+	((MainWindow*)mParent)->freeze_transforms();
 	xPosSpinBox->setValue(0.0);
 	yPosSpinBox->setValue(0.0);
 	zPosSpinBox->setValue(0.0);

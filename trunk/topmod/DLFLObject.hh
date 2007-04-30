@@ -9,8 +9,6 @@
 // A material list is also stored for rendering purposes.
 // The lists actually store pointerss
 
-#include <QFile>
-
 #include "DLFLCommon.hh"
 #include "DLFLVertex.hh"
 #include "DLFLFaceVertex.hh"

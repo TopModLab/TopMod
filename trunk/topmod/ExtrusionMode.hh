@@ -70,6 +70,8 @@ public slots:
 	
 private:
 	
+	QWidget *mParent;
+
 	//doo sabin extrude
 	QLabel *dooSabinLengthLabel;
 	QDoubleSpinBox *dooSabinLengthSpinBox;

@@ -9,53 +9,10 @@
 RemeshingMode::RemeshingMode(QWidget *parent)
 		: QWidget(parent)
 {		
-	lastMode = DLFLWindow::NormalMode;
-	((MainWindow*)parentWidget())->setRemeshingScheme(DLFLWindow::Dual);
+	setParent(0);
+	mParent = parent;
 	
-	//mode group. this is the main widget that goes into a TabWidget
-  // remeshingGroup = new QGroupBox(tr("Remeshing"));
-	//boxLayout widget to add buttons to within the groupBox widget
-	remeshingBoxLayout = new QVBoxLayout;
-
-	//Populate a Q Combo Box with a list of strings
-	// remeshingLabel = new QLabel(tr("Select Remeshing Scheme"));
-	remeshingComboBox = new QComboBox();
-	QStringList remeshingList;
-	remeshingList << tr("Dual") << tr("3-Conversion Schemes") << tr("4-Conversion Schemes") << tr("5-Conversion Schemes") << tr("3-Preservation Schemes") 
-								<< tr("4-Preservation Schemes") << tr("5-Preservation Schemes") << tr("6-Preservation Schemes") << tr("Miscellaneous Schemes");
-	remeshingComboBox->addItems(remeshingList);
-	//add the combobox to the layout
-	// remeshingBoxLayout->addWidget(remeshingLabel);
-	remeshingBoxLayout->addWidget(remeshingComboBox);
-	
-	//create the stacked widget and all child widget pages
-	dualWidget = new QWidget;
-  threeConversionWidget = new QWidget;
-  fourConversionWidget = new QWidget;
-  fiveConversionWidget = new QWidget;
-  threePreservationWidget = new QWidget;
-  fourPreservationWidget = new QWidget;
-  fivePreservationWidget = new QWidget;
-  sixPreservationWidget = new QWidget;
-  miscellaneousWidget = new QWidget;
-
-  stackedWidget = new QStackedWidget;
-  stackedWidget->addWidget(dualWidget);
-  stackedWidget->addWidget(threeConversionWidget);
-  stackedWidget->addWidget(fourConversionWidget);
-  stackedWidget->addWidget(fiveConversionWidget);
-  stackedWidget->addWidget(threePreservationWidget);
-  stackedWidget->addWidget(fourPreservationWidget);
-  stackedWidget->addWidget(fivePreservationWidget);
-  stackedWidget->addWidget(sixPreservationWidget);
-  stackedWidget->addWidget(miscellaneousWidget);
-
-	//add the stackedwidget to the layout
-  remeshingBoxLayout->addWidget(stackedWidget);
-
-	//connect the combobox to the stacked widget
-  connect(remeshingComboBox, SIGNAL(activated(int)),
-          stackedWidget, SLOT(setCurrentIndex(int)));
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::Dual);
 	
 	//setup stacked widget pages here, 
 	setupDual();
@@ -68,195 +25,451 @@ RemeshingMode::RemeshingMode(QWidget *parent)
 	setupSixPreservation();
 	setupMiscellaneous();
 	
-	//set the layout
-	// remeshingGroup->setLayout(remeshingBoxLayout);
-	setLayout(remeshingBoxLayout);
+	mDualAction = new QAction(tr("Dual"),this);
+	mDualAction->setCheckable(true);
+	mDualAction->setChecked(true);
+	// sm->registerAction(mDualAction, "Basics Modes", "9");
+	mDualAction->setStatusTip(tr("Enter Dual Mode"));
+	mDualAction->setToolTip(tr("Dual Mode"));
+	connect(mDualAction, SIGNAL(triggered()), this, SLOT(triggerDual()));
+
+	mRootThreeAction = new QAction(tr("Root-3"),this);
+	mRootThreeAction->setCheckable(true);
+	// sm->registerAction(mRootThreeAction, "Basics Modes", "9");
+	mRootThreeAction->setStatusTip(tr("Enter Root-3 Mode"));
+	mRootThreeAction->setToolTip(tr("Root-3 Mode"));
+	connect(mRootThreeAction, SIGNAL(triggered()), this, SLOT(triggerRootThree()));
+
+	mDualVertexTruncationAction = new QAction(tr("Dual Vertex Truncation"),this);
+	mDualVertexTruncationAction->setCheckable(true);
+	// sm->registerAction(mDualVertexTruncationAction, "Basics Modes", "9");
+	mDualVertexTruncationAction->setStatusTip(tr("Enter Dual Vertex Truncation Mode"));
+	mDualVertexTruncationAction->setToolTip(tr("Dual Vertex Truncation Mode"));
+	connect(mDualVertexTruncationAction, SIGNAL(triggered()), this, SLOT(triggerDualVertexTruncation()));
+
+	mStellationAction = new QAction(tr("Stellate"),this);
+	mStellationAction->setCheckable(true);
+	// sm->registerAction(mStellationAction, "Basics Modes", "9");
+	mStellationAction->setStatusTip(tr("Enter Stellate Mode"));
+	mStellationAction->setToolTip(tr("Stellate Mode"));
+	connect(mStellationAction, SIGNAL(triggered()), this, SLOT(triggerStellation()));
+
+	mDoubleStellationAction = new QAction(tr("Double Stellate"),this);
+	mDoubleStellationAction->setCheckable(true);
+	// sm->registerAction(mDoubleStellationAction, "Basics Modes", "9");
+	mDoubleStellationAction->setStatusTip(tr("Enter Double Stellate Mode"));
+	mDoubleStellationAction->setToolTip(tr("Double Stellate Mode"));
+	connect(mDoubleStellationAction, SIGNAL(triggered()), this, SLOT(triggerDoubleStellation()));
+
+	mTwelveSixFourAction = new QAction(tr("12.6.4"),this);
+	mTwelveSixFourAction->setCheckable(true);
+	// sm->registerAction(mTwelveSixFourAction, "Basics Modes", "9");
+	mTwelveSixFourAction->setStatusTip(tr("Enter 12.6.4 Mode"));
+	mTwelveSixFourAction->setToolTip(tr("12.6.4 Mode"));
+	connect(mTwelveSixFourAction, SIGNAL(triggered()), this, SLOT(triggerTwelveSixFour()));	
+
+	mHoneycombAction = new QAction(tr("Honeycomb"),this);
+	mHoneycombAction->setCheckable(true);
+	// sm->registerAction(mHoneycombAction, "Basics Modes", "9");
+	mHoneycombAction->setStatusTip(tr("Enter Honeycomb Mode"));
+	mHoneycombAction->setToolTip(tr("Honeycomb Mode"));
+	connect(mHoneycombAction, SIGNAL(triggered()), this, SLOT(triggerHoneycomb()));	
 	
-	connect(remeshingComboBox, SIGNAL(currentIndexChanged(int)),
-					this,SLOT(switchMode(int)) );
+	mVertexTruncationAction = new QAction(tr("Vertex Truncation"),this);
+	mVertexTruncationAction->setCheckable(true);
+	// sm->registerAction(mVertexTruncationAction, "Basics Modes", "9");
+	mVertexTruncationAction->setStatusTip(tr("Enter Vertex Truncation Mode"));
+	mVertexTruncationAction->setToolTip(tr("Vertex Truncation Mode"));
+	connect(mVertexTruncationAction, SIGNAL(triggered()), this, SLOT(triggerVertexTruncation()));	
+	
+	mDualTwelveSixFourAction = new QAction(tr("Dual 12.6.4"),this);
+	mDualTwelveSixFourAction->setCheckable(true);
+	// sm->registerAction(mDualTwelveSixFourAction, "Basics Modes", "9");
+	mDualTwelveSixFourAction->setStatusTip(tr("Enter Dual 12.6.4 Mode"));
+	mDualTwelveSixFourAction->setToolTip(tr("Dual 12.6.4 Mode"));
+	connect(mDualTwelveSixFourAction, SIGNAL(triggered()), this, SLOT(triggerDualTwelveSixFour()));	
+	
+	mLinearVertexAction = new QAction(tr("Linear Vertex Insertion"),this);
+	mLinearVertexAction->setCheckable(true);
+	// sm->registerAction(mLinearVertexAction, "Basics Modes", "9");
+	mLinearVertexAction->setStatusTip(tr("Enter Linear Vertex Insertion Mode"));
+	mLinearVertexAction->setToolTip(tr("Linear Vertex Insertion Mode"));
+	connect(mLinearVertexAction, SIGNAL(triggered()), this, SLOT(triggerLinearVertex()));	
+	
+	mCatmullClarkAction = new QAction(tr("Catmull Clark"),this);
+	mCatmullClarkAction->setCheckable(true);
+	// sm->registerAction(mCatmullClarkAction, "Basics Modes", "9");
+	mCatmullClarkAction->setStatusTip(tr("Enter Catmull Clark Mode"));
+	mCatmullClarkAction->setToolTip(tr("Catmull Clark Mode"));
+	connect(mCatmullClarkAction, SIGNAL(triggered()), this, SLOT(triggerCatmullClark()));	
+	
+	mStellateEdgeRemovalAction = new QAction(tr("Stellate with Edge Removal"),this);
+	mStellateEdgeRemovalAction->setCheckable(true);
+	// sm->registerAction(mStellateEdgeRemovalAction, "Basics Modes", "9");
+	mStellateEdgeRemovalAction->setStatusTip(tr("Enter Stellate with Edge Removal Mode"));
+	mStellateEdgeRemovalAction->setToolTip(tr("Stellate with Edge Removal Mode"));
+	connect(mStellateEdgeRemovalAction, SIGNAL(triggered()), this, SLOT(triggerStellateEdgeRemoval()));	
+	
+	mDooSabinAction = new QAction(tr("Doo Sabin"),this);
+	mDooSabinAction->setCheckable(true);
+	// sm->registerAction(mDooSabinAction, "Basics Modes", "9");
+	mDooSabinAction->setStatusTip(tr("Enter Doo Sabin Mode"));
+	mDooSabinAction->setToolTip(tr("Doo Sabin Mode"));
+	connect(mDooSabinAction, SIGNAL(triggered()), this, SLOT(triggerDooSabin()));	
+	
+	mCornerCuttingAction = new QAction(tr("Corner Cutting"),this);
+	mCornerCuttingAction->setCheckable(true);
+	// sm->registerAction(mCornerCuttingAction, "Basics Modes", "9");
+	mCornerCuttingAction->setStatusTip(tr("Enter Corner Cutting Mode"));
+	mCornerCuttingAction->setToolTip(tr("Corner Cutting Mode"));
+	connect(mCornerCuttingAction, SIGNAL(triggered()), this, SLOT(triggerCornerCutting()));	
+
+	mSimplestAction = new QAction(tr("Simplest"),this);
+	mSimplestAction->setCheckable(true);
+	// sm->registerAction(mSimplestAction, "Basics Modes", "9");
+	mSimplestAction->setStatusTip(tr("Enter Simplest Mode"));
+	mSimplestAction->setToolTip(tr("Simplest Mode"));
+	connect(mSimplestAction, SIGNAL(triggered()), this, SLOT(triggerSimplest()));	
+
+	mPentagonalizationAction = new QAction(tr("Pentagonalization"),this);
+	mPentagonalizationAction->setCheckable(true);
+	// sm->registerAction(mPentagonalizationAction, "Basics Modes", "9");
+	mPentagonalizationAction->setStatusTip(tr("Enter Pentagonalization Mode"));
+	mPentagonalizationAction->setToolTip(tr("Pentagonalization Mode"));
+	connect(mPentagonalizationAction, SIGNAL(triggered()), this, SLOT(triggerPentagonalization()));	
+
+	mCubicPentagonalizationAction = new QAction(tr("Cubic Pentagonalization"),this);
+	mCubicPentagonalizationAction->setCheckable(true);
+	// sm->registerAction(mCubicPentagonalizationAction, "Basics Modes", "9");
+	mCubicPentagonalizationAction->setStatusTip(tr("Enter Cubic Pentagonalization Mode"));
+	mCubicPentagonalizationAction->setToolTip(tr("Cubic Pentagonalization Mode"));
+	connect(mCubicPentagonalizationAction, SIGNAL(triggered()), this, SLOT(triggerCubicPentagonalization()));	
+
+	mDualPentagonalizationAction = new QAction(tr("Dual Pentagonalization"),this);
+	mDualPentagonalizationAction->setCheckable(true);
+	// sm->registerAction(mDualPentagonalizationAction, "Basics Modes", "9");
+	mDualPentagonalizationAction->setStatusTip(tr("Enter Dual Pentagonalization Mode"));
+	mDualPentagonalizationAction->setToolTip(tr("Dual Pentagonalization Mode"));
+	connect(mDualPentagonalizationAction, SIGNAL(triggered()), this, SLOT(triggerDualPentagonalization()));	
+
+	mLoopStyleRemeshingAction = new QAction(tr("Loop Style Remeshing"),this);
+	mLoopStyleRemeshingAction->setCheckable(true);
+	// sm->registerAction(mLoopStyleRemeshingAction, "Basics Modes", "9");
+	mLoopStyleRemeshingAction->setStatusTip(tr("Enter Loop Style Remeshing Mode"));
+	mLoopStyleRemeshingAction->setToolTip(tr("Loop Style Remeshing Mode"));
+	connect(mLoopStyleRemeshingAction, SIGNAL(triggered()), this, SLOT(triggerLoopStyleRemeshing()));		
+
+	mLoopSubdivisionAction = new QAction(tr("Loop Subdivision"),this);
+	mLoopSubdivisionAction->setCheckable(true);
+	// sm->registerAction(mLoopSubdivisionAction, "Basics Modes", "9");
+	mLoopSubdivisionAction->setStatusTip(tr("Enter Loop Subdivision Mode"));
+	mLoopSubdivisionAction->setToolTip(tr("Loop Subdivision Mode"));
+	connect(mLoopSubdivisionAction, SIGNAL(triggered()), this, SLOT(triggerLoopSubdivision()));		
+	
+	mDualLoopStyleRemeshingAction = new QAction(tr("Dual Loop Style Remeshing"),this);
+	mDualLoopStyleRemeshingAction->setCheckable(true);
+	// sm->registerAction(mDualLoopStyleRemeshingAction, "Basics Modes", "9");
+	mDualLoopStyleRemeshingAction->setStatusTip(tr("Enter Dual Loop Style Remeshing Mode"));
+	mDualLoopStyleRemeshingAction->setToolTip(tr("Dual Loop Style Remeshing Mode"));
+	connect(mDualLoopStyleRemeshingAction, SIGNAL(triggered()), this, SLOT(triggerDualLoopStyleRemeshing()));		
+	
+	mDualLoopSubdivisionAction = new QAction(tr("Dual Loop Subdivision"),this);
+	mDualLoopSubdivisionAction->setCheckable(true);
+	// sm->registerAction(mDualLoopSubdivisionAction, "Basics Modes", "9");
+	mDualLoopSubdivisionAction->setStatusTip(tr("Enter Dual Loop Subdivision Mode"));
+	mDualLoopSubdivisionAction->setToolTip(tr("Dual Loop Subdivision Mode"));
+	connect(mDualLoopSubdivisionAction, SIGNAL(triggered()), this, SLOT(triggerDualLoopSubdivision()));		
+	
+	mGlobalExtrudeAction = new QAction(tr("Global Extrude"),this);
+	mGlobalExtrudeAction->setCheckable(true);
+	// sm->registerAction(mGlobalExtrudeAction, "Basics Modes", "9");
+	mGlobalExtrudeAction->setStatusTip(tr("Enter Global Extrude Mode"));
+	mGlobalExtrudeAction->setToolTip(tr("Global Extrude Mode"));
+	connect(mGlobalExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerGlobalExtrude()));
+
+	mCheckerboardAction = new QAction(tr("Checkerboard"),this);
+	mCheckerboardAction->setCheckable(true);
+	// sm->registerAction(mCheckerboardAction, "Basics Modes", "9");
+	mCheckerboardAction->setStatusTip(tr("Enter Checkerboard Mode"));
+	mCheckerboardAction->setToolTip(tr("Checkerboard Mode"));
+	connect(mCheckerboardAction, SIGNAL(triggered()), this, SLOT(triggerCheckerboard()));
+
+	mDualGlobalExtrudeAction = new QAction(tr("Dual Global Extrude"),this);
+	mDualGlobalExtrudeAction->setCheckable(true);
+	// sm->registerAction(mDualGlobalExtrudeAction, "Basics Modes", "9");
+	mDualGlobalExtrudeAction->setStatusTip(tr("Enter Dual Global Extrude Mode"));
+	mDualGlobalExtrudeAction->setToolTip(tr("Dual Global Extrude Mode"));
+	connect(mDualGlobalExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerDualGlobalExtrude()));
+
+	mDualCheckerboardAction = new QAction(tr("Dual Checkerboard"),this);
+	mDualCheckerboardAction->setCheckable(true);
+	// sm->registerAction(mDualCheckerboardAction, "Basics Modes", "9");
+	mDualCheckerboardAction->setStatusTip(tr("Enter Dual Checkerboard Mode"));
+	mDualCheckerboardAction->setToolTip(tr("Dual Checkerboard Mode"));
+	connect(mDualCheckerboardAction, SIGNAL(triggered()), this, SLOT(triggerDualCheckerboard()));
+
+	mPentagonPreservingAction = new QAction(tr("Pentagon Preserving"),this);
+	mPentagonPreservingAction->setCheckable(true);
+	// sm->registerAction(mPentagonPreservingAction, "Basics Modes", "9");
+	mPentagonPreservingAction->setStatusTip(tr("Enter Pentagon Preserving Mode"));
+	mPentagonPreservingAction->setToolTip(tr("Pentagon Preserving Mode"));
+	connect(mPentagonPreservingAction, SIGNAL(triggered()), this, SLOT(triggerPentagonPreserving()));
+
+	mDualPentagonPreservingAction = new QAction(tr("Dual Pentagon Preserving"),this);
+	mDualPentagonPreservingAction->setCheckable(true);
+	// sm->registerAction(mDualPentagonPreservingAction, "Basics Modes", "9");
+	mDualPentagonPreservingAction->setStatusTip(tr("Enter Dual Pentagon Preserving Mode"));
+	mDualPentagonPreservingAction->setToolTip(tr("Dual Pentagon Preserving Mode"));
+	connect(mDualPentagonPreservingAction, SIGNAL(triggered()), this, SLOT(triggerDualPentagonPreserving()));	
+	
+	mDualLoopStyleRemeshingSixAction = new QAction(tr("Dual Loop Style"),this);
+	mDualLoopStyleRemeshingSixAction->setCheckable(true);
+	// sm->registerAction(mDualLoopStyleRemeshingSixAction, "Basics Modes", "9");
+	mDualLoopStyleRemeshingSixAction->setStatusTip(tr("Enter Loop Style Remeshing Mode"));
+	mDualLoopStyleRemeshingSixAction->setToolTip(tr("Dual Loop Style Remeshing Mode"));
+	connect(mDualLoopStyleRemeshingSixAction, SIGNAL(triggered()), this, SLOT(triggerDualLoopStyleRemeshingSix()));	
+	
+	mLoopStyleRemeshingSixAction = new QAction(tr("Loop Style"),this);
+	mLoopStyleRemeshingSixAction->setCheckable(true);
+	// sm->registerAction(mLoopStyleRemeshingSixAction, "Basics Modes", "9");
+	mLoopStyleRemeshingSixAction->setStatusTip(tr("Enter Loop Style Remeshing Mode"));
+	mLoopStyleRemeshingSixAction->setToolTip(tr("Loop Style Remeshing Mode"));
+	connect(mLoopStyleRemeshingSixAction, SIGNAL(triggered()), this, SLOT(triggerLoopStyleRemeshingSix()));	
+	
+	mFractalAction = new QAction(tr("Fractal"),this);
+	mFractalAction->setCheckable(true);
+	// sm->registerAction(mFractalAction, "Basics Modes", "9");
+	mFractalAction->setStatusTip(tr("Enter Fractal Mode"));
+	mFractalAction->setToolTip(tr("Fractal Mode"));
+	connect(mFractalAction, SIGNAL(triggered()), this, SLOT(triggerFractal()));	
+	
+	mDoubleStellateMiscAction = new QAction(tr("Double Stellate"),this);
+	mDoubleStellateMiscAction->setCheckable(true);
+	// sm->registerAction(mDoubleStellateMiscAction, "Basics Modes", "9");
+	mDoubleStellateMiscAction->setStatusTip(tr("Enter Double Stellate Mode"));
+	mDoubleStellateMiscAction->setToolTip(tr("Double Stellate Mode"));
+	connect(mDoubleStellateMiscAction, SIGNAL(triggered()), this, SLOT(triggerDoubleStellateMisc()));	
+	
+	mDooSabinBCAction = new QAction(tr("Doo Sabin BC"),this);
+	mDooSabinBCAction->setCheckable(true);
+	// sm->registerAction(mDooSabinBCAction, "Basics Modes", "9");
+	mDooSabinBCAction->setStatusTip(tr("Enter Doo Sabin BC Mode"));
+	mDooSabinBCAction->setToolTip(tr("Doo Sabin BC Mode"));
+	connect(mDooSabinBCAction, SIGNAL(triggered()), this, SLOT(triggerDooSabinBC()));	
+	
+	mDooSabinBCNewAction = new QAction(tr("Doo Sabin BC New"),this);
+	mDooSabinBCNewAction->setCheckable(true);
+	// sm->registerAction(mDooSabinBCNewAction, "Basics Modes", "9");
+	mDooSabinBCNewAction->setStatusTip(tr("Enter Doo Sabin BC New Mode"));
+	mDooSabinBCNewAction->setToolTip(tr("Doo Sabin BC New Mode"));
+	connect(mDooSabinBCNewAction, SIGNAL(triggered()), this, SLOT(triggerDooSabinBCNew()));	
+	
+	mDomeAction = new QAction(tr("Dome"),this);
+	mDomeAction->setCheckable(true);
+	// sm->registerAction(mDomeAction, "Basics Modes", "9");
+	mDomeAction->setStatusTip(tr("Enter Dome Mode"));
+	mDomeAction->setToolTip(tr("Dome Mode"));
+	connect(mDomeAction, SIGNAL(triggered()), this, SLOT(triggerDome()));	
+	
+	mSubdivideFaceAction = new QAction(tr("Subdivide Face"),this);
+	mSubdivideFaceAction->setCheckable(true);
+	// sm->registerAction(mSubdivideFaceAction, "Basics Modes", "9");
+	mSubdivideFaceAction->setStatusTip(tr("Enter Subdivide Face Mode"));
+	mSubdivideFaceAction->setToolTip(tr("Subdivide Face Mode"));
+	connect(mSubdivideFaceAction, SIGNAL(triggered()), this, SLOT(triggerSubdivideFace()));	
+
 }
 
-void RemeshingMode::insertTab(QTabWidget *tabWidget){
-	tabWidget->addTab( remeshingGroup, QIcon(":/images/mode_remeshing.png"), "4");
-  tabWidget->setTabToolTip(0,tr("Remeshing Modes"));
-}
-
-int RemeshingMode::getLastMode(){
-	return lastMode;
-}
-
-
-
-void RemeshingMode::switchMode(int index){	
-	switch(index){
-		case 0: lastMode = DLFLWindow::NormalMode;//dual();
-						((MainWindow*)parentWidget()->parentWidget())->setRemeshingScheme(DLFLWindow::Dual);
-		break;
-		case 1:	lastMode = DLFLWindow::NormalMode;
-						((MainWindow*)parentWidget()->parentWidget())->setRemeshingScheme(lastThreeConversionScheme);
-		break;	
-		case 2: lastMode = DLFLWindow::NormalMode;
-						((MainWindow*)parentWidget()->parentWidget())->setRemeshingScheme(lastFourConversionScheme);
-		break;
-		case 3: lastMode = DLFLWindow::NormalMode;
-						((MainWindow*)parentWidget()->parentWidget())->setRemeshingScheme(lastFiveConversionScheme);
-		break;
-		case 4: lastMode = DLFLWindow::NormalMode;
-						((MainWindow*)parentWidget()->parentWidget())->setRemeshingScheme(lastThreePreservationScheme);
-		break;
-		case 5: lastMode = DLFLWindow::NormalMode;
-						((MainWindow*)parentWidget()->parentWidget())->setRemeshingScheme(lastFourPreservationScheme);
-		break;
-		case 6: lastMode = DLFLWindow::NormalMode;
-						((MainWindow*)parentWidget()->parentWidget())->setRemeshingScheme(lastFivePreservationScheme);
-		break;
-		case 7: lastMode = DLFLWindow::NormalMode;
-						((MainWindow*)parentWidget()->parentWidget())->setRemeshingScheme(lastSixPreservationScheme);
-		break;
-		case 8: lastMode = lastMiscellaneousMode;
-						((MainWindow*)parentWidget()->parentWidget())->setRemeshingScheme(lastMiscellaneousScheme);
-		break;
-		default: lastMode = DLFLWindow::NormalMode;
-		break;
-	}
-	((MainWindow*)parentWidget()->parentWidget())->setMode(lastMode);
-	// ((MainWindow*)parentWidget()->parentWidget())->setRemeshingScheme(lastMode);
+void RemeshingMode::addActions(QActionGroup *remeshingActionGroup, QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget){
+	
+	remeshingActionGroup->addAction(mDualAction);
+	remeshingActionGroup->addAction(mRootThreeAction);
+	remeshingActionGroup->addAction(mDualVertexTruncationAction);
+	remeshingActionGroup->addAction(mStellationAction);
+	remeshingActionGroup->addAction(mDoubleStellationAction);
+	remeshingActionGroup->addAction(mTwelveSixFourAction);
+	remeshingActionGroup->addAction(mHoneycombAction);
+	remeshingActionGroup->addAction(mVertexTruncationAction);
+	remeshingActionGroup->addAction(mDualTwelveSixFourAction);
+	remeshingActionGroup->addAction(mLinearVertexAction);
+	remeshingActionGroup->addAction(mCatmullClarkAction);
+	remeshingActionGroup->addAction(mStellateEdgeRemovalAction);
+	remeshingActionGroup->addAction(mDooSabinAction);
+	remeshingActionGroup->addAction(mCornerCuttingAction);
+	remeshingActionGroup->addAction(mSimplestAction);
+	remeshingActionGroup->addAction(mPentagonalizationAction);
+	remeshingActionGroup->addAction(mCubicPentagonalizationAction);
+	remeshingActionGroup->addAction(mDualPentagonalizationAction);
+	remeshingActionGroup->addAction(mLoopStyleRemeshingAction);
+	remeshingActionGroup->addAction(mLoopSubdivisionAction);
+	remeshingActionGroup->addAction(mDualLoopStyleRemeshingAction);
+	remeshingActionGroup->addAction(mDualLoopSubdivisionAction);
+	remeshingActionGroup->addAction(mGlobalExtrudeAction);
+	remeshingActionGroup->addAction(mCheckerboardAction);
+	remeshingActionGroup->addAction(mDualGlobalExtrudeAction);
+	remeshingActionGroup->addAction(mDualCheckerboardAction);
+	remeshingActionGroup->addAction(mPentagonPreservingAction);
+	remeshingActionGroup->addAction(mDualPentagonPreservingAction);
+	remeshingActionGroup->addAction(mDualLoopStyleRemeshingSixAction);
+	remeshingActionGroup->addAction(mLoopStyleRemeshingSixAction);	
+	remeshingActionGroup->addAction(mFractalAction);
+	remeshingActionGroup->addAction(mDoubleStellateMiscAction);
+	remeshingActionGroup->addAction(mDooSabinBCAction);
+	remeshingActionGroup->addAction(mDooSabinBCNewAction);
+	remeshingActionGroup->addAction(mDomeAction);
+	
+	actionGroup->addAction(mSubdivideFaceAction);
+	
+	toolBar->addAction(mDualAction);
+	toolBar->addAction(mRootThreeAction);
+	toolBar->addAction(mDualVertexTruncationAction);
+	toolBar->addAction(mStellationAction);
+	toolBar->addAction(mDoubleStellationAction);
+	toolBar->addAction(mTwelveSixFourAction);
+	toolBar->addSeparator();
+	toolBar->addAction(mHoneycombAction);
+	toolBar->addAction(mVertexTruncationAction);
+	toolBar->addAction(mDualTwelveSixFourAction);
+	toolBar->addAction(mLinearVertexAction);
+	toolBar->addAction(mCatmullClarkAction);
+	toolBar->addAction(mStellateEdgeRemovalAction);
+	toolBar->addAction(mDooSabinAction);
+	toolBar->addAction(mCornerCuttingAction);
+	toolBar->addAction(mSimplestAction);
+	toolBar->addSeparator();
+	toolBar->addAction(mPentagonalizationAction);
+	toolBar->addAction(mCubicPentagonalizationAction);
+	toolBar->addAction(mDualPentagonalizationAction);
+	toolBar->addSeparator();
+	toolBar->addAction(mLoopStyleRemeshingAction);
+	toolBar->addAction(mLoopSubdivisionAction);
+	toolBar->addAction(mDualLoopStyleRemeshingAction);
+	toolBar->addAction(mDualLoopSubdivisionAction);
+	toolBar->addSeparator();
+	toolBar->addAction(mGlobalExtrudeAction);
+	toolBar->addAction(mCheckerboardAction);
+	toolBar->addAction(mDualGlobalExtrudeAction);
+	toolBar->addAction(mDualCheckerboardAction);
+	toolBar->addSeparator();
+	toolBar->addAction(mPentagonPreservingAction);
+	toolBar->addAction(mDualPentagonPreservingAction);
+	toolBar->addSeparator();
+	toolBar->addAction(mDualLoopStyleRemeshingSixAction);
+	toolBar->addAction(mLoopStyleRemeshingSixAction);	
+	toolBar->addSeparator();
+	toolBar->addAction(mFractalAction);
+	toolBar->addAction(mDoubleStellateMiscAction);
+	toolBar->addAction(mDooSabinBCAction);
+	toolBar->addAction(mDooSabinBCNewAction);
+	toolBar->addAction(mDomeAction);
+	toolBar->addAction(mSubdivideFaceAction);
+	
+	stackedWidget->addWidget(mDualWidget);
+	stackedWidget->addWidget(mRootThreeWidget);
+	stackedWidget->addWidget(mDualVertexTruncationWidget);
+	stackedWidget->addWidget(mStellationWidget);
+	stackedWidget->addWidget(mDoubleStellationWidget);
+	stackedWidget->addWidget(mTwelveSixFourWidget);
+	stackedWidget->addWidget(mHoneycombWidget);
+	stackedWidget->addWidget(mVertexTruncationWidget);
+	stackedWidget->addWidget(mDualTwelveSixFourWidget);
+	stackedWidget->addWidget(mLinearVertexWidget);
+	stackedWidget->addWidget(mCatmullClarkWidget);
+	stackedWidget->addWidget(mStellateEdgeRemovalWidget);
+	stackedWidget->addWidget(mDooSabinWidget);
+	stackedWidget->addWidget(mCornerCuttingWidget);
+	stackedWidget->addWidget(mSimplestWidget);
+	stackedWidget->addWidget(mPentagonalizationWidget);
+	stackedWidget->addWidget(mCubicPentagonalizationWidget);
+	stackedWidget->addWidget(mDualPentagonalizationWidget);
+	stackedWidget->addWidget(mLoopStyleRemeshingWidget);
+	stackedWidget->addWidget(mLoopSubdivisionWidget);
+	stackedWidget->addWidget(mDualLoopStyleRemeshingWidget);
+	stackedWidget->addWidget(mDualLoopSubdivisionWidget);
+	stackedWidget->addWidget(mGlobalExtrudeWidget);
+	stackedWidget->addWidget(mCheckerboardWidget);
+	stackedWidget->addWidget(mDualGlobalExtrudeWidget);
+	stackedWidget->addWidget(mDualCheckerboardWidget);
+	stackedWidget->addWidget(mPentagonPreservingWidget);
+	stackedWidget->addWidget(mDualPentagonPreservingWidget);
+	stackedWidget->addWidget(mDualLoopStyleRemeshingSixWidget);
+	stackedWidget->addWidget(mLoopStyleRemeshingSixWidget);	
+	stackedWidget->addWidget(mFractalWidget);
+	stackedWidget->addWidget(mDoubleStellateMiscWidget);
+	stackedWidget->addWidget(mDooSabinBCWidget);
+	stackedWidget->addWidget(mDooSabinBCNewWidget);
+	stackedWidget->addWidget(mDomeWidget);
+	stackedWidget->addWidget(mSubdivideFaceWidget);											
+	
 }
 
 void RemeshingMode::setupDual(){
 	
-	dualLayout = new QVBoxLayout;
+	mDualLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	
 	QCheckBox *dualFasterCheckBox = new QCheckBox(tr("Use Faster Method (Less Accurate)"));					
 	connect(dualFasterCheckBox, SIGNAL(stateChanged(int)),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(toggleAccurateDualFlag(int)) );
+					((MainWindow*)mParent),SLOT(toggleAccurateDualFlag(int)) );
 	
-	dualLayout->addWidget(dualFasterCheckBox);
+	mDualLayout->addWidget(dualFasterCheckBox);
 	
 	//create crust button
 	QPushButton *dualCreateButton = new QPushButton(tr("Create Dual"), this);
 	connect(dualCreateButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 
-	dualLayout->addWidget(dualCreateButton);
-	
-	dualLayout->addStretch(1);
-	dualWidget->setLayout(dualLayout);
+	mDualLayout->addWidget(dualCreateButton);	
+	mDualLayout->addStretch(1);
+	mDualWidget->setLayout(mDualLayout);
+}
+
+void RemeshingMode::triggerDual(){
+
+	((MainWindow*)mParent)->setToolOptions(mDualWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::ExtrudeFaceIcosa);
 }
 
 void RemeshingMode::setupThreeConversion(){
-	
-	lastThreeConversionScheme = DLFLWindow::Root3;
-	threeConversionLayout = new QVBoxLayout;
-	
-	// QLabel *threeConversionLabel = new QLabel(tr("Select Remeshing Scheme"));
-	QComboBox *threeConversionComboBox = new QComboBox();
-	// QStringList threeConversionList;
-	// threeConversionList << tr("Root 3") << tr("Dual of Vertex-Truncation") << tr("Stellation") << tr("Double Stellation (Star)") << tr("12.6.4") 
-	// 										<< tr("Honeycomb (dual of root 3)") << tr("Vertex-Truncation") << tr("Dual of 12.6.4") ;
-	// threeConversionComboBox->addItems(threeConversionList);
-	//add the combobox to the layout
-	// threeConversionLayout->addWidget(threeConversionLabel);
-	// threeConversionLayout->addWidget(threeConversionComboBox);
-	
-	QHBoxLayout *mThreeConversionButtonLayout = new QHBoxLayout;
-	QButtonGroup *mThreeConversionButtonGroup = new QButtonGroup;
-	mThreeConversionButtonGroup->setExclusive(true);
-	
-	QPushButton *mRootThreeButton = new QPushButton("Root 3");
-	mRootThreeButton->setCheckable(true);
-	mRootThreeButton->setChecked(true);
-	mRootThreeButton->setMaximumSize(40,40);
-	
-	QPushButton *mDualVertexTruncationButton = new QPushButton("Dual of Vertex-Truncation");
-	mDualVertexTruncationButton->setCheckable(true);
-	mDualVertexTruncationButton->setMaximumSize(40,40);
 
-	QPushButton *mStellationButton = new QPushButton("Stellation");
-	mStellationButton->setCheckable(true);
-	mStellationButton->setMaximumSize(40,40);
-		
-	QPushButton *mDoubleStellationButton = new QPushButton("Double Stellation (Star)");
-	mDoubleStellationButton->setCheckable(true);
-	mDoubleStellationButton->setMaximumSize(40,40);
-		
-	QPushButton *mTwelveSixFourButton = new QPushButton("12.6.4");
-	mTwelveSixFourButton->setCheckable(true);
-	mTwelveSixFourButton->setMaximumSize(40,40);
-		
-	QPushButton *mHoneycombButton = new QPushButton("Honeycomb (dual of root 3)");
-	mHoneycombButton->setCheckable(true);
-	mHoneycombButton->setMaximumSize(40,40);
-		
-	QPushButton *mVertexTruncationButton = new QPushButton("Vertex-Truncation");
-	mVertexTruncationButton->setCheckable(true);
-	mVertexTruncationButton->setMaximumSize(40,40);
-		
-	QPushButton *mDualTwelveSixFourButton = new QPushButton("Dual of 12.6.4");
-	mDualTwelveSixFourButton->setCheckable(true);
-	mDualTwelveSixFourButton->setMaximumSize(40,40);
-			
-	mThreeConversionButtonGroup->addButton(mRootThreeButton,0);
-	mThreeConversionButtonGroup->addButton(mDualVertexTruncationButton,1);
-	mThreeConversionButtonGroup->addButton(mStellationButton,2);
-	mThreeConversionButtonGroup->addButton(mDoubleStellationButton,3);
-	mThreeConversionButtonGroup->addButton(mTwelveSixFourButton,4);
-	mThreeConversionButtonGroup->addButton(mHoneycombButton,5);
-	mThreeConversionButtonGroup->addButton(mVertexTruncationButton,6);
-	mThreeConversionButtonGroup->addButton(mDualTwelveSixFourButton,7);
-	
-	mThreeConversionButtonLayout->addWidget(mRootThreeButton);
-	mThreeConversionButtonLayout->addWidget(mDualVertexTruncationButton);
-	mThreeConversionButtonLayout->addWidget(mStellationButton);
-	mThreeConversionButtonLayout->addWidget(mDoubleStellationButton);
-	mThreeConversionButtonLayout->addWidget(mTwelveSixFourButton);
-	mThreeConversionButtonLayout->addWidget(mHoneycombButton);
-	mThreeConversionButtonLayout->addWidget(mVertexTruncationButton);
-	mThreeConversionButtonLayout->addWidget(mDualTwelveSixFourButton);
-	mThreeConversionButtonLayout->addStretch(1);
-	threeConversionLayout->addLayout(mThreeConversionButtonLayout);
-	//create the stacked widget and all child widget pages
-  QWidget *rootThreeWidget = new QWidget;
-  QWidget *dualVertexTruncationWidget = new QWidget;
-  QWidget *stellationWidget = new QWidget;
-  QWidget *starWidget = new QWidget;
-  QWidget *twelveSixFourWidget = new QWidget;
-  QWidget *honeycombWidget = new QWidget;
-  QWidget *vertexTruncationWidget = new QWidget;
-  QWidget *dualTwelveSixFourWidget = new QWidget;
+	mRootThreeWidget = new QWidget;
+	mDualVertexTruncationWidget = new QWidget;
+	mStellationWidget = new QWidget;
+	mDoubleStellationWidget = new QWidget;
+	mTwelveSixFourWidget = new QWidget;
+	mHoneycombWidget = new QWidget;
+	mVertexTruncationWidget = new QWidget;
+	mDualTwelveSixFourWidget = new QWidget;
 
 	//create the panels for each of these three conversion schemes
 	//root 3
-	QVBoxLayout *rootThreeLayout = new QVBoxLayout;
-	QPushButton *rootThreeCreateButton = new QPushButton(tr("Perform Remeshing"), this);
+	mRootThreeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	QPushButton *rootThreeCreateButton = new QPushButton(tr("Perform Root 3 Remeshing"), this);
 	connect(rootThreeCreateButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
-	rootThreeLayout->addWidget(rootThreeCreateButton);
-	rootThreeLayout->addStretch(1);
-	rootThreeWidget->setLayout(rootThreeLayout);
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+	mRootThreeLayout->addWidget(rootThreeCreateButton);
+	mRootThreeLayout->addStretch(1);
+	mRootThreeWidget->setLayout(mRootThreeLayout);
 	
 	//dual vertex truncation
-	QVBoxLayout *dualVertexTruncationLayout = new QVBoxLayout;
+	mDualVertexTruncationLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	QPushButton *dualVertexTruncationButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dualVertexTruncationButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
-	dualVertexTruncationLayout->addWidget(dualVertexTruncationButton);
-	dualVertexTruncationLayout->addStretch(1);
-	dualVertexTruncationWidget->setLayout(dualVertexTruncationLayout);
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+	mDualVertexTruncationLayout->addWidget(dualVertexTruncationButton);
+	mDualVertexTruncationLayout->addStretch(1);
+	mDualVertexTruncationWidget->setLayout(mDualVertexTruncationLayout);
 
 	//stellation
-	QVBoxLayout *stellationLayout = new QVBoxLayout;
+	mStellationLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	QPushButton *stellationButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(stellationButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
-	stellationLayout->addWidget(stellationButton);
-	stellationLayout->addStretch(1);
-	stellationWidget->setLayout(stellationLayout);
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+	mStellationLayout->addWidget(stellationButton);
+	mStellationLayout->addStretch(1);
+	mStellationWidget->setLayout(mStellationLayout);
 
 	//double stellate
-	QVBoxLayout *starLayout = new QVBoxLayout;
-	QGridLayout *starGrid = new QGridLayout;
-	
+	mDoubleStellationLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	//scale factor - 0.00-10.00
 	QLabel *starLabel = new QLabel(tr("Offset:"));
 	QDoubleSpinBox *starSpinBox = new QDoubleSpinBox;
@@ -265,20 +478,20 @@ void RemeshingMode::setupThreeConversion(){
 	starSpinBox->setValue(0.0);
 	starSpinBox->setDecimals(2);
 	connect(starSpinBox, SIGNAL(valueChanged(double)),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(changeStarOffset(double)) );	
+					((MainWindow*)mParent),SLOT(changeStarOffset(double)) );	
 	
-	starGrid->addWidget(starLabel,0,0,Qt::AlignRight);
-  starGrid->addWidget(starSpinBox,0,1);
+	mDoubleStellationLayout->addWidget(starLabel);
+  mDoubleStellationLayout->addWidget(starSpinBox);
 	//create button
 	QPushButton *starButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(starButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
-	starLayout->addWidget(starButton);
-	starLayout->addStretch(1);
-	starWidget->setLayout(starLayout);
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+	mDoubleStellationLayout->addWidget(starButton);
+	mDoubleStellationLayout->addStretch(1);
+	mDoubleStellationWidget->setLayout(mDoubleStellationLayout);
 	
 	//12.6.4
-	QVBoxLayout *twelveSixFourLayout = new QVBoxLayout;
+	mTwelveSixFourLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	//scale factor - 0.00-10.00
 	QLabel *twelveSixFourLabel = new QLabel(tr("Offset:"));
 	QDoubleSpinBox *twelveSixFourSpinBox = new QDoubleSpinBox;
@@ -287,29 +500,29 @@ void RemeshingMode::setupThreeConversion(){
 	twelveSixFourSpinBox->setValue(0.7);
 	twelveSixFourSpinBox->setDecimals(2);
 	connect(twelveSixFourSpinBox, SIGNAL(valueChanged(double)),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(changeSubStellateCurve(double)) );	
+					((MainWindow*)mParent),SLOT(changeSubStellateCurve(double)) );	
 	
-	twelveSixFourLayout->addWidget(twelveSixFourLabel);
-  twelveSixFourLayout->addWidget(twelveSixFourSpinBox);
+	mTwelveSixFourLayout->addWidget(twelveSixFourLabel);
+  mTwelveSixFourLayout->addWidget(twelveSixFourSpinBox);
 	//create button
 	QPushButton *twelveSixFourButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(twelveSixFourButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
-	twelveSixFourLayout->addWidget(twelveSixFourButton);
-	twelveSixFourLayout->addStretch(1);
-	twelveSixFourWidget->setLayout(twelveSixFourLayout);
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+	mTwelveSixFourLayout->addWidget(twelveSixFourButton);
+	mTwelveSixFourLayout->addStretch(1);
+	mTwelveSixFourWidget->setLayout(mTwelveSixFourLayout);
 	
 	//honeycomb
-	QVBoxLayout *honeycombLayout = new QVBoxLayout;
+	mHoneycombLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	QPushButton *honeycombButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(honeycombButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
-	honeycombLayout->addWidget(honeycombButton);
-	honeycombLayout->addStretch(1);
-	honeycombWidget->setLayout(honeycombLayout);
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+	mHoneycombLayout->addWidget(honeycombButton);
+	mHoneycombLayout->addStretch(1);
+	mHoneycombWidget->setLayout(mHoneycombLayout);
 	
 	//vertexTruncation
-	QVBoxLayout *vertexTruncationLayout = new QVBoxLayout;
+	mVertexTruncationLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	//scale factor
 	QLabel *vertexTruncationLabel = new QLabel(tr("Offset:"));
 	QDoubleSpinBox *vertexTruncationSpinBox = new QDoubleSpinBox;
@@ -318,19 +531,19 @@ void RemeshingMode::setupThreeConversion(){
 	vertexTruncationSpinBox->setValue(0.25);
 	vertexTruncationSpinBox->setDecimals(2);
 	connect(vertexTruncationSpinBox, SIGNAL(valueChanged(double)),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(changeVertexCuttingOffset(double)) );	
+					((MainWindow*)mParent),SLOT(changeVertexCuttingOffset(double)) );	
 	
-	vertexTruncationLayout->addWidget(vertexTruncationLabel);
-  vertexTruncationLayout->addWidget(vertexTruncationSpinBox);
+	mVertexTruncationLayout->addWidget(vertexTruncationLabel);
+  mVertexTruncationLayout->addWidget(vertexTruncationSpinBox);
 	QPushButton *vertexTruncationButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(vertexTruncationButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
-	vertexTruncationLayout->addWidget(vertexTruncationButton);
-	vertexTruncationLayout->addStretch(1);
-	vertexTruncationWidget->setLayout(vertexTruncationLayout);
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+	mVertexTruncationLayout->addWidget(vertexTruncationButton);
+	mVertexTruncationLayout->addStretch(1);
+	mVertexTruncationWidget->setLayout(mVertexTruncationLayout);
 		
 	//dual 12.6.4
-	QVBoxLayout *dualTwelveSixFourLayout = new QVBoxLayout;
+	mDualTwelveSixFourLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	//scale factor
 	QLabel *dualTwelveSixFourLabel = new QLabel(tr("Scale:"));
 	QDoubleSpinBox *dualTwelveSixFourSpinBox = new QDoubleSpinBox;
@@ -339,223 +552,187 @@ void RemeshingMode::setupThreeConversion(){
 	dualTwelveSixFourSpinBox->setValue(0.06);
 	dualTwelveSixFourSpinBox->setDecimals(2);
 	connect(dualTwelveSixFourSpinBox, SIGNAL(valueChanged(double)),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(changeDual1264Scale(double)) );	
+					((MainWindow*)mParent),SLOT(changeDual1264Scale(double)) );	
 	
-	dualTwelveSixFourLayout->addWidget(dualTwelveSixFourLabel);
-  dualTwelveSixFourLayout->addWidget(dualTwelveSixFourSpinBox);
+	mDualTwelveSixFourLayout->addWidget(dualTwelveSixFourLabel);
+  mDualTwelveSixFourLayout->addWidget(dualTwelveSixFourSpinBox);
 	//create button
 	QPushButton *dualTwelveSixFourButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dualTwelveSixFourButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 					
-	dualTwelveSixFourLayout->addWidget(dualTwelveSixFourButton);
-	dualTwelveSixFourLayout->addStretch(1);
-	dualTwelveSixFourWidget->setLayout(dualTwelveSixFourLayout);
+	mDualTwelveSixFourLayout->addWidget(dualTwelveSixFourButton);
+	mDualTwelveSixFourLayout->addStretch(1);
+	mDualTwelveSixFourWidget->setLayout(mDualTwelveSixFourLayout);
 	
-	//add the widgets to a stack controlled by the qcombobox
-  QStackedWidget *threeConversionStackedWidget = new QStackedWidget;
-  threeConversionStackedWidget->addWidget(rootThreeWidget);
-  threeConversionStackedWidget->addWidget(dualVertexTruncationWidget);
-  threeConversionStackedWidget->addWidget(stellationWidget);
-  threeConversionStackedWidget->addWidget(starWidget);
-  threeConversionStackedWidget->addWidget(twelveSixFourWidget);
-  threeConversionStackedWidget->addWidget(honeycombWidget);
-  threeConversionStackedWidget->addWidget(vertexTruncationWidget);
-  threeConversionStackedWidget->addWidget(dualTwelveSixFourWidget);
-	//add the stackedwidget to the layout
-  threeConversionLayout->addWidget(threeConversionStackedWidget);
-	//connect the combobox to the stacked widget
-  connect(mThreeConversionButtonGroup, SIGNAL(buttonPressed(int)),
-          threeConversionStackedWidget, SLOT(setCurrentIndex(int)));	
-
-	threeConversionLayout->addStretch(1);
-	threeConversionWidget->setLayout(threeConversionLayout);
-	
-	//connect the combobox signal to the mode switching slot
-	connect(mThreeConversionButtonGroup, SIGNAL(buttonPressed(int)),
-					this,SLOT(switchThreeConversionMode(int)) );
 }
 
-void RemeshingMode::switchThreeConversionMode(int index){	
-	
-	switch(index){
-		case 0: lastThreeConversionScheme = DLFLWindow::Root3;//root3_subdivision();
-		break;
-		case 1:	lastThreeConversionScheme = DLFLWindow::DualVertexTrunc;//sqrt3_subdivision();
-		break;	
-		case 2: lastThreeConversionScheme = DLFLWindow::GlobalStellate;//global_stellation();
-		break;
-		case 3: lastThreeConversionScheme = DLFLWindow::Star;//star_subdivision();
-		break;
-		case 4: lastThreeConversionScheme = DLFLWindow::Generic1264;//generic1264_subdivision();
-		break;
-		case 5: lastThreeConversionScheme = DLFLWindow::Honeycomb;//honeycomb_subdivision();
-		break;
-		case 6: lastThreeConversionScheme = DLFLWindow::VertexTrunc;//vertex_cutting_subdivision();
-		break;
-		case 7: lastThreeConversionScheme = DLFLWindow::DualGeneric1264;//dual_generic1264_subdivision();
-		break;
-		default:
-		break;
-	}
-	((MainWindow*)parentWidget()->parentWidget())->setRemeshingScheme(lastThreeConversionScheme);
+void RemeshingMode::triggerRootThree(){
+
+	((MainWindow*)mParent)->setToolOptions(mRootThreeWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::Root3);
+}
+
+void RemeshingMode::triggerDualVertexTruncation(){
+
+	((MainWindow*)mParent)->setToolOptions(mDualVertexTruncationWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::DualVertexTrunc);
+}
+
+void RemeshingMode::triggerStellation(){
+
+	((MainWindow*)mParent)->setToolOptions(mStellationWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::GlobalStellate);
+}
+
+void RemeshingMode::triggerDoubleStellation(){
+
+	((MainWindow*)mParent)->setToolOptions(mDoubleStellationWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::Star);
+}
+
+void RemeshingMode::triggerTwelveSixFour(){
+
+	((MainWindow*)mParent)->setToolOptions(mTwelveSixFourWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::Generic1264);
+}
+
+void RemeshingMode::triggerHoneycomb(){
+
+	((MainWindow*)mParent)->setToolOptions(mHoneycombWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::Honeycomb);
+}
+
+void RemeshingMode::triggerVertexTruncation(){
+
+	((MainWindow*)mParent)->setToolOptions(mVertexTruncationWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::VertexTrunc);
+}
+
+void RemeshingMode::triggerDualTwelveSixFour(){
+
+	((MainWindow*)mParent)->setToolOptions(mDualTwelveSixFourWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::DualGeneric1264);
 }
 
 void RemeshingMode::setupFourConversion(){
 	
-	lastFourConversionScheme = DLFLWindow::LinearVertexInsertion;
-	fourConversionLayout = new QVBoxLayout;
-	
-	fourConversionLabel = new QLabel(tr("Select Remeshing Scheme"));
-	fourConversionComboBox = new QComboBox();
-	QStringList fourConversionList;
-	fourConversionList << tr("Linear Vertex Insertion") << tr("Catmull-Clark") << tr("Stellate with edge removal") << tr("Doo-Sabin") << tr("Corner-Cutting") 
-											<< tr("Simplest");
-											
-	fourConversionComboBox->addItems(fourConversionList);
-	//add the combobox to the layout
-	fourConversionLayout->addWidget(fourConversionLabel);
-	fourConversionLayout->addWidget(fourConversionComboBox);
-	
-	//create the stacked widget and all child widget pages
-  QWidget *linearVertexWidget = new QWidget;
-  QWidget *catmullClarkWidget = new QWidget;
-  QWidget *stellateEdgeRemovalWidget = new QWidget;
-  QWidget *dooSabinWidget = new QWidget;
-  QWidget *cornerCuttingWidget = new QWidget;
-  QWidget *simplestWidget = new QWidget;
-
-	//create the panels for each of these four conversion schemes
+  mLinearVertexWidget = new QWidget;
+  mCatmullClarkWidget = new QWidget;
+  mStellateEdgeRemovalWidget = new QWidget;
+  mDooSabinWidget = new QWidget;
+	mCornerCuttingWidget = new QWidget;
+  mSimplestWidget = new QWidget;
 
 	//linear vertex insertion
-	QVBoxLayout *linearVertexLayout = new QVBoxLayout;
+	mLinearVertexLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	QPushButton *linearVertexCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(linearVertexCreateButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 					
-	linearVertexLayout->addWidget(linearVertexCreateButton);
-	linearVertexLayout->addStretch(1);
-	linearVertexWidget->setLayout(linearVertexLayout);
+	mLinearVertexLayout->addWidget(linearVertexCreateButton);
+	mLinearVertexLayout->addStretch(1);
+	mLinearVertexWidget->setLayout(mLinearVertexLayout);
 
 	//catmull clark
-	QVBoxLayout *catmullClarkLayout = new QVBoxLayout;
+	mCatmullClarkLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	QPushButton *catmullClarkCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(catmullClarkCreateButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 					
-	catmullClarkLayout->addWidget(catmullClarkCreateButton);
-	catmullClarkLayout->addStretch(1);
-	catmullClarkWidget->setLayout(catmullClarkLayout);
+	mCatmullClarkLayout->addWidget(catmullClarkCreateButton);
+	mCatmullClarkLayout->addStretch(1);
+	mCatmullClarkWidget->setLayout(mCatmullClarkLayout);
 	
 	//stellate with edge removal
-	QVBoxLayout *stellateEdgeRemovalLayout = new QVBoxLayout;
+	mStellateEdgeRemovalLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	QPushButton *stellateEdgeRemovalCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(stellateEdgeRemovalCreateButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 					
-	stellateEdgeRemovalLayout->addWidget(stellateEdgeRemovalCreateButton);
-	stellateEdgeRemovalLayout->addStretch(1);
-	stellateEdgeRemovalWidget->setLayout(stellateEdgeRemovalLayout);
+	mStellateEdgeRemovalLayout->addWidget(stellateEdgeRemovalCreateButton);
+	mStellateEdgeRemovalLayout->addStretch(1);
+	mStellateEdgeRemovalWidget->setLayout(mStellateEdgeRemovalLayout);
 	
 	//doo sabin
-	QVBoxLayout *dooSabinLayout = new QVBoxLayout;
+	mDooSabinLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	QCheckBox *dooSabinCheckBox = new QCheckBox(tr("Check for multiple edges"));
-	dooSabinLayout->addWidget(dooSabinCheckBox);
+	mDooSabinLayout->addWidget(dooSabinCheckBox);
 	//connect the checkbox
 	connect(dooSabinCheckBox, SIGNAL(stateChanged(int)),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(toggleDooSabinEdgeFlag(int)) );
+					((MainWindow*)mParent),SLOT(toggleDooSabinEdgeFlag(int)) );
 	QPushButton *dooSabinCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dooSabinCreateButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
-	dooSabinLayout->addWidget(dooSabinCreateButton);
-	dooSabinLayout->addStretch(1);
-	dooSabinWidget->setLayout(dooSabinLayout);
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+	mDooSabinLayout->addWidget(dooSabinCreateButton);
+	mDooSabinLayout->addStretch(1);
+	mDooSabinWidget->setLayout(mDooSabinLayout);
 	
 	//corner cutting
-	QVBoxLayout *cornerCuttingLayout = new QVBoxLayout;
+	mCornerCuttingLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	QPushButton *cornerCuttingCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(cornerCuttingCreateButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
-	cornerCuttingLayout->addWidget(cornerCuttingCreateButton);
-	cornerCuttingLayout->addStretch(1);
-	cornerCuttingWidget->setLayout(cornerCuttingLayout);
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+	mCornerCuttingLayout->addWidget(cornerCuttingCreateButton);
+	mCornerCuttingLayout->addStretch(1);
+	mCornerCuttingWidget->setLayout(mCornerCuttingLayout);
 	
 	//simplest
-	QVBoxLayout *simplestLayout = new QVBoxLayout;
+	mSimplestLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	QPushButton *simplestCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(simplestCreateButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
-	simplestLayout->addWidget(simplestCreateButton);
-	simplestLayout->addStretch(1);
-	simplestWidget->setLayout(simplestLayout);	
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+	mSimplestLayout->addWidget(simplestCreateButton);
+	mSimplestLayout->addStretch(1);
+	mSimplestWidget->setLayout(mSimplestLayout);	
 	
-	//add the widgets to a stack controlled by the qcombobox
-  QStackedWidget *fourConversionStackedWidget = new QStackedWidget;
-	fourConversionStackedWidget->addWidget(linearVertexWidget);
-  fourConversionStackedWidget->addWidget(catmullClarkWidget);
-  fourConversionStackedWidget->addWidget(stellateEdgeRemovalWidget);
-  fourConversionStackedWidget->addWidget(dooSabinWidget);
-  fourConversionStackedWidget->addWidget(cornerCuttingWidget);
-  fourConversionStackedWidget->addWidget(simplestWidget);
-	//add the stackedwidget to the layout
-  fourConversionLayout->addWidget(fourConversionStackedWidget);
-	//connect the combobox to the stacked widget
-  connect(fourConversionComboBox, SIGNAL(activated(int)),
-          fourConversionStackedWidget, SLOT(setCurrentIndex(int)));	
-	
-	fourConversionLayout->addStretch(1);
-	fourConversionWidget->setLayout(fourConversionLayout);	
-	
-	//connect the combobox signal to the mode switching slot
-	connect(fourConversionComboBox, SIGNAL(currentIndexChanged(int)),
-					this,SLOT(switchFourConversionMode(int)) );
 }
 
-void RemeshingMode::switchFourConversionMode(int index){	
-	
-	switch(index){
-		case 0: lastFourConversionScheme = DLFLWindow::LinearVertexInsertion;
-		break;
-		case 1:	lastFourConversionScheme = DLFLWindow::CatmullClark;
-		break;	
-		case 2: lastFourConversionScheme = DLFLWindow::ModifiedStellate;
-		break;
-		case 3: lastFourConversionScheme = DLFLWindow::DooSabin;
-		break;
-		case 4: lastFourConversionScheme = DLFLWindow::CornerCutting;
-		break;
-		case 5: lastFourConversionScheme = DLFLWindow::Simplest;
-		break;
-		default:
-		break;
-	}
-	((MainWindow*)parentWidget()->parentWidget())->setRemeshingScheme(lastFourConversionScheme);
+void RemeshingMode::triggerLinearVertex(){
+
+	((MainWindow*)mParent)->setToolOptions(mLinearVertexWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::LinearVertexInsertion);
+}
+
+void RemeshingMode::triggerCatmullClark(){
+
+	((MainWindow*)mParent)->setToolOptions(mCatmullClarkWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::CatmullClark);
+}
+
+void RemeshingMode::triggerStellateEdgeRemoval(){
+
+	((MainWindow*)mParent)->setToolOptions(mStellateEdgeRemovalWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::ModifiedStellate);
+}
+
+void RemeshingMode::triggerDooSabin(){
+
+	((MainWindow*)mParent)->setToolOptions(mDooSabinWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::DooSabin);
+}
+
+void RemeshingMode::triggerCornerCutting(){
+
+	((MainWindow*)mParent)->setToolOptions(mCornerCuttingWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::CornerCutting);
+}
+
+void RemeshingMode::triggerSimplest(){
+
+	((MainWindow*)mParent)->setToolOptions(mSimplestWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::Simplest);
 }
 
 void RemeshingMode::setupFiveConversion(){
 	
-	lastFiveConversionScheme = DLFLWindow::Pentagonal;
-	fiveConversionLayout = new QVBoxLayout;
-	
-	QLabel *fiveConversionLabel = new QLabel(tr("Select Remeshing Scheme"));
-	QComboBox *fiveConversionComboBox = new QComboBox();
-	QStringList fiveConversionList;
-	fiveConversionList << tr("Pentagonalization") << tr("Cubic Pentagonalization") << tr("Dual-Pentagonalization");
-	
-	fiveConversionComboBox->addItems(fiveConversionList);
-	//add the combobox to the layout
-	fiveConversionLayout->addWidget(fiveConversionLabel);
-	fiveConversionLayout->addWidget(fiveConversionComboBox);
-	
 	//create the stacked widget and all child widget pages
-  QWidget *pentagonalizationWidget = new QWidget;
-  QWidget *cubicPentagonalizationWidget = new QWidget;
-  QWidget *dualPentagonalizationWidget = new QWidget;
-
-	//create the panels for each of these five conversion schemes
+  mPentagonalizationWidget = new QWidget;
+  mCubicPentagonalizationWidget = new QWidget;
+  mDualPentagonalizationWidget = new QWidget;
 
 	//pentagonalization
-	QVBoxLayout *pentagonalizationLayout = new QVBoxLayout;
+	mPentagonalizationLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	//offset spinbox
 	QLabel *pentagonalizationLabel = new QLabel(tr("Offset:"));
 	QDoubleSpinBox *pentagonalizationSpinBox = new QDoubleSpinBox;
@@ -564,20 +741,20 @@ void RemeshingMode::setupFiveConversion(){
 	pentagonalizationSpinBox->setValue(0.0);
 	pentagonalizationSpinBox->setDecimals(2);
 	connect(pentagonalizationSpinBox, SIGNAL(valueChanged(double)),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(changePentagonalOffset(double)) );
+					((MainWindow*)mParent),SLOT(changePentagonalOffset(double)) );
 	
-	pentagonalizationLayout->addWidget(pentagonalizationLabel);
-  pentagonalizationLayout->addWidget(pentagonalizationSpinBox);
+	mPentagonalizationLayout->addWidget(pentagonalizationLabel);
+  mPentagonalizationLayout->addWidget(pentagonalizationSpinBox);
 	QPushButton *pentagonalizationCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(pentagonalizationCreateButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 					
-	pentagonalizationLayout->addWidget(pentagonalizationCreateButton);
-	pentagonalizationLayout->addStretch(1);
-	pentagonalizationWidget->setLayout(pentagonalizationLayout);
+	mPentagonalizationLayout->addWidget(pentagonalizationCreateButton);
+	mPentagonalizationLayout->addStretch(1);
+	mPentagonalizationWidget->setLayout(mPentagonalizationLayout);
 
 	//cubic Pentagonalization
-	QVBoxLayout *cubicPentagonalizationLayout = new QVBoxLayout;
+	mCubicPentagonalizationLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	//offset spinbox
 	QLabel *cubicPentagonalizationLabel = new QLabel(tr("Offset:"));
 	QDoubleSpinBox *cubicPentagonalizationSpinBox = new QDoubleSpinBox;
@@ -586,85 +763,57 @@ void RemeshingMode::setupFiveConversion(){
 	cubicPentagonalizationSpinBox->setValue(0.0);
 	cubicPentagonalizationSpinBox->setDecimals(2);
 	connect(cubicPentagonalizationSpinBox, SIGNAL(valueChanged(double)),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(changePentagonalOffset(double)) );
+					((MainWindow*)mParent),SLOT(changePentagonalOffset(double)) );
 					
-	cubicPentagonalizationLayout->addWidget(cubicPentagonalizationLabel);
-  cubicPentagonalizationLayout->addWidget(cubicPentagonalizationSpinBox);
+	mCubicPentagonalizationLayout->addWidget(cubicPentagonalizationLabel);
+  mCubicPentagonalizationLayout->addWidget(cubicPentagonalizationSpinBox);
 	QPushButton *cubicPentagonalizationCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(cubicPentagonalizationCreateButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 					
-	cubicPentagonalizationLayout->addWidget(cubicPentagonalizationCreateButton);
-	cubicPentagonalizationLayout->addStretch(1);
-	cubicPentagonalizationWidget->setLayout(cubicPentagonalizationLayout);
+	mCubicPentagonalizationLayout->addWidget(cubicPentagonalizationCreateButton);
+	mCubicPentagonalizationLayout->addStretch(1);
+	mCubicPentagonalizationWidget->setLayout(mCubicPentagonalizationLayout);
 	
 	//dual pentagonalization
-	QVBoxLayout *dualPentagonalizationLayout = new QVBoxLayout;
+	mDualPentagonalizationLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	QPushButton *dualPentagonalizationCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dualPentagonalizationCreateButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
-	dualPentagonalizationLayout->addWidget(dualPentagonalizationCreateButton);
-	dualPentagonalizationLayout->addStretch(1);
-	dualPentagonalizationWidget->setLayout(dualPentagonalizationLayout);
-	
-	//add the widgets to a stack controlled by the qcombobox
-  QStackedWidget *fiveConversionStackedWidget = new QStackedWidget;
-	fiveConversionStackedWidget->addWidget(pentagonalizationWidget);
-  fiveConversionStackedWidget->addWidget(cubicPentagonalizationWidget);
-  fiveConversionStackedWidget->addWidget(dualPentagonalizationWidget);
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+	mDualPentagonalizationLayout->addWidget(dualPentagonalizationCreateButton);
+	mDualPentagonalizationLayout->addStretch(1);
+	mDualPentagonalizationWidget->setLayout(mDualPentagonalizationLayout);
 
-	//add the stackedwidget to the layout
-  fiveConversionLayout->addWidget(fiveConversionStackedWidget);
-	//connect the combobox to the stacked widget
-  connect(fiveConversionComboBox, SIGNAL(activated(int)),
-          fiveConversionStackedWidget, SLOT(setCurrentIndex(int)));
-	
-	fiveConversionLayout->addStretch(1);
-	fiveConversionWidget->setLayout(fiveConversionLayout);	
-	
-	//connect the combobox signal to the mode switching slot
-	connect(fiveConversionComboBox, SIGNAL(currentIndexChanged(int)),
-					this,SLOT(switchFiveConversionMode(int)) );
 }
 
-void RemeshingMode::switchFiveConversionMode(int index){	
-	
-	switch(index){
-		case 0: lastFiveConversionScheme = DLFLWindow::Pentagonal;
-		break;
-		case 1:	lastFiveConversionScheme = DLFLWindow::CubicPentagonal;
-		break;	
-		case 2: lastFiveConversionScheme = DLFLWindow::DualPentagonal;
-		break;
-		default:
-		break;
-	}
-	((MainWindow*)parentWidget()->parentWidget())->setRemeshingScheme(lastFiveConversionScheme);
+void RemeshingMode::triggerPentagonalization(){
+
+	((MainWindow*)mParent)->setToolOptions(mPentagonalizationWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::Pentagonal);
+}
+
+void RemeshingMode::triggerCubicPentagonalization(){
+
+	((MainWindow*)mParent)->setToolOptions(mCubicPentagonalizationWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::CubicPentagonal);
+}
+
+void RemeshingMode::triggerDualPentagonalization(){
+
+	((MainWindow*)mParent)->setToolOptions(mDualPentagonalizationWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::DualPentagonal);
 }
 
 void RemeshingMode::setupThreePreservation(){
 	
-	lastThreePreservationScheme = DLFLWindow::LoopStyle;
-	threePreservationLayout = new QVBoxLayout;
-	
-	QLabel *threePreservationLabel = new QLabel(tr("Select Remeshing Scheme"));
-	QComboBox *threePreservationComboBox = new QComboBox();
-	QStringList threePreservationList;
-	threePreservationList << tr("Loop-Style Remeshing") << tr("Loop Subdivision") << tr("Dual of Loop-Style Remeshing") << tr("Dual of Loop Subdivision");
-	
-	threePreservationComboBox->addItems(threePreservationList);
-	//add the combobox to the layout
-	threePreservationLayout->addWidget(threePreservationLabel);
-	threePreservationLayout->addWidget(threePreservationComboBox);
-	
 	//create the stacked widget and all child widget pages
-  QWidget *loopStyleRemeshingWidget = new QWidget;
-  QWidget *loopSubdivisionWidget = new QWidget;
-  QWidget *dualLoopStyleRemeshingWidget = new QWidget;
-  QWidget *dualLoopSubdivisionWidget = new QWidget;
+  mLoopStyleRemeshingWidget = new QWidget;
+  mLoopSubdivisionWidget = new QWidget;
+  mDualLoopStyleRemeshingWidget = new QWidget;
+  mDualLoopSubdivisionWidget = new QWidget;
 
 	//loop-style remeshing
-	QVBoxLayout *loopStyleRemeshingLayout = new QVBoxLayout;
+	mLoopStyleRemeshingLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	//offset spinbox
 	QLabel *loopStyleRemeshingLabel = new QLabel(tr("Length:"));
 	QDoubleSpinBox *loopStyleRemeshingSpinBox = new QDoubleSpinBox;
@@ -673,29 +822,29 @@ void RemeshingMode::setupThreePreservation(){
 	loopStyleRemeshingSpinBox->setValue(1.0);
 	loopStyleRemeshingSpinBox->setDecimals(2);
 	connect(loopStyleRemeshingSpinBox, SIGNAL(valueChanged(double)),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(changeLoopStyleSubdivisionLength(double)) );
+					((MainWindow*)mParent),SLOT(changeLoopStyleSubdivisionLength(double)) );
 	
-	loopStyleRemeshingLayout->addWidget(loopStyleRemeshingLabel);
-  loopStyleRemeshingLayout->addWidget(loopStyleRemeshingSpinBox);
+	mLoopStyleRemeshingLayout->addWidget(loopStyleRemeshingLabel);
+  mLoopStyleRemeshingLayout->addWidget(loopStyleRemeshingSpinBox);
 	QPushButton *loopStyleRemeshingButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(loopStyleRemeshingButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 	
-	loopStyleRemeshingLayout->addWidget(loopStyleRemeshingButton);
-	loopStyleRemeshingLayout->addStretch(1);
-	loopStyleRemeshingWidget->setLayout(loopStyleRemeshingLayout);
+	mLoopStyleRemeshingLayout->addWidget(loopStyleRemeshingButton);
+	mLoopStyleRemeshingLayout->addStretch(1);
+	mLoopStyleRemeshingWidget->setLayout(mLoopStyleRemeshingLayout);
 
 	//loop subdivision
-	QVBoxLayout *loopSubdivisionLayout = new QVBoxLayout;
+	mLoopSubdivisionLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	QPushButton *loopSubdivisionCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(loopSubdivisionCreateButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
-	loopSubdivisionLayout->addWidget(loopSubdivisionCreateButton);
-	loopSubdivisionLayout->addStretch(1);
-	loopSubdivisionWidget->setLayout(loopSubdivisionLayout);
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+	mLoopSubdivisionLayout->addWidget(loopSubdivisionCreateButton);
+	mLoopSubdivisionLayout->addStretch(1);
+	mLoopSubdivisionWidget->setLayout(mLoopSubdivisionLayout);
 	
 	//dual of loop-style remeshing
-	QVBoxLayout *dualLoopStyleRemeshingLayout = new QVBoxLayout;
+	mDualLoopStyleRemeshingLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	
 	QLabel *dualLoopStyleRemeshingTwistLabel = new QLabel(tr("Twist:"));
 	QDoubleSpinBox *dualLoopStyleRemeshingTwistSpinBox = new QDoubleSpinBox;
@@ -704,10 +853,10 @@ void RemeshingMode::setupThreePreservation(){
 	dualLoopStyleRemeshingTwistSpinBox->setValue(0.0);
 	dualLoopStyleRemeshingTwistSpinBox->setDecimals(2);
 	connect(dualLoopStyleRemeshingTwistSpinBox, SIGNAL(valueChanged(double)),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(changeRoot4Twist(double)) );	
+					((MainWindow*)mParent),SLOT(changeRoot4Twist(double)) );	
 	
-	dualLoopStyleRemeshingLayout->addWidget(dualLoopStyleRemeshingTwistLabel);
-  dualLoopStyleRemeshingLayout->addWidget(dualLoopStyleRemeshingTwistSpinBox);
+	mDualLoopStyleRemeshingLayout->addWidget(dualLoopStyleRemeshingTwistLabel);
+  mDualLoopStyleRemeshingLayout->addWidget(dualLoopStyleRemeshingTwistSpinBox);
 
 	QLabel *dualLoopStyleRemeshingWeightLabel = new QLabel(tr("Weight:"));
 	QDoubleSpinBox *dualLoopStyleRemeshingWeightSpinBox = new QDoubleSpinBox;
@@ -716,187 +865,136 @@ void RemeshingMode::setupThreePreservation(){
 	dualLoopStyleRemeshingWeightSpinBox->setValue(0.0);
 	dualLoopStyleRemeshingWeightSpinBox->setDecimals(2);
 	connect(dualLoopStyleRemeshingWeightSpinBox, SIGNAL(valueChanged(double)),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(changeRoot4Weight(double)) );	
+					((MainWindow*)mParent),SLOT(changeRoot4Weight(double)) );	
 	
-	dualLoopStyleRemeshingLayout->addWidget(dualLoopStyleRemeshingWeightLabel);
-  dualLoopStyleRemeshingLayout->addWidget(dualLoopStyleRemeshingWeightSpinBox);
+	mDualLoopStyleRemeshingLayout->addWidget(dualLoopStyleRemeshingWeightLabel);
+  mDualLoopStyleRemeshingLayout->addWidget(dualLoopStyleRemeshingWeightSpinBox);
 
 	QPushButton *dualLoopStyleRemeshingButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dualLoopStyleRemeshingButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 					
-	dualLoopStyleRemeshingLayout->addWidget(dualLoopStyleRemeshingButton);
-	dualLoopStyleRemeshingLayout->addStretch(1);
-	dualLoopStyleRemeshingWidget->setLayout(dualLoopStyleRemeshingLayout);
+	mDualLoopStyleRemeshingLayout->addWidget(dualLoopStyleRemeshingButton);
+	mDualLoopStyleRemeshingLayout->addStretch(1);
+	mDualLoopStyleRemeshingWidget->setLayout(mDualLoopStyleRemeshingLayout);
 	
 	//dual of loop subdivision
-	QVBoxLayout *dualLoopSubdivisionLayout = new QVBoxLayout;
+	mDualLoopSubdivisionLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	QPushButton *dualLoopSubdivisionCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dualLoopSubdivisionCreateButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 					
-	dualLoopSubdivisionLayout->addWidget(dualLoopSubdivisionCreateButton);
-	dualLoopSubdivisionLayout->addStretch(1);
-	dualLoopSubdivisionWidget->setLayout(dualLoopSubdivisionLayout);
-	
-	//add the widgets to a stack controlled by the qcombobox
-  QStackedWidget *threePreservationStackedWidget = new QStackedWidget;
-	threePreservationStackedWidget->addWidget(loopStyleRemeshingWidget);
-	threePreservationStackedWidget->addWidget(loopSubdivisionWidget);
-  threePreservationStackedWidget->addWidget(dualLoopStyleRemeshingWidget);
-	threePreservationStackedWidget->addWidget(dualLoopSubdivisionWidget);
+	mDualLoopSubdivisionLayout->addWidget(dualLoopSubdivisionCreateButton);
+	mDualLoopSubdivisionLayout->addStretch(1);
+	mDualLoopSubdivisionWidget->setLayout(mDualLoopSubdivisionLayout);
 
-	//add the stackedwidget to the layout
-  threePreservationLayout->addWidget(threePreservationStackedWidget);
-	//connect the combobox to the stacked widget
-  connect(threePreservationComboBox, SIGNAL(activated(int)),
-          threePreservationStackedWidget, SLOT(setCurrentIndex(int)));	
-
-	threePreservationLayout->addStretch(1);
-	threePreservationWidget->setLayout(threePreservationLayout);
-	
-	//connect the combobox signal to the mode switching slot
-	connect(threePreservationComboBox, SIGNAL(currentIndexChanged(int)),
-					this,SLOT(switchThreePreservationMode(int)) );
 }
 
-void RemeshingMode::switchThreePreservationMode(int index){	
-	
-	switch(index){
-		case 0: lastThreePreservationScheme = DLFLWindow::LoopStyle;
-		break;
-		case 1:	lastThreePreservationScheme = DLFLWindow::Loop;
-		break;	
-		case 2: lastThreePreservationScheme = DLFLWindow::Root4;
-		break;
-		case 3: lastThreePreservationScheme = DLFLWindow::DualLoop;
-		break;
-		default:
-		break;
-	}
-	((MainWindow*)parentWidget()->parentWidget())->setRemeshingScheme(lastThreePreservationScheme);
+void RemeshingMode::triggerLoopStyleRemeshing(){
+
+	((MainWindow*)mParent)->setToolOptions(mLoopStyleRemeshingWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::LoopStyle);
+}
+
+void RemeshingMode::triggerLoopSubdivision(){
+
+	((MainWindow*)mParent)->setToolOptions(mLoopSubdivisionWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::Loop);
+}
+
+void RemeshingMode::triggerDualLoopStyleRemeshing(){
+
+	((MainWindow*)mParent)->setToolOptions(mDualLoopStyleRemeshingWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::Root4);
+}
+
+void RemeshingMode::triggerDualLoopSubdivision(){
+
+	((MainWindow*)mParent)->setToolOptions(mDualLoopSubdivisionWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::DualLoop);
 }
 
 void RemeshingMode::setupFourPreservation(){
 	
-	lastFourPreservationScheme = DLFLWindow::GlobalCubicExtrude;
-	fourPreservationLayout = new QVBoxLayout;
-	
-	QLabel *fourPreservationLabel = new QLabel(tr("Select Remeshing Scheme"));
-	QComboBox *fourPreservationComboBox = new QComboBox();
-	QStringList fourPreservationList;
-	fourPreservationList << tr("Global Extrude") << tr("Checkerboard Remeshing") << tr("Dual of Global Extrude") << tr("Dual of Checkerboard Remeshing");
-	
-	fourPreservationComboBox->addItems(fourPreservationList);
-	//add the combobox to the layout
-	fourPreservationLayout->addWidget(fourPreservationLabel);
-	fourPreservationLayout->addWidget(fourPreservationComboBox);
-	
-	//create the stacked widget and all child widget pages
-  QWidget *globalExtrudeWidget = new QWidget;
-  QWidget *checkerboardWidget = new QWidget;
-  QWidget *dualGlobalExtrudeWidget = new QWidget;
-  QWidget *dualCheckerboardWidget = new QWidget;
+  mGlobalExtrudeWidget = new QWidget;
+  mCheckerboardWidget = new QWidget;
+  mDualGlobalExtrudeWidget = new QWidget;
+  mDualCheckerboardWidget = new QWidget;
 
 	//global extrude
-	QVBoxLayout *globalExtrudeLayout = new QVBoxLayout;
+	mGlobalExtrudeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	QPushButton *globalExtrudeButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(globalExtrudeButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 					
-	globalExtrudeLayout->addWidget(globalExtrudeButton);
-	globalExtrudeLayout->addStretch(1);
-	globalExtrudeWidget->setLayout(globalExtrudeLayout);
+	mGlobalExtrudeLayout->addWidget(globalExtrudeButton);
+	mGlobalExtrudeLayout->addStretch(1);
+	mGlobalExtrudeWidget->setLayout(mGlobalExtrudeLayout);
 
 	//checkerboard
-	QVBoxLayout *checkerboardLayout = new QVBoxLayout;
+	mCheckerboardLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	QPushButton *checkerboardCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(checkerboardCreateButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 					
-	checkerboardLayout->addWidget(checkerboardCreateButton);
-	checkerboardLayout->addStretch(1);
-	checkerboardWidget->setLayout(checkerboardLayout);
+	mCheckerboardLayout->addWidget(checkerboardCreateButton);
+	mCheckerboardLayout->addStretch(1);
+	mCheckerboardWidget->setLayout(mCheckerboardLayout);
 	
 	//dual of global extrude
-	QVBoxLayout *dualGlobalExtrudeLayout = new QVBoxLayout;
+	mDualGlobalExtrudeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	QPushButton *dualGlobalExtrudeButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dualGlobalExtrudeButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 					
-	dualGlobalExtrudeLayout->addWidget(dualGlobalExtrudeButton);
-	dualGlobalExtrudeLayout->addStretch(1);
-	dualGlobalExtrudeWidget->setLayout(dualGlobalExtrudeLayout);
+	mDualGlobalExtrudeLayout->addWidget(dualGlobalExtrudeButton);
+	mDualGlobalExtrudeLayout->addStretch(1);
+	mDualGlobalExtrudeWidget->setLayout(mDualGlobalExtrudeLayout);
 	
 	//dual of checkerboard remeshing
-	QVBoxLayout *dualCheckerboardLayout = new QVBoxLayout;
+	mDualCheckerboardLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	QPushButton *dualCheckerboardCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dualCheckerboardCreateButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 					
-	dualCheckerboardLayout->addWidget(dualCheckerboardCreateButton);
-	dualCheckerboardLayout->addStretch(1);
-	dualCheckerboardWidget->setLayout(dualCheckerboardLayout);
+	mDualCheckerboardLayout->addWidget(dualCheckerboardCreateButton);
+	mDualCheckerboardLayout->addStretch(1);
+	mDualCheckerboardWidget->setLayout(mDualCheckerboardLayout);
 	
-	//add the widgets to a stack controlled by the qcombobox
-  QStackedWidget *fourPreservationStackedWidget = new QStackedWidget;
-	fourPreservationStackedWidget->addWidget(globalExtrudeWidget);
-	fourPreservationStackedWidget->addWidget(checkerboardWidget);
-  fourPreservationStackedWidget->addWidget(dualGlobalExtrudeWidget);
-	fourPreservationStackedWidget->addWidget(dualCheckerboardWidget);
-
-	//add the stackedwidget to the layout
-  fourPreservationLayout->addWidget(fourPreservationStackedWidget);
-	//connect the combobox to the stacked widget
-  connect(fourPreservationComboBox, SIGNAL(activated(int)),
-          fourPreservationStackedWidget, SLOT(setCurrentIndex(int)));
-	
-	fourPreservationLayout->addStretch(1);
-	fourPreservationWidget->setLayout(fourPreservationLayout);
-	
-	//connect the combobox signal to the mode switching slot
-	connect(fourPreservationComboBox, SIGNAL(currentIndexChanged(int)),
-					this,SLOT(switchFourPreservationMode(int)) );
 }
 
-void RemeshingMode::switchFourPreservationMode(int index){	
-	
-	switch(index){
-		case 0: lastFourPreservationScheme = DLFLWindow::GlobalCubicExtrude;
-		break;
-		case 1:	lastFourPreservationScheme = DLFLWindow::CheckerBoard;
-		break;	
-		case 2: lastFourPreservationScheme = DLFLWindow::DualGlobalCubicExtrude;
-		break;
-		case 3: lastFourPreservationScheme = DLFLWindow::DualCheckerBoard;
-		break;
-		default:
-		break;
-	}
-	((MainWindow*)parentWidget()->parentWidget())->setRemeshingScheme(lastFourPreservationScheme);
+void RemeshingMode::triggerGlobalExtrude(){
+
+	((MainWindow*)mParent)->setToolOptions(mGlobalExtrudeWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::GlobalCubicExtrude);
+}
+
+void RemeshingMode::triggerCheckerboard(){
+
+	((MainWindow*)mParent)->setToolOptions(mCheckerboardWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::CheckerBoard);
+}
+
+void RemeshingMode::triggerDualGlobalExtrude(){
+
+	((MainWindow*)mParent)->setToolOptions(mDualGlobalExtrudeWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::DualGlobalCubicExtrude);
+}
+
+void RemeshingMode::triggerDualCheckerboard(){
+
+	((MainWindow*)mParent)->setToolOptions(mDualCheckerboardWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::DualCheckerBoard);
 }
 
 void RemeshingMode::setupFivePreservation(){
-	
-	lastFivePreservationScheme = DLFLWindow::PentagonPreserving;
-	fivePreservationLayout = new QVBoxLayout;
-	
-	QLabel *fivePreservationLabel = new QLabel(tr("Select Remeshing Scheme"));
-	QComboBox *fivePreservationComboBox = new QComboBox();
-	QStringList fivePreservationList;
-	fivePreservationList << tr("Pentagon Preserving") << tr("Dual of Pentagon Preserving");
-	
-	fivePreservationComboBox->addItems(fivePreservationList);
-	//add the combobox to the layout
-	fivePreservationLayout->addWidget(fivePreservationLabel);
-	fivePreservationLayout->addWidget(fivePreservationComboBox);
-	
+
 	//create the stacked widget and all child widget pages
-  QWidget *pentagonPreservingWidget = new QWidget;
-  QWidget *dualPentagonPreservingWidget = new QWidget;
+  QWidget *mPentagonPreservingWidget = new QWidget;
+  QWidget *mDualPentagonPreservingWidget = new QWidget;
 
 	//Pentagon Preserving
-	QVBoxLayout *pentagonPreservingLayout = new QVBoxLayout;
+	mPentagonPreservingLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	QLabel *pentagonPreservingLabel = new QLabel(tr("Scale Factor:"));
 	QDoubleSpinBox *pentagonPreservingSpinBox = new QDoubleSpinBox;
 	pentagonPreservingSpinBox->setRange(0.0, 1.0);
@@ -904,82 +1002,50 @@ void RemeshingMode::setupFivePreservation(){
 	pentagonPreservingSpinBox->setValue(0.75);
 	pentagonPreservingSpinBox->setDecimals(2);
 	connect(pentagonPreservingSpinBox, SIGNAL(valueChanged(double)),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(changePentagonalScaleFactor(double)) );	
+					((MainWindow*)mParent),SLOT(changePentagonalScaleFactor(double)) );	
 	
-	pentagonPreservingLayout->addWidget(pentagonPreservingLabel);
-  pentagonPreservingLayout->addWidget(pentagonPreservingSpinBox);
+	mPentagonPreservingLayout->addWidget(pentagonPreservingLabel);
+  mPentagonPreservingLayout->addWidget(pentagonPreservingSpinBox);
 
 	QPushButton *pentagonPreservingButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(pentagonPreservingButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 					
-	pentagonPreservingLayout->addWidget(pentagonPreservingButton);
-	pentagonPreservingLayout->addStretch(1);
-	pentagonPreservingWidget->setLayout(pentagonPreservingLayout);
+	mPentagonPreservingLayout->addWidget(pentagonPreservingButton);
+	mPentagonPreservingLayout->addStretch(1);
+	mPentagonPreservingWidget->setLayout(mPentagonPreservingLayout);
 
 	//dual of Pentagon Preserving
-	QVBoxLayout *dualPentagonPreservingLayout = new QVBoxLayout;
+	mDualPentagonPreservingLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	QPushButton *dualPentagonPreservingCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dualPentagonPreservingCreateButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 					
-	dualPentagonPreservingLayout->addWidget(dualPentagonPreservingCreateButton);
-	dualPentagonPreservingLayout->addStretch(1);
-	dualPentagonPreservingWidget->setLayout(dualPentagonPreservingLayout);
+	mDualPentagonPreservingLayout->addWidget(dualPentagonPreservingCreateButton);
+	mDualPentagonPreservingLayout->addStretch(1);
+	mDualPentagonPreservingWidget->setLayout(mDualPentagonPreservingLayout);
 	
-	//add the widgets to a stack controlled by the qcombobox
-  QStackedWidget *fivePreservationStackedWidget = new QStackedWidget;
-	fivePreservationStackedWidget->addWidget(pentagonPreservingWidget);
-	fivePreservationStackedWidget->addWidget(dualPentagonPreservingWidget);
-
-	//add the stackedwidget to the layout
-  fivePreservationLayout->addWidget(fivePreservationStackedWidget);
-	//connect the combobox to the stacked widget
-  connect(fivePreservationComboBox, SIGNAL(activated(int)),
-          fivePreservationStackedWidget, SLOT(setCurrentIndex(int)));
-	
-	fivePreservationLayout->addStretch(1);
-	fivePreservationWidget->setLayout(fivePreservationLayout);
-	
-	//connect the combobox signal to the mode switching slot
-	connect(fivePreservationComboBox, SIGNAL(currentIndexChanged(int)),
-					this,SLOT(switchFivePreservationMode(int)) );
 }
 
-void RemeshingMode::switchFivePreservationMode(int index){	
-	
-	switch(index){
-		case 0: lastFivePreservationScheme = DLFLWindow::PentagonPreserving;
-		break;
-		case 1:	lastFivePreservationScheme = DLFLWindow::DualPentagonPreserving;
-		break;	
-		default:
-		break;
-	}
-	((MainWindow*)parentWidget()->parentWidget())->setRemeshingScheme(lastFivePreservationScheme);
+void RemeshingMode::triggerPentagonPreserving(){
+
+	((MainWindow*)mParent)->setToolOptions(mPentagonPreservingWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::PentagonPreserving);
+}
+
+void RemeshingMode::triggerDualPentagonPreserving(){
+
+	((MainWindow*)mParent)->setToolOptions(mDualPentagonPreservingWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::DualPentagonPreserving);
 }
 
 void RemeshingMode::setupSixPreservation(){
 	
-	lastSixPreservationScheme = DLFLWindow::HexagonPreserving;
-	sixPreservationLayout = new QVBoxLayout;
-	
-	QLabel *sixPreservationLabel = new QLabel(tr("Select Remeshing Scheme"));
-	QComboBox *sixPreservationComboBox = new QComboBox();
-	QStringList sixPreservationList;
-	sixPreservationList << tr("Dual of Loop-Style Remeshing") << tr("Loop-Style Remeshing");
-	
-	sixPreservationComboBox->addItems(sixPreservationList);
-	//add the combobox to the layout
-	sixPreservationLayout->addWidget(sixPreservationLabel);
-	sixPreservationLayout->addWidget(sixPreservationComboBox);
-	
-	//create the stacked widget and all child widget pages
-  QWidget *dualLoopStyleRemeshingSixWidget = new QWidget;
-  QWidget *loopStyleRemeshingSixWidget = new QWidget;
+  QWidget *mDualLoopStyleRemeshingSixWidget = new QWidget;
+  QWidget *mLoopStyleRemeshingSixWidget = new QWidget;
 
 	//dual of loop-style remeshing
-	QVBoxLayout *dualLoopStyleRemeshingSixLayout = new QVBoxLayout;
+	mDualLoopStyleRemeshingSixLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	
 	QLabel *dualLoopStyleRemeshingSixTwistLabel = new QLabel(tr("Twist:"));
 	QDoubleSpinBox *dualLoopStyleRemeshingSixTwistSpinBox = new QDoubleSpinBox;
@@ -988,10 +1054,10 @@ void RemeshingMode::setupSixPreservation(){
 	dualLoopStyleRemeshingSixTwistSpinBox->setValue(0.0);
 	dualLoopStyleRemeshingSixTwistSpinBox->setDecimals(2);
 	connect(dualLoopStyleRemeshingSixTwistSpinBox, SIGNAL(valueChanged(double)),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(changeRoot4Twist(double)) );	
+					((MainWindow*)mParent),SLOT(changeRoot4Twist(double)) );	
 	
-	dualLoopStyleRemeshingSixLayout->addWidget(dualLoopStyleRemeshingSixTwistLabel);
-  dualLoopStyleRemeshingSixLayout->addWidget(dualLoopStyleRemeshingSixTwistSpinBox);
+	mDualLoopStyleRemeshingSixLayout->addWidget(dualLoopStyleRemeshingSixTwistLabel);
+  mDualLoopStyleRemeshingSixLayout->addWidget(dualLoopStyleRemeshingSixTwistSpinBox);
 
 	QLabel *dualLoopStyleRemeshingSixWeightLabel = new QLabel(tr("Weight:"));
 	QDoubleSpinBox *dualLoopStyleRemeshingSixWeightSpinBox = new QDoubleSpinBox;
@@ -1000,21 +1066,21 @@ void RemeshingMode::setupSixPreservation(){
 	dualLoopStyleRemeshingSixWeightSpinBox->setValue(0.0);
 	dualLoopStyleRemeshingSixWeightSpinBox->setDecimals(2);
 	connect(dualLoopStyleRemeshingSixWeightSpinBox, SIGNAL(valueChanged(double)),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(changeRoot4Weight(double)) );	
+					((MainWindow*)mParent),SLOT(changeRoot4Weight(double)) );	
 	
-	dualLoopStyleRemeshingSixLayout->addWidget(dualLoopStyleRemeshingSixWeightLabel);
-  dualLoopStyleRemeshingSixLayout->addWidget(dualLoopStyleRemeshingSixWeightSpinBox);
+	mDualLoopStyleRemeshingSixLayout->addWidget(dualLoopStyleRemeshingSixWeightLabel);
+  mDualLoopStyleRemeshingSixLayout->addWidget(dualLoopStyleRemeshingSixWeightSpinBox);
 
 	QPushButton *dualLoopStyleRemeshingSixButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dualLoopStyleRemeshingSixButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 					
-	dualLoopStyleRemeshingSixLayout->addWidget(dualLoopStyleRemeshingSixButton);
-	dualLoopStyleRemeshingSixLayout->addStretch(1);
-	dualLoopStyleRemeshingSixWidget->setLayout(dualLoopStyleRemeshingSixLayout);
+	mDualLoopStyleRemeshingSixLayout->addWidget(dualLoopStyleRemeshingSixButton);
+	mDualLoopStyleRemeshingSixLayout->addStretch(1);
+	mDualLoopStyleRemeshingSixWidget->setLayout(mDualLoopStyleRemeshingSixLayout);
 	
 	//loop-style remeshing
-	QVBoxLayout *loopStyleRemeshingSixLayout = new QVBoxLayout;
+	mLoopStyleRemeshingSixLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 
 	QLabel *loopStyleRemeshingSixLabel = new QLabel(tr("Length:"));
 	QDoubleSpinBox *loopStyleRemeshingSixSpinBox = new QDoubleSpinBox;
@@ -1023,77 +1089,43 @@ void RemeshingMode::setupSixPreservation(){
 	loopStyleRemeshingSixSpinBox->setValue(1.0);
 	loopStyleRemeshingSixSpinBox->setDecimals(2);
 	connect(loopStyleRemeshingSixSpinBox, SIGNAL(valueChanged(double)),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(changeLoopStyleSubdivisionLength(double)) );	
+					((MainWindow*)mParent),SLOT(changeLoopStyleSubdivisionLength(double)) );	
 	
-	loopStyleRemeshingSixLayout->addWidget(loopStyleRemeshingSixLabel);
-  loopStyleRemeshingSixLayout->addWidget(loopStyleRemeshingSixSpinBox);
+	mLoopStyleRemeshingSixLayout->addWidget(loopStyleRemeshingSixLabel);
+  mLoopStyleRemeshingSixLayout->addWidget(loopStyleRemeshingSixSpinBox);
 	QPushButton *loopStyleRemeshingSixButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(loopStyleRemeshingSixButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 					
-	loopStyleRemeshingSixLayout->addWidget(loopStyleRemeshingSixButton);
-	loopStyleRemeshingSixLayout->addStretch(1);
-	loopStyleRemeshingSixWidget->setLayout(loopStyleRemeshingSixLayout);
-	
-	//add the widgets to a stack controlled by the qcombobox
-  QStackedWidget *sixPreservationStackedWidget = new QStackedWidget;
-  sixPreservationStackedWidget->addWidget(dualLoopStyleRemeshingSixWidget);
-	sixPreservationStackedWidget->addWidget(loopStyleRemeshingSixWidget);
+	mLoopStyleRemeshingSixLayout->addWidget(loopStyleRemeshingSixButton);
+	mLoopStyleRemeshingSixLayout->addStretch(1);
+	mLoopStyleRemeshingSixWidget->setLayout(mLoopStyleRemeshingSixLayout);
 
-	//add the stackedwidget to the layout
-  sixPreservationLayout->addWidget(sixPreservationStackedWidget);
-	//connect the combobox to the stacked widget
-  connect(sixPreservationComboBox, SIGNAL(activated(int)),
-          sixPreservationStackedWidget, SLOT(setCurrentIndex(int)));
-
-	sixPreservationLayout->addStretch(1);
-	sixPreservationWidget->setLayout(sixPreservationLayout);
-	
-	//connect the combobox signal to the mode switching slot
-	connect(sixPreservationComboBox, SIGNAL(currentIndexChanged(int)),
-					this,SLOT(switchSixPreservationMode(int)) );
 }
 
-void RemeshingMode::switchSixPreservationMode(int index){	
-	
-	switch(index){
-		case 0: lastSixPreservationScheme = DLFLWindow::HexagonPreserving;
-		break;
-		case 1:	lastSixPreservationScheme = DLFLWindow::DualHexagonPreserving;
-		break;	
-		default:
-		break;
-	}
-	((MainWindow*)parentWidget()->parentWidget())->setRemeshingScheme(lastSixPreservationScheme);
+void RemeshingMode::triggerDualLoopStyleRemeshingSix(){
+
+	((MainWindow*)mParent)->setToolOptions(mDualLoopStyleRemeshingSixWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::HexagonPreserving);
+}
+
+void RemeshingMode::triggerLoopStyleRemeshingSixWidget(){
+
+	((MainWindow*)mParent)->setToolOptions(mLoopStyleRemeshingSixWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::DualHexagonPreserving);
 }
 
 void RemeshingMode::setupMiscellaneous(){
 	
-	lastMiscellaneousScheme = DLFLWindow::Fractal;
-	lastMiscellaneousMode = DLFLWindow::NormalMode;
-	miscellaneousLayout = new QVBoxLayout;
-	
-	QLabel *miscellaneousLabel = new QLabel(tr("Select Remeshing Scheme"));
-	QComboBox *miscellaneousComboBox = new QComboBox();
-	QStringList miscellaneousList;
-	miscellaneousList << tr("Fractal") << tr("Double Stellate with Edge Removal") << tr("Doo-Sabin (BC)") 
-										<< tr("Doo-Sabin (BC New)") << tr("Dome") << tr("Subdivide Face");
-	
-	miscellaneousComboBox->addItems(miscellaneousList);
-	//add the combobox to the layout
-	miscellaneousLayout->addWidget(miscellaneousLabel);
-	miscellaneousLayout->addWidget(miscellaneousComboBox);
-	
-	//create the stacked widget and all child widget pages
-  QWidget *fractalWidget = new QWidget;
-  QWidget *doubleStellateMiscWidget = new QWidget;
-  QWidget *dooSabinBCWidget = new QWidget;
-  QWidget *dooSabinBCNewWidget = new QWidget;
-  QWidget *domeWidget = new QWidget;
-  QWidget *subdivideFaceWidget = new QWidget;
+  mFractalWidget = new QWidget;
+  mDoubleStellateMiscWidget = new QWidget;
+  mDooSabinBCWidget = new QWidget;
+  mDooSabinBCNewWidget = new QWidget;
+  mDomeWidget = new QWidget;
+  mSubdivideFaceWidget = new QWidget;
 
 	//Fractal
-	QVBoxLayout *fractalLayout = new QVBoxLayout;
+	mFractalLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	
 	QLabel *fractalMultiplierLabel = new QLabel(tr("Multiplier:"));
 	QDoubleSpinBox *fractalMultiplierSpinBox = new QDoubleSpinBox;
@@ -1102,21 +1134,21 @@ void RemeshingMode::setupMiscellaneous(){
 	fractalMultiplierSpinBox->setValue(1.0);
 	fractalMultiplierSpinBox->setDecimals(2);
 	connect(fractalMultiplierSpinBox, SIGNAL(valueChanged(double)),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(changeFractalOffset(double)) );	
+					((MainWindow*)mParent),SLOT(changeFractalOffset(double)) );	
 	
-	fractalLayout->addWidget(fractalMultiplierLabel);
-  fractalLayout->addWidget(fractalMultiplierSpinBox);
+	mFractalLayout->addWidget(fractalMultiplierLabel);
+  mFractalLayout->addWidget(fractalMultiplierSpinBox);
 
 	QPushButton *fractalButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(fractalButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 					
-	fractalLayout->addWidget(fractalButton);
-	fractalLayout->addStretch(1);
-	fractalWidget->setLayout(fractalLayout);
+	mFractalLayout->addWidget(fractalButton);
+	mFractalLayout->addStretch(1);
+	mFractalWidget->setLayout(mFractalLayout);
 	
 	//double stellate with Edge Removal
-	QVBoxLayout *doubleStellateMiscLayout = new QVBoxLayout;
+	mDoubleStellateMiscLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 
 	QLabel *doubleStellateMiscHeightLabel = new QLabel(tr("Height:"));
 	QDoubleSpinBox *doubleStellateMiscHeightSpinBox = new QDoubleSpinBox;
@@ -1125,10 +1157,10 @@ void RemeshingMode::setupMiscellaneous(){
 	doubleStellateMiscHeightSpinBox->setValue(0.0);
 	doubleStellateMiscHeightSpinBox->setDecimals(2);
 	connect(doubleStellateMiscHeightSpinBox, SIGNAL(valueChanged(double)),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(changeSubStellateAmount(double)) );	
+					((MainWindow*)mParent),SLOT(changeSubStellateAmount(double)) );	
 	
-	doubleStellateMiscLayout->addWidget(doubleStellateMiscHeightLabel);
-  doubleStellateMiscLayout->addWidget(doubleStellateMiscHeightSpinBox);
+	mDoubleStellateMiscLayout->addWidget(doubleStellateMiscHeightLabel);
+  mDoubleStellateMiscLayout->addWidget(doubleStellateMiscHeightSpinBox);
 
 	QLabel *doubleStellateMiscCurveLabel = new QLabel(tr("Curve:"));
 	QDoubleSpinBox *doubleStellateMiscCurveSpinBox = new QDoubleSpinBox;
@@ -1137,31 +1169,31 @@ void RemeshingMode::setupMiscellaneous(){
 	doubleStellateMiscCurveSpinBox->setValue(0.0);
 	doubleStellateMiscCurveSpinBox->setDecimals(2);
 	connect(doubleStellateMiscCurveSpinBox, SIGNAL(valueChanged(double)),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(changeSubStellateCurve(double)) );	
+					((MainWindow*)mParent),SLOT(changeSubStellateCurve(double)) );	
 	
-	doubleStellateMiscLayout->addWidget(doubleStellateMiscCurveLabel);
-  doubleStellateMiscLayout->addWidget(doubleStellateMiscCurveSpinBox);
+	mDoubleStellateMiscLayout->addWidget(doubleStellateMiscCurveLabel);
+  mDoubleStellateMiscLayout->addWidget(doubleStellateMiscCurveSpinBox);
 
 	QPushButton *doubleStellateMiscButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(doubleStellateMiscButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 					
-	doubleStellateMiscLayout->addWidget(doubleStellateMiscButton);
-	doubleStellateMiscLayout->addStretch(1);
-	doubleStellateMiscWidget->setLayout(doubleStellateMiscLayout);
+	mDoubleStellateMiscLayout->addWidget(doubleStellateMiscButton);
+	mDoubleStellateMiscLayout->addStretch(1);
+	mDoubleStellateMiscWidget->setLayout(mDoubleStellateMiscLayout);
 	
 	//doo sabin bc
-	QVBoxLayout *dooSabinBCLayout = new QVBoxLayout;
+	mDooSabinBCLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	QPushButton *dooSabinBCButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dooSabinBCButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 					
-	dooSabinBCLayout->addWidget(dooSabinBCButton);
-	dooSabinBCLayout->addStretch(1);
-	dooSabinBCWidget->setLayout(dooSabinBCLayout);
+	mDooSabinBCLayout->addWidget(dooSabinBCButton);
+	mDooSabinBCLayout->addStretch(1);
+	mDooSabinBCWidget->setLayout(mDooSabinBCLayout);
 	
 	//doo sabin bc new
-	QVBoxLayout *dooSabinBCNewLayout = new QVBoxLayout;
+	mDooSabinBCNewLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 
 	QLabel *dooSabinBCNewScaleLabel = new QLabel(tr("Scale:"));
 	QDoubleSpinBox *dooSabinBCNewScaleSpinBox = new QDoubleSpinBox;
@@ -1170,10 +1202,10 @@ void RemeshingMode::setupMiscellaneous(){
 	dooSabinBCNewScaleSpinBox->setValue(1.0);
 	dooSabinBCNewScaleSpinBox->setDecimals(2);
 	connect(dooSabinBCNewScaleSpinBox, SIGNAL(valueChanged(double)),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(changeDooSabinBCnewScale(double)) );	
+					((MainWindow*)mParent),SLOT(changeDooSabinBCnewScale(double)) );	
 	
-	dooSabinBCNewLayout->addWidget(dooSabinBCNewScaleLabel);
-  dooSabinBCNewLayout->addWidget(dooSabinBCNewScaleSpinBox);
+	mDooSabinBCNewLayout->addWidget(dooSabinBCNewScaleLabel);
+  mDooSabinBCNewLayout->addWidget(dooSabinBCNewScaleSpinBox);
 
 	QLabel *dooSabinBCNewLengthLabel = new QLabel(tr("Length:"));
 	QDoubleSpinBox *dooSabinBCNewLengthSpinBox = new QDoubleSpinBox;
@@ -1182,21 +1214,21 @@ void RemeshingMode::setupMiscellaneous(){
 	dooSabinBCNewLengthSpinBox->setValue(1.0);
 	dooSabinBCNewLengthSpinBox->setDecimals(2);	
 	connect(dooSabinBCNewLengthSpinBox, SIGNAL(valueChanged(double)),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(changeDooSabinBCnewLength(double)) );	
+					((MainWindow*)mParent),SLOT(changeDooSabinBCnewLength(double)) );	
 	
-	dooSabinBCNewLayout->addWidget(dooSabinBCNewLengthLabel);
-  dooSabinBCNewLayout->addWidget(dooSabinBCNewLengthSpinBox);
+	mDooSabinBCNewLayout->addWidget(dooSabinBCNewLengthLabel);
+  mDooSabinBCNewLayout->addWidget(dooSabinBCNewLengthSpinBox);
 
 	QPushButton *dooSabinBCNewButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dooSabinBCNewButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 					
-	dooSabinBCNewLayout->addWidget(dooSabinBCNewButton);
-	dooSabinBCNewLayout->addStretch(1);
-	dooSabinBCNewWidget->setLayout(dooSabinBCNewLayout);
+	mDooSabinBCNewLayout->addWidget(dooSabinBCNewButton);
+	mDooSabinBCNewLayout->addStretch(1);
+	mDooSabinBCNewWidget->setLayout(mDooSabinBCNewLayout);
 	
 	//dome
-	QVBoxLayout *domeLayout = new QVBoxLayout;
+	mDomeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 
 	QLabel *domeHeightLabel = new QLabel(tr("Height:"));
 	QDoubleSpinBox *domeHeightSpinBox = new QDoubleSpinBox;
@@ -1205,10 +1237,10 @@ void RemeshingMode::setupMiscellaneous(){
 	domeHeightSpinBox->setValue(1.0);
 	domeHeightSpinBox->setDecimals(2);
 	connect(domeHeightSpinBox, SIGNAL(valueChanged(double)),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(changeDomeSubdivisionLength(double)) );	
+					((MainWindow*)mParent),SLOT(changeDomeSubdivisionLength(double)) );	
 	
-	domeLayout->addWidget(domeHeightLabel);
-  domeLayout->addWidget(domeHeightSpinBox);
+	mDomeLayout->addWidget(domeHeightLabel);
+  mDomeLayout->addWidget(domeHeightSpinBox);
 
 	QLabel *domeScaleLabel = new QLabel(tr("Scale:"));
 	QDoubleSpinBox *domeScaleSpinBox = new QDoubleSpinBox;
@@ -1217,105 +1249,69 @@ void RemeshingMode::setupMiscellaneous(){
 	domeScaleSpinBox->setValue(1.0);
 	domeScaleSpinBox->setDecimals(2);
 	connect(domeScaleSpinBox, SIGNAL(valueChanged(double)),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(changeDomeSubdivisionScale(double)) );	
+					((MainWindow*)mParent),SLOT(changeDomeSubdivisionScale(double)) );	
 	
-	domeLayout->addWidget(domeScaleLabel);
-  domeLayout->addWidget(domeScaleSpinBox);
+	mDomeLayout->addWidget(domeScaleLabel);
+  mDomeLayout->addWidget(domeScaleSpinBox);
 
 	QPushButton *domeButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(domeButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(perform_remeshing()) );
-	domeLayout->addWidget(domeButton);
-	domeLayout->addStretch(1);
-	domeWidget->setLayout(domeLayout);
+					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+	mDomeLayout->addWidget(domeButton);
+	mDomeLayout->addStretch(1);
+	mDomeWidget->setLayout(mDomeLayout);
 	
 	//subdivide face
-	QVBoxLayout *subdivideFaceLayout = new QVBoxLayout;
+	mSubdivideFaceLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	QCheckBox *subdivideFaceCheckBox = new QCheckBox(tr("Use Quads (off -> triangles)"));
 	connect(subdivideFaceCheckBox, SIGNAL(stateChanged(int)),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(toggleUseQuadsFlag(int)) );
+					((MainWindow*)mParent),SLOT(toggleUseQuadsFlag(int)) );
 
-	subdivideFaceLayout->addWidget(subdivideFaceCheckBox);
+	mSubdivideFaceLayout->addWidget(subdivideFaceCheckBox);
+	
 	subdivideFaceCheckBox->setChecked(true);
 	QPushButton *subdivideFaceButton = new QPushButton(tr("Subdivide Selected Faces"), this);
 	connect(subdivideFaceButton, SIGNAL(clicked()),
-					((MainWindow*)parentWidget()->parentWidget()),SLOT(subdivide_face()) );
+					((MainWindow*)mParent),SLOT(subdivide_face()) );
 					
-	subdivideFaceLayout->addWidget(subdivideFaceButton);
-	subdivideFaceLayout->addStretch(1);
-	subdivideFaceWidget->setLayout(subdivideFaceLayout);
+	mSubdivideFaceLayout->addWidget(subdivideFaceButton);
+	mSubdivideFaceLayout->addStretch(1);
+	mSubdivideFaceWidget->setLayout(mSubdivideFaceLayout);
 	
-	//add the widgets to a stack controlled by the qcombobox
-  QStackedWidget *miscellaneousStackedWidget = new QStackedWidget;
-  miscellaneousStackedWidget->addWidget(fractalWidget );
-	miscellaneousStackedWidget->addWidget(doubleStellateMiscWidget );
-  miscellaneousStackedWidget->addWidget(dooSabinBCWidget );
-	miscellaneousStackedWidget->addWidget(dooSabinBCNewWidget );
-	miscellaneousStackedWidget->addWidget(domeWidget );
-	miscellaneousStackedWidget->addWidget(subdivideFaceWidget );
-	
-	//add the stackedwidget to the layout
-  miscellaneousLayout->addWidget(miscellaneousStackedWidget);
-	//connect the combobox to the stacked widget
-  connect(miscellaneousComboBox, SIGNAL(activated(int)),
-          miscellaneousStackedWidget, SLOT(setCurrentIndex(int)));
-	
-	miscellaneousLayout->addStretch(1);
-	miscellaneousWidget->setLayout(miscellaneousLayout);
-	
-	//connect the combobox signal to the mode switching slot
-	connect(miscellaneousComboBox, SIGNAL(currentIndexChanged(int)),
-					this,SLOT(switchMiscellaneousMode(int)) );
 }
 
-void RemeshingMode::switchMiscellaneousMode(int index){	
-	// QMessageBox::about(this, "HEY",tr("index = %1").arg(index));
-	
-	switch(index){
-		case 0: lastMiscellaneousMode = DLFLWindow::NormalMode;
-						lastMiscellaneousScheme = DLFLWindow::Fractal;
-						((MainWindow*)parentWidget()->parentWidget())->setMode(DLFLWindow::NormalMode);
-		break;
-		case 1:	lastMiscellaneousMode = DLFLWindow::NormalMode;
-						lastMiscellaneousScheme = DLFLWindow::ModifiedDoubleStellate;
-						((MainWindow*)parentWidget()->parentWidget())->setMode(DLFLWindow::NormalMode);
-		break;	
-		case 2: lastMiscellaneousMode = DLFLWindow::NormalMode;
-						lastMiscellaneousScheme = DLFLWindow::Dome;
-						((MainWindow*)parentWidget()->parentWidget())->setMode(DLFLWindow::NormalMode);
-		break;
-		case 3: lastMiscellaneousMode = DLFLWindow::NormalMode;
-						lastMiscellaneousScheme = DLFLWindow::DooSabinBC;
-						((MainWindow*)parentWidget()->parentWidget())->setMode(DLFLWindow::NormalMode);
-		break;
-		case 4: lastMiscellaneousMode = DLFLWindow::NormalMode;
-						lastMiscellaneousScheme = DLFLWindow::DooSabinBCNew;
-						((MainWindow*)parentWidget()->parentWidget())->setMode(DLFLWindow::NormalMode);
-		break;
-		case 5: lastMiscellaneousMode = DLFLWindow::SubDivideFace;
-						((MainWindow*)parentWidget()->parentWidget())->setMode(lastMiscellaneousMode);
-		break;
-		default:
-		break;
-	}
-	((MainWindow*)parentWidget()->parentWidget())->setRemeshingScheme(lastMiscellaneousScheme);
+void RemeshingMode::triggerFractal(){
+
+	((MainWindow*)mParent)->setToolOptions(mFractalWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::LinearVertexInsertion);
 }
 
-// //mouse events
-// void MainWindow::mousePressEvent(QMouseEvent *event) {
-// 	if ( event->buttons() == Qt::RightButton ){
-// 		event->ignore();
-// 	}
-// }
-// 
-// void MainWindow::mouseMoveEvent(QMouseEvent *event) {
-// 	if ( event->buttons() == Qt::RightButton ){
-// 		event->ignore();
-// 	}
-// }
-// 
-// void MainWindow::mouseReleaseEvent(QMouseEvent *event) {
-// 	if ( event->buttons() == Qt::RightButton ){
-// 		event->ignore();
-// 	}
-// }
+void RemeshingMode::triggerDoubleStellateMisc(){
+
+	((MainWindow*)mParent)->setToolOptions(mDoubleStellateMiscWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::CatmullClark);
+}
+
+void RemeshingMode::triggerDooSabinBC(){
+
+	((MainWindow*)mParent)->setToolOptions(mDooSabinBCWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::ModifiedStellate);
+}
+
+void RemeshingMode::triggerDooSabinBCNew(){
+
+	((MainWindow*)mParent)->setToolOptions(mDooSabinBCNewWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::DooSabin);
+}
+
+void RemeshingMode::triggerDome(){
+
+	((MainWindow*)mParent)->setToolOptions(mDomeWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::CornerCutting);
+}
+
+void RemeshingMode::triggerSubdivideFace(){
+
+	((MainWindow*)mParent)->setToolOptions(mSubdivideFaceWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::SubDivideFace);
+}

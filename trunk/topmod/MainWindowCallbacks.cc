@@ -552,7 +552,3 @@ void MainWindow::changeTiltPlane1(double value){
 void MainWindow::changeTiltPlane2(double value){
 	
 }
-
-
-
-

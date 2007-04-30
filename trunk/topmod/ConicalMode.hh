@@ -75,6 +75,8 @@ public slots:
 
 private: 
 
+	QWidget *mParent;
+
 	QDoubleSpinBox *cutbyEdgeOffsetSpinBox;
 	QDoubleSpinBox *cutbyEdgeTiltPlane1SpinBox;
 	QDoubleSpinBox *cutbyEdgeTiltPlane2SpinBox;

@@ -86,6 +86,8 @@ public slots:
 
 private:
 	
+	QWidget *mParent;
+
 	QBoxLayout *mMultiFaceAlgorithmLayout;
 	
 	QButtonGroup *multiFaceAlgorithmButtonGroup;
