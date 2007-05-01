@@ -459,9 +459,15 @@ void MainWindow::createActions()
 }
 
 void MainWindow::createMenus(){
-		
-	menuBar = new QMenuBar(this);
-	setMenuBar(menuBar);
+
+	#ifdef __APPLE__
+		menuBar = new QMenuBar(0);
+		setMenuBar(menuBar);
+		setUnifiedTitleAndToolBarOnMac(true);
+	#else
+		menuBar = new QMenuBar(this);
+		setMenuBar(menuBar);
+	#endif
 	
 	fileMenu = new QMenu(tr("&File"));
 	menuBar->addMenu(fileMenu);
@@ -530,6 +536,18 @@ void MainWindow::createMenus(){
 	primitivesMenu->addAction(pIcosahedronAct);
 	primitivesMenu->addAction(pSoccerBallAct);
 	primitivesMenu->addAction(pGeodesicAct);
+	
+	mToolsMenu = new QMenu(tr("&Tools"));
+	mToolsMenu->addMenu(mBasicsMode->getMenu());
+	mToolsMenu->addMenu(mExtrusionMode->getMenu());
+	mToolsMenu->addMenu(mConicalMode->getMenu());
+	mToolsMenu->addMenu(mHighgenusMode->getMenu());
+	mToolsMenu->addMenu(mTexturingMode->getMenu());
+	// mToolsMenu->addMenu(mBasicsMode->getMenu());
+	menuBar->addMenu(mToolsMenu);
+	
+	mRemeshingMenu = mRemeshingMode->getMenu();
+	menuBar->addMenu(mRemeshingMenu);		
 
 	objectMenu = new QMenu(tr("&Object"));
 	menuBar->addMenu(objectMenu);
@@ -598,7 +616,7 @@ void MainWindow::createToolBars() {
 	mToolsToolBar->addSeparator();
 	
 	mRemeshingActionGroup = new QActionGroup(this);
-	mRemeshingMode->addActions(mRemeshingActionGroup, mToolsActionGroup, mRemeshingToolBar, mToolOptionsStackedWidget);
+	mRemeshingMode->addActions(mToolsActionGroup, mRemeshingToolBar, mToolOptionsStackedWidget);
 	
 	mHighgenusMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);
 	mToolsToolBar->addSeparator();

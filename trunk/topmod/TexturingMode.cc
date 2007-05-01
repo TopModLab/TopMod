@@ -24,6 +24,16 @@ TexturingMode::TexturingMode(QWidget *parent)
 
 }
 
+QMenu* TexturingMode::getMenu(){
+	
+	mTexturingMenu = new QMenu(tr("Texturing"));
+	
+	mTexturingMenu->addAction(mTileTexturingAction);
+	
+	return mTexturingMenu;
+	
+}
+
 void TexturingMode::triggerTileTexturing(){
 	
 	((MainWindow*)mParent)->setToolOptions(mTileTexturingWidget);

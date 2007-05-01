@@ -28,6 +28,7 @@ class BasicsMode : public QWidget {
 public:
 	BasicsMode(QWidget *parent = 0);
 	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
+	QMenu* getMenu();
 
 	QAction *mInsertEdgeAction;
 	QAction *mDeleteEdgeAction;	
@@ -65,6 +66,7 @@ protected:
 private:
 	
 	QWidget *mParent;
+	QMenu *mBasicsMenu;	
 	
 	//transform spinboxes
 	QDoubleSpinBox *xScaleSpinBox;

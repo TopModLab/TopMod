@@ -85,6 +85,21 @@ BasicsMode::BasicsMode(QWidget *parent)
 		
 }
 
+QMenu* BasicsMode::getMenu(){
+	mBasicsMenu = new QMenu(tr("Basics"));
+	
+	mBasicsMenu->addAction(mInsertEdgeAction);
+	mBasicsMenu->addAction(mDeleteEdgeAction);	
+	mBasicsMenu->addAction(mCollapseEdgeAction);	
+	mBasicsMenu->addAction(mSubdivideEdgeAction);
+	mBasicsMenu->addAction(mConnectEdgesAction);	
+	mBasicsMenu->addAction(mSpliceCornersAction);
+	mBasicsMenu->addAction(mTransformsAction);
+	
+	return mBasicsMenu;
+	
+}
+
 void BasicsMode::triggerInsertEdge(){
 	
 	((MainWindow*)mParent)->setToolOptions(mInsertEdgeWidget);

@@ -169,6 +169,9 @@ private:
   QMenu *settingsMenu;
   QMenu *languageMenu;
 	
+	QMenu *mRemeshingMenu;
+	QMenu *mToolsMenu;
+	
   //File Menu Actions
   QAction *newAct;
   QAction *openAct;

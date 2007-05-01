@@ -19,6 +19,7 @@ class ExtrusionMode : public QWidget {
 public:
 	ExtrusionMode(QWidget *parent = 0);
 	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
+	QMenu* getMenu();
 	
 	QAction *mDooSabinExtrudeAction;
 	QAction *mCubicalExtrudeAction;
@@ -71,6 +72,7 @@ public slots:
 private:
 	
 	QWidget *mParent;
+	QMenu *mExtrusionMenu;
 
 	//doo sabin extrude
 	QLabel *dooSabinLengthLabel;

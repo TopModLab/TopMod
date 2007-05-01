@@ -82,6 +82,22 @@ ExtrusionMode::ExtrusionMode(QWidget *parent)
 
 }
 
+QMenu* ExtrusionMode::getMenu(){
+	
+	mExtrusionMenu = new QMenu(tr("Extrusion"));
+	
+	mExtrusionMenu->addAction(mDooSabinExtrudeAction);
+	mExtrusionMenu->addAction(mCubicalExtrudeAction);
+	mExtrusionMenu->addAction(mDodecahedralExtrudeAction);
+	mExtrusionMenu->addAction(mIcosahedralExtrudeAction);
+	mExtrusionMenu->addAction(mOctahedralExtrudeAction);
+	mExtrusionMenu->addAction(mStellateExtrudeAction);
+	mExtrusionMenu->addAction(mDoubleStellateExtrudeAction);	
+	
+	return mExtrusionMenu;	
+	
+}
+
 void ExtrusionMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget){
 	
 	actionGroup->addAction(mDooSabinExtrudeAction);

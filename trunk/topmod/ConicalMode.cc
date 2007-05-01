@@ -80,6 +80,21 @@ ConicalMode::ConicalMode(QWidget *parent)
 
 }
 
+QMenu *ConicalMode::getMenu(){
+	
+	mConicalMenu = new QMenu(tr("Conical"));
+	
+	mConicalMenu->addAction(mCutbyEdgeAction);
+	mConicalMenu->addAction(mCutbyVertexAction);
+	mConicalMenu->addAction(mCutbyEdgeVertexAction);
+	mConicalMenu->addAction(mCutbyFaceAction);
+	mConicalMenu->addAction(mTruncateEdgeAction);
+	mConicalMenu->addAction(mTruncateVertexAction); 
+	mConicalMenu->addAction(mDualConvexHullAction);
+	
+	return mConicalMenu;
+}
+
 void ConicalMode::triggerCutbyEdge(){
 	
 	((MainWindow*)mParent)->setToolOptions(mCutbyEdgeWidget);

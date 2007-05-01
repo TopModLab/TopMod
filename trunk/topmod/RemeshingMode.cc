@@ -27,7 +27,6 @@ RemeshingMode::RemeshingMode(QWidget *parent)
 	
 	mDualAction = new QAction(tr("Dual"),this);
 	mDualAction->setCheckable(true);
-	mDualAction->setChecked(true);
 	// sm->registerAction(mDualAction, "Basics Modes", "9");
 	mDualAction->setStatusTip(tr("Enter Dual Mode"));
 	mDualAction->setToolTip(tr("Dual Mode"));
@@ -280,43 +279,119 @@ RemeshingMode::RemeshingMode(QWidget *parent)
 
 }
 
-void RemeshingMode::addActions(QActionGroup *remeshingActionGroup, QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget){
+QMenu* RemeshingMode::getMenu(){
 	
-	remeshingActionGroup->addAction(mDualAction);
-	remeshingActionGroup->addAction(mRootThreeAction);
-	remeshingActionGroup->addAction(mDualVertexTruncationAction);
-	remeshingActionGroup->addAction(mStellationAction);
-	remeshingActionGroup->addAction(mDoubleStellationAction);
-	remeshingActionGroup->addAction(mTwelveSixFourAction);
-	remeshingActionGroup->addAction(mHoneycombAction);
-	remeshingActionGroup->addAction(mVertexTruncationAction);
-	remeshingActionGroup->addAction(mDualTwelveSixFourAction);
-	remeshingActionGroup->addAction(mLinearVertexAction);
-	remeshingActionGroup->addAction(mCatmullClarkAction);
-	remeshingActionGroup->addAction(mStellateEdgeRemovalAction);
-	remeshingActionGroup->addAction(mDooSabinAction);
-	remeshingActionGroup->addAction(mCornerCuttingAction);
-	remeshingActionGroup->addAction(mSimplestAction);
-	remeshingActionGroup->addAction(mPentagonalizationAction);
-	remeshingActionGroup->addAction(mCubicPentagonalizationAction);
-	remeshingActionGroup->addAction(mDualPentagonalizationAction);
-	remeshingActionGroup->addAction(mLoopStyleRemeshingAction);
-	remeshingActionGroup->addAction(mLoopSubdivisionAction);
-	remeshingActionGroup->addAction(mDualLoopStyleRemeshingAction);
-	remeshingActionGroup->addAction(mDualLoopSubdivisionAction);
-	remeshingActionGroup->addAction(mGlobalExtrudeAction);
-	remeshingActionGroup->addAction(mCheckerboardAction);
-	remeshingActionGroup->addAction(mDualGlobalExtrudeAction);
-	remeshingActionGroup->addAction(mDualCheckerboardAction);
-	remeshingActionGroup->addAction(mPentagonPreservingAction);
-	remeshingActionGroup->addAction(mDualPentagonPreservingAction);
-	remeshingActionGroup->addAction(mDualLoopStyleRemeshingSixAction);
-	remeshingActionGroup->addAction(mLoopStyleRemeshingSixAction);	
-	remeshingActionGroup->addAction(mFractalAction);
-	remeshingActionGroup->addAction(mDoubleStellateMiscAction);
-	remeshingActionGroup->addAction(mDooSabinBCAction);
-	remeshingActionGroup->addAction(mDooSabinBCNewAction);
-	remeshingActionGroup->addAction(mDomeAction);
+	mRemeshingMenu = new QMenu(tr("Remeshing"));
+	
+	mRemeshingMenu->addAction(mDualAction);
+	
+	mThreeConversionMenu = new QMenu(tr("3-Conversion"));
+	mThreeConversionMenu->addAction(mRootThreeAction);
+	mThreeConversionMenu->addAction(mDualVertexTruncationAction);
+	mThreeConversionMenu->addAction(mStellationAction);
+	mThreeConversionMenu->addAction(mDoubleStellationAction);
+	mThreeConversionMenu->addAction(mTwelveSixFourAction);
+	mThreeConversionMenu->addAction(mHoneycombAction);
+	mThreeConversionMenu->addAction(mVertexTruncationAction);
+	mThreeConversionMenu->addAction(mDualTwelveSixFourAction);
+	
+	mRemeshingMenu->addMenu(mThreeConversionMenu);
+	
+	mFourConversionMenu = new QMenu(tr("4-Conversion"));
+	mFourConversionMenu->addAction(mLinearVertexAction);
+	mFourConversionMenu->addAction(mCatmullClarkAction);
+	mFourConversionMenu->addAction(mStellateEdgeRemovalAction);
+	mFourConversionMenu->addAction(mDooSabinAction);
+	mFourConversionMenu->addAction(mCornerCuttingAction);
+	mFourConversionMenu->addAction(mSimplestAction);
+	
+	mRemeshingMenu->addMenu(mFourConversionMenu);
+	
+	mFiveConversionMenu = new QMenu(tr("5-Conversion"));	
+	mFiveConversionMenu->addAction(mPentagonalizationAction);
+	mFiveConversionMenu->addAction(mCubicPentagonalizationAction);
+	mFiveConversionMenu->addAction(mDualPentagonalizationAction);
+	
+	mRemeshingMenu->addMenu(mFiveConversionMenu);
+	
+	mThreePreservationMenu = new QMenu(tr("3-Preservation"));
+	mThreePreservationMenu->addAction(mLoopStyleRemeshingAction);
+	mThreePreservationMenu->addAction(mLoopSubdivisionAction);
+	mThreePreservationMenu->addAction(mDualLoopStyleRemeshingAction);
+	mThreePreservationMenu->addAction(mDualLoopSubdivisionAction);
+	
+	mRemeshingMenu->addMenu(mThreePreservationMenu);
+	
+	mFourPreservationMenu = new QMenu(tr("4-Preservation"));
+	mFourPreservationMenu->addAction(mGlobalExtrudeAction);
+	mFourPreservationMenu->addAction(mCheckerboardAction);
+	mFourPreservationMenu->addAction(mDualGlobalExtrudeAction);
+	mFourPreservationMenu->addAction(mDualCheckerboardAction);
+	
+	mRemeshingMenu->addMenu(mFourPreservationMenu);
+	
+	mFivePreservationMenu = new QMenu(tr("5-Preservation"));
+	mFivePreservationMenu->addAction(mPentagonPreservingAction);
+	mFivePreservationMenu->addAction(mDualPentagonPreservingAction);
+	
+	mRemeshingMenu->addMenu(mFivePreservationMenu);
+	
+	mSixPreservationMenu = new QMenu(tr("6-Preservation"));
+	mSixPreservationMenu->addAction(mDualLoopStyleRemeshingSixAction);
+	mSixPreservationMenu->addAction(mLoopStyleRemeshingSixAction);	
+	
+	mRemeshingMenu->addMenu(mSixPreservationMenu);
+	
+	mMiscellaneousMenu = new QMenu(tr("Miscellaneous"));
+	mMiscellaneousMenu->addAction(mFractalAction);
+	mMiscellaneousMenu->addAction(mDoubleStellateMiscAction);
+	mMiscellaneousMenu->addAction(mDooSabinBCAction);
+	mMiscellaneousMenu->addAction(mDooSabinBCNewAction);
+	mMiscellaneousMenu->addAction(mDomeAction);
+	mMiscellaneousMenu->addAction(mSubdivideFaceAction);
+
+	mRemeshingMenu->addMenu(mMiscellaneousMenu);	
+	
+	return mRemeshingMenu;
+}
+
+void RemeshingMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget){
+	
+	actionGroup->addAction(mDualAction);
+	actionGroup->addAction(mRootThreeAction);
+	actionGroup->addAction(mDualVertexTruncationAction);
+	actionGroup->addAction(mStellationAction);
+	actionGroup->addAction(mDoubleStellationAction);
+	actionGroup->addAction(mTwelveSixFourAction);
+	actionGroup->addAction(mHoneycombAction);
+	actionGroup->addAction(mVertexTruncationAction);
+	actionGroup->addAction(mDualTwelveSixFourAction);
+	actionGroup->addAction(mLinearVertexAction);
+	actionGroup->addAction(mCatmullClarkAction);
+	actionGroup->addAction(mStellateEdgeRemovalAction);
+	actionGroup->addAction(mDooSabinAction);
+	actionGroup->addAction(mCornerCuttingAction);
+	actionGroup->addAction(mSimplestAction);
+	actionGroup->addAction(mPentagonalizationAction);
+	actionGroup->addAction(mCubicPentagonalizationAction);
+	actionGroup->addAction(mDualPentagonalizationAction);
+	actionGroup->addAction(mLoopStyleRemeshingAction);
+	actionGroup->addAction(mLoopSubdivisionAction);
+	actionGroup->addAction(mDualLoopStyleRemeshingAction);
+	actionGroup->addAction(mDualLoopSubdivisionAction);
+	actionGroup->addAction(mGlobalExtrudeAction);
+	actionGroup->addAction(mCheckerboardAction);
+	actionGroup->addAction(mDualGlobalExtrudeAction);
+	actionGroup->addAction(mDualCheckerboardAction);
+	actionGroup->addAction(mPentagonPreservingAction);
+	actionGroup->addAction(mDualPentagonPreservingAction);
+	actionGroup->addAction(mDualLoopStyleRemeshingSixAction);
+	actionGroup->addAction(mLoopStyleRemeshingSixAction);	
+	actionGroup->addAction(mFractalAction);
+	actionGroup->addAction(mDoubleStellateMiscAction);
+	actionGroup->addAction(mDooSabinBCAction);
+	actionGroup->addAction(mDooSabinBCNewAction);
+	actionGroup->addAction(mDomeAction);
 	
 	actionGroup->addAction(mSubdivideFaceAction);
 	
@@ -405,6 +480,7 @@ void RemeshingMode::addActions(QActionGroup *remeshingActionGroup, QActionGroup 
 
 void RemeshingMode::setupDual(){
 	
+	mDualWidget = new QWidget;
 	mDualLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	
 	QCheckBox *dualFasterCheckBox = new QCheckBox(tr("Use Faster Method (Less Accurate)"));					
@@ -990,8 +1066,8 @@ void RemeshingMode::triggerDualCheckerboard(){
 void RemeshingMode::setupFivePreservation(){
 
 	//create the stacked widget and all child widget pages
-  QWidget *mPentagonPreservingWidget = new QWidget;
-  QWidget *mDualPentagonPreservingWidget = new QWidget;
+  mPentagonPreservingWidget = new QWidget;
+  mDualPentagonPreservingWidget = new QWidget;
 
 	//Pentagon Preserving
 	mPentagonPreservingLayout = new QBoxLayout(QBoxLayout::LeftToRight);
@@ -1041,8 +1117,8 @@ void RemeshingMode::triggerDualPentagonPreserving(){
 
 void RemeshingMode::setupSixPreservation(){
 	
-  QWidget *mDualLoopStyleRemeshingSixWidget = new QWidget;
-  QWidget *mLoopStyleRemeshingSixWidget = new QWidget;
+  mDualLoopStyleRemeshingSixWidget = new QWidget;
+  mLoopStyleRemeshingSixWidget = new QWidget;
 
 	//dual of loop-style remeshing
 	mDualLoopStyleRemeshingSixLayout = new QBoxLayout(QBoxLayout::LeftToRight);

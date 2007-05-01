@@ -23,6 +23,7 @@ class TexturingMode : public QWidget {
 public:
 	TexturingMode(QWidget *parent = 0);
 	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
+	QMenu *getMenu();
 
 	QAction *mTileTexturingAction;
 	QWidget *mTileTexturingWidget;	
@@ -36,6 +37,7 @@ public slots:
 private:
 
 	QWidget *mParent;
+	QMenu *mTexturingMenu;
 	
 	QBoxLayout *mTileTexturingLayout;	
 	

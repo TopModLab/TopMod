@@ -107,6 +107,24 @@ HighgenusMode::HighgenusMode(QWidget *parent)
 	
 }
 
+QMenu* HighgenusMode::getMenu(){
+	mHighgenusMenu = new QMenu(tr("High Genus"));
+	
+	mHighgenusMenu->addAction(mAddHoleHandleAction);
+	mHighgenusMenu->addAction(mAddHoleHandleCVAction);
+	mHighgenusMenu->addAction(mAddHandleSIAction);
+	mHighgenusMenu->addAction(mRindModelingScalingAction); 
+	mHighgenusMenu->addAction(mRindModelingThicknessAction);
+	mHighgenusMenu->addAction(mWireframeModelingAction); 
+	mHighgenusMenu->addAction(mColumnModelingAction);	
+	mHighgenusMenu->addAction(mSierpinskyAction);
+	mHighgenusMenu->addAction(mMultiFaceHandleAction);
+	mHighgenusMenu->addAction(mMengerSpongeAction);	
+	
+	return mHighgenusMenu;
+	
+}
+
 void HighgenusMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget){
 	
 	actionGroup->addAction(mAddHoleHandleAction);

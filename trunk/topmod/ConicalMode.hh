@@ -23,6 +23,7 @@ class ConicalMode : public QWidget {
 public:
 	ConicalMode(QWidget *parent = 0);
 	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
+	QMenu *getMenu();
 	
 	QWidget *mCutbyEdgeWidget;
 	QWidget *mCutbyVertexWidget;
@@ -76,6 +77,7 @@ public slots:
 private: 
 
 	QWidget *mParent;
+	QMenu *mConicalMenu;
 
 	QDoubleSpinBox *cutbyEdgeOffsetSpinBox;
 	QDoubleSpinBox *cutbyEdgeTiltPlane1SpinBox;

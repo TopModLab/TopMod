@@ -27,7 +27,8 @@ class RemeshingMode : public QWidget {
 
 public:
 	RemeshingMode(QWidget *parent = 0);
-	void addActions(QActionGroup *remeshingActionGroup, QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
+	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
+	QMenu *getMenu();
 
 		//dual
 	QBoxLayout *mDualLayout;
@@ -234,7 +235,15 @@ private:
 	
 	QWidget *mParent;
 	
-
+	QMenu *mRemeshingMenu;
+	QMenu *mThreeConversionMenu;
+	QMenu *mFourConversionMenu;
+	QMenu *mFiveConversionMenu;	
+	QMenu *mThreePreservationMenu;
+	QMenu *mFourPreservationMenu;
+	QMenu *mFivePreservationMenu;
+	QMenu *mSixPreservationMenu;
+	QMenu *mMiscellaneousMenu;
 	
 };
 

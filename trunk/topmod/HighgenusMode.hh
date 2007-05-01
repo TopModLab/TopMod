@@ -17,6 +17,7 @@ class HighgenusMode : public QWidget {
 public:
 	HighgenusMode(QWidget *parent = 0);
 	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
+	QMenu* getMenu();
 	
 	QAction *mAddHoleHandleAction;
 	QAction *mAddHoleHandleCVAction;
@@ -87,6 +88,7 @@ public slots:
 private:
 	
 	QWidget *mParent;
+	QMenu *mHighgenusMenu;
 
 	QBoxLayout *mMultiFaceAlgorithmLayout;
 	
