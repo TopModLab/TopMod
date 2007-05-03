@@ -114,16 +114,10 @@ protected:
 	QDockWidget *mToolOptionsDockWidget;
 	QStackedWidget *mToolOptionsStackedWidget;
 	
-	QToolBar *mRemeshingToolBar;
 	
    // Default sizes
 	static int MIN_W;                 // Minimum width for app window
 	static int MIN_H;                // Minimum height for app window
-	static int OPT_W;                          // Options panel width
-	static int MODE_TILE_H;                       // Mode tile height
-	static int SUBGRP_TILE_H;      // Operation sub-group tile height
-	static int MENU_H;                              // Menubar height
-	static int STATUS_H;                      // Status window height
 
 	   // Renderers
 	static ShadedRendererPtr shaded;                // ShadedRenderer
@@ -224,26 +218,25 @@ private:
   QAction *computeNormalsAndLightingAct;
   QAction *assignTextureCoordinatesAct;
 	
-  //Selection Menu Actions
-  QAction *selectVertexAct;
-  QAction *selectFaceAct;
-  QAction *selectEdgeAct;
-  QAction *selectCornerAct;
-  QAction *exitSelectionModeAct;
-
-  //Mode Switching Actions
-  QAction *modeBasicsAct;
-  QAction *modeExtrusionAct;
-	QAction *modeConicalAct;
-  QAction *modeRemeshingAct;
-  QAction *modeHighgenusAct;
-  QAction *modeTexturingAct;
+	//   //Selection Menu Actions
+	//   QAction *selectVertexAct;
+	//   QAction *selectFaceAct;
+	//   QAction *selectEdgeAct;
+	//   QAction *selectCornerAct;
+	//   QAction *exitSelectionModeAct;
+	// 
+	//   //Mode Switching Actions
+	//   QAction *modeBasicsAct;
+	//   QAction *modeExtrusionAct;
+	// QAction *modeConicalAct;
+	//   QAction *modeRemeshingAct;
+	//   QAction *modeHighgenusAct;
+	//   QAction *modeTexturingAct;
 	
   //settings menu actions
   QAction *manageShortcutsAct;
 	
   //Language Menu actions;
-	
   QAction *englishAct;
   QAction *spanishAct;
   QAction *germanAct;
@@ -253,9 +246,18 @@ private:
 
   QString curFile;
 	
+	QWidget *mToolOptionsTitleBarWidget;
+	QBoxLayout *mToolOptionsTitleBarLayout;
+	
   //QToolbars
   QToolBar *mPrimitivesToolBar;
 	QToolBar *mToolsToolBar;
+	QToolBar *mExtrusionToolBar;
+	QToolBar *mConicalToolBar;
+	QToolBar *mHighgenusToolBar;
+	QToolBar *mTexturingToolBar;
+	
+	QToolBar *mRemeshingToolBar;
 
 	//QActionGroups
 	QActionGroup *mToolsActionGroup;
@@ -285,9 +287,7 @@ public slots:
 	
 	
 //--- Callbacks for the controls and menu items ---//
-//--- The source for these methods are in DLFLAppWindowCallbacks.cc ---//
-// The DLFLAppWindow instance initiating the callback
-// is assumed to be specified through the user_data parameter
+//--- The source for these methods are in MainWindowCallbacks.cc ---//
 
 	void open_file();
 	void save_file();
@@ -448,6 +448,11 @@ public slots:
 	void mouseReleaseEvent(QMouseEvent * event);
 	void mouseMoveEvent(QMouseEvent * event);
 	void paintEvent(QPaintEvent * event);
+	
+	void dragEnterEvent(QDragEnterEvent *event);
+	void dropEvent(QDropEvent *event);
+	
+	
 	
 	
 };

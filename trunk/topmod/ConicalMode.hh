@@ -21,7 +21,7 @@ class ConicalMode : public QWidget {
 	Q_OBJECT
 
 public:
-	ConicalMode(QWidget *parent = 0);
+	ConicalMode(QWidget *parent, QShortcutManager *sm);
 	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
 	QMenu *getMenu();
 	

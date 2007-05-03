@@ -79,6 +79,9 @@ HEADERS += 	DLFLScriptEditor.hh \
 						DLFLVertex.hh \
 						DLFLWindow.hh \
 						Viewport.hh \
+						include/Graphics/TMPatchFace.hh \
+						include/Graphics/TMPatchObject.hh \
+						include/Graphics/TMPatch.hh \
 						stylesheeteditor.hh \
 						include/arcball/Arcball.hh \
 						include/arcball/BallMath.hh \

@@ -6,7 +6,7 @@
 
 #include "ExtrusionMode.hh"
 
-ExtrusionMode::ExtrusionMode(QWidget *parent)
+ExtrusionMode::ExtrusionMode(QWidget *parent, QShortcutManager *sm)
 		: QWidget(parent)
 {		
 	setParent(0);
@@ -33,49 +33,49 @@ ExtrusionMode::ExtrusionMode(QWidget *parent)
  	
 	mDooSabinExtrudeAction = new QAction(tr("Doo Sabin"),this);
 	mDooSabinExtrudeAction->setCheckable(true);
-	// sm->registerAction(mDooSabinExtrudeAction, "Basics Modes", "9");
+	sm->registerAction(mDooSabinExtrudeAction, "Extrusion Operations", "");
 	mDooSabinExtrudeAction->setStatusTip(tr("Enter Doo Sabin Extrude Mode"));
 	mDooSabinExtrudeAction->setToolTip(tr("Doo Sabin Extrude Mode"));
 	connect(mDooSabinExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerDooSabinExtrude()));
 	
 	mCubicalExtrudeAction = new QAction(tr("Cubical"),this);
 	mCubicalExtrudeAction->setCheckable(true);
-	// sm->registerAction(mCubicalExtrudeAction, "Basics Modes", "9");
+	sm->registerAction(mCubicalExtrudeAction, "Extrusion Operations", "");
 	mCubicalExtrudeAction->setStatusTip(tr("Enter Cubical Extrude Mode"));
 	mCubicalExtrudeAction->setToolTip(tr("Cubical Extrude Mode"));
 	connect(mCubicalExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerCubicalExtrude()));
 	
 	mDodecahedralExtrudeAction = new QAction(tr("Dodecahedral"),this);
 	mDodecahedralExtrudeAction->setCheckable(true);
-	// sm->registerAction(mDodecahedralExtrudeAction, "Basics Modes", "9");
+	sm->registerAction(mDodecahedralExtrudeAction, "Extrusion Operations", "");
 	mDodecahedralExtrudeAction->setStatusTip(tr("Enter Dodecahedral Extrude Mode"));
 	mDodecahedralExtrudeAction->setToolTip(tr("Dodecahedral Extrude Mode"));
 	connect(mDodecahedralExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerDodecahedralExtrude()));
 	
 	mIcosahedralExtrudeAction = new QAction(tr("Icosahedral"),this);
 	mIcosahedralExtrudeAction->setCheckable(true);
-	// sm->registerAction(mIcosahedralExtrudeAction, "Basics Modes", "9");
+	sm->registerAction(mIcosahedralExtrudeAction, "Extrusion Operations", "");
 	mIcosahedralExtrudeAction->setStatusTip(tr("Enter Icosahedral Extrude Mode"));
 	mIcosahedralExtrudeAction->setToolTip(tr("Icosahedral Extrude Mode"));
 	connect(mIcosahedralExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerIcosahedralExtrude()));
 	
 	mOctahedralExtrudeAction = new QAction(tr("Octahedral"),this);
 	mOctahedralExtrudeAction->setCheckable(true);
-	// sm->registerAction(mOctahedralExtrudeAction, "Basics Modes", "9");
+	sm->registerAction(mOctahedralExtrudeAction, "Extrusion Operations", "");
 	mOctahedralExtrudeAction->setStatusTip(tr("Enter Octahedral Extrude Mode"));
 	mOctahedralExtrudeAction->setToolTip(tr("Octahedral Extrude Mode"));
 	connect(mOctahedralExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerOctahedralExtrude()));
 	
 	mStellateExtrudeAction = new QAction(tr("Stellate"),this);
 	mStellateExtrudeAction->setCheckable(true);
-	// sm->registerAction(mStellateExtrudeAction, "Basics Modes", "9");
+	sm->registerAction(mStellateExtrudeAction, "Extrusion Operations", "");
 	mStellateExtrudeAction->setStatusTip(tr("Enter Stellate Extrude Mode"));
 	mStellateExtrudeAction->setToolTip(tr("Stellate Extrude Mode"));
 	connect(mStellateExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerStellateExtrude()));
 	
 	mDoubleStellateExtrudeAction = new QAction(tr("Double Stellate"),this);
 	mDoubleStellateExtrudeAction->setCheckable(true);
-	// sm->registerAction(mDoubleStellateExtrudeAction, "Basics Modes", "9");
+	sm->registerAction(mDoubleStellateExtrudeAction, "Extrusion Operations", "");
 	mDoubleStellateExtrudeAction->setStatusTip(tr("Enter Double Stellate Mode"));
 	mDoubleStellateExtrudeAction->setToolTip(tr("Double Stellate Mode"));
 	connect(mDoubleStellateExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerDoubleStellateExtrude()));
@@ -210,6 +210,7 @@ void ExtrusionMode::setScale(double value){
 void ExtrusionMode::setupDooSabinExtrude(){
 	
 	mDooSabinExtrudeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	mDooSabinExtrudeLayout->setMargin(0);
 	
 	//length
 	dooSabinLengthLabel = new QLabel(tr("Length"));
@@ -288,6 +289,7 @@ void ExtrusionMode::setupDooSabinExtrude(){
 	//   mDooSabinExtrudeLayout->addWidget(dooSabinBendBSpinBox);
  	
 	mDooSabinExtrudeLayout->addStretch(1);
+	mDooSabinExtrudeWidget->setWindowTitle(tr("Doo Sabin Extrusion"));
 	mDooSabinExtrudeWidget->setLayout(mDooSabinExtrudeLayout);	
 	
 }
@@ -295,6 +297,7 @@ void ExtrusionMode::setupDooSabinExtrude(){
 void ExtrusionMode::setupCubicalExtrude(){
 	
 	mCubicalExtrudeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	mCubicalExtrudeLayout->setMargin(0);
 	
 	//length
 	cubicalLengthLabel = new QLabel(tr("Length"));
@@ -373,12 +376,14 @@ void ExtrusionMode::setupCubicalExtrude(){
 	//   mCubicalExtrudeLayout->addWidget(cubicalBendBSpinBox);
 	
 	mCubicalExtrudeLayout->addStretch(1);
+	mCubicalExtrudeWidget->setWindowTitle(tr("Cubical Extrusion"));
 	mCubicalExtrudeWidget->setLayout(mCubicalExtrudeLayout);
 }
 
 void ExtrusionMode::setupDodecahedralExtrude(){
 	
 	mDodecahedralExtrudeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	mDodecahedralExtrudeLayout->setMargin(0);
 
 	//length
 	dodecahedralLengthLabel = new QLabel(tr("Length:"));
@@ -428,12 +433,14 @@ void ExtrusionMode::setupDodecahedralExtrude(){
 	mDodecahedralExtrudeLayout->addWidget(hexagonalizeCheckBox);
 
 	mDodecahedralExtrudeLayout->addStretch(1);
+	mDodecahedralExtrudeWidget->setWindowTitle(tr("Dodecahedral Extrusion"));
 	mDodecahedralExtrudeWidget->setLayout(mDodecahedralExtrudeLayout);	
 }
 
 void ExtrusionMode::setupIcosahedralExtrude(){
 	
 	mIcosahedralExtrudeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	mIcosahedralExtrudeLayout->setMargin(0);
 	
 	//length
 	icosahedralLengthLabel = new QLabel(tr("Length:"));
@@ -475,12 +482,14 @@ void ExtrusionMode::setupIcosahedralExtrude(){
 	mIcosahedralExtrudeLayout->addWidget(icosahedralSegmentsLabel);
   mIcosahedralExtrudeLayout->addWidget(icosahedralSegmentsSpinBox);
 	mIcosahedralExtrudeLayout->addStretch(1);
+	mIcosahedralExtrudeWidget->setWindowTitle(tr("Icosahedral Extrusion"));
 	mIcosahedralExtrudeWidget->setLayout(mIcosahedralExtrudeLayout);	
 }
 
 void ExtrusionMode::setupOctahedralExtrude(){
 	
 	mOctahedralExtrudeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	mOctahedralExtrudeLayout->setMargin(0);
 
 	//length
 	octahedralLengthLabel = new QLabel(tr("Length"));
@@ -544,13 +553,15 @@ void ExtrusionMode::setupOctahedralExtrude(){
 	mOctahedralExtrudeLayout->addWidget(meshFlatEdgesCheckBox);
 
 	mOctahedralExtrudeLayout->addStretch(1);
+	mOctahedralExtrudeWidget->setWindowTitle(tr("Octahedral Extrusion"));
 	mOctahedralExtrudeWidget->setLayout(mOctahedralExtrudeLayout);	
 }
 
 void ExtrusionMode::setupStellateExtrude(){
 	
 	mStellateExtrudeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-		
+	mStellateExtrudeLayout->setMargin(0);
+	
 	//length
 	stellateLengthLabel = new QLabel(tr("Length"));
 	stellateLengthSpinBox = new QDoubleSpinBox;
@@ -566,13 +577,14 @@ void ExtrusionMode::setupStellateExtrude(){
 	mStellateExtrudeLayout->addWidget(stellateLengthLabel);
 	mStellateExtrudeLayout->addWidget(stellateLengthSpinBox);
 	mStellateExtrudeLayout->addStretch(1);	
+	mStellateExtrudeWidget->setWindowTitle(tr("Stellate Extrusion"));
 	mStellateExtrudeWidget->setLayout(mStellateExtrudeLayout);
 }
 
 void ExtrusionMode::setupDoubleStellateExtrude(){
 	
 	mDoubleStellateExtrudeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	
+	mDoubleStellateExtrudeLayout->setMargin(0);
 	//length
 	doubleStellateLengthLabel = new QLabel(tr("Length"));
 	doubleStellateLengthSpinBox = new QDoubleSpinBox;
@@ -588,5 +600,6 @@ void ExtrusionMode::setupDoubleStellateExtrude(){
 	mDoubleStellateExtrudeLayout->addWidget(doubleStellateLengthLabel);
 	mDoubleStellateExtrudeLayout->addWidget(doubleStellateLengthSpinBox);
 	mDoubleStellateExtrudeLayout->addStretch(1);
+	mDoubleStellateExtrudeWidget->setWindowTitle(tr("Double Stellate Extrusion"));
 	mDoubleStellateExtrudeWidget->setLayout(mDoubleStellateExtrudeLayout);	
 }

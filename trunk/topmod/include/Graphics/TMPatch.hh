@@ -176,8 +176,7 @@ class TMPatch
             for (int j=0; j < patchsize; ++j)
                {
                  color = Kd * lightptr->illuminate(ctrlpts[j][i],ctrlptnormals[j][i]);
-                //fix this calculation to get a nice specular falloff 
-								color += (1.0 - Kd) * basecolor;
+                 color += (1.0 - Kd) * basecolor;
                  colorindex = (i*patchsize+j)*4;
                  glctrlptcolors[colorindex+0] = color.r;
                  glctrlptcolors[colorindex+1] = color.g;

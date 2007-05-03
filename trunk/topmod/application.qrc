@@ -35,6 +35,6 @@
 	<file alias="icosahedron.obj">objs/icosahedron.obj</file>
 	<file alias="soccerball.obj">objs/soccerball.obj</file>
 	<file alias="geodesic.obj">objs/geodesicdome.obj</file>
-	<!-- <file>images/</file> -->
+	<file>images/placeholder.png</file>
 </qresource>
 </RCC>

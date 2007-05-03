@@ -26,7 +26,7 @@ class BasicsMode : public QWidget {
 	Q_OBJECT
 	
 public:
-	BasicsMode(QWidget *parent = 0);
+	BasicsMode(QWidget *parent, QShortcutManager *sm);
 	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
 	QMenu* getMenu();
 

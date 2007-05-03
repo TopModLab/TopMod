@@ -21,7 +21,7 @@ class TexturingMode : public QWidget {
 	Q_OBJECT
 
 public:
-	TexturingMode(QWidget *parent = 0);
+	TexturingMode(QWidget *parent, QShortcutManager *sm);
 	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
 	QMenu *getMenu();
 

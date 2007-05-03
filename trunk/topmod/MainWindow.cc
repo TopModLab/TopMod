@@ -10,11 +10,6 @@
 
 int MainWindow::MIN_W = 1200;                        // Minimum width for app window
 int MainWindow::MIN_H = 630;                        // Minimum height for app window
-int MainWindow::OPT_W = 250;                        // Options panel width
-int MainWindow::MODE_TILE_H = 130;                  // Mode tile height
-int MainWindow::SUBGRP_TILE_H = 100;                 // Remeshing sub-group tile height
-int MainWindow::MENU_H = 30;                        // Menubar height
-int MainWindow::STATUS_H = 30;                      // Status window height
 
 ShadedRendererPtr MainWindow::shaded;                // ShadedRenderer
 NormalRendererPtr MainWindow::normal;                // NormalRenderer
@@ -25,16 +20,22 @@ PatchRendererPtr MainWindow::patch;		       // PatchRenderer
 
 //DLFLWindowPtr MainWindow::mainWindowPtr;            // Pointer to the main window
 
-MainWindow::MainWindow(){
+MainWindow::MainWindow() {
 	
-	// setUnifiedTitleAndToolBarOnMac(true);
+	// setUnifiedTitleAndToolBarOnMac(false);
 	mStatusBar = new QStatusBar();
 	setStatusBar(mStatusBar);
+	setDockOptions(QMainWindow::AllowNestedDocks);
+	setAttribute(Qt::WA_AcceptDrops, true);
+	// setAttribute(Qt::WA_MacMetalStyle, true);
+	setWindowFlags(Qt::Window | Qt::WindowTitleHint);
+	setWindowTitle("TopMod");
+	
   move(0,0);
   cWidget = new QWidget( );
 	
 	//create a container widget to hold multiple glwidgets
-	mainWindow = new DLFLWindow(OPT_W,MENU_H,MIN_W-OPT_W,MIN_H-MENU_H);
+	mainWindow = new DLFLWindow(0,0,1000,700);
 
   /** Setup Layouts **/
   layout = new QBoxLayout( QBoxLayout::TopToBottom, 0 );
@@ -58,12 +59,12 @@ MainWindow::MainWindow(){
   //make a new instance of QShortcutManager
   sm = new QShortcutManager();
 
-	mBasicsMode = new BasicsMode(this);
-	mExtrusionMode = new ExtrusionMode(this);
-	mConicalMode = new ConicalMode(this);
-	mRemeshingMode = new RemeshingMode(this);
-	mHighgenusMode = new HighgenusMode(this);
-	mTexturingMode = new TexturingMode(this);
+	mBasicsMode = new BasicsMode(this, sm);
+	mExtrusionMode = new ExtrusionMode(this, sm);
+	mConicalMode = new ConicalMode(this, sm);
+	mRemeshingMode = new RemeshingMode(this, sm);
+	mHighgenusMode = new HighgenusMode(this, sm);
+	mTexturingMode = new TexturingMode(this, sm);
 
   createToolBars();
   createActions();
@@ -319,43 +320,43 @@ void MainWindow::createActions()
 	connect(pGeodesicAct, SIGNAL(triggered()), mainWindow, SLOT(loadGeodesic()));
 
 
-	modeExtrusionAct = new QAction(QIcon(":/images/mode_extrusion.png"), tr("&Extrusion"), this);
-	modeExtrusionAct->setCheckable(true);
-	sm->registerAction(modeExtrusionAct, "Modes", "2");
-	modeExtrusionAct->setStatusTip(tr("Switch to Extrusions Mode"));
-	//connect(modeExtrusionAct, SIGNAL(triggered()), this, SLOT(switchExtrusionMode()));
+	// modeExtrusionAct = new QAction(QIcon(":/images/mode_extrusion.png"), tr("&Extrusion"), this);
+	// modeExtrusionAct->setCheckable(true);
+	// sm->registerAction(modeExtrusionAct, "Modes", "2");
+	// modeExtrusionAct->setStatusTip(tr("Switch to Extrusions Mode"));
+	// //connect(modeExtrusionAct, SIGNAL(triggered()), this, SLOT(switchExtrusionMode()));
+	// 
+	// modeConicalAct = new QAction(QIcon(":/images/mode_conical.png"), tr("&Conical Sculpting"), this);
+	// modeConicalAct->setCheckable(true);
+	// sm->registerAction(modeConicalAct, "Modes", "3");
+	// modeConicalAct->setStatusTip(tr("Switch to Conical Sculpting Mode"));
+	// // connect(modeConicalAct, SIGNAL(triggered()), this, SLOT(switchConicalMode()));
+	// 
+	// modeRemeshingAct = new QAction(QIcon(":/images/mode_remeshing.png"), tr("&Remeshing"), this);
+	// modeRemeshingAct->setCheckable(true);
+	// sm->registerAction(modeRemeshingAct, "Modes", "4");
+	// modeRemeshingAct->setStatusTip(tr("Switch to Remeshing Mode"));
+	// // connect(modeRemeshingAct, SIGNAL(triggered()), this, SLOT(switchRemeshingMode()));
+	// 
+	// modeHighgenusAct = new QAction(QIcon(":/images/mode_highgenus.png"), tr("&High Genus"), this);
+	// modeHighgenusAct->setCheckable(true);
+	// sm->registerAction(modeHighgenusAct, "Modes", "5");
+	// modeHighgenusAct->setStatusTip(tr("Switch to High Genus Mode"));
+	// // connect(modeHighgenusAct, SIGNAL(triggered()), this, SLOT(switchHighgenusMode()));
+	// 
+	// modeTexturingAct = new QAction(QIcon(":/images/mode_texturing.png"), tr("&Texturing"), this);
+	// modeTexturingAct->setCheckable(true);
+	// sm->registerAction(modeTexturingAct, "Modes", "6");
+	// modeTexturingAct->setStatusTip(tr("Switch to Texturing Mode"));
+	// // connect(modeTexturingAct, SIGNAL(triggered()), this, SLOT(switchTexturingMode()));
 
-	modeConicalAct = new QAction(QIcon(":/images/mode_conical.png"), tr("&Conical Sculpting"), this);
-	modeConicalAct->setCheckable(true);
-	sm->registerAction(modeConicalAct, "Modes", "3");
-	modeConicalAct->setStatusTip(tr("Switch to Conical Sculpting Mode"));
-	// connect(modeConicalAct, SIGNAL(triggered()), this, SLOT(switchConicalMode()));
-
-	modeRemeshingAct = new QAction(QIcon(":/images/mode_remeshing.png"), tr("&Remeshing"), this);
-	modeRemeshingAct->setCheckable(true);
-	sm->registerAction(modeRemeshingAct, "Modes", "4");
-	modeRemeshingAct->setStatusTip(tr("Switch to Remeshing Mode"));
-	// connect(modeRemeshingAct, SIGNAL(triggered()), this, SLOT(switchRemeshingMode()));
-
-	modeHighgenusAct = new QAction(QIcon(":/images/mode_highgenus.png"), tr("&High Genus"), this);
-	modeHighgenusAct->setCheckable(true);
-	sm->registerAction(modeHighgenusAct, "Modes", "5");
-	modeHighgenusAct->setStatusTip(tr("Switch to High Genus Mode"));
-	// connect(modeHighgenusAct, SIGNAL(triggered()), this, SLOT(switchHighgenusMode()));
-
-	modeTexturingAct = new QAction(QIcon(":/images/mode_texturing.png"), tr("&Texturing"), this);
-	modeTexturingAct->setCheckable(true);
-	sm->registerAction(modeTexturingAct, "Modes", "6");
-	modeTexturingAct->setStatusTip(tr("Switch to Texturing Mode"));
-	// connect(modeTexturingAct, SIGNAL(triggered()), this, SLOT(switchTexturingMode()));
-
-	modesActionGroup = new QActionGroup(this);
-	modesActionGroup->setExclusive(true);
-	modesActionGroup->addAction(modeExtrusionAct);
-	modesActionGroup->addAction(modeConicalAct);
-	modesActionGroup->addAction(modeRemeshingAct);
-	modesActionGroup->addAction(modeHighgenusAct);
-	modesActionGroup->addAction(modeTexturingAct);
+	// modesActionGroup = new QActionGroup(this);
+	// modesActionGroup->setExclusive(true);
+	// modesActionGroup->addAction(modeExtrusionAct);
+	// modesActionGroup->addAction(modeConicalAct);
+	// modesActionGroup->addAction(modeRemeshingAct);
+	// modesActionGroup->addAction(modeHighgenusAct);
+	// modesActionGroup->addAction(modeTexturingAct);
 	
 	//Object Menu Actions
 	subdivideAllEdgesAct = new QAction(tr("Subdivide All &Edges"), this);
@@ -398,30 +399,30 @@ void MainWindow::createActions()
 	// assignTextureCoordinatesAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(assignTextureCoordinatesAct, SIGNAL(triggered()), this, SLOT(assign_texture_coordinates()));
 
-	//SELECTION MENU ACTIONS
-	selectVertexAct = new QAction(tr("Select &Vertex"), this);
-	sm->registerAction(selectVertexAct, "Settings", "CTRL+M");
-	// selectVertexAct->setStatusTip(tr("Copy the current selection's contents to the "
-	connect(selectVertexAct, SIGNAL(triggered()), this, SLOT(select_vertex()));
-
-	selectFaceAct = new QAction(tr("Select &Face"), this);
-	sm->registerAction(selectFaceAct, "Settings", "CTRL+M");
-	// selectFaceAct->setStatusTip(tr("Copy the current selection's contents to the "
-	connect(selectFaceAct, SIGNAL(triggered()), this, SLOT(select_face() ) );
-
-	selectEdgeAct = new QAction(tr("Select &Edge"), this);
-	sm->registerAction(selectEdgeAct, "Settings", "CTRL+M");
-	// selectCornerAct->setStatusTip(tr("Copy the current selection's contents to the "));
-	sm->connect( selectEdgeAct , SIGNAL( triggered() ), SLOT  ( select_edge() ) );
-
-	selectCornerAct = new QAction(tr("Select &Corner"), this);
-	sm->registerAction(selectCornerAct, "Settings", "CTRL+M");
-	// selectCornerAct->setStatusTip(tr("Copy the current selection's contents to the "));
-	sm->connect( selectCornerAct , SIGNAL( triggered() ), SLOT  ( select_corner() ) );
-
-	exitSelectionModeAct = new QAction(tr("Exit Selection Mode"), this);
-	//sm->registerAction(exitSelectionModeAct, "Settings", "CTRL+X");
-	sm->connect( exitSelectionModeAct , SIGNAL( triggered() ), SLOT  ( exit_selection_mode() ) );
+	// //SELECTION MENU ACTIONS
+	// selectVertexAct = new QAction(tr("Select &Vertex"), this);
+	// sm->registerAction(selectVertexAct, "Settings", "CTRL+M");
+	// // selectVertexAct->setStatusTip(tr("Copy the current selection's contents to the "
+	// connect(selectVertexAct, SIGNAL(triggered()), this, SLOT(select_vertex()));
+	// 
+	// selectFaceAct = new QAction(tr("Select &Face"), this);
+	// sm->registerAction(selectFaceAct, "Settings", "CTRL+M");
+	// // selectFaceAct->setStatusTip(tr("Copy the current selection's contents to the "
+	// connect(selectFaceAct, SIGNAL(triggered()), this, SLOT(select_face() ) );
+	// 
+	// selectEdgeAct = new QAction(tr("Select &Edge"), this);
+	// sm->registerAction(selectEdgeAct, "Settings", "CTRL+M");
+	// // selectCornerAct->setStatusTip(tr("Copy the current selection's contents to the "));
+	// sm->connect( selectEdgeAct , SIGNAL( triggered() ), SLOT  ( select_edge() ) );
+	// 
+	// selectCornerAct = new QAction(tr("Select &Corner"), this);
+	// sm->registerAction(selectCornerAct, "Settings", "CTRL+M");
+	// // selectCornerAct->setStatusTip(tr("Copy the current selection's contents to the "));
+	// sm->connect( selectCornerAct , SIGNAL( triggered() ), SLOT  ( select_corner() ) );
+	// 
+	// exitSelectionModeAct = new QAction(tr("Exit Selection Mode"), this);
+	// //sm->registerAction(exitSelectionModeAct, "Settings", "CTRL+X");
+	// sm->connect( exitSelectionModeAct , SIGNAL( triggered() ), SLOT  ( exit_selection_mode() ) );
  
 	//SETTINGS ACTIONS
 	manageShortcutsAct = new QAction(tr("Shortcuts..."),this);
@@ -462,11 +463,11 @@ void MainWindow::createMenus(){
 
 	#ifdef __APPLE__
 		menuBar = new QMenuBar(0);
-		setMenuBar(menuBar);
-		setUnifiedTitleAndToolBarOnMac(true);
+		//setMenuBar(menuBar);
+		// setUnifiedTitleAndToolBarOnMac(true);
 	#else
-		menuBar = new QMenuBar(this);
-		setMenuBar(menuBar);
+		// menuBar = new QMenuBar(this);
+		// setMenuBar(menuBar);
 	#endif
 	
 	fileMenu = new QMenu(tr("&File"));
@@ -543,7 +544,6 @@ void MainWindow::createMenus(){
 	mToolsMenu->addMenu(mConicalMode->getMenu());
 	mToolsMenu->addMenu(mHighgenusMode->getMenu());
 	mToolsMenu->addMenu(mTexturingMode->getMenu());
-	// mToolsMenu->addMenu(mBasicsMode->getMenu());
 	menuBar->addMenu(mToolsMenu);
 	
 	mRemeshingMenu = mRemeshingMode->getMenu();
@@ -560,21 +560,20 @@ void MainWindow::createMenus(){
 	objectMenu->addAction(computeNormalsAndLightingAct);
 	objectMenu->addAction(assignTextureCoordinatesAct);
 
-	selectionMenu = new QMenu(tr("&Selection"));
-	menuBar->addMenu(selectionMenu);
-	selectionMenu->addAction(selectVertexAct);
-	selectionMenu->addAction(selectFaceAct);
-	selectionMenu->addAction(selectEdgeAct);
-	selectionMenu->addAction(selectCornerAct);
-	selectionMenu->addAction(exitSelectionModeAct);
+	// selectionMenu = new QMenu(tr("&Selection"));
+	// // menuBar->addMenu(selectionMenu);
+	// selectionMenu->addAction(selectVertexAct);
+	// selectionMenu->addAction(selectFaceAct);
+	// selectionMenu->addAction(selectEdgeAct);
+	// selectionMenu->addAction(selectCornerAct);
+	// selectionMenu->addAction(exitSelectionModeAct);
 
 	settingsMenu = new QMenu(tr("Se&ttings"));
 	menuBar->addMenu(settingsMenu);
 	settingsMenu->addAction(manageShortcutsAct);
 	settingsMenu->addAction(mEditStyleSheetAct);
-   
 	languageMenu = new QMenu(tr("&Language"));
-	menuBar->addMenu(languageMenu);
+	settingsMenu->addMenu(languageMenu);
 	languageMenu->addAction(englishAct);
 	languageMenu->addAction(spanishAct);
 	languageMenu->addAction(germanAct);
@@ -588,40 +587,55 @@ void MainWindow::createToolBars() {
 	
 	//the main tool options DockWidget
 	mToolOptionsDockWidget = new QDockWidget(tr("Tool Options"),this);
-	mToolOptionsDockWidget->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
+	mToolOptionsDockWidget->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable /* | QDockWidget::DockWidgetClosable*/);
 	mToolOptionsDockWidget->setAllowedAreas(Qt::TopDockWidgetArea);
 	mToolOptionsStackedWidget = new QStackedWidget();
-	//mToolOptionsDockWidget->setFloating(true);
-	//mToolOptionsDockWidget->show();
+	// mToolOptionsDockWidget->setFloating(true);
+	// mToolOptionsDockWidget->hide();
 	mToolOptionsDockWidget->setWidget(mToolOptionsStackedWidget);
+	
+	// mToolOptionsTitleBarLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	// mToolOptionsTitleBarWidget = new QWidget;
+	// mToolOptionsTitleBarWidget->setLayout(mToolOptionsTitleBarLayout);
+	// mToolOptionsDockWidget->setTitleBarWidget(mToolOptionsTitleBarWidget);
+	// mToolOptionsDockWidget->titleBarWidget()->setContentsMargins(0,0,0,0);
+	// mToolOptionsDockWidget->move(0,22);
+	// mToolOptionsDockWidget->setWindowTitle("Insert Edge Mode");
 	addDockWidget(Qt::TopDockWidgetArea, mToolOptionsDockWidget);
 	
+	
+	//basic tools - six buttons
 	mToolsToolBar = new QToolBar(tr("Tools"));
-	addToolBar(Qt::RightToolBarArea,mToolsToolBar);
+	addToolBar(Qt::TopToolBarArea,mToolsToolBar);
+	
+	mExtrusionToolBar = new QToolBar(tr("Extrusion Tools"));
+	addToolBar(Qt::TopToolBarArea,mExtrusionToolBar);
+	
+	mConicalToolBar = new QToolBar(tr("Conical Tools"));
+	addToolBar(Qt::TopToolBarArea,mExtrusionToolBar);
+	
+	mHighgenusToolBar = new QToolBar(tr("High Genus Tools"));
+	addToolBar(Qt::TopToolBarArea,mExtrusionToolBar);
+	
+	mTexturingToolBar = new QToolBar(tr("High Genus Tools"));
+	addToolBar(Qt::TopToolBarArea,mExtrusionToolBar);
 	
 	mRemeshingToolBar = new QToolBar(tr("Remeshing"));
-	addToolBar(Qt::RightToolBarArea,mRemeshingToolBar);
+	// addToolBar(Qt::RightToolBarArea,mRemeshingToolBar);
 	
 	//tools ction group initialization
 	mToolsActionGroup = new QActionGroup(this);
 	mToolsActionGroup->setExclusive(true);
 		
-	mBasicsMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);
-	mToolsToolBar->addSeparator();
-	
-	mExtrusionMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);
-	mToolsToolBar->addSeparator();
-
-	mConicalMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);
-	mToolsToolBar->addSeparator();
+	mBasicsMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);	
+	mExtrusionMode->addActions(mToolsActionGroup, mExtrusionToolBar, mToolOptionsStackedWidget);
+	mConicalMode->addActions(mToolsActionGroup, mConicalToolBar, mToolOptionsStackedWidget);
 	
 	mRemeshingActionGroup = new QActionGroup(this);
 	mRemeshingMode->addActions(mToolsActionGroup, mRemeshingToolBar, mToolOptionsStackedWidget);
 	
-	mHighgenusMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);
-	mToolsToolBar->addSeparator();
-
-	mTexturingMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);
+	mHighgenusMode->addActions(mToolsActionGroup, mHighgenusToolBar, mToolOptionsStackedWidget);
+	mTexturingMode->addActions(mToolsActionGroup, mTexturingToolBar, mToolOptionsStackedWidget);
 
 	// mPrimitivesToolBar = new QToolBar(tr("Primitives"));
 	// addToolBar(Qt::LeftToolBarArea,mPrimitivesToolBar);
@@ -636,7 +650,13 @@ void MainWindow::createToolBars() {
 
 void MainWindow::setToolOptions(QWidget *optionsWidget) {
 
+	mToolOptionsDockWidget->setWindowTitle(optionsWidget->windowTitle());
 	mToolOptionsStackedWidget->setCurrentWidget(optionsWidget);
+	// show or hide the dockwidget options
+	if (optionsWidget->windowTitle() != "" && mToolOptionsDockWidget->isHidden())
+		mToolOptionsDockWidget->show();
+	else if (!mToolOptionsDockWidget->isHidden() && optionsWidget->windowTitle() == "")
+		mToolOptionsDockWidget->hide();
 
 }
 
@@ -804,4 +824,18 @@ void MainWindow::showHideScriptEditor(){
 	  mScriptEditorDockWidget->show( );
 	  mScriptEditorDockWidget->setFocus();
 	}
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
+	
+    if (event->mimeData()->hasFormat("obj"))
+        event->acceptProposedAction();
+}
+
+void MainWindow::dropEvent(QDropEvent *event) {
+    //textBrowser->setPlainText(event->mimeData()->text());
+    //mimeTypeCombo->clear();
+    //mimeTypeCombo->addItems(event->mimeData()->formats());
+
+    event->acceptProposedAction();
 }

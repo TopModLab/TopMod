@@ -6,7 +6,7 @@
 
 #include "TexturingMode.hh"
 
-TexturingMode::TexturingMode(QWidget *parent)
+TexturingMode::TexturingMode(QWidget *parent, QShortcutManager *sm)
 		: QWidget(parent)
 {		
 	setParent(0);
@@ -16,8 +16,9 @@ TexturingMode::TexturingMode(QWidget *parent)
 	setupTileTexturing();
 	
 	mTileTexturingAction = new QAction(tr("Tile Texturing"),this);
+	mTileTexturingAction->setIcon(QIcon(":images/placeholder.png"));
 	mTileTexturingAction->setCheckable(true);
-	// sm->registerAction(mTileTexturingAction, "Basics Modes", "9");
+	sm->registerAction(mTileTexturingAction, "Texturing Operations", "");
 	mTileTexturingAction->setStatusTip(tr("Enter Tile Texturing Mode"));
 	mTileTexturingAction->setToolTip(tr("Tile Texturing Mode"));
 	connect(mTileTexturingAction, SIGNAL(triggered()), this, SLOT(triggerTileTexturing()));
@@ -52,7 +53,7 @@ void TexturingMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 void TexturingMode::setupTileTexturing(){
 	
 	mTileTexturingLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	
+	mTileTexturingLayout->setMargin(0);
 	//number of segments
 	QLabel *tileTexturingNumTilesLabel = new QLabel(tr("Tiling Number:"));
 	QSpinBox *tileTexturingNumTilesSpinBox = new QSpinBox;

@@ -33,7 +33,7 @@ class TMPatchFace
 	 if ( dlflface != NULL )
 	    {
 	      patcharray.resize(dlflface->size());
-	      for (int i=0; i < (int)patcharray.size(); ++i)
+	      for (int i=0; i < patcharray.size(); ++i)
 		 patcharray[i].resizePatch(patchsize);
 	    }
        }
@@ -67,7 +67,7 @@ class TMPatchFace
 	 if ( psize != patchsize )
 	    {
 	      patchsize = psize;
-	      for (int i=0; i < (int)patcharray.size(); ++i)
+	      for (int i=0; i < patcharray.size(); ++i)
 		 patcharray[i].resizePatch(patchsize);
 	    }
        }
@@ -243,7 +243,7 @@ class TMPatchFace
          DLFLFaceVertexPtr fvp, nfvp, pfvp;
          TMPatchPtr pptr, npptr, ppptr;
          Vector3d p00,p01,p10,p11,ip;
-         for (int i=0; i < (int)corners.size(); ++i)
+         for (int i=0; i < corners.size(); ++i)
             {
               fvp = corners[i]; pptr = fvp->getPatchPtr();
               nfvp = corners[i]->getOppositeCorner(); npptr = nfvp->getPatchPtr();
@@ -271,7 +271,7 @@ class TMPatchFace
      void computeLighting(LightPtr lightptr)
        {
          DLFLMaterialPtr matl;
-         for (int i=0; i < (int)patcharray.size(); ++i)
+         for (int i=0; i < patcharray.size(); ++i)
             {
               matl = dlflface->material();
               patcharray[i].computeLighting(matl->color,matl->Ka,matl->Kd,matl->Ks,lightptr);
@@ -281,43 +281,43 @@ class TMPatchFace
 	// Render the patches using filled polygons
      void render(void)
      {
-       for (int i=0; i < (int)patcharray.size(); ++i) patcharray[i].render();
+       for (int i=0; i < patcharray.size(); ++i) patcharray[i].render();
      }
 
 	// Render the patches using outlined polygons
      void outline(void)
      {
-       for (int i=0; i < (int)patcharray.size(); ++i) patcharray[i].outline();
+       for (int i=0; i < patcharray.size(); ++i) patcharray[i].outline();
      }
 
 	// Render the boundaries of the patches
      void patch_boundary(void)
      {
-       for (int i=0; i < (int)patcharray.size(); ++i) patcharray[i].patch_boundary();
+       for (int i=0; i < patcharray.size(); ++i) patcharray[i].patch_boundary();
      }
 
 	// Render the boundaries of the patches
      void face_boundary(void)
      {
-       for (int i=0; i < (int)patcharray.size(); ++i) patcharray[i].face_boundary();
+       for (int i=0; i < patcharray.size(); ++i) patcharray[i].face_boundary();
      }
 
 	// Render the control grids of the patches
      void controlgrid(void)
      {
-       for (int i=0; i < (int)patcharray.size(); ++i) patcharray[i].controlgrid();
+       for (int i=0; i < patcharray.size(); ++i) patcharray[i].controlgrid();
      }
 
 	// Show the conrtol points
      void controlpoints(void)
      {
-       for (int i=0; i < (int)patcharray.size(); ++i) patcharray[i].controlpoints();
+       for (int i=0; i < patcharray.size(); ++i) patcharray[i].controlpoints();
      }
 
         // Show the normals
      void renderNormals(void)
        {
-         for (int i=0; i < (int)patcharray.size(); ++i) patcharray[i].renderNormals();
+         for (int i=0; i < patcharray.size(); ++i) patcharray[i].renderNormals();
        }
      
      friend void tmpf_render(TMPatchFacePtr pfp)

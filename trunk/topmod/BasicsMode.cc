@@ -6,7 +6,7 @@
 
 #include "BasicsMode.hh"
 
-BasicsMode::BasicsMode(QWidget *parent)
+BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm)
 		: QWidget(parent) {
 		
 	setParent(0);
@@ -34,6 +34,7 @@ BasicsMode::BasicsMode(QWidget *parent)
 	setupTransforms();
 	
 	mInsertEdgeAction = new QAction(tr("Insert Edge"),this);
+	mInsertEdgeAction->setIcon(QIcon(":/images/placeholder.png"));
 	mInsertEdgeAction->setCheckable(true);
 	mInsertEdgeAction->setChecked(true);
 	// sm->registerAction(mInsertEdgeAction, "Basics Modes", "9");
@@ -42,6 +43,7 @@ BasicsMode::BasicsMode(QWidget *parent)
 	connect(mInsertEdgeAction, SIGNAL(triggered()), this, SLOT(triggerInsertEdge()));
 
 	mDeleteEdgeAction = new QAction(tr("Delete Edge"),this);
+	mDeleteEdgeAction->setIcon(QIcon(":/images/placeholder.png"));
 	mDeleteEdgeAction->setCheckable(true);
 	// sm->registerAction(mDeleteEdgeAction, "Basics Modes", "9");
 	mDeleteEdgeAction->setStatusTip(tr("Enter Delete Edge Mode"));
@@ -49,6 +51,7 @@ BasicsMode::BasicsMode(QWidget *parent)
 	connect(mDeleteEdgeAction, SIGNAL(triggered()), this, SLOT(triggerDeleteEdge()));
 
 	mCollapseEdgeAction = new QAction(tr("Collapse Edge"),this);
+	mCollapseEdgeAction->setIcon(QIcon(":/images/placeholder.png"));
 	mCollapseEdgeAction->setCheckable(true);
 	// sm->registerAction(mCollapseEdgeAction, "Basics Modes", "9");
 	mCollapseEdgeAction->setStatusTip(tr("Enter Collapse Edge Mode"));
@@ -56,6 +59,7 @@ BasicsMode::BasicsMode(QWidget *parent)
 	connect(mCollapseEdgeAction, SIGNAL(triggered()), this, SLOT(triggerCollapseEdge()));
 
 	mSubdivideEdgeAction = new QAction(tr("Subdivide Edge"),this);
+	mSubdivideEdgeAction->setIcon(QIcon(":/images/placeholder.png"));
 	mSubdivideEdgeAction->setCheckable(true);
 	// sm->registerAction(mDeleteEdgeAction, "Basics Modes", "9");
 	mSubdivideEdgeAction->setStatusTip(tr("Enter Subdivide Edge Mode"));
@@ -63,6 +67,7 @@ BasicsMode::BasicsMode(QWidget *parent)
 	connect(mSubdivideEdgeAction, SIGNAL(triggered()), this, SLOT(triggerSubdivideEdge()));
 	
 	mConnectEdgesAction = new QAction(tr("Connect Edges"),this);
+	mConnectEdgesAction->setIcon(QIcon(":/images/placeholder.png"));
 	mConnectEdgesAction->setCheckable(true);
 	// sm->registerAction(mDeleteEdgeAction, "Basics Modes", "9");
 	mConnectEdgesAction->setStatusTip(tr("Enter Connect Edges Mode"));
@@ -70,6 +75,7 @@ BasicsMode::BasicsMode(QWidget *parent)
 	connect(mConnectEdgesAction, SIGNAL(triggered()), this, SLOT(triggerConnectEdges()));
 	
 	mSpliceCornersAction = new QAction(tr("Splice Corners"),this);
+	mSpliceCornersAction->setIcon(QIcon(":/images/placeholder.png"));
 	mSpliceCornersAction->setCheckable(true);
 	// sm->registerAction(mDeleteEdgeAction, "Basics Modes", "9");
 	mSpliceCornersAction->setStatusTip(tr("Enter Splice Corners Mode"));
@@ -77,6 +83,7 @@ BasicsMode::BasicsMode(QWidget *parent)
 	connect(mSpliceCornersAction, SIGNAL(triggered()), this, SLOT(triggerSpliceCorners()));
 
 	mTransformsAction = new QAction(tr("Transforms"),this);
+	mTransformsAction->setIcon(QIcon(":/images/placeholder.png"));
 	mTransformsAction->setCheckable(true);
 	// sm->registerAction(mDeleteEdgeAction, "Basics Modes", "9");
 	mTransformsAction->setStatusTip(tr("Enter Transforms Mode"));
@@ -173,35 +180,37 @@ void BasicsMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStack
 void BasicsMode::setupInsertEdge() {
 	
 	mInsertEdgeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	mInsertEdgeLayout->setMargin(1);
+	mInsertEdgeLayout->setMargin(0);
+	mInsertEdgeWidget->setWindowTitle(tr(""));
 	mInsertEdgeWidget->setLayout(mInsertEdgeLayout);	
 }
 
 void BasicsMode::setupDeleteEdge() {
 	
 	mDeleteEdgeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	mDeleteEdgeLayout->setMargin(1);
+	mDeleteEdgeLayout->setMargin(0);
 	//cleanup checkbox
 	QCheckBox *cleanupCheckBox = new QCheckBox(tr("Cleanup"),this);
 	connect(cleanupCheckBox, SIGNAL(stateChanged(int)),
           ((MainWindow*)mParent), SLOT(toggleDeleteEdgeCleanupFlag(int)));
 	mDeleteEdgeLayout->addWidget(cleanupCheckBox);	
 	mDeleteEdgeLayout->addStretch(1);
-	//set layout
+	mDeleteEdgeWidget->setWindowTitle(tr("Delete Edge Mode"));
 	mDeleteEdgeWidget->setLayout(mDeleteEdgeLayout);	
 }
 
 void BasicsMode::setupCollapseEdge() {
 	
 	mCollapseEdgeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	mCollapseEdgeLayout->setMargin(1);
+	mCollapseEdgeLayout->setMargin(0);
+	mCollapseEdgeWidget->setWindowTitle(tr(""));
 	mCollapseEdgeWidget->setLayout(mCollapseEdgeLayout);	
 }
 
 void BasicsMode::setupSubdivideEdge() {
 	
 	mSubdivideEdgeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	mSubdivideEdgeLayout->setMargin(1);
+	mSubdivideEdgeLayout->setMargin(0);
 	
 	//number of subdivisions spinbox
 	QLabel *numSubdivsLabel = new QLabel(tr("# Subdivisions"));
@@ -217,6 +226,7 @@ void BasicsMode::setupSubdivideEdge() {
 	mSubdivideEdgeLayout->addWidget(numSubdivsLabel);
 	mSubdivideEdgeLayout->addWidget(numSubdivsSpinBox);
 	mSubdivideEdgeLayout->addStretch(1);
+	mSubdivideEdgeWidget->setWindowTitle(tr("Subdivide Edge Mode"));
 	mSubdivideEdgeWidget->setLayout(mSubdivideEdgeLayout);	
 	
 }
@@ -224,7 +234,8 @@ void BasicsMode::setupSubdivideEdge() {
 void BasicsMode::setupConnectEdges(){
 	
 	mConnectEdgesLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	mConnectEdgesLayout->setMargin(1);
+	mConnectEdgesLayout->setMargin(0);
+	mConnectEdgesWidget->setWindowTitle(tr(""));
 	mConnectEdgesWidget->setLayout(mConnectEdgesLayout);	
 	
 }
@@ -232,7 +243,8 @@ void BasicsMode::setupConnectEdges(){
 void BasicsMode::setupSpliceCorners(){
 	
 	mSpliceCornersLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	mSpliceCornersLayout->setMargin(1);
+	mSpliceCornersLayout->setMargin(0);
+	mSpliceCornersWidget->setWindowTitle(tr(""));
 	mSpliceCornersWidget->setLayout(mSpliceCornersLayout);
 	
 }
@@ -240,7 +252,7 @@ void BasicsMode::setupSpliceCorners(){
 void BasicsMode::setupTransforms(){
 	
 	mTransformsLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	mTransformsLayout->setMargin(5);
+	mTransformsLayout->setMargin(0);
 	QLabel *transformLabel = new QLabel(tr("Translate:"));
 	mTransformsLayout->addWidget(transformLabel);
 	
@@ -336,6 +348,7 @@ void BasicsMode::setupTransforms(){
 	
 	mTransformsLayout->addWidget(freezeTransformsButton);	
 	mTransformsLayout->addStretch(1);
+	mTransformsWidget->setWindowTitle(tr("Transforms Mode"));
 	mTransformsWidget->setLayout(mTransformsLayout);	
 }
 

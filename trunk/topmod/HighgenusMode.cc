@@ -6,7 +6,7 @@
 
 #include "HighgenusMode.hh"
 
-HighgenusMode::HighgenusMode(QWidget *parent)
+HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm)
 		: QWidget(parent)
 {		
 	setParent(0);
@@ -37,70 +37,70 @@ HighgenusMode::HighgenusMode(QWidget *parent)
 	//setup the 10 modes for high genus modeling
 	mAddHoleHandleAction = new QAction(tr("Add Hole/Handle"),this);
 	mAddHoleHandleAction->setCheckable(true);
-	// sm->registerAction(mAddHoleHandleAction, "Basics Modes", "9");
+	sm->registerAction(mAddHoleHandleAction, "High Genus Operations", "");
 	mAddHoleHandleAction->setStatusTip(tr("Enter Add Hole/Handle Mode"));
 	mAddHoleHandleAction->setToolTip(tr("Add Hole/Handle Mode"));
 	connect(mAddHoleHandleAction, SIGNAL(triggered()), this, SLOT(triggerAddHoleHandle()));
 	
 	mAddHoleHandleCVAction = new QAction(tr("Add Hole/Handle CV"),this);
 	mAddHoleHandleCVAction->setCheckable(true);
-	// sm->registerAction(mAddHoleHandleCVAction, "Basics Modes", "9");
+	sm->registerAction(mAddHoleHandleCVAction, "High Genus Operations", "");
 	mAddHoleHandleCVAction->setStatusTip(tr("Enter Add Hole/Handle CV Mode"));
 	mAddHoleHandleCVAction->setToolTip(tr("Add Hole/Handle CV Mode"));
 	connect(mAddHoleHandleCVAction, SIGNAL(triggered()), this, SLOT(triggerAddHoleHandleCV()));
 
 	mAddHandleSIAction = new QAction(tr("Add Handle SI"),this);
 	mAddHandleSIAction->setCheckable(true);
-	// sm->registerAction(mAddHandleSIAction, "Basics Modes", "9");
+	sm->registerAction(mAddHandleSIAction, "High Genus Operations", "");
 	mAddHandleSIAction->setStatusTip(tr("Enter Add Handle (Shape Interpolation) Mode"));
 	mAddHandleSIAction->setToolTip(tr("Add Handle (Shape Interpolation) Mode"));
 	connect(mAddHandleSIAction, SIGNAL(triggered()), this, SLOT(triggerAddHandleSI()));
 
 	mRindModelingScalingAction = new QAction(tr("Rind Modeling Scaling"),this);
 	mRindModelingScalingAction->setCheckable(true);
-	// sm->registerAction(mRindModelingScalingAction, "Basics Modes", "9");
+	sm->registerAction(mRindModelingScalingAction, "High Genus Operations", "");
 	mRindModelingScalingAction->setStatusTip(tr("Enter Rind Modeling Scaling Mode"));
 	mRindModelingScalingAction->setToolTip(tr("Rind Modeling Scaling Mode"));
 	connect(mRindModelingScalingAction, SIGNAL(triggered()), this, SLOT(triggerRindModelingScaling()));
 
 	mRindModelingThicknessAction = new QAction(tr("Rind Modeling Thickness"),this);
 	mRindModelingThicknessAction->setCheckable(true);
-	// sm->registerAction(mRindModelingThicknessAction, "Basics Modes", "9");
+	sm->registerAction(mRindModelingThicknessAction, "High Genus Operations", "");
 	mRindModelingThicknessAction->setStatusTip(tr("Enter Rind Modeling Thickness Mode"));
 	mRindModelingThicknessAction->setToolTip(tr("Rind Modeling Thickness Mode"));
 	connect(mRindModelingThicknessAction, SIGNAL(triggered()), this, SLOT(triggerRindModelingThickness()));
 
 	mWireframeModelingAction = new QAction(tr("Wireframe Modeling"),this);
 	mWireframeModelingAction->setCheckable(true);
-	// sm->registerAction(mWireframeModelingAction, "Basics Modes", "9");
+	sm->registerAction(mWireframeModelingAction, "High Genus Operations", "");
 	mWireframeModelingAction->setStatusTip(tr("Enter Wireframe Modeling Mode"));
 	mWireframeModelingAction->setToolTip(tr("Wireframe Modeling Mode"));
 	connect(mWireframeModelingAction, SIGNAL(triggered()), this, SLOT(triggerWireframeModeling()));
 
 	mColumnModelingAction = new QAction(tr("Column Modeling"),this);
 	mColumnModelingAction->setCheckable(true);
-	// sm->registerAction(mColumnModelingAction, "Basics Modes", "9");
+	sm->registerAction(mColumnModelingAction, "High Genus Operations", "");
 	mColumnModelingAction->setStatusTip(tr("Enter Column Modeling Mode"));
 	mColumnModelingAction->setToolTip(tr("Column Modeling Mode"));
 	connect(mColumnModelingAction, SIGNAL(triggered()), this, SLOT(triggerColumnModeling()));
 
 	mSierpinskyAction = new QAction(tr("Sierpinsky"),this);
 	mSierpinskyAction->setCheckable(true);
-	// sm->registerAction(mSierpinskyAction, "Basics Modes", "9");
+	sm->registerAction(mSierpinskyAction, "High Genus Operations", "");
 	mSierpinskyAction->setStatusTip(tr("Enter Sierpinsky Mode"));
 	mSierpinskyAction->setToolTip(tr("Sierpinsky Mode"));
 	connect(mSierpinskyAction, SIGNAL(triggered()), this, SLOT(triggerSierpinsky()));
 
 	mMultiFaceHandleAction = new QAction(tr("Multi-face Handle"),this);
 	mMultiFaceHandleAction->setCheckable(true);
-	// sm->registerAction(mMultiFaceHandleAction, "Basics Modes", "9");
+	sm->registerAction(mMultiFaceHandleAction, "High Genus Operations", "");
 	mMultiFaceHandleAction->setStatusTip(tr("Enter Multi-face Handle Mode"));
 	mMultiFaceHandleAction->setToolTip(tr("Multi-face Handle Mode"));
 	connect(mMultiFaceHandleAction, SIGNAL(triggered()), this, SLOT(triggerMultiFaceHandle()));
 
 	mMengerSpongeAction = new QAction(tr("Menger Sponge"),this);
 	mMengerSpongeAction->setCheckable(true);
-	// sm->registerAction(mMengerSpongeAction, "Basics Modes", "9");
+	sm->registerAction(mMengerSpongeAction, "High Genus Operations", "");
 	mMengerSpongeAction->setStatusTip(tr("Enter Menger Sponge Mode"));
 	mMengerSpongeAction->setToolTip(tr("Menger Sponge Mode"));
 	connect(mMengerSpongeAction, SIGNAL(triggered()), this, SLOT(triggerMengerSponge()));
@@ -233,6 +233,7 @@ void HighgenusMode::toggleCrustCleanupFlag(int state)
 void HighgenusMode::setupAddHoleHandle(){
 	
 	mAddHoleHandleLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	mAddHoleHandleLayout->setMargin(0);
 	
 	QLabel *addHoleHandleNumSegmentsLabel = new QLabel(tr("Number of Segments"));
 	addHoleHandleNumSegmentsSpinBox = new QSpinBox;
@@ -300,6 +301,7 @@ void HighgenusMode::numSegmentsConnectValueChanged(int value){
 void HighgenusMode::setupAddHoleHandleCV(){
 	
 	mAddHoleHandleCVLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	mAddHoleHandleCVLayout->setMargin(0);
 
 	QLabel *addHoleHandleCVNumSegmentsLabel = new QLabel(tr("Number of Segments"));
 	addHoleHandleCVNumSegmentsSpinBox = new QSpinBox;
@@ -332,6 +334,7 @@ void HighgenusMode::setupAddHoleHandleCV(){
 void HighgenusMode::setupAddHandleSI(){
 	
 	mAddHandleSILayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	mAddHandleSILayout->setMargin(0);
 	
 	//number of segments
 	QLabel *addHandleSINumSegmentsLabel = new QLabel(tr("Number of Segments"));
@@ -430,7 +433,8 @@ void HighgenusMode::toggleSymmetricWeightsFlag(int state){
 void HighgenusMode::setupRindModelingScaling(){
 	
 	mRindModelingScalingLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	
+	mRindModelingScalingLayout->setMargin(0);
+
 	//scale factor - 0.00-10.00
 	QLabel *rindModelingScalingLabel = new QLabel(tr("Scale:"));
 	QDoubleSpinBox *rindModelingScalingSpinBox = new QDoubleSpinBox;
@@ -466,6 +470,7 @@ void HighgenusMode::setupRindModelingScaling(){
 void HighgenusMode::setupRindModelingThickness(){
 
 	mRindModelingThicknessLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	mRindModelingThicknessLayout->setMargin(0);
 	
 	//thickness
 	QLabel *rindModelingThicknessLabel = new QLabel(tr("Thickness:"));
@@ -502,6 +507,7 @@ void HighgenusMode::setupRindModelingThickness(){
 void HighgenusMode::setupWireframeModeling(){
 	
 	mWireframeModelingLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	mWireframeModelingLayout->setMargin(0);
 	
 	//thickness
 	QLabel *wireframeModelingThicknessLabel = new QLabel(tr("Thickness:"));
@@ -529,6 +535,7 @@ void HighgenusMode::setupWireframeModeling(){
 void HighgenusMode::setupColumnModeling(){
 	
 	mColumnModelingLayout = new QBoxLayout(QBoxLayout::LeftToRight);	
+	mColumnModelingLayout->setMargin(0);
 	//thickness
 	QLabel *columnModelingThicknessLabel = new QLabel(tr("Thickness:"));
 	QDoubleSpinBox *columnModelingThicknessSpinBox = new QDoubleSpinBox;
@@ -567,6 +574,8 @@ void HighgenusMode::setupColumnModeling(){
 void HighgenusMode::setupSierpinsky(){
 	
 	mSierpinskyLayout = new QBoxLayout(QBoxLayout::LeftToRight);	
+	mSierpinskyLayout->setMargin(0);
+	
 	//create column button
 	QPushButton *sierpinskyButton = new QPushButton("Create Sierpinsky Tetrahedra", this);
 	connect(sierpinskyButton, SIGNAL(clicked()),
@@ -581,12 +590,15 @@ void HighgenusMode::setupSierpinsky(){
 void HighgenusMode::setupMultiFaceHandle(){
 	
 	mMultiFaceHandleLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	mMultiFaceHandleLayout->setMargin(0);
 		
 	QGroupBox *multiFaceAlgorithmGroupBox = new QGroupBox(tr("Use Convex Hull Algorithm"));
 	multiFaceAlgorithmGroupBox->setCheckable(true);
 	multiFaceAlgorithmGroupBox->setChecked(false);
 	
 	mMultiFaceAlgorithmLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	mMultiFaceAlgorithmLayout->setMargin(0);
+	multiFaceAlgorithmGroupBox->setAlignment(Qt::AlignLeft);
 
 	connect(multiFaceAlgorithmGroupBox, SIGNAL(toggled(bool)),
 	          this, SLOT(changeMultiFaceAlgorithm(bool)));
@@ -629,7 +641,7 @@ void HighgenusMode::setupMultiFaceHandle(){
 	multiFaceAlgorithmGroupBox->setLayout(mMultiFaceAlgorithmLayout);
 	
 	//add the groupbox to the multiface layout
-	mMultiFaceHandleLayout->addWidget(multiFaceAlgorithmGroupBox);
+	// mMultiFaceHandleLayout->addWidget(multiFaceAlgorithmGroupBox);
 
 	QPushButton *multiFaceHandleButton = new QPushButton("Connect Selected Faces", this);
 	connect(multiFaceHandleButton, SIGNAL(clicked()),
@@ -684,6 +696,7 @@ void HighgenusMode::changeMultiFaceAlgorithm(bool on){
 void HighgenusMode::setupMengerSponge(){
 	
 	mMengerSpongeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	mMengerSpongeLayout->setMargin(0);
 	
 	//thickness
 	QLabel *mengerSpongeThicknessLabel = new QLabel(tr("Thickness:"));
