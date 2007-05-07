@@ -110,7 +110,7 @@ void GLWidget::paintGL( ) {
 				glVertex3f(0,0,0); glVertex3f(0,10,0);
       }
       glEnd();
-      glLineWidth(1.0);
+      glLineWidth(3.0);
     }
     // Draw the actual object using the renderer.
     // Assumes that render flags have already been set for the renderer
@@ -489,7 +489,7 @@ void GLWidget::drawSelected(void)
     while ( first != last ){
       (*first)->render(); ++first;
     }
-    glLineWidth(1.5);
+    glLineWidth(3.0);
   }
 
   if ( !sel_fptr_array.empty() ){
@@ -501,7 +501,7 @@ void GLWidget::drawSelected(void)
     while ( first != last )	{
       (*first)->render_FVN(); ++first;
     }
-    glLineWidth(1.5);
+    glLineWidth(3.0);
   }
 
   if ( !sel_fvptr_array.empty() ) {

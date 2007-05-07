@@ -7,7 +7,7 @@
 #include "DLFLFaceVertex.hh"
 #include "DLFLVertex.hh"
 #include "DLFLMaterial.hh"
-#include "include/Graphics/TMPatchFace.hh"
+#include "TMPatchFace.hh"
 
 // Texture coordinates for the 4 corners of a unit square
 static Vector2d unittexcoords[] = { Vector2d(0,0), Vector2d(1,0), Vector2d(1,1), Vector2d(0,1) };
@@ -350,7 +350,7 @@ void DLFLFace :: setColor(double r, double g, double b)
 void DLFLFace :: randomAssignTexCoords(void)
 {
      // Assumes that the face is a quad
-  int start = rand() % 4; // Random no 0,1,2 or 3
+  int start = lrand48() % 4; // Random no 0,1,2 or 3
 
   if ( head )
      {

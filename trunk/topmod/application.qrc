@@ -36,5 +36,31 @@
 	<file alias="soccerball.obj">objs/soccerball.obj</file>
 	<file alias="geodesic.obj">objs/geodesicdome.obj</file>
 	<file>images/placeholder.png</file>
+	<file>images/insert_edge.png</file>
+	<file>images/delete_edge.png</file>
+	<file>images/connect_edges.png</file>
+	<file>images/collapse_edge.png</file>
+	<file>images/splice_corners.png</file>
+	<file>images/transforms.png</file>
+	<file>images/subdivide_edge.png</file>
+	<file>images/undo.png</file>
+	<file>images/redo.png</file>
+	<file>images/extrude_doosabin.png</file>
+	<file>images/extrude_cubical.png</file>
+	<file>images/extrude_dodecahedral.png</file>
+	<file>images/extrude_icosahedral.png</file>
+	<file>images/extrude_octahedral.png</file>
+	<file>images/extrude_stellate.png</file>
+	<file>images/extrude_doublestellate.png</file>
+	<file>images/highgenus_addholehandle.png</file>
+	<file>images/highgenus_addholehandlecv.png</file>
+	<file>images/highgenus_addhandlesi.png</file>
+	<file>images/highgenus_rind.png</file>
+	<file>images/highgenus_column.png</file>
+	<file>images/highgenus_wireframe.png</file>
+	<file>images/highgenus_multifacehandle.png</file>
+	<file>images/highgenus_mengersponge.png</file>
+	<file>images/highgenus_sierpinsky.png</file>
+	<file>images/doosabin_extrude.png</file>
 </qresource>
 </RCC>

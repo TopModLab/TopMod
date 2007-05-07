@@ -31,49 +31,49 @@ ExtrusionMode::ExtrusionMode(QWidget *parent, QShortcutManager *sm)
 	setupStellateExtrude();
 	setupDoubleStellateExtrude();
  	
-	mDooSabinExtrudeAction = new QAction(tr("Doo Sabin"),this);
+	mDooSabinExtrudeAction = new QAction(QIcon(":images/extrude_doosabin.png"),tr("Doo Sabin"),this);
 	mDooSabinExtrudeAction->setCheckable(true);
 	sm->registerAction(mDooSabinExtrudeAction, "Extrusion Operations", "");
 	mDooSabinExtrudeAction->setStatusTip(tr("Enter Doo Sabin Extrude Mode"));
 	mDooSabinExtrudeAction->setToolTip(tr("Doo Sabin Extrude Mode"));
 	connect(mDooSabinExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerDooSabinExtrude()));
 	
-	mCubicalExtrudeAction = new QAction(tr("Cubical"),this);
+	mCubicalExtrudeAction = new QAction(QIcon(":images/extrude_cubical.png"),tr("Cubical"),this);
 	mCubicalExtrudeAction->setCheckable(true);
 	sm->registerAction(mCubicalExtrudeAction, "Extrusion Operations", "");
 	mCubicalExtrudeAction->setStatusTip(tr("Enter Cubical Extrude Mode"));
 	mCubicalExtrudeAction->setToolTip(tr("Cubical Extrude Mode"));
 	connect(mCubicalExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerCubicalExtrude()));
 	
-	mDodecahedralExtrudeAction = new QAction(tr("Dodecahedral"),this);
+	mDodecahedralExtrudeAction = new QAction(QIcon(":images/extrude_dodecahedral.png"),tr("Dodecahedral"),this);
 	mDodecahedralExtrudeAction->setCheckable(true);
 	sm->registerAction(mDodecahedralExtrudeAction, "Extrusion Operations", "");
 	mDodecahedralExtrudeAction->setStatusTip(tr("Enter Dodecahedral Extrude Mode"));
 	mDodecahedralExtrudeAction->setToolTip(tr("Dodecahedral Extrude Mode"));
 	connect(mDodecahedralExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerDodecahedralExtrude()));
 	
-	mIcosahedralExtrudeAction = new QAction(tr("Icosahedral"),this);
+	mIcosahedralExtrudeAction = new QAction(QIcon(":images/extrude_icosahedral.png"),tr("Icosahedral"),this);
 	mIcosahedralExtrudeAction->setCheckable(true);
 	sm->registerAction(mIcosahedralExtrudeAction, "Extrusion Operations", "");
 	mIcosahedralExtrudeAction->setStatusTip(tr("Enter Icosahedral Extrude Mode"));
 	mIcosahedralExtrudeAction->setToolTip(tr("Icosahedral Extrude Mode"));
 	connect(mIcosahedralExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerIcosahedralExtrude()));
 	
-	mOctahedralExtrudeAction = new QAction(tr("Octahedral"),this);
+	mOctahedralExtrudeAction = new QAction(QIcon(":images/extrude_octahedral.png"),tr("Octahedral"),this);
 	mOctahedralExtrudeAction->setCheckable(true);
 	sm->registerAction(mOctahedralExtrudeAction, "Extrusion Operations", "");
 	mOctahedralExtrudeAction->setStatusTip(tr("Enter Octahedral Extrude Mode"));
 	mOctahedralExtrudeAction->setToolTip(tr("Octahedral Extrude Mode"));
 	connect(mOctahedralExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerOctahedralExtrude()));
 	
-	mStellateExtrudeAction = new QAction(tr("Stellate"),this);
+	mStellateExtrudeAction = new QAction(QIcon(":images/extrude_stellate.png"),tr("Stellate"),this);
 	mStellateExtrudeAction->setCheckable(true);
 	sm->registerAction(mStellateExtrudeAction, "Extrusion Operations", "");
 	mStellateExtrudeAction->setStatusTip(tr("Enter Stellate Extrude Mode"));
 	mStellateExtrudeAction->setToolTip(tr("Stellate Extrude Mode"));
 	connect(mStellateExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerStellateExtrude()));
 	
-	mDoubleStellateExtrudeAction = new QAction(tr("Double Stellate"),this);
+	mDoubleStellateExtrudeAction = new QAction(QIcon(":images/extrude_doublestellate.png"),tr("Double Stellate"),this);
 	mDoubleStellateExtrudeAction->setCheckable(true);
 	sm->registerAction(mDoubleStellateExtrudeAction, "Extrusion Operations", "");
 	mDoubleStellateExtrudeAction->setStatusTip(tr("Enter Double Stellate Mode"));

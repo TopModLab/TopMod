@@ -29,49 +29,49 @@ ConicalMode::ConicalMode(QWidget *parent, QShortcutManager *sm)
 	setupTruncateVertex();
 	setupDualConvexHull();
 
-	mCutbyEdgeAction = new QAction(tr("Cut by Edge"),this);
+	mCutbyEdgeAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Cut by Edge"),this);
 	mCutbyEdgeAction->setCheckable(true);
 	sm->registerAction(mCutbyEdgeAction, "Conical Operations", "");
 	mCutbyEdgeAction->setStatusTip(tr("Enter Cut by Edge Mode"));
 	mCutbyEdgeAction->setToolTip(tr("Cut by Edge Mode"));
 	connect(mCutbyEdgeAction, SIGNAL(triggered()), this, SLOT(triggerCutbyEdge()));
 
-	mCutbyVertexAction = new QAction(tr("Cut by Vertex"),this);
+	mCutbyVertexAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Cut by Vertex"),this);
 	mCutbyVertexAction->setCheckable(true);
 	sm->registerAction(mCutbyVertexAction, "Conical Operations", "");
 	mCutbyVertexAction->setStatusTip(tr("Enter Cut by Vertex Mode"));
 	mCutbyVertexAction->setToolTip(tr("Cut by Vertex Mode"));
 	connect(mCutbyVertexAction, SIGNAL(triggered()), this, SLOT(triggerCutbyVertex()));
 
-	mCutbyEdgeVertexAction = new QAction(tr("Cut by Edge-Vertex"),this);
+	mCutbyEdgeVertexAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Cut by Edge-Vertex"),this);
 	mCutbyEdgeVertexAction->setCheckable(true);
 	sm->registerAction(mCutbyEdgeVertexAction, "Conical Operations", "");
 	mCutbyEdgeVertexAction->setStatusTip(tr("Enter Cut by Edge-Vertex Mode"));
 	mCutbyEdgeVertexAction->setToolTip(tr("Cut by EdgeVertex Mode"));
 	connect(mCutbyEdgeVertexAction, SIGNAL(triggered()), this, SLOT(triggerCutbyEdgeVertex()));
 
-	mCutbyFaceAction = new QAction(tr("Cut by Face"),this);
+	mCutbyFaceAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Cut by Face"),this);
 	mCutbyFaceAction->setCheckable(true);
 	sm->registerAction(mCutbyFaceAction, "Conical Operations", "");
 	mCutbyFaceAction->setStatusTip(tr("Enter Cut by Face Mode"));
 	mCutbyFaceAction->setToolTip(tr("Cut by Face Mode"));
 	connect(mCutbyFaceAction, SIGNAL(triggered()), this, SLOT(triggerCutbyFace()));
 
-	mTruncateEdgeAction = new QAction(tr("Truncate Edge"),this);
+	mTruncateEdgeAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Truncate Edge"),this);
 	mTruncateEdgeAction->setCheckable(true);
 	sm->registerAction(mTruncateEdgeAction, "Conical Operations", "");
 	mTruncateEdgeAction->setStatusTip(tr("Enter Truncate Edge Mode"));
 	mTruncateEdgeAction->setToolTip(tr("Truncate Edge Mode"));
 	connect(mTruncateEdgeAction, SIGNAL(triggered()), this, SLOT(triggerTruncateEdge()));
 
-	mTruncateVertexAction = new QAction(tr("Truncate Vertex"),this);
+	mTruncateVertexAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Truncate Vertex"),this);
 	mTruncateVertexAction->setCheckable(true);
 	sm->registerAction(mTruncateVertexAction, "Conical Operations", "");
 	mTruncateVertexAction->setStatusTip(tr("Enter Truncate Vertex Mode"));
 	mTruncateVertexAction->setToolTip(tr("Truncate Vertex Mode"));
 	connect(mTruncateVertexAction, SIGNAL(triggered()), this, SLOT(triggerTruncateVertex()));
 	
-	mDualConvexHullAction = new QAction(tr("Dual Convex Hull"),this);
+	mDualConvexHullAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Dual Convex Hull"),this);
 	mDualConvexHullAction->setCheckable(true);
 	sm->registerAction(mDualConvexHullAction, "Conical Operations", "");
 	mDualConvexHullAction->setStatusTip(tr("Enter Dual Convex Hull Mode"));

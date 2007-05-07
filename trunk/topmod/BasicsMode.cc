@@ -34,7 +34,7 @@ BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm)
 	setupTransforms();
 	
 	mInsertEdgeAction = new QAction(tr("Insert Edge"),this);
-	mInsertEdgeAction->setIcon(QIcon(":/images/placeholder.png"));
+	mInsertEdgeAction->setIcon(QIcon(":/images/insert_edge.png"));
 	mInsertEdgeAction->setCheckable(true);
 	mInsertEdgeAction->setChecked(true);
 	// sm->registerAction(mInsertEdgeAction, "Basics Modes", "9");
@@ -43,7 +43,7 @@ BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm)
 	connect(mInsertEdgeAction, SIGNAL(triggered()), this, SLOT(triggerInsertEdge()));
 
 	mDeleteEdgeAction = new QAction(tr("Delete Edge"),this);
-	mDeleteEdgeAction->setIcon(QIcon(":/images/placeholder.png"));
+	mDeleteEdgeAction->setIcon(QIcon(":/images/delete_edge.png"));
 	mDeleteEdgeAction->setCheckable(true);
 	// sm->registerAction(mDeleteEdgeAction, "Basics Modes", "9");
 	mDeleteEdgeAction->setStatusTip(tr("Enter Delete Edge Mode"));
@@ -51,7 +51,7 @@ BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm)
 	connect(mDeleteEdgeAction, SIGNAL(triggered()), this, SLOT(triggerDeleteEdge()));
 
 	mCollapseEdgeAction = new QAction(tr("Collapse Edge"),this);
-	mCollapseEdgeAction->setIcon(QIcon(":/images/placeholder.png"));
+	mCollapseEdgeAction->setIcon(QIcon(":/images/collapse_edge.png"));
 	mCollapseEdgeAction->setCheckable(true);
 	// sm->registerAction(mCollapseEdgeAction, "Basics Modes", "9");
 	mCollapseEdgeAction->setStatusTip(tr("Enter Collapse Edge Mode"));
@@ -59,7 +59,7 @@ BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm)
 	connect(mCollapseEdgeAction, SIGNAL(triggered()), this, SLOT(triggerCollapseEdge()));
 
 	mSubdivideEdgeAction = new QAction(tr("Subdivide Edge"),this);
-	mSubdivideEdgeAction->setIcon(QIcon(":/images/placeholder.png"));
+	mSubdivideEdgeAction->setIcon(QIcon(":/images/subdivide_edge.png"));
 	mSubdivideEdgeAction->setCheckable(true);
 	// sm->registerAction(mDeleteEdgeAction, "Basics Modes", "9");
 	mSubdivideEdgeAction->setStatusTip(tr("Enter Subdivide Edge Mode"));
@@ -67,7 +67,7 @@ BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm)
 	connect(mSubdivideEdgeAction, SIGNAL(triggered()), this, SLOT(triggerSubdivideEdge()));
 	
 	mConnectEdgesAction = new QAction(tr("Connect Edges"),this);
-	mConnectEdgesAction->setIcon(QIcon(":/images/placeholder.png"));
+	mConnectEdgesAction->setIcon(QIcon(":/images/connect_edges.png"));
 	mConnectEdgesAction->setCheckable(true);
 	// sm->registerAction(mDeleteEdgeAction, "Basics Modes", "9");
 	mConnectEdgesAction->setStatusTip(tr("Enter Connect Edges Mode"));
@@ -75,7 +75,7 @@ BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm)
 	connect(mConnectEdgesAction, SIGNAL(triggered()), this, SLOT(triggerConnectEdges()));
 	
 	mSpliceCornersAction = new QAction(tr("Splice Corners"),this);
-	mSpliceCornersAction->setIcon(QIcon(":/images/placeholder.png"));
+	mSpliceCornersAction->setIcon(QIcon(":/images/splice_corners.png"));
 	mSpliceCornersAction->setCheckable(true);
 	// sm->registerAction(mDeleteEdgeAction, "Basics Modes", "9");
 	mSpliceCornersAction->setStatusTip(tr("Enter Splice Corners Mode"));
@@ -83,7 +83,7 @@ BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm)
 	connect(mSpliceCornersAction, SIGNAL(triggered()), this, SLOT(triggerSpliceCorners()));
 
 	mTransformsAction = new QAction(tr("Transforms"),this);
-	mTransformsAction->setIcon(QIcon(":/images/placeholder.png"));
+	mTransformsAction->setIcon(QIcon(":/images/transforms.png"));
 	mTransformsAction->setCheckable(true);
 	// sm->registerAction(mDeleteEdgeAction, "Basics Modes", "9");
 	mTransformsAction->setStatusTip(tr("Enter Transforms Mode"));

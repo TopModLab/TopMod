@@ -25,7 +25,7 @@ MainWindow::MainWindow() {
 	// setUnifiedTitleAndToolBarOnMac(false);
 	mStatusBar = new QStatusBar();
 	setStatusBar(mStatusBar);
-	setDockOptions(QMainWindow::AllowNestedDocks);
+	// setDockOptions(QMainWindow::AllowNestedDocks);
 	setAttribute(Qt::WA_AcceptDrops, true);
 	// setAttribute(Qt::WA_MacMetalStyle, true);
 	setWindowFlags(Qt::Window | Qt::WindowTitleHint);
@@ -66,8 +66,8 @@ MainWindow::MainWindow() {
 	mHighgenusMode = new HighgenusMode(this, sm);
 	mTexturingMode = new TexturingMode(this, sm);
 
-  createToolBars();
   createActions();
+  createToolBars();
   createMenus();
 
 	MainWindow::createRenderers();
@@ -171,15 +171,15 @@ void MainWindow::createActions()
 	connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
 	//Edit Menu Actions
-	undoAct = new QAction(tr("&Undo"), this);
-	sm->registerAction(undoAct, "Edit Menu", "CTRL+Z");
-	// undoAct->setStatusTip(tr("Cut the current selection's contents to the clipboard"));
-	connect(undoAct, SIGNAL(triggered()), mainWindow, SLOT(undo()));
+	mUndoAct = new QAction(QIcon(":images/undo.png"), tr("&Undo"), this);
+	sm->registerAction(mUndoAct, "Edit Menu", "CTRL+Z");
+	mUndoAct->setStatusTip(tr("Undo the last operation"));
+	connect(mUndoAct, SIGNAL(triggered()), mainWindow, SLOT(undo()));
 
-	redoAct = new QAction(tr("&Redo"), this);
-	sm->registerAction(redoAct, "Edit Menu", "CTRL+SHIFT+Z");
-	// undoAct->setStatusTip(tr("Cut the current selection's contents to the clipboard"));
-	connect(redoAct, SIGNAL(triggered()), mainWindow, SLOT(redo()));
+	mRedoAct = new QAction(QIcon(":images/redo.png"), tr("&Redo"), this);
+	sm->registerAction(mRedoAct, "Edit Menu", "CTRL+SHIFT+Z");
+	mUndoAct->setStatusTip(tr("Redo the last operation"));
+	connect(mRedoAct, SIGNAL(triggered()), mainWindow, SLOT(redo()));
 
 	//Display Menu Actions
 	mFullscreenAct = new QAction(tr("&Full Screen"), this);
@@ -463,16 +463,15 @@ void MainWindow::createMenus(){
 
 	#ifdef __APPLE__
 		menuBar = new QMenuBar(0);
-		//setMenuBar(menuBar);
+		setMenuBar(menuBar);
 		// setUnifiedTitleAndToolBarOnMac(true);
 	#else
-		// menuBar = new QMenuBar(this);
-		// setMenuBar(menuBar);
+		menuBar = new QMenuBar(this);
+		setMenuBar(menuBar);
 	#endif
 	
 	fileMenu = new QMenu(tr("&File"));
 	menuBar->addMenu(fileMenu);
-	// fileMenu = new QMenu(tr("&File"),this);
 	fileMenu->setTearOffEnabled(true);
 	
 	fileMenu->addAction(openAct);
@@ -489,8 +488,8 @@ void MainWindow::createMenus(){
 
 	editMenu = new QMenu(tr("&Edit"));
 	menuBar->addMenu(editMenu);
-	editMenu->addAction(undoAct);
-	editMenu->addAction(redoAct);
+	editMenu->addAction(mUndoAct);
+	editMenu->addAction(mRedoAct);
 	editMenu->setTearOffEnabled(true);
 	// menuBar->addSeparator();
 	
@@ -583,7 +582,7 @@ void MainWindow::createMenus(){
 	
 }
 
-void MainWindow::createToolBars() {	
+void MainWindow::createToolBars() {
 	
 	//the main tool options DockWidget
 	mToolOptionsDockWidget = new QDockWidget(tr("Tool Options"),this);
@@ -603,25 +602,39 @@ void MainWindow::createToolBars() {
 	// mToolOptionsDockWidget->setWindowTitle("Insert Edge Mode");
 	addDockWidget(Qt::TopDockWidgetArea, mToolOptionsDockWidget);
 	
+	mEditToolBar = new QToolBar(tr("Edit"));
+	addToolBar(Qt::TopToolBarArea,mEditToolBar);
+	mEditToolBar->addAction(mUndoAct);
+	mEditToolBar->addAction(mRedoAct);
+	mEditToolBar->setIconSize(QSize(32,32));
 	
 	//basic tools - six buttons
 	mToolsToolBar = new QToolBar(tr("Tools"));
 	addToolBar(Qt::TopToolBarArea,mToolsToolBar);
-	
+	mToolsToolBar->setIconSize(QSize(32,32));
+		
 	mExtrusionToolBar = new QToolBar(tr("Extrusion Tools"));
 	addToolBar(Qt::TopToolBarArea,mExtrusionToolBar);
+	mExtrusionToolBar->setIconSize(QSize(32,32));
 	
 	mConicalToolBar = new QToolBar(tr("Conical Tools"));
-	addToolBar(Qt::TopToolBarArea,mExtrusionToolBar);
+	addToolBar(Qt::TopToolBarArea,mConicalToolBar);
+	mConicalToolBar->setIconSize(QSize(32,32));
+	
+	addToolBarBreak();
 	
 	mHighgenusToolBar = new QToolBar(tr("High Genus Tools"));
-	addToolBar(Qt::TopToolBarArea,mExtrusionToolBar);
+	addToolBar(Qt::TopToolBarArea,mHighgenusToolBar);
+	mHighgenusToolBar->setIconSize(QSize(32,32));
 	
-	mTexturingToolBar = new QToolBar(tr("High Genus Tools"));
-	addToolBar(Qt::TopToolBarArea,mExtrusionToolBar);
+	mTexturingToolBar = new QToolBar(tr("Texturing Tools"));
+	addToolBar(Qt::TopToolBarArea,mTexturingToolBar);
+	mTexturingToolBar->setIconSize(QSize(32,32));
+	
 	
 	mRemeshingToolBar = new QToolBar(tr("Remeshing"));
-	// addToolBar(Qt::RightToolBarArea,mRemeshingToolBar);
+	// addToolBar(Qt::TopToolBarArea,mRemeshingToolBar);
+	mRemeshingToolBar->setIconSize(QSize(32,32));
 	
 	//tools ction group initialization
 	mToolsActionGroup = new QActionGroup(this);
@@ -653,10 +666,10 @@ void MainWindow::setToolOptions(QWidget *optionsWidget) {
 	mToolOptionsDockWidget->setWindowTitle(optionsWidget->windowTitle());
 	mToolOptionsStackedWidget->setCurrentWidget(optionsWidget);
 	// show or hide the dockwidget options
-	if (optionsWidget->windowTitle() != "" && mToolOptionsDockWidget->isHidden())
-		mToolOptionsDockWidget->show();
-	else if (!mToolOptionsDockWidget->isHidden() && optionsWidget->windowTitle() == "")
-		mToolOptionsDockWidget->hide();
+	// if (optionsWidget->windowTitle() != "" && mToolOptionsDockWidget->isHidden())
+	// 	mToolOptionsDockWidget->show();
+	// else if (!mToolOptionsDockWidget->isHidden() && optionsWidget->windowTitle() == "")
+	// 	mToolOptionsDockWidget->hide();
 
 }
 

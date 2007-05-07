@@ -179,8 +179,8 @@ private:
   QAction *exitAct;
 
   //Edit Menu Actions
-  QAction *undoAct;
-  QAction *redoAct;
+  QAction *mUndoAct;
+  QAction *mRedoAct;
 
   //Display Menu Actions
   QAction *showVerticesAct;
@@ -250,6 +250,8 @@ private:
 	QBoxLayout *mToolOptionsTitleBarLayout;
 	
   //QToolbars
+	QToolBar *mEditToolBar;
+
   QToolBar *mPrimitivesToolBar;
 	QToolBar *mToolsToolBar;
 	QToolBar *mExtrusionToolBar;

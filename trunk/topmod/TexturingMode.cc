@@ -16,7 +16,7 @@ TexturingMode::TexturingMode(QWidget *parent, QShortcutManager *sm)
 	setupTileTexturing();
 	
 	mTileTexturingAction = new QAction(tr("Tile Texturing"),this);
-	mTileTexturingAction->setIcon(QIcon(":images/placeholder.png"));
+	mTileTexturingAction->setIcon(QIcon(":images/mode_texturing.png"));
 	mTileTexturingAction->setCheckable(true);
 	sm->registerAction(mTileTexturingAction, "Texturing Operations", "");
 	mTileTexturingAction->setStatusTip(tr("Enter Tile Texturing Mode"));

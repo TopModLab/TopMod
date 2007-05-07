@@ -35,19 +35,20 @@ class DLFLFace
      Vector3d              auxcoords;                  // Coords for use during subdivs, etc.
      Vector3d              auxnormal;                  // Extra storage for normal
 
-  public :    
+  public :
+     
      Vector3d              centroid;                   // Centroid of this face (not always current)
      Vector3d              normal;                     // Normal to this face. Not always correct/current
      unsigned long         flags;                      // Variable for general use to store flags, etc.
-    uint ismarked; //ozgur
+		 uint ismarked; //ozgur
 
-  protected :
+	protected :
 
         // Assign a unique ID for this instance
      void assignID(void)
        {
          uID = DLFLFace :: newID();
-		     ismarked = 0; //ozgur
+		     ismarked = 0; // ozgur
        }
 
         // Advance the pointer by given number of nodes. Similar to STL advance algorithm
@@ -606,8 +607,8 @@ class DLFLFace
        {
          face.outline_FV();
        }
-			//changed name here for 3d spacenavigator
-     friend void outline_face(const DLFLFace& face)
+
+     friend void outline(const DLFLFace& face)
        {
          face.outline();
        }

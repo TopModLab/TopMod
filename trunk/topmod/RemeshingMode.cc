@@ -25,252 +25,252 @@ RemeshingMode::RemeshingMode(QWidget *parent, QShortcutManager *sm)
 	setupSixPreservation();
 	setupMiscellaneous();
 	
-	mDualAction = new QAction(tr("Dual"),this);
+	mDualAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Dual"),this);
 	mDualAction->setCheckable(true);
 	sm->registerAction(mDualAction, "Remeshing", "");
 	mDualAction->setStatusTip(tr("Enter Dual Mode"));
 	mDualAction->setToolTip(tr("Dual Mode"));
 	connect(mDualAction, SIGNAL(triggered()), this, SLOT(triggerDual()));
 
-	mRootThreeAction = new QAction(tr("Root-3"),this);
+	mRootThreeAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Root-3"),this);
 	mRootThreeAction->setCheckable(true);
 	sm->registerAction(mRootThreeAction, "Remeshing", "");
 	mRootThreeAction->setStatusTip(tr("Enter Root-3 Mode"));
 	mRootThreeAction->setToolTip(tr("Root-3 Mode"));
 	connect(mRootThreeAction, SIGNAL(triggered()), this, SLOT(triggerRootThree()));
 
-	mDualVertexTruncationAction = new QAction(tr("Dual Vertex Truncation"),this);
+	mDualVertexTruncationAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Dual Vertex Truncation"),this);
 	mDualVertexTruncationAction->setCheckable(true);
 	sm->registerAction(mDualVertexTruncationAction, "Remeshing", "");
 	mDualVertexTruncationAction->setStatusTip(tr("Enter Dual Vertex Truncation Mode"));
 	mDualVertexTruncationAction->setToolTip(tr("Dual Vertex Truncation Mode"));
 	connect(mDualVertexTruncationAction, SIGNAL(triggered()), this, SLOT(triggerDualVertexTruncation()));
 
-	mStellationAction = new QAction(tr("Stellate"),this);
+	mStellationAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Stellate"),this);
 	mStellationAction->setCheckable(true);
 	sm->registerAction(mStellationAction, "Remeshing", "");
 	mStellationAction->setStatusTip(tr("Enter Stellate Mode"));
 	mStellationAction->setToolTip(tr("Stellate Mode"));
 	connect(mStellationAction, SIGNAL(triggered()), this, SLOT(triggerStellation()));
 
-	mDoubleStellationAction = new QAction(tr("Double Stellate"),this);
+	mDoubleStellationAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Double Stellate"),this);
 	mDoubleStellationAction->setCheckable(true);
 	sm->registerAction(mDoubleStellationAction, "Remeshing", "");
 	mDoubleStellationAction->setStatusTip(tr("Enter Double Stellate Mode"));
 	mDoubleStellationAction->setToolTip(tr("Double Stellate Mode"));
 	connect(mDoubleStellationAction, SIGNAL(triggered()), this, SLOT(triggerDoubleStellation()));
 
-	mTwelveSixFourAction = new QAction(tr("12.6.4"),this);
+	mTwelveSixFourAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("12.6.4"),this);
 	mTwelveSixFourAction->setCheckable(true);
 	sm->registerAction(mTwelveSixFourAction, "Remeshing", "");
 	mTwelveSixFourAction->setStatusTip(tr("Enter 12.6.4 Mode"));
 	mTwelveSixFourAction->setToolTip(tr("12.6.4 Mode"));
 	connect(mTwelveSixFourAction, SIGNAL(triggered()), this, SLOT(triggerTwelveSixFour()));	
 
-	mHoneycombAction = new QAction(tr("Honeycomb"),this);
+	mHoneycombAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Honeycomb"),this);
 	mHoneycombAction->setCheckable(true);
 	sm->registerAction(mHoneycombAction, "Remeshing", "");
 	mHoneycombAction->setStatusTip(tr("Enter Honeycomb Mode"));
 	mHoneycombAction->setToolTip(tr("Honeycomb Mode"));
 	connect(mHoneycombAction, SIGNAL(triggered()), this, SLOT(triggerHoneycomb()));	
 	
-	mVertexTruncationAction = new QAction(tr("Vertex Truncation"),this);
+	mVertexTruncationAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Vertex Truncation"),this);
 	mVertexTruncationAction->setCheckable(true);
 	sm->registerAction(mVertexTruncationAction, "Remeshing", "");
 	mVertexTruncationAction->setStatusTip(tr("Enter Vertex Truncation Mode"));
 	mVertexTruncationAction->setToolTip(tr("Vertex Truncation Mode"));
 	connect(mVertexTruncationAction, SIGNAL(triggered()), this, SLOT(triggerVertexTruncation()));	
 	
-	mDualTwelveSixFourAction = new QAction(tr("Dual 12.6.4"),this);
+	mDualTwelveSixFourAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Dual 12.6.4"),this);
 	mDualTwelveSixFourAction->setCheckable(true);
 	sm->registerAction(mDualTwelveSixFourAction, "Remeshing", "");
 	mDualTwelveSixFourAction->setStatusTip(tr("Enter Dual 12.6.4 Mode"));
 	mDualTwelveSixFourAction->setToolTip(tr("Dual 12.6.4 Mode"));
 	connect(mDualTwelveSixFourAction, SIGNAL(triggered()), this, SLOT(triggerDualTwelveSixFour()));	
 	
-	mLinearVertexAction = new QAction(tr("Linear Vertex Insertion"),this);
+	mLinearVertexAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Linear Vertex Insertion"),this);
 	mLinearVertexAction->setCheckable(true);
 	sm->registerAction(mLinearVertexAction, "Remeshing", "");
 	mLinearVertexAction->setStatusTip(tr("Enter Linear Vertex Insertion Mode"));
 	mLinearVertexAction->setToolTip(tr("Linear Vertex Insertion Mode"));
 	connect(mLinearVertexAction, SIGNAL(triggered()), this, SLOT(triggerLinearVertex()));	
 	
-	mCatmullClarkAction = new QAction(tr("Catmull Clark"),this);
+	mCatmullClarkAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Catmull Clark"),this);
 	mCatmullClarkAction->setCheckable(true);
 	sm->registerAction(mCatmullClarkAction, "Remeshing", "");
 	mCatmullClarkAction->setStatusTip(tr("Enter Catmull Clark Mode"));
 	mCatmullClarkAction->setToolTip(tr("Catmull Clark Mode"));
 	connect(mCatmullClarkAction, SIGNAL(triggered()), this, SLOT(triggerCatmullClark()));	
 	
-	mStellateEdgeRemovalAction = new QAction(tr("Stellate with Edge Removal"),this);
+	mStellateEdgeRemovalAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Stellate with Edge Removal"),this);
 	mStellateEdgeRemovalAction->setCheckable(true);
 	sm->registerAction(mStellateEdgeRemovalAction, "Remeshing", "");
 	mStellateEdgeRemovalAction->setStatusTip(tr("Enter Stellate with Edge Removal Mode"));
 	mStellateEdgeRemovalAction->setToolTip(tr("Stellate with Edge Removal Mode"));
 	connect(mStellateEdgeRemovalAction, SIGNAL(triggered()), this, SLOT(triggerStellateEdgeRemoval()));	
 	
-	mDooSabinAction = new QAction(tr("Doo Sabin"),this);
+	mDooSabinAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Doo Sabin"),this);
 	mDooSabinAction->setCheckable(true);
 	sm->registerAction(mDooSabinAction, "Remeshing", "");
 	mDooSabinAction->setStatusTip(tr("Enter Doo Sabin Mode"));
 	mDooSabinAction->setToolTip(tr("Doo Sabin Mode"));
 	connect(mDooSabinAction, SIGNAL(triggered()), this, SLOT(triggerDooSabin()));	
 	
-	mCornerCuttingAction = new QAction(tr("Corner Cutting"),this);
+	mCornerCuttingAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Corner Cutting"),this);
 	mCornerCuttingAction->setCheckable(true);
 	sm->registerAction(mCornerCuttingAction, "Remeshing", "");
 	mCornerCuttingAction->setStatusTip(tr("Enter Corner Cutting Mode"));
 	mCornerCuttingAction->setToolTip(tr("Corner Cutting Mode"));
 	connect(mCornerCuttingAction, SIGNAL(triggered()), this, SLOT(triggerCornerCutting()));	
 
-	mSimplestAction = new QAction(tr("Simplest"),this);
+	mSimplestAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Simplest"),this);
 	mSimplestAction->setCheckable(true);
 	sm->registerAction(mSimplestAction, "Remeshing", "");
 	mSimplestAction->setStatusTip(tr("Enter Simplest Mode"));
 	mSimplestAction->setToolTip(tr("Simplest Mode"));
 	connect(mSimplestAction, SIGNAL(triggered()), this, SLOT(triggerSimplest()));	
 
-	mPentagonalizationAction = new QAction(tr("Pentagonalization"),this);
+	mPentagonalizationAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Pentagonalization"),this);
 	mPentagonalizationAction->setCheckable(true);
 	sm->registerAction(mPentagonalizationAction, "Remeshing", "");
 	mPentagonalizationAction->setStatusTip(tr("Enter Pentagonalization Mode"));
 	mPentagonalizationAction->setToolTip(tr("Pentagonalization Mode"));
 	connect(mPentagonalizationAction, SIGNAL(triggered()), this, SLOT(triggerPentagonalization()));	
 
-	mCubicPentagonalizationAction = new QAction(tr("Cubic Pentagonalization"),this);
+	mCubicPentagonalizationAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Cubic Pentagonalization"),this);
 	mCubicPentagonalizationAction->setCheckable(true);
 	sm->registerAction(mCubicPentagonalizationAction, "Remeshing", "");
 	mCubicPentagonalizationAction->setStatusTip(tr("Enter Cubic Pentagonalization Mode"));
 	mCubicPentagonalizationAction->setToolTip(tr("Cubic Pentagonalization Mode"));
 	connect(mCubicPentagonalizationAction, SIGNAL(triggered()), this, SLOT(triggerCubicPentagonalization()));	
 
-	mDualPentagonalizationAction = new QAction(tr("Dual Pentagonalization"),this);
+	mDualPentagonalizationAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Dual Pentagonalization"),this);
 	mDualPentagonalizationAction->setCheckable(true);
 	sm->registerAction(mDualPentagonalizationAction, "Remeshing", "");
 	mDualPentagonalizationAction->setStatusTip(tr("Enter Dual Pentagonalization Mode"));
 	mDualPentagonalizationAction->setToolTip(tr("Dual Pentagonalization Mode"));
 	connect(mDualPentagonalizationAction, SIGNAL(triggered()), this, SLOT(triggerDualPentagonalization()));	
 
-	mLoopStyleRemeshingAction = new QAction(tr("Loop Style Remeshing"),this);
+	mLoopStyleRemeshingAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Loop Style Remeshing"),this);
 	mLoopStyleRemeshingAction->setCheckable(true);
 	sm->registerAction(mLoopStyleRemeshingAction, "Remeshing", "");
 	mLoopStyleRemeshingAction->setStatusTip(tr("Enter Loop Style Remeshing Mode"));
 	mLoopStyleRemeshingAction->setToolTip(tr("Loop Style Remeshing Mode"));
 	connect(mLoopStyleRemeshingAction, SIGNAL(triggered()), this, SLOT(triggerLoopStyleRemeshing()));		
 
-	mLoopSubdivisionAction = new QAction(tr("Loop Subdivision"),this);
+	mLoopSubdivisionAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Loop Subdivision"),this);
 	mLoopSubdivisionAction->setCheckable(true);
 	sm->registerAction(mLoopSubdivisionAction, "Remeshing", "");
 	mLoopSubdivisionAction->setStatusTip(tr("Enter Loop Subdivision Mode"));
 	mLoopSubdivisionAction->setToolTip(tr("Loop Subdivision Mode"));
 	connect(mLoopSubdivisionAction, SIGNAL(triggered()), this, SLOT(triggerLoopSubdivision()));		
 	
-	mDualLoopStyleRemeshingAction = new QAction(tr("Dual Loop Style Remeshing"),this);
+	mDualLoopStyleRemeshingAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Dual Loop Style Remeshing"),this);
 	mDualLoopStyleRemeshingAction->setCheckable(true);
 	sm->registerAction(mDualLoopStyleRemeshingAction, "Remeshing", "");
 	mDualLoopStyleRemeshingAction->setStatusTip(tr("Enter Dual Loop Style Remeshing Mode"));
 	mDualLoopStyleRemeshingAction->setToolTip(tr("Dual Loop Style Remeshing Mode"));
 	connect(mDualLoopStyleRemeshingAction, SIGNAL(triggered()), this, SLOT(triggerDualLoopStyleRemeshing()));		
 	
-	mDualLoopSubdivisionAction = new QAction(tr("Dual Loop Subdivision"),this);
+	mDualLoopSubdivisionAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Dual Loop Subdivision"),this);
 	mDualLoopSubdivisionAction->setCheckable(true);
 	sm->registerAction(mDualLoopSubdivisionAction, "Remeshing", "");
 	mDualLoopSubdivisionAction->setStatusTip(tr("Enter Dual Loop Subdivision Mode"));
 	mDualLoopSubdivisionAction->setToolTip(tr("Dual Loop Subdivision Mode"));
 	connect(mDualLoopSubdivisionAction, SIGNAL(triggered()), this, SLOT(triggerDualLoopSubdivision()));		
 	
-	mGlobalExtrudeAction = new QAction(tr("Global Extrude"),this);
+	mGlobalExtrudeAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Global Extrude"),this);
 	mGlobalExtrudeAction->setCheckable(true);
 	sm->registerAction(mGlobalExtrudeAction, "Remeshing", "");
 	mGlobalExtrudeAction->setStatusTip(tr("Enter Global Extrude Mode"));
 	mGlobalExtrudeAction->setToolTip(tr("Global Extrude Mode"));
 	connect(mGlobalExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerGlobalExtrude()));
 
-	mCheckerboardAction = new QAction(tr("Checkerboard"),this);
+	mCheckerboardAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Checkerboard"),this);
 	mCheckerboardAction->setCheckable(true);
 	sm->registerAction(mCheckerboardAction, "Remeshing", "");
 	mCheckerboardAction->setStatusTip(tr("Enter Checkerboard Mode"));
 	mCheckerboardAction->setToolTip(tr("Checkerboard Mode"));
 	connect(mCheckerboardAction, SIGNAL(triggered()), this, SLOT(triggerCheckerboard()));
 
-	mDualGlobalExtrudeAction = new QAction(tr("Dual Global Extrude"),this);
+	mDualGlobalExtrudeAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Dual Global Extrude"),this);
 	mDualGlobalExtrudeAction->setCheckable(true);
 	sm->registerAction(mDualGlobalExtrudeAction, "Remeshing", "");
 	mDualGlobalExtrudeAction->setStatusTip(tr("Enter Dual Global Extrude Mode"));
 	mDualGlobalExtrudeAction->setToolTip(tr("Dual Global Extrude Mode"));
 	connect(mDualGlobalExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerDualGlobalExtrude()));
 
-	mDualCheckerboardAction = new QAction(tr("Dual Checkerboard"),this);
+	mDualCheckerboardAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Dual Checkerboard"),this);
 	mDualCheckerboardAction->setCheckable(true);
 	sm->registerAction(mDualCheckerboardAction, "Remeshing", "");
 	mDualCheckerboardAction->setStatusTip(tr("Enter Dual Checkerboard Mode"));
 	mDualCheckerboardAction->setToolTip(tr("Dual Checkerboard Mode"));
 	connect(mDualCheckerboardAction, SIGNAL(triggered()), this, SLOT(triggerDualCheckerboard()));
 
-	mPentagonPreservingAction = new QAction(tr("Pentagon Preserving"),this);
+	mPentagonPreservingAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Pentagon Preserving"),this);
 	mPentagonPreservingAction->setCheckable(true);
 	sm->registerAction(mPentagonPreservingAction, "Remeshing", "");
 	mPentagonPreservingAction->setStatusTip(tr("Enter Pentagon Preserving Mode"));
 	mPentagonPreservingAction->setToolTip(tr("Pentagon Preserving Mode"));
 	connect(mPentagonPreservingAction, SIGNAL(triggered()), this, SLOT(triggerPentagonPreserving()));
 
-	mDualPentagonPreservingAction = new QAction(tr("Dual Pentagon Preserving"),this);
+	mDualPentagonPreservingAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Dual Pentagon Preserving"),this);
 	mDualPentagonPreservingAction->setCheckable(true);
 	sm->registerAction(mDualPentagonPreservingAction, "Remeshing", "");
 	mDualPentagonPreservingAction->setStatusTip(tr("Enter Dual Pentagon Preserving Mode"));
 	mDualPentagonPreservingAction->setToolTip(tr("Dual Pentagon Preserving Mode"));
 	connect(mDualPentagonPreservingAction, SIGNAL(triggered()), this, SLOT(triggerDualPentagonPreserving()));	
 	
-	mDualLoopStyleRemeshingSixAction = new QAction(tr("Dual Loop Style"),this);
+	mDualLoopStyleRemeshingSixAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Dual Loop Style"),this);
 	mDualLoopStyleRemeshingSixAction->setCheckable(true);
 	sm->registerAction(mDualLoopStyleRemeshingSixAction, "Remeshing", "");
 	mDualLoopStyleRemeshingSixAction->setStatusTip(tr("Enter Loop Style Remeshing Mode"));
 	mDualLoopStyleRemeshingSixAction->setToolTip(tr("Dual Loop Style Remeshing Mode"));
 	connect(mDualLoopStyleRemeshingSixAction, SIGNAL(triggered()), this, SLOT(triggerDualLoopStyleRemeshingSix()));	
 	
-	mLoopStyleRemeshingSixAction = new QAction(tr("Loop Style"),this);
+	mLoopStyleRemeshingSixAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Loop Style"),this);
 	mLoopStyleRemeshingSixAction->setCheckable(true);
 	sm->registerAction(mLoopStyleRemeshingSixAction, "Remeshing", "");
 	mLoopStyleRemeshingSixAction->setStatusTip(tr("Enter Loop Style Remeshing Mode"));
 	mLoopStyleRemeshingSixAction->setToolTip(tr("Loop Style Remeshing Mode"));
 	connect(mLoopStyleRemeshingSixAction, SIGNAL(triggered()), this, SLOT(triggerLoopStyleRemeshingSix()));	
 	
-	mFractalAction = new QAction(tr("Fractal"),this);
+	mFractalAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Fractal"),this);
 	mFractalAction->setCheckable(true);
 	sm->registerAction(mFractalAction, "Remeshing", "");
 	mFractalAction->setStatusTip(tr("Enter Fractal Mode"));
 	mFractalAction->setToolTip(tr("Fractal Mode"));
 	connect(mFractalAction, SIGNAL(triggered()), this, SLOT(triggerFractal()));	
 	
-	mDoubleStellateMiscAction = new QAction(tr("Double Stellate"),this);
+	mDoubleStellateMiscAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Double Stellate"),this);
 	mDoubleStellateMiscAction->setCheckable(true);
 	sm->registerAction(mDoubleStellateMiscAction, "Remeshing", "");
 	mDoubleStellateMiscAction->setStatusTip(tr("Enter Double Stellate Mode"));
 	mDoubleStellateMiscAction->setToolTip(tr("Double Stellate Mode"));
 	connect(mDoubleStellateMiscAction, SIGNAL(triggered()), this, SLOT(triggerDoubleStellateMisc()));	
 	
-	mDooSabinBCAction = new QAction(tr("Doo Sabin BC"),this);
+	mDooSabinBCAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Doo Sabin BC"),this);
 	mDooSabinBCAction->setCheckable(true);
 	sm->registerAction(mDooSabinBCAction, "Remeshing", "");
 	mDooSabinBCAction->setStatusTip(tr("Enter Doo Sabin BC Mode"));
 	mDooSabinBCAction->setToolTip(tr("Doo Sabin BC Mode"));
 	connect(mDooSabinBCAction, SIGNAL(triggered()), this, SLOT(triggerDooSabinBC()));	
 	
-	mDooSabinBCNewAction = new QAction(tr("Doo Sabin BC New"),this);
+	mDooSabinBCNewAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Doo Sabin BC New"),this);
 	mDooSabinBCNewAction->setCheckable(true);
 	sm->registerAction(mDooSabinBCNewAction, "Remeshing", "");
 	mDooSabinBCNewAction->setStatusTip(tr("Enter Doo Sabin BC New Mode"));
 	mDooSabinBCNewAction->setToolTip(tr("Doo Sabin BC New Mode"));
 	connect(mDooSabinBCNewAction, SIGNAL(triggered()), this, SLOT(triggerDooSabinBCNew()));	
 	
-	mDomeAction = new QAction(tr("Dome"),this);
+	mDomeAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Dome"),this);
 	mDomeAction->setCheckable(true);
 	sm->registerAction(mDomeAction, "Remeshing", "");
 	mDomeAction->setStatusTip(tr("Enter Dome Mode"));
 	mDomeAction->setToolTip(tr("Dome Mode"));
 	connect(mDomeAction, SIGNAL(triggered()), this, SLOT(triggerDome()));	
 	
-	mSubdivideFaceAction = new QAction(tr("Subdivide Face"),this);
+	mSubdivideFaceAction = new QAction(QIcon(":images/doosabin_extrude.png"),tr("Subdivide Face"),this);
 	mSubdivideFaceAction->setCheckable(true);
 	sm->registerAction(mSubdivideFaceAction, "Remeshing", "");
 	mSubdivideFaceAction->setStatusTip(tr("Enter Subdivide Face Mode"));

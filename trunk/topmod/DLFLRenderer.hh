@@ -142,7 +142,7 @@ class DLFLRenderer
          glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
          glColor3f(0.1,0.1,0.2);
          glDepthRange(0.0,1.0-0.0005);
-         object->renderEdges(1.5);
+         object->renderEdges(32.0);
        }
      
      static void drawSilhouette(DLFLObjectPtr object)
