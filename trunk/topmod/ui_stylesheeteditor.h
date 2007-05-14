@@ -1,8 +1,8 @@
 /********************************************************************************
 ** Form generated from reading ui file 'stylesheeteditor.ui'
 **
-** Created: Wed May 2 01:48:15 2007
-**      by: Qt User Interface Compiler version 4.3.0beta
+** Created: Mon May 14 02:42:14 2007
+**      by: Qt User Interface Compiler version 4.4.0-snapshot-20070507
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
 ********************************************************************************/
@@ -124,8 +124,10 @@ public:
     {
     StyleSheetEditor->setWindowTitle(QApplication::translate("StyleSheetEditor", "Style Editor", 0, QApplication::UnicodeUTF8));
     styleSheetCombo->clear();
-    styleSheetCombo->addItem(QApplication::translate("StyleSheetEditor", "Default", 0, QApplication::UnicodeUTF8));
-    styleSheetCombo->addItem(QApplication::translate("StyleSheetEditor", "Modo", 0, QApplication::UnicodeUTF8));
+    styleSheetCombo->insertItems(0, QStringList()
+     << QApplication::translate("StyleSheetEditor", "Default", 0, QApplication::UnicodeUTF8)
+     << QApplication::translate("StyleSheetEditor", "Modo", 0, QApplication::UnicodeUTF8)
+    );
     label_7->setText(QApplication::translate("StyleSheetEditor", "Style:", 0, QApplication::UnicodeUTF8));
     applyButton->setText(QApplication::translate("StyleSheetEditor", "&Apply", 0, QApplication::UnicodeUTF8));
     label_8->setText(QApplication::translate("StyleSheetEditor", "Style Sheet:", 0, QApplication::UnicodeUTF8));

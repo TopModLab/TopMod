@@ -608,7 +608,7 @@ class DLFLFace
          face.outline_FV();
        }
 
-     friend void outline(const DLFLFace& face)
+     friend void outlineface(const DLFLFace& face)
        {
          face.outline();
        }

@@ -113,20 +113,18 @@ protected:
 	QDockWidget *mScriptEditorDockWidget;
 	QDockWidget *mToolOptionsDockWidget;
 	QStackedWidget *mToolOptionsStackedWidget;
-	
-	
+
    // Default sizes
 	static int MIN_W;                 // Minimum width for app window
 	static int MIN_H;                // Minimum height for app window
 
 	   // Renderers
-	static ShadedRendererPtr shaded;                // ShadedRenderer
-	static NormalRendererPtr normal;                // NormalRenderer
-	static LitRendererPtr lit;                        // LitRenderer
+	static ShadedRendererPtr shaded;              // ShadedRenderer
+	static NormalRendererPtr normal;              // NormalRenderer
+	static LitRendererPtr lit;                    // LitRenderer
 	static TexturedRendererPtr textured;          // TexturedRenderer
-	static TexturedLitRendererPtr texturedlit; // TexturedLitRenderer
-	static PatchRendererPtr patch;		      // PatchRenderer
-
+	static TexturedLitRendererPtr texturedlit; 		// TexturedLitRenderer
+	static PatchRendererPtr patch;		      			// PatchRenderer
 	
 	BasicsMode *mBasicsMode;
 	ExtrusionMode *mExtrusionMode;

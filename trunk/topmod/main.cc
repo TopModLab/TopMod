@@ -16,7 +16,7 @@
 #include "MainWindow.hh"
 
 #ifdef __APPLE__
-// #include "TdxDeviceWrappers.hh"
+	#include "TdxDeviceWrappers.hh"
 #endif
 
 
@@ -32,8 +32,8 @@ int main( int argc, char **argv ) {
 	translator.load(QString("topmod_") + locale);
 	app.installTranslator(&translator);
 
-	//OSStatus err;
-	//err = TdxInitDevice((UInt32)'TopM', FALSE, kConnexionClientModeTakeOver, (kConnexionMaskAxis | kConnexionMaskButtons ));
+	OSStatus err;
+	err = TdxInitDevice('TopM', TRUE, kConnexionClientModeTakeOver, kConnexionMaskAll);
 	//pass kConnexionClientModeTakeOver as the mode and try kConnexionMaskAxis | kConnexionMaskButtons as the mask. kConnexionMaskAll should also work.
 
 	MainWindow mainWindow;
@@ -45,7 +45,7 @@ int main( int argc, char **argv ) {
 	return app.exec( );
 }
 
-/* 
+
 int TdxComputeAxes(const TdxDeviceAxes inArrayPtr)
 {
     OSStatus err;
@@ -128,4 +128,4 @@ int TdxComputeEventZero()
 
     // in this case, just process the zero event like any other axes event. 
     return TdxComputeAxes(zero);
-}*/
+}//*/

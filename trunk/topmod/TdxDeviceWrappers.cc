@@ -56,7 +56,7 @@ long TdxInitDevice(UInt32 appID, Boolean showOnlyMyClientEvents, UInt16 mode, UI
 
 	/* make sure the framework is installed */
 	if (InstallConnexionHandlers == NULL){
-		fprintf(stderr, "3Dconnexion framework not found!\n");
+		printf("3Dconnexion framework not found!\n");
 		return -1;
 	}
 
@@ -67,10 +67,11 @@ long TdxInitDevice(UInt32 appID, Boolean showOnlyMyClientEvents, UInt16 mode, UI
 
 	/* register our app with the driver */
 	// err = TdxInitDevice('3Dm1', TRUE, kConnexionClientModeTakeOver, (kConnexionMaskAxis | kConnexionMaskButtons));
-	gDevWrapperInfo.clientID = RegisterConnexionClient(appID, NULL, mode, mask);
+	// gDevWrapperInfo.clientID = RegisterConnexionClient(appID, (UInt8*)"\pTopMod", mode, mask);
+	gDevWrapperInfo.clientID = RegisterConnexionClient('TopM', (UInt8*)"\pTopMod", kConnexionClientModeTakeOver, kConnexionMaskAll);
 	if (gDevWrapperInfo.clientID == 0)	return -2;
 
-	fprintf(stderr, "3Dconnexion device initialized. Client ID: %d\n", gDevWrapperInfo.clientID);
+	printf("3Dconnexion device initialized. Client ID: %d\n", gDevWrapperInfo.clientID);
 	
 	return err;
 }
@@ -101,9 +102,7 @@ void TdxTerminateDevice()
     them directly, (3) write the event info in a shared memory location for
     usage by reader threads.
 */
-static void tdx_drv_handler(io_connect_t connection, natural_t messageType, void *messageArgument)
-{
-	// QMessageBox::about(0, "About TopMod","SPACE NAV");
+static void tdx_drv_handler(io_connect_t connection, natural_t messageType, void *messageArgument){
 		
 	ConnexionDeviceStatePtr msg = (ConnexionDeviceStatePtr)messageArgument;
 	static UInt16 lastBtnPressed = 0;
@@ -172,7 +171,7 @@ static void tdx_drv_handler(io_connect_t connection, natural_t messageType, void
 			/* other messageTypes can happen and should be ignored */
 			break;
 	}
-    /*
+    
     printf("connection: %X\n", connection);
     printf("messageType: %X\n", messageType);
     printf("version: %d\n", msg->version);
@@ -191,7 +190,7 @@ static void tdx_drv_handler(io_connect_t connection, natural_t messageType, void
     printf("RY: %d\n", msg->axis[4]);
     printf("RZ: %d\n", msg->axis[5]);
     printf("-----------------------------------------\n\n");
-    */
+    //*/
 #ifdef __MWERKS__
 	#pragma unused(connection)
 #endif	

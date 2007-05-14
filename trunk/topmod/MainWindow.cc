@@ -28,7 +28,7 @@ MainWindow::MainWindow() {
 	// setDockOptions(QMainWindow::AllowNestedDocks);
 	setAttribute(Qt::WA_AcceptDrops, true);
 	// setAttribute(Qt::WA_MacMetalStyle, true);
-	setWindowFlags(Qt::Window | Qt::WindowTitleHint);
+	setWindowFlags(Qt::Window);
 	setWindowTitle("TopMod");
 	
   move(0,0);
@@ -540,7 +540,7 @@ void MainWindow::createMenus(){
 	mToolsMenu = new QMenu(tr("&Tools"));
 	mToolsMenu->addMenu(mBasicsMode->getMenu());
 	mToolsMenu->addMenu(mExtrusionMode->getMenu());
-	mToolsMenu->addMenu(mConicalMode->getMenu());
+	// mToolsMenu->addMenu(mConicalMode->getMenu());
 	mToolsMenu->addMenu(mHighgenusMode->getMenu());
 	mToolsMenu->addMenu(mTexturingMode->getMenu());
 	menuBar->addMenu(mToolsMenu);
@@ -607,6 +607,20 @@ void MainWindow::createToolBars() {
 	mEditToolBar->addAction(mUndoAct);
 	mEditToolBar->addAction(mRedoAct);
 	mEditToolBar->setIconSize(QSize(32,32));
+		
+	mPrimitivesToolBar = new QToolBar(tr("Primitives"));
+	mPrimitivesToolBar->setFloatable(true);
+	addToolBar(Qt::TopToolBarArea,mPrimitivesToolBar);
+	mPrimitivesToolBar->setIconSize(QSize(32,32));
+	mPrimitivesToolBar->addAction(pCubeAct);
+	mPrimitivesToolBar->addAction(pOctahedronAct);
+	mPrimitivesToolBar->addAction(pTetrahedronAct);
+	mPrimitivesToolBar->addAction(pDodecahedronAct);
+	mPrimitivesToolBar->addAction(pIcosahedronAct);
+	mPrimitivesToolBar->addAction(pSoccerBallAct);
+	mPrimitivesToolBar->addAction(pGeodesicAct);
+		
+	// addToolBarBreak();
 	
 	//basic tools - six buttons
 	mToolsToolBar = new QToolBar(tr("Tools"));
@@ -617,9 +631,9 @@ void MainWindow::createToolBars() {
 	addToolBar(Qt::TopToolBarArea,mExtrusionToolBar);
 	mExtrusionToolBar->setIconSize(QSize(32,32));
 	
-	mConicalToolBar = new QToolBar(tr("Conical Tools"));
-	addToolBar(Qt::TopToolBarArea,mConicalToolBar);
-	mConicalToolBar->setIconSize(QSize(32,32));
+	// mConicalToolBar = new QToolBar(tr("Conical Tools"));
+	// addToolBar(Qt::TopToolBarArea,mConicalToolBar);
+	// mConicalToolBar->setIconSize(QSize(32,32));
 	
 	addToolBarBreak();
 	
@@ -631,7 +645,6 @@ void MainWindow::createToolBars() {
 	addToolBar(Qt::TopToolBarArea,mTexturingToolBar);
 	mTexturingToolBar->setIconSize(QSize(32,32));
 	
-	
 	mRemeshingToolBar = new QToolBar(tr("Remeshing"));
 	// addToolBar(Qt::TopToolBarArea,mRemeshingToolBar);
 	mRemeshingToolBar->setIconSize(QSize(32,32));
@@ -642,7 +655,7 @@ void MainWindow::createToolBars() {
 		
 	mBasicsMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);	
 	mExtrusionMode->addActions(mToolsActionGroup, mExtrusionToolBar, mToolOptionsStackedWidget);
-	mConicalMode->addActions(mToolsActionGroup, mConicalToolBar, mToolOptionsStackedWidget);
+	// mConicalMode->addActions(mToolsActionGroup, mConicalToolBar, mToolOptionsStackedWidget);
 	
 	mRemeshingActionGroup = new QActionGroup(this);
 	mRemeshingMode->addActions(mToolsActionGroup, mRemeshingToolBar, mToolOptionsStackedWidget);
@@ -650,15 +663,7 @@ void MainWindow::createToolBars() {
 	mHighgenusMode->addActions(mToolsActionGroup, mHighgenusToolBar, mToolOptionsStackedWidget);
 	mTexturingMode->addActions(mToolsActionGroup, mTexturingToolBar, mToolOptionsStackedWidget);
 
-	// mPrimitivesToolBar = new QToolBar(tr("Primitives"));
-	// addToolBar(Qt::LeftToolBarArea,mPrimitivesToolBar);
-	// mPrimitivesToolBar->addAction(pCubeAct);
-	// mPrimitivesToolBar->addAction(pOctahedronAct);
-	// mPrimitivesToolBar->addAction(pTetrahedronAct);
-	// mPrimitivesToolBar->addAction(pDodecahedronAct);
-	// mPrimitivesToolBar->addAction(pIcosahedronAct);
-	// mPrimitivesToolBar->addAction(pSoccerBallAct);
-	// mPrimitivesToolBar->addAction(pGeodesicAct);
+
 }
 
 void MainWindow::setToolOptions(QWidget *optionsWidget) {

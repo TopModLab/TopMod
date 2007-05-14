@@ -6,7 +6,7 @@ TEMPLATE = app
 TARGET = TopMod
 QT += opengl xml
 CONFIG += qt 
-#release x86 ppc
+# release x86 ppc
 
 #tell it to load a custom info.plist file here:
 QMAKE_INFO_PLIST    = Info.plist
@@ -22,7 +22,7 @@ DEPENDPATH += . \
 							include/Misc \
 							include/String \
 							include/vecmat \
-							include/Graphics/Windows \
+							include/Graphics/Windows
 
 INCLUDEPATH += . \
                include/arcball \
@@ -32,15 +32,12 @@ INCLUDEPATH += . \
                include/Misc \
                include/String \
                include/Graphics \
-               include/Graphics/Windows \
+               include/Graphics/Windows 
 
 macx: {
- INCLUDEPATH += /Library/Frameworks/Python.framework/Versions/2.5/include/python2.5 
-# /Library/Frameworks/3DconnexionClient.framework/Versions/A/Headers
- QMAKE_LFLAGS += -L/Library/Frameworks/Python.framework 
-# -L/Library/Frameworks/3DconnexionClient.framework 
- LIBS += -framework Python 
-# -framework 3DconnexionClient
+ INCLUDEPATH += /Library/Frameworks/Python.framework/Versions/2.5/include/python2.5 /Library/Frameworks/3DconnexionClient.framework/Versions/A/Headers
+ QMAKE_LFLAGS += -L/Library/Frameworks/Python.framework -L/Library/Frameworks/3DconnexionClient.framework 
+ LIBS += -framework Python -framework 3DconnexionClient
 }
 unix: {
  # INCLUDEPATH += /usr/include/python2.5
@@ -53,126 +50,126 @@ win32 {
 }
 # Input
 HEADERS += 	DLFLScriptEditor.hh \	
-						# TdxDeviceWrappers.hh \
-						GLWidget.hh \
-						MainWindow.hh \
-						qcumber.hh \
-						qshortcutdialog.hh \
-						qshortcutmanager.hh \
-						ui_shortcutdialog.h \
-						ui_stylesheeteditor.h \
-						BasicsMode.hh \
-						ExtrusionMode.hh \ 
-						RemeshingMode.hh \
-						ConicalMode.hh \ 
-						HighgenusMode.hh \
- 						TexturingMode.hh \
-						DLFLAux.hh \
-						DLFLCommon.hh \
-						DLFLConvexHull.hh \
-						DLFLEdge.hh \
-						DLFLFace.hh \
-						DLFLFaceVertex.hh \
-						DLFLMaterial.hh \
-						DLFLObject.hh \
-						DLFLRenderer.hh \
-						DLFLVertex.hh \
-						DLFLWindow.hh \
-						Viewport.hh \
-						include/Graphics/TMPatchFace.hh \
-						include/Graphics/TMPatchObject.hh \
-						include/Graphics/TMPatch.hh \
-						stylesheeteditor.hh \
-						include/arcball/Arcball.hh \
-						include/arcball/BallMath.hh \
-						include/arcball/DollyControl.hh \
-						include/arcball/TransControl.hh \
-						include/arcball/ZoomControl.hh \
-						include/Base/BaseObject.hh \
-						include/Base/Constants.hh \
-						include/Base/Inlines.hh \
-						include/Base/StreamIO.hh \
-						include/DataStructures/Array.hh \
-						include/DataStructures/List.hh \
-						include/DataStructures/ListIterator.hh \
-						include/DataStructures/ListNode.hh \
-						include/Graphics/Camera.hh \
-						include/Graphics/Color.hh \
-						include/Graphics/GL++.hh \
-						include/Graphics/Grid.hh \
-						include/Graphics/Texture.hh \
-						include/Graphics/Transform.hh \
-						include/Light/AmbientLight.hh \
-						include/Light/Light.hh \
-						include/Light/PointLight.hh \
-						include/Light/SpotLight.hh \
-						include/String/Paragraph.hh \
-						include/String/SString.hh \
-						include/vecmat/Matrix3x3.hh \
-						include/vecmat/Matrix4x4.hh \
-						include/vecmat/Quaternion.hh \
-						include/vecmat/Vector.hh \
-						include/vecmat/Vector2d.hh \
-						include/vecmat/Vector3d.hh \
-						include/vecmat/Vector4d.hh \
-						include/String/SString.inl
+			TdxDeviceWrappers.hh \
+			GLWidget.hh \
+			MainWindow.hh \
+			qcumber.hh \
+			qshortcutdialog.hh \
+			qshortcutmanager.hh \
+			ui_shortcutdialog.h \
+			ui_stylesheeteditor.h \
+			BasicsMode.hh \
+			ExtrusionMode.hh \ 
+			RemeshingMode.hh \
+			ConicalMode.hh \ 
+			HighgenusMode.hh \
+			TexturingMode.hh \
+			DLFLAux.hh \
+			DLFLCommon.hh \
+			DLFLConvexHull.hh \
+			DLFLEdge.hh \
+			DLFLFace.hh \
+			DLFLFaceVertex.hh \
+			DLFLMaterial.hh \
+			DLFLObject.hh \
+			DLFLRenderer.hh \
+			DLFLVertex.hh \
+			DLFLWindow.hh \
+			Viewport.hh \
+			include/Graphics/TMPatchFace.hh \
+			include/Graphics/TMPatchObject.hh \
+			include/Graphics/TMPatch.hh \
+			stylesheeteditor.hh \
+			include/arcball/Arcball.hh \
+			include/arcball/BallMath.hh \
+			include/arcball/DollyControl.hh \
+			include/arcball/TransControl.hh \
+			include/arcball/ZoomControl.hh \
+			include/Base/BaseObject.hh \
+			include/Base/Constants.hh \
+			include/Base/Inlines.hh \
+			include/Base/StreamIO.hh \
+			include/DataStructures/Array.hh \
+			include/DataStructures/List.hh \
+			include/DataStructures/ListIterator.hh \
+			include/DataStructures/ListNode.hh \
+			include/Graphics/Camera.hh \
+			include/Graphics/Color.hh \
+			include/Graphics/GL++.hh \
+			include/Graphics/Grid.hh \
+			include/Graphics/Texture.hh \
+			include/Graphics/Transform.hh \
+			include/Light/AmbientLight.hh \
+			include/Light/Light.hh \
+			include/Light/PointLight.hh \
+			include/Light/SpotLight.hh \
+			include/String/Paragraph.hh \
+			include/String/SString.hh \
+			include/vecmat/Matrix3x3.hh \
+			include/vecmat/Matrix4x4.hh \
+			include/vecmat/Quaternion.hh \
+			include/vecmat/Vector.hh \
+			include/vecmat/Vector2d.hh \
+			include/vecmat/Vector3d.hh \
+			include/vecmat/Vector4d.hh \
+			include/String/SString.inl
 
 FORMS += shortcutdialog.ui stylesheeteditor.ui
 
 SOURCES += 	DLFLScriptEditor.cc \
-			# TdxDeviceWrappers.cc \
+			TdxDeviceWrappers.cc \
            	GLWidget.cc \
-						main.cc \
-						MainWindow.cc \
-						MainWindowCallbacks.cc \
-						MainWindowRemeshingCallbacks.cc \
-						qshortcutdialog.cc \
-						qshortcutmanager.cc \
-						BasicsMode.cc	\
-						ExtrusionMode.cc \
-						RemeshingMode.cc \ 
-						ConicalMode.cc \ 
-						HighgenusMode.cc \
-						TexturingMode.cc \
-						DLFLAux.cc \
-						DLFLBase.cc \
-						DLFLCommon.cc \
-						DLFLConnect.cc \
-						DLFLConvexHull.cc \
-						DLFLCrust.cc \
-						DLFLDual.cc \
-						DLFLEdge.cc \
-						DLFLExtrude.cc \
-						DLFLFace.cc \
-						DLFLFaceVertex.cc \
-						DLFLFile.cc \
-						DLFLFileAlt.cc \
-						DLFLLighting.cc \
-						DLFLMeshSmooth.cc \
-						DLFLMultiConnect.cc \
-						DLFLObject.cc \
-						DLFLPlanarize.cc \
-						DLFLRenderer.cc \
-						DLFLSelection.cc \
-						DLFLSpheralize.cc \
-						DLFLStandardObjects.cc \
-						DLFLSubdiv.cc \
-						DLFLSculpting.cc \
-						DLFLUndo.cc \
-						DLFLVertex.cc \
-						DLFLWindow.cc \
-						stylesheeteditor.cc \
-						include/arcball/Arcball.cc \
-						include/arcball/BallMath.cc \
-						include/DataStructures/List.cc \
-						include/String/Paragraph.cc \
-						include/String/SString.cc \
-						include/vecmat/Matrix3x3.cc \
-						include/vecmat/Matrix4x4.cc \
-						include/vecmat/Vector.cc \
-						include/vecmat/Vector2d.cc \
-						include/vecmat/Vector3d.cc \
-						include/vecmat/Vector4d.cc  
+			main.cc \
+			MainWindow.cc \
+			MainWindowCallbacks.cc \
+			MainWindowRemeshingCallbacks.cc \
+			qshortcutdialog.cc \
+			qshortcutmanager.cc \
+			BasicsMode.cc	\
+			ExtrusionMode.cc \
+			RemeshingMode.cc \ 
+			ConicalMode.cc \ 
+			HighgenusMode.cc \
+			TexturingMode.cc \
+			DLFLAux.cc \
+			DLFLBase.cc \
+			DLFLCommon.cc \
+			DLFLConnect.cc \
+			DLFLConvexHull.cc \
+			DLFLCrust.cc \
+			DLFLDual.cc \
+			DLFLEdge.cc \
+			DLFLExtrude.cc \
+			DLFLFace.cc \
+			DLFLFaceVertex.cc \
+			DLFLFile.cc \
+			DLFLFileAlt.cc \
+			DLFLLighting.cc \
+			DLFLMeshSmooth.cc \
+			DLFLMultiConnect.cc \
+			DLFLObject.cc \
+			DLFLPlanarize.cc \
+			DLFLRenderer.cc \
+			DLFLSelection.cc \
+			DLFLSpheralize.cc \
+			DLFLStandardObjects.cc \
+			DLFLSubdiv.cc \
+			DLFLSculpting.cc \
+			DLFLUndo.cc \
+			DLFLVertex.cc \
+			DLFLWindow.cc \
+			stylesheeteditor.cc \
+			include/arcball/Arcball.cc \
+			include/arcball/BallMath.cc \
+			include/DataStructures/List.cc \
+			include/String/Paragraph.cc \
+			include/String/SString.cc \
+			include/vecmat/Matrix3x3.cc \
+			include/vecmat/Matrix4x4.cc \
+			include/vecmat/Vector.cc \
+			include/vecmat/Vector2d.cc \
+			include/vecmat/Vector3d.cc \
+			include/vecmat/Vector4d.cc  
 
 RESOURCES += application.qrc
 
