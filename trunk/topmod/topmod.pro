@@ -35,9 +35,12 @@ INCLUDEPATH += . \
                include/Graphics/Windows 
 
 macx: {
- INCLUDEPATH += /Library/Frameworks/Python.framework/Versions/2.5/include/python2.5 /Library/Frameworks/3DconnexionClient.framework/Versions/A/Headers
- QMAKE_LFLAGS += -L/Library/Frameworks/Python.framework -L/Library/Frameworks/3DconnexionClient.framework 
- LIBS += -framework Python -framework 3DconnexionClient
+ INCLUDEPATH += /Library/Frameworks/Python.framework/Versions/2.5/include/python2.5 
+# /Library/Frameworks/3DconnexionClient.framework/Versions/A/Headers
+ QMAKE_LFLAGS += -L/Library/Frameworks/Python.framework 
+# -L/Library/Frameworks/3DconnexionClient.framework 
+ LIBS += -framework Python 
+# -framework 3DconnexionClient
 }
 unix: {
  # INCLUDEPATH += /usr/include/python2.5
@@ -50,7 +53,7 @@ win32 {
 }
 # Input
 HEADERS += 	DLFLScriptEditor.hh \	
-			TdxDeviceWrappers.hh \
+			# TdxDeviceWrappers.hh \
 			GLWidget.hh \
 			MainWindow.hh \
 			qcumber.hh \
@@ -117,8 +120,8 @@ HEADERS += 	DLFLScriptEditor.hh \
 FORMS += shortcutdialog.ui stylesheeteditor.ui
 
 SOURCES += 	DLFLScriptEditor.cc \
-			TdxDeviceWrappers.cc \
-           	GLWidget.cc \
+			# TdxDeviceWrappers.cc \
+			GLWidget.cc \
 			main.cc \
 			MainWindow.cc \
 			MainWindowCallbacks.cc \

@@ -62,5 +62,7 @@
 	<file>images/highgenus_mengersponge.png</file>
 	<file>images/highgenus_sierpinsky.png</file>
 	<file>images/doosabin_extrude.png</file>
+	<file>images/open.png</file>
+	<file>images/saveas.png</file>
 </qresource>
 </RCC>

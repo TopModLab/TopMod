@@ -125,25 +125,25 @@ void MainWindow::documentWasModified(){
 void MainWindow::createActions()
 {	
 	//File Menu Actions
-	openAct = new QAction(tr("&Open..."), this);
-	sm->registerAction(openAct, "File Menu", "CTRL+O");
-	openAct->setStatusTip(tr("Open an existing file"));
-	connect(openAct, SIGNAL(triggered()), mainWindow, SLOT(openFile()));
+	mOpenAct = new QAction(QIcon(":images/open.png"),tr("&Open..."), this);
+	sm->registerAction(mOpenAct, "File Menu", "CTRL+O");
+	mOpenAct->setStatusTip(tr("Open an existing file"));
+	connect(mOpenAct, SIGNAL(triggered()), mainWindow, SLOT(openFile()));
 
-	saveAct = new QAction(tr("&Save"), this);
-	sm->registerAction(saveAct, "File Menu", "CTRL+S");
-	saveAct->setStatusTip(tr("Save the document to disk"));
-	connect(saveAct, SIGNAL(triggered()), mainWindow, SLOT(saveFile()));
+	mSaveAct = new QAction(QIcon(":images/saveas.png"),tr("&Save"), this);
+	sm->registerAction(mSaveAct, "File Menu", "CTRL+S");
+	mSaveAct->setStatusTip(tr("Save the document to disk"));
+	connect(mSaveAct, SIGNAL(triggered()), mainWindow, SLOT(saveFile()));
 
-	saveAsAct = new QAction(tr("Save &As..."), this);
-	sm->registerAction(saveAsAct, "File Menu", "CTRL+SHIFT+S");
-	saveAsAct->setStatusTip(tr("Save the document under a new name"));
-	connect(saveAsAct, SIGNAL(triggered()), mainWindow, SLOT(saveFile()));
+	mSaveAsAct = new QAction(QIcon(":images/saveas.png"),tr("Save &As..."), this);
+	sm->registerAction(mSaveAsAct, "File Menu", "CTRL+SHIFT+S");
+	mSaveAsAct->setStatusTip(tr("Save the document under a new name"));
+	connect(mSaveAsAct, SIGNAL(triggered()), mainWindow, SLOT(saveFile()));
 
 	loadTextureAct = new QAction(tr("Load &Texture..."), this);
 	sm->registerAction(loadTextureAct, "File Menu", "CTRL+L");
 	loadTextureAct->setStatusTip(tr("Load Texture from file"));
-	//connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
+	//connect(mSaveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
 	printInfoAct = new QAction(tr("Print &Information"), this);
 	sm->registerAction(printInfoAct, "File Menu", "CTRL+P");
@@ -165,10 +165,10 @@ void MainWindow::createActions()
 	printEdgeListAct->setStatusTip(tr("Print Edge list to the console"));
 	// connect(printEdgeListAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
-	exitAct = new QAction(tr("E&xit"), this);
-	sm->registerAction(exitAct, "Settings", "CTRL+Q");
-	exitAct->setStatusTip(tr("Exit the application"));
-	connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
+	mExitAct = new QAction(tr("E&xit"), this);
+	sm->registerAction(mExitAct, "Settings", "CTRL+Q");
+	mExitAct->setStatusTip(tr("Exit the application"));
+	connect(mExitAct, SIGNAL(triggered()), this, SLOT(close()));
 
 	//Edit Menu Actions
 	mUndoAct = new QAction(QIcon(":images/undo.png"), tr("&Undo"), this);
@@ -318,45 +318,6 @@ void MainWindow::createActions()
 	sm->registerAction(pGeodesicAct, "Primitives Menu", "CTRL+U");
 	pGeodesicAct->setStatusTip(tr("Load a geodesic dome"));
 	connect(pGeodesicAct, SIGNAL(triggered()), mainWindow, SLOT(loadGeodesic()));
-
-
-	// modeExtrusionAct = new QAction(QIcon(":/images/mode_extrusion.png"), tr("&Extrusion"), this);
-	// modeExtrusionAct->setCheckable(true);
-	// sm->registerAction(modeExtrusionAct, "Modes", "2");
-	// modeExtrusionAct->setStatusTip(tr("Switch to Extrusions Mode"));
-	// //connect(modeExtrusionAct, SIGNAL(triggered()), this, SLOT(switchExtrusionMode()));
-	// 
-	// modeConicalAct = new QAction(QIcon(":/images/mode_conical.png"), tr("&Conical Sculpting"), this);
-	// modeConicalAct->setCheckable(true);
-	// sm->registerAction(modeConicalAct, "Modes", "3");
-	// modeConicalAct->setStatusTip(tr("Switch to Conical Sculpting Mode"));
-	// // connect(modeConicalAct, SIGNAL(triggered()), this, SLOT(switchConicalMode()));
-	// 
-	// modeRemeshingAct = new QAction(QIcon(":/images/mode_remeshing.png"), tr("&Remeshing"), this);
-	// modeRemeshingAct->setCheckable(true);
-	// sm->registerAction(modeRemeshingAct, "Modes", "4");
-	// modeRemeshingAct->setStatusTip(tr("Switch to Remeshing Mode"));
-	// // connect(modeRemeshingAct, SIGNAL(triggered()), this, SLOT(switchRemeshingMode()));
-	// 
-	// modeHighgenusAct = new QAction(QIcon(":/images/mode_highgenus.png"), tr("&High Genus"), this);
-	// modeHighgenusAct->setCheckable(true);
-	// sm->registerAction(modeHighgenusAct, "Modes", "5");
-	// modeHighgenusAct->setStatusTip(tr("Switch to High Genus Mode"));
-	// // connect(modeHighgenusAct, SIGNAL(triggered()), this, SLOT(switchHighgenusMode()));
-	// 
-	// modeTexturingAct = new QAction(QIcon(":/images/mode_texturing.png"), tr("&Texturing"), this);
-	// modeTexturingAct->setCheckable(true);
-	// sm->registerAction(modeTexturingAct, "Modes", "6");
-	// modeTexturingAct->setStatusTip(tr("Switch to Texturing Mode"));
-	// // connect(modeTexturingAct, SIGNAL(triggered()), this, SLOT(switchTexturingMode()));
-
-	// modesActionGroup = new QActionGroup(this);
-	// modesActionGroup->setExclusive(true);
-	// modesActionGroup->addAction(modeExtrusionAct);
-	// modesActionGroup->addAction(modeConicalAct);
-	// modesActionGroup->addAction(modeRemeshingAct);
-	// modesActionGroup->addAction(modeHighgenusAct);
-	// modesActionGroup->addAction(modeTexturingAct);
 	
 	//Object Menu Actions
 	subdivideAllEdgesAct = new QAction(tr("Subdivide All &Edges"), this);
@@ -431,7 +392,7 @@ void MainWindow::createActions()
 
 	mEditStyleSheetAct = new QAction(tr("Stylesheets..."),this);
 	connect( mEditStyleSheetAct, SIGNAL( triggered() ), this, SLOT(on_editStyleAction_triggered()) );
-	//sm->registerAction(mEditStyleSheetAct, "Settings", "CTRL+M");
+	sm->registerAction(mEditStyleSheetAct, "Settings", "CTRL+N");
 
 	//LANGUAGE MENU BAR ACTIONS
 	englishAct = new QAction(tr("English"),this);
@@ -474,9 +435,9 @@ void MainWindow::createMenus(){
 	menuBar->addMenu(fileMenu);
 	fileMenu->setTearOffEnabled(true);
 	
-	fileMenu->addAction(openAct);
-	fileMenu->addAction(saveAct);
-	fileMenu->addAction(saveAsAct);
+	fileMenu->addAction(mOpenAct);
+	fileMenu->addAction(mSaveAct);
+	fileMenu->addAction(mSaveAsAct);
 	fileMenu->addSeparator();
 	fileMenu->addAction(loadTextureAct);
 	fileMenu->addAction(printInfoAct);
@@ -484,7 +445,7 @@ void MainWindow::createMenus(){
 	fileMenu->addAction(printVertexListAct);
 	fileMenu->addAction(printEdgeListAct);
 	fileMenu->addSeparator();
-	fileMenu->addAction(exitAct);
+	fileMenu->addAction(mExitAct);
 
 	editMenu = new QMenu(tr("&Edit"));
 	menuBar->addMenu(editMenu);
@@ -503,6 +464,7 @@ void MainWindow::createMenus(){
 	// modesMenu->insertTearOffHandle();
 
 	displayMenu = new QMenu(tr("&Display"));
+	displayMenu->setTearOffEnabled(true);
 	menuBar->addMenu(displayMenu);
 	
 	displayMenu->addAction(showVerticesAct);
@@ -516,6 +478,7 @@ void MainWindow::createMenus(){
 	displayMenu->addAction(mFullscreenAct);
 
 	rendererMenu = new QMenu(tr("&Renderer"));
+	rendererMenu->setTearOffEnabled(true);
 	menuBar->addMenu(rendererMenu);
 	rendererMenu->addAction(normalRendererAct);
 	rendererMenu->addAction(shadedRendererAct);
@@ -528,6 +491,7 @@ void MainWindow::createMenus(){
 	rendererMenu->addAction(patchRendererAct);
 
 	primitivesMenu = new QMenu(tr("&Primitives"));
+	primitivesMenu->setTearOffEnabled(true);
 	menuBar->addMenu(primitivesMenu);
 	primitivesMenu->addAction(pCubeAct);
 	primitivesMenu->addAction(pOctahedronAct);
@@ -538,6 +502,7 @@ void MainWindow::createMenus(){
 	primitivesMenu->addAction(pGeodesicAct);
 	
 	mToolsMenu = new QMenu(tr("&Tools"));
+	mToolsMenu->setTearOffEnabled(true);
 	mToolsMenu->addMenu(mBasicsMode->getMenu());
 	mToolsMenu->addMenu(mExtrusionMode->getMenu());
 	// mToolsMenu->addMenu(mConicalMode->getMenu());
@@ -546,9 +511,11 @@ void MainWindow::createMenus(){
 	menuBar->addMenu(mToolsMenu);
 	
 	mRemeshingMenu = mRemeshingMode->getMenu();
+	mRemeshingMenu->setTearOffEnabled(true);
 	menuBar->addMenu(mRemeshingMenu);		
 
 	objectMenu = new QMenu(tr("&Object"));
+	objectMenu->setTearOffEnabled(true);
 	menuBar->addMenu(objectMenu);
 	objectMenu->addAction(subdivideAllEdgesAct);
 	objectMenu->addAction(planarizeAllFacesAct);
@@ -568,10 +535,12 @@ void MainWindow::createMenus(){
 	// selectionMenu->addAction(exitSelectionModeAct);
 
 	settingsMenu = new QMenu(tr("Se&ttings"));
+	settingsMenu->setTearOffEnabled(true);
 	menuBar->addMenu(settingsMenu);
 	settingsMenu->addAction(manageShortcutsAct);
 	settingsMenu->addAction(mEditStyleSheetAct);
 	languageMenu = new QMenu(tr("&Language"));
+	languageMenu->setTearOffEnabled(true);
 	settingsMenu->addMenu(languageMenu);
 	languageMenu->addAction(englishAct);
 	languageMenu->addAction(spanishAct);
@@ -579,7 +548,6 @@ void MainWindow::createMenus(){
 	languageMenu->addAction(frenchAct);
 	languageMenu->addAction(turkishAct);
 	languageMenu->addAction(catalanAct);
-	
 }
 
 void MainWindow::createToolBars() {
@@ -590,7 +558,7 @@ void MainWindow::createToolBars() {
 	mToolOptionsDockWidget->setAllowedAreas(Qt::TopDockWidgetArea);
 	mToolOptionsStackedWidget = new QStackedWidget();
 	// mToolOptionsDockWidget->setFloating(true);
-	// mToolOptionsDockWidget->hide();
+	mToolOptionsDockWidget->hide();
 	mToolOptionsDockWidget->setWidget(mToolOptionsStackedWidget);
 	
 	// mToolOptionsTitleBarLayout = new QBoxLayout(QBoxLayout::LeftToRight);
@@ -604,6 +572,8 @@ void MainWindow::createToolBars() {
 	
 	mEditToolBar = new QToolBar(tr("Edit"));
 	addToolBar(Qt::TopToolBarArea,mEditToolBar);
+	mEditToolBar->addAction(mOpenAct);
+	mEditToolBar->addAction(mSaveAsAct);
 	mEditToolBar->addAction(mUndoAct);
 	mEditToolBar->addAction(mRedoAct);
 	mEditToolBar->setIconSize(QSize(32,32));
@@ -619,14 +589,14 @@ void MainWindow::createToolBars() {
 	mPrimitivesToolBar->addAction(pIcosahedronAct);
 	mPrimitivesToolBar->addAction(pSoccerBallAct);
 	mPrimitivesToolBar->addAction(pGeodesicAct);
-		
-	// addToolBarBreak();
 	
 	//basic tools - six buttons
 	mToolsToolBar = new QToolBar(tr("Tools"));
 	addToolBar(Qt::TopToolBarArea,mToolsToolBar);
 	mToolsToolBar->setIconSize(QSize(32,32));
 		
+	addToolBarBreak();
+	
 	mExtrusionToolBar = new QToolBar(tr("Extrusion Tools"));
 	addToolBar(Qt::TopToolBarArea,mExtrusionToolBar);
 	mExtrusionToolBar->setIconSize(QSize(32,32));
@@ -634,9 +604,7 @@ void MainWindow::createToolBars() {
 	// mConicalToolBar = new QToolBar(tr("Conical Tools"));
 	// addToolBar(Qt::TopToolBarArea,mConicalToolBar);
 	// mConicalToolBar->setIconSize(QSize(32,32));
-	
-	addToolBarBreak();
-	
+		
 	mHighgenusToolBar = new QToolBar(tr("High Genus Tools"));
 	addToolBar(Qt::TopToolBarArea,mHighgenusToolBar);
 	mHighgenusToolBar->setIconSize(QSize(32,32));
@@ -671,10 +639,10 @@ void MainWindow::setToolOptions(QWidget *optionsWidget) {
 	mToolOptionsDockWidget->setWindowTitle(optionsWidget->windowTitle());
 	mToolOptionsStackedWidget->setCurrentWidget(optionsWidget);
 	// show or hide the dockwidget options
-	// if (optionsWidget->windowTitle() != "" && mToolOptionsDockWidget->isHidden())
-	// 	mToolOptionsDockWidget->show();
-	// else if (!mToolOptionsDockWidget->isHidden() && optionsWidget->windowTitle() == "")
-	// 	mToolOptionsDockWidget->hide();
+	if (optionsWidget->windowTitle() != "" && mToolOptionsDockWidget->isHidden())
+		mToolOptionsDockWidget->show();
+	else if (!mToolOptionsDockWidget->isHidden() && optionsWidget->windowTitle() == "")
+		mToolOptionsDockWidget->hide();
 
 }
 

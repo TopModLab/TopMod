@@ -165,16 +165,16 @@ private:
 	QMenu *mToolsMenu;
 	
   //File Menu Actions
-  QAction *newAct;
-  QAction *openAct;
-  QAction *saveAct;
-  QAction *saveAsAct;
+  QAction *mNewAct;
+  QAction *mOpenAct;
+  QAction *mSaveAct;
+  QAction *mSaveAsAct;
   QAction *loadTextureAct;
   QAction *printInfoAct;
   QAction *printFaceListAct;
   QAction *printVertexListAct;
   QAction *printEdgeListAct;
-  QAction *exitAct;
+  QAction *mExitAct;
 
   //Edit Menu Actions
   QAction *mUndoAct;

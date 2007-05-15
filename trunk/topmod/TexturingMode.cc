@@ -75,6 +75,7 @@ void TexturingMode::setupTileTexturing(){
 
 	mTileTexturingLayout->addWidget(tileTexturingAssignButton);
 	mTileTexturingLayout->addStretch(1);
+	mTileTexturingWidget->setWindowTitle("Tile Texturing");
 	mTileTexturingWidget->setLayout(mTileTexturingLayout);	
 	
 }
