@@ -802,7 +802,7 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
 													     if ( septr )
 													        {
 													          undoPush();
-																		septr->ismarked = 1- septr->ismarked;
+																		//septr->ismarked = 1- septr->ismarked;
 													          /*object.CutEdge(septr, peelDistance_factor,pnormalBendS_factor,pnormalBendT_factor, peel_all_edges);
 													        }*/
 																	}
@@ -817,7 +817,7 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
 													     if ( svptr )
 													        {
 													          undoPush();
-																		svptr->ismarked = 1 - svptr->ismarked;
+																		//svptr->ismarked = 1 - svptr->ismarked;
 
 													        }
 													     GLWidget::clearSelectedVertices();
@@ -833,7 +833,7 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
 													     if ( septr )
 													        {
 													          undoPush();
-													          septr->ismarked = 1- septr->ismarked;
+													          // septr->ismarked = 1- septr->ismarked;
 													        }
 													     GLWidget::clearSelectedEdges();
 													     redraw();
@@ -847,7 +847,7 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
 													     if ( svptr )
 													        {
 													          undoPush();
-													          svptr->ismarked = 1 - svptr->ismarked;
+													          // svptr->ismarked = 1 - svptr->ismarked;
 													        }
 													     GLWidget::clearSelectedVertices();
 													     redraw();
@@ -861,7 +861,7 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
 													     if ( sfptr )
 													        {
 													          undoPush();
-																		sfptr->ismarked = 1 - sfptr->ismarked;
+																		// sfptr->ismarked = 1 - sfptr->ismarked;
 													        }
 													     GLWidget::clearSelectedFaces();
 													     redraw();

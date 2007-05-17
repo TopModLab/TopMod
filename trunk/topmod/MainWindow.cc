@@ -83,6 +83,7 @@ MainWindow::MainWindow() {
 	
 	//style sheet editor
   mStyleSheetEditor = new StyleSheetEditor(this);
+	
 }
 
 void MainWindow::setMode(int m){

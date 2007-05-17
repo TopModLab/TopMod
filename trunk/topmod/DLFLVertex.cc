@@ -6,10 +6,10 @@
 #include "DLFLFace.hh"
 #include "DLFLEdge.hh"
 
-uint DLFLVertex::suLastID = 0;
+uint DLFLVertex :: suLastID = 0;
 
 // Dump contents of this object to an output stream
-void DLFLVertex::dump(ostream& o) const
+void DLFLVertex :: dump(ostream& o) const
 {
   o << "DLFLVertex" << endl
 //    << "  ID : " << uID << endl
@@ -17,7 +17,7 @@ void DLFLVertex::dump(ostream& o) const
 //    << "  Type : " << vtType << endl
     << "  fvpList" << endl;
 
-  DLFLFaceVertexPtrList::const_iterator first, last;
+  DLFLFaceVertexPtrList :: const_iterator first, last;
   int i=0;
   
   first = fvpList.begin(); last = fvpList.end();
@@ -30,14 +30,14 @@ void DLFLVertex::dump(ostream& o) const
 }
 
    // Reset type of vertex, face-vertices and edges associated with this vertex
-void DLFLVertex::resetTypeDeep(void)
+void DLFLVertex :: resetTypeDeep(void)
 {
      // Reset vertex type
   resetType();
 
      // Go through face-vertex list and reset type of each face-vertex
      // and the edge starting at that face-vertex
-  DLFLFaceVertexPtrList::iterator first, last;
+  DLFLFaceVertexPtrList :: iterator first, last;
   DLFLFaceVertexPtr fvp;
   first = fvpList.begin(); last = fvpList.end();
   while ( first != last )
@@ -49,9 +49,9 @@ void DLFLVertex::resetTypeDeep(void)
 }
 
    // Set the texture coordinates for all FaceVertexes referring to this vertex
-void DLFLVertex::setTexCoords(const Vector2d& texcoord)
+void DLFLVertex :: setTexCoords(const Vector2d& texcoord)
 {
-  DLFLFaceVertexPtrList::iterator first, last;
+  DLFLFaceVertexPtrList :: iterator first, last;
 
   first = fvpList.begin(); last = fvpList.end();
   while ( first != last )
@@ -62,9 +62,9 @@ void DLFLVertex::setTexCoords(const Vector2d& texcoord)
 }
 
    // Set the color values for all FaceVertexes referring to this vertex
-void DLFLVertex::setColor(const RGBColor& color)
+void DLFLVertex :: setColor(const RGBColor& color)
 {
-  DLFLFaceVertexPtrList::iterator first, last;
+  DLFLFaceVertexPtrList :: iterator first, last;
 
   first = fvpList.begin(); last = fvpList.end();
   while ( first != last )
@@ -74,37 +74,11 @@ void DLFLVertex::setColor(const RGBColor& color)
      }
 }
 
-	   // Set the normals for all FaceVertexes referring to this vertex
-	Vector3d DLFLVertex::computeNormal(bool set)
-	{
-	  DLFLFaceVertexPtrList::iterator first, last;
-	  Vector3d normal;
-	  int i=0;
-
-	  first = fvpList.begin(); last = fvpList.end();
-	  while ( first != last )
-	     {
-	       normal += (*first)->computeNormal();
-	       ++first; ++i;
-	     }
-	  normal /= i;
-	  if ( set )
-	     {
-	       first = fvpList.begin();
-	       while ( first != last )
-	          {
-	            (*first)->normal = normal;
-	            ++first;
-	          }
-	     }
-	  return normal;
-	}
-
    // Compute the normals for all FaceVertexes referring to this vertex
    // Update the vertex normal and return it
-Vector3d DLFLVertex::updateNormal(bool recompute)
+Vector3d DLFLVertex :: updateNormal(bool recompute)
 {
-  DLFLFaceVertexPtrList::iterator first, last;
+  DLFLFaceVertexPtrList :: iterator first, last;
 
   first = fvpList.begin(); last = fvpList.end();
   normal.reset();
@@ -125,9 +99,7 @@ Vector3d DLFLVertex::updateNormal(bool recompute)
   return normal;
 }
 
-
-
-Vector3d DLFLVertex::getNormals(Vector3dArray& normals)
+Vector3d DLFLVertex :: getNormals(Vector3dArray& normals)
 {
      // Return normals at all corners in an Vector3dArray
   Vector3d avenormal;
@@ -136,7 +108,7 @@ Vector3d DLFLVertex::getNormals(Vector3dArray& normals)
      {
        normals.clear(); normals.reserve(numnormals);
 
-       DLFLFaceVertexPtrList::const_iterator first, last;
+       DLFLFaceVertexPtrList :: const_iterator first, last;
        DLFLFaceVertexPtr fvp = NULL;
        first = fvpList.begin(); last = fvpList.end();
        while ( first != last )
@@ -150,9 +122,9 @@ Vector3d DLFLVertex::getNormals(Vector3dArray& normals)
 }
 
    // Set tex coordinates, color and normal info for all FaceVertexes referring to this vertex
-void DLFLVertex::setFaceVertexProps(const Vector2d& texcoord, const RGBColor& color, const Vector3d& n)
+void DLFLVertex :: setFaceVertexProps(const Vector2d& texcoord, const RGBColor& color, const Vector3d& n)
 {
-  DLFLFaceVertexPtrList::iterator first, last;
+  DLFLFaceVertexPtrList :: iterator first, last;
 
   first = fvpList.begin(); last = fvpList.end();
   while ( first != last )
@@ -164,7 +136,7 @@ void DLFLVertex::setFaceVertexProps(const Vector2d& texcoord, const RGBColor& co
      }
 }
 
-void DLFLVertex::vertexTrace(void) const
+void DLFLVertex :: vertexTrace(void) const
 {
      // Output all edges incident on this DLFLVertex in the specific rotation order
 
@@ -203,7 +175,7 @@ void DLFLVertex::vertexTrace(void) const
   cout << endl;
 }
 
-int DLFLVertex::getEdges(DLFLEdgePtr ** edges) const
+int DLFLVertex :: getEdges(DLFLEdgePtr ** edges) const
 {
      // Create an array of DLFLEdge's incident on this DLFLVertex. The number of DLFLEdges
      // is returned. Memory will be allocated inside this function, which should
@@ -219,7 +191,7 @@ int DLFLVertex::getEdges(DLFLEdgePtr ** edges) const
      // Allocate memory for the DLFLEdgePtr array
   *edges = new DLFLEdgePtr[num_edges];
   
-  DLFLFaceVertexPtrList::const_iterator first, last;
+  DLFLFaceVertexPtrList :: const_iterator first, last;
   DLFLFaceVertexPtr fvp = NULL;
   first = fvpList.begin(); last = fvpList.end();
   while ( first != last )
@@ -230,13 +202,13 @@ int DLFLVertex::getEdges(DLFLEdgePtr ** edges) const
   return num_edges;
 }
 
-void DLFLVertex::getEdges(DLFLEdgePtrArray& edges) const
+void DLFLVertex :: getEdges(DLFLEdgePtrArray& edges) const
 {
      // Return edges in an DLFLEdgePtrArray
 
   edges.clear(); edges.reserve(fvpList.size());
 
-  DLFLFaceVertexPtrList::const_iterator first, last;
+  DLFLFaceVertexPtrList :: const_iterator first, last;
   DLFLFaceVertexPtr fvp = NULL;
   first = fvpList.begin(); last = fvpList.end();
   while ( first != last )
@@ -246,12 +218,12 @@ void DLFLVertex::getEdges(DLFLEdgePtrArray& edges) const
      }
 }
 
-DLFLEdgePtr DLFLVertex::getEdgeTo(DLFLVertexPtr vp)
+DLFLEdgePtr DLFLVertex :: getEdgeTo(DLFLVertexPtr vp)
 {
      // Get the Edge incident on this Vertex which connects to given Vertex
      // If no such edge exists, returns NULL
   DLFLEdgePtr ep, retep = NULL;
-  DLFLFaceVertexPtrList::iterator first, last;
+  DLFLFaceVertexPtrList :: iterator first, last;
   DLFLFaceVertexPtr fvp = NULL, ofvp;
   first = fvpList.begin(); last = fvpList.end();
   while ( first != last )
@@ -270,12 +242,12 @@ DLFLEdgePtr DLFLVertex::getEdgeTo(DLFLVertexPtr vp)
   return retep;
 }
   
-void DLFLVertex::getFaceVertices(DLFLFaceVertexPtrArray& fvparray)
+void DLFLVertex :: getFaceVertices(DLFLFaceVertexPtrArray& fvparray)
 {
      // Go through the face-vertex-pointer list and add each
      // face vertex pointer to the array
   fvparray.clear(); fvparray.reserve(fvpList.size());
-  DLFLFaceVertexPtrList::iterator first, last;
+  DLFLFaceVertexPtrList :: iterator first, last;
   DLFLFaceVertexPtr fvp = NULL;
   first = fvpList.begin(); last = fvpList.end();
   while ( first != last )
@@ -285,7 +257,7 @@ void DLFLVertex::getFaceVertices(DLFLFaceVertexPtrArray& fvparray)
      }
 }
 
-void DLFLVertex::getOrderedFaceVertices(DLFLFaceVertexPtrArray& fvparray)
+void DLFLVertex :: getOrderedFaceVertices(DLFLFaceVertexPtrArray& fvparray)
 {
      // Get the face vertices associated with this vertex in the clockwise rotation order
   fvparray.clear();
@@ -305,10 +277,10 @@ void DLFLVertex::getOrderedFaceVertices(DLFLFaceVertexPtrArray& fvparray)
 }
 
 
-void DLFLVertex::getCornerAuxCoords(Vector3dArray& coords) const
+void DLFLVertex :: getCornerAuxCoords(Vector3dArray& coords) const
 {
   coords.clear(); coords.reserve(fvpList.size());
-  DLFLFaceVertexPtrList::const_iterator first, last;
+  DLFLFaceVertexPtrList :: const_iterator first, last;
   DLFLFaceVertexPtr fvp = NULL;
   first = fvpList.begin(); last = fvpList.end();
   while ( first != last )
@@ -318,7 +290,7 @@ void DLFLVertex::getCornerAuxCoords(Vector3dArray& coords) const
      }
 }
 
-void DLFLVertex::getOrderedCornerAuxCoords(Vector3dArray& coords) const
+void DLFLVertex :: getOrderedCornerAuxCoords(Vector3dArray& coords) const
 {
      // Get the aux coords of face vertices associated with this vertex in the clockwise rotation order
   coords.clear();
@@ -338,12 +310,12 @@ void DLFLVertex::getOrderedCornerAuxCoords(Vector3dArray& coords) const
 }
 
 
-void DLFLVertex::getFaces(DLFLFacePtrArray& fparray)
+void DLFLVertex :: getFaces(DLFLFacePtrArray& fparray)
 {
      // Go through the face-vertex-pointer list and add
      // face pointer of each face vertex pointer to the array
   fparray.clear(); fparray.reserve(fvpList.size());
-  DLFLFaceVertexPtrList::iterator first, last;
+  DLFLFaceVertexPtrList :: iterator first, last;
   DLFLFaceVertexPtr fvp = NULL;
   first = fvpList.begin(); last = fvpList.end();
   while ( first != last )
@@ -353,12 +325,12 @@ void DLFLVertex::getFaces(DLFLFacePtrArray& fparray)
      }
 }
 
-DLFLFaceVertexPtr DLFLVertex::getFaceVertexInFace(DLFLFacePtr fp)
+DLFLFaceVertexPtr DLFLVertex :: getFaceVertexInFace(DLFLFacePtr fp)
 {
      // Get the FaceVertex belonging to the given face. If only 1 face-vertex
      // is there in the list, return that. If more than 1 exist but nothing
      // belongs to given face, return NULL
-  DLFLFaceVertexPtrList::iterator first, last;
+  DLFLFaceVertexPtrList :: iterator first, last;
   DLFLFaceVertexPtr fvp, retfvp = NULL;
   first = fvpList.begin(); last = fvpList.end();
   if ( fvpList.size() == 1 ) retfvp = (*first);
@@ -377,12 +349,12 @@ DLFLFaceVertexPtr DLFLVertex::getFaceVertexInFace(DLFLFacePtr fp)
   return retfvp;
 }
 
-DLFLFaceVertexPtr DLFLVertex::getFaceVertexWithPrev(DLFLVertexPtr vp)
+DLFLFaceVertexPtr DLFLVertex :: getFaceVertexWithPrev(DLFLVertexPtr vp)
 {
      // Get the FaceVertex which has the given Vertex before it in it's Face
      // If only 1 FaceVertex refers to this Vertex, will return that
      // If there are more than 1 and none of them satisfies the condition, returns NULL
-  DLFLFaceVertexPtrList::iterator first, last;
+  DLFLFaceVertexPtrList :: iterator first, last;
   DLFLFaceVertexPtr fvp, retfvp = NULL;
   first = fvpList.begin(); last = fvpList.end();
   if ( fvpList.size() == 1 ) retfvp = (*first);
@@ -401,12 +373,12 @@ DLFLFaceVertexPtr DLFLVertex::getFaceVertexWithPrev(DLFLVertexPtr vp)
   return retfvp;
 }
 
-DLFLFaceVertexPtr DLFLVertex::getFaceVertexWithNext(DLFLVertexPtr vp)
+DLFLFaceVertexPtr DLFLVertex :: getFaceVertexWithNext(DLFLVertexPtr vp)
 {
      // Get the FaceVertex which has the given Vertex after it in it's Face
      // If only 1 FaceVertex refers to this Vertex, will return that
      // If there are more than 1 and none of them satisfies the condition, returns NULL
-  DLFLFaceVertexPtrList::iterator first, last;
+  DLFLFaceVertexPtrList :: iterator first, last;
   DLFLFaceVertexPtr fvp, retfvp = NULL;
   first = fvpList.begin(); last = fvpList.end();
   if ( fvpList.size() == 1 ) retfvp = (*first);
@@ -425,11 +397,11 @@ DLFLFaceVertexPtr DLFLVertex::getFaceVertexWithNext(DLFLVertexPtr vp)
   return retfvp;
 }
 
-DLFLFaceVertexPtr DLFLVertex::getBackFaceVertex(void)
+DLFLFaceVertexPtr DLFLVertex :: getBackFaceVertex(void)
 {
      // Get the FaceVertex which has the 'backface' flag set
      // If no such FaceVertex is found, returns NULL
-  DLFLFaceVertexPtrList::iterator first, last;
+  DLFLFaceVertexPtrList :: iterator first, last;
   DLFLFaceVertexPtr fvp, retfvp = NULL;
   first = fvpList.begin(); last = fvpList.end();
   while ( first != last )

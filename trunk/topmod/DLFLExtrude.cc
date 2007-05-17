@@ -6,14 +6,14 @@
 #include "DLFLAux.hh"
 #include "DLFLObject.hh"
 
-DLFLFacePtr DLFLObject::duplicateFace(DLFLFacePtr fptr, double offset, double rot, double sf)
+DLFLFacePtr DLFLObject :: duplicateFace(DLFLFacePtr fptr, double offset, double rot, double sf)
 {
      // Duplicate the given face, use face normal for direction of offset
   Vector3d dir = fptr->computeNormal();
   return duplicateFace(fptr,dir,offset,rot,sf);
 }
 
-DLFLFacePtr DLFLObject::duplicateFace(DLFLFacePtr fptr, const Vector3d& dir,
+DLFLFacePtr DLFLObject :: duplicateFace(DLFLFacePtr fptr, const Vector3d& dir,
                                         double offset, double rot, double sf)
 {
      // Duplicate given face, offsetting, scaling and rotating if necessary
@@ -46,13 +46,13 @@ DLFLFacePtr DLFLObject::duplicateFace(DLFLFacePtr fptr, const Vector3d& dir,
        createFace(newverts,fptr->material());
 
           // Get pointer to the first newly created face (second from last)
-       DLFLFacePtrList::reverse_iterator rfirst = face_list.rbegin();
+       DLFLFacePtrList :: reverse_iterator rfirst = face_list.rbegin();
        ++rfirst; endface = (*rfirst);
      }
   return endface;
 }
 
-DLFLFacePtr DLFLObject::duplicateFacePlanarOffset(DLFLFacePtr fptr,
+DLFLFacePtr DLFLObject :: duplicateFacePlanarOffset(DLFLFacePtr fptr,
                                                     double offset, double rot, double thickness,
                                                     bool fractionalthickness)
 {
@@ -63,7 +63,7 @@ DLFLFacePtr DLFLObject::duplicateFacePlanarOffset(DLFLFacePtr fptr,
   return duplicateFacePlanarOffset(fptr,dir,offset,rot,thickness,fractionalthickness);
 }
 
-DLFLFacePtr DLFLObject::duplicateFacePlanarOffset(DLFLFacePtr fptr, const Vector3d& dir,
+DLFLFacePtr DLFLObject :: duplicateFacePlanarOffset(DLFLFacePtr fptr, const Vector3d& dir,
                                                     double offset, double rot, double thickness,
                                                     bool fractionalthickness)
 {
@@ -197,13 +197,13 @@ DLFLFacePtr DLFLObject::duplicateFacePlanarOffset(DLFLFacePtr fptr, const Vector
        createFace(newverts,fptr->material());
 
           // Get pointer to the first newly created face (second from last)
-       DLFLFacePtrList::reverse_iterator rfirst = face_list.rbegin();
+       DLFLFacePtrList :: reverse_iterator rfirst = face_list.rbegin();
        ++rfirst; endface = (*rfirst);
      }
   return endface;
 }
 
-DLFLFacePtr DLFLObject::extrudeFace(DLFLFacePtr fptr, double d)
+DLFLFacePtr DLFLObject :: extrudeFace(DLFLFacePtr fptr, double d)
 {
      // Extrude the given face along its normal for a given distance
   Vector3d dir = fptr->computeNormal();
@@ -211,7 +211,7 @@ DLFLFacePtr DLFLObject::extrudeFace(DLFLFacePtr fptr, double d)
   return extrudeFace(fptr,d,dir,0.0,1.0);
 }
 
-DLFLFacePtr DLFLObject::extrudeFace(DLFLFacePtr fptr, double d, int num)
+DLFLFacePtr DLFLObject :: extrudeFace(DLFLFacePtr fptr, double d, int num)
 {
   DLFLFacePtr exface = fptr;
   for (int i=0; i < num; ++i)
@@ -221,7 +221,7 @@ DLFLFacePtr DLFLObject::extrudeFace(DLFLFacePtr fptr, double d, int num)
   return exface;
 }
 
-DLFLFacePtr DLFLObject::extrudeFace(DLFLFacePtr fptr, double d, double rot, double sf)
+DLFLFacePtr DLFLObject :: extrudeFace(DLFLFacePtr fptr, double d, double rot, double sf)
 {
      // Extrude the given face along its normal for a given distance
      // Rotate and scale the new face w.r.t. old face by given parameters
@@ -230,7 +230,7 @@ DLFLFacePtr DLFLObject::extrudeFace(DLFLFacePtr fptr, double d, double rot, doub
   return extrudeFace(fptr,d,dir,rot,sf);
 }
 
-DLFLFacePtr DLFLObject::extrudeFace(DLFLFacePtr fptr, double d, int num, double rot, double sf)
+DLFLFacePtr DLFLObject :: extrudeFace(DLFLFacePtr fptr, double d, int num, double rot, double sf)
 {
   DLFLFacePtr exface = fptr;
   for (int i=0; i < num; ++i)
@@ -240,12 +240,12 @@ DLFLFacePtr DLFLObject::extrudeFace(DLFLFacePtr fptr, double d, int num, double 
   return exface;
 }
 
-DLFLFacePtr DLFLObject::extrudeFace(DLFLFacePtr fptr, double d, const Vector3d& dir)
+DLFLFacePtr DLFLObject :: extrudeFace(DLFLFacePtr fptr, double d, const Vector3d& dir)
 {
   return extrudeFace(fptr,d,dir,0.0,1.0);
 }
 
-DLFLFacePtr DLFLObject::extrudeFace(DLFLFacePtr fptr, double d, const Vector3d& dir,
+DLFLFacePtr DLFLObject :: extrudeFace(DLFLFacePtr fptr, double d, const Vector3d& dir,
                                       int num)
 {
   DLFLFacePtr exface = fptr;
@@ -256,7 +256,7 @@ DLFLFacePtr DLFLObject::extrudeFace(DLFLFacePtr fptr, double d, const Vector3d& 
   return exface;
 }
   
-DLFLFacePtr DLFLObject::extrudeFace(DLFLFacePtr fptr, double d, const Vector3d& dir,
+DLFLFacePtr DLFLObject :: extrudeFace(DLFLFacePtr fptr, double d, const Vector3d& dir,
                                       double rot, double sf)
 {
   DLFLFacePtr endface = duplicateFace(fptr,dir,d,rot,sf);
@@ -274,7 +274,7 @@ DLFLFacePtr DLFLObject::extrudeFace(DLFLFacePtr fptr, double d, const Vector3d& 
   return endface;
 }
 
-DLFLFacePtr DLFLObject::extrudeFace(DLFLFacePtr fptr, double d, const Vector3d& dir,
+DLFLFacePtr DLFLObject :: extrudeFace(DLFLFacePtr fptr, double d, const Vector3d& dir,
                                       int num, double rot, double sf)
 {
   DLFLFacePtr exface = fptr;
@@ -285,7 +285,7 @@ DLFLFacePtr DLFLObject::extrudeFace(DLFLFacePtr fptr, double d, const Vector3d& 
   return exface;
 }
 
-DLFLFacePtr DLFLObject::extrudeFacePlanarOffset(DLFLFacePtr fptr,
+DLFLFacePtr DLFLObject :: extrudeFacePlanarOffset(DLFLFacePtr fptr,
                                                   double d, double rot, double thickness,
                                                   bool fractionalthickness)
 {
@@ -298,7 +298,7 @@ DLFLFacePtr DLFLObject::extrudeFacePlanarOffset(DLFLFacePtr fptr,
   return extrudeFacePlanarOffset(fptr,d,dir,rot,thickness,fractionalthickness);
 }
 
-DLFLFacePtr DLFLObject::extrudeFacePlanarOffset(DLFLFacePtr fptr, double d, const Vector3d& dir,
+DLFLFacePtr DLFLObject :: extrudeFacePlanarOffset(DLFLFacePtr fptr, double d, const Vector3d& dir,
                                                   double rot, double thickness,
                                                   bool fractionalthickness)
 {
@@ -317,7 +317,7 @@ DLFLFacePtr DLFLObject::extrudeFacePlanarOffset(DLFLFacePtr fptr, double d, cons
   return endface;
 }
 
-DLFLFacePtr DLFLObject::extrudeFaceDS(DLFLFacePtr fptr, double d,
+DLFLFacePtr DLFLObject :: extrudeFaceDS(DLFLFacePtr fptr, double d,
                                         double twist, double sf)
 {
      // Extrude the given face along its normal for a given distance
@@ -326,7 +326,7 @@ DLFLFacePtr DLFLObject::extrudeFaceDS(DLFLFacePtr fptr, double d,
   return extrudeFaceDS(fptr,d,dir,twist,sf);
 }
 
-DLFLFacePtr DLFLObject::extrudeFaceDS(DLFLFacePtr fptr, double d,
+DLFLFacePtr DLFLObject :: extrudeFaceDS(DLFLFacePtr fptr, double d,
                                         int num, double twist, double sf)
 {
   DLFLFacePtr exface = fptr;
@@ -337,7 +337,7 @@ DLFLFacePtr DLFLObject::extrudeFaceDS(DLFLFacePtr fptr, double d,
   return exface;
 }
 
-DLFLFacePtr DLFLObject::extrudeFaceDS(DLFLFacePtr fptr, double d, const Vector3d& dir,
+DLFLFacePtr DLFLObject :: extrudeFaceDS(DLFLFacePtr fptr, double d, const Vector3d& dir,
                                         double twist, double sf)
 {
      // Extrude the given face along the given direction for a given distance
@@ -384,7 +384,7 @@ DLFLFacePtr DLFLObject::extrudeFaceDS(DLFLFacePtr fptr, double d, const Vector3d
        createFace(oldverts,fptr->material());
 
           // Get pointer to the first newly created face (second from last)
-       DLFLFacePtrList::reverse_iterator rfirst = face_list.rbegin();
+       DLFLFacePtrList :: reverse_iterator rfirst = face_list.rbegin();
        ++rfirst; endface = (*rfirst);
 
           // Get the pointer to the second newly inserted face
@@ -399,7 +399,8 @@ DLFLFacePtr DLFLObject::extrudeFaceDS(DLFLFacePtr fptr, double d, const Vector3d
   return endface;
 }
 
-DLFLFacePtr DLFLObject::extrudeFaceDS(DLFLFacePtr fptr, double d, const Vector3d& dir, int num, double twist, double sf)
+DLFLFacePtr DLFLObject :: extrudeFaceDS(DLFLFacePtr fptr, double d, const Vector3d& dir,
+                                        int num, double twist, double sf)
 {
   DLFLFacePtr exface = fptr;
   for (int i=0; i < num; ++i)
@@ -409,7 +410,8 @@ DLFLFacePtr DLFLObject::extrudeFaceDS(DLFLFacePtr fptr, double d, const Vector3d
   return exface;
 }
 
-DLFLFacePtr DLFLObject::extrudeDualFace(DLFLFacePtr fptr, double d, double rot, double sf, bool mesh)
+DLFLFacePtr DLFLObject :: extrudeDualFace(DLFLFacePtr fptr, double d,
+                                          double rot, double sf, bool mesh)
 {
      // Extrude the given face along its normal for a given distance
      // Rotate and scale the new face w.r.t. old face by given parameters
@@ -418,7 +420,8 @@ DLFLFacePtr DLFLObject::extrudeDualFace(DLFLFacePtr fptr, double d, double rot, 
   return extrudeDualFace(fptr,d,dir,rot,sf,mesh);
 }
 
-DLFLFacePtr DLFLObject::extrudeDualFace(DLFLFacePtr fptr, double d, int num, double rot, double sf, bool mesh)
+DLFLFacePtr DLFLObject :: extrudeDualFace(DLFLFacePtr fptr, double d,
+                                          int num, double rot, double sf, bool mesh)
 {
   DLFLFacePtr exface = fptr;
   for (int i=0; i < num; ++i)
@@ -428,7 +431,8 @@ DLFLFacePtr DLFLObject::extrudeDualFace(DLFLFacePtr fptr, double d, int num, dou
   return exface;
 }
 
-DLFLFacePtr DLFLObject::extrudeDualFace(DLFLFacePtr fptr, double d, const Vector3d& dir, double rot, double sf, bool mesh)
+DLFLFacePtr DLFLObject :: extrudeDualFace(DLFLFacePtr fptr, double d, const Vector3d& dir,
+                                          double rot, double sf, bool mesh)
 {
      // Extrude the given face along the given direction for a given distance
   DLFLFacePtr endface = NULL;
@@ -468,7 +472,7 @@ DLFLFacePtr DLFLObject::extrudeDualFace(DLFLFacePtr fptr, double d, const Vector
        createFace(newverts,fptr->material());
 
           // Get pointers to the newly created faces
-       DLFLFacePtrList::reverse_iterator rfirst = face_list.rbegin();
+       DLFLFacePtrList :: reverse_iterator rfirst = face_list.rbegin();
        DLFLFacePtr nfp = (*rfirst);
        ++rfirst;
        endface = (*rfirst);
@@ -482,7 +486,7 @@ DLFLFacePtr DLFLObject::extrudeDualFace(DLFLFacePtr fptr, double d, const Vector
           // If the mesh flag is true delete the edges in the original face
        if ( mesh )
           {
-            DLFLEdgePtrArray::iterator el_first, el_last;
+            DLFLEdgePtrArray :: iterator el_first, el_last;
             DLFLEdgePtr ep;
 
             el_first = ep_arr.begin(); el_last = ep_arr.end();
@@ -496,7 +500,8 @@ DLFLFacePtr DLFLObject::extrudeDualFace(DLFLFacePtr fptr, double d, const Vector
   return endface;
 }
 
-DLFLFacePtr DLFLObject::extrudeDualFace(DLFLFacePtr fptr, double d, const Vector3d& dir, int num, double rot, double sf, bool mesh)
+DLFLFacePtr DLFLObject :: extrudeDualFace(DLFLFacePtr fptr, double d, const Vector3d& dir,
+                                          int num, double rot, double sf, bool mesh)
 {
   DLFLFacePtr exface = fptr;
   for (int i=0; i < num; ++i)
@@ -507,7 +512,7 @@ DLFLFacePtr DLFLObject::extrudeDualFace(DLFLFacePtr fptr, double d, const Vector
 }
 
 
-void DLFLObject::stellateFace(DLFLFacePtr fptr, double d)
+void DLFLObject :: stellateFace(DLFLFacePtr fptr, double d)
 {
      // Stellate the given face along its normal for a given distance
   Vector3d dir = fptr->computeNormal();
@@ -515,7 +520,7 @@ void DLFLObject::stellateFace(DLFLFacePtr fptr, double d)
   stellateFace(fptr,d,dir);
 }
 
-void DLFLObject::stellateFace(DLFLFacePtr fptr, double d, const Vector3d& dir)
+void DLFLObject :: stellateFace(DLFLFacePtr fptr, double d, const Vector3d& dir)
 {
      // Stellation is like extrusion but creates a cone instead of a cylinder
   DLFLMaterialPtr matl = fptr->material();
@@ -561,7 +566,7 @@ void DLFLObject::stellateFace(DLFLFacePtr fptr, double d, const Vector3d& dir)
      }
 }
 
-void DLFLObject::doubleStellateFace(DLFLFacePtr fptr, double d)
+void DLFLObject :: doubleStellateFace(DLFLFacePtr fptr, double d)
 {
      // Original version by Eric. Modified by Vinod.
      // Double stellation
@@ -588,7 +593,8 @@ void DLFLObject::doubleStellateFace(DLFLFacePtr fptr, double d)
 
 //--- Additions by Eric ---//
 
-DLFLFacePtr DLFLObject::extrudeFaceDodeca(DLFLFacePtr fptr, double d, int num, double rot, double sf, bool hexagonalize)
+DLFLFacePtr DLFLObject :: extrudeFaceDodeca(DLFLFacePtr fptr, double d, int num, double rot, double sf,
+                                            bool hexagonalize)
 {
      // Dodecahedral extrusion
   DLFLFacePtr exface = fptr;
@@ -615,7 +621,7 @@ DLFLFacePtr DLFLObject::extrudeFaceDodeca(DLFLFacePtr fptr, double d, int num, d
   return exface;
 }
 
-DLFLFacePtr DLFLObject::extrudeHexTileFace(DLFLFacePtr fptr, double d, double rot, double sf)
+DLFLFacePtr DLFLObject :: extrudeHexTileFace(DLFLFacePtr fptr, double d, double rot, double sf)
 {
      // Hexagonal extrusion for multiple dodecahedral extrusion.
   DLFLFacePtr exface = fptr;
@@ -630,7 +636,7 @@ DLFLFacePtr DLFLObject::extrudeHexTileFace(DLFLFacePtr fptr, double d, double ro
   exface = extrudeFace(exface, ddiv3, 0.0, sf_2);
 
      // delete more unneeded edges, the same way dual extrude does
-  DLFLEdgePtrArray::iterator el_first, el_last;
+  DLFLEdgePtrArray :: iterator el_first, el_last;
   DLFLEdgePtr ep;
   el_first = ep_arr.begin(); el_last = ep_arr.end();
   while ( el_first != el_last )
@@ -641,7 +647,7 @@ DLFLFacePtr DLFLObject::extrudeHexTileFace(DLFLFacePtr fptr, double d, double ro
   return exface;
 }
 
-DLFLFacePtr DLFLObject::extrudeFaceDodeca(DLFLFacePtr fptr, double d, double rot, double sf)
+DLFLFacePtr DLFLObject :: extrudeFaceDodeca(DLFLFacePtr fptr, double d, double rot, double sf)
 {
      // Dodecahedral extrusion
      // Sequence of extrude, dual extrude and extrude followed by deletion of lateral edges
@@ -660,7 +666,7 @@ DLFLFacePtr DLFLObject::extrudeFaceDodeca(DLFLFacePtr fptr, double d, double rot
   exface = extrudeFace(exface, ddiv3, 0.0, sf_3);
 
      // delete more unneeded edges, the same way dual extrude does
-  DLFLEdgePtrArray::iterator el_first, el_last;
+  DLFLEdgePtrArray :: iterator el_first, el_last;
   DLFLEdgePtr ep;
   el_first = ep_arr.begin(); el_last = ep_arr.end();
   while ( el_first != el_last )
@@ -671,7 +677,7 @@ DLFLFacePtr DLFLObject::extrudeFaceDodeca(DLFLFacePtr fptr, double d, double rot
   return exface;
 }
 
-DLFLFacePtr DLFLObject::extrudeFaceIcosa(DLFLFacePtr fptr, double d, int num, double rot,  double sf)
+DLFLFacePtr DLFLObject :: extrudeFaceIcosa(DLFLFacePtr fptr, double d, int num, double rot,  double sf)
 {
      // Icosahedral extrusion
   DLFLFacePtr exface = fptr;
@@ -687,7 +693,7 @@ DLFLFacePtr DLFLObject::extrudeFaceIcosa(DLFLFacePtr fptr, double d, int num, do
 
    // is performed by extruding, dual extruding, then extruding again.
    // then delete the latitude edges
-DLFLFacePtr DLFLObject::extrudeFaceIcosa(DLFLFacePtr fptr, double d, double rot, double sf)
+DLFLFacePtr DLFLObject :: extrudeFaceIcosa(DLFLFacePtr fptr, double d, double rot, double sf)
 {
      // Icosahedral extrusion
   DLFLFacePtr exface = fptr;
@@ -719,7 +725,7 @@ DLFLFacePtr DLFLObject::extrudeFaceIcosa(DLFLFacePtr fptr, double d, double rot,
   exface = extrudeFace(exface, ddiv3*2.0);
 
      // delete top edges from dual extrude
-  DLFLEdgePtrArray::iterator el_first, el_last;
+  DLFLEdgePtrArray :: iterator el_first, el_last;
   DLFLEdgePtr ep;
   el_first = ep_arr.begin(); el_last = ep_arr.end();
   while ( el_first != el_last )
@@ -752,7 +758,7 @@ DLFLFacePtr DLFLObject::extrudeFaceIcosa(DLFLFacePtr fptr, double d, double rot,
 
 //--- End additions by Eric ---//
 
-void DLFLObject::extrudeFace(DLFLFacePtr fptr)
+void DLFLObject :: extrudeFace(DLFLFacePtr fptr)
 {
      // Extrude the given face using previously computed coordinates.
   DLFLFaceVertexPtr head;
@@ -773,7 +779,7 @@ void DLFLObject::extrudeFace(DLFLFacePtr fptr)
 
           // Get the pointer to the second newly inserted face
        DLFLFacePtr nfp;
-       DLFLFacePtrList::reverse_iterator rfirst = face_list.rbegin();
+       DLFLFacePtrList :: reverse_iterator rfirst = face_list.rbegin();
        nfp = (*rfirst);
 
           // The last face will be the one facing the old face

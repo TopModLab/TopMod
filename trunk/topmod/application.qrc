@@ -28,6 +28,7 @@
 	<file>lang/topmod_tr.qm</file>
 	<file>lang/topmod_fr.qm</file>
     <file>qss/modo.qss</file>
+    <file>qss/default.qss</file>
 	<file alias="cube.obj">objs/cube.obj</file>
 	<file alias="octahedron.obj">objs/octahedron.obj</file>
 	<file alias="tetrahedron.obj">objs/tetrahedron.obj</file>

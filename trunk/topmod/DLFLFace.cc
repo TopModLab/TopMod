@@ -13,7 +13,7 @@
 static Vector2d unittexcoords[] = { Vector2d(0,0), Vector2d(1,0), Vector2d(1,1), Vector2d(0,1) };
 
 // Define the static variable. Initialized to 0
-uint DLFLFace::suLastID = 0;
+uint DLFLFace :: suLastID = 0;
 
 /*
   Traversing the Face using the DLFLFaceVertexPtr
@@ -37,7 +37,7 @@ uint DLFLFace::suLastID = 0;
 
 
 // Dump contents of object
-void DLFLFace::dump(ostream& o) const
+void DLFLFace :: dump(ostream& o) const
 {
   o << "DLFLFace" << endl
 //    << "  ID : " << uID << endl
@@ -62,7 +62,7 @@ void DLFLFace::dump(ostream& o) const
 }
 
    // Constructor
-DLFLFace::DLFLFace(DLFLMaterialPtr mp)
+DLFLFace :: DLFLFace(DLFLMaterialPtr mp)
   : head(NULL), matl_ptr(mp), ftType(FTNormal), auxcoords(), auxnormal(), centroid(), normal(), flags(0)
 {
   assignID();
@@ -71,7 +71,7 @@ DLFLFace::DLFLFace(DLFLMaterialPtr mp)
 }
 
    // Copy constructor
-DLFLFace::DLFLFace(const DLFLFace& face)
+DLFLFace :: DLFLFace(const DLFLFace& face)
   : uID(face.uID), head(NULL), matl_ptr(face.matl_ptr), ftType(face.ftType),
     auxcoords(face.auxcoords), auxnormal(face.auxnormal), centroid(face.centroid), normal(face.normal), flags(face.flags)
 {
@@ -81,7 +81,7 @@ DLFLFace::DLFLFace(const DLFLFace& face)
 }
 
    // Destructor
-DLFLFace::~DLFLFace()
+DLFLFace :: ~DLFLFace()
 {
      // Remove this face from the face-list of the material if there is an associated material
   if ( matl_ptr ) matl_ptr->deleteFace(this);
@@ -89,7 +89,7 @@ DLFLFace::~DLFLFace()
 }
 
    // Copy face from another face. Doesn't destroy existing face. So it's more of an insert
-void DLFLFace::copy(DLFLFaceVertexPtr ptr)
+void DLFLFace :: copy(DLFLFaceVertexPtr ptr)
 {
   if ( ptr )
      {
@@ -105,7 +105,7 @@ void DLFLFace::copy(DLFLFaceVertexPtr ptr)
 }
 
    // Destroy this face
-void DLFLFace::destroy(void)
+void DLFLFace :: destroy(void)
 {
   if ( head )
      {
@@ -125,7 +125,7 @@ void DLFLFace::destroy(void)
 }
 
    // Assignment operator
-DLFLFace& DLFLFace::operator = (const DLFLFace& face)
+DLFLFace& DLFLFace :: operator = (const DLFLFace& face)
 {
   destroy();
   copy(face.head);
@@ -150,7 +150,7 @@ DLFLFace& DLFLFace::operator = (const DLFLFace& face)
   return (*this);
 }
 
-DLFLFaceVertexPtr DLFLFace::addVertex(const DLFLFaceVertex& dfv)
+DLFLFaceVertexPtr DLFLFace :: addVertex(const DLFLFaceVertex& dfv)
 {
      // Insert a copy.
   DLFLFaceVertexPtr newfvp = dfv.copy();
@@ -158,7 +158,7 @@ DLFLFaceVertexPtr DLFLFace::addVertex(const DLFLFaceVertex& dfv)
   return newfvp;
 }
 
-DLFLFaceVertexPtr DLFLFace::addVertex(DLFLFaceVertexPtr dfvp)
+DLFLFaceVertexPtr DLFLFace :: addVertex(DLFLFaceVertexPtr dfvp)
 {
      // Insert a copy.
   DLFLFaceVertexPtr newfvp = dfvp->copy();
@@ -166,7 +166,7 @@ DLFLFaceVertexPtr DLFLFace::addVertex(DLFLFaceVertexPtr dfvp)
   return newfvp;
 }
 
-void DLFLFace::addVertexPtr(DLFLFaceVertexPtr dfvp)         // Insert the pointer
+void DLFLFace :: addVertexPtr(DLFLFaceVertexPtr dfvp)         // Insert the pointer
 {
      // Just insert the pointer.
      // **** WARNING!!! **** The pointer will be freed when the list is deleted!
@@ -187,7 +187,7 @@ void DLFLFace::addVertexPtr(DLFLFaceVertexPtr dfvp)         // Insert the pointe
      }
 }
 
-void DLFLFace::deleteVertexPtr(DLFLFaceVertexPtr dfvp)
+void DLFLFace :: deleteVertexPtr(DLFLFaceVertexPtr dfvp)
 {
   if ( dfvp->getFacePtr() != this ) return;
 
@@ -212,7 +212,7 @@ void DLFLFace::deleteVertexPtr(DLFLFaceVertexPtr dfvp)
 }
 
        
-void DLFLFace::getVertexCoords(Vector3dArray& verts)
+void DLFLFace :: getVertexCoords(Vector3dArray& verts)
 {
      // Get the coordinates of the vertices of this face in a Vector3dArray
   verts.clear(); verts.reserve(size());
@@ -230,7 +230,7 @@ void DLFLFace::getVertexCoords(Vector3dArray& verts)
 }
 
    // Set the material for this face. Update face-list of material also
-void DLFLFace::setMaterial(DLFLMaterialPtr mptr)
+void DLFLFace :: setMaterial(DLFLMaterialPtr mptr)
 {
   if ( mptr == matl_ptr ) return;
 
@@ -244,7 +244,7 @@ void DLFLFace::setMaterial(DLFLMaterialPtr mptr)
   if ( matl_ptr ) matl_ptr->addFace(this);
 }
 
-DLFLFaceVertexPtr DLFLFace::advance(DLFLFaceVertexPtr ptr, uint num) const
+DLFLFaceVertexPtr DLFLFace :: advance(DLFLFaceVertexPtr ptr, uint num) const
 {
   DLFLFaceVertexPtr newptr = ptr;
   for (int i=0; i < num; ++i)
@@ -253,71 +253,71 @@ DLFLFaceVertexPtr DLFLFace::advance(DLFLFaceVertexPtr ptr, uint num) const
 }
 
    // Access the face-vertex specified by index. No range checks done
-DLFLFaceVertexPtr DLFLFace::facevertexptr(uint index)
+DLFLFaceVertexPtr DLFLFace :: facevertexptr(uint index)
 {
   return advance(head,index);
 }
 
-DLFLFaceVertex& DLFLFace::facevertex(uint index)
+DLFLFaceVertex& DLFLFace :: facevertex(uint index)
 {
   return *advance(head,index);
 }
      
-DLFLFaceVertex DLFLFace::facevertex(uint index) const
+DLFLFaceVertex DLFLFace :: facevertex(uint index) const
 {
   return *advance(head,index);
 }
 
    // Access the vertex specified by index. No range checks done
-DLFLVertexPtr DLFLFace::vertexptr(uint index)
+DLFLVertexPtr DLFLFace :: vertexptr(uint index)
 {
   return facevertexptr(index)->vertex;
 }
      
-DLFLVertex& DLFLFace::vertex(uint index)
+DLFLVertex& DLFLFace :: vertex(uint index)
 {
   return *(facevertexptr(index)->vertex);
 }
 
-DLFLVertex DLFLFace::vertex(uint index) const
+DLFLVertex DLFLFace :: vertex(uint index) const
 {
   return *(facevertex(index).vertex);
 }
 
    // Access the coordinates of the vertex specified by index. No range checks done
-Vector3d& DLFLFace::vertex_coords(uint index)
+Vector3d& DLFLFace :: vertex_coords(uint index)
 {
   return vertexptr(index)->coords;
 }
 
-Vector3d DLFLFace::vertex_coords(uint index) const
+Vector3d DLFLFace :: vertex_coords(uint index) const
 {
   return vertex(index).coords;
 }
 
    // Access color and normal of face vertex specified by index
-RGBColor& DLFLFace::fv_color(uint index)
+RGBColor& DLFLFace :: fv_color(uint index)
 {
   return facevertexptr(index)->color;
 }
 
-RGBColor DLFLFace::fv_color(uint index) const
+RGBColor DLFLFace :: fv_color(uint index) const
 {
   return facevertex(index).color;
 }
      
-Vector3d& DLFLFace::fv_normal(uint index)
+Vector3d& DLFLFace :: fv_normal(uint index)
 {
   return facevertexptr(index)->normal;
 }
 
-Vector3d DLFLFace::fv_normal(uint index) const
+Vector3d DLFLFace :: fv_normal(uint index) const
 {
   return facevertex(index).normal;
 }
 
    // Set the color of all face vertices of this face
-void DLFLFace::setColor(const RGBColor& col)
+void DLFLFace :: setColor(const RGBColor& col)
 {
   if ( head )
      {
@@ -332,7 +332,7 @@ void DLFLFace::setColor(const RGBColor& col)
      }
 }
 
-void DLFLFace::setColor(double r, double g, double b)
+void DLFLFace :: setColor(double r, double g, double b)
 {
   if ( head )
      {
@@ -347,10 +347,11 @@ void DLFLFace::setColor(double r, double g, double b)
      }
 }
 
-void DLFLFace::randomAssignTexCoords(void)
+void DLFLFace :: randomAssignTexCoords(void)
 {
      // Assumes that the face is a quad
-  int start = lrand48() % 4; // Random no 0,1,2 or 3
+  // int start = lrand48() % 4; // Random no 0,1,2 or 3
+  int start = rand() % 4; // Random no 0,1,2 or 3
 
   if ( head )
      {
@@ -367,12 +368,12 @@ void DLFLFace::randomAssignTexCoords(void)
      }
 }
   
-void DLFLFace::updateMaterial(void)
+void DLFLFace :: updateMaterial(void)
 {
   if ( matl_ptr ) matl_ptr->addFace(this);
 }
 
-Vector3d DLFLFace::geomSum(void) const
+Vector3d DLFLFace :: geomSum(void) const
 {
   Vector3d sumg;
   if ( head )
@@ -389,7 +390,7 @@ Vector3d DLFLFace::geomSum(void) const
   return sumg;
 }
 
-Vector2d DLFLFace::textureSum(void) const
+Vector2d DLFLFace :: textureSum(void) const
 {
   Vector2d sumtc;
   if ( head )
@@ -406,7 +407,7 @@ Vector2d DLFLFace::textureSum(void) const
   return sumtc;
 }
 
-RGBColor DLFLFace::colorSum(void) const
+RGBColor DLFLFace :: colorSum(void) const
 {
   RGBColor sumc;
   if ( head )
@@ -423,7 +424,7 @@ RGBColor DLFLFace::colorSum(void) const
   return sumc;
 }
 
-Vector3d DLFLFace::normalSum(void) const
+Vector3d DLFLFace :: normalSum(void) const
 {
   Vector3d sumn;
   if ( head )
@@ -440,7 +441,7 @@ Vector3d DLFLFace::normalSum(void) const
   return sumn;
 }
 
-void DLFLFace::getSums(Vector3d& sumg, Vector2d& sumtc, RGBColor& sumc, Vector3d& sumn) const
+void DLFLFace :: getSums(Vector3d& sumg, Vector2d& sumtc, RGBColor& sumc, Vector3d& sumn) const
 {
   if ( head )
      {
@@ -461,7 +462,7 @@ void DLFLFace::getSums(Vector3d& sumg, Vector2d& sumtc, RGBColor& sumc, Vector3d
      }
 }
 
-void DLFLFace::updateCentroid(void)
+void DLFLFace :: updateCentroid(void)
 {
   centroid.reset();
   if ( head )
@@ -479,7 +480,7 @@ void DLFLFace::updateCentroid(void)
      }
 }
 
-Vector2d DLFLFace::textureCentroid(void) const
+Vector2d DLFLFace :: textureCentroid(void) const
 {
   Vector2d centc;
   if ( head )
@@ -498,7 +499,7 @@ Vector2d DLFLFace::textureCentroid(void) const
   return centc;
 }
 
-RGBColor DLFLFace::colorCentroid(void) const
+RGBColor DLFLFace :: colorCentroid(void) const
 {
   RGBColor cenc;
   if ( head )
@@ -517,7 +518,7 @@ RGBColor DLFLFace::colorCentroid(void) const
   return cenc;
 }
 
-void DLFLFace::updateNormal(void)
+void DLFLFace :: updateNormal(void)
 {
   normal.reset();
   if ( head )
@@ -534,7 +535,7 @@ void DLFLFace::updateNormal(void)
      }
 }
 
-Vector3d DLFLFace::computeNormal(void)
+Vector3d DLFLFace :: computeNormal(void)
 {
   normal.reset();
   if ( head )
@@ -560,7 +561,7 @@ Vector3d DLFLFace::computeNormal(void)
   return normal;
 }
 
-void DLFLFace::storeNormals(void)
+void DLFLFace :: storeNormals(void)
 {
   if ( head )
      {
@@ -575,7 +576,7 @@ void DLFLFace::storeNormals(void)
      }
 }
 
-void DLFLFace::getCentroids(Vector3d& ceng, Vector2d& centc, RGBColor& cenc, Vector3d& cenn) const
+void DLFLFace :: getCentroids(Vector3d& ceng, Vector2d& centc, RGBColor& cenc, Vector3d& cenn) const
 {
   if ( head )
      {
@@ -603,7 +604,7 @@ void DLFLFace::getCentroids(Vector3d& ceng, Vector2d& centc, RGBColor& cenc, Vec
      }
 }
 
-uint DLFLFace::size(void) const
+uint DLFLFace :: size(void) const
 {
   int num=0;
   if ( head )
@@ -618,7 +619,7 @@ uint DLFLFace::size(void) const
   return num;
 }
 
-void DLFLFace::resetTypeDeep(void)
+void DLFLFace :: resetTypeDeep(void)
 {
   resetType();
   if ( head )
@@ -634,7 +635,7 @@ void DLFLFace::resetTypeDeep(void)
      }
 }
 
-void DLFLFace::updateFacePointers(void)
+void DLFLFace :: updateFacePointers(void)
 {
   if ( head )
      {
@@ -649,7 +650,7 @@ void DLFLFace::updateFacePointers(void)
      }
 }
 
-void DLFLFace::resetFacePointers(void)
+void DLFLFace :: resetFacePointers(void)
 {
   if ( head )
      {
@@ -664,7 +665,7 @@ void DLFLFace::resetFacePointers(void)
      }
 }
 
-void DLFLFace::addFaceVerticesToVertices(void)
+void DLFLFace :: addFaceVerticesToVertices(void)
 {
   if ( head )
      {
@@ -679,7 +680,7 @@ void DLFLFace::addFaceVerticesToVertices(void)
      }
 }
 
-void DLFLFace::deleteFaceVerticesFromVertices(void)
+void DLFLFace :: deleteFaceVerticesFromVertices(void)
 {
   if ( head )
      {
@@ -694,7 +695,7 @@ void DLFLFace::deleteFaceVerticesFromVertices(void)
      }
 }
 
-void DLFLFace::addFaceVerticesToEdges(void)
+void DLFLFace :: addFaceVerticesToEdges(void)
 {
   if ( head )
      {
@@ -709,7 +710,7 @@ void DLFLFace::addFaceVerticesToEdges(void)
      }
 }
 
-void DLFLFace::deleteFaceVerticesFromEdges(void)
+void DLFLFace :: deleteFaceVerticesFromEdges(void)
 {
   if ( head )
      {
@@ -724,7 +725,7 @@ void DLFLFace::deleteFaceVerticesFromEdges(void)
      }
 }
 
-void DLFLFace::addFaceVerticesToVerticesAndEdges(void)
+void DLFLFace :: addFaceVerticesToVerticesAndEdges(void)
 {
   if ( head )
      {
@@ -741,7 +742,7 @@ void DLFLFace::addFaceVerticesToVerticesAndEdges(void)
      }
 }
 
-void DLFLFace::deleteFaceVerticesFromVerticesAndEdges(void)
+void DLFLFace :: deleteFaceVerticesFromVerticesAndEdges(void)
 {
   if ( head )
      {
@@ -758,7 +759,7 @@ void DLFLFace::deleteFaceVerticesFromVerticesAndEdges(void)
      }
 }
 
-int DLFLFace::getEdges(DLFLEdge ** edges)
+int DLFLFace :: getEdges(DLFLEdge ** edges)
 {
   int length = size();
   if ( length < 2 ) return 0;
@@ -788,7 +789,7 @@ int DLFLFace::getEdges(DLFLEdge ** edges)
 
 // This function is different from the previous one in that it doesn't create any new edges
 // It simply gets the existing edges. Puts the edge pointers into an array
-void DLFLFace::getEdges(DLFLEdgePtrArray& edges)
+void DLFLFace :: getEdges(DLFLEdgePtrArray& edges)
 {
   edges.clear(); edges.reserve(size());
   if ( head )
@@ -806,7 +807,7 @@ void DLFLFace::getEdges(DLFLEdgePtrArray& edges)
 }
 
 // Same as above but puts edge pointers into a linked list
-void DLFLFace::getEdges(DLFLEdgePtrList& edges)
+void DLFLFace :: getEdges(DLFLEdgePtrList& edges)
 {
   edges.clear();
   if ( head )
@@ -824,7 +825,7 @@ void DLFLFace::getEdges(DLFLEdgePtrList& edges)
 }
 
 // Get the face vertex pointers in the face as an array
-void DLFLFace::getCorners(DLFLFaceVertexPtrArray& corners)
+void DLFLFace :: getCorners(DLFLFaceVertexPtrArray& corners)
 {
   corners.clear(); corners.reserve(size());
 
@@ -843,7 +844,7 @@ void DLFLFace::getCorners(DLFLFaceVertexPtrArray& corners)
 }
 
 // Get the corners and the coords
-void DLFLFace::getCornersAndCoords(DLFLFaceVertexPtrArray& corners, Vector3dArray& coords)
+void DLFLFace :: getCornersAndCoords(DLFLFaceVertexPtrArray& corners, Vector3dArray& coords)
 {
   int n = size();
   corners.clear(); corners.reserve(n);
@@ -866,7 +867,7 @@ void DLFLFace::getCornersAndCoords(DLFLFaceVertexPtrArray& corners, Vector3dArra
 }
 
 // Does this face contain the given face-vertex?
-bool DLFLFace::contains(DLFLFaceVertexPtr fvptr)
+bool DLFLFace :: contains(DLFLFaceVertexPtr fvptr)
 {
   if ( head )
      {
@@ -884,19 +885,19 @@ bool DLFLFace::contains(DLFLFaceVertexPtr fvptr)
 
 
 // Find next DLFLFaceVertex - just return the next() for given face-vertex
-DLFLFaceVertexPtr DLFLFace::nextFaceVertex(DLFLFaceVertexPtr fvptr)
+DLFLFaceVertexPtr DLFLFace :: nextFaceVertex(DLFLFaceVertexPtr fvptr)
 {
   return fvptr->next();
 }
 
 // Find previous DLFLFaceVertex - just return the prev() for given face-vertex
-DLFLFaceVertexPtr DLFLFace::prevFaceVertex(DLFLFaceVertexPtr fvptr)
+DLFLFaceVertexPtr DLFLFace :: prevFaceVertex(DLFLFaceVertexPtr fvptr)
 {
   return fvptr->prev();
 }
 
 // Find the DLFLFaceVertex closest to the given point
-DLFLFaceVertexPtr DLFLFace::findClosest(const Vector3d& p)
+DLFLFaceVertexPtr DLFLFace :: findClosest(const Vector3d& p)
 {
   DLFLFaceVertexPtr closest = NULL;
 
@@ -923,7 +924,7 @@ DLFLFaceVertexPtr DLFLFace::findClosest(const Vector3d& p)
 // Find the two corners which are closest to each other in the two faces
 // The passed DLFLFaceVertex pointers will be set to the closest corners,
 // the first one from the first face and the second one from the second face
-void DLFLFace::findClosestCorners(DLFLFacePtr fp1, DLFLFacePtr fp2,
+void DLFLFace :: findClosestCorners(DLFLFacePtr fp1, DLFLFacePtr fp2,
                                     DLFLFaceVertexPtr& fvp1, DLFLFaceVertexPtr& fvp2)
 {
      // Traverse face 1 and find closest point in face 2 for each point in face 1
@@ -952,7 +953,7 @@ void DLFLFace::findClosestCorners(DLFLFacePtr fp1, DLFLFacePtr fp2,
 }
 
 // Insert a new DLFLFaceVertex after a given DLFLFaceVertex
-DLFLFaceVertexPtr DLFLFace::insertAfter(DLFLFaceVertexPtr fvptr, DLFLFaceVertexPtr new_fvp, bool copy)
+DLFLFaceVertexPtr DLFLFace :: insertAfter(DLFLFaceVertexPtr fvptr, DLFLFaceVertexPtr new_fvp, bool copy)
 {
   DLFLFaceVertexPtr fvp;
 
@@ -970,7 +971,7 @@ DLFLFaceVertexPtr DLFLFace::insertAfter(DLFLFaceVertexPtr fvptr, DLFLFaceVertexP
 }
 
 // Insert a new DLFLFaceVertex before a given DLFLFaceVertex
-DLFLFaceVertexPtr DLFLFace::insertBefore(DLFLFaceVertexPtr fvptr, DLFLFaceVertexPtr new_fvp, bool copy)
+DLFLFaceVertexPtr DLFLFace :: insertBefore(DLFLFaceVertexPtr fvptr, DLFLFaceVertexPtr new_fvp, bool copy)
 {
      // Find the previous face vertex to the given face vertex
      // and insert the new one after that
@@ -978,7 +979,7 @@ DLFLFaceVertexPtr DLFLFace::insertBefore(DLFLFaceVertexPtr fvptr, DLFLFaceVertex
   return insertAfter(prev,new_fvp,copy);
 }
 
-void DLFLFace::reorder(DLFLFaceVertexPtr fvptr)
+void DLFLFace :: reorder(DLFLFaceVertexPtr fvptr)
 {
      // Reorder the face-vertices so that the given face-vertex is the first one
      // Simply have to change the head pointer to point to the new face vertex
@@ -987,7 +988,7 @@ void DLFLFace::reorder(DLFLFaceVertexPtr fvptr)
   if ( this->contains(fvptr) ) head = fvptr;
 }
 
-void DLFLFace::reverse(void)
+void DLFLFace :: reverse(void)
 {
      // Reverse the order of face-vertices in the face
      // For every face-vertex, swap the previous and next fields
@@ -1006,7 +1007,7 @@ void DLFLFace::reverse(void)
 
 
 // Boundary walk of DLFLFace
-void DLFLFace::boundaryWalk(void) const
+void DLFLFace :: boundaryWalk(void) const
 {
   cout << "DLFLFace " << uID << " (" << size() << ") : ";
   if ( head )
@@ -1037,7 +1038,7 @@ void DLFLFace::boundaryWalk(void) const
      }
 }
 
-void DLFLFace::printPointers(void) const
+void DLFLFace :: printPointers(void) const
 {
   cout << "DLFLFace " << uID << " (" << size() << ") : ";
   if ( head )
@@ -1057,7 +1058,7 @@ void DLFLFace::printPointers(void) const
 }
 
    // Write out DLFLFace in OBJ format
-void DLFLFace::objWrite(ostream& o, uint min_id) const
+void DLFLFace :: objWrite(ostream& o, uint min_id) const
 {
   uint index;
   if ( head )
@@ -1077,7 +1078,7 @@ void DLFLFace::objWrite(ostream& o, uint min_id) const
      }
 }
 
-void DLFLFace::objWriteWithNormals(ostream& o, uint min_id, uint& normal_id_start) const
+void DLFLFace :: objWriteWithNormals(ostream& o, uint min_id, uint& normal_id_start) const
 {
   uint index;
   if ( head )
@@ -1099,7 +1100,7 @@ void DLFLFace::objWriteWithNormals(ostream& o, uint min_id, uint& normal_id_star
      }
 }
 
-void DLFLFace::objWriteWithTexCoords(ostream& o, uint min_id,
+void DLFLFace :: objWriteWithTexCoords(ostream& o, uint min_id,
                                        uint& tex_id_start) const
 {
   uint index;
@@ -1122,7 +1123,7 @@ void DLFLFace::objWriteWithTexCoords(ostream& o, uint min_id,
      }
 }
 
-void DLFLFace::objWriteWithNormalsAndTexCoords(ostream& o, uint min_id,
+void DLFLFace :: objWriteWithNormalsAndTexCoords(ostream& o, uint min_id,
                                                  uint& normal_id_start,
                                                  uint& tex_id_start) const
 {
@@ -1147,7 +1148,7 @@ void DLFLFace::objWriteWithNormalsAndTexCoords(ostream& o, uint min_id,
 }
 
    // Write out normals at each vertex in OBJ format
-void DLFLFace::objWriteNormals(ostream& o) const
+void DLFLFace :: objWriteNormals(ostream& o) const
 {
   if ( head )
      {
@@ -1166,7 +1167,7 @@ void DLFLFace::objWriteNormals(ostream& o) const
 }
 
    // Write out texture coordinates at each vertex in OBJ format
-void DLFLFace::objWriteTexCoords(ostream& o) const
+void DLFLFace :: objWriteTexCoords(ostream& o) const
 {
   if ( head )
      {
@@ -1184,7 +1185,7 @@ void DLFLFace::objWriteTexCoords(ostream& o) const
      }
 }
 
-void DLFLFace::writeDLFL(ostream& o) const
+void DLFLFace :: writeDLFL(ostream& o) const
 {
   if ( head )
      {
@@ -1201,7 +1202,7 @@ void DLFLFace::writeDLFL(ostream& o) const
      }
 }
 
-void DLFLFace::writeDLFLReverse(ostream& o) const
+void DLFLFace :: writeDLFLReverse(ostream& o) const
 {
   if ( head )
      {
@@ -1218,7 +1219,7 @@ void DLFLFace::writeDLFLReverse(ostream& o) const
      }
 }
 
-void DLFLFace::for_each(void (*func)(DLFLFaceVertexPtr)) const
+void DLFLFace :: for_each(void (*func)(DLFLFaceVertexPtr)) const
 {
      // Apply given function to every face-vertex in the face starting at head
   if ( head )

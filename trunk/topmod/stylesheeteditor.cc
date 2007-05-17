@@ -38,7 +38,7 @@
      ui.styleCombo->addItems(QStyleFactory::keys());
      ui.styleCombo->setCurrentIndex(ui.styleCombo->findText(defaultStyle));
      //ui.styleSheetCombo->setCurrentIndex(ui.styleSheetCombo->findText("Coffee"));
-     //loadStyleSheet("Coffee");
+     loadStyleSheet("default");
  }
 
  void StyleSheetEditor::on_styleCombo_activated(const QString &styleName)

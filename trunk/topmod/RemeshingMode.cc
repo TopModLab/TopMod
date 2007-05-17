@@ -527,7 +527,7 @@ void RemeshingMode::setupThreeConversion(){
 					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 	mRootThreeLayout->addWidget(rootThreeCreateButton);
 	mRootThreeLayout->addStretch(1);
-	mRootThreeWidget->setWindowTitle("Cut by Edge");
+	mRootThreeWidget->setWindowTitle("Root-3 Remeshing");
 	mRootThreeWidget->setLayout(mRootThreeLayout);
 	
 	//dual vertex truncation
@@ -538,7 +538,7 @@ void RemeshingMode::setupThreeConversion(){
 					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 	mDualVertexTruncationLayout->addWidget(dualVertexTruncationButton);
 	mDualVertexTruncationLayout->addStretch(1);
-	mDualVertexTruncationWidget->setWindowTitle("Cut by Edge");
+	mDualVertexTruncationWidget->setWindowTitle("Dual Vertex Truncation");
 	mDualVertexTruncationWidget->setLayout(mDualVertexTruncationLayout);
 
 	//stellation
@@ -549,7 +549,7 @@ void RemeshingMode::setupThreeConversion(){
 					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 	mStellationLayout->addWidget(stellationButton);
 	mStellationLayout->addStretch(1);
-	mStellationWidget->setWindowTitle("Stellation");
+	mStellationWidget->setWindowTitle("Stellation Remeshing");
 	mStellationWidget->setLayout(mStellationLayout);
 
 	//double stellate
@@ -573,7 +573,7 @@ void RemeshingMode::setupThreeConversion(){
 					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 	mDoubleStellationLayout->addWidget(starButton);
 	mDoubleStellationLayout->addStretch(1);
-	mDoubleStellationWidget->setWindowTitle("Double Stellation");
+	mDoubleStellationWidget->setWindowTitle("Double Stellation Remeshing");
 	mDoubleStellationWidget->setLayout(mDoubleStellationLayout);
 	
 	//12.6.4
@@ -597,7 +597,7 @@ void RemeshingMode::setupThreeConversion(){
 					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 	mTwelveSixFourLayout->addWidget(twelveSixFourButton);
 	mTwelveSixFourLayout->addStretch(1);
-	mTwelveSixFourWidget->setWindowTitle("Cut by Edge");
+	mTwelveSixFourWidget->setWindowTitle("12.6.4");
 	mTwelveSixFourWidget->setLayout(mTwelveSixFourLayout);
 	
 	//honeycomb
@@ -608,7 +608,7 @@ void RemeshingMode::setupThreeConversion(){
 					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 	mHoneycombLayout->addWidget(honeycombButton);
 	mHoneycombLayout->addStretch(1);
-	mHoneycombWidget->setWindowTitle("Cut by Edge");
+	mHoneycombWidget->setWindowTitle("Honeycomb Remeshing");
 	mHoneycombWidget->setLayout(mHoneycombLayout);
 	
 	//vertexTruncation
@@ -631,7 +631,7 @@ void RemeshingMode::setupThreeConversion(){
 					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 	mVertexTruncationLayout->addWidget(vertexTruncationButton);
 	mVertexTruncationLayout->addStretch(1);
-	mVertexTruncationWidget->setWindowTitle("Cut by Edge");
+	mVertexTruncationWidget->setWindowTitle("Vertex Truncation Remeshing");
 	mVertexTruncationWidget->setLayout(mVertexTruncationLayout);
 		
 	//dual 12.6.4
@@ -656,7 +656,7 @@ void RemeshingMode::setupThreeConversion(){
 					
 	mDualTwelveSixFourLayout->addWidget(dualTwelveSixFourButton);
 	mDualTwelveSixFourLayout->addStretch(1);
-	mDualTwelveSixFourWidget->setWindowTitle("Cut by Edge");
+	mDualTwelveSixFourWidget->setWindowTitle("Dual 12.6.4 Remeshing");
 	mDualTwelveSixFourWidget->setLayout(mDualTwelveSixFourLayout);
 	
 }
@@ -727,7 +727,7 @@ void RemeshingMode::setupFourConversion(){
 					
 	mLinearVertexLayout->addWidget(linearVertexCreateButton);
 	mLinearVertexLayout->addStretch(1);
-	mLinearVertexWidget->setWindowTitle("Cut by Edge");
+	mLinearVertexWidget->setWindowTitle("Linear Vertex Insertion Remeshing");
 	mLinearVertexWidget->setLayout(mLinearVertexLayout);
 
 	//catmull clark
@@ -739,7 +739,7 @@ void RemeshingMode::setupFourConversion(){
 					
 	mCatmullClarkLayout->addWidget(catmullClarkCreateButton);
 	mCatmullClarkLayout->addStretch(1);
-	mCatmullClarkWidget->setWindowTitle("Cut by Edge");
+	mCatmullClarkWidget->setWindowTitle("Catmull-Clark Remeshing");
 	mCatmullClarkWidget->setLayout(mCatmullClarkLayout);
 	
 	//stellate with edge removal
@@ -751,7 +751,7 @@ void RemeshingMode::setupFourConversion(){
 					
 	mStellateEdgeRemovalLayout->addWidget(stellateEdgeRemovalCreateButton);
 	mStellateEdgeRemovalLayout->addStretch(1);
-	mStellateEdgeRemovalWidget->setWindowTitle("Cut by Edge");
+	mStellateEdgeRemovalWidget->setWindowTitle("Stellate with Edge Removal Remeshing");
 	mStellateEdgeRemovalWidget->setLayout(mStellateEdgeRemovalLayout);
 	
 	//doo sabin
@@ -767,7 +767,7 @@ void RemeshingMode::setupFourConversion(){
 					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 	mDooSabinLayout->addWidget(dooSabinCreateButton);
 	mDooSabinLayout->addStretch(1);
-	mDooSabinWidget->setWindowTitle("Cut by Edge");
+	mDooSabinWidget->setWindowTitle("Doo Sabin Remeshing");
 	mDooSabinWidget->setLayout(mDooSabinLayout);
 	
 	//corner cutting
@@ -778,7 +778,7 @@ void RemeshingMode::setupFourConversion(){
 					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 	mCornerCuttingLayout->addWidget(cornerCuttingCreateButton);
 	mCornerCuttingLayout->addStretch(1);
-	mCornerCuttingWidget->setWindowTitle("Cut by Edge");
+	mCornerCuttingWidget->setWindowTitle("Corner Cutting Remeshing");
 	mCornerCuttingWidget->setLayout(mCornerCuttingLayout);
 	
 	//simplest
@@ -789,7 +789,7 @@ void RemeshingMode::setupFourConversion(){
 					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 	mSimplestLayout->addWidget(simplestCreateButton);
 	mSimplestLayout->addStretch(1);
-	mSimplestWidget->setWindowTitle("Cut by Edge");
+	mSimplestWidget->setWindowTitle("Simplest Remeshing Scheme");
 	mSimplestWidget->setLayout(mSimplestLayout);	
 	
 }
@@ -858,7 +858,7 @@ void RemeshingMode::setupFiveConversion(){
 					
 	mPentagonalizationLayout->addWidget(pentagonalizationCreateButton);
 	mPentagonalizationLayout->addStretch(1);
-	mPentagonalizationWidget->setWindowTitle("Cut by Edge");
+	mPentagonalizationWidget->setWindowTitle("Pentagonalization Remeshing");
 	mPentagonalizationWidget->setLayout(mPentagonalizationLayout);
 
 	//cubic Pentagonalization
@@ -882,7 +882,7 @@ void RemeshingMode::setupFiveConversion(){
 					
 	mCubicPentagonalizationLayout->addWidget(cubicPentagonalizationCreateButton);
 	mCubicPentagonalizationLayout->addStretch(1);
-	mCubicPentagonalizationWidget->setWindowTitle("Cut by Edge");
+	mCubicPentagonalizationWidget->setWindowTitle("Cubic Pentagonalization Remeshing");
 	mCubicPentagonalizationWidget->setLayout(mCubicPentagonalizationLayout);
 	
 	//dual pentagonalization
@@ -893,7 +893,7 @@ void RemeshingMode::setupFiveConversion(){
 					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 	mDualPentagonalizationLayout->addWidget(dualPentagonalizationCreateButton);
 	mDualPentagonalizationLayout->addStretch(1);
-	mDualPentagonalizationWidget->setWindowTitle("Cut by Edge");
+	mDualPentagonalizationWidget->setWindowTitle("Dual Pentagonalization Remeshing");
 	mDualPentagonalizationWidget->setLayout(mDualPentagonalizationLayout);
 
 }
@@ -945,7 +945,7 @@ void RemeshingMode::setupThreePreservation(){
 	
 	mLoopStyleRemeshingLayout->addWidget(loopStyleRemeshingButton);
 	mLoopStyleRemeshingLayout->addStretch(1);
-	mLoopStyleRemeshingWidget->setWindowTitle("Cut by Edge");
+	mLoopStyleRemeshingWidget->setWindowTitle("Loop Style Remeshing");
 	mLoopStyleRemeshingWidget->setLayout(mLoopStyleRemeshingLayout);
 
 	//loop subdivision
@@ -956,7 +956,7 @@ void RemeshingMode::setupThreePreservation(){
 					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 	mLoopSubdivisionLayout->addWidget(loopSubdivisionCreateButton);
 	mLoopSubdivisionLayout->addStretch(1);
-	mLoopSubdivisionWidget->setWindowTitle("Cut by Edge");
+	mLoopSubdivisionWidget->setWindowTitle("Loop Subdivision Remeshing");
 	mLoopSubdivisionWidget->setLayout(mLoopSubdivisionLayout);
 	
 	//dual of loop-style remeshing
@@ -993,7 +993,7 @@ void RemeshingMode::setupThreePreservation(){
 					
 	mDualLoopStyleRemeshingLayout->addWidget(dualLoopStyleRemeshingButton);
 	mDualLoopStyleRemeshingLayout->addStretch(1);
-	mDualLoopStyleRemeshingWidget->setWindowTitle("Cut by Edge");
+	mDualLoopStyleRemeshingWidget->setWindowTitle("Dual Loop Style Remeshing");
 	mDualLoopStyleRemeshingWidget->setLayout(mDualLoopStyleRemeshingLayout);
 	
 	//dual of loop subdivision
@@ -1005,7 +1005,7 @@ void RemeshingMode::setupThreePreservation(){
 					
 	mDualLoopSubdivisionLayout->addWidget(dualLoopSubdivisionCreateButton);
 	mDualLoopSubdivisionLayout->addStretch(1);
-	mDualLoopSubdivisionWidget->setWindowTitle("Cut by Edge");
+	mDualLoopSubdivisionWidget->setWindowTitle("Dual Loop Subdivision Remeshing");
 	mDualLoopSubdivisionWidget->setLayout(mDualLoopSubdivisionLayout);
 
 }
@@ -1050,7 +1050,7 @@ void RemeshingMode::setupFourPreservation(){
 					
 	mGlobalExtrudeLayout->addWidget(globalExtrudeButton);
 	mGlobalExtrudeLayout->addStretch(1);
-	mGlobalExtrudeWidget->setWindowTitle("Cut by Edge");
+	mGlobalExtrudeWidget->setWindowTitle("Global Extrude Remeshing");
 	mGlobalExtrudeWidget->setLayout(mGlobalExtrudeLayout);
 
 	//checkerboard
@@ -1062,7 +1062,7 @@ void RemeshingMode::setupFourPreservation(){
 					
 	mCheckerboardLayout->addWidget(checkerboardCreateButton);
 	mCheckerboardLayout->addStretch(1);
-	mCheckerboardWidget->setWindowTitle("Cut by Edge");
+	mCheckerboardWidget->setWindowTitle("Checkerboard Remeshing");
 	mCheckerboardWidget->setLayout(mCheckerboardLayout);
 	
 	//dual of global extrude
@@ -1074,7 +1074,7 @@ void RemeshingMode::setupFourPreservation(){
 					
 	mDualGlobalExtrudeLayout->addWidget(dualGlobalExtrudeButton);
 	mDualGlobalExtrudeLayout->addStretch(1);
-	mDualGlobalExtrudeWidget->setWindowTitle("Cut by Edge");
+	mDualGlobalExtrudeWidget->setWindowTitle("Dual Global Extrude Remeshing");
 	mDualGlobalExtrudeWidget->setLayout(mDualGlobalExtrudeLayout);
 	
 	//dual of checkerboard remeshing
@@ -1086,7 +1086,7 @@ void RemeshingMode::setupFourPreservation(){
 					
 	mDualCheckerboardLayout->addWidget(dualCheckerboardCreateButton);
 	mDualCheckerboardLayout->addStretch(1);
-	mDualCheckerboardWidget->setWindowTitle("Cut by Edge");
+	mDualCheckerboardWidget->setWindowTitle("Dual Checkerboard Remeshing");
 	mDualCheckerboardWidget->setLayout(mDualCheckerboardLayout);
 	
 }
@@ -1142,7 +1142,7 @@ void RemeshingMode::setupFivePreservation(){
 					
 	mPentagonPreservingLayout->addWidget(pentagonPreservingButton);
 	mPentagonPreservingLayout->addStretch(1);
-	mPentagonPreservingWidget->setWindowTitle("Cut by Edge");
+	mPentagonPreservingWidget->setWindowTitle("Pentagon Preserving Remeshing");
 	mPentagonPreservingWidget->setLayout(mPentagonPreservingLayout);
 
 	//dual of Pentagon Preserving
@@ -1154,7 +1154,7 @@ void RemeshingMode::setupFivePreservation(){
 					
 	mDualPentagonPreservingLayout->addWidget(dualPentagonPreservingCreateButton);
 	mDualPentagonPreservingLayout->addStretch(1);
-	mDualPentagonPreservingWidget->setWindowTitle("Cut by Edge");
+	mDualPentagonPreservingWidget->setWindowTitle("Dual Pentagon Preserving Remeshing");
 	mDualPentagonPreservingWidget->setLayout(mDualPentagonPreservingLayout);
 	
 }
@@ -1210,7 +1210,7 @@ void RemeshingMode::setupSixPreservation(){
 					
 	mDualLoopStyleRemeshingSixLayout->addWidget(dualLoopStyleRemeshingSixButton);
 	mDualLoopStyleRemeshingSixLayout->addStretch(1);
-	mDualLoopStyleRemeshingSixWidget->setWindowTitle("Cut by Edge");
+	mDualLoopStyleRemeshingSixWidget->setWindowTitle("Dual Loop Style Six Remeshing");
 	mDualLoopStyleRemeshingSixWidget->setLayout(mDualLoopStyleRemeshingSixLayout);
 	
 	//loop-style remeshing
@@ -1234,7 +1234,7 @@ void RemeshingMode::setupSixPreservation(){
 					
 	mLoopStyleRemeshingSixLayout->addWidget(loopStyleRemeshingSixButton);
 	mLoopStyleRemeshingSixLayout->addStretch(1);
-	mLoopStyleRemeshingSixWidget->setWindowTitle("Cut by Edge");
+	mLoopStyleRemeshingSixWidget->setWindowTitle("Loop Style Six Remeshing");
 	mLoopStyleRemeshingSixWidget->setLayout(mLoopStyleRemeshingSixLayout);
 
 }
@@ -1282,7 +1282,7 @@ void RemeshingMode::setupMiscellaneous(){
 					
 	mFractalLayout->addWidget(fractalButton);
 	mFractalLayout->addStretch(1);
-	mFractalWidget->setWindowTitle("Cut by Edge");
+	mFractalWidget->setWindowTitle("Fractal Remeshing");
 	mFractalWidget->setLayout(mFractalLayout);
 	
 	//double stellate with Edge Removal
@@ -1331,7 +1331,7 @@ void RemeshingMode::setupMiscellaneous(){
 					
 	mDooSabinBCLayout->addWidget(dooSabinBCButton);
 	mDooSabinBCLayout->addStretch(1);
-	mDooSabinBCWidget->setWindowTitle("Cut by Edge");
+	mDooSabinBCWidget->setWindowTitle("Doo Sabin BC Remeshing");
 	mDooSabinBCWidget->setLayout(mDooSabinBCLayout);
 	
 	//doo sabin bc new
@@ -1368,7 +1368,7 @@ void RemeshingMode::setupMiscellaneous(){
 					
 	mDooSabinBCNewLayout->addWidget(dooSabinBCNewButton);
 	mDooSabinBCNewLayout->addStretch(1);
-	mDooSabinBCNewWidget->setWindowTitle("Cut by Edge");
+	mDooSabinBCNewWidget->setWindowTitle("Doo Sabin BC New Remeshing");
 	mDooSabinBCNewWidget->setLayout(mDooSabinBCNewLayout);
 	
 	//dome
@@ -1404,7 +1404,7 @@ void RemeshingMode::setupMiscellaneous(){
 					((MainWindow*)mParent),SLOT(perform_remeshing()) );
 	mDomeLayout->addWidget(domeButton);
 	mDomeLayout->addStretch(1);
-	mDomeWidget->setWindowTitle("Cut by Edge");
+	mDomeWidget->setWindowTitle("Dome Remeshing");
 	mDomeWidget->setLayout(mDomeLayout);
 	
 	//subdivide face
@@ -1423,7 +1423,7 @@ void RemeshingMode::setupMiscellaneous(){
 					
 	mSubdivideFaceLayout->addWidget(subdivideFaceButton);
 	mSubdivideFaceLayout->addStretch(1);
-	mSubdivideFaceWidget->setWindowTitle("Cut by Edge");
+	mSubdivideFaceWidget->setWindowTitle("Subdivide Selected Faces");
 	mSubdivideFaceWidget->setLayout(mSubdivideFaceLayout);
 	
 }
