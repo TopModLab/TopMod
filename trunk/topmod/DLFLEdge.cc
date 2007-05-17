@@ -29,8 +29,7 @@ void DLFLEdge :: updateNormal(void)
 {
   if ( fvpV1 != NULL && fvpV2 != NULL )
      {
-       normal = fvpV1->computeNormal() + fvpV1->next()->computeNormal() +
-		fvpV2->computeNormal() + fvpV2->next()->computeNormal();
+       normal = fvpV1->computeNormal() + fvpV1->next()->computeNormal() +	fvpV2->computeNormal() + fvpV2->next()->computeNormal();
        normalize(normal);
      }
 }

@@ -31,7 +31,6 @@ MainWindow::MainWindow() {
 	setWindowFlags(Qt::Window);
 	setWindowTitle("TopMod");
 	
-  move(0,0);
   cWidget = new QWidget( );
 	
 	//create a container widget to hold multiple glwidgets
@@ -56,6 +55,15 @@ MainWindow::MainWindow() {
 	mScriptEditorDockWidget->hide();
 	mScriptEditorDockWidget->setMaximumHeight(200);
 
+	//verse script box
+	mVerseDialog = new VerseTopMod(this );
+	mVerseDialogDockWidget = new QDockWidget(tr("Verse-TopMod"), this);
+	mVerseDialogDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
+	mVerseDialogDockWidget->setWidget(mVerseDialog);
+	addDockWidget(Qt::BottomDockWidgetArea, mVerseDialogDockWidget);
+	mVerseDialogDockWidget->hide();
+	mVerseDialogDockWidget->setMaximumHeight(200);
+	
   //make a new instance of QShortcutManager
   sm = new QShortcutManager();
 
@@ -235,6 +243,12 @@ void MainWindow::createActions()
 	showScriptEditorAct->setStatusTip( tr("Show the script editor to execute DLFL commands") );
 	connect(showScriptEditorAct, SIGNAL(triggered()), this, SLOT(showHideScriptEditor()));
 	sm->registerAction(showScriptEditorAct, "Display Menu", "SHIFT+CTRL+E");
+
+	mShowVerseDialogAct = new QAction(tr("Show Verse &Dialog"), this);
+	mShowVerseDialogAct->setCheckable(true);
+	mShowVerseDialogAct->setStatusTip( tr("Show the verse dialog to view verse server connection status") );
+	connect(mShowVerseDialogAct, SIGNAL(triggered()), this, SLOT(showHideVerseDialog()));
+	sm->registerAction(mShowVerseDialogAct, "Display Menu", "SHIFT+CTRL+V");
 
 	//Renderer Menu Actions
 	normalRendererAct = new QAction(tr("&Normal Renderer"), this);
@@ -418,6 +432,28 @@ void MainWindow::createActions()
 	catalanAct = new QAction(tr("Catalan"),this);
 	// sm->connect( catalanAct , SIGNAL( triggered() ), SLOT  ( configure() ) );
 	sm->registerAction(catalanAct, "Languages", "CTRL+F12");
+	
+	//verse menu actions
+	mVerseConnectLocalhostAct = new QAction(tr("Connect to localhost"), this);
+	mVerseConnectLocalhostAct->setStatusTip( tr("Connect to localhost") );
+	connect(mVerseConnectLocalhostAct, SIGNAL(triggered()), mVerseDialog, SLOT(connectLocalhost()));
+	sm->registerAction(mVerseConnectLocalhostAct, "Verse Menu", "");
+	
+	mVerseConnectAct = new QAction(tr("Connect to host..."), this);
+	mVerseConnectAct->setStatusTip( tr("Connect to host...") );
+	connect(mVerseConnectAct, SIGNAL(triggered()), mVerseDialog, SLOT(connectHost()));
+	sm->registerAction(mVerseConnectAct, "Verse Menu", "");
+
+	mVerseDisconnectAct = new QAction(tr("Disconnect"), this);
+	mVerseDisconnectAct->setStatusTip( tr("Disconnect from Verse Server") );
+	connect(mVerseDisconnectAct, SIGNAL(triggered()), mVerseDialog, SLOT(disconnectHost()));
+	sm->registerAction(mVerseDisconnectAct, "Verse Menu", "");
+
+	mVerseDisconnectAllAct = new QAction(tr("Disconnect All"), this);
+	mVerseDisconnectAllAct->setStatusTip( tr("Disconnect All Nodes") );
+	connect(mVerseDisconnectAllAct, SIGNAL(triggered()), mVerseDialog, SLOT(disconnectAll()));
+	sm->registerAction(mVerseDisconnectAllAct, "Verse Menu", "");
+	
 }
 
 void MainWindow::createMenus(){
@@ -438,6 +474,14 @@ void MainWindow::createMenus(){
 	fileMenu->addAction(mOpenAct);
 	fileMenu->addAction(mSaveAct);
 	fileMenu->addAction(mSaveAsAct);
+	fileMenu->addSeparator();
+	mVerseMenu = new QMenu(tr("&Verse"));
+	fileMenu->addMenu(mVerseMenu);
+	mVerseMenu->addAction(mVerseConnectLocalhostAct);
+	mVerseMenu->addAction(mVerseConnectAct);
+	mVerseMenu->addSeparator();
+	mVerseMenu->addAction(mVerseDisconnectAct);
+	mVerseMenu->addAction(mVerseDisconnectAllAct);
 	fileMenu->addSeparator();
 	fileMenu->addAction(loadTextureAct);
 	fileMenu->addAction(printInfoAct);
@@ -475,6 +519,7 @@ void MainWindow::createMenus(){
 	displayMenu->addAction(objectOrientationAct);
 	displayMenu->addAction(showNormalsAct);
 	displayMenu->addAction(showScriptEditorAct);
+	displayMenu->addAction(mShowVerseDialogAct);
 	displayMenu->addAction(mFullscreenAct);
 
 	rendererMenu = new QMenu(tr("&Renderer"));
@@ -548,6 +593,7 @@ void MainWindow::createMenus(){
 	languageMenu->addAction(frenchAct);
 	languageMenu->addAction(turkishAct);
 	languageMenu->addAction(catalanAct);
+	
 }
 
 void MainWindow::createToolBars() {
@@ -561,6 +607,7 @@ void MainWindow::createToolBars() {
 	mToolOptionsDockWidget->hide();
 	mToolOptionsDockWidget->setWidget(mToolOptionsStackedWidget);
 	
+	mToolOptionsDockWidget->setFloating(false);
 	// mToolOptionsTitleBarLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	// mToolOptionsTitleBarWidget = new QWidget;
 	// mToolOptionsTitleBarWidget->setLayout(mToolOptionsTitleBarLayout);
@@ -579,7 +626,7 @@ void MainWindow::createToolBars() {
 	mEditToolBar->setIconSize(QSize(32,32));
 		
 	mPrimitivesToolBar = new QToolBar(tr("Primitives"));
-	mPrimitivesToolBar->setFloatable(true);
+	// mPrimitivesToolBar->setFloatable(true);
 	addToolBar(Qt::TopToolBarArea,mPrimitivesToolBar);
 	mPrimitivesToolBar->setIconSize(QSize(32,32));
 	mPrimitivesToolBar->addAction(pCubeAct);
@@ -630,7 +677,6 @@ void MainWindow::createToolBars() {
 	
 	mHighgenusMode->addActions(mToolsActionGroup, mHighgenusToolBar, mToolOptionsStackedWidget);
 	mTexturingMode->addActions(mToolsActionGroup, mTexturingToolBar, mToolOptionsStackedWidget);
-
 
 }
 
@@ -809,6 +855,16 @@ void MainWindow::showHideScriptEditor(){
 	else {
 	  mScriptEditorDockWidget->show( );
 	  mScriptEditorDockWidget->setFocus();
+	}
+}
+
+void MainWindow::showHideVerseDialog(){
+
+	if( mVerseDialogDockWidget->isVisible( ) )
+	  mVerseDialogDockWidget->hide( );
+	else {
+	  mVerseDialogDockWidget->show( );
+	  mVerseDialogDockWidget->setFocus();
 	}
 }
 

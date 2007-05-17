@@ -1,8 +1,7 @@
 /******************************************
  * main.cc
- * topmod shit
+ * topmod 
  * 
- * Stuart T. Tett <stuart@viz.tamu.edu>
  ******************************************/
 
 #include <QApplication>
@@ -16,36 +15,10 @@
 #include "MainWindow.hh"
 
 #ifdef __APPLE__
-	// #include "TdxDeviceWrappers.hh"
-#endif
-
-
-int main( int argc, char **argv ) {
-
-  QApplication app( argc, argv, true );
-
-	app.setApplicationName("TopMod");
-	
-	QString locale = QLocale::system().name();
-
-	QTranslator translator;
-	translator.load(QString("topmod_") + locale);
-	app.installTranslator(&translator);
-
-	// OSStatus err;
-	// err = TdxInitDevice('TopM', TRUE, kConnexionClientModeTakeOver, kConnexionMaskAll);
-	//pass kConnexionClientModeTakeOver as the mode and try kConnexionMaskAxis | kConnexionMaskButtons as the mask. kConnexionMaskAll should also work.
-
-	MainWindow mainWindow;
-
-	app.processEvents( );
-	mainWindow.resize( 1000, 800 );
-	mainWindow.show();
-
-	return app.exec( );
-}
 
 /*
+#include "TdxDeviceWrappers.hh"
+
 int TdxComputeAxes(const TdxDeviceAxes inArrayPtr)
 {
     OSStatus err;
@@ -129,3 +102,30 @@ int TdxComputeEventZero()
     // in this case, just process the zero event like any other axes event. 
     return TdxComputeAxes(zero);
 }//*/
+#endif
+
+int main( int argc, char **argv ) {
+
+  QApplication app( argc, argv, true );
+
+	app.setApplicationName("TopMod");
+	
+	QString locale = QLocale::system().name();
+
+	QTranslator translator;
+	translator.load(QString("topmod_") + locale);
+	app.installTranslator(&translator);
+		
+	//3d connexion stuff ... isn't working right now
+	// OSStatus err;
+	// err = TdxInitDevice('TopM', TRUE, kConnexionClientModeTakeOver, kConnexionMaskAll);
+	//pass kConnexionClientModeTakeOver as the mode and try kConnexionMaskAxis | kConnexionMaskButtons as the mask. kConnexionMaskAll should also work.
+
+	MainWindow mainWindow;
+
+	app.processEvents( );
+	mainWindow.resize( 1000, 800 );
+	mainWindow.show();
+
+	return app.exec( );
+}

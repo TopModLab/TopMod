@@ -695,8 +695,6 @@ void DLFLObject::createFace(const Vector3dArray& verts, DLFLMaterialPtr matl, bo
   addFacePtr(newface1); addFacePtr(newface2);
   newface1->setMaterial(matl); newface2->setMaterial(matl);
 
-  newface1->computeNormal(); newface2->computeNormal();
-
      // Create the new edges
      // Traverse the 2 faces in opposite orders
   DLFLFaceVertexPtr head1, current1;
@@ -707,17 +705,19 @@ void DLFLObject::createFace(const Vector3dArray& verts, DLFLMaterialPtr matl, bo
 
      // Assume that head1 and head2 are not NULL
   current1 = head1; current2 = head2;
-  eptr = new DLFLEdge(current1,current2);
+  eptr = new DLFLEdge(current1,current2,false);
   eptr->updateFaceVertices();
   addEdgePtr(eptr);
   current1 = current1->next(); current2 = current2->prev();
   while ( current1 != head1 && current2 != head2 )
      {
-       eptr = new DLFLEdge(current1,current2);
+       eptr = new DLFLEdge(current1,current2,false);
        eptr->updateFaceVertices();
        addEdgePtr(eptr);
        current1 = current1->next(); current2 = current2->prev();
      }
+
+  newface1->computeNormal(); newface2->computeNormal();
 }
 
 DLFLFaceVertexPtr DLFLObject::createPointSphere(const Vector3d& v, DLFLMaterialPtr matl)

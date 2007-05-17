@@ -9,6 +9,7 @@
 #include "stylesheeteditor.hh"
 #include "qshortcutmanager.hh"
 #include "DLFLScriptEditor.hh"
+#include "VerseTopMod.hh"
 
 #include <QMainWindow>
 #include <QWidget>
@@ -111,6 +112,10 @@ protected:
 	
   DLFLScriptEditor *mScriptEditor;
 	QDockWidget *mScriptEditorDockWidget;
+	
+	VerseTopMod *mVerseDialog;
+	QDockWidget *mVerseDialogDockWidget;
+	
 	QDockWidget *mToolOptionsDockWidget;
 	QStackedWidget *mToolOptionsStackedWidget;
 
@@ -160,6 +165,7 @@ private:
   QMenu *selectionMenu;
   QMenu *settingsMenu;
   QMenu *languageMenu;
+	QMenu *mVerseMenu;
 	
 	QMenu *mRemeshingMenu;
 	QMenu *mToolsMenu;
@@ -242,6 +248,12 @@ private:
   QAction *turkishAct;
   QAction *catalanAct;
 
+	//verse menu actions
+	QAction *mVerseConnectLocalhostAct;
+	QAction *mVerseConnectAct;
+	QAction *mVerseDisconnectAct;
+	QAction *mVerseDisconnectAllAct;
+
   QString curFile;
 	
 	QWidget *mToolOptionsTitleBarWidget;
@@ -269,6 +281,7 @@ private:
 	QStatusBar *mStatusBar;
 
   QAction *showScriptEditorAct;
+  QAction *mShowVerseDialogAct;
   QAction *mFullscreenAct;
 
   StyleSheetEditor *mStyleSheetEditor;
@@ -284,11 +297,8 @@ public slots:
   void documentWasModified();
 
 	void showHideScriptEditor();
+	void showHideVerseDialog();
 	
-	
-//--- Callbacks for the controls and menu items ---//
-//--- The source for these methods are in MainWindowCallbacks.cc ---//
-
 	void open_file();
 	void save_file();
 	void save_file_with_normals();
