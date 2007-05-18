@@ -1,13 +1,13 @@
 QPushButton {
 
 /*background-color: rgb(82,94,104);*/
-border-radius: 3px;
+/*border-radius: 3px;
 border-width: 50px;
 padding:3px;
 border: 2px solid black;
-margin-left:10px;
+margin-left:10px;*/
 }
 
 QLabel{
-padding-left:15px;
+/*padding-left:15px;*/
 }

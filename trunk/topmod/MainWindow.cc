@@ -254,37 +254,37 @@ void MainWindow::createActions()
 	//Renderer Menu Actions
 	normalRendererAct = new QAction(tr("&Normal Renderer"), this);
 	normalRendererAct->setCheckable(true);
-	sm->registerAction(normalRendererAct, "Renderer Menu", "CTRL+1");
+	sm->registerAction(normalRendererAct, "Renderer Menu", "");
 	// normalRendererAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(normalRendererAct, SIGNAL(triggered()), this, SLOT(use_normal_renderer()));
 
 	lightedRendererAct = new QAction(tr("&Lighted Renderer"), this);
 	lightedRendererAct->setCheckable(true);
-	sm->registerAction(lightedRendererAct, "Renderer Menu", "CTRL+3");
+	sm->registerAction(lightedRendererAct, "Renderer Menu", "");
 	// lightedRendererAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(lightedRendererAct, SIGNAL(triggered()), this, SLOT(use_lighted_renderer()));
 
 	shadedRendererAct = new QAction(tr("&Shaded Renderer"), this);
 	shadedRendererAct->setCheckable(true);
-	sm->registerAction(shadedRendererAct, "Renderer Menu", "CTRL+2");
+	sm->registerAction(shadedRendererAct, "Renderer Menu", "");
 	// shadedRendererAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(shadedRendererAct, SIGNAL(triggered()), this, SLOT(use_shaded_renderer()));
 
 	texturedRendererAct = new QAction(tr("&Textured Renderer"), this);
 	texturedRendererAct->setCheckable(true);
-	sm->registerAction(texturedRendererAct, "Renderer Menu", "CTRL+4");
+	sm->registerAction(texturedRendererAct, "Renderer Menu", "");
 	// texturedRendererAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(texturedRendererAct, SIGNAL(triggered()), this, SLOT(use_textured_renderer()));
 
 	texturedLightedAct = new QAction(tr("Te&xtured Lighted Renderer"), this);
 	texturedLightedAct->setCheckable(true);
-	sm->registerAction(texturedLightedAct, "Renderer Menu", "CTRL+5");
+	sm->registerAction(texturedLightedAct, "Renderer Menu", "");
 	// texturedLightedAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(texturedLightedAct, SIGNAL(triggered()), this, SLOT(use_textured_lit_renderer()));
 
 	patchRendererAct = new QAction(tr("&Patch Renderer"), this);
 	patchRendererAct->setCheckable(true);
-	sm->registerAction(patchRendererAct, "Renderer Menu", "CTRL+6");
+	sm->registerAction(patchRendererAct, "Renderer Menu", "");
 	// patchRendererAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(patchRendererAct, SIGNAL(triggered()), this, SLOT(use_patch_renderer()));
 
@@ -300,37 +300,37 @@ void MainWindow::createActions()
 
 	//PRIMITIVES MENU ACTIONS
 	pCubeAct = new QAction(QIcon(":/images/prim_cube.png"), tr("&Cube"), this);
-	sm->registerAction(pCubeAct, "Primitives Menu", "CTRL+B");
+	sm->registerAction(pCubeAct, "Primitives Menu", "CTRL+1");
 	pCubeAct->setStatusTip(tr("Load a Cube"));
 	connect(pCubeAct, SIGNAL(triggered()), mainWindow, SLOT(loadCube()));
 
 	pOctahedronAct = new QAction(QIcon(":/images/prim_octahedron.png"), tr("&Octahedron"), this);
-	sm->registerAction(pOctahedronAct, "Primitives Menu", "CTRL+W");
+	sm->registerAction(pOctahedronAct, "Primitives Menu", "CTRL+2");
 	pOctahedronAct->setStatusTip(tr("Load an octahedron"));
 	connect(pOctahedronAct, SIGNAL(triggered()), mainWindow, SLOT(loadOctahedron()));
 
 	pTetrahedronAct = new QAction(QIcon(":/images/prim_tetrahedron.png"), tr("&Tetrahedron"), this);
-	sm->registerAction(pTetrahedronAct, "Primitives Menu", "CTRL+E");
+	sm->registerAction(pTetrahedronAct, "Primitives Menu", "CTRL+3");
 	pTetrahedronAct->setStatusTip(tr("Load a tetrahedron"));
 	connect(pTetrahedronAct, SIGNAL(triggered()), mainWindow, SLOT(loadTetrahedron()));
 
 	pDodecahedronAct = new QAction(QIcon(":/images/prim_dodecahedron.png"), tr("&Dodecahedron"), this);
-	sm->registerAction(pDodecahedronAct, "Primitives Menu", "CTRL+R");
+	sm->registerAction(pDodecahedronAct, "Primitives Menu", "CTRL+4");
 	pDodecahedronAct->setStatusTip(tr("Load a dodecahedron"));
 	connect(pDodecahedronAct, SIGNAL(triggered()), mainWindow, SLOT(loadDodecahedron()));
 
 	pIcosahedronAct = new QAction(QIcon(":/images/prim_icosahedron.png"), tr("&Icosahedron"), this);
-	sm->registerAction(pIcosahedronAct, "Primitives Menu", "CTRL+T");
+	sm->registerAction(pIcosahedronAct, "Primitives Menu", "CTRL+5");
 	pIcosahedronAct->setStatusTip(tr("Load an icosahedron"));
 	connect(pIcosahedronAct, SIGNAL(triggered()), mainWindow, SLOT(loadIcosahedron()));
 
 	pSoccerBallAct = new QAction(QIcon(":/images/prim_soccerball.png"), tr("&Soccer ball"), this);
-	sm->registerAction(pSoccerBallAct, "Primitives Menu", "CTRL+Y");
+	sm->registerAction(pSoccerBallAct, "Primitives Menu", "CTRL+6");
 	pSoccerBallAct->setStatusTip(tr("Load a soccer ball"));
 	connect(pSoccerBallAct, SIGNAL(triggered()), mainWindow, SLOT(loadSoccerball()));
 
 	pGeodesicAct = new QAction(QIcon(":/images/prim_geodesic.png"), tr("&Geodesic Dome"), this);
-	sm->registerAction(pGeodesicAct, "Primitives Menu", "CTRL+U");
+	sm->registerAction(pGeodesicAct, "Primitives Menu", "CTRL+7");
 	pGeodesicAct->setStatusTip(tr("Load a geodesic dome"));
 	connect(pGeodesicAct, SIGNAL(triggered()), mainWindow, SLOT(loadGeodesic()));
 	
@@ -455,6 +455,11 @@ void MainWindow::createActions()
 	connect(mVerseDisconnectAllAct, SIGNAL(triggered()), mVerseDialog, SLOT(disconnectAll()));
 	sm->registerAction(mVerseDisconnectAllAct, "Verse Menu", "");
 	
+	mPerformRemeshingAct = new QAction(tr("Perform Remeshing"), this);
+	mPerformRemeshingAct->setStatusTip( tr("Perform the current remeshing scheme") );
+	connect(mPerformRemeshingAct, SIGNAL(triggered()), this, SLOT(perform_remeshing()));
+	sm->registerAction(mPerformRemeshingAct, "Remeshing Menu", "CTRL+R");
+	
 }
 
 void MainWindow::createMenus(){
@@ -557,6 +562,7 @@ void MainWindow::createMenus(){
 	menuBar->addMenu(mToolsMenu);
 	
 	mRemeshingMenu = mRemeshingMode->getMenu();
+	mRemeshingMenu->addAction(mPerformRemeshingAct);
 	mRemeshingMenu->setTearOffEnabled(true);
 	menuBar->addMenu(mRemeshingMenu);		
 

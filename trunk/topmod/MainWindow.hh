@@ -283,6 +283,8 @@ private:
   QAction *showScriptEditorAct;
   QAction *mShowVerseDialogAct;
   QAction *mFullscreenAct;
+	
+	QAction *mPerformRemeshingAct;
 
   StyleSheetEditor *mStyleSheetEditor;
   QAction *mEditStyleSheetAct;
