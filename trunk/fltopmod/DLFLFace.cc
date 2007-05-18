@@ -7,6 +7,7 @@
 #include "DLFLFaceVertex.hh"
 #include "DLFLVertex.hh"
 #include "DLFLMaterial.hh"
+#include "TMPatchFace.hh"
 
 // Texture coordinates for the 4 corners of a unit square
 static Vector2d unittexcoords[] = { Vector2d(0,0), Vector2d(1,0), Vector2d(1,1), Vector2d(0,1) };
@@ -62,7 +63,7 @@ void DLFLFace :: dump(ostream& o) const
 
    // Constructor
 DLFLFace :: DLFLFace(DLFLMaterialPtr mp)
-  : head(NULL), matl_ptr(mp), ftType(FTNormal), auxcoords(), centroid(), normal(), flags(0)
+  : head(NULL), matl_ptr(mp), ftType(FTNormal), auxcoords(), auxnormal(), centroid(), normal(), flags(0)
 {
   assignID();
      // Add this face to the face-list of any associated material
@@ -72,7 +73,7 @@ DLFLFace :: DLFLFace(DLFLMaterialPtr mp)
    // Copy constructor
 DLFLFace :: DLFLFace(const DLFLFace& face)
   : uID(face.uID), head(NULL), matl_ptr(face.matl_ptr), ftType(face.ftType),
-    auxcoords(face.auxcoords), centroid(face.centroid), normal(face.normal), flags(face.flags)
+    auxcoords(face.auxcoords), auxnormal(face.auxnormal), centroid(face.centroid), normal(face.normal), flags(face.flags)
 {
   copy(face.head);
      // Add this face to the face-list of any associated material
@@ -131,6 +132,7 @@ DLFLFace& DLFLFace :: operator = (const DLFLFace& face)
   uID = face.uID;
   ftType = face.ftType;
   auxcoords = face.auxcoords;
+  auxnormal = face.auxnormal;
   centroid = face.centroid;
   normal = face.normal;
   flags = face.flags;
@@ -459,24 +461,22 @@ void DLFLFace :: getSums(Vector3d& sumg, Vector2d& sumtc, RGBColor& sumc, Vector
      }
 }
 
-Vector3d DLFLFace :: geomCentroid(void)
+void DLFLFace :: updateCentroid(void)
 {
-  Vector3d ceng;
+  centroid.reset();
   if ( head )
      {
        int num = 0;
        DLFLFaceVertexPtr current = head; 
-       ceng = current->vertex->coords; ++num;
+       centroid = current->vertex->coords; ++num;
        current = current->next();
        while ( current != head )
           {
-            ceng += current->vertex->coords; ++num;
+            centroid += current->vertex->coords; ++num;
             current = current->next();
           }
-       ceng /= num;
+       centroid /= num;
      }
-  centroid = ceng;
-  return ceng;
 }
 
 Vector2d DLFLFace :: textureCentroid(void) const
@@ -517,24 +517,21 @@ RGBColor DLFLFace :: colorCentroid(void) const
   return cenc;
 }
 
-Vector3d DLFLFace :: normalCentroid(void) const
+void DLFLFace :: updateNormal(void)
 {
-  Vector3d cenn;
+  normal.reset();
   if ( head )
      {
        int num = 0;
-       DLFLFaceVertexPtr current = head; 
-       cenn = current->normal; ++num;
-       current = current->next();
-       while ( current != head )
-          {
-            cenn += current->normal; ++num;
-            current = current->next();
-          }
-       cenn /= num; normalize(cenn);
+       DLFLFaceVertexPtr current = head;
+       do
+	  {
+	    normal += current->computeNormal(); ++num;
+	    current = current->next();
+	  }
+       while ( current != head );
+       normalize(normal);
      }
-
-  return cenn;
 }
 
 Vector3d DLFLFace :: computeNormal(void)
@@ -543,24 +540,22 @@ Vector3d DLFLFace :: computeNormal(void)
   if ( head )
      {
        int num = 0;
-       DLFLFaceVertexPtr current = head; 
-       normal = current->computeNormal(); ++num;
-       current = current->next();
-       while ( current != head )
-          {
-            normal += current->computeNormal(); ++num;
-            current = current->next();
-          }
+       DLFLFaceVertexPtr current = head;
+       do
+	  {
+	    normal += current->computeNormal(); ++num;
+	    current = current->next();
+	  }
+       while ( current != head );
        normal /= num; normalize(normal);
 
-       current = head; 
-       current->setNormal(normal);
-       current = current->next();
-       while ( current != head )
-          {
-            current->setNormal(normal);
-            current = current->next();
-          }
+       current = head;
+       do
+	  {
+	    current->setNormal(normal);
+	    current = current->next();
+	  }
+       while ( current != head );
      }
   return normal;
 }
@@ -842,6 +837,29 @@ void DLFLFace :: getCorners(DLFLFaceVertexPtrArray& corners)
        while ( current != head )
           {
             corners.push_back(current);
+            current = current->next();
+          }
+     }
+}
+
+// Get the corners and the coords
+void DLFLFace :: getCornersAndCoords(DLFLFaceVertexPtrArray& corners, Vector3dArray& coords)
+{
+  int n = size();
+  corners.clear(); corners.reserve(n);
+  coords.clear(); coords.reserve(n);
+
+  if ( head )
+     {
+       DLFLFaceVertexPtr current = head;
+
+       corners.push_back(current);
+       coords.push_back(current->getVertexCoords());
+       current = current->next();
+       while ( current != head )
+          {
+            corners.push_back(current);
+            coords.push_back(current->getVertexCoords());
             current = current->next();
           }
      }

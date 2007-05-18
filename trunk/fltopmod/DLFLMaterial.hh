@@ -155,10 +155,6 @@ class DLFLMaterial
        }
 
         //--- Rendering functions ---//
-     void renderPatches(void) const
-       {
-         for_each(faces.begin(),faces.end(),facepatchrender);
-       }
 
      void render(void) const
        {
@@ -228,11 +224,7 @@ class DLFLMaterial
 
         // Names have been changed to avoid conflicts during STL instantiation
         // because of functions with same name
-     friend void matl_renderpatches(DLFLMaterialPtr matl)
-       {
-         matl->renderPatches();
-       }
- 
+
      friend void matl_render(DLFLMaterialPtr matl)
        {
          matl->render();

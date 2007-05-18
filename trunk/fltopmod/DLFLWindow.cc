@@ -7,10 +7,6 @@
 //-- Parameters used in various operations on the DLFL object --//
 //-- See header file for explanations --//
 
-int DLFLWindow :: drag_startx = 0;
-int DLFLWindow :: drag_starty = 0;
-bool DLFLWindow :: is_editing = false;
-
         // Edge deletion
 bool DLFLWindow :: delete_edge_cleanup = true;
 
@@ -104,121 +100,6 @@ int DLFLWindow :: num_sel_edges = 0;
 int DLFLWindow :: num_sel_faces = 0;
 int DLFLWindow :: num_sel_faceverts = 0;
 
-void DLFLWindow :: doDrag(int x, int y)
-{
-  int drag_endx = Fl::event_x();
-  int drag_endy = h()-Fl::event_y();
-
-  GLdouble obj_world[3],  // Object world coordinates
-           obj_window[3], // Object window coordinates 
-           ms_window[3],  // Mouse start drag window
-           ms_world[3],   // Mouse start drag world
-           me_window[3],  // Mouse end drag window
-           me_world[3];   // Mouse end drag world
-  GLdouble modelMatrix[16], projMatrix[16];
-  GLint viewport[4];
-  GLint realy;
-  DLFLVertexPtr vptr;
-  Viewport* viewp;
-
-  switch ( mode )
-  {
-    case EditMode:
-      if (DLFLViewport::numSelectedLocators() > 0)
-      {
-        if (!is_editing)
-        {
-          undoPush();
-          is_editing = true;
-        }
-
-        vptr = active->getLocatorPtr()->getActiveVertex();
-
-        // Save previous transformations
-        glMatrixMode(GL_PROJECTION);
-        glPushMatrix();
-        glMatrixMode(GL_MODELVIEW);
-        glPushMatrix();
-  
-        // Apply current transformation
-        viewp = active->getViewport();
-        viewp->reshape();
-        viewp->apply_transform();
-  
-        // Get the info
-        glGetIntegerv(GL_VIEWPORT, viewport);
-        glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix);
-        glGetDoublev(GL_PROJECTION_MATRIX, projMatrix);
-
-        obj_world[0] = vptr->getCoords()[0]; 
-        obj_world[1] = vptr->getCoords()[1]; 
-        obj_world[2] = vptr->getCoords()[2];
-
-        // Project object coordinates to window coordinates (to get accurate window depth)
-        gluProject(obj_world[0],obj_world[1],obj_world[2],
-                   modelMatrix,projMatrix,viewport,
-                   &obj_window[0],&obj_window[1],&obj_window[2]);
-
-        // Set start and end window coordinates using depth coordinate found above
-        ms_window[0] = drag_startx;  ms_window[1] = drag_starty;  ms_window[2] = obj_window[2];
-        me_window[0] = drag_endx;    me_window[1] = drag_endy;    me_window[2] = obj_window[2];
-
-        // Unproject start drag window coordinates to world coordinates
-        gluUnProject(ms_window[0],ms_window[1],ms_window[2],
-                     modelMatrix, projMatrix, viewport,
-                     &ms_world[0],&ms_world[1],&ms_world[2]);
-
-        // Unproject end drag window coordinates to world coordinates
-        gluUnProject(me_window[0],me_window[1],me_window[2],
-                     modelMatrix, projMatrix, viewport,
-                     &me_world[0],&me_world[1],&me_world[2]);
-
-        // Switch on locked axis and update object world position
-        switch (active->getLocatorPtr()->getSelectedAxis())
-        {
-          case 0: // X-axis
-            obj_world[0] = obj_world[0] + me_world[0] - ms_world[0];     
-            break;
-
-          case 1: // Y-axis
-            obj_world[1] = obj_world[1] + me_world[1] - ms_world[1];                     
-            break;
-
-          case 2: // Z-axis
-            obj_world[2] = obj_world[2] + me_world[2] - ms_world[2];                 
-            break;
-
-          case 3:  // User can drag freely along viewing place
-          default: 
-            obj_world[0] = obj_world[0] + me_world[0] - ms_world[0];             
-            obj_world[1] = obj_world[1] + me_world[1] - ms_world[1];
-            obj_world[2] = obj_world[2] + me_world[2] - ms_world[2];
-            break;
-        }
-
-        vptr->setCoords(Vector3d(obj_world[0],obj_world[1],obj_world[2]));
-
-        // Update patches
-        //object.bezierDefaults();
-
-        // Reset drag start points
-        startDrag(drag_endx,drag_endy);
-
-        // Restore previous transformations
-        glPopMatrix();
-        glMatrixMode(GL_PROJECTION);
-        glPopMatrix();
-
-        redraw();
-      }
-      break;
-
-    default:
-      doSelection(Fl::event_x(),h()-Fl::event_y());
-      break;
-  }
-}
-
    // Do selection of various entities depending on current mode
 void DLFLWindow :: doSelection(int x, int y)
 {
@@ -226,37 +107,9 @@ void DLFLWindow :: doSelection(int x, int y)
   DLFLEdgePtr septr = NULL;
   DLFLFacePtr sfptr = NULL;
   DLFLFaceVertexPtr sfvptr = NULL;
-  DLFLLocatorPtr slptr = NULL; // brianb
   
   switch ( mode )
      {
-       case EditMode:     // brianb
-                    slptr = active->getLocatorPtr();
-                    svptr = active->getLocatorPtr()->getActiveVertex();
-
-                    if (svptr == NULL)
-                    {
-                      svptr = active->selectVertex(x,y);
-                      slptr->setActiveVertex(svptr);
-                    }
-                    
-                    // Test for locator selection
-                    if (slptr->getActiveVertex() != NULL)
-                    {
-                      slptr = active->selectLocator(x,y);
-                      if (slptr != NULL)
-                      {
-                        DLFLViewport::setSelectedLocator(0,slptr);
-                        startDrag(x,y);
-                      }
-                      else
-                      {
-                        active->getLocatorPtr()->setActiveVertex(NULL);
-                        DLFLViewport::clearSelectedLocators();
-                      } 
-                    }
-                    break;
-
        case SelectVertex :
                     svptr = active->selectVertex(x,y);
                     DLFLViewport::setSelectedVertex(num_sel_verts,svptr);
@@ -307,6 +160,7 @@ void DLFLWindow :: doSelection(int x, int y)
        case SelectFaceVertex :
        case ReorderFace :
        case InsertEdge :
+       case SpliceCorners :
        case ConnectFaceVertices :
        case BezierConnectFaces :
        case HermiteConnectFaces :
@@ -340,7 +194,7 @@ void DLFLWindow :: doSelection(int x, int y)
                        }
                     break;
      }
-  if ( svptr != NULL || septr != NULL || sfptr != NULL || slptr != NULL) redraw();
+  if ( svptr != NULL || septr != NULL || sfptr != NULL ) redraw();
 }
 
    // Handle keyboard and mouse events
@@ -363,9 +217,6 @@ int DLFLWindow :: handle(int event)
           {
             switch ( key )
                {
-                 case 'b' :      // Toggle display of patches
-                              togglePatchWireframe(); retval = 1; redraw();
-                              break;
                  case 'p' :
                                  // Toggle display of points
                               toggleVertices(); retval = 1; redraw();
@@ -464,6 +315,10 @@ int DLFLWindow :: handle(int event)
                                  // Go back to normal mode
                               setMode(NormalMode); retval = 1; redraw();
                               break;
+                 case 'p' :
+                                 // Splice Corners
+                              setMode(SpliceCorners); retval = 1; redraw();
+                              break;
                  case 'r' :
                                  // Reorder face
                               setMode(ReorderFace); retval = 1;
@@ -560,7 +415,9 @@ int DLFLWindow :: handle(int event)
                               retval = 1; redraw();
                               break;
                  case 'p' :
-                              printSummary(); retval = 1;
+			      if ( shift ) printSummary();
+			      else recomputePatches();
+			      retval = 1; redraw();
                               break;
                  case 'q' :
                               cleanupForExit();
@@ -609,25 +466,14 @@ int DLFLWindow :: handle(int event)
           {
             if ( mode != NormalMode )
                {
-                 if ( event == FL_DRAG)
-                 {
-                   doDrag(Fl::event_x(),Fl::event_y());
-                 }
+                 if ( event == FL_DRAG ) // We are doing some selection
+                    {
+                      doSelection(Fl::event_x(),h()-Fl::event_y());
+                    }
                  else if ( event == FL_RELEASE ) // Complete current operation if any
                     {
                       switch ( mode )
                          {
-                           case EditMode :       // brianb
-                                        is_editing = false;
-                                        if ( DLFLViewport::numSelectedVertices() >= 1 )
-                                           {
-                                             DLFLVertexPtr vp = DLFLViewport::getSelectedVertex(0);
-                                             vp->print();
-                                             DLFLViewport::clearSelectedVertices();
-                                             num_sel_verts = 0;
-                                             redraw();
-                                           }
-                                        break;
                            case SelectVertex :
                                         if ( DLFLViewport::numSelectedVertices() >= 1 )
                                            {
@@ -730,6 +576,28 @@ int DLFLWindow :: handle(int event)
                                              redraw();
                                            }
                                         break;
+                           case SpliceCorners :
+                                        if ( DLFLViewport::numSelectedFaceVertices() >= 2 )
+                                           {
+                                             DLFLFaceVertexPtr sfvptr1, sfvptr2;
+                                             sfvptr1 = DLFLViewport::getSelectedFaceVertex(0);
+                                             sfvptr2 = DLFLViewport::getSelectedFaceVertex(1);
+                                             if ( sfvptr1 && sfvptr2 )
+                                                {
+                                                  DLFLMaterialPtr mptr = sfvptr1->getFacePtr()->material();
+                                                  undoPush();
+                                                  object.spliceCorners(sfvptr1,sfvptr2);
+                                                  DLFLViewport::clearSelectedFaces();
+                                                  DLFLViewport::clearSelectedFaceVertices();
+                                                  num_sel_faceverts = 0; num_sel_faces = 0;
+                                                  redraw();   
+                                                }
+                                           }
+                                        else if ( DLFLViewport::numSelectedFaceVertices() == 1 )
+                                           {
+                                             num_sel_faceverts=1; num_sel_faces=1;
+                                           }
+                                        break;
                            case ConnectFaces :
                                         if ( DLFLViewport::numSelectedFaces() >= 2 )
                                            {
@@ -740,6 +608,7 @@ int DLFLWindow :: handle(int event)
                                                 {
                                                   undoPush();
                                                   object.connectFaces(sfptr1,sfptr2,num_segments);
+                                                  recomputePatches();
                                                   recomputeNormals();
                                                   DLFLViewport::clearSelectedFaces();
                                                   redraw();   
@@ -763,6 +632,7 @@ int DLFLWindow :: handle(int event)
                                                   DLFLViewport::clearSelectedFaces();
                                                   DLFLViewport::clearSelectedFaceVertices();
                                                   num_sel_faceverts = 0; num_sel_faces = 0;
+                                                  recomputePatches();
                                                   recomputeNormals();
                                                   redraw();   
                                                 }
@@ -805,6 +675,7 @@ int DLFLWindow :: handle(int event)
                                                   undoPush();
                                                   object.extrudeFace(sfptr,extrude_dist,num_extrusions,
                                                                      extrude_rot,extrude_scale);
+                                                  recomputePatches();
                                                   recomputeNormals();
                                                 }
                                              DLFLViewport::clearSelectedFaces();
@@ -820,6 +691,7 @@ int DLFLWindow :: handle(int event)
                                                   undoPush();
                                                   object.extrudeFaceDS(sfptr,extrude_dist,num_extrusions,
                                                                        ds_ex_twist,extrude_scale);
+                                                  recomputePatches();
                                                   recomputeNormals();
                                                 }
                                              DLFLViewport::clearSelectedFaces();
@@ -836,6 +708,7 @@ int DLFLWindow :: handle(int event)
                                                   object.extrudeDualFace(sfptr,extrude_dist,num_extrusions,
                                                                          extrude_rot,extrude_scale,
                                                                          dual_mesh_edges_check);
+                                                  recomputePatches();
                                                   recomputeNormals();
                                                 }
                                              DLFLViewport::clearSelectedFaces();
@@ -852,6 +725,7 @@ int DLFLWindow :: handle(int event)
                                                   object.extrudeFaceDodeca(sfptr,extrude_dist,num_extrusions,
                                                                            ds_ex_twist,extrude_scale,
                                                                            hexagonalize_dodeca_extrude);
+                                                  recomputePatches();
                                                   recomputeNormals();
                                                 }
                                              DLFLViewport::clearSelectedFaces();
@@ -867,6 +741,7 @@ int DLFLWindow :: handle(int event)
                                                   undoPush();
                                                   object.extrudeFaceIcosa(sfptr,extrude_dist,num_extrusions,
                                                                           ds_ex_twist,extrude_scale);
+                                                  recomputePatches();
                                                   recomputeNormals();
                                                 }
                                              DLFLViewport::clearSelectedFaces();
@@ -881,6 +756,7 @@ int DLFLWindow :: handle(int event)
                                                 {
                                                   undoPush();
                                                   object.stellateFace(sfptr,extrude_dist);
+                                                  recomputePatches();
                                                   recomputeNormals();
                                                 }
                                              DLFLViewport::clearSelectedFaces();
@@ -895,6 +771,7 @@ int DLFLWindow :: handle(int event)
                                                 {
                                                   undoPush();
                                                   object.doubleStellateFace(sfptr,extrude_dist);
+                                                  recomputePatches();
                                                   recomputeNormals();
                                                 }
                                              DLFLViewport::clearSelectedFaces();
@@ -914,6 +791,7 @@ int DLFLWindow :: handle(int event)
                                                      {
                                                        object.tagMatchingFaces(sfptr);
                                                        object.punchHoles();
+                                                       recomputePatches();
                                                        recomputeNormals();
                                                      }
                                                   else
@@ -938,6 +816,7 @@ int DLFLWindow :: handle(int event)
                                                   DLFLViewport::clearSelectedFaces();
                                                   DLFLViewport::clearSelectedFaceVertices();
                                                   num_sel_faceverts = 0; num_sel_faces = 0;
+                                                  recomputePatches();
                                                   recomputeNormals();
                                                   redraw();   
                                                 }
@@ -967,6 +846,7 @@ int DLFLWindow :: handle(int event)
                                                   DLFLViewport::clearSelectedFaces();
                                                   DLFLViewport::clearSelectedFaceVertices();
                                                   num_sel_faceverts = 0; num_sel_faces = 0;
+                                                  recomputePatches();
                                                   recomputeNormals();
                                                   redraw();
                                                 }

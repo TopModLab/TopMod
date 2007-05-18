@@ -543,6 +543,12 @@ DLFLEdgePtr DLFLObject :: insertEdgeWithoutCheck(DLFLFaceVertexPtr fvptr1, DLFLF
   return insertEdge2(fvptr1,fvptr2,matl);
 }
 
+void DLFLObject :: spliceCorners(DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2)
+{
+  DLFLEdgePtr ep = insertEdge(fvptr1,fvptr2);
+  if ( ep != NULL ) collapseEdge(ep);
+}
+
 DLFLVertexPtr DLFLObject :: subDivideEdge(DLFLEdgePtr edgeptr, bool set_type)
 {
      // Sub-divide an Edge into 2 Edges. A new Vertex will be added at the midpoint

@@ -147,18 +147,6 @@ void DLFLAppWindow :: toggle_wireframe(Fl_Menu_*, void*)
   mainWindowPtr->redraw();
 }
 
-void DLFLAppWindow :: toggle_patch_wireframe(Fl_Menu_*, void*)
-{
-  mainWindowPtr->togglePatchWireframe();
-  mainWindowPtr->redraw();
-}
-
-void DLFLAppWindow :: toggle_patch_vertices(Fl_Menu_*,void*)
-{
-  mainWindowPtr->togglePatchVertices();
-  mainWindowPtr->redraw();
-}
-
 void DLFLAppWindow :: toggle_grid(Fl_Menu_*, void*)
 {
   mainWindowPtr->toggleGrid();
@@ -207,10 +195,9 @@ void DLFLAppWindow :: use_textured_lit_renderer(Fl_Menu_*, void*)
   mainWindowPtr->redraw();
 }
 
-void DLFLAppWindow :: use_bezier_renderer(Fl_Menu_*, void*)
+void DLFLAppWindow :: use_patch_renderer(Fl_Menu_*, void*)
 {
-  bezier->updateBezierSurface();
-  mainWindowPtr->setRenderer(bezier);
+  mainWindowPtr->setRenderer(patch);
   mainWindowPtr->getActive()->invalidate();
   mainWindowPtr->redraw();
 }
@@ -315,22 +302,6 @@ void DLFLAppWindow :: basics_mode(Fl_Menu_*, void*)
   blank->show();
 }
 
-void DLFLAppWindow :: bezier_mode(Fl_Menu_*,void*) // brianb
-{
-  mainWindowPtr->setMode(DLFLWindow::BezierMode);
-  hide_modes();
-  hide_tiles();
-  blank->show();
-}
-
-void DLFLAppWindow :: edit_mode(Fl_Menu_*, void*)  // brianb
-{
-  mainWindowPtr->setMode(DLFLWindow::EditMode);
-  hide_modes();
-  hide_tiles();
-  blank->show();
-}
-
 void DLFLAppWindow :: extrude_mode(Fl_Menu_*, void*)
 {
   hide_modes();
@@ -429,6 +400,13 @@ void DLFLAppWindow :: transforms_mode(Fl_Menu_*, void*)
 {
   hide_tiles();
   transforms_tile->show();
+}
+
+void DLFLAppWindow :: splice_corners_mode(Fl_Menu_*, void*)
+{
+  mainWindowPtr->setMode(DLFLWindow::SpliceCorners);
+  hide_tiles();
+  blank->show();
 }
 
 // Extrude.

@@ -56,7 +56,7 @@ void DLFLObject :: computeNormals(void)
   first = vertex_list.begin(); last = vertex_list.end();
   while ( first != last )
      {
-       (*first)->computeNormal();
+       (*first)->updateNormal();
        ++first;
      }
 }
@@ -72,6 +72,14 @@ void DLFLObject :: computeLighting(LightPtr lightptr)
        faceptr = (*first);
        faceptr->computeLighting(lightptr);
        ++first;
+     }
+
+  TMPatchFacePtrList :: iterator pfirst = patch_list.begin(), plast = patch_list.end();
+  TMPatchFacePtr pfp = NULL;
+  while ( pfirst != plast )
+     {
+       pfp = (*pfirst); ++pfirst;
+       pfp->computeLighting(lightptr);
      }
 }
 

@@ -43,9 +43,9 @@ class DLFLFaceVertex
 
      DLFLFaceVertexType fvtType;                       // For use in subdivision surfaces
      Vector3d           auxcoords;                     // Coords for use during subdivs, extrude, etc.
-
-                                                       // brianb
-     DLFLControlPoint2dArray cpArray;                  // Bezier surface control points
+     Vector3d           auxnormal;                     // Additional storage for normal
+     Vector3d           ds2coords[4];                  // Level-2 Doo Sabin coordinates
+     TMPatchPtr         tmpp;                          // Pointer to the TMPatch corresponding to this corner
 
   public :
 
@@ -54,7 +54,7 @@ class DLFLFaceVertex
        : vertex(NULL), normal(), color(1), texcoord(), backface(bf), index(0),
          epEPtr(NULL), fpFPtr(NULL),
          fvpNext(NULL), fvpPrev(NULL),
-         fvtType(FVTNormal), auxcoords()
+         fvtType(FVTNormal), auxcoords(), auxnormal(), tmpp(NULL)
        {
          fvpNext = this; fvpPrev = this;
        }
@@ -64,7 +64,7 @@ class DLFLFaceVertex
        : vertex(vptr), normal(), color(1), texcoord(), backface(bf), index(0),
          epEPtr(eptr), fpFPtr(NULL),
          fvpNext(NULL), fvpPrev(NULL),
-         fvtType(FVTNormal), auxcoords()
+         fvtType(FVTNormal), auxcoords(), auxnormal(), tmpp(NULL)
        {
          fvpNext = this; fvpPrev = this;
        }
@@ -74,10 +74,9 @@ class DLFLFaceVertex
        : vertex(dfv.vertex), normal(dfv.normal), color(dfv.color), texcoord(dfv.texcoord),
          backface(false), index(dfv.index),
          epEPtr(dfv.epEPtr), fpFPtr(dfv.fpFPtr), 
-         fvpNext(NULL), fvpPrev(NULL), fvtType(dfv.fvtType), auxcoords(dfv.auxcoords)
+         fvpNext(NULL), fvpPrev(NULL), fvtType(dfv.fvtType), auxcoords(dfv.auxcoords), auxnormal(dfv.auxnormal), tmpp(dfv.tmpp)
        {
          fvpNext = this; fvpPrev = this;
-         cpArray = dfv.cpArray;
        }
 
         // Destructor
@@ -91,8 +90,7 @@ class DLFLFaceVertex
          backface = dfv.backface; index = dfv.index;
          epEPtr = dfv.epEPtr; fpFPtr = dfv.fpFPtr;
          fvpNext = dfv.fvpNext; fvpPrev = dfv.fvpPrev;
-         fvtType = dfv.fvtType; auxcoords = dfv.auxcoords;
-         cpArray = dfv.cpArray;
+         fvtType = dfv.fvtType; auxcoords = dfv.auxcoords; auxnormal = dfv.auxnormal; tmpp = dfv.tmpp;
          return (*this);
        }
 
@@ -134,6 +132,8 @@ class DLFLFaceVertex
          return epEPtr;
        }
 
+     DLFLFaceVertexPtr getOppositeCorner(void);
+     
      DLFLFacePtr getFacePtr(void) const
        {
          return fpFPtr;
@@ -160,22 +160,34 @@ class DLFLFaceVertex
          return auxcoords;
        }
 
+     Vector3d getAuxNormal(void) const
+       {
+         return auxnormal;
+       }
+
+     void getDS2Coords(Vector3d& dsc0, Vector3d& dsc1, Vector3d& dsc2, Vector3d& dsc3) const
+       { 
+         dsc0 = ds2coords[0]; dsc1 = ds2coords[1]; dsc2 = ds2coords[2]; dsc3 = ds2coords[3];
+       }
+
+     Vector3d getDS2Coord(uint index) const
+       {
+            // Assumes index is within range (0 to 3)
+         return ds2coords[index];
+       }
+
+     TMPatchPtr getPatchPtr(void) const
+       {
+         return tmpp;
+       }
+
      friend bool coFacial(DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2);
      friend bool coFacial(const DLFLFaceVertex& fv1, const DLFLFaceVertex& fv2);
 
      friend bool areEqual(DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2);
      friend bool areEqual(const DLFLFaceVertex& fv1, const DLFLFaceVertex& fv2);
      
-     DLFLControlPoint2dArray getControlPoint2dArray(void) const
-       {
-         return cpArray;
-       }
-
         //--- Mutative Functions ---//
-     void setControlPoint2dArray(const DLFLControlPoint2dArray& cpArray)
-       {
-         this->cpArray = cpArray;
-       }
 
      void setType(DLFLFaceVertexType type)
        {
@@ -216,6 +228,11 @@ class DLFLFaceVertex
          normal = normalized(n);
        }
 
+     void setPatchPtr(TMPatchPtr p)
+       {
+         tmpp = p;
+       }
+
         // Check if this corner is a concave corner or not
         // Will not work properly for non-planar faces.
         // Will not work properly for faces which have edges which belong entirely to that face.
@@ -245,7 +262,13 @@ class DLFLFaceVertex
 
         // Compute the normal using adjacent vertices in this face
         // Normal will be adjusted to account for concave corners
-     Vector3d computeNormal(void);
+     void updateNormal(void);
+     Vector3d computeNormal(void)
+     {
+	  // Deprecated
+       updateNormal();
+       return normal;
+     }
 
      void setVertexCoords(const Vector3d& vec);
      void setVertexCoords(double x, double y, double z);
@@ -260,6 +283,36 @@ class DLFLFaceVertex
          auxcoords = p;
        }
 
+     void setAuxNormal(const Vector3d& n)
+       {
+         auxnormal = n;
+       }
+
+     void setDS2Coords(const Vector3d& dsc0, const Vector3d& dsc1, const Vector3d& dsc2, const Vector3d& dsc3)
+       { 
+         ds2coords[0] = dsc0; ds2coords[1] = dsc1; ds2coords[2] = dsc2; ds2coords[3] = dsc3;
+       }
+
+     void setDS2Coord0(const Vector3d& dsc0)
+       {
+         ds2coords[0] = dsc0;
+       }
+
+     void setDS2Coord1(const Vector3d& dsc1)
+       {
+         ds2coords[1] = dsc1;
+       }
+
+     void setDS2Coord2(const Vector3d& dsc2)
+       {
+         ds2coords[2] = dsc2;
+       }
+
+     void setDS2Coord3(const Vector3d& dsc3)
+       {
+         ds2coords[3] = dsc3;
+       }
+     
         // Update the DLFLFaceVertexList of the DLFLVertex referred to by this DLFLFaceVertex
      void addSelfToVertex(void);
      void deleteSelfFromVertex(void);
@@ -360,14 +413,6 @@ class DLFLFaceVertex
         // This is used for selection
      void render(void) const;
 
-     // Render the bezier patch associated with this face vertex
-     void     renderPatch(void) const;
-     void     renderPatchWireframe(void) const;
-     void     renderPatchVertices(void) const;
-     float*   createPatchInfoArray(int& w, int& h, int& d) const;
-     void     fillPatchVertexArray(float* vinfo, int w, int h, int d) const;
-     int      indexPatchInfo(int w, int h, int d) const;
-
         // Do a glVertex on this vertex, using the normal and with color
      friend void glVertexCN(const DLFLFaceVertex& dfv);
 
@@ -399,21 +444,6 @@ class DLFLFaceVertex
      friend void glVertexNTp(DLFLFaceVertexPtr dfvp);
      friend void glVertexCTp(DLFLFaceVertexPtr dfvp);
      friend void glVertexOFVTp(DLFLFaceVertexPtr dfvp);
-
-     friend void facevertexpatchrender(DLFLFaceVertexPtr dfv)
-       {
-         dfv->renderPatch();
-       }
-
-     friend void facevertexpatchwireframe(DLFLFaceVertexPtr dfv)
-       {
-         dfv->renderPatchWireframe();
-       }
-
-     friend void facevertexpatchvertices(DLFLFaceVertexPtr dfv)
-       {
-         dfv->renderPatchVertices();
-       }
 };
 
 #endif /* #ifndef _DLFL_FACE_VERTEX_HH_ */

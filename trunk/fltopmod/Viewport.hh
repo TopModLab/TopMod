@@ -11,12 +11,12 @@
 
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include "Arcball.hh"
-#include "TransControl.hh"
-#include "ZoomControl.hh"
-#include "DollyControl.hh"
-#include "Transform.hh"
-#include "Camera.hh"
+#include "include/Arcball.hh"
+#include "include/TransControl.hh"
+#include "include/ZoomControl.hh"
+#include "include/DollyControl.hh"
+#include "include/Transform.hh"
+#include "include/Camera.hh"
 
 // Enumerations for the different views. The names imply looking from the corresponding
 // side. ie Front -> looking *from* front, Right -> looking *from* right

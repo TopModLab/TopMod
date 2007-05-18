@@ -61,7 +61,7 @@ void DLFLLocator::render(void)
     glutSolidCone(0.0625,0.125,100,1);
   glPopMatrix();
 
-  glLineWidth(1.0);
+  glLineWidth(3.0);
 
   // Render cube
   if (renderSelection)

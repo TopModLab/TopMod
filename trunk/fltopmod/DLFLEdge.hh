@@ -28,13 +28,9 @@ class DLFLEdge
      uint uID;                                         // ID for this Edge
      DLFLEdgeType       etType;                        // For use in subdivision surfaces
      Vector3d           auxcoords;                     // Coords for use during subdivs, etc.
-
-     // Bezier surface info
-     DLFLControlPoint      centroid;                   // Center control point
-     DLFLControlPointArray cpfArray1;                  // Control points for forward edge
-     DLFLControlPointArray cpfArray2;                  
-     DLFLControlPointArray cpbArray1;                  // Control points for backward edge
-     DLFLControlPointArray cpbArray2;
+     Vector3d           auxnormal;                     // Extra storage for normal
+     Vector3d           midpoint;                      // Midpoint of edge (not always current)
+     Vector3d           normal;                        // Edge normal (at midpoint, not always current)
 
   public :
 
@@ -55,32 +51,38 @@ class DLFLEdge
        {
          uID = DLFLEdge :: newID();
        }
-     
 
+	// Update the mid point for this edge
+     void updateMidPoint(void);
+
+	// Update the edge normal - average of normals at the 4 corners adjacent to this edge
+     void updateNormal(void);
+
+     
   public :
 
         // Default constructor
      DLFLEdge()
-       : fvpV1(NULL), fvpV2(NULL), etType(ETNormal), auxcoords(), flags(0)
+       : fvpV1(NULL), fvpV2(NULL), etType(ETNormal), auxcoords(), auxnormal(), midpoint(), normal(), flags(0)
        {
          assignID();
        }
 
-        // 2 argument constructor
-     DLFLEdge(DLFLFaceVertexPtr fvp1, DLFLFaceVertexPtr fvp2)
-       : fvpV1(fvp1), fvpV2(fvp2), etType(ETNormal), auxcoords(), flags(0)
+        // 2 & 3 argument constructor
+     DLFLEdge(DLFLFaceVertexPtr fvp1, DLFLFaceVertexPtr fvp2, bool update=true)
+       : fvpV1(fvp1), fvpV2(fvp2), etType(ETNormal), auxcoords(), auxnormal(), midpoint(), normal(), flags(0)
        {
+	 if ( update )
+	    {
+	      updateMidPoint(); updateNormal();
+	    }
          assignID();
        }
 
         // Copy constructor
      DLFLEdge(const DLFLEdge& e)
-       : fvpV1(e.fvpV1), fvpV2(e.fvpV2), uID(e.uID), etType(e.etType), auxcoords(e.auxcoords),
-         flags(e.flags),
-         cpfArray1(e.cpfArray1),
-         cpbArray1(e.cpbArray1),
-         cpfArray2(e.cpfArray2),
-         cpbArray2(e.cpbArray2)
+       : fvpV1(e.fvpV1), fvpV2(e.fvpV2), uID(e.uID), etType(e.etType), auxcoords(e.auxcoords), auxnormal(e.auxnormal),
+         midpoint(e.midpoint), normal(e.normal), flags(e.flags)
        {}
 
         // Destructor
@@ -90,12 +92,8 @@ class DLFLEdge
         // Assignment operator
      DLFLEdge& operator = (const DLFLEdge& e)
        {
-         fvpV1 = e.fvpV1; fvpV2 = e.fvpV2; uID = e.uID; etType = e.etType; auxcoords = e.auxcoords;
-         flags = e.flags;
-         cpfArray1 = e.cpfArray1;
-         cpbArray1 = e.cpbArray1;
-         cpfArray2 = e.cpfArray2;
-         cpbArray2 = e.cpbArray2;
+         fvpV1 = e.fvpV1; fvpV2 = e.fvpV2; uID = e.uID; etType = e.etType; auxcoords = e.auxcoords; auxnormal = e.auxnormal;
+         midpoint = e.midpoint; normal = e.normal; flags = e.flags;
          return (*this);
        }
 
@@ -104,40 +102,6 @@ class DLFLEdge
        {
          DLFLEdgePtr eptr = new DLFLEdge(*this);
          return eptr;
-       }
-
-     void setControlPointForwardArray1(const DLFLControlPointArray& cpArray)
-       {
-         cpfArray1 = cpArray;
-       }
-     void setControlPointBackwardArray1(const DLFLControlPointArray& cpArray)
-       {
-         cpbArray1 = cpArray;
-       }
-     void setControlPointForwardArray2(const DLFLControlPointArray& cpArray)
-       {
-         cpfArray2 = cpArray;
-       }
-     void setControlPointBackwardArray2(const DLFLControlPointArray& cpArray)
-       {
-         cpbArray2 = cpArray;
-       }
-
-     DLFLControlPointArray getControlPointForwardArray1() const
-       {
-         return cpfArray1;
-       }
-     DLFLControlPointArray getControlPointBackwardArray1() const
-       {
-         return cpbArray1;
-       }
-     DLFLControlPointArray getControlPointForwardArray2() const
-       {
-         return cpfArray2;
-       }
-     DLFLControlPointArray getControlPointBackwardArray2() const
-       {
-         return cpbArray2;
        }
 
         // Dump contents of object
@@ -154,13 +118,11 @@ class DLFLEdge
          return auxcoords;
        }
 
-     void geomCentroid(void);
-
-     DLFLControlPoint getCentroid(void) const 
+     Vector3d getAuxNormal(void) const
        {
-         return centroid;
+         return auxnormal;
        }
-
+     
      void setType(DLFLEdgeType type)
        {
          etType = type;
@@ -176,16 +138,31 @@ class DLFLEdge
          auxcoords = p;
        }
 
+     void setAuxNormal(const Vector3d& n)
+       {
+         auxnormal = n;
+       }
+     
      void addToAuxCoords(const Vector3d& p)
        {
          auxcoords += p;
        }
 
+     void addToAuxNormal(const Vector3d& n)
+       {
+         auxnormal += n;
+       }
+     
      void resetAuxCoords(void)
        {
          auxcoords.reset();
        }
-     
+
+     void resetAuxNormal(void)
+       {
+         auxnormal.reset();
+       }
+           
      friend void resetEdgeType(DLFLEdgePtr dep)
        {
          dep->resetType();
@@ -219,7 +196,12 @@ class DLFLEdge
        {
          fvptr1 = fvpV1; fvptr2 = fvpV2;
        }
-     
+
+     void getCorners(DLFLFaceVertexPtr& fvp1, DLFLFaceVertexPtr& fvp2) const
+       {
+         getFaceVertexPointers(fvp1,fvp2);
+       }
+
      uint getID(void) const
        {
          return uID;
@@ -228,7 +210,16 @@ class DLFLEdge
         // Check if two given edges are co-facial
      friend bool coFacial(DLFLEdgePtr ep1, DLFLEdgePtr ep2);
 
-     Vector3d getMidPoint(void) const;
+     Vector3d getMidPoint(void) const
+       {
+	 return midpoint;
+       }
+
+     Vector3d getNormal(void) const
+       {
+	 return normal;
+       }
+
      void getEndPoints(Vector3d& p1, Vector3d& p2) const;
      double length(void) const;
 
@@ -246,6 +237,14 @@ class DLFLEdge
 
         // Get pointer to vertex which is at opposite end to given vertex pointer
      DLFLVertexPtr getOtherVertexPointer(DLFLVertexPtr vptr);
+
+        // Get all 4 corners adjacent to this edge in CCW order such that those
+        // corners will make a face (EF = Edge Face)
+     void getEFCorners(DLFLFaceVertexPtrArray& corners);
+
+        // Get the aux coords of all 4 corners adjacent to this edge in CCW order such
+        // that those corners make a face (EF = Edge Face)
+     void getEFCornersAuxCoords(Vector3dArray& coords);
 
         // NOTE : All the 4 functions below will return the distance from one
         // of the end points when the point is not in the rectangular region
@@ -270,20 +269,38 @@ class DLFLEdge
         // a zero vector as the normal
      Vector3d getEdgeNormal(DLFLFaceVertexPtr fvptr) const;
 
+        // Compute and return the average of the normal at the two end vertices
+     Vector3d averageVertexNormal(void) const;
+
+        // Compute and return the average of the normal at the two end corners
+     Vector3d averageCornerNormal(void) const;
+
         // Mutative functions
-     void setFaceVertexPtr1(DLFLFaceVertexPtr fvptr)
+     void setFaceVertexPtr1(DLFLFaceVertexPtr fvptr, bool update=true)
        {
          fvpV1 = fvptr;
+	 if ( update )
+	    {
+	      updateMidPoint(); updateNormal();
+	    }
        }
 
-     void setFaceVertexPtr2(DLFLFaceVertexPtr fvptr)
+     void setFaceVertexPtr2(DLFLFaceVertexPtr fvptr, bool update=true)
        {
          fvpV2 = fvptr;
+	 if ( update )
+	    {
+	      updateMidPoint(); updateNormal();
+	    }
        }
 
-     void setFaceVertexPointers(DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2)
+     void setFaceVertexPointers(DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2, bool update=true)
        {
          fvpV1 = fvptr1; fvpV2 = fvptr2;
+	 if ( update )
+	    {
+	      updateMidPoint(); updateNormal();
+	    }
        }
      
      void makeUnique(void)

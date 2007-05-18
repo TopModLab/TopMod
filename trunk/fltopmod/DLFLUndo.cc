@@ -68,6 +68,7 @@ void DLFLWindow :: undo(void)
        object.readDLFL(*oldobj);
        undoList.pop_back(); delete oldobj;
 
+       recomputePatches();
        recomputeNormals();
           // Clear selection lists to avoid dangling pointers
        DLFLWindow::clearSelected();
@@ -89,6 +90,7 @@ void DLFLWindow :: redo(void)
        object.readDLFL(*newobj);
        redoList.pop_back(); delete newobj;
 
+       recomputePatches();
        recomputeNormals();
           // Clear selection lists to avoid dangling pointers
        DLFLWindow::clearSelected();

@@ -46,7 +46,7 @@ class NormalRenderer : public DLFLRenderer
          glEnable(GL_CULL_FACE);
          setCulling();
          glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-         glColor3f(0.25,0.25,0.25);
+         glColor3f(0.25,0.25,0.55);
          object->plainRender();
          drawOverlays(object);
          glDisable(GL_CULL_FACE);

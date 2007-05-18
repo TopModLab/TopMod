@@ -1,4 +1,4 @@
-/* $Id: DLFLAux.hh,v 4.0 2003/12/26 01:58:52 vinod Exp $ */
+/* $Id$ */
 
 #ifndef _DLFL_AUX_HH_
 
@@ -46,6 +46,12 @@ Vector3d findProjectionPlane(const Vector3d& n1, const Vector3d& n2);
 
 // Project a polygon onto a plane defined by point and normal
 void planarProject(Vector3dArray& poly, const Vector3d& p, const Vector3d& nproj);
+
+// Project a point onto a plane defined by point and normal
+void planarProject(Vector3d& p, const Vector3d& point, const Vector3d& normal);
+
+// Project a line (defined by 2 points) onto a plane defined by point and normal
+void planarProject(Vector3d& p1, Vector3d& p2, const Vector3d& point, const Vector3d& normal);
 
 
 // Translate the given polygon so that the centroid is moved to the given origin
@@ -103,53 +109,47 @@ void hermiteInterpolate(const Vector3d& p1, const Vector3d& v1, const Vector3d& 
 double hermiteCurveLength(const Vector3d& p1, const Vector3d& v1, const Vector3d& p2, const Vector3d& v2,
                           int numsegs);
 
+
+// Compute the centroid and average normal for a given array of points,
+// assuming they form a polygon and are specified in the correct order (RHS)
+void computeCentroidAndNormal(const Vector3dArray& p, Vector3d& centroid, Vector3d& normal);
+
+
+// Calculate doo-sabin coordinates for the given array of points,
+// assuming they form a polygon and are specified in the correct order
+void computeDooSabinCoords(Vector3dArray& points);
+
+// Calculate modified doo-sabin coordinates for the given array of points,
+// assuming they form a polygon and are specified in the correct order
+void computeModifiedDooSabinCoords(Vector3dArray& points);
+
+
+// Project a point onto a line along the normal from the line through the point
+Vector3d projectPointOnLine(const Vector3d& p, const Vector3d& p0, const Vector3d& p1);
+
+// Compute the distance of a point from a line
+double distPointLine(const Vector3d& p, const Vector3d& p0, const Vector3d& p1);
+
+// Project two lines onto a plane specified by point and normal
+// and fine their intersection
+Vector3d planarProjectAndIntersect(const Vector3d& p00, const Vector3d& p01,
+                                   const Vector3d& p10, const Vector3d& p11,
+                                   const Vector3d& point, const Vector3d& normal);
+
+
+// Compute lighting for a vertex with a given normal and lighting parameters
+// Returns a color
+Vector3d computeLighting(const Vector3d& p, const Vector3d& n, const RGBColor& basecolor,
+                         double Ka, double Kd, double Ks, LightPtr lightptr);
+
+
+// Find the intersection point between two coplanar lines specified by their end points
+Vector3d intersectCoplanarLines(const Vector3d& p00, const Vector3d& p01,
+                                const Vector3d& p10, const Vector3d& p11);
+
 #endif /* #ifndef _DLFL_AUX_HH_ */
 
 
 /*
-  $Log: DLFLAux.hh,v $
-  Revision 4.0  2003/12/26 01:58:52  vinod
-  Major version sync.
-
-  Revision 3.3  2003/11/14 02:39:21  vinod
-  Removed isConcaveCorner method. Added pointInPolygon method
-
-  Revision 3.2  2003/11/07 05:37:26  vinod
-  Added isConcaveCorner and findAxialProjectPlane methods
-
-  Revision 3.1  2003/11/06 17:21:01  vinod
-  Added second translate method for moving polygons along a direction
-
-  Revision 3.0  2003/09/19 16:06:47  vinod
-  Major version update
-
-  Revision 2.6  2003/04/29 08:40:09  vinod
-  Included dvdt calculation for Hermite interpolation
-
-  Revision 2.5  2003/04/04 06:27:30  vinod
-  Added methods to compute length of Hermite curve
-
-  Revision 2.4  2001/12/05 18:12:48  vinod
-  Added linearInterpolate method for Vector arrays
-
-  Revision 2.3  2001/09/19 03:56:26  vinod
-  translate returns delta
-
-  Revision 2.2  2001/09/13 23:08:28  vinod
-  Added rotate
-
-  Revision 2.1  2001/08/07 07:15:45  vinod
-  Added polygon scaling
-
-  Revision 2.0  2001/07/25 05:12:41  vinod
-  Major version sync
-
-  Revision 1.2  2001/05/17 04:58:26  vinod
-  Added printArray, Moved Hv from DLFLObject.cc, Added dHv
-  Changed planarProject to do projection for one plane only
-  Added findProjectionPlane, rotate, reconstructPolygon, hermiteInterpolate
-
-  Revision 1.1  2001/05/15 21:12:05  vinod
-  Auxiliary subroutines for DLFL
-
+  $Log$
 */

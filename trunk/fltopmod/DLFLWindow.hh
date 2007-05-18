@@ -34,15 +34,13 @@ class DLFLWindow : public Fl_Double_Window
        NormalMode=0,
        SelectVertex=1, SelectEdge=2, SelectFace=3, SelectFaceVertex=4, // Simple selection
        MultiSelectVertex=5, MultiSelectEdge=6, MultiSelectFace=7, MultiSelectFaceVertex=8, // Multiple selection
-       InsertEdge=11, DeleteEdge=12, SubDivideEdge=13, CollapseEdge=14, // Edge operations
+       InsertEdge=11, DeleteEdge=12, SubDivideEdge=13, CollapseEdge=14, SpliceCorners=15, // Edge operations
        ConnectEdges=21, // Connect two half-edges
        ExtrudeFace=31, ExtrudeFaceDS=32, ExtrudeDualFace=33, ExtrudeFaceDodeca=34, ExtrudeFaceIcosa=35, // Extrusions
        StellateFace=41, DoubleStellateFace = 42,
        ConnectFaceVertices=51, ConnectFaces=52, BezierConnectFaces=53, HermiteConnectFaces=54, // Handles
        ReorderFace=61, SubDivideFace=62, // Face operations
-       CrustModeling=71, // Crust modeling
-       EditMode=81,  // Edit vertex positions with locator (brianb)
-       BezierMode=91 // Enable bezier surface modeling
+       CrustModeling=71 // Crust modeling
      };
 
         // Enumerations for various multi-face-handle algorithms
@@ -70,9 +68,6 @@ class DLFLWindow : public Fl_Double_Window
   public :
 
         //-- Parameters used in various operations on the DLFL object --//
-     static int  drag_startx;
-     static int  drag_starty;
-     static bool is_editing;
 
         // Edge deletion
      static bool delete_edge_cleanup; // Flag for point-sphere cleanup after edge deletion
@@ -164,12 +159,6 @@ class DLFLWindow : public Fl_Double_Window
      static int num_sel_edges;                // No. of selected edges
      static int num_sel_faces;                // No. of selected faces
      static int num_sel_faceverts;    // No. of selected face vertices
-
-     static void startDrag(int x, int y)
-       {
-         drag_startx = x;
-         drag_starty = y;
-       }
 
      static void clearNumSelected(void)
        {
@@ -284,24 +273,6 @@ class DLFLWindow : public Fl_Double_Window
          delete right;
        }
 
-        // Set the DLFL object
-     void setObject(const DLFLObject& obj)
-       {
-         object = obj;
-       }
-
-        // Get the DLFL object
-     const DLFLObject& getObject(void)
-       {
-         return object;
-       }
-
-        // Return a pointer to the object
-     DLFLObjectPtr getObjectPtr(void)
-       {
-         return &object;
-       }
-
         // Read the DLFL object from a file
      void readObject(const char * filename)
        {
@@ -401,7 +372,6 @@ class DLFLWindow : public Fl_Double_Window
         // to the selection lists in the DLFLViewport class, which are assumed
         // to have been cleared before calling this function
      void doSelection(int x, int y);
-     void doDrag(int x, int y);
 
         // Override show() method to show subwindows also
      void show(void)
@@ -450,16 +420,6 @@ class DLFLWindow : public Fl_Double_Window
          active->toggleVertices();
        }
 
-     void togglePatchWireframe(void)             // Toggle display of patch wireframes
-       {
-         active->togglePatchWireframe();
-       }
-
-     void togglePatchVertices(void)               // Toggle display of patch (control) vertices
-       {
-         active->togglePatchVertices();
-       }
-
      void turnOffOverlays(void)               // Turn off all overlays
        {
          active->setRenderFlags(0);
@@ -474,19 +434,8 @@ class DLFLWindow : public Fl_Double_Window
      void setMode(Mode m)
        {
          mode = m;
-
-         if (mode != EditMode)
-         {
-           active->resetLocator();
-           redraw();
-         }
-
          switch ( mode )
             {
-              case BezierMode:
-                object.bezierDefaults();
-                break;
-              case EditMode :    // brianb
               case SelectVertex :
                            DLFLWindow::num_sel_verts = 0;
                            break;
@@ -562,6 +511,11 @@ class DLFLWindow : public Fl_Double_Window
          object.computeLighting(&plight);
        }
 
+     void recomputePatches(void) // Recompute the patches for patch rendering
+     {
+       object.updatePatches();
+     }
+       
      void subDivideAllEdges(void)              // Sub-divide all edges
        {
          undoPush();
@@ -614,6 +568,7 @@ class DLFLWindow : public Fl_Double_Window
               default :
                            break;
             }
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -623,6 +578,7 @@ class DLFLWindow : public Fl_Double_Window
             // Multi-connect midpoints after simplest-subdivision without edge deletion
          undoPush();
          object.multiConnectMidpoints();
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -632,6 +588,7 @@ class DLFLWindow : public Fl_Double_Window
             // Multi-connect after creating crust
          undoPush();
          object.multiConnectCrust();
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -641,6 +598,7 @@ class DLFLWindow : public Fl_Double_Window
             // Modified multi-connect after creating crust
          undoPush();
          object.modifiedMultiConnectCrust();
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -650,6 +608,7 @@ class DLFLWindow : public Fl_Double_Window
          undoPush();
          object.createSponge(DLFLWindow::sponge_thickness,
                              DLFLWindow::sponge_collapse_threshold);
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -658,6 +617,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.planarize();
+         recomputePatches();
          recomputeNormals();
        }
 
@@ -665,6 +625,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.spheralize();
+         recomputePatches();
          recomputeNormals();
        }
 
@@ -672,6 +633,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.meshsmooth();
+         recomputePatches();
          recomputeNormals();
        }
 
@@ -681,6 +643,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.catmullClarkSubDivide();
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -689,6 +652,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.dooSabinSubDivide(doo_sabin_check);
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -697,6 +661,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.honeycombSubDivide();
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -705,6 +670,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.root4SubDivide(DLFLWindow::weight_factor,DLFLWindow::twist_factor);
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -713,6 +679,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.cornerCuttingSubDivide();
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -721,6 +688,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.subDivideAllFaces(true);
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -729,6 +697,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.simplestSubDivide();
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -737,6 +706,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.vertexCuttingSubDivide(DLFLWindow::vertex_cutting_offset);
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -745,6 +715,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.pentagonalSubDivide(DLFLWindow::pentagonal_offset);
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -756,6 +727,7 @@ class DLFLWindow : public Fl_Double_Window
          object.pentagonalSubDivide(DLFLWindow::pentagonal_offset);
          object.createDual(true); // Use accurate method
          object.createDual(true); // Use accurate method
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -767,6 +739,7 @@ class DLFLWindow : public Fl_Double_Window
          object.createDual(true); // Use accurate method
          object.pentagonalSubDivide(DLFLWindow::pentagonal_offset);
          object.createDual(true); // Use accurate method
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -775,6 +748,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.pentagonalSubDivide2(DLFLWindow::pentagonal_scale);
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -786,6 +760,7 @@ class DLFLWindow : public Fl_Double_Window
          object.createDual(true); // Use accurate method
          object.pentagonalSubDivide2(DLFLWindow::pentagonal_scale);
          object.createDual(true); // Use accurate method
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -797,6 +772,7 @@ class DLFLWindow : public Fl_Double_Window
          object.createDual(true); // Use accurate method
          object.root4SubDivide(DLFLWindow::weight_factor,DLFLWindow::twist_factor);
          object.createDual(true); // Use accurate method
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -808,6 +784,7 @@ class DLFLWindow : public Fl_Double_Window
          object.createDual(true); // Use accurate method
          object.honeycombSubDivide();
          object.createDual(true); // Use accurate method
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -816,6 +793,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.loopSubDivide();
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -827,6 +805,7 @@ class DLFLWindow : public Fl_Double_Window
          object.createDual(true); // Use accurate method
          object.loopSubDivide();
          object.createDual(true); // Use accurate method
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -838,6 +817,7 @@ class DLFLWindow : public Fl_Double_Window
          object.createDual(true); // Use accurate method
          object.dual1264SubDivide(DLFLWindow::dual1264_scale_factor);
          object.createDual(true); // Use accurate method
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -846,6 +826,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.dual1264SubDivide(DLFLWindow::dual1264_scale_factor);
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -854,6 +835,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.checkerBoardRemeshing(DLFLWindow::checkerboard_thickness);
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -865,6 +847,7 @@ class DLFLWindow : public Fl_Double_Window
          object.createDual(true); // Use accurate method
          object.checkerBoardRemeshing(DLFLWindow::checkerboard_thickness);
          object.createDual(true); // Use accurate method
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -873,6 +856,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.starSubDivide(DLFLWindow::star_offset);
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -881,6 +865,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.sqrt3SubDivide();
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -889,6 +874,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.fractalSubDivide(DLFLWindow::fractal_offset);
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -897,6 +883,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.stellateSubDivide();
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -905,6 +892,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.twostellateSubDivide(DLFLWindow::substellate_height, DLFLWindow::substellate_curve);
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -913,6 +901,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.domeSubDivide(DLFLWindow::domeLength_factor, DLFLWindow::domeScale_factor);
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -921,6 +910,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.dooSabinSubDivideBC(DLFLWindow::doo_sabin_check);
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -930,6 +920,7 @@ class DLFLWindow : public Fl_Double_Window
          undoPush();
          object.dooSabinSubDivideBCNew(DLFLWindow::dooSabinBCnewScale_factor,
                                        DLFLWindow::dooSabinBCnewLength_factor);
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -938,6 +929,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.loopStyleSubDivide(DLFLWindow::loopLength_factor);
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -947,6 +939,7 @@ class DLFLWindow : public Fl_Double_Window
             // Does not use length parameter for now. Uses subDivideFace method with triangles
          undoPush();
          object.subDivideAllFaces(false);
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -955,6 +948,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.splitValence2Vertices(DLFLWindow::vertex_split_offset);
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -963,6 +957,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.cleanupWingedVertices();
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -971,6 +966,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.createDual(DLFLWindow::accurate_dual);
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -980,6 +976,7 @@ class DLFLWindow : public Fl_Double_Window
          undoPush();
          if ( use_scaling ) object.createCrustWithScaling(DLFLWindow::crust_scale_factor);
          else object.createCrust(DLFLWindow::crust_thickness);
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -988,6 +985,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.makeWireframe(DLFLWindow::wireframe_thickness);
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -996,6 +994,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.makeWireframeWithColumns(DLFLWindow::column_thickness, DLFLWindow::column_segments);
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -1007,6 +1006,7 @@ class DLFLWindow : public Fl_Double_Window
          object.reset();
          object.splice(*unitcube);
          delete unitcube;
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -1018,6 +1018,7 @@ class DLFLWindow : public Fl_Double_Window
          object.reset();
          object.splice(*unittetra);
          delete unittetra;
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -1029,6 +1030,7 @@ class DLFLWindow : public Fl_Double_Window
          object.reset();
          object.splice(*mengersponge);
          delete mengersponge;
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -1040,6 +1042,7 @@ class DLFLWindow : public Fl_Double_Window
          object.reset();
          object.splice(*stetra);
          delete stetra;
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -1058,6 +1061,7 @@ class DLFLWindow : public Fl_Double_Window
        {
          undoPush();
          object.edgeCleanup();
+         recomputePatches();
          recomputeNormals();
          DLFLWindow::clearSelected();
        }
@@ -1101,6 +1105,7 @@ class DLFLWindow : public Fl_Double_Window
             {
               undoPush();
               readObject(filename);
+              recomputePatches();
               recomputeNormals();
             }         
        }
@@ -1118,6 +1123,7 @@ class DLFLWindow : public Fl_Double_Window
             {
               undoPush();
               readObjectOBJ(filename);
+              recomputePatches();
               recomputeNormals();
             }         
        }
@@ -1135,6 +1141,7 @@ class DLFLWindow : public Fl_Double_Window
             {
               undoPush();
               readObjectDLFL(filename);
+              recomputePatches();
               recomputeNormals();
             }
        }

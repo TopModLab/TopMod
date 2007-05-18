@@ -1209,8 +1209,16 @@ void DLFLObject :: catmullClarkSubDivide(void)
   int num_faces, num_edges;
   int num_old_faces, num_old_edges;
   
+
+     // Reset aux coords in each vertex
+  vl_first = vertex_list.begin(); vl_last = vertex_list.end();
+  while ( vl_first != vl_last )
+     {
+       vp = (*vl_first); ++vl_first;
+       vp->resetAuxCoords();
+     }
   
-     // First compute the coordinates of the new points and store them in the aux-coords
+     // Compute the coordinates of the new points and store them in the aux-coords
      // fields of each class
   
      // Go through each face and compute the centroid and store it in the aux-coords field

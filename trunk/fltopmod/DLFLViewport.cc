@@ -5,7 +5,7 @@
 #include "DLFLViewport.hh"
 
 //-- Define static members --//
-DLFLLocatorPtrArray DLFLViewport::sel_lptr_array; // brianb
+
 DLFLVertexPtrArray DLFLViewport::sel_vptr_array;
 DLFLEdgePtrArray DLFLViewport::sel_eptr_array;
 DLFLFacePtrArray DLFLViewport::sel_fptr_array;
@@ -70,70 +70,6 @@ DLFLVertexPtr DLFLViewport :: selectVertex(int mx, int my)
      }
   return sel;
 }
-
-// Subroutine for selecting a Vertex
-DLFLLocatorPtr DLFLViewport :: selectLocator(int mx, int my)
-{
-  GLuint selectBuf[1024];
-  uint closest;
-  GLuint dist;
-  long hits, index;
-
-  glSelectBuffer(1024,selectBuf);
-  glRenderMode(GL_SELECT);
-
-  glInitNames(); glPushName(0);
-
-  GLint vp[4];
-  glGetIntegerv(GL_VIEWPORT, vp);
-  viewport.camera.enterSelectionMode(mx,my,10,10,vp); // Reduced sensitivity for picking points
-
-  // Make sure earlier matrices are preserved, since multiple windows
-  // seem to be sharing the same matrix stacks
-
-  glMatrixMode(GL_PROJECTION);
-  glPushMatrix();
-
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-
-  viewport.reshape();
-  viewport.apply_transform();
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  renderLocatorsForSelect();
-  glFlush();
-
-  glPopMatrix();
-
-  glMatrixMode(GL_PROJECTION);
-  glPopMatrix();
-
-  viewport.camera.leaveSelectionMode();
-  hits = glRenderMode(GL_RENDER);
-  if ( hits > 0 )
-  {
-    closest = 0; dist = 0xffffffff;
-    while ( hits )
-    {
-      index = (hits-1)*4;
-      if ( selectBuf[index+1] < dist )
-      {
-        dist = selectBuf[index+1];
-        closest = selectBuf[index+3];
-      }
-      hits--;
-    }
-    
-    // closest now has the hit axis
-    DLFLViewport::locatorPtr->setSelectedAxis(closest);
-
-    // Only one locator for now, return pointer to DLFLViewport::locator
-    return DLFLViewport::locatorPtr;
-  }
-  
-  return NULL;
-}
-
 
    // Subroutine for selecting an Edge
 DLFLEdgePtr DLFLViewport :: selectEdge(int mx, int my)
@@ -318,11 +254,6 @@ DLFLFaceVertexPtr DLFLViewport :: selectFaceVertex(DLFLFacePtr fp, int mx, int m
    // Draw the selected items
 void DLFLViewport :: drawSelected(void)
 {
-  if ( !sel_lptr_array.empty() )
-    {
-      sel_lptr_array[0]->render();
-    }
-
   if ( !sel_vptr_array.empty() )
      {
           // Selected vertices are shown in red color
@@ -500,6 +431,20 @@ int DLFLViewport :: handle(int event)
                  else                        // Left mouse is not down
                     {
                       viewport.handle_pan(VPPush,x,y); // Start panning
+                      fl_cursor(FL_CURSOR_MOVE,FL_RED); 
+                    }
+               }
+            else if ( Fl::event_button() == FL_RIGHT_MOUSE ) // Middle mouse was pressed
+               {
+                 if ( viewport.current() == VPRotate ) // Implies left mouse is already down
+                    {
+                      viewport.handle_rotate(VPRelease,x,y); // Stop rotating
+                      viewport.handle_zoom(VPPush,x,y); // Start zooming
+                      fl_cursor(FL_CURSOR_WE,FL_RED);
+                    }
+                 else                        // Left mouse is not down
+                    {
+                      viewport.handle_zoom(VPPush,x,y); // Start panning
                       fl_cursor(FL_CURSOR_MOVE,FL_RED); 
                     }
                }

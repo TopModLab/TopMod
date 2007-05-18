@@ -34,7 +34,6 @@ class DLFLViewport : public Fl_Gl_Window
   protected :
 
         // Selection lists - these are shared by all viewports
-     static DLFLLocatorPtrArray sel_lptr_array; // List of selected DLFLLocator pointers
      static DLFLVertexPtrArray sel_vptr_array; // List of selected DLFLVertex pointers
      static DLFLEdgePtrArray sel_eptr_array; // List of selected DLFLEdge pointers
      static DLFLFacePtrArray sel_fptr_array; // List of selected DLFLFace pointers
@@ -54,31 +53,12 @@ class DLFLViewport : public Fl_Gl_Window
         // Each viewport will have its own grid
      Grid grid;                                        // Display grid
 
-     // Default Locator object
-     DLFLLocatorPtr locatorPtr;
-
         // Boolean flags - these are viewport specific
      bool showgrid;                           // Should grid be shown?
      bool showaxes;                           // Should axes be shown?
 
 
   public :
-     Viewport* getViewport() 
-       {
-         return &viewport;
-       }
- 
-     void renderLocatorsForSelect() 
-       {
-         locatorPtr->setRenderSelection(true);
-         locatorPtr->render();
-         locatorPtr->setRenderSelection(false);
-       }
-
-     void resetLocator() 
-       {
-         locatorPtr->setActiveVertex(NULL);
-       }
 
         //--- Initialize the selection lists ---//
      static void initializeSelectionLists(int num)
@@ -89,15 +69,9 @@ class DLFLViewport : public Fl_Gl_Window
          sel_eptr_array.reserve(num);
          sel_fptr_array.reserve(num);
          sel_fvptr_array.reserve(num);
-         sel_lptr_array.reserve(num);
        }
 
         //--- Add items to the selection lists - check for NULL pointers ---//
-     static void addToSelection(DLFLLocatorPtr vp)
-       {
-         if ( vp ) sel_lptr_array.push_back(vp);
-       }
-
      static void addToSelection(DLFLVertexPtr vp)
        {
          if ( vp ) sel_vptr_array.push_back(vp);
@@ -119,20 +93,6 @@ class DLFLViewport : public Fl_Gl_Window
        }
 
         //--- Check if given item is there in the selection list ---//
-     static bool isSelected(DLFLLocatorPtr vp)
-       {
-         bool found = false;
-         if ( vp )
-            {
-              for (int i=0; i < sel_lptr_array.size(); ++i)
-                 if ( sel_lptr_array[i] == vp )
-                    {
-                      found = true; break;
-                    }
-            }
-         return found;
-       }
-
      static bool isSelected(DLFLVertexPtr vp)
        {
          bool found = false;
@@ -191,15 +151,6 @@ class DLFLViewport : public Fl_Gl_Window
 
         //--- Set the selected item at given index ---//
         //--- If size of array is smaller than index item will be added to end of array ---//
-     static void setSelectedLocator(int index, DLFLLocatorPtr vp)
-       {
-         if ( vp && index >= 0 )
-            {
-              if ( index < sel_lptr_array.size() ) sel_lptr_array[index] = vp;
-              else sel_lptr_array.push_back(vp);
-            }
-       }
-
      static void setSelectedVertex(int index, DLFLVertexPtr vp)
        {
          if ( vp && index >= 0 )
@@ -237,17 +188,6 @@ class DLFLViewport : public Fl_Gl_Window
        }
 
         //--- Return the selected items at given index ---//
-     DLFLLocatorPtr getLocatorPtr() const 
-       {
-         return locatorPtr;
-       }
-
-     static DLFLLocatorPtr getSelectedLocator(int index)
-       {
-         if ( index < sel_lptr_array.size() ) return sel_lptr_array[index];
-         return NULL;
-       }
-
      static DLFLVertexPtr getSelectedVertex(int index)
        {
          if ( index < sel_vptr_array.size() ) return sel_vptr_array[index];
@@ -273,11 +213,6 @@ class DLFLViewport : public Fl_Gl_Window
        }
 
         //--- Find the number of items in the selection lists ---//
-     static int numSelectedLocators(void)
-       {
-         return sel_lptr_array.size();
-       }
-
      static int numSelectedVertices(void)
        {
          return sel_vptr_array.size();
@@ -299,11 +234,6 @@ class DLFLViewport : public Fl_Gl_Window
        }
 
         //--- Clear individual selection lists ---//
-     static void clearSelectedLocators(void)
-       {
-         sel_lptr_array.clear();
-       }
-
      static void clearSelectedVertices(void)
        {
          sel_vptr_array.clear();
@@ -327,7 +257,6 @@ class DLFLViewport : public Fl_Gl_Window
         // Reset all selection lists
      static void clearSelected(void)
        {
-         sel_lptr_array.clear();
          sel_vptr_array.clear();
          sel_eptr_array.clear();
          sel_fptr_array.clear();
@@ -352,7 +281,6 @@ class DLFLViewport : public Fl_Gl_Window
          showgrid(false), showaxes(true)
        {
          mode(FL_RGB|FL_DOUBLE|FL_DEPTH);
-         locatorPtr = new DLFLLocator();
        }
 
         // Constructor
@@ -362,14 +290,11 @@ class DLFLViewport : public Fl_Gl_Window
          showgrid(false), showaxes(true)
        {
          mode(FL_RGB|FL_DOUBLE|FL_DEPTH);
-         locatorPtr = new DLFLLocator();
        }
 
         // Destructor
      ~DLFLViewport()
-       {
-         delete locatorPtr;
-       }
+       {}
 
      void switchTo(VPView view)
        {
@@ -443,16 +368,6 @@ class DLFLViewport : public Fl_Gl_Window
          if ( renderer ) renderer->toggleVertices();
        }
 
-     void togglePatchWireframe(void)
-       {
-         if ( renderer ) renderer->togglePatchWireframe();
-       }
-
-     void togglePatchVertices(void)
-       {
-         if ( renderer ) renderer->togglePatchVertices();
-       }
-
         // Toggle object orientation
      void toggleObjectOrientation(void)
        {
@@ -468,7 +383,6 @@ class DLFLViewport : public Fl_Gl_Window
        }
 
         // Subroutines for selecting Vertices, Edges, Faces and FaceVertices (Corners)
-     DLFLLocatorPtr selectLocator(int mx, int my);  // brian
      DLFLVertexPtr selectVertex(int mx, int my);
      DLFLEdgePtr selectEdge(int mx, int my);
      DLFLFacePtr selectFace(int mx, int my);

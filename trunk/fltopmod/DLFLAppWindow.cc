@@ -17,7 +17,7 @@ NormalRendererPtr DLFLAppWindow::normal;                // NormalRenderer
 LitRendererPtr DLFLAppWindow::lit;                        // LitRenderer
 TexturedRendererPtr DLFLAppWindow::textured;          // TexturedRenderer
 TexturedLitRendererPtr DLFLAppWindow::texturedlit; // TexturedLitRenderer
-BezierRendererPtr DLFLAppWindow::bezier;
+PatchRendererPtr DLFLAppWindow::patch;		       // PatchRenderer
 
 Fl_Menu_Bar * DLFLAppWindow::menubar;
 Fl_Choice * DLFLAppWindow::basics;
@@ -228,8 +228,6 @@ void DLFLAppWindow :: createModeSelectionPanel(int x, int y, int w, int h)
         {"Remeshing", 0,(Fl_Callback*)remeshing_mode, 0, 0},
         {"High Genus Modeling", 0,(Fl_Callback*)highgenus_mode, 0, 0},
         {"Texturing", 0,(Fl_Callback*)texturing_mode, 0, 0},
-        {"Edit", 0, (Fl_Callback*)edit_mode,0,0}, // brianb
-        {"Bezier", 0, (Fl_Callback*)bezier_mode,0,0},
         {0}
       };
     Fl_Choice* modes = createPullDownMenu(x+10, 55, w-20, 25, "Group", mode_menu);
@@ -244,6 +242,7 @@ void DLFLAppWindow :: createModeSelectionPanel(int x, int y, int w, int h)
         {"Collapse Edge", 0, (Fl_Callback*)collapse_edge_mode, 0, 0},
         {"Subdivide Edge", 0, (Fl_Callback*)subdivide_edge_mode, 0, 0},
         {"Connect Edges", 0, (Fl_Callback*)connect_edge_mode, 0, 0},
+        {"Splice Corners", 0, (Fl_Callback*)splice_corners_mode, 0, 0},
 #ifndef DLFL_RELEASE
         {"Transforms", 0, (Fl_Callback*)transforms_mode, 0, 0},
 #endif /* DLFL_RELEASE */
@@ -1250,8 +1249,6 @@ void DLFLAppWindow :: createMenubar(int w, int h)
         {"Show Wireframe", 0, (Fl_Callback*)toggle_wireframe, 0, FL_MENU_TOGGLE|FL_MENU_VALUE},
         {"Show Grid", 0, (Fl_Callback*)toggle_grid, 0, FL_MENU_TOGGLE},
         {"Show Coordinate Axes", 0, (Fl_Callback*)toggle_axes, 0, FL_MENU_TOGGLE|FL_MENU_VALUE},
-        {"Show Patch Wireframe",0,(Fl_Callback*)toggle_patch_wireframe,0,FL_MENU_TOGGLE},
-        {"Show Patch Vertices",0,(Fl_Callback*)toggle_patch_vertices,0,FL_MENU_TOGGLE},
       {0},
       {"Renderer", 0, 0, 0, FL_SUBMENU},
 #ifndef DLFL_RELEASE
@@ -1261,7 +1258,7 @@ void DLFLAppWindow :: createMenubar(int w, int h)
         {"Lighted Renderer", 0, (Fl_Callback*)use_lighted_renderer, 0, FL_MENU_RADIO|FL_MENU_VALUE},
         {"Textured Renderer", 0, (Fl_Callback*)use_textured_renderer, 0, FL_MENU_RADIO},
         {"Textured-Lighted Renderer", 0, (Fl_Callback*)use_textured_lit_renderer, 0, FL_MENU_RADIO},
-        {"Bezier Renderer", 0, (Fl_Callback*)use_bezier_renderer,0, FL_MENU_RADIO},
+        {"Patch Renderer", 0, (Fl_Callback*)use_patch_renderer, 0, FL_MENU_RADIO},
       {0},
 #ifndef DLFL_RELEASE
       {"Object", 0, 0, 0, FL_SUBMENU},

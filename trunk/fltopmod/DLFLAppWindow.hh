@@ -32,7 +32,7 @@
 #include "LitRenderer.hh"
 #include "TexturedRenderer.hh"
 #include "TexturedLitRenderer.hh"
-#include "BezierRenderer.hh"
+#include "PatchRenderer.hh"
 
 class DLFLAppWindow : public Fl_Double_Window
 {
@@ -53,8 +53,8 @@ class DLFLAppWindow : public Fl_Double_Window
      static LitRendererPtr lit;                        // LitRenderer
      static TexturedRendererPtr textured;          // TexturedRenderer
      static TexturedLitRendererPtr texturedlit; // TexturedLitRenderer
-     static BezierRendererPtr bezier;              // BezierRenderer
-
+     static PatchRendererPtr patch;		      // PatchRenderer
+     
         // Control panels and controls
      static Fl_Menu_Bar * menubar;
      static Fl_Choice * basics;
@@ -253,14 +253,14 @@ class DLFLAppWindow : public Fl_Double_Window
          lit = new LitRenderer();
          lit->setRenderFlags(DLFLRenderer::ShowWireframe);
          
-         bezier = new BezierRenderer();
-         bezier->setRenderFlags(DLFLRenderer::ShowPatchWireframe);
-
          textured = new TexturedRenderer();
          textured->setRenderFlags(DLFLRenderer::ShowWireframe);
          
          texturedlit = new TexturedLitRenderer();
          texturedlit->setRenderFlags(DLFLRenderer::ShowWireframe);
+
+	 patch = new PatchRenderer();
+	 patch->setRenderFlags(DLFLRenderer::ShowWireframe);
        }
 
      static void destroyRenderers(void)
@@ -270,7 +270,7 @@ class DLFLAppWindow : public Fl_Double_Window
          delete lit;
          delete textured;
          delete texturedlit;
-         delete bezier;
+	 delete patch;
        }
 
      static void setMainWindow(DLFLWindowPtr wp)
@@ -296,9 +296,8 @@ class DLFLAppWindow : public Fl_Double_Window
          this->end();
 
          DLFLAppWindow::createRenderers();
-         bezier->setObject(mainWindow.getObjectPtr()); // Associate object with bezier renderer
          mainWindow.setRenderer(lit); // Default renderer is LightedRenderer
-         
+
          DLFLAppWindow::setMainWindow(&mainWindow);
        }
 
@@ -315,6 +314,7 @@ class DLFLAppWindow : public Fl_Double_Window
      void openFile(const char * filename)
        {
          mainWindow.readObject(filename);
+         mainWindow.recomputePatches();
          mainWindow.recomputeNormals();
          mainWindow.redraw();
        }
@@ -354,34 +354,9 @@ class DLFLAppWindow : public Fl_Double_Window
          mainWindow.resize(OPT_W,MENU_H,w-OPT_W,h-MENU_H);
        }
 
-        /* Function called when object state has changed */
-     static void object_changed(void)
-       {
-         bezier->updateBezierSurface();
-       }
-
      int handle(int event)
        {
-         if ( event == FL_KEYBOARD )
-            {
-              if ( Fl::event_state(FL_CTRL) )
-                 {
-                   int key = Fl::event_key();
-                   if ( key == '1' )
-                      {
-                        bezier->setPatchType(Linear); return 1;
-                      }
-                   else if ( key == '3' )
-                      {
-                        bezier->setPatchType(Cubic); return 1;
-                      }
-                   else if ( key == '5' )
-                      {
-                        bezier->setPatchType(Quintic); return 1;
-                      }
-                 }
-              return mainWindow.handle(event);
-            }
+         if ( event == FL_KEYBOARD ) return mainWindow.handle(event);
          return Fl_Double_Window::handle(event);
        }
 
@@ -412,16 +387,14 @@ class DLFLAppWindow : public Fl_Double_Window
      static void toggle_wireframe(Fl_Menu_*, void*);
      static void toggle_grid(Fl_Menu_*, void*);
      static void toggle_axes(Fl_Menu_*, void*);
-     static void toggle_patch_wireframe(Fl_Menu_*,void*);
-     static void toggle_patch_vertices(Fl_Menu_*,void*);
 
      static void use_normal_renderer(Fl_Menu_*, void*);
      static void use_lighted_renderer(Fl_Menu_*, void*);
      static void use_shaded_renderer(Fl_Menu_*, void*);
      static void use_textured_renderer(Fl_Menu_*, void*);
      static void use_textured_lit_renderer(Fl_Menu_*, void*);
-     static void use_bezier_renderer(Fl_Menu_*, void*);
-
+     static void use_patch_renderer(Fl_Menu_*, void*);
+     
      static void subdivide_all_edges(Fl_Menu_*, void*);
      static void planarize_all_faces(Fl_Menu_*, void*);
      static void make_object_spherical(Fl_Menu_*, void*);
@@ -447,8 +420,6 @@ class DLFLAppWindow : public Fl_Double_Window
      static void highgenus_mode(Fl_Menu_*, void*);
      static void texturing_mode(Fl_Menu_*, void*);
      static void hide_remeshing_tiles(Fl_Menu_*, void*);
-     static void edit_mode(Fl_Menu_*, void*); // brianb
-     static void bezier_mode(Fl_Menu_*,void*); //brianb
 
      static void insert_edge_mode(Fl_Menu_*, void*);
      static void delete_edge_mode(Fl_Menu_*, void*);
@@ -460,7 +431,8 @@ class DLFLAppWindow : public Fl_Double_Window
      static void assign_tile_texture_coords(Fl_Menu_*, void*);
      static void connect_edge_mode(Fl_Menu_*, void*);
      static void transforms_mode(Fl_Menu_*, void*);
-
+     static void splice_corners_mode(Fl_Menu_*, void*);
+     
      static void extrude_face(Fl_Menu_*, void*);
      static void extrude_face_doosabin(Fl_Menu_*, void*);
      static void extrude_face_dodeca(Fl_Menu_*, void*);

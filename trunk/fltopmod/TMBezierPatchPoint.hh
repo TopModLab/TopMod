@@ -4,7 +4,7 @@
 
 #define _TM_BEZIER_PATH_POINT_HH_
 
-#include <Vector3d.hh>
+#include "include/Vector3d.hh"
 #include <vector>
 
 using namespace std;

@@ -74,58 +74,28 @@ void DLFLVertex :: setColor(const RGBColor& color)
      }
 }
 
-   // Set the normals for all FaceVertexes referring to this vertex
-void DLFLVertex :: setNormal(const Vector3d& normal)
+   // Compute the normals for all FaceVertexes referring to this vertex
+   // Update the vertex normal and return it
+Vector3d DLFLVertex :: updateNormal(bool recompute)
 {
   DLFLFaceVertexPtrList :: iterator first, last;
 
   first = fvpList.begin(); last = fvpList.end();
-  while ( first != last )
-     {
-       (*first)->normal = normal;
-       ++first;
-     }
-}
-
-   // Set the normals for all FaceVertexes referring to this vertex
-Vector3d DLFLVertex :: computeNormal(bool set)
-{
-  DLFLFaceVertexPtrList :: iterator first, last;
-  Vector3d normal;
-  int i=0;
-
-  first = fvpList.begin(); last = fvpList.end();
-  while ( first != last )
-     {
-       normal += (*first)->computeNormal();
-       ++first; ++i;
-     }
-  normal /= i;
-  if ( set )
-     {
-       first = fvpList.begin();
-       while ( first != last )
-          {
-            (*first)->normal = normal;
-            ++first;
-          }
-     }
-  return normal;
-}
-
-Vector3d DLFLVertex :: averageNormal(void)
-{
-  DLFLFaceVertexPtrList :: iterator first, last;
-  Vector3d normal;
-  int i=0;
-
-  first = fvpList.begin(); last = fvpList.end();
-  while ( first != last )
-     {
-       normal += (*first)->normal;
-       ++first; ++i;
-     }
-  if ( i > 0 ) normal /= i;
+  normal.reset();
+  if ( recompute )
+     while ( first != last )
+        {
+          normal += (*first)->computeNormal();
+          ++first;
+        }
+  else
+     while ( first != last )
+        {
+          normal += (*first)->normal;
+          ++first;
+        }
+     
+  normalize(normal);
   return normal;
 }
 
@@ -134,22 +104,25 @@ Vector3d DLFLVertex :: getNormals(Vector3dArray& normals)
      // Return normals at all corners in an Vector3dArray
   Vector3d avenormal;
   int numnormals = fvpList.size();
-  normals.clear(); normals.reserve(numnormals);
-
-  DLFLFaceVertexPtrList :: const_iterator first, last;
-  DLFLFaceVertexPtr fvp = NULL;
-  first = fvpList.begin(); last = fvpList.end();
-  while ( first != last )
+  if ( numnormals > 0 )
      {
-       fvp = (*first); ++first;
-       normals.push_back(fvp->normal); avenormal += fvp->normal;
+       normals.clear(); normals.reserve(numnormals);
+
+       DLFLFaceVertexPtrList :: const_iterator first, last;
+       DLFLFaceVertexPtr fvp = NULL;
+       first = fvpList.begin(); last = fvpList.end();
+       while ( first != last )
+          {
+            fvp = (*first); ++first;
+            normals.push_back(fvp->normal); avenormal += fvp->normal;
+          }
+       avenormal /= numnormals;
      }
-  if ( numnormals > 0 ) avenormal /= numnormals;
   return avenormal;
 }
 
    // Set tex coordinates, color and normal info for all FaceVertexes referring to this vertex
-void DLFLVertex :: setFaceVertexProps(const Vector2d& texcoord, const RGBColor& color, const Vector3d& normal)
+void DLFLVertex :: setFaceVertexProps(const Vector2d& texcoord, const RGBColor& color, const Vector3d& n)
 {
   DLFLFaceVertexPtrList :: iterator first, last;
 
@@ -158,7 +131,7 @@ void DLFLVertex :: setFaceVertexProps(const Vector2d& texcoord, const RGBColor& 
      {
        (*first)->texcoord = texcoord;
        (*first)->color = color;
-       (*first)->normal = normal;
+       (*first)->normal = n;
        ++first;
      }
 }
@@ -284,6 +257,59 @@ void DLFLVertex :: getFaceVertices(DLFLFaceVertexPtrArray& fvparray)
      }
 }
 
+void DLFLVertex :: getOrderedFaceVertices(DLFLFaceVertexPtrArray& fvparray)
+{
+     // Get the face vertices associated with this vertex in the clockwise rotation order
+  fvparray.clear();
+
+  DLFLFaceVertexPtr fvpstart = fvpList.front();
+  if ( fvpstart == NULL ) return;
+
+  fvparray.reserve(fvpList.size());
+  DLFLFaceVertexPtr fvp = fvpstart;
+
+  do
+     {
+       fvparray.push_back(fvp);
+       fvp = fvp->vnext();
+     }
+  while ( fvp != fvpstart );
+}
+
+
+void DLFLVertex :: getCornerAuxCoords(Vector3dArray& coords) const
+{
+  coords.clear(); coords.reserve(fvpList.size());
+  DLFLFaceVertexPtrList :: const_iterator first, last;
+  DLFLFaceVertexPtr fvp = NULL;
+  first = fvpList.begin(); last = fvpList.end();
+  while ( first != last )
+     {
+       fvp = (*first); ++first;
+       coords.push_back(fvp->getAuxCoords());
+     }
+}
+
+void DLFLVertex :: getOrderedCornerAuxCoords(Vector3dArray& coords) const
+{
+     // Get the aux coords of face vertices associated with this vertex in the clockwise rotation order
+  coords.clear();
+
+  DLFLFaceVertexPtr fvpstart = fvpList.front();
+  if ( fvpstart == NULL ) return;
+
+  coords.reserve(fvpList.size());
+  DLFLFaceVertexPtr fvp = fvpstart;
+
+  do
+     {
+       coords.push_back(fvp->getAuxCoords());
+       fvp = fvp->vnext();
+     }
+  while ( fvp != fvpstart );
+}
+
+
 void DLFLVertex :: getFaces(DLFLFacePtrArray& fparray)
 {
      // Go through the face-vertex-pointer list and add
@@ -388,6 +414,7 @@ DLFLFaceVertexPtr DLFLVertex :: getBackFaceVertex(void)
      }
   return retfvp;
 }
+
 
 /*
   $Log: DLFLVertex.cc,v $

@@ -1,4 +1,4 @@
-/* $Id: DLFLAux.cc,v 4.0 2003/12/26 01:58:52 vinod Exp $ */
+/* $Id$ */
 
 // Auxiliary supporting subroutines for DLFL subroutines
 #include "DLFLAux.hh"
@@ -166,6 +166,21 @@ void planarProject(Vector3dArray& poly, const Vector3d& p, const Vector3d& nproj
        pp = poly[i] - ( (poly[i] - p )*nproj ) * nproj;
        poly[i] = pp;
      }
+}
+
+
+// Project a point onto a plane defined by point and normal
+void planarProject(Vector3d& p, const Vector3d& point, const Vector3d& normal)
+{
+  p = p - ( (p-point)*normal ) * normal;
+}
+
+
+// Project a line (defined by 2 points) onto a plane defined by point and normal
+void planarProject(Vector3d& p1, Vector3d& p2, const Vector3d& point, const Vector3d& normal)
+{
+  p1 = p1 - ( (p1-point)*normal ) * normal;
+  p2 = p2 - ( (p2-point)*normal ) * normal;
 }
 
 
@@ -399,68 +414,136 @@ double hermiteCurveLength(const Vector3d& p1, const Vector3d& v1, const Vector3d
   return length;
 }
 
+
+// Compute the centroid and average normal for a given array of points,
+// assuming they form a polygon and are specified in the correct order (RHS)
+void computeCentroidAndNormal(const Vector3dArray& p, Vector3d& centroid, Vector3d& normal)
+{
+  centroid.reset(); normal.reset();
+  int num = p.size();
+  if ( num > 2 )
+     {
+       Vector3d p0,p1;
+       p0 = p[num-1];
+       for (int i=0; i < p.size(); ++i)
+          {
+            p1 = p[i]; centroid += p1;
+            normal += p0 % p1;
+            p0 = p1;
+          }
+       centroid /= num;
+       normalize(normal);
+     }
+}
+
+
+// Calculate doo-sabin coordinates for the given array of points,
+// assuming they form a polygon and are specified in the correct order
+void computeDooSabinCoords(Vector3dArray& points)
+{
+  Vector3dArray op(points);
+  Vector3d p;
+  int numpts = op.size();
+  double coef, alpha;
+  for (int i=0; i < numpts; ++i)
+     {
+       p.reset();
+       for (int j=0; j < numpts; ++j)
+          {
+            alpha = 1.0/4.0 + 5.0/(4.0*numpts);
+            if ( i == j ) coef = alpha;
+            else coef = ( 3.0 + 2.0*cos(2.0*(i-j)*M_PI/numpts) ) / (4.0*numpts);
+            p += coef*op[j];
+          }
+       points[i] = p;
+     }
+}
+
+// Calculate modified doo-sabin coordinates for the given array of points,
+// assuming they form a polygon and are specified in the correct order
+void computeModifiedDooSabinCoords(Vector3dArray& points)
+{
+  Vector3dArray op(points);
+  Vector3d p;
+  int numpts = op.size();
+  double coef, alpha;
+  for (int i=0; i < numpts; ++i)
+     {
+       p.reset();
+       for (int j=0; j < numpts; ++j)
+          {
+            alpha = 1.0/4.0 + 5.0/(4.0*numpts);
+            if ( i == j ) coef = alpha;
+            else coef = (1.0 - alpha) * ( 3.0 + 2.0*cos(2.0*(i-j)*M_PI/numpts) ) / (3.0*numpts - 5.0);
+            p += coef*op[j];
+          }
+       points[i] = p;
+     }
+}
+
+// Project a point onto a line along the normal from the line through the point
+Vector3d projectPointOnLine(const Vector3d& p, const Vector3d& p0, const Vector3d& p1)
+{
+  double u = ((p-p0)*(p1-p0)) / ((p1-p0)*(p1-p0));
+  Vector3d pp = p0 + u*(p1-p0);
+  return pp;
+}
+
+// Compute the distance of a point from a line
+double distPointLine(const Vector3d& p, const Vector3d& p0, const Vector3d& p1)
+{
+  Vector3d pp = projectPointOnLine(p,p0,p1);
+  return norm(p-pp);
+}
+
+
+// Project two lines onto a plane specified by point and normal
+// and find their intersection
+Vector3d planarProjectAndIntersect(const Vector3d& _p00, const Vector3d& _p01,
+                                   const Vector3d& _p10, const Vector3d& _p11,
+                                   const Vector3d& point, const Vector3d& normal)
+{
+  Vector3d p00(_p00), p01(_p01), p10(_p10), p11(_p11);
+
+  planarProject(p00,p01,point,normal);
+  planarProject(p10,p11,point,normal);
+
+  double d0 = distPointLine(p10,p00,p01);
+  double d1 = distPointLine(p11,p00,p01);
+  double frac = d0 / (d0 + d1);
+
+  Vector3d ip = p10 + frac*(p11-p10);
+
+  return ip;
+}
+
+
+// Compute lighting for a vertex with a given normal and lighting parameters
+// Returns a color
+RGBColor computeLighting(const Vector3d p, const Vector3d n, const RGBColor& basecolor,
+                         double Ka, double Kd, double Ks, LightPtr lightptr)
+{
+  RGBColor color;
+
+  color = Kd * lightptr->illuminate(p,n);
+  color += (1.0 - Kd) * basecolor;
+
+  return color;
+}
+
+// Find the intersection point between two coplanar lines specified by their end points
+Vector3d intersectCoplanarLines(const Vector3d& p00, const Vector3d& p01,
+                                const Vector3d& p10, const Vector3d& p11)
+{
+  double d0 = distPointLine(p10,p00,p01);
+  double d1 = distPointLine(p11,p00,p01);
+  double frac = d0 / (d0 + d1);
+
+  Vector3d ip = p10 + frac*(p11-p10);
+  return ip;
+}
+
+
 /*
-  $Log: DLFLAux.cc,v $
-  Revision 4.0  2003/12/26 01:58:52  vinod
-  Major version sync.
-
-  Revision 3.3  2003/11/14 02:39:38  vinod
-  Removed isConcaveCorner method. Added pointInPolygon method
-
-  Revision 3.2  2003/11/07 05:37:41  vinod
-  Added isConcaveCorner and findAxialProjectPlane methods
-
-  Revision 3.1  2003/11/06 17:21:01  vinod
-  Added second translate method for moving polygons along a direction
-
-  Revision 3.0  2003/09/19 16:06:47  vinod
-  Major version update
-
-  Revision 2.9  2003/04/29 08:40:09  vinod
-  Included dvdt calculation for Hermite interpolation
-
-  Revision 2.8  2003/04/04 06:27:30  vinod
-  Added methods to compute length of Hermite curve
-
-  Revision 2.7  2001/12/05 18:12:48  vinod
-  Added linearInterpolate method for Vector arrays
-
-  Revision 2.6  2001/10/16 04:52:17  vinod
-  Modified resolvePolygon to account for cases where several multiples of 2pi
-  might have to be added to make angles monotonically increasing
-
-  Revision 2.5  2001/10/15 23:23:21  vinod
-  Added check for un-solvable rotations - when axis of rotation can't be
-  determined, in rotate method for rotation from one normal to a new normal
-  Modified resolvePolygon to make sure all angles are positive and
-  monotonously increasing. And now stores actual angles instead of
-  differences.
-
-  Revision 2.4  2001/10/13 18:16:56  vinod
-  Added code to ensure all angles in resolvePolygon are positive
-
-  Revision 2.3  2001/09/19 03:57:18  vinod
-  translate now returns the amount by which the polygon was translated
-  Fixed bug in rotate methods which took polygon back to original centroid
-
-  Revision 2.2  2001/09/15 22:33:04  vinod
-  Added rotate by angle
-
-  Revision 2.1  2001/08/07 07:15:53  vinod
-  Added polygon scaling
-
-  Revision 2.0  2001/07/25 05:12:41  vinod
-  Major version sync
-
-  Revision 1.3  2001/05/17 07:41:34  vinod
-  Fixed axis/angle calculation in rotate
-
-  Revision 1.2  2001/05/17 04:59:16  vinod
-  Added printArray, Moved Hv from DLFLObject.cc, Added dHv
-  Changed planarProject to do projection for one plane only
-  Added findProjectionPlane, rotate, reconstructPolygon, hermiteInterpolate
-
-  Revision 1.1  2001/05/15 21:09:39  vinod
-  Auxiliary subroutines for DLFL
-
+  $Log$
 */

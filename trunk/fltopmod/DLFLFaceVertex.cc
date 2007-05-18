@@ -7,6 +7,7 @@
 #include "DLFLEdge.hh"
 #include "DLFLVertex.hh"
 #include "DLFLAux.hh"
+#include "DLFLRenderer.hh"
 
 // Dump contents of this object
 void DLFLFaceVertex :: dump(ostream& o) const
@@ -47,6 +48,11 @@ void average(DLFLFaceVertexPtr dfvp1, DLFLFaceVertexPtr dfvp2, DLFLFaceVertexPtr
 DLFLVertexType DLFLFaceVertex :: getVertexType(void) const
 {
   return vertex->getType();
+}
+
+DLFLFaceVertexPtr DLFLFaceVertex :: getOppositeCorner(void)
+{
+  return epEPtr->getOtherFaceVertexPtr(this);
 }
 
 uint DLFLFaceVertex :: getVertexID(void) const
@@ -229,7 +235,7 @@ void DLFLFaceVertex :: getEdgeVectors(Vector3d& pvec, Vector3d& nvec)
   pvec = - (fvpPrev->getEdgeVector()); // Reverse direction of edgevector from previous corner
 }
 
-Vector3d DLFLFaceVertex :: computeNormal(void)
+void DLFLFaceVertex :: updateNormal(void)
 {
      // If this is a winged corner, assign normal of nearest non-winged corner
      // Otherwise compute for this corner and adjust for concave corners
@@ -243,8 +249,7 @@ Vector3d DLFLFaceVertex :: computeNormal(void)
           // compute the normal using adjacent vertices
        Vector3d pvec, nvec;
 
-       getEdgeVectors(pvec,nvec);
-       normalize(pvec); normalize(nvec);
+       getEdgeVectors(pvec,nvec); // Don't have to be normalized
        normal = nvec % pvec;
        normalize(normal);
 
@@ -252,7 +257,6 @@ Vector3d DLFLFaceVertex :: computeNormal(void)
           // then reverse the normal.
        if ( isConcaveCorner() ) normal = -normal;
      }
-  return normal;
 }
 
 void DLFLFaceVertex :: setVertexCoords(const Vector3d& vec)
@@ -313,7 +317,7 @@ DLFLFaceVertexPtr DLFLFaceVertex :: vprev(void)
   if ( epEPtr )
      {
        vn = vn->prev();
-       vn = epEPtr->getOtherFaceVertexPtr(vn);
+       vn = vn->epEPtr->getOtherFaceVertexPtr(vn);
      }
   return vn;
 }
@@ -352,247 +356,6 @@ uint DLFLFaceVertex :: readDLFL(istream& i)
 void DLFLFaceVertex :: render(void) const
 {
   if ( vertex ) vertex->render();
-}
-
-void DLFLFaceVertex :: renderPatchVertices(void) const
-{
-  int width,  // Order of patch width plus 1
-      height, // Order of patch height plus 1
-      depth;  // Number of values, such as 3 xyz, rgb, normal components etc
-  float* vinfo = createPatchInfoArray(width,height,depth);
-
-  if (!vinfo)
-    return;
-
-  fillPatchVertexArray(vinfo,width,height,depth);
-
-  glMap2f(GL_MAP2_VERTEX_3,  // Map vertex information
-          0.0,               // Minimum U
-          1.0,               // Maximum U
-          3,                 // U-stride
-          width,             // U-order
-          0.0,               // Minimum V
-          1.0,               // Maximum V
-          3*height,          // V-stride
-          height,
-          &vinfo[0]);
-  glEnable(GL_MAP2_VERTEX_3);
-  glMapGrid2f(width,         // U segments
-              0.0,           // Start U
-              1.0,           // End U
-              height,        // V segments
-              0.0,           // Start V
-              1.0);          // End V
-
-  // Draw wireframe
-  glEvalMesh2(GL_POINT,0, width, 0, height);
-
-  glDisable(GL_MAP2_VERTEX_3);
-
-  delete [] vinfo;
-}
-
-void DLFLFaceVertex :: renderPatchWireframe(void) const
-{
-  int width,  // Order of patch width plus 1
-      height, // Order of patch height plus 1
-      depth;  // Number of values, such as 3 xyz, rgb, normal components etc
-  float* vinfo = createPatchInfoArray(width,height,depth);
-
-  if (!vinfo)
-    return;
-
-  fillPatchVertexArray(vinfo,width,height,depth);
-
-  glMap2f(GL_MAP2_VERTEX_3,  // Map vertex information
-          0.0,               // Minimum U
-          1.0,               // Maximum U
-          3,                 // U-stride
-          width,             // U-order
-          0.0,               // Minimum V
-          1.0,               // Maximum V
-          3*height,          // V-stride
-          height,
-          &vinfo[0]);
-  glEnable(GL_MAP2_VERTEX_3);
-  glMapGrid2f(width,         // U segments
-              0.0,           // Start U
-              1.0,           // End U
-              height,        // V segments
-              0.0,           // Start V
-              1.0);          // End V
-
-  // Draw wireframe
-  glEvalMesh2(GL_LINE,0, width, 0, height);
-
-  glDisable(GL_MAP2_VERTEX_3);
-
-  delete [] vinfo;
-}
-
-void DLFLFaceVertex :: renderPatch(void) const
-{
-  //cout << "DLFLFaceVertex::renderPatch " << *vertex << endl;
-  int width,  // Order of patch width plus 1
-      height, // Order of patch height plus 1
-      depth;  // Number of values, such as 3 xyz, rgb, normal components etc
-  float* vinfo = createPatchInfoArray(width,height,depth);
-
-  if (!vinfo)
-    return;
-
-  fillPatchVertexArray(vinfo,width,height,depth);
-  glMap2f(GL_MAP2_VERTEX_3,  // Map vertex information
-          0.0,               // Minimum U
-          1.0,               // Maximum U
-          3,                 // U-stride
-          width,             // U-order
-          0.0,               // Minimum V
-          1.0,               // Maximum V
-          3*height,          // V-stride
-          height,
-          &vinfo[0]);
-  glEnable(GL_MAP2_VERTEX_3);
-  glMapGrid2f(width,         // U segments
-              0.0,           // Start U
-              1.0,           // End U
-              height,        // V segments
-              0.0,           // Start V
-              1.0);          // End V
-
-
-  // Draw filled polygons
-  glColor3f(0.75,0.75,0.75);
-  glEvalMesh2(GL_FILL, 0, width, 0, height);
-
-  glEnd();
-  glPointSize(1.0);
-
-  glDisable(GL_MAP2_VERTEX_3);
-
-  delete [] vinfo;
-}
-
-float* DLFLFaceVertex :: createPatchInfoArray(int& w, int& h, int& d) const
-{
-  // Need to scale size according to bezier order
-  if (this->getEdgePtr()->getControlPointForwardArray1().size() == 0)
-    return NULL; // Object has not had bezierDefaults() or equivalent method called!!!
- 
-  w = this->getEdgePtr()->getControlPointForwardArray1().size()+2;
-  h = this->getEdgePtr()->getControlPointForwardArray1().size()+2;
-  d = 3;
-  return new float[w*h*d];
-}
-
-void DLFLFaceVertex :: fillPatchVertexArray(float* vinfo, int w, int h, int d) const
-{
-  int width=w,  // Order of patch width plus 1
-      height=h, // Order of patch height plus 1
-      depth=d;  // Number of values, such as 3 xyz, rgb, normal components etc
-
-  // Copy control point info into the vertex array
-
-  // Fill in this face vertex information
-  DLFLControlPoint cp;
-
-  for (int j=1; j < height-1; ++j)
-    for (int i=1; i < width-1; ++i)
-  {
-    cp = cpArray[(j-1)*(width-2)+(i-1)];
-    vinfo[indexPatchInfo(i,j,0)] = cp[0];
-    vinfo[indexPatchInfo(i,j,1)] = cp[1];
-    vinfo[indexPatchInfo(i,j,2)] = cp[2];
-  }
-
-  // Set vertex
-  cp = vertex->getCoords();
-  vinfo[indexPatchInfo(0,0,0)] = cp[0];
-  vinfo[indexPatchInfo(0,0,1)] = cp[1];
-  vinfo[indexPatchInfo(0,0,2)] = cp[2];
-
-  // Set face vertex
-  cp = this->getFacePtr()->getGeomCentroid();
-  vinfo[indexPatchInfo(width-1,height-1,0)] = cp[0];
-  vinfo[indexPatchInfo(width-1,height-1,1)] = cp[1];
-  vinfo[indexPatchInfo(width-1,height-1,2)] = cp[2];
-
-  // Fill in edge info
-  DLFLControlPoint edgeVertex = this->getEdgePtr()->getCentroid();
-
-  vinfo[indexPatchInfo(width-1,0,0)] = edgeVertex[0];
-  vinfo[indexPatchInfo(width-1,0,1)] = edgeVertex[1];
-  vinfo[indexPatchInfo(width-1,0,2)] = edgeVertex[2];
-
-  DLFLEdgePtr ecurrent = this->getEdgePtr();
-  DLFLControlPointArray fwcpArray1, fwcpArray2, bkcpArray1, bkcpArray2;
-
-  if (this == ecurrent->getFaceVertexPtr1())
-  {
-    fwcpArray1 = ecurrent->getControlPointForwardArray1();
-    fwcpArray2 = ecurrent->getControlPointForwardArray2();  
-  }
-  else
-  {
-    fwcpArray1 = ecurrent->getControlPointBackwardArray1();
-    fwcpArray2 = ecurrent->getControlPointBackwardArray2();
-  }
-  
-  for (int i=1; i < width-1; ++i)
-  {
-    cp = fwcpArray1[i-1];
-    vinfo[indexPatchInfo(i,0,0)] = cp[0];
-    vinfo[indexPatchInfo(i,0,1)] = cp[1];
-    vinfo[indexPatchInfo(i,0,2)] = cp[2];
-  }
-
-  for (int j=1; j < height-1; ++j)
-  {
-    cp = fwcpArray2[j-1];
-    vinfo[indexPatchInfo(width-1,j,0)] = cp[0];
-    vinfo[indexPatchInfo(width-1,j,1)] = cp[1];
-    vinfo[indexPatchInfo(width-1,j,2)] = cp[2];   
-  }
-
-  ecurrent = this->prev()->getEdgePtr();
-
-  edgeVertex = ecurrent->getCentroid();
-  vinfo[indexPatchInfo(0,height-1,0)] = edgeVertex[0];
-  vinfo[indexPatchInfo(0,height-1,1)] = edgeVertex[1];
-  vinfo[indexPatchInfo(0,height-1,2)] = edgeVertex[2];
-
-  if (this->prev() == ecurrent->getFaceVertexPtr1())
-  {
-    bkcpArray1 = ecurrent->getControlPointBackwardArray1();
-    bkcpArray2 = ecurrent->getControlPointForwardArray2();
-  }
-  else
-  {
-    bkcpArray1 = ecurrent->getControlPointForwardArray1();
-    bkcpArray2 = ecurrent->getControlPointBackwardArray2();
-  }
-
-  for (int i=1; i < width-1; ++i)
-  {
-    cp = bkcpArray2[i-1];
-    vinfo[indexPatchInfo(i,height-1,0)] = cp[0];
-    vinfo[indexPatchInfo(i,height-1,1)] = cp[1];
-    vinfo[indexPatchInfo(i,height-1,2)] = cp[2];
-  }
-
-  for (int j=1; j < height-1; ++j)
-  {
-    cp = bkcpArray1[j-1];
-    vinfo[indexPatchInfo(0,j,0)] = cp[0];
-    vinfo[indexPatchInfo(0,j,1)] = cp[1];
-    vinfo[indexPatchInfo(0,j,2)] = cp[2];   
-  }
-}
-
-int DLFLFaceVertex :: indexPatchInfo(int w, int h, int d) const
-{
-  // Need to scale according to bezier order
-  return w*12 + h*3 + d;
 }
 
    // Do a glVertex on this vertex, using the normal and with color
@@ -646,7 +409,10 @@ void glVertexCNT(const DLFLFaceVertex& dfv)
        double x,y,z; dfv.normal.get(x,y,z);
        glNormal3f(x,y,z);
        glColor(dfv.color);
-       glTexCoord2d(dfv.texcoord[0],dfv.texcoord[1]);
+       if ( DLFLRenderer::isReversed() )
+          glTexCoord2d(1.0-dfv.texcoord[0],1.0-dfv.texcoord[1]);
+       else
+          glTexCoord2d(1.0-dfv.texcoord[0],1.0-dfv.texcoord[1]);
        glVertex(*(dfv.vertex));
      }
 }
@@ -657,7 +423,10 @@ void glVertexNT(const DLFLFaceVertex& dfv)
      {
        double x,y,z; dfv.normal.get(x,y,z);
        glNormal3f(x,y,z);
-       glTexCoord2d(dfv.texcoord[0],dfv.texcoord[1]);
+       if ( DLFLRenderer::isReversed() )
+          glTexCoord2d(1.0-dfv.texcoord[0],1.0-dfv.texcoord[1]);
+       else
+          glTexCoord2d(dfv.texcoord[0],dfv.texcoord[1]);
        glVertex(*(dfv.vertex));
      }
 }
@@ -667,7 +436,10 @@ void glVertexCT(const DLFLFaceVertex& dfv)
   if ( dfv.vertex )
      {
        glColor(dfv.color);
-       glTexCoord2d(dfv.texcoord[0],dfv.texcoord[1]);
+       if ( DLFLRenderer::isReversed() )
+          glTexCoord2d(1.0-dfv.texcoord[0],1.0-dfv.texcoord[1]);
+       else
+          glTexCoord2d(dfv.texcoord[0],dfv.texcoord[1]);
        glVertex(*(dfv.vertex));
      }
 }
@@ -676,7 +448,10 @@ void glVertexOFVT(const DLFLFaceVertex& dfv)
 {
   if ( dfv.vertex )
      {
-       glTexCoord2d(dfv.texcoord[0],dfv.texcoord[1]);
+       if ( DLFLRenderer::isReversed() )
+          glTexCoord2d(1.0-dfv.texcoord[0],1.0-dfv.texcoord[1]);
+       else
+          glTexCoord2d(dfv.texcoord[0],dfv.texcoord[1]);
        glVertex(*(dfv.vertex));
      }
 }

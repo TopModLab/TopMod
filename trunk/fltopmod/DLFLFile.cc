@@ -376,7 +376,7 @@ void DLFLObject :: readDLFL(istream& i, bool clearold)
             i >> fvindex1 >> fvindex2; readTillEOL(i);
 
                // Set the ends of the edge using the face vertex array
-            neweptr->setFaceVertexPointers(face_vertex_array[fvindex1],face_vertex_array[fvindex2]);
+            neweptr->setFaceVertexPointers(face_vertex_array[fvindex1],face_vertex_array[fvindex2],false);
 
                // Update the EdgePtr fields of the face vertices
             neweptr->updateFaceVertices();

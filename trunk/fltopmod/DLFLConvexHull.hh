@@ -73,24 +73,25 @@ class DLFLConvexHull : public DLFLObject
             vertices[i].point = p[i];
        }
 
+  private :
         // Copy constructor
      DLFLConvexHull(const DLFLConvexHull& dchull)
-       : DLFLObject(dchull), vertices(dchull.vertices)
+       : DLFLObject(), vertices(dchull.vertices)
        {}
 
+  public :
         // Destructor
      ~DLFLConvexHull()
        {}
 
+  private :
         // Assignment operator
      DLFLConvexHull& operator = (const DLFLConvexHull& dchull)
        {
-         DLFLObject::operator = (dchull);
-         vertices = dchull.vertices;
          return (*this);
        }
 
-
+  public :
         // Create a convex hull from given list of vertices
         // Old object is destroyed
      bool createHull(const Vector3dArray& p);

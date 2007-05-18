@@ -10,7 +10,6 @@
 #include <list>
 #include <algorithm>
 #include <iterator>
-#include <GL/glut.h>
 #include <GL/gl.h>
 #include <Vector2d.hh>
 #include <Vector3d.hh>
@@ -27,13 +26,13 @@
 
 // strstream is deprecated in the new standard.
 // The GNU compiler complies with this but the SGI compiler doesn't
-//#ifdef HAVE_SSTREAM
+#ifdef __GNUG__
 #include <sstream>
 typedef stringstream StringStream;
-//#else
-//#include <strstream.h>
-//typedef strstream StringStream;
-//#endif
+#else
+#include <strstream.h>
+typedef strstream StringStream;
+#endif
 
 #ifdef __GNUG__
 #include <fstream>
@@ -53,22 +52,18 @@ class DLFLEdge;
 class DLFLFace;
 class DLFLObject;
 class DLFLMaterial;
-class DLFLLocator;  // brianb
+class TMPatch;
+class TMPatchFace;
 
 typedef DLFLVertex * DLFLVertexPtr;
-typedef DLFLLocator * DLFLLocatorPtr; // brianb
 typedef DLFLFaceVertex * DLFLFaceVertexPtr;
 typedef DLFLEdge * DLFLEdgePtr;
 typedef DLFLFace * DLFLFacePtr;
 typedef DLFLObject * DLFLObjectPtr;
 typedef DLFLMaterial * DLFLMaterialPtr;
+typedef TMPatch * TMPatchPtr;
+typedef TMPatchFace * TMPatchFacePtr;
 
-typedef Vector3d DLFLControlPoint;                         // brianb
-typedef vector<DLFLControlPoint> DLFLControlPointArray; 
-typedef vector<DLFLControlPoint> DLFLControlPoint2dArray;
-
-typedef vector<DLFLLocator> DLFLLocatorArray;        // brianb
-typedef vector<DLFLLocatorPtr> DLFLLocatorPtrArray;  
 typedef vector<DLFLVertex> DLFLVertexArray;
 typedef vector<DLFLVertexPtr> DLFLVertexPtrArray;
 typedef list<DLFLVertex> DLFLVertexList;
@@ -104,21 +99,43 @@ typedef vector<LightPtr> LightPtrArray;
 typedef list<Light> LightList;
 typedef list<LightPtr> LightPtrList;
 
+
+typedef vector<Vector4d> Vector4dArray;
+typedef vector<Vector4dPtr> Vector4dPtrArray;
+typedef list<Vector4d> Vector4dList;
+typedef list<Vector4dPtr> Vector4dPtrList;
+
+typedef vector<Vector4dArray> Vector4dGrid;
+typedef vector<Vector4dPtrArray> Vector4dPtrGrid;
+
+
 typedef vector<Vector3d> Vector3dArray;
 typedef vector<Vector3dPtr> Vector3dPtrArray;
 typedef list<Vector3d> Vector3dList;
 typedef list<Vector3dPtr> Vector3dPtrList;
+
+typedef vector<Vector3dArray> Vector3dGrid;
+typedef vector<Vector3dPtrArray> Vector3dPtrGrid;
+
 
 typedef vector<Vector2d> Vector2dArray;
 typedef vector<Vector2dPtr> Vector2dPtrArray;
 typedef list<Vector2d> Vector2dList;
 typedef list<Vector2dPtr> Vector2dPtrList;
 
+typedef vector<Vector2dArray> Vector2dGrid;
+typedef vector<Vector2dPtrArray> Vector2dPtrGrid;
+
 typedef vector<double> DoubleArray;
 typedef list<double> DoubleList;
 
+typedef vector<DoubleArray> DoubleGrid;
+
 typedef vector<int> IntArray;
 typedef list<int> IntList;
+
+typedef vector<IntArray> IntGrid;
+
 
 // Define some types/flags needed for subdivision surfaces and other operations
 
@@ -133,6 +150,7 @@ enum DLFLFaceVertexType { FVTNormal=0, FVTNew=1, FVTWire=2  };
 enum DLFLEdgeType { ETNormal=0, ETNew=1, ETCollapse=2, ETCollapseAux=3,
                     ETOriginal=4, ETChull=5, ETdoNotDelete=6, ETdoDelete=7 };
 enum DLFLFaceType { FTNormal=0, FTNew=1, FTHole=2, FTHoleInside=3, FTWire=4 };
+
 
 //-- Common utility functions --//
 
@@ -161,7 +179,6 @@ void erase_dep(DLFLEdgePtr ep);
 void erase_dfp(DLFLFacePtr fp);
 void erase_dop(DLFLObjectPtr op);
 void erase_dmp(DLFLMaterialPtr mp);
-void erase_dlp(DLFLLocatorPtr lp);  // brianb
 
 void clear(DLFLVertexPtrArray& vparray);
 void clear(DLFLFaceVertexPtrArray& fvparray);

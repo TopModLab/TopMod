@@ -8,13 +8,6 @@
 
 uint DLFLEdge :: suLastID = 0;
 
-    // Compute center between the two vertices
-void DLFLEdge :: geomCentroid(void)
-{
-  centroid = (fvpV1->getVertexPtr()->getCoords() +
-              fvpV2->getVertexPtr()->getCoords()) / 2.0;
-}
-
 void DLFLEdge :: dump(ostream& o) const
 {
   o << "DLFLEdge" << endl
@@ -23,6 +16,23 @@ void DLFLEdge :: dump(ostream& o) const
     << "  fvpV2 : " << fvpV2 << endl
 //    << "  Type : " << etType << endl
     << endl;
+}
+
+   // Update the mid point for this edge
+void DLFLEdge :: updateMidPoint(void)
+{
+  if ( fvpV1 != NULL && fvpV2 != NULL ) midpoint = 0.5 * (fvpV1->getVertexCoords() + fvpV2->getVertexCoords());
+}
+
+   // Update the edge normal - average of normals at the 4 corners adjacent to this edge
+void DLFLEdge :: updateNormal(void)
+{
+  if ( fvpV1 != NULL && fvpV2 != NULL )
+     {
+       normal = fvpV1->computeNormal() + fvpV1->next()->computeNormal() +
+		fvpV2->computeNormal() + fvpV2->next()->computeNormal();
+       normalize(normal);
+     }
 }
 
    // Reverse the DLFL edge. Update face-vertex pointers appropriately
@@ -68,14 +78,6 @@ bool coFacial(DLFLEdgePtr ep1, DLFLEdgePtr ep2)
   return cofacial;
 }
 
-
-Vector3d DLFLEdge :: getMidPoint(void) const
-{
-  Vector3d p1,p2;
-  p1 = fvpV1->getVertexCoords(); p2 = fvpV2->getVertexCoords();
-  return (p1+p2)/2.0;
-}
-
 void DLFLEdge :: getEndPoints(Vector3d& p1, Vector3d& p2) const
 {
   p1 = fvpV1->getVertexCoords(); p2 = fvpV2->getVertexCoords();
@@ -118,6 +120,24 @@ DLFLVertexPtr DLFLEdge :: getOtherVertexPointer(DLFLVertexPtr vptr)
   if ( fvpV1->getVertexPtr() == vptr ) return fvpV2->getVertexPtr();
   else if ( fvpV2->getVertexPtr() == vptr ) return fvpV1->getVertexPtr();
   return NULL;
+}
+
+void DLFLEdge :: getEFCorners(DLFLFaceVertexPtrArray& corners)
+{
+  corners.resize(4);
+  corners[0] = fvpV1->next();
+  corners[1] = fvpV1;
+  corners[2] = fvpV2->next();
+  corners[3] = fvpV2;
+}
+
+void DLFLEdge :: getEFCornersAuxCoords(Vector3dArray& coords)
+{
+  coords.resize(4);
+  coords[0] = fvpV1->next()->getAuxCoords();
+  coords[1] = fvpV1->getAuxCoords();
+  coords[2] = fvpV2->next()->getAuxCoords();
+  coords[3] = fvpV2->getAuxCoords();
 }
 
    // Equality operator - two edges are equal if they have the same 2 end-points
@@ -416,6 +436,28 @@ Vector3d DLFLEdge :: getEdgeNormal(DLFLFaceVertexPtr fvptr) const
   enormal = normal % edge_vector;
 
   return enormal;
+}
+
+Vector3d DLFLEdge :: averageVertexNormal(void) const
+{
+  Vector3d avn;
+
+  avn = fvpV1->getVertexPtr()->averageNormal();
+  avn += fvpV2->getVertexPtr()->averageNormal();
+
+  normalize(avn);
+
+  return avn;
+}
+
+Vector3d DLFLEdge :: averageCornerNormal(void) const
+{
+  Vector3d acn;
+
+  acn = fvpV1->computeNormal() + fvpV2->computeNormal();
+  normalize(acn);
+
+  return acn;
 }
 
 // Render the DLFLEdge as a line segment

@@ -33,6 +33,7 @@ class DLFLFace
      DLFLMaterialPtr       matl_ptr;                   // Pointer to material for this face
      DLFLFaceType          ftType;                     // For use in subdivision surfaces
      Vector3d              auxcoords;                  // Coords for use during subdivs, etc.
+     Vector3d              auxnormal;                  // Extra storage for normal
 
   public :
      
@@ -91,8 +92,15 @@ class DLFLFace
         // Get all sums
      void getSums(Vector3d& sumg, Vector2d& sumtc, RGBColor& sumc, Vector3d& sumn) const;
 
+	// Update the centroid of this face
+     void updateCentroid(void);
+     
         // Update the centroid of this face and return it
-     Vector3d geomCentroid(void);
+     Vector3d geomCentroid(void)
+     {
+       updateCentroid();
+       return centroid;
+     }
 
         // Compute the texture centroid
      Vector2d textureCentroid(void) const;
@@ -100,8 +108,15 @@ class DLFLFace
         // Compute the color centroid
      RGBColor colorCentroid(void) const;
 
+	// Update the normal of this face
+     void updateNormal(void);
+     
         // Compute the normal centroid
-     Vector3d normalCentroid(void) const;
+     Vector3d normalCentroid(void)
+     {
+       updateNormal();
+       return normal;
+     }
 
         // Compute the normal for this face and send it to the face-vertices
      Vector3d computeNormal(void);
@@ -110,10 +125,6 @@ class DLFLFace
         // Don't do any averaging, etc.
      void storeNormals(void);
      
-     Vector3d getGeomCentroid(void) const {
-       return centroid;
-     }
-
         // Compute all centroids
      void getCentroids(Vector3d& cen, Vector2d& texc, RGBColor& colc, Vector3d& nc) const;
 
@@ -138,6 +149,21 @@ class DLFLFace
        {
          return auxcoords;
        }
+
+     Vector3d getAuxNormal(void) const
+       {
+         return auxnormal;
+       }
+     
+     Vector3d getNormal(void) const
+     {
+       return normal;
+     }
+
+     Vector3d getCentroid(void) const
+     {
+       return centroid;
+     }
 
         //--- Mutative Functions ---//
 
@@ -215,14 +241,29 @@ class DLFLFace
          auxcoords = p;
        }
 
+     void setAuxNormal(const Vector3d& n)
+       {
+         auxnormal = n;
+       }
+     
      void addToAuxCoords(const Vector3d& p)
        {
          auxcoords += p;
        }
 
+     void addToAuxNormal(const Vector3d& n)
+       {
+         auxnormal += n;
+       }
+     
      void resetAuxCoords(void)
        {
          auxcoords.reset();
+       }
+
+     void resetAuxNormal(void)
+       {
+         auxnormal.reset();
        }
      
      uint size(void) const;                             // No. of vertices in this face
@@ -266,6 +307,9 @@ class DLFLFace
         // Get the corners in the face. Stores the existing DLFLFaceVertexPtr's in the face
         // into the array
      void getCorners(DLFLFaceVertexPtrArray& corners);
+
+        // Get the corners and the coordinates
+     void getCornersAndCoords(DLFLFaceVertexPtrArray& corners, Vector3dArray& coords);
 
         // Does this Face contain the given face-vertex?
      bool contains(DLFLFaceVertexPtr dfvp);
@@ -420,21 +464,6 @@ class DLFLFace
        }
 
      void for_each(void (*func)(DLFLFaceVertexPtr)) const;
-         
-     void renderPatches(void) const
-       {
-         for_each(facevertexpatchrender);
-       }
-
-     void renderPatchWireframe(void) const
-       {
-         for_each(facevertexpatchwireframe);
-       }
-
-     void renderPatchVertices(void) const
-       {
-         for_each(facevertexpatchvertices);
-       }
 
      void render_FVN(void) const                       // Render using FV normals
        {
@@ -626,21 +655,6 @@ class DLFLFace
      friend void facerender_FVT(const DLFLFacePtr& face)
        {
          face->render_FVT();
-       }
-
-     friend void facepatchrender(const DLFLFacePtr& face)
-       {
-         face->renderPatches();
-       }
-
-     friend void facepatchwireframe(const DLFLFacePtr& face)
-       {
-         face->renderPatchWireframe();
-       }
-
-     friend void facepatchvertices(const DLFLFacePtr& face)
-       {
-         face->renderPatchVertices();
        }
 
      friend void facerender(const DLFLFacePtr& face)

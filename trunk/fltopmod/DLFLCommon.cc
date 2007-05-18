@@ -15,11 +15,6 @@ void erase_dvp(DLFLVertexPtr vp)
   delete vp;
 }
 
-void erase_dlp(DLFLLocatorPtr lp)  // brianb
-{
-  delete lp;
-}
-
 void erase_dfvp(DLFLFaceVertexPtr fvp)
 {
   delete fvp;

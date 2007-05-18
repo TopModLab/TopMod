@@ -33,8 +33,7 @@ class DLFLRenderer
   public :
 
         /* Enumeration for render flags */
-     enum RenderFlags { ShowWireframe=1, ShowSilhouette=2, ShowVertices=4, 
-                        ShowPatchWireframe=8, ShowPatchVertices=16 };
+     enum RenderFlags { ShowWireframe=1, ShowSilhouette=2, ShowVertices=4, ShowNormals=8 };
 
   protected :
      
@@ -79,20 +78,20 @@ class DLFLRenderer
          DLFLRenderer::render_flags ^= ShowVertices;
        }
 
-     void togglePatchWireframe(void)
+     void toggleNormals(void)
        {
-         DLFLRenderer::render_flags ^= ShowPatchWireframe;
-       }
-
-     void togglePatchVertices(void)
-       {
-         DLFLRenderer::render_flags ^= ShowPatchVertices;
+         DLFLRenderer::render_flags ^= ShowNormals;
        }
 
      void toggleObjectOrientation(void)
        {
          if ( DLFLRenderer::reverse_object ) DLFLRenderer::reverse_object = false;
          else DLFLRenderer::reverse_object = true;
+       }
+
+     static bool isReversed(void)
+       {
+         return DLFLRenderer::reverse_object;
        }
 
         /* Get the render flags */
@@ -154,23 +153,7 @@ class DLFLRenderer
        {
          glColor3f(0.5,1.0,0.0);
          glDepthRange(0.0,1.0-0.00075);
-         object->renderVertices(5.0);
-       }
-
-     static void drawPatchWireframe(DLFLObjectPtr object)
-       {
-         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-         glColor3f(0.1,0.1,0.2);
-         glDepthRange(0.0,1.0-0.0005);
-         object->renderPatchWireframe();
-       }
-
-     static void drawPatchVertices(DLFLObjectPtr object)
-       {
-         glPolygonMode(GL_FRONT_AND_BACK,GL_POINT); 
-         glColor3f(1.0,1.0,0.0);
-         glDepthRange(0.0,1.0-0.00075);
-         object->renderPatchVertices(5.0);
+	 object->renderVertices(5.0);
        }
 
         /*
@@ -182,8 +165,6 @@ class DLFLRenderer
          if ( DLFLRenderer::render_flags & ShowWireframe ) DLFLRenderer::drawWireframe(object);
          if ( DLFLRenderer::render_flags & ShowSilhouette ) DLFLRenderer::drawSilhouette(object);
          if ( DLFLRenderer::render_flags & ShowVertices ) DLFLRenderer::drawVertices(object);
-//         if ( DLFLRenderer::render_flags & ShowPatchWireframe) DLFLRenderer::drawPatchWireframe(object);
-//         if ( DLFLRenderer::render_flags & ShowPatchVertices) DLFLRenderer::drawPatchVertices(object);
        }
 };
 

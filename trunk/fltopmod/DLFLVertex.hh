@@ -39,6 +39,8 @@ class DLFLVertex
                                                        // refer to this DLFLVertex
      DLFLVertexType        vtType;                     // For use in subdivision surfaces
      Vector3d              auxcoords;                  // Coords for use during subdivs, etc.
+     Vector3d              auxnormal;                  // Extra storage for normal
+     Vector3d              normal;                     // Average normal at this vertex
 
         // Assign a unique ID for this instance
      void assignID(void)
@@ -51,21 +53,21 @@ class DLFLVertex
      
         // Default constructor
      DLFLVertex()
-       : coords(), flags(0), fvpList(), vtType(VTNormal), auxcoords()
+       : coords(), flags(0), fvpList(), vtType(VTNormal), auxcoords(), auxnormal(), normal()
        {
          assignID();
        }
 
         // 1 argument constructor
      DLFLVertex(const Vector3d& vec)
-       : coords(vec), flags(0), fvpList(), vtType(VTNormal), auxcoords()
+       : coords(vec), flags(0), fvpList(), vtType(VTNormal), auxcoords(), auxnormal(), normal()
        {
          assignID();
        }
 
         // 3 argument constructor
      DLFLVertex(double x, double y, double z)
-       : coords(x,y,z), flags(0), fvpList(), vtType(VTNormal), auxcoords()
+       : coords(x,y,z), flags(0), fvpList(), vtType(VTNormal), auxcoords(), auxnormal(), normal()
        {
          assignID();
        }
@@ -74,7 +76,7 @@ class DLFLVertex
      DLFLVertex(const DLFLVertex& dv)
        : coords(dv.coords), flags(dv.flags),
          uID(dv.uID), index(dv.index), fvpList(dv.fvpList), vtType(dv.vtType),
-         auxcoords(dv.auxcoords)
+         auxcoords(dv.auxcoords), auxnormal(dv.auxnormal), normal(dv.normal)
        {}
 
         // Destructor
@@ -86,7 +88,7 @@ class DLFLVertex
        {
          coords = dv.coords; flags = dv.flags;
          uID = dv.uID; index = dv.index; fvpList = dv.fvpList; vtType = dv.vtType;
-         auxcoords = dv.auxcoords;
+         auxcoords = dv.auxcoords; auxnormal = dv.auxnormal; normal = dv.normal;
          return (*this);
        }
 
@@ -101,7 +103,8 @@ class DLFLVertex
 
      void reset(void)
        {
-         coords.reset(); flags = 0; fvpList.clear(); vtType = VTNormal; auxcoords.reset();
+         coords.reset(); flags = 0; fvpList.clear(); vtType = VTNormal;
+         auxcoords.reset(); auxnormal.reset(); normal.reset();
        }
 
      void makeUnique(void)
@@ -163,6 +166,16 @@ class DLFLVertex
          return auxcoords;
        }
 
+     Vector3d getAuxNormal(void) const
+       {
+         return auxnormal;
+       }
+     
+     Vector3d getNormal(void) const
+       {
+         return normal;
+       }
+
         //--- Mutative functions ---//
 
      void setType(DLFLVertexType type)
@@ -199,34 +212,55 @@ class DLFLVertex
          auxcoords = p;
        }
 
+     void setAuxNormal(const Vector3d& n)
+       {
+         auxnormal = n;
+       }
+     
         // Add to the aux coords
      void addToAuxCoords(const Vector3d& p)
        {
          auxcoords += p;
        }
 
+     void addToAuxNormal(const Vector3d& n)
+       {
+         auxnormal += n;
+       }
+     
         // Reset the aux coords
      void resetAuxCoords(void)
        {
          auxcoords.reset();
        }
-     
+
+     void resetAuxNormal(void)
+       {
+         auxnormal.reset();
+       }
+           
         // Set the texture coordinates for all FaceVertexes referring to this vertex
      void setTexCoords(const Vector2d& texcoord);
 
         // Set the color values for all FaceVertexes referring to this vertex
      void setColor(const RGBColor& color);
 
-        // Set the normals for all FaceVertexes referring to this vertex
-     void setNormal(const Vector3d& normal);
+        // Set the normal for this vertex directly
+     void setNormal(const Vector3d& n)
+       {
+         normal = n; normalize(normal);
+       }
 
-        // Compute normals for all FaceVertexes referring to this vertex, average them
-        // and set their normals to be the average if flag is true. Returns the normal
-     Vector3d computeNormal(bool set=false);
+        // If flag is true recompute normals for all FaceVertexes referring to this vertex,
+        // Update the vertex normal. Returns the vertex normal
+     Vector3d updateNormal(bool recompute=true);
 
-        // Compute the average of the normals of all facevertices referring to this vertex
-        // Assumes that normals have already been computed for all facevertices
-     Vector3d averageNormal(void);
+        // Retained for backward compatibility
+        // Same as updateNormal but doesn't recompute the corner normals
+     Vector3d averageNormal(void)
+       {
+         return updateNormal(false);
+       }
 
         // Get normals of all corners referring to this vertex. Returns average normal
      Vector3d getNormals(Vector3dArray& normals);
@@ -272,6 +306,20 @@ class DLFLVertex
 
         // Create an array of FaceVertexes which share this Vertex.
      void getFaceVertices(DLFLFaceVertexPtrArray& fvparray);
+     void getOrderedFaceVertices(DLFLFaceVertexPtrArray& fvparray);
+     
+     void getCorners(DLFLFaceVertexPtrArray& fvparray)
+       {
+         getFaceVertices(fvparray);
+       }
+     void getOrderedCorners(DLFLFaceVertexPtrArray& fvparray)
+       {
+         getOrderedFaceVertices(fvparray);
+       }
+     
+        // Get the aux coords from all corners which share this Vertex
+     void getCornerAuxCoords(Vector3dArray& coords) const;
+     void getOrderedCornerAuxCoords(Vector3dArray& coords) const;
 
         // Create an array of Faces which share this Vertex
      void getFaces(DLFLFacePtrArray& fparray);

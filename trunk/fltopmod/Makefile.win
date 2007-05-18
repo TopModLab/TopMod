@@ -5,11 +5,11 @@ CPP  = g++.exe
 CC   = gcc.exe
 WINDRES = windres.exe
 RES  = 
-OBJ  = DLFLApp.o DLFLAppWindow.o DLFLAppWindowCallbacks.o DLFLAppWindowRemeshingCallbacks.o DLFLAppWindowRemeshingTiles.o DLFLAux.o DLFLBase.o DLFLCommon.o DLFLConnect.o DLFLConvexHull.o DLFLCrust.o DLFLDual.o DLFLEdge.o DLFLExtrude.o DLFLFace.o DLFLFaceVertex.o DLFLFile.o DLFLFileAlt.o DLFLLighting.o DLFLMeshSmooth.o DLFLMultiConnect.o DLFLObject.o DLFLPlanarize.o DLFLRenderer.o DLFLSelection.o DLFLSpheralize.o DLFLStandardObjects.o DLFLSubdiv.o DLFLUndo.o DLFLVertex.o DLFLViewport.o DLFLWindow.o DLFLLocator.o TMBezierPatch.o TMBezierSurface.o $(RES)
-LINKOBJ  = DLFLApp.o DLFLAppWindow.o DLFLAppWindowCallbacks.o DLFLAppWindowRemeshingCallbacks.o DLFLAppWindowRemeshingTiles.o DLFLAux.o DLFLBase.o DLFLCommon.o DLFLConnect.o DLFLConvexHull.o DLFLCrust.o DLFLDual.o DLFLEdge.o DLFLExtrude.o DLFLFace.o DLFLFaceVertex.o DLFLFile.o DLFLFileAlt.o DLFLLighting.o DLFLMeshSmooth.o DLFLMultiConnect.o DLFLObject.o DLFLPlanarize.o DLFLRenderer.o DLFLSelection.o DLFLSpheralize.o DLFLStandardObjects.o DLFLSubdiv.o DLFLUndo.o DLFLVertex.o DLFLViewport.o DLFLWindow.o DLFLLocator.o TMBezierPatch.o TMBezierSurface.o $(RES)
-LIBS =  -L"C:/Dev-Cpp/lib" -L"C:/Topmod/lib" -lopengl32 -lglu32 -lglut32 -lfltk_images -ljpeg -lpng -lz -lfltk_gl -lfltk -larcball -lopengl32 -lglu32 -lglut32 -lvecmat -lOBJ -lm -lole32 -luuid -lcomctl32 -lwsock32 -lm -lwinmm -lgdi32  
-INCS =  -I"C:/Dev-Cpp/include"  -I"C:/Topmod/include"  -I"C:/Dev-Cpp/include/FL" 
-CXXINCS =  -I"C:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/Dev-Cpp/include/c++/3.4.2"  -I"C:/Dev-Cpp/include"  -I"C:/Topmod/include"  -I"C:/Dev-Cpp/include/FL" 
+OBJ  = DLFLApp.o DLFLAppWindow.o DLFLAppWindowCallbacks.o DLFLAppWindowRemeshingCallbacks.o DLFLAppWindowRemeshingTiles.o DLFLAux.o DLFLBase.o DLFLCommon.o DLFLConnect.o DLFLConvexHull.o DLFLCrust.o DLFLDual.o DLFLEdge.o DLFLExtrude.o DLFLFace.o DLFLFaceVertex.o DLFLFile.o DLFLFileAlt.o DLFLLighting.o DLFLMeshSmooth.o DLFLMultiConnect.o DLFLObject.o DLFLPlanarize.o DLFLRenderer.o DLFLSelection.o DLFLSpheralize.o DLFLStandardObjects.o DLFLSubdiv.o DLFLUndo.o DLFLVertex.o DLFLViewport.o DLFLWindow.o TMBezierPatch.o TMBezierSurface.o $(RES)
+LINKOBJ  = DLFLApp.o DLFLAppWindow.o DLFLAppWindowCallbacks.o DLFLAppWindowRemeshingCallbacks.o DLFLAppWindowRemeshingTiles.o DLFLAux.o DLFLBase.o DLFLCommon.o DLFLConnect.o DLFLConvexHull.o DLFLCrust.o DLFLDual.o DLFLEdge.o DLFLExtrude.o DLFLFace.o DLFLFaceVertex.o DLFLFile.o DLFLFileAlt.o DLFLLighting.o DLFLMeshSmooth.o DLFLMultiConnect.o DLFLObject.o DLFLPlanarize.o DLFLRenderer.o DLFLSelection.o DLFLSpheralize.o DLFLStandardObjects.o DLFLSubdiv.o DLFLUndo.o DLFLVertex.o DLFLViewport.o DLFLWindow.o TMBezierPatch.o TMBezierSurface.o $(RES)
+LIBS =  -L"C:/Dev-Cpp/lib" -L"lib" -lopengl32 -lglu32 -lglut32 -lfltk_images -ljpeg -lpng -lz -lfltk_gl -lfltk -larcball -lopengl32 -lglu32 -lglut32 -lvecmat -lOBJ -lm -lole32 -luuid -lcomctl32 -lwsock32 -lm -lwinmm -lgdi32  
+INCS =  -I"C:/Dev-Cpp/include"  -I"include"  -I"C:/Dev-Cpp/include/FL" 
+CXXINCS =  -I"C:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/Dev-Cpp/include/c++/3.4.2"  -I"C:/Dev-Cpp/include"  -I"include"  -I"C:/Dev-Cpp/include/FL" 
 BIN  = Topmod.exe
 CXXFLAGS = $(CXXINCS)  
 CFLAGS = $(INCS)  
@@ -121,9 +121,6 @@ DLFLViewport.o: DLFLViewport.cc
 
 DLFLWindow.o: DLFLWindow.cc
 	$(CPP) -c DLFLWindow.cc -o DLFLWindow.o $(CXXFLAGS)
-
-DLFLLocator.o: DLFLLocator.cc
-	$(CPP) -c DLFLLocator.cc -o DLFLLocator.o $(CXXFLAGS)
 
 TMBezierPatch.o: TMBezierPatch.cc
 	$(CPP) -c TMBezierPatch.cc -o TMBezierPatch.o $(CXXFLAGS)

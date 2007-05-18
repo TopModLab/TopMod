@@ -11,12 +11,13 @@
 
 #include "DLFLCommon.hh"
 #include "DLFLVertex.hh"
-#include "DLFLLocator.hh"     // brianb
 #include "DLFLFaceVertex.hh"
 #include "DLFLEdge.hh"
 #include "DLFLFace.hh"
 #include "DLFLMaterial.hh"
+#include "DLFLAux.hh"
 #include <Transform.hh>
+#include "TMPatchFace.hh"
 
 class DLFLObject
 {
@@ -34,11 +35,8 @@ class DLFLObject
 
      static Transformation tr;                         // For doing GL transformations
 
-     static int bezierOrder;                           // Control order of surface (brian)
-
   public :
 
-     static DLFLLocatorPtrArray lparray;               // For selection  (brianb)
      static DLFLVertexPtrArray vparray;                // For selection
      static DLFLEdgePtrArray   eparray;                // For selection
      static DLFLFacePtrArray   fparray;                // For selection
@@ -59,8 +57,6 @@ class DLFLObject
      Vector3d           scale_factor;                  // Scale of object
      Quaternion         rotation;                      // Rotation of object
 
-     
-
   protected :
 
      DLFLVertexPtrList          vertex_list;           // The vertex list
@@ -68,6 +64,9 @@ class DLFLObject
      DLFLFacePtrList            face_list;             // The face list
      DLFLMaterialPtrList        matl_list;             // Material list (for rendering)
 
+     TMPatchFacePtrList patch_list;		// List of patch faces
+     int patchsize;				 // Size of each patch
+     
      uint uID;                                         // ID for this object
 
         // Assign a unique ID for this instance
@@ -76,6 +75,19 @@ class DLFLObject
          uID = DLFLObject :: newID();
        }
 
+	// Free the memory allocated for the patches
+     void destroyPatches()
+     {
+       TMPatchFacePtrList :: iterator first = patch_list.begin(), last = patch_list.end();
+       TMPatchFacePtr pfp = NULL;
+       while ( first != last )
+	  {
+	    pfp = (*first); ++first;
+	    delete pfp;
+	  }
+       patch_list.clear();
+     }
+
      void clearLists(void)
        {
             // Free all the pointers in the lists and clear the lists
@@ -83,41 +95,7 @@ class DLFLObject
          clear(edge_list);
          clear(face_list);
          clear(matl_list);
-       }
-
-     void copyLists(const DLFLObject& dlfl)
-       {
-            // Copy the vertex list
-         DLFLVertexPtrList :: const_iterator vfirst=dlfl.vertex_list.begin(), vlast=dlfl.vertex_list.end();
-         while ( vfirst != vlast )
-            {
-              vertex_list.push_back((*vfirst)->copy());
-              ++vfirst;
-            }
-         
-            // Copy the edge list
-         DLFLEdgePtrList :: const_iterator efirst=dlfl.edge_list.begin(), elast=dlfl.edge_list.end();
-         while ( efirst != elast )
-            {
-              edge_list.push_back((*efirst)->copy());
-              ++efirst;
-            }
-         
-            // Copy the face list
-         DLFLFacePtrList :: const_iterator ffirst=dlfl.face_list.begin(), flast=dlfl.face_list.end();
-         while ( ffirst != flast )
-            {
-              face_list.push_back((*ffirst)->copy());
-              ++ffirst;
-            }
-         
-            // Copy the material list
-         DLFLMaterialPtrList :: const_iterator mfirst=dlfl.matl_list.begin(), mlast=dlfl.matl_list.end();
-         while ( mfirst != mlast )
-            {
-              matl_list.push_back((*mfirst)->copy());
-              ++mfirst;
-            }
+	 destroyPatches();
        }
 
   public :
@@ -125,27 +103,23 @@ class DLFLObject
         // Default constructor
      DLFLObject()
        : position(), scale_factor(1), rotation(),
-         vertex_list(), edge_list(), face_list(), matl_list()
+         vertex_list(), edge_list(), face_list(), matl_list(), patch_list(), patchsize(4)
        {
          assignID();
+
             // Add a default material
          matl_list.push_back(new DLFLMaterial("default",0.5,0.5,0.5));
        }
-     
+
+  private :
+
         // Copy constructor - make proper copy, don't just copy pointers
      DLFLObject(const DLFLObject& dlfl)
        : position(dlfl.position), scale_factor(dlfl.scale_factor), rotation(dlfl.rotation),
-         vertex_list(), edge_list(), face_list(), matl_list(),
+         vertex_list(dlfl.vertex_list), edge_list(dlfl.edge_list), face_list(dlfl.face_list), matl_list(dlfl.matl_list),
+	 patch_list(dlfl.patch_list), patchsize(dlfl.patchsize),
          uID(dlfl.uID)
-       {
-         copyLists(dlfl);
-       }
-
-        // Destructor
-     ~DLFLObject()
-       {
-         clearLists();
-       }
+       {}
 
         // Assignment operator
      DLFLObject& operator = (const DLFLObject& dlfl)
@@ -158,21 +132,24 @@ class DLFLObject
          clearLists();
 
             // Copy the lists from the new object
-         copyLists(dlfl);
-
+	 vertex_list = dlfl.vertex_list;
+	 edge_list = dlfl.edge_list;
+	 face_list = dlfl.face_list;
+	 matl_list = dlfl.matl_list;
+	 patch_list = dlfl.patch_list;
+	 patchsize = dlfl.patchsize;
+	 
          uID = dlfl.uID;
          return (*this);
        }
 
-        // Copy function
-     DLFLObjectPtr copy(void)
-       {
-         DLFLObjectPtr newdlfl = new DLFLObject(*this);
-         return newdlfl;
-       }
+  public :
 
-        // Bezier surface methods (brianb)
-     void bezierDefaults(); // Apply default values to all edge, face, and face vertex control points
+        // Destructor
+     ~DLFLObject()
+       {
+         clearLists();
+       }
 
         // Dump contents of this object
      void dump(ostream& o) const;
@@ -621,9 +598,6 @@ class DLFLObject
                                 DLFLMaterialPtr matl=NULL);
 
   public :
-     static int getBezierOrder(void) { return bezierOrder; }
-     static void setBezierOrder(int order) { bezierOrder = order; }
-
         /*
           The general case insertEdge subroutine. Calls one of the above, depending
           on whether the corners are cofacial or not. If the 2 corners are cofacial
@@ -639,6 +613,10 @@ class DLFLObject
         // Same as above but doesn't do the check to see if the 2 pointers refer to the same corner
      DLFLEdgePtr insertEdgeWithoutCheck(DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2,
                                         bool set_type=false, DLFLMaterialPtr matl=NULL);
+
+        // Splice two corners
+        // Insert edge and then collapse edge
+     void spliceCorners(DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2);
 
         //-- Edge cleanup --//
         // If both sides of an edge are co-planar, the edge will be removed
@@ -810,8 +788,6 @@ class DLFLObject
         //--- End additions by Eric ---//
 
   protected :
-
-
 
         // Extrude a face - just creates the new faces/vertices/edges and sets coordinates
         // using previously computed and stored aux-coords
@@ -1042,14 +1018,6 @@ class DLFLObject
          glPopMatrix();
        }
 
-     void renderPatches(void) const
-       {
-         glPushMatrix();
-         transform();
-         for_each(matl_list.begin(),matl_list.end(),matl_renderpatches);
-         glPopMatrix();
-       }
-
      void renderEdges(float linewidth=3.0) const
        {
             // Just render all the edges with specified line width
@@ -1057,28 +1025,6 @@ class DLFLObject
          transform();
          glLineWidth(linewidth);
          for_each(edge_list.begin(),edge_list.end(),renderP);
-         glLineWidth(1.0);
-         glPopMatrix();
-       }
-
-     void renderPatchVertices(float pointsize=2.0) const
-       {
-           // Just render all the edges with specified line width
-         glPushMatrix();
-         transform();
-         glPointSize(pointsize);
-         for_each(face_list.begin(),face_list.end(),facepatchvertices);
-         glPointSize(1.0);
-         glPopMatrix();
-       }
-
-     void renderPatchWireframe(float linewidth=1.0) const
-       {
-           // Just render all the edges with specified line width
-         glPushMatrix();
-         transform();
-         glLineWidth(linewidth);
-         for_each(face_list.begin(),face_list.end(),facepatchwireframe);
          glLineWidth(1.0);
          glPopMatrix();
        }
@@ -1198,6 +1144,268 @@ class DLFLObject
 
         // Create a Sierpinski tetrahedron of specified level
      static DLFLObjectPtr makeSierpinskiTetrahedron(int level);
+
+
+	/* Patch rendering functions */
+
+  protected :
+	// Build the list of patch faces
+     void createPatches()
+     {
+       destroyPatches();
+       DLFLFacePtrList :: iterator ffirst = face_list.begin(), flast = face_list.end();
+       DLFLFacePtr fp = NULL;
+       TMPatchFacePtr pfp = NULL;
+       
+       while ( ffirst != flast )
+	  {
+	    fp = (*ffirst); ++ffirst;
+	    pfp = new TMPatchFace(patchsize);
+	    pfp->setDLFLFace(fp); pfp->createPatches();
+	    patch_list.push_back(pfp);
+	  }
+
+          // Adjust the edge points for all patches
+       DLFLEdgePtrList :: iterator efirst = edge_list.begin(), elast = edge_list.end();
+       DLFLEdgePtr ep = NULL;
+       DLFLFaceVertexPtr fvp1,fvp2;
+       TMPatchPtr pp1, pp2;
+       Vector3d p00,p01,p10,p11,ip;
+       while ( efirst != elast )
+          {
+            ep = (*efirst); ++efirst;
+            ep->getCorners(fvp1,fvp2);
+            pp1 = fvp1->getPatchPtr(); pp2 = fvp2->getPatchPtr();
+
+            p00 = pp1->getControlPoint(2,0); p01 = pp2->getControlPoint(2,0);
+            p10 = pp1->getControlPoint(3,1); p11 = pp2->getControlPoint(3,1);
+            ip = intersectCoplanarLines(p00,p01,p10,p11);
+
+            pp1->setControlPoint(3,0,ip); pp2->setControlPoint(3,0,ip);
+            pp1->updateGLPointArray(); pp2->updateGLPointArray();
+
+            pp1 = fvp1->next()->getPatchPtr(); pp2 = fvp2->next()->getPatchPtr();
+            pp1->setControlPoint(0,3,ip); pp2->setControlPoint(0,3,ip);
+            pp1->updateGLPointArray(); pp2->updateGLPointArray();
+          }
+
+          // Adjust the vertex points for 4-valence vertices
+       DLFLVertexPtrList :: iterator vfirst = vertex_list.begin(), vlast = vertex_list.end();
+       DLFLVertexPtr vp = NULL;
+       while ( vfirst != vlast )
+          {
+            vp = (*vfirst); ++vfirst;
+            if ( vp->valence() == 4 )
+               {
+                 DLFLFaceVertexPtrArray vcorners;
+                 vp->getOrderedCorners(vcorners);
+                 pp1 = vcorners[0]->getPatchPtr(); pp2 = vcorners[2]->getPatchPtr();
+
+                 p00 = pp1->getControlPoint(1,0); p01 = pp2->getControlPoint(1,0);
+                 p10 = pp1->getControlPoint(0,1); p11 = pp2->getControlPoint(0,1);
+                 ip = intersectCoplanarLines(p00,p01,p10,p11);
+
+                 for (int i=0; i < 4; ++i)
+                    {
+                      pp1 = vcorners[i]->getPatchPtr();
+                      pp1->setControlPoint(0,0,ip);
+                      pp1->updateGLPointArray();
+                    }
+               }
+          }
+                 
+          /*
+       TMPatchFacePtrList :: iterator pfirst = patch_list.begin(), plast = patch_list.end();
+       while ( pfirst != plast )
+	  {
+	    pfp = (*pfirst); ++pfirst;
+            pfp->adjustEdgePoints();
+	  }
+          */
+     }
+
+  public :
+
+     void updateForPatches(void)
+     {
+	  // Update information stored at each face, vertex, edge and corner for patch rendering
+
+	  // Compute doo-sabin coordinates for each face and store them in the auxcoord field of the corner
+	  // Update the auxcoord field of the face
+       Vector3dArray coords;
+       DLFLFacePtrList :: iterator ffirst=face_list.begin(), flast=face_list.end();
+       DLFLFacePtr fp;
+       DLFLFaceVertexPtrArray corners;
+       int valence;
+       
+       while ( ffirst != flast )
+	  {
+	    fp = *ffirst; ++ffirst;
+	    fp->getCornersAndCoords(corners,coords);
+	    valence = coords.size();
+
+            if ( valence > 0 )
+               {
+                    // Compute Doo-Sabin coordinates - Level 1
+                 computeDooSabinCoords(coords);
+                 for (int i=0; i < valence; ++i) corners[i]->setAuxCoords(coords[i]);
+
+                    // Compute Doo-Sabin coordinates - Level 2
+                 computeDooSabinCoords(coords);
+                 for (int i=0; i < valence; ++i) corners[i]->setDS2Coord2(coords[i]);
+
+                    // Compute the patch point and patch normal
+                 Vector3d pp, pn;
+                 computeCentroidAndNormal(coords,pp,pn);
+                 fp->setAuxCoords(pp); fp->setAuxNormal(pn);
+               }
+	  }
+
+          // Compute patch point and normal for all edges
+       DLFLEdgePtrList :: iterator efirst=edge_list.begin(), elast=edge_list.end();
+       DLFLEdgePtr ep;
+       while ( efirst != elast )
+	  {
+	    ep = *efirst; ++efirst;
+
+            Vector3dArray p;
+            ep->getEFCornersAuxCoords(p);
+            
+               // Compute Doo-Sabin coordinates - Level 2
+            computeDooSabinCoords(p);
+
+            Vector3d pp,pn;
+            computeCentroidAndNormal(p,pp,pn);
+	    ep->setAuxCoords(pp); ep->setAuxNormal(pn);
+
+            DLFLFaceVertexPtrArray fvp;
+            ep->getEFCorners(fvp);
+            fvp[0]->setDS2Coord3(p[0]); fvp[1]->setDS2Coord1(p[1]);
+            fvp[2]->setDS2Coord3(p[2]); fvp[3]->setDS2Coord1(p[3]);
+          }
+
+          // Compute patch point and normal for all vertices
+       DLFLVertexPtrList :: iterator vfirst=vertex_list.begin(), vlast=vertex_list.end();
+       DLFLVertexPtr vp;
+       while ( vfirst != vlast )
+          {
+            vp = *vfirst; ++vfirst;
+            Vector3dArray p;
+            vp->getOrderedCornerAuxCoords(p);
+
+               // Compute Doo-Sabin coordinates - Level 2
+            computeDooSabinCoords(p);
+
+            Vector3d pp,pn;
+            computeCentroidAndNormal(p,pp,pn);
+            vp->setAuxCoords(pp); vp->setAuxNormal(-pn); // Reverse the normal since the rotation order around the vertex is clockwise
+            
+            DLFLFaceVertexPtrArray fvp;
+            vp->getOrderedCorners(fvp);
+            for (int i=0; i < fvp.size(); ++i) fvp[i]->setDS2Coord0(p[i]);
+          }
+     }
+
+	// Set the patch size
+     void setPatchSize(int size)
+     {
+       if ( size != patchsize && size > 0 )
+	  {
+	    patchsize = size;
+	    createPatches();
+	  }
+     }
+
+	// Update the patches
+     void updatePatches()
+     {
+       updateForPatches();
+       createPatches();
+     }
+
+        // Render the patches
+     void renderPatches(void) const
+       {
+         glPushMatrix();
+         transform();
+         for_each(patch_list.begin(), patch_list.end(), tmpf_render);
+         glPopMatrix();
+       }
+
+        // Render the object using wireframe patches
+     void renderWireframePatches(void) const
+       {
+         glPushMatrix();
+         transform();
+         for_each(patch_list.begin(), patch_list.end(), tmpf_outline);
+         glPopMatrix();
+       }
+
+     void renderPatchBoundaries(void) const
+       {
+         glPushMatrix();
+         transform();
+         for_each(patch_list.begin(), patch_list.end(), tmpf_patch_boundary);
+         glPopMatrix();
+       }
+         
+     void renderPatchFaceBoundaries(void) const
+       {
+         glPushMatrix();
+         transform();
+         for_each(patch_list.begin(), patch_list.end(), tmpf_face_boundary);
+         glPopMatrix();
+       }
+
+     void renderDS2Points(void) const
+       {
+         Vector3d ds20,ds21,ds22,ds23;
+         DLFLFacePtrList :: const_iterator ffirst=face_list.begin(), flast=face_list.end();
+         DLFLFacePtr fp;
+         DLFLFaceVertexPtrArray corners;
+
+         glBegin(GL_POINTS);
+         while ( ffirst != flast )
+            {
+              fp = *ffirst; ++ffirst;
+              fp->getCorners(corners);
+
+              for (int i=0; i < corners.size(); ++i)
+                 {
+                   corners[i]->getDS2Coords(ds20,ds21,ds22,ds23);
+
+                   glColor3f(1.0,0.0,0.0);
+                   glVertex(corners[i]->getAuxCoords());
+
+                   glColor3f(0.0,1.0,0.0);
+                   glVertex(ds20);
+                   glVertex(ds21);
+                   glVertex(ds22);
+                   glVertex(ds23);
+                 }
+            }
+         glVertex(fp->getAuxCoords());
+         glEnd();
+       }
+     
+        // Render the object using point patches
+     void renderPointPatches(void) const
+       {
+         glPushMatrix();
+         transform();
+         for_each(patch_list.begin(), patch_list.end(), tmpf_controlpoints);
+//         renderDS2Points();
+         glPopMatrix();
+       }
+
+     
+     void renderPatchNormals(void) const
+       {
+         glPushMatrix();
+         transform();
+         for_each(patch_list.begin(), patch_list.end(), tmpf_render_normals);
+         glPopMatrix();
+       }
 };
 
 #endif /* #ifndef _DLFL_OBJECT_HH_ */
