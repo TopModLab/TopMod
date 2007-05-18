@@ -62,10 +62,11 @@ void GLWidget::redraw() {
 void GLWidget::initializeGL( ) {
   setAutoBufferSwap( true );
   glClearColor(0.29,0.33,0.37,1); // Modo's viewport color
-	viewport.resize(this->size().width(),this->size().height());
-	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);					// Set Line Antialiasing
-	glEnable(GL_BLEND);							// Enable Blending
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);			// Type Of Blending To Use
+  viewport.resize(this->size().width(),this->size().height());
+  glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);					// Set Line Antialiasing
+  glEnable(GL_BLEND);							// Enable Blending
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);			// Type Of Blending To Use
+  mShowIDs = false;
 }
 
 void GLWidget::paintGL( ) {
@@ -118,15 +119,17 @@ void GLWidget::paintGL( ) {
     glColor3f(0.2,0.5,0.85);
 
     if ( renderer ) renderer->render(object);
-
+    
     // Show any selected items.
     // Adjust the depthrange so selected items are shown clearly
     glDepthRange(0,1-0.0005-0.0005);
-    GLWidget::drawSelected();
+    GLWidget::drawSelected();    
+    drawIDs( ); // draw vertex ids
     glDepthRange(0,1);
+
   } 
-	
   glPopMatrix();
+
   // glLoadIdentity();
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -217,6 +220,54 @@ void GLWidget::drawText(int width, int height ){
   //                  rect.width(), rect.height(),
   //                  Qt::AlignCenter | Qt::TextWordWrap, text);
   // painter.end();
+}
+
+void GLWidget::drawIDs( ) {
+  glDisable(GL_DEPTH_TEST);
+ 
+  QFont font10("arial"); 
+  font10.setPointSize(10);
+  font10.setBold(true);
+
+  /* Draw Vertex IDs */
+  if( mShowIDs ) {
+    DLFLVertexPtrArray vparray;
+    object->getVertices(vparray);
+    DLFLVertexPtrArray::iterator it;
+    for( it = vparray.begin(); it != vparray.end(); it++) {
+      QString id = QString::number( (*it)->getID() );
+      double x,y,z; (*it)->coords.get(x,y,z);
+      glColor3f(0.886,0.565,0.02);
+      renderText( x, y, z, id, font10 );
+    }
+  }
+
+  /* Draw Edge IDs */
+  if( mShowIDs ) {
+    DLFLEdgePtrArray eparray;
+    object->getEdges(eparray);
+    DLFLEdgePtrArray::iterator it;
+    for( it = eparray.begin(); it != eparray.end(); it++) {
+      QString id = QString::number( (*it)->getID() );
+      double x,y,z; (*it)->getMidPoint().get(x,y,z);
+      glColor3f(0.671,0.886,0.02);
+      renderText( x, y, z, id, font10 );
+    }
+  }
+
+  /* Draw Face IDs */
+  if( mShowIDs ) {
+    DLFLFacePtrArray fparray;
+    object->getFaces(fparray);
+    DLFLFacePtrArray::iterator it;
+    for( it = fparray.begin(); it != fparray.end(); it++) {
+      QString id = QString::number( (*it)->getID() );
+      double x,y,z; (*it)->geomCentroid().get(x,y,z);
+      glColor3f(0.886,0.02,0.875);
+      renderText( x, y, z, id, font10 );
+    }
+  }
+  glEnable(GL_DEPTH_TEST);
 }
 
 void GLWidget::toggleFullScreen( ) {

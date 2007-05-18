@@ -188,10 +188,11 @@ private:
 
   //Display Menu Actions
   QAction *showVerticesAct;
+  QAction *showIDsAct;
   QAction *showSilhouetteAct;
   QAction *showWireframeAct;
-	QAction *objectOrientationAct;
-	QAction *showNormalsAct;
+  QAction *objectOrientationAct;
+  QAction *showNormalsAct;
   QAction *showGridAct;
   QAction *showCoordinateAxesAct;
 

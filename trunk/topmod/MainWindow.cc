@@ -203,6 +203,11 @@ void MainWindow::createActions()
 	// showVerticesAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(showVerticesAct, SIGNAL(triggered()), mainWindow, SLOT(toggleVertices()));
 
+	showIDsAct = new QAction(tr("Show &IDs"), this);
+	showIDsAct->setCheckable(true);
+	sm->registerAction(showIDsAct, "Display Menu", "I");
+	connect(showIDsAct, SIGNAL(triggered()), mainWindow, SLOT(toggleIDs()));
+
 	showSilhouetteAct = new QAction(tr("Show &Silhouette"), this);
 	showSilhouetteAct->setCheckable(true);
 	sm->registerAction(showSilhouetteAct, "Display ", "S" );
@@ -518,6 +523,7 @@ void MainWindow::createMenus(){
 	menuBar->addMenu(displayMenu);
 	
 	displayMenu->addAction(showVerticesAct);
+	displayMenu->addAction(showIDsAct);
 	displayMenu->addAction(showSilhouetteAct);
 	displayMenu->addAction(showWireframeAct);
 	displayMenu->addAction(showCoordinateAxesAct);

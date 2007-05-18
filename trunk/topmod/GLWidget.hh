@@ -63,7 +63,7 @@ protected :
   void paintGL( );
 
 	void drawText( int width, int height );
-	
+  void drawIDs( );
 	void resizeGL( int width, int height );
 	
 	void setupViewport(int width, int height);
@@ -75,6 +75,7 @@ protected :
 	void resizeOverlayGL(int width, int height);
 	
   bool mIsFullScreen;
+  bool mShowIDs;
 
 	   // Selection lists - these are shared by all viewports
 	static DLFLVertexPtrArray sel_vptr_array; // List of selected DLFLVertex pointers
@@ -401,6 +402,11 @@ public :
 	    if ( renderer ) renderer->toggleVertices();
 			this->updateGL();
 	  }
+
+  void toggleIDs( ) {
+    mShowIDs = !mShowIDs;
+    this->updateGL();
+  }
 
 	   // Toggle object orientation
 	void toggleObjectOrientation(void)
