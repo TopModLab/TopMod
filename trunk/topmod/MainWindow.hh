@@ -177,12 +177,14 @@ private:
   QAction *mNewAct;
   QAction *mOpenAct;
   QAction *mSaveAct;
+	QAction *mSavePatchesAct;
   QAction *mSaveAsAct;
   QAction *loadTextureAct;
   QAction *printInfoAct;
   QAction *printFaceListAct;
   QAction *printVertexListAct;
   QAction *printEdgeListAct;
+  QAction *mPrintCVListAct;
   QAction *mExitAct;
 
   //Edit Menu Actions
@@ -312,12 +314,17 @@ public slots:
 	void save_file_with_normals();
 	void save_file_with_tex_coords();
 	void save_file_extended();
+	/* stuart - bezier export */
+  void save_file_patches();
 	void load_texture();
 	void print_info();
 	void print_flist();
 	void print_vlist();
 	void print_elist();
+	void print_cvlist();
 	void quit();
+	
+	
 
 	void undo();
 	void redo();

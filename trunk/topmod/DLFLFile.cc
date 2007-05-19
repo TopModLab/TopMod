@@ -253,6 +253,35 @@ void DLFLObject::objWrite(ostream& o, bool with_normals, bool with_tex_coords)
   o << "# " << face_list.size() << " faces" << endl << endl;
 }
 
+/* stuart - bezier export */
+void DLFLObject::objPatchWrite( ostream& o ) {
+  o << "g patches" << std::endl
+    << "mg 1 0.5"  << std::endl << std::endl;
+  TMPatchFacePtrList::const_iterator first = patch_list.begin(), last = patch_list.end();
+  int i = 0;
+  int v = 0;
+  while( first != last ) {
+    o << "# Face " << i+1 << std::endl;
+    int npatches = (*first)->print(o);
+    int j = 0;
+    while( j < npatches ) {
+      o << "# Patch" << i+j+1 << std::endl;
+      o << "cstype bezier" << std::endl
+	<< "deg 3 3" << std::endl
+	<< "surf 0.000000 1.000000 0.000000 1.000000 " 
+	<< 1+v << " " << 2+v << " " << 3+v << " " << 4+v << " " << 5+v << " " << 6+v << " " << 7+v << " " << 8+v << " " << 9+v << " " << 10+v << " " << 11+v << " " << 12+v << " " << 13+v << " " << 14+v << " " << 15+v << " " << 16+v << std::endl
+	<< "parm u 0.000000 1.000000" << std::endl
+	<< "parm v 0.000000 1.000000" << std::endl
+	<< "end" << std::endl << std::endl;
+      j++;
+      v += 16;
+    }
+    ++first;
+    i++;
+  }
+}
+
+
 void DLFLObject::readDLFL(istream& i, bool clearold)
 {
      // Read the object from an input stream in DLFL format

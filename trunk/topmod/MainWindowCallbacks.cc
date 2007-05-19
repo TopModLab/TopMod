@@ -38,6 +38,12 @@ void MainWindow::save_file_extended()
   mainWindow->saveFile(true,true);
 }
 
+/* stuart - bezier export */
+void MainWindow::save_file_patches()
+{
+  mainWindow->saveFileBezierOBJ( );
+}
+
 void MainWindow::load_texture()
 {
   // char * texfile = fl_file_chooser("Load Texture","*.{jpg,png}","");
@@ -68,6 +74,11 @@ void MainWindow::print_vlist()
 void MainWindow::print_elist()
 {
   mainWindow->printEdgeList();
+}
+
+void MainWindow::print_cvlist()
+{
+  mainWindow->printCVList();
 }
 
 void MainWindow::quit()

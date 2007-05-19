@@ -935,7 +935,9 @@ class DLFLObject
         //-- Output --//
      void objWrite(ostream& o, bool with_normals = false, bool with_tex_coords = false);
      void writeDLFL(ostream& o, bool reverse_faces=false);
-  void objPatchWrite( ostream& o );
+  	 void objPatchWrite( ostream& o );
+		 // void objPatchWrite( ostream& o );
+
 
         //-- Geometric Transformations --//
 

@@ -346,6 +346,16 @@ class DLFLObject
             }
        }
      
+		/* stuart - bezier export */
+		void printPatchCVList( ) const
+		{
+		  cout << "Patch CVs" << endl;
+		  TMPatchFacePtrList::const_iterator first = patch_list.begin(), last = patch_list.end();
+		  while( first != last ) {
+		    (*first)->print(cout);
+		    ++first;
+		  }
+		}
         //--- Mutative Functions ---//
 
         // Reset the whole object
@@ -924,6 +934,7 @@ class DLFLObject
         //-- Output --//
      void objWrite(ostream& o, bool with_normals = false, bool with_tex_coords = false);
      void writeDLFL(ostream& o, bool reverse_faces=false);
+  	 void objPatchWrite( ostream& o );
 
         //-- Geometric Transformations --//
 

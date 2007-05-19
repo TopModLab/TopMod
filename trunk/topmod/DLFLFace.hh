@@ -389,6 +389,9 @@ class DLFLFace
         // Write out the texture coordinates for each vertex in the Face in OBJ format
      void objWriteTexCoords(ostream& o) const;
 
+		/* stuart - bezier export */
+		void objPatchWrite( ostream &o ) const;
+
         // Write out the face in DLFL format
      void writeDLFL(ostream& o) const;
 

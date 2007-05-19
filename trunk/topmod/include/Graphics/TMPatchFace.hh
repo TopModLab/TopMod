@@ -320,6 +320,15 @@ class TMPatchFace
          for (uint i=0; i < patcharray.size(); ++i) patcharray[i].renderNormals();
        }
      
+		/* stuart - bezier export */
+		int print( ostream &stream ) {
+		  for( int i = 0; i < patcharray.size(); i++ ) {
+		    patcharray[i].printControlPoints( stream );
+		    stream << std::endl;
+		  }
+		  return patcharray.size( );
+		}
+
      friend void tmpf_render(TMPatchFacePtr pfp)
      {
        pfp->render();

@@ -7,7 +7,6 @@ TEMPLATE = app
 TARGET = TopMod
 QT += opengl xml
 CONFIG += qt debug
-# release x86 ppc
 
 DEPENDPATH += . \
               lang \
@@ -28,7 +27,7 @@ macx: {
 QMAKE_INFO_PLIST    = Info.plist
 MACOSX_DEPLOYMENT_TARGET = 10.2
 # compile release + universal binary 
-CONFIG += release x86 ppc
+CONFIG += x86
 
 INCLUDEPATH += /usr/include
 #/Library/Frameworks/Python.framework/Versions/2.5/include/python2.5 
@@ -40,7 +39,8 @@ QMAKE_LFLAGS += -L/usr/lib
 # -L/usr/lib
 # -L/Library/Frameworks/3DconnexionClient.framework 
 
-LIBS += -lverse
+LIBS += 
+# -lverse
 # -framework Python
 # -framework 3DconnexionClient
 }
@@ -48,7 +48,7 @@ unix: {
  # INCLUDEPATH += /usr/include/python2.5
  # LIBS += -lpython2.5 -L/usr/lib/python2.5/config
 }
-win32 {
+win32: {
  INCLUDEPATH += C:\Python25\include
  QMAKE_LFLAGS += -LC:\Python25\libs
  LIBS += -lpython25
@@ -109,16 +109,13 @@ HEADERS += 	DLFLScriptEditor.hh \
 			include/Light/Light.hh \
 			include/Light/PointLight.hh \
 			include/Light/SpotLight.hh \
-			include/String/Paragraph.hh \
-			include/String/SString.hh \
 			include/vecmat/Matrix3x3.hh \
 			include/vecmat/Matrix4x4.hh \
 			include/vecmat/Quaternion.hh \
 			include/vecmat/Vector.hh \
 			include/vecmat/Vector2d.hh \
 			include/vecmat/Vector3d.hh \
-			include/vecmat/Vector4d.hh \
-			include/String/SString.inl
+			include/vecmat/Vector4d.hh 
 
 FORMS += shortcutdialog.ui stylesheeteditor.ui
 
@@ -169,8 +166,6 @@ SOURCES += 	DLFLScriptEditor.cc \
 			include/arcball/Arcball.cc \
 			include/arcball/BallMath.cc \
 			include/DataStructures/List.cc \
-			include/String/Paragraph.cc \
-			include/String/SString.cc \
 			include/vecmat/Matrix3x3.cc \
 			include/vecmat/Matrix4x4.cc \
 			include/vecmat/Vector.cc \

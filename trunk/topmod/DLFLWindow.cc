@@ -244,6 +244,13 @@ void DLFLWindow::writeObjectOBJ(const char * filename, bool with_normals, bool w
     file.close();
   }
 
+/* stuart - bezier export */
+void DLFLWindow::writePatchOBJ( const char *filename ) {
+	ofstream file;
+	file.open(filename);
+	object.objPatchWrite(file);
+}
+
 void DLFLWindow::writeObjectDLFL(const char * filename)
   {
     ofstream file;
@@ -1749,6 +1756,11 @@ void DLFLWindow::printEdgeList(void)                       // Print edge list
 	object.printEdgeList();
 }
 
+void DLFLWindow::printCVList(void)                       // Print CV list
+{
+	object.printPatchCVList();
+}
+
 void DLFLWindow::printFaceList(void)                       // Print face list
 {
 	object.printFaces();
@@ -1844,6 +1856,20 @@ void DLFLWindow::saveFileOBJ(bool with_normals, bool with_tex_coords)
 		QByteArray ba = fileName.toLatin1();
 		const char *filename = ba.data();
 		writeObjectOBJ(filename,with_normals,with_tex_coords);
+	}
+}
+
+/* stuart - bezier export */
+void DLFLWindow::saveFileBezierOBJ( )
+{
+	QString fileName = QFileDialog::getSaveFileName(this,
+																									tr("Save Bezier Patch (OBJ)..."),
+																									curFile,
+																									tr("Wavefront Files (*.obj);;All Files (*)"));
+	if (!fileName.isEmpty()){
+		QByteArray ba = fileName.toLatin1();
+		const char *filename = ba.data();
+		writePatchOBJ(filename);
 	}
 }
 

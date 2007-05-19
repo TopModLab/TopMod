@@ -330,6 +330,18 @@ class TMPatch
                  glVertex(ctrlpts[i][j]+0.25*ctrlptnormals[i][j]);
                }
        }
+		/* stuart - bezier export */
+		void printControlPoints( ostream &stream ) {
+		  for( int i = 0; i < patchsize; i++ ) {
+		    for( int j = 0; j < patchsize; j++ ) {
+		stream << "v "
+		      << ctrlpts[i][j][0] << " "
+		      << ctrlpts[i][j][1] << " "
+		      << ctrlpts[i][j][2] 
+		      << std::endl;
+		    }
+		  }
+		}
 };
 
 #endif /* #ifndef _TM_PATCH_HH_ */

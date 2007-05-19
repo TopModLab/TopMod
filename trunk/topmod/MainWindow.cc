@@ -152,6 +152,11 @@ void MainWindow::createActions()
 	mSaveAsAct->setStatusTip(tr("Save the document under a new name"));
 	connect(mSaveAsAct, SIGNAL(triggered()), mainWindow, SLOT(saveFile()));
 
+	mSavePatchesAct = new QAction(QIcon(":images/saveas.png"),tr("Save &Patch OBJ..."), this);
+	sm->registerAction(mSavePatchesAct, "File Menu", "");
+	mSavePatchesAct->setStatusTip(tr("Save a bezier patch .obj file"));
+	connect(mSavePatchesAct, SIGNAL(triggered()), mainWindow, SLOT(saveFileBezierOBJ()));
+
 	loadTextureAct = new QAction(tr("Load &Texture..."), this);
 	sm->registerAction(loadTextureAct, "File Menu", "CTRL+L");
 	loadTextureAct->setStatusTip(tr("Load Texture from file"));
@@ -176,6 +181,11 @@ void MainWindow::createActions()
 	sm->registerAction(printEdgeListAct, "File Menu", "CTRL+ALT+SHIFT+P");
 	printEdgeListAct->setStatusTip(tr("Print Edge list to the console"));
 	// connect(printEdgeListAct, SIGNAL(triggered()), this, SLOT(saveAs()));
+
+	mPrintCVListAct = new QAction(tr("Print &CV List"), this);
+	sm->registerAction(mPrintCVListAct, "File Menu", "");
+	mPrintCVListAct->setStatusTip(tr("Print CV list to the console"));
+	// connect(mPrintCVListAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
 	mExitAct = new QAction(tr("E&xit"), this);
 	sm->registerAction(mExitAct, "File Menu", "CTRL+Q");
@@ -499,7 +509,8 @@ void MainWindow::createMenus(){
 	
 	fileMenu->addAction(mOpenAct);
 	fileMenu->addAction(mSaveAct);
-	fileMenu->addAction(mSaveAsAct);
+	fileMenu->addAction(mSavePatchesAct);
+	//fileMenu->addAction(mSaveAsAct);
 	fileMenu->addSeparator();
 	mVerseMenu = new QMenu(tr("&Verse"));
 	fileMenu->addMenu(mVerseMenu);
@@ -514,6 +525,7 @@ void MainWindow::createMenus(){
 	fileMenu->addAction(printFaceListAct);
 	fileMenu->addAction(printVertexListAct);
 	fileMenu->addAction(printEdgeListAct);
+	fileMenu->addAction(mPrintCVListAct);
 	fileMenu->addSeparator();
 	fileMenu->addAction(mExitAct);
 

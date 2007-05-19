@@ -378,6 +378,7 @@ public slots:
 		void printSummary(void);
 		void printVertexList(void);
 		void printEdgeList(void);
+		void printCVList(void);
 		void printFaceList(void);
 
 		// Axes and grid
@@ -392,6 +393,8 @@ public slots:
 		void saveFileOBJ(bool with_normals=false, bool with_tex_coords=false);
 		void openFileDLFL(void);
 		void saveFileDLFL(void);
+		void saveFileBezierOBJ( );
+		void writePatchOBJ(const char *filename);
 		void loadFile(const QString &fileName);
 		void setCurrentFile(const QString &fileName);
 
