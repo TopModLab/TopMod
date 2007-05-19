@@ -1038,6 +1038,31 @@ void DLFLFace :: boundaryWalk(void) const
      }
 }
 
+void DLFLFace :: printCoords(void) const
+{
+  cout << "DLFLFace " << uID << " (" << size() << ") : ";
+  if ( head )
+     {
+       DLFLFaceVertexPtr current = head;
+       if ( current->getFacePtr() != this )
+          {
+            cerr << endl << "Data-structure consistency error!" << endl;
+            cerr << "Vertex : " << current->getVertexID() << endl
+                 << "Face : " << current->getFacePtr()->getID() << endl
+                 << "Edge : " << current->getEdgePtr()->getID() << endl;
+            return;
+          }
+       cout << setprecision(2);
+       do
+          {
+            cout << current->getVertexCoords() << " ";
+            current = current->next();
+          }
+       while ( current != head );
+       cout << endl;
+     }
+}
+
 void DLFLFace :: printPointers(void) const
 {
   cout << "DLFLFace " << uID << " (" << size() << ") : ";
