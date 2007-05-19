@@ -277,28 +277,22 @@ class DLFLEdge
      void setFaceVertexPtr1(DLFLFaceVertexPtr fvptr, bool update=true)
        {
          fvpV1 = fvptr;
-	 if ( update )
-	    {
-	      updateMidPoint(); updateNormal();
-	    }
+	 if ( update ) updateNormal();
+         updateMidPoint(); 
        }
 
      void setFaceVertexPtr2(DLFLFaceVertexPtr fvptr, bool update=true)
        {
          fvpV2 = fvptr;
-	 if ( update )
-	    {
-	      updateMidPoint(); updateNormal();
-	    }
+	 if ( update ) updateNormal();
+         updateMidPoint();
        }
 
      void setFaceVertexPointers(DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2, bool update=true)
        {
          fvpV1 = fvptr1; fvpV2 = fvptr2;
-	 if ( update )
-	    {
-	      updateMidPoint(); updateNormal();
-	    }
+	 if ( update ) updateNormal();
+         updateMidPoint();
        }
      
      void makeUnique(void)
