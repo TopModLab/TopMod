@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'shortcutdialog.ui'
 **
-** Created: Sat May 19 16:32:28 2007
+** Created: Sat May 19 17:29:05 2007
 **      by: Qt User Interface Compiler version 4.2.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
