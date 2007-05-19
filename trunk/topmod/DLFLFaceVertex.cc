@@ -211,6 +211,8 @@ DLFLFaceVertexPtr DLFLFaceVertex :: closestNonWingedCorner(void) const
      {
        if ( ! fvpp->isWingedCorner() ) fvp = fvpp;
        else if ( ! fvpn->isWingedCorner() ) fvp = fvpn;
+          // WARNING! If the code reaches this point, this function will return NULL
+          // This will cause other parts of the program to fail
      }
   else if ( ! fvpp->isWingedCorner() ) fvp = fvpp;
   else fvp = fvpn;
