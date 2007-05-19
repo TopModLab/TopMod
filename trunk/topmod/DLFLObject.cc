@@ -717,7 +717,7 @@ void DLFLObject::createFace(const Vector3dArray& verts, DLFLMaterialPtr matl, bo
        current1 = current1->next(); current2 = current2->prev();
      }
 
-  //newface1->computeNormal(); newface2->computeNormal();
+  newface1->computeNormal(); newface2->computeNormal();
 }
 
 DLFLFaceVertexPtr DLFLObject::createPointSphere(const Vector3d& v, DLFLMaterialPtr matl)
