@@ -1008,7 +1008,8 @@ void DLFLWindow::performRemeshing(void)
                     subDivideDooSabinBCNew();
                     break;
      }
-  setMode(NormalMode);
+  // setMode(NormalMode);
+	setMode(mode);
   redraw();
 }
 

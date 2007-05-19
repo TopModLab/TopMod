@@ -175,7 +175,7 @@ void MainWindow::createActions()
 	// connect(printEdgeListAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
 	mExitAct = new QAction(tr("E&xit"), this);
-	sm->registerAction(mExitAct, "Settings", "CTRL+Q");
+	sm->registerAction(mExitAct, "File Menu", "CTRL+Q");
 	mExitAct->setStatusTip(tr("Exit the application"));
 	connect(mExitAct, SIGNAL(triggered()), this, SLOT(close()));
 
@@ -210,7 +210,7 @@ void MainWindow::createActions()
 
 	showSilhouetteAct = new QAction(tr("Show &Silhouette"), this);
 	showSilhouetteAct->setCheckable(true);
-	sm->registerAction(showSilhouetteAct, "Display ", "S" );
+	sm->registerAction(showSilhouetteAct, "Display Menu", "S" );
 	// showSilhouetteAct->setStatusTip((tr"Blah"));
 	connect(showSilhouetteAct, SIGNAL(triggered()), mainWindow, SLOT(toggleSilhouette()));
 

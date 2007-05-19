@@ -245,12 +245,12 @@ class ShortcutGetter : public QDialog
 			
 			QPushButton *b;
 			
-			 b = new QPushButton(QIcon(":/ok.png"), tr("&OK"), this);
+			 b = new QPushButton(QIcon(":/ok.png"), tr("OK"), this);
 			connect(b	, SIGNAL( clicked() ),
 					this, SLOT  ( accept() ) );
 			hbox->addWidget(b);
 			
-			b = new QPushButton(QIcon(":/cancel.png"), tr("&Cancel"), this);
+			b = new QPushButton(QIcon(":/cancel.png"), tr("Cancel"), this);
 			connect(b	, SIGNAL( clicked() ),
 					this, SLOT  ( reject() ) );
 			hbox->addWidget(b);
