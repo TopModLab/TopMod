@@ -1,4 +1,4 @@
-/* $Id: DLFLAppWindowCallbacks.cc,v 4.13 2004/01/20 22:18:36 vinod Exp $ */
+/* $Id: DLFLAppWindowCallbacks.cc,v 1.1.1.1 2007/03/10 18:32:17 stuart Exp $ */
 
 // Definitions for callback functions in the DLFLAppWindow class
 // All these are static methods
@@ -77,6 +77,13 @@ void DLFLAppWindow :: save_file_extended(Fl_Menu_*, void*)
   Fl :: focus(mainWindowPtr);
 }
 
+/* stuart - bezier export */
+void DLFLAppWindow :: save_file_patches(Fl_Menu_*, void*)
+{
+  mainWindowPtr->saveFileBezierOBJ( );
+  Fl::focus(mainWindowPtr);
+}
+
 void DLFLAppWindow :: load_texture(Fl_Menu_*, void*)
 {
   char * texfile = fl_file_chooser("Load Texture","*.{jpg,png}","");
@@ -108,6 +115,11 @@ void DLFLAppWindow :: print_vlist(Fl_Menu_*, void*)
 void DLFLAppWindow :: print_elist(Fl_Menu_*, void*)
 {
   mainWindowPtr->printEdgeList();
+}
+
+void DLFLAppWindow :: print_cvlist(Fl_Menu_*, void*)
+{
+  mainWindowPtr->printPatchCVList();
 }
 
 void DLFLAppWindow :: quit(Fl_Menu_*, void*)
@@ -1002,6 +1014,9 @@ void DLFLAppWindow :: freeze_transforms(Fl_Widget *, void *)
 
 /*
   $Log: DLFLAppWindowCallbacks.cc,v $
+  Revision 1.1.1.1  2007/03/10 18:32:17  stuart
+  Initial CVS Import
+
   Revision 4.13  2004/01/20 22:18:36  vinod
   Added redraw after file read
 

@@ -1,4 +1,4 @@
-/* $Id: DLFLObject.hh,v 4.9 2004/01/20 22:17:52 vinod Exp $ */
+/* $Id: DLFLObject.hh,v 1.1.1.1 2007/03/10 18:32:17 stuart Exp $ */
 
 #ifndef _DLFL_OBJECT_HH_
 
@@ -16,7 +16,7 @@
 #include "DLFLFace.hh"
 #include "DLFLMaterial.hh"
 #include "DLFLAux.hh"
-#include <Transform.hh>
+#include <Graphics/Transform.hh>
 #include "TMPatchFace.hh"
 
 class DLFLObject
@@ -345,6 +345,17 @@ class DLFLObject
               ++first;
             }
        }
+
+  /* stuart - bezier export */
+  void printPatchCVList( ) const
+  {
+    cout << "Patch CVs" << endl;
+    TMPatchFacePtrList::const_iterator first = patch_list.begin(), last = patch_list.end();
+    while( first != last ) {
+      (*first)->print(cout);
+      ++first;
+    }
+  }
      
         //--- Mutative Functions ---//
 
@@ -924,6 +935,7 @@ class DLFLObject
         //-- Output --//
      void objWrite(ostream& o, bool with_normals = false, bool with_tex_coords = false);
      void writeDLFL(ostream& o, bool reverse_faces=false);
+  void objPatchWrite( ostream& o );
 
         //-- Geometric Transformations --//
 
@@ -1413,6 +1425,9 @@ class DLFLObject
 
 /*
   $Log: DLFLObject.hh,v $
+  Revision 1.1.1.1  2007/03/10 18:32:17  stuart
+  Initial CVS Import
+
   Revision 4.9  2004/01/20 22:17:52  vinod
   Added Loop subdivision scheme
 

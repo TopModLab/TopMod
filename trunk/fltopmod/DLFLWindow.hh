@@ -1,4 +1,4 @@
-/* $Id: DLFLWindow.hh,v 4.13 2004/04/18 18:19:41 vinod Exp $ */
+/* $Id: DLFLWindow.hh,v 1.1.1.1 2007/03/10 18:32:17 stuart Exp $ */
 
 #ifndef _DLFL_WINDOW_HH_
 
@@ -332,6 +332,13 @@ class DLFLWindow : public Fl_Double_Window
          object.objWrite(file,with_normals,with_tex_coords);
          file.close();
        }
+
+/* stuart - bezier export */
+  void writePatchOBJ( const char *filename ) {
+    ofstream file;
+    file.open(filename);
+    object.objPatchWrite(file);
+  }
 
      void writeObjectDLFL(const char * filename)
        {
@@ -1076,6 +1083,11 @@ class DLFLWindow : public Fl_Double_Window
          object.printVertexList();
        }
 
+  /* stuart - bezier export */
+  void printPatchCVList( ) {
+    object.printPatchCVList( );
+  }
+
      void printEdgeList(void)                       // Print edge list
        {
          object.printEdgeList();
@@ -1134,6 +1146,14 @@ class DLFLWindow : public Fl_Double_Window
          if ( filename ) writeObjectOBJ(filename,with_normals,with_tex_coords);
        }
 
+  /* stuart - bezier export */
+  void saveFileBezierOBJ( )
+  {
+    char *filename = fl_file_chooser("Save Bezier Patch (OBJ)","*.obj","");
+    if( filename )
+      writePatchOBJ(filename);
+  }
+
      void openFileDLFL(void)
        {
          char * filename = fl_file_chooser("Read Object (DLFL)","*.dlfl","");
@@ -1165,6 +1185,9 @@ class DLFLWindow : public Fl_Double_Window
 
 /*
   $Log: DLFLWindow.hh,v $
+  Revision 1.1.1.1  2007/03/10 18:32:17  stuart
+  Initial CVS Import
+
   Revision 4.13  2004/04/18 18:19:41  vinod
   Added toggleObjectOrientation method
 

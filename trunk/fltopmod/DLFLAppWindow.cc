@@ -1,4 +1,4 @@
-/* $Id: DLFLAppWindow.cc,v 4.15 2004/01/20 17:17:16 vinod Exp $ */
+/* $Id: DLFLAppWindow.cc,v 1.1.1.1 2007/03/10 18:32:16 stuart Exp $ */
 
 // Source code for DLFLAppWindow class
 
@@ -1231,12 +1231,14 @@ void DLFLAppWindow :: createMenubar(int w, int h)
           {"Save (with normals)", 0, (Fl_Callback*)save_file_with_normals, 0, 0},
           {"Save (with texture coords)", 0, (Fl_Callback*)save_file_with_tex_coords, 0, 0},
           {"Save (extended)", 0, (Fl_Callback*)save_file_extended, 0, 0},
+      {"Save (patches)", 0, (Fl_Callback*)save_file_patches, 0, 0 }, /* stuart - bezier export */
         {0},
         {"Load Texture", 0, (Fl_Callback*)load_texture, 0, 0},
         {"Print Information", 0, (Fl_Callback*)print_info, 0, 0},
         {"Print Face List", 0, (Fl_Callback*)print_flist, 0, 0},
         {"Print Vertex List", 0, (Fl_Callback*)print_vlist, 0, 0},
         {"Print Edge List", 0, (Fl_Callback*)print_elist, 0, 0},
+      {"Print CV List", 0, (Fl_Callback*)print_cvlist, 0, 0}, /* stuart - bezier export */
         {"Quit", 0, (Fl_Callback*)quit, 0, 0},
       {0},
       {"Edit", 0, 0, 0, FL_SUBMENU},
@@ -1290,6 +1292,9 @@ void DLFLAppWindow :: createMenubar(int w, int h)
 
 /*
   $Log: DLFLAppWindow.cc,v $
+  Revision 1.1.1.1  2007/03/10 18:32:16  stuart
+  Initial CVS Import
+
   Revision 4.15  2004/01/20 17:17:16  vinod
   Tiling number tile is now excluded in the release version
 

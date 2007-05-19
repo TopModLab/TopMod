@@ -1,4 +1,4 @@
-/* $Id: DLFLFace.cc,v 4.3 2004/01/20 17:42:50 vinod Exp $ */
+/* $Id: DLFLFace.cc,v 1.1.1.1 2007/03/10 18:32:17 stuart Exp $ */
 
 // Non-inline source code for DLFLFace class
 
@@ -350,7 +350,7 @@ void DLFLFace :: setColor(double r, double g, double b)
 void DLFLFace :: randomAssignTexCoords(void)
 {
      // Assumes that the face is a quad
-  int start = rand() % 4; // Random no 0,1,2 or 3
+  int start = lrand48() % 4; // Random no 0,1,2 or 3
 
   if ( head )
      {
@@ -1253,6 +1253,9 @@ ostream& operator << (ostream& o, const DLFLFace& face)
 
 /*
   $Log: DLFLFace.cc,v $
+  Revision 1.1.1.1  2007/03/10 18:32:17  stuart
+  Initial CVS Import
+
   Revision 4.3  2004/01/20 17:42:50  vinod
   Bug fix in textureCentroid method. Coord was not being incremented in the loop.
 

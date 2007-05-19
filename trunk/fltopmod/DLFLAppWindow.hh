@@ -1,4 +1,4 @@
-/* $Id: DLFLAppWindow.hh,v 4.15 2004/01/20 22:18:20 vinod Exp $ */
+/* $Id: DLFLAppWindow.hh,v 1.1.1.1 2007/03/10 18:32:17 stuart Exp $ */
 
 #ifndef _DLFL_APP_WINDOW_HH_
 
@@ -377,7 +377,10 @@ class DLFLAppWindow : public Fl_Double_Window
      static void print_flist(Fl_Menu_*, void*);
      static void print_vlist(Fl_Menu_*, void*);
      static void print_elist(Fl_Menu_*, void*);
+     static void print_cvlist(Fl_Menu_*, void*);
      static void quit(Fl_Menu_*, void*);
+  /* stuart - bezier export */
+  static void save_file_patches(Fl_Menu_*, void*);
 
      static void undo(Fl_Menu_*, void*);
      static void redo(Fl_Menu_*, void*);
@@ -591,6 +594,9 @@ class DLFLAppWindow : public Fl_Double_Window
 
 /*
   $Log: DLFLAppWindow.hh,v $
+  Revision 1.1.1.1  2007/03/10 18:32:17  stuart
+  Initial CVS Import
+
   Revision 4.15  2004/01/20 22:18:20  vinod
   Added loop and dual_loop subdivision schemes
 
