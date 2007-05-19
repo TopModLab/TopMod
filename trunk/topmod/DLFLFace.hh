@@ -358,6 +358,8 @@ class DLFLFace
          boundaryWalk();
        }
 
+     void printCoords(void) const;
+
      friend void boundaryWalk(DLFLFacePtr faceptr)
        {
          faceptr->boundaryWalk();
