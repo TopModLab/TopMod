@@ -6,7 +6,7 @@
 #ifndef VERSETOPMOD_H
 #define VERSETOPMOD_H
 
-#include "verse.h"
+//#include "verse.h"
 
 #include <QWidget>
 
@@ -22,7 +22,7 @@ class VerseTopMod : public QWidget {
 public:
 	VerseTopMod(QWidget *parent = 0, Qt::WindowFlags f = Qt::Tool );
 	~VerseTopMod();
-	
+#if 0	
 	void callback_node_create(void *user, VNodeID node_id, VNodeType type, VNodeOwner ownership);
 	// static void wrapper_callback_node_create(void *user, VNodeID node_id, VNodeType type, VNodeOwner ownership);
 	
@@ -36,7 +36,8 @@ public slots:
 	void connectHost();
 	void disconnectHost();
 	void disconnectAll();
-
+#endif
+     
 private:
   QLineEdit *mLineEdit;
   QTextEdit *mTextEdit;

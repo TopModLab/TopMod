@@ -135,6 +135,9 @@ class Viewport
          switchTo(view);
        }
 
+     virtual ~Viewport()
+       {}
+     
      VPTransformType current(void) const
        {
          return currenttr;

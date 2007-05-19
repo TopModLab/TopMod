@@ -6,30 +6,22 @@
 TEMPLATE = app
 TARGET = TopMod
 QT += opengl xml
-CONFIG += qt 
+CONFIG += qt debug
 # release x86 ppc
 
 DEPENDPATH += . \
               lang \
 							include/arcball \
 							include/Base \
-							include/DataStructures \
 							include/Graphics \ 
 							include/Light \
-							include/Misc \
-							include/String \
-							include/vecmat \
-							include/Graphics/Windows
+							include/vecmat
 
 INCLUDEPATH += . \
                include/arcball \
                include/vecmat \
                include/Base \
-               include/DataStructures \
-               include/Misc \
-               include/String \
-               include/Graphics \
-               include/Graphics/Windows 
+               include/Graphics
 
 macx: {
 #tell it to load a custom info.plist file here

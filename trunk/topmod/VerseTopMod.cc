@@ -7,6 +7,7 @@
 
 #include "VerseTopMod.hh"
 
+#if 0
 /* A callback for connection acception: will be called when server accepts this client. */
 void VerseTopMod::callback_accept_connect(void *user, uint32 avatar, void *address, void *connection, uint8 *host_id) {
 
@@ -26,6 +27,7 @@ void VerseTopMod::callback_node_create(void *user, VNodeID node_id, VNodeType ty
 
 	mTextEdit->insertPlainText(" Node #" + QString(node_id) + " has type " + QString(type) + "\n");
 }
+#endif
 
 //constructor
 VerseTopMod::VerseTopMod(QWidget *parent, Qt::WindowFlags f)
@@ -51,7 +53,7 @@ VerseTopMod::VerseTopMod(QWidget *parent, Qt::WindowFlags f)
 	// verse_callback_set((void *)verse_send_node_create,	  (void *)callback_node_create, NULL);
 
 	/* Kick off program by connecting to Verse host on local machine. */
-	verse_send_connect("TopMod", "password", "localhost", NULL);
+//	verse_send_connect("TopMod", "password", "localhost", NULL);
 	// while(TRUE)
 	// verse_callback_update(10000);   /* Listen to network, get callbacks. */
 	
@@ -60,7 +62,7 @@ VerseTopMod::VerseTopMod(QWidget *parent, Qt::WindowFlags f)
 VerseTopMod::~VerseTopMod(){
 	
 }
-
+#if 0
 void VerseTopMod::executeCommand( )
 {
   QString command = mLineEdit->text();
@@ -103,3 +105,4 @@ void VerseTopMod::disconnectAll(){
 }
 
 
+#endif

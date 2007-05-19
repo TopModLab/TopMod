@@ -1,8 +1,8 @@
 /********************************************************************************
 ** Form generated from reading ui file 'stylesheeteditor.ui'
 **
-** Created: Mon May 14 02:42:14 2007
-**      by: Qt User Interface Compiler version 4.4.0-snapshot-20070507
+** Created: Sat May 19 16:32:28 2007
+**      by: Qt User Interface Compiler version 4.2.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
 ********************************************************************************/
@@ -27,42 +27,41 @@ class Ui_StyleSheetEditor
 {
 public:
     QGridLayout *gridLayout;
+    QSpacerItem *spacerItem;
+    QSpacerItem *spacerItem1;
     QComboBox *styleSheetCombo;
+    QSpacerItem *spacerItem2;
     QComboBox *styleCombo;
     QLabel *label_7;
     QHBoxLayout *hboxLayout;
+    QSpacerItem *spacerItem3;
     QPushButton *applyButton;
     QTextEdit *styleTextEdit;
     QLabel *label_8;
 
     void setupUi(QWidget *StyleSheetEditor)
     {
-    if (StyleSheetEditor->objectName().isEmpty())
-        StyleSheetEditor->setObjectName(QString::fromUtf8("StyleSheetEditor"));
-    QSize size(445, 289);
-    size = size.expandedTo(StyleSheetEditor->minimumSizeHint());
-    StyleSheetEditor->resize(size);
+    StyleSheetEditor->setObjectName(QString::fromUtf8("StyleSheetEditor"));
     gridLayout = new QGridLayout(StyleSheetEditor);
-#ifndef Q_OS_MAC
     gridLayout->setSpacing(6);
-#endif
-#ifndef Q_OS_MAC
     gridLayout->setMargin(9);
-#endif
     gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
+    spacerItem = new QSpacerItem(32, 20, QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
 
-    gridLayout->addItem(new QSpacerItem(32, 20, QSizePolicy::MinimumExpanding, QSizePolicy::Minimum), 0, 6, 1, 1);
+    gridLayout->addItem(spacerItem, 0, 6, 1, 1);
 
+    spacerItem1 = new QSpacerItem(32, 20, QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
 
-    gridLayout->addItem(new QSpacerItem(32, 20, QSizePolicy::MinimumExpanding, QSizePolicy::Minimum), 0, 0, 1, 1);
+    gridLayout->addItem(spacerItem1, 0, 0, 1, 1);
 
     styleSheetCombo = new QComboBox(StyleSheetEditor);
     styleSheetCombo->setObjectName(QString::fromUtf8("styleSheetCombo"));
 
     gridLayout->addWidget(styleSheetCombo, 0, 5, 1, 1);
 
+    spacerItem2 = new QSpacerItem(10, 16, QSizePolicy::Fixed, QSizePolicy::Minimum);
 
-    gridLayout->addItem(new QSpacerItem(10, 16, QSizePolicy::Fixed, QSizePolicy::Minimum), 0, 3, 1, 1);
+    gridLayout->addItem(spacerItem2, 0, 3, 1, 1);
 
     styleCombo = new QComboBox(StyleSheetEditor);
     styleCombo->setObjectName(QString::fromUtf8("styleCombo"));
@@ -85,13 +84,12 @@ public:
     gridLayout->addWidget(label_7, 0, 1, 1, 1);
 
     hboxLayout = new QHBoxLayout();
-#ifndef Q_OS_MAC
     hboxLayout->setSpacing(6);
-#endif
     hboxLayout->setMargin(0);
     hboxLayout->setObjectName(QString::fromUtf8("hboxLayout"));
+    spacerItem3 = new QSpacerItem(321, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-    hboxLayout->addItem(new QSpacerItem(321, 20, QSizePolicy::Expanding, QSizePolicy::Minimum));
+    hboxLayout->addItem(spacerItem3);
 
     applyButton = new QPushButton(StyleSheetEditor);
     applyButton->setObjectName(QString::fromUtf8("applyButton"));
@@ -109,13 +107,21 @@ public:
 
     label_8 = new QLabel(StyleSheetEditor);
     label_8->setObjectName(QString::fromUtf8("label_8"));
-    sizePolicy1.setHeightForWidth(label_8->sizePolicy().hasHeightForWidth());
-    label_8->setSizePolicy(sizePolicy1);
+    QSizePolicy sizePolicy2(static_cast<QSizePolicy::Policy>(0), static_cast<QSizePolicy::Policy>(5));
+    sizePolicy2.setHorizontalStretch(0);
+    sizePolicy2.setVerticalStretch(0);
+    sizePolicy2.setHeightForWidth(label_8->sizePolicy().hasHeightForWidth());
+    label_8->setSizePolicy(sizePolicy2);
 
     gridLayout->addWidget(label_8, 0, 4, 1, 1);
 
 
     retranslateUi(StyleSheetEditor);
+
+    QSize size(445, 289);
+    size = size.expandedTo(StyleSheetEditor->minimumSizeHint());
+    StyleSheetEditor->resize(size);
+
 
     QMetaObject::connectSlotsByName(StyleSheetEditor);
     } // setupUi
@@ -124,10 +130,8 @@ public:
     {
     StyleSheetEditor->setWindowTitle(QApplication::translate("StyleSheetEditor", "Style Editor", 0, QApplication::UnicodeUTF8));
     styleSheetCombo->clear();
-    styleSheetCombo->insertItems(0, QStringList()
-     << QApplication::translate("StyleSheetEditor", "Default", 0, QApplication::UnicodeUTF8)
-     << QApplication::translate("StyleSheetEditor", "Modo", 0, QApplication::UnicodeUTF8)
-    );
+    styleSheetCombo->addItem(QApplication::translate("StyleSheetEditor", "Default", 0, QApplication::UnicodeUTF8));
+    styleSheetCombo->addItem(QApplication::translate("StyleSheetEditor", "Modo", 0, QApplication::UnicodeUTF8));
     label_7->setText(QApplication::translate("StyleSheetEditor", "Style:", 0, QApplication::UnicodeUTF8));
     applyButton->setText(QApplication::translate("StyleSheetEditor", "&Apply", 0, QApplication::UnicodeUTF8));
     label_8->setText(QApplication::translate("StyleSheetEditor", "Style Sheet:", 0, QApplication::UnicodeUTF8));

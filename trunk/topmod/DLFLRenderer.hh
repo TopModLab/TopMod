@@ -47,13 +47,13 @@ class DLFLRenderer
        {}
 
         /* Copy constructor */
-     DLFLRenderer(const DLFLRenderer& renderer)
+     DLFLRenderer(const DLFLRenderer&)
        {}
 
   public :
 
         /* Assignment operator */
-     DLFLRenderer& operator = (const DLFLRenderer& renderer)
+     DLFLRenderer& operator = (const DLFLRenderer&)
        {
          return (*this);
        }
@@ -160,7 +160,7 @@ class DLFLRenderer
        {
          glColor3f(0.5,1.0,0.0);
          glDepthRange(0.0,1.0-0.00075);
-	 			 object->renderVertices(5.0);
+         object->renderVertices(5.0);
        }
 
         /*

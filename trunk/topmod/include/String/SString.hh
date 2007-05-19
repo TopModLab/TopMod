@@ -7,7 +7,7 @@
 #include <string>
 //#include <bool.h>
 #include <iostream.h>
-#include "../base/BaseObject.hh"
+#include <BaseObject.hh>
 
 // A Simple String class
 class SString;

@@ -227,7 +227,8 @@ DLFLFacePtr DLFLObject :: extrudeFace(DLFLFacePtr fptr, double d, double rot, do
      // Rotate and scale the new face w.r.t. old face by given parameters
   Vector3d dir = fptr->computeNormal();
   normalize(dir);
-  return extrudeFace(fptr,d,dir,rot,sf);
+  DLFLFacePtr exface = extrudeFace(fptr,d,dir,rot,sf);
+  return exface;
 }
 
 DLFLFacePtr DLFLObject :: extrudeFace(DLFLFacePtr fptr, double d, int num, double rot, double sf)
@@ -242,7 +243,8 @@ DLFLFacePtr DLFLObject :: extrudeFace(DLFLFacePtr fptr, double d, int num, doubl
 
 DLFLFacePtr DLFLObject :: extrudeFace(DLFLFacePtr fptr, double d, const Vector3d& dir)
 {
-  return extrudeFace(fptr,d,dir,0.0,1.0);
+  DLFLFacePtr exface = extrudeFace(fptr,d,dir,0.0,1.0);
+  return exface;
 }
 
 DLFLFacePtr DLFLObject :: extrudeFace(DLFLFacePtr fptr, double d, const Vector3d& dir,

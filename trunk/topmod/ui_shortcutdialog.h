@@ -1,8 +1,8 @@
 /********************************************************************************
 ** Form generated from reading ui file 'shortcutdialog.ui'
 **
-** Created: Mon May 14 02:42:14 2007
-**      by: Qt User Interface Compiler version 4.4.0-snapshot-20070507
+** Created: Sat May 19 16:32:28 2007
+**      by: Qt User Interface Compiler version 4.2.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
 ********************************************************************************/
@@ -27,16 +27,13 @@ public:
     QVBoxLayout *vboxLayout;
     QTreeWidget *twShortcuts;
     QHBoxLayout *hboxLayout;
+    QSpacerItem *spacerItem;
     QPushButton *okButton;
     QPushButton *cancelButton;
 
     void setupUi(QDialog *ShortcutDialog)
     {
-    if (ShortcutDialog->objectName().isEmpty())
-        ShortcutDialog->setObjectName(QString::fromUtf8("ShortcutDialog"));
-    QSize size(400, 300);
-    size = size.expandedTo(ShortcutDialog->minimumSizeHint());
-    ShortcutDialog->resize(size);
+    ShortcutDialog->setObjectName(QString::fromUtf8("ShortcutDialog"));
     vboxLayout = new QVBoxLayout(ShortcutDialog);
     vboxLayout->setSpacing(4);
     vboxLayout->setMargin(2);
@@ -51,8 +48,9 @@ public:
     hboxLayout->setSpacing(2);
     hboxLayout->setMargin(0);
     hboxLayout->setObjectName(QString::fromUtf8("hboxLayout"));
+    spacerItem = new QSpacerItem(131, 31, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-    hboxLayout->addItem(new QSpacerItem(131, 31, QSizePolicy::Expanding, QSizePolicy::Minimum));
+    hboxLayout->addItem(spacerItem);
 
     okButton = new QPushButton(ShortcutDialog);
     okButton->setObjectName(QString::fromUtf8("okButton"));
@@ -69,6 +67,11 @@ public:
 
 
     retranslateUi(ShortcutDialog);
+
+    QSize size(400, 300);
+    size = size.expandedTo(ShortcutDialog->minimumSizeHint());
+    ShortcutDialog->resize(size);
+
     QObject::connect(okButton, SIGNAL(clicked()), ShortcutDialog, SLOT(accept()));
     QObject::connect(cancelButton, SIGNAL(clicked()), ShortcutDialog, SLOT(reject()));
 
