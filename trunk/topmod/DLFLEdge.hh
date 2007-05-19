@@ -72,10 +72,8 @@ class DLFLEdge
      DLFLEdge(DLFLFaceVertexPtr fvp1, DLFLFaceVertexPtr fvp2, bool update=true)
        : fvpV1(fvp1), fvpV2(fvp2), etType(ETNormal), auxcoords(), auxnormal(), midpoint(), normal(), flags(0)
        {
-	 if ( update )
-	    {
-	      updateMidPoint(); updateNormal();
-	    }
+	 if ( update )  updateNormal();
+         updateMidPoint();
          assignID();
        }
 
