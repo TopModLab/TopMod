@@ -32,21 +32,24 @@ INCLUDEPATH += . \
                include/Graphics/Windows 
 
 macx: {
-	
 #tell it to load a custom info.plist file here
 QMAKE_INFO_PLIST    = Info.plist
 MACOSX_DEPLOYMENT_TARGET = 10.2
-
 # compile release + universal binary 
-# CONFIG += release x86 ppc
+CONFIG += release x86 ppc
 
-INCLUDEPATH += /Library/Frameworks/Python.framework/Versions/2.5/include/python2.5 /usr/include
+INCLUDEPATH += /usr/include
+#/Library/Frameworks/Python.framework/Versions/2.5/include/python2.5 
 # /usr/include
 # /Library/Frameworks/3DconnexionClient.framework/Versions/A/Headers
-QMAKE_LFLAGS += -L/Library/Frameworks/Python.framework -L/usr/lib
+
+QMAKE_LFLAGS += -L/usr/lib
+#-L/Library/Frameworks/Python.framework 
 # -L/usr/lib
 # -L/Library/Frameworks/3DconnexionClient.framework 
- LIBS += -framework Python -lverse
+
+LIBS += -lverse
+# -framework Python
 # -framework 3DconnexionClient
 }
 unix: {
