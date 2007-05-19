@@ -9,10 +9,6 @@ QT += opengl xml
 CONFIG += qt 
 # release x86 ppc
 
-#tell it to load a custom info.plist file here:
-QMAKE_INFO_PLIST    = Info.plist
-MACOSX_DEPLOYMENT_TARGET = 10.2
-
 DEPENDPATH += . \
               lang \
 							include/arcball \
@@ -36,10 +32,18 @@ INCLUDEPATH += . \
                include/Graphics/Windows 
 
 macx: {
- INCLUDEPATH += /Library/Frameworks/Python.framework/Versions/2.5/include/python2.5 /usr/include
+	
+#tell it to load a custom info.plist file here
+QMAKE_INFO_PLIST    = Info.plist
+MACOSX_DEPLOYMENT_TARGET = 10.2
+
+# compile release + universal binary 
+# CONFIG += release x86 ppc
+
+INCLUDEPATH += /Library/Frameworks/Python.framework/Versions/2.5/include/python2.5 /usr/include
 # /usr/include
 # /Library/Frameworks/3DconnexionClient.framework/Versions/A/Headers
- QMAKE_LFLAGS += -L/Library/Frameworks/Python.framework -L/usr/lib
+QMAKE_LFLAGS += -L/Library/Frameworks/Python.framework -L/usr/lib
 # -L/usr/lib
 # -L/Library/Frameworks/3DconnexionClient.framework 
  LIBS += -framework Python -lverse

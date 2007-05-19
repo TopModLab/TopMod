@@ -295,7 +295,9 @@ public slots:
 		void toggleWireframe(void);
 		void toggleSilhouette(void);
 		void toggleVertices(void);
-  void toggleIDs( );
+	  void toggleFaceIDs( );
+	  void toggleVertexIDs( );
+	  void toggleEdgeIDs( );
 		void turnOffOverlays(void);
 		void toggleObjectOrientation(void);
 		void toggleNormals(void);

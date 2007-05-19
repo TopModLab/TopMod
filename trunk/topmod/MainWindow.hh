@@ -109,9 +109,11 @@ protected:
 	int startX, startY, endX, endY;
 
   DLFLWindow *mainWindow;            // Window displaying the object
-	
+
+	#ifdef WITH_PYTHON
   DLFLScriptEditor *mScriptEditor;
 	QDockWidget *mScriptEditorDockWidget;
+	#endif
 	
 	VerseTopMod *mVerseDialog;
 	QDockWidget *mVerseDialogDockWidget;
@@ -159,6 +161,7 @@ private:
   QMenu *editMenu;
   QMenu *modesMenu;
   QMenu *displayMenu;
+	QMenu *mShowIDsMenu;
   QMenu *rendererMenu;
   QMenu *primitivesMenu;
   QMenu *objectMenu;
@@ -188,7 +191,9 @@ private:
 
   //Display Menu Actions
   QAction *showVerticesAct;
-  QAction *showIDsAct;
+  QAction *mShowFaceIDsAct;
+  QAction *mShowEdgeIDsAct;
+  QAction *mShowVertexIDsAct;
   QAction *showSilhouetteAct;
   QAction *showWireframeAct;
   QAction *objectOrientationAct;

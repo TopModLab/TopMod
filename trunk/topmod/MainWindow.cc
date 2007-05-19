@@ -45,16 +45,19 @@ MainWindow::MainWindow() {
   cWidget->setLayout( layout );
   setCentralWidget( cWidget );
 
-	//the script editor widget will be placed into a QDockWidget
-	//and will be dockable in the top and bottom sections of the main window	
-	mScriptEditor = new DLFLScriptEditor( );
-	mScriptEditorDockWidget = new QDockWidget(tr("Script Editor"), this);
-	mScriptEditorDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
-	mScriptEditorDockWidget->setWidget(mScriptEditor);
-	addDockWidget(Qt::BottomDockWidgetArea, mScriptEditorDockWidget);
-	mScriptEditorDockWidget->hide();
-	mScriptEditorDockWidget->setMaximumHeight(200);
-
+	
+	#ifdef WITH_PYTHON
+		//the script editor widget will be placed into a QDockWidget
+		//and will be dockable in the top and bottom sections of the main window	
+		mScriptEditor = new DLFLScriptEditor( );
+		mScriptEditorDockWidget = new QDockWidget(tr("Script Editor"), this);
+		mScriptEditorDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
+		mScriptEditorDockWidget->setWidget(mScriptEditor);
+		addDockWidget(Qt::BottomDockWidgetArea, mScriptEditorDockWidget);
+		mScriptEditorDockWidget->hide();
+		mScriptEditorDockWidget->setMaximumHeight(200);
+	#endif
+	
 	//verse script box
 	mVerseDialog = new VerseTopMod(this );
 	mVerseDialogDockWidget = new QDockWidget(tr("Verse-TopMod"), this);
@@ -193,7 +196,7 @@ void MainWindow::createActions()
 	//Display Menu Actions
 	mFullscreenAct = new QAction(tr("&Full Screen"), this);
 	mFullscreenAct->setCheckable(true);
-	sm->registerAction( mFullscreenAct, "Display Menu", "CTRL+F");
+	sm->registerAction( mFullscreenAct, "Display Menu", "");
 	mFullscreenAct->setStatusTip(tr("Toggle Full Screen"));
 	//  connect(mFullscreenAct, SIGNAL(triggered()), glWidget, SLOT(toggleFullScreen()) );
 
@@ -203,10 +206,20 @@ void MainWindow::createActions()
 	// showVerticesAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(showVerticesAct, SIGNAL(triggered()), mainWindow, SLOT(toggleVertices()));
 
-	showIDsAct = new QAction(tr("Show &IDs"), this);
-	showIDsAct->setCheckable(true);
-	sm->registerAction(showIDsAct, "Display Menu", "I");
-	connect(showIDsAct, SIGNAL(triggered()), mainWindow, SLOT(toggleIDs()));
+	mShowFaceIDsAct = new QAction(tr("Show &Face IDs"), this);
+	mShowFaceIDsAct->setCheckable(true);
+	sm->registerAction(mShowFaceIDsAct, "Display Menu", "CTRL+F");
+	connect(mShowFaceIDsAct, SIGNAL(triggered()), mainWindow, SLOT(toggleFaceIDs()));
+
+	mShowEdgeIDsAct = new QAction(tr("Show &Edge IDs"), this);
+	mShowEdgeIDsAct->setCheckable(true);
+	sm->registerAction(mShowEdgeIDsAct, "Display Menu", "CTRL+E");
+	connect(mShowEdgeIDsAct, SIGNAL(triggered()), mainWindow, SLOT(toggleEdgeIDs()));
+
+	mShowVertexIDsAct = new QAction(tr("Show &Vertex IDs"), this);
+	mShowVertexIDsAct->setCheckable(true);
+	sm->registerAction(mShowVertexIDsAct, "Display Menu", "CTRL+V");
+	connect(mShowVertexIDsAct, SIGNAL(triggered()), mainWindow, SLOT(toggleVertexIDs()));
 
 	showSilhouetteAct = new QAction(tr("Show &Silhouette"), this);
 	showSilhouetteAct->setCheckable(true);
@@ -244,12 +257,14 @@ void MainWindow::createActions()
 	// showGridAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(showGridAct, SIGNAL(triggered()), mainWindow, SLOT(toggleGrid()));
 
-	showScriptEditorAct = new QAction(tr("Show Script &Editor"), this);
-	showScriptEditorAct->setCheckable(true);
-	showScriptEditorAct->setStatusTip( tr("Show the script editor to execute DLFL commands") );
-	connect(showScriptEditorAct, SIGNAL(triggered()), this, SLOT(showHideScriptEditor()));
-	sm->registerAction(showScriptEditorAct, "Display Menu", "SHIFT+CTRL+E");
-
+	#ifdef WITH_PYTHON
+		showScriptEditorAct = new QAction(tr("Show Script &Editor"), this);
+		showScriptEditorAct->setCheckable(true);
+		showScriptEditorAct->setStatusTip( tr("Show the script editor to execute DLFL commands") );
+		connect(showScriptEditorAct, SIGNAL(triggered()), this, SLOT(showHideScriptEditor()));
+		sm->registerAction(showScriptEditorAct, "Display Menu", "SHIFT+CTRL+E");
+	#endif
+	
 	mShowVerseDialogAct = new QAction(tr("Show Verse &Dialog"), this);
 	mShowVerseDialogAct->setCheckable(true);
 	mShowVerseDialogAct->setStatusTip( tr("Show the verse dialog to view verse server connection status") );
@@ -507,30 +522,29 @@ void MainWindow::createMenus(){
 	editMenu->addAction(mUndoAct);
 	editMenu->addAction(mRedoAct);
 	editMenu->setTearOffEnabled(true);
-	// menuBar->addSeparator();
-	
-	//modesMenu = menuBar->addMenu(tr("&Modes"));
-	//modesMenu->setTearOffEnabled(true);
-	//modesMenu->addAction(modeExtrusionAct);
-	//modesMenu->addAction(modeConicalAct);
-	//modesMenu->addAction(modeRemeshingAct);
-	//modesMenu->addAction(modeHighgenusAct);
-	//modesMenu->addAction(modeTexturingAct);
-	// modesMenu->insertTearOffHandle();
 
 	displayMenu = new QMenu(tr("&Display"));
 	displayMenu->setTearOffEnabled(true);
 	menuBar->addMenu(displayMenu);
-	
 	displayMenu->addAction(showVerticesAct);
-	displayMenu->addAction(showIDsAct);
+	
+	mShowIDsMenu = new QMenu(tr("&Show IDs"));
+	displayMenu->addMenu(mShowIDsMenu);
+	mShowIDsMenu->setTearOffEnabled(true);
+	mShowIDsMenu->addAction(mShowFaceIDsAct);
+	mShowIDsMenu->addAction(mShowEdgeIDsAct);
+	mShowIDsMenu->addAction(mShowVertexIDsAct);
 	displayMenu->addAction(showSilhouetteAct);
 	displayMenu->addAction(showWireframeAct);
 	displayMenu->addAction(showCoordinateAxesAct);
 	displayMenu->addAction(showGridAct);
 	displayMenu->addAction(objectOrientationAct);
 	displayMenu->addAction(showNormalsAct);
+	
+	#ifdef WITH_PYTHON
 	displayMenu->addAction(showScriptEditorAct);
+	#endif
+	
 	displayMenu->addAction(mShowVerseDialogAct);
 	displayMenu->addAction(mFullscreenAct);
 
@@ -862,13 +876,16 @@ void MainWindow::paintEvent(QPaintEvent *event){
 }
 
 void MainWindow::showHideScriptEditor(){
-
+	
+#ifdef WITH_PYTHON
 	if( mScriptEditorDockWidget->isVisible( ) )
 	  mScriptEditorDockWidget->hide( );
 	else {
 	  mScriptEditorDockWidget->show( );
 	  mScriptEditorDockWidget->setFocus();
 	}
+#endif
+
 }
 
 void MainWindow::showHideVerseDialog(){

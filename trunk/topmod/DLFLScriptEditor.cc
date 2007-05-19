@@ -1,4 +1,7 @@
+#ifdef WITH_PYTHON
+
 #include "DLFLScriptEditor.hh"
+
 
 #include <iostream>
 #include <QtGui>
@@ -146,3 +149,5 @@ void DLFLScriptEditor::keyPressEvent( QKeyEvent * e ) {
 
   int y = x;
 }
+
+#endif

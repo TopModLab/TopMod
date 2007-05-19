@@ -66,7 +66,10 @@ void GLWidget::initializeGL( ) {
   glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);					// Set Line Antialiasing
   glEnable(GL_BLEND);							// Enable Blending
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);			// Type Of Blending To Use
-  mShowIDs = false;
+
+  mShowVertexIDs = false;
+  mShowEdgeIDs = false;
+  mShowFaceIDs = false;
 }
 
 void GLWidget::paintGL( ) {
@@ -228,9 +231,10 @@ void GLWidget::drawIDs( ) {
   QFont font10("arial"); 
   font10.setPointSize(10);
   font10.setBold(true);
+	font10.setStyleStrategy(QFont::NoAntialias);
 
   /* Draw Vertex IDs */
-  if( mShowIDs ) {
+  if( mShowVertexIDs ) {
     DLFLVertexPtrArray vparray;
     object->getVertices(vparray);
     DLFLVertexPtrArray::iterator it;
@@ -243,7 +247,7 @@ void GLWidget::drawIDs( ) {
   }
 
   /* Draw Edge IDs */
-  if( mShowIDs ) {
+  if( mShowEdgeIDs ) {
     DLFLEdgePtrArray eparray;
     object->getEdges(eparray);
     DLFLEdgePtrArray::iterator it;
@@ -256,7 +260,7 @@ void GLWidget::drawIDs( ) {
   }
 
   /* Draw Face IDs */
-  if( mShowIDs ) {
+  if( mShowFaceIDs ) {
     DLFLFacePtrArray fparray;
     object->getFaces(fparray);
     DLFLFacePtrArray::iterator it;

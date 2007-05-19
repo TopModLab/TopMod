@@ -1077,8 +1077,16 @@ void DLFLWindow::toggleVertices(void)             // Toggle display of points
 	active->toggleVertices();
 }
 
-void DLFLWindow::toggleIDs( ) {
-  active->toggleIDs( );
+void DLFLWindow::toggleFaceIDs( ) {
+  active->toggleFaceIDs( );
+}
+
+void DLFLWindow::toggleVertexIDs( ) {
+  active->toggleVertexIDs( );
+}
+
+void DLFLWindow::toggleEdgeIDs( ) {
+  active->toggleEdgeIDs( );
 }
 
 void DLFLWindow::turnOffOverlays(void)               // Turn off all overlays

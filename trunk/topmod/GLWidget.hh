@@ -75,7 +75,9 @@ protected :
 	void resizeOverlayGL(int width, int height);
 	
   bool mIsFullScreen;
-  bool mShowIDs;
+  bool mShowFaceIDs;
+  bool mShowVertexIDs;
+  bool mShowEdgeIDs;
 
 	   // Selection lists - these are shared by all viewports
 	static DLFLVertexPtrArray sel_vptr_array; // List of selected DLFLVertex pointers
@@ -403,8 +405,18 @@ public :
 			this->updateGL();
 	  }
 
-  void toggleIDs( ) {
-    mShowIDs = !mShowIDs;
+  void toggleFaceIDs( ) {
+    mShowFaceIDs = !mShowFaceIDs;
+    this->updateGL();
+  }
+
+  void toggleEdgeIDs( ) {
+    mShowEdgeIDs = !mShowEdgeIDs;
+    this->updateGL();
+  }
+
+  void toggleVertexIDs( ) {
+    mShowVertexIDs = !mShowVertexIDs;
     this->updateGL();
   }
 

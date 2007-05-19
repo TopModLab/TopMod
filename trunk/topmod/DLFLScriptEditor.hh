@@ -1,6 +1,8 @@
 #ifndef _DLFLSCRIPT_EDITOR_CC_
 #define _DLFLSCRIPT_EDITOR_CC_
 
+#ifdef WITH_PYTHON
+
 #undef slots
 #include <Python.h>
 #define slots
@@ -37,5 +39,7 @@ private :
   void PyInit();
 
 };
+
+#endif
 
 #endif // _DLFLSCRIPT_EDITOR_CC_

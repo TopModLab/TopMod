@@ -14,6 +14,11 @@
 
 #include "MainWindow.hh"
 
+#define WITH_VERSE TRUE
+#define WITH_PYTHON TRUE
+// #define WITH_3DCONNEXION
+
+#ifdef WITH_3DCONEXXION
 #ifdef __APPLE__
 
 /*
@@ -103,6 +108,7 @@ int TdxComputeEventZero()
     return TdxComputeAxes(zero);
 }//*/
 #endif
+#endif 
 
 int main( int argc, char **argv ) {
 
@@ -116,11 +122,15 @@ int main( int argc, char **argv ) {
 	translator.load(QString("topmod_") + locale);
 	app.installTranslator(&translator);
 		
-	//3d connexion stuff ... isn't working right now
-	// OSStatus err;
-	// err = TdxInitDevice('TopM', TRUE, kConnexionClientModeTakeOver, kConnexionMaskAll);
-	//pass kConnexionClientModeTakeOver as the mode and try kConnexionMaskAxis | kConnexionMaskButtons as the mask. kConnexionMaskAll should also work.
-
+	#ifdef WITH_3DCONNEXION
+		#ifdef __APPLE__
+			//3d connexion stuff ... isn't working right now
+			// OSStatus err;
+			// err = TdxInitDevice('TopM', TRUE, kConnexionClientModeTakeOver, kConnexionMaskAll);
+			//pass kConnexionClientModeTakeOver as the mode and try kConnexionMaskAxis | kConnexionMaskButtons as the mask. kConnexionMaskAll should also work.
+		#endif
+	#endif
+	
 	MainWindow mainWindow;
 
 	app.processEvents( );
