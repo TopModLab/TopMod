@@ -16,7 +16,7 @@
 #include "DLFLFace.hh"
 #include "DLFLMaterial.hh"
 #include "DLFLAux.hh"
-#include <Graphics/Transform.hh>
+#include <Transform.hh>
 #include "TMPatchFace.hh"
 
 class DLFLObject
