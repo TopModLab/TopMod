@@ -62,7 +62,7 @@ class MainWindow : public QMainWindow {
 Q_OBJECT
 
 public:
-  MainWindow();
+  MainWindow(char *filename = NULL);
 
 		      	// Create the renderers
 	void createRenderers(void){
@@ -97,6 +97,7 @@ public:
 	void setMode(int m);
 	void setToolOptions(QWidget *optionsWidget);
 	void setRemeshingScheme(int m);
+	void loadFile(const QString &fileName);
 
 protected:
   void closeEvent( QCloseEvent *event );
@@ -111,12 +112,14 @@ protected:
   DLFLWindow *mainWindow;            // Window displaying the object
 
 	#ifdef WITH_PYTHON
-  DLFLScriptEditor *mScriptEditor;
-	QDockWidget *mScriptEditorDockWidget;
+	  DLFLScriptEditor *mScriptEditor;
+		QDockWidget *mScriptEditorDockWidget;
 	#endif
 	
-	VerseTopMod *mVerseDialog;
-	QDockWidget *mVerseDialogDockWidget;
+	#ifdef WITH_VERSE
+		VerseTopMod *mVerseDialog;
+		QDockWidget *mVerseDialogDockWidget;
+	#endif	
 	
 	QDockWidget *mToolOptionsDockWidget;
 	QStackedWidget *mToolOptionsStackedWidget;
@@ -151,9 +154,11 @@ private:
   void readSettings();
   void writeSettings();
   bool maybeSave();
-  void loadFile(const QString &fileName);
+  // void loadFile(const QString &fileName);
   bool saveFile(const QString &fileName);
   void setCurrentFile(const QString &fileName);	
+	void openFile(const QString &fileName);
+
 
 	QMenuBar *menuBar;
 
@@ -168,7 +173,10 @@ private:
   QMenu *selectionMenu;
   QMenu *settingsMenu;
   QMenu *languageMenu;
-	QMenu *mVerseMenu;
+
+	#ifdef WITH_VERSE
+		QMenu *mVerseMenu;
+	#endif
 	
 	QMenu *mRemeshingMenu;
 	QMenu *mToolsMenu;
@@ -256,12 +264,14 @@ private:
   QAction *turkishAct;
   QAction *catalanAct;
 
-	//verse menu actions
-	QAction *mVerseConnectLocalhostAct;
-	QAction *mVerseConnectAct;
-	QAction *mVerseDisconnectAct;
-	QAction *mVerseDisconnectAllAct;
-
+	#ifdef WITH_VERSE
+		//verse menu actions
+		QAction *mVerseConnectLocalhostAct;
+		QAction *mVerseConnectAct;
+		QAction *mVerseDisconnectAct;
+		QAction *mVerseDisconnectAllAct;
+	#endif
+	
   QString curFile;
 	
 	QWidget *mToolOptionsTitleBarWidget;
@@ -289,7 +299,9 @@ private:
 	QStatusBar *mStatusBar;
 
   QAction *showScriptEditorAct;
-  QAction *mShowVerseDialogAct;
+	#ifdef WITH_VERSE
+	  QAction *mShowVerseDialogAct;
+	#endif
   QAction *mFullscreenAct;
 	
 	QAction *mPerformRemeshingAct;

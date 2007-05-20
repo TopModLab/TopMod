@@ -58,6 +58,7 @@ HEADERS += 	DLFLScriptEditor.hh \
 			VerseTopMod.hh \
 			# TdxDeviceWrappers.hh \
 			GLWidget.hh \
+			TopMod.hh \
 			MainWindow.hh \
 			qcumber.hh \
 			qshortcutdialog.hh \
@@ -123,6 +124,7 @@ SOURCES += 	DLFLScriptEditor.cc \
 			VerseTopMod.cc \
 			# TdxDeviceWrappers.cc \
 			GLWidget.cc \
+			TopMod.cc \
 			main.cc \
 			MainWindow.cc \
 			MainWindowCallbacks.cc \

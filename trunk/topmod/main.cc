@@ -11,11 +11,17 @@
 #include <QMenuBar>
 #include <QMainWindow>
 #include <QMessageBox>
+#include <QFileOpenEvent>
+
 
 #include "MainWindow.hh"
+#include "TopMod.hh"
 
-#define WITH_VERSE TRUE
-#define WITH_PYTHON TRUE
+#ifndef WITH_VERSE
+	// #define WITH_VERSE
+#endif 
+// #define WITH_PYTHON
+
 // #define WITH_3DCONNEXION
 
 #ifdef WITH_3DCONEXXION
@@ -110,17 +116,53 @@ int TdxComputeEventZero()
 #endif
 #endif 
 
+// TopMod::TopMod(int & argc, char ** argv, bool GUIenabled)
+// 	: QApplication(argc,argv,GUIenabled){
+// 			
+// 	setApplicationName("TopMod");
+// 
+// 	mainWindow = new MainWindow();
+// 	
+// 	QString locale = QLocale::system().name();
+// 	QTranslator translator;
+// 	translator.load(QString("topmod_") + locale);
+// 	installTranslator(&translator);
+// 
+// 	processEvents( );
+// 	
+// 	mainWindow->resize( 1000, 800 );
+// 	mainWindow->show();
+// 	
+// }
+// 
+// bool TopMod::event(QEvent *event){
+// 	
+// 	switch (event->type()) {
+// 	case QEvent::FileOpen:
+// 		mainWindow->loadFile(static_cast<QFileOpenEvent *>(event)->file());        
+// 		return true;
+// 	default:
+// 		return QApplication::event(event);
+// 	}
+// 	
+// }
+// 
+// void TopMod::loadFile(const QString &filename){
+// 
+// 	mainWindow->loadFile(filename);
+// }
+
+
 int main( int argc, char **argv ) {
 
-  QApplication app( argc, argv, true );
+  TopMod app( argc, argv, true );
 
-	app.setApplicationName("TopMod");
-	
-	QString locale = QLocale::system().name();
-
-	QTranslator translator;
-	translator.load(QString("topmod_") + locale);
-	app.installTranslator(&translator);
+	// app.setApplicationName("TopMod");
+	// 
+	// QString locale = QLocale::system().name();
+	// QTranslator translator;
+	// translator.load(QString("topmod_") + locale);
+	// app.installTranslator(&translator);
 		
 	#ifdef WITH_3DCONNEXION
 		#ifdef __APPLE__
@@ -131,11 +173,15 @@ int main( int argc, char **argv ) {
 		#endif
 	#endif
 	
-	MainWindow mainWindow;
-
-	app.processEvents( );
-	mainWindow.resize( 1000, 800 );
-	mainWindow.show();
+	// // if (argc > 0)
+	// MainWindow mainWindow;
+	// 	// else
+	// 	// MainWindow mainWindow = new MainWindow();
+	// // QFileOpenEvent fileOpenEvent;	
+	// 
+	// app.processEvents( );
+	// mainWindow.resize( 1000, 800 );
+	// mainWindow.show();
 
 	return app.exec( );
 }

@@ -1,4 +1,4 @@
-
+#ifdef WITH_VERSE
 #include <iostream>
 #include <QtGui>
 
@@ -104,5 +104,7 @@ void VerseTopMod::disconnectAll(){
 	
 }
 
+
+#endif
 
 #endif

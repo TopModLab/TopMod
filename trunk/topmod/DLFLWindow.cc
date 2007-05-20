@@ -1800,7 +1800,6 @@ void DLFLWindow::openFile(void)
 
 void DLFLWindow::openFile(QString fileName){
 
-	
 	QFile file(fileName);
 	file.open(QIODevice::ReadOnly);
 // QDir::absoluteFilePath(fileName).toLatin1();

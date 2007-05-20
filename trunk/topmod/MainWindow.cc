@@ -20,7 +20,7 @@ PatchRendererPtr MainWindow::patch;		       // PatchRenderer
 
 //DLFLWindowPtr MainWindow::mainWindowPtr;            // Pointer to the main window
 
-MainWindow::MainWindow() {
+MainWindow::MainWindow(char *filename) {
 	
 	// setUnifiedTitleAndToolBarOnMac(false);
 	mStatusBar = new QStatusBar();
@@ -58,14 +58,16 @@ MainWindow::MainWindow() {
 		mScriptEditorDockWidget->setMaximumHeight(200);
 	#endif
 	
-	//verse script box
-	mVerseDialog = new VerseTopMod(this );
-	mVerseDialogDockWidget = new QDockWidget(tr("Verse-TopMod"), this);
-	mVerseDialogDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
-	mVerseDialogDockWidget->setWidget(mVerseDialog);
-	addDockWidget(Qt::BottomDockWidgetArea, mVerseDialogDockWidget);
-	mVerseDialogDockWidget->hide();
-	mVerseDialogDockWidget->setMaximumHeight(200);
+	#ifdef WITH_VERSE
+		//verse script box
+		mVerseDialog = new VerseTopMod(this );
+		mVerseDialogDockWidget = new QDockWidget(tr("Verse-TopMod"), this);
+		mVerseDialogDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
+		mVerseDialogDockWidget->setWidget(mVerseDialog);
+		addDockWidget(Qt::BottomDockWidgetArea, mVerseDialogDockWidget);
+		mVerseDialogDockWidget->hide();
+		mVerseDialogDockWidget->setMaximumHeight(200);
+	#endif
 	
   //make a new instance of QShortcutManager
   sm = new QShortcutManager();
@@ -86,6 +88,10 @@ MainWindow::MainWindow() {
 	
 	//style sheet editor
   mStyleSheetEditor = new StyleSheetEditor(this);
+
+	// if (filename){
+// 		mainWindow->openFile(QString(filename));
+// 	}
 	
 }
 
@@ -107,9 +113,14 @@ void MainWindow::newFile()
 
 }
 
-void MainWindow::open()
-{
+void MainWindow::open() {
+	
 	mainWindow->openFile();
+}
+
+void MainWindow::openFile(const QString &fileName) {
+	
+	mainWindow->openFile(fileName);
 }
 
 bool MainWindow::save()
@@ -275,11 +286,13 @@ void MainWindow::createActions()
 		sm->registerAction(showScriptEditorAct, "Display Menu", "SHIFT+CTRL+E");
 	#endif
 	
-	mShowVerseDialogAct = new QAction(tr("Show Verse &Dialog"), this);
-	mShowVerseDialogAct->setCheckable(true);
-	mShowVerseDialogAct->setStatusTip( tr("Show the verse dialog to view verse server connection status") );
-	connect(mShowVerseDialogAct, SIGNAL(triggered()), this, SLOT(showHideVerseDialog()));
-	sm->registerAction(mShowVerseDialogAct, "Display Menu", "SHIFT+CTRL+V");
+	#ifdef WITH_VERSE
+		mShowVerseDialogAct = new QAction(tr("Show Verse &Dialog"), this);
+		mShowVerseDialogAct->setCheckable(true);
+		mShowVerseDialogAct->setStatusTip( tr("Show the verse dialog to view verse server connection status") );
+		connect(mShowVerseDialogAct, SIGNAL(triggered()), this, SLOT(showHideVerseDialog()));
+		sm->registerAction(mShowVerseDialogAct, "Display Menu", "SHIFT+CTRL+V");
+	#endif	
 
 	//Renderer Menu Actions
 	normalRendererAct = new QAction(tr("&Normal Renderer"), this);
@@ -464,26 +477,28 @@ void MainWindow::createActions()
 	// sm->connect( catalanAct , SIGNAL( triggered() ), SLOT  ( configure() ) );
 	sm->registerAction(catalanAct, "Languages", "CTRL+F12");
 	
-	//verse menu actions
-	mVerseConnectLocalhostAct = new QAction(tr("Connect to localhost"), this);
-	mVerseConnectLocalhostAct->setStatusTip( tr("Connect to localhost") );
-	connect(mVerseConnectLocalhostAct, SIGNAL(triggered()), mVerseDialog, SLOT(connectLocalhost()));
-	sm->registerAction(mVerseConnectLocalhostAct, "Verse Menu", "");
+	#ifdef WITH_VERSE
+		//verse menu actions
+		mVerseConnectLocalhostAct = new QAction(tr("Connect to localhost"), this);
+		mVerseConnectLocalhostAct->setStatusTip( tr("Connect to localhost") );
+		connect(mVerseConnectLocalhostAct, SIGNAL(triggered()), mVerseDialog, SLOT(connectLocalhost()));
+		sm->registerAction(mVerseConnectLocalhostAct, "Verse Menu", "");
 	
-	mVerseConnectAct = new QAction(tr("Connect to host..."), this);
-	mVerseConnectAct->setStatusTip( tr("Connect to host...") );
-	connect(mVerseConnectAct, SIGNAL(triggered()), mVerseDialog, SLOT(connectHost()));
-	sm->registerAction(mVerseConnectAct, "Verse Menu", "");
+		mVerseConnectAct = new QAction(tr("Connect to host..."), this);
+		mVerseConnectAct->setStatusTip( tr("Connect to host...") );
+		connect(mVerseConnectAct, SIGNAL(triggered()), mVerseDialog, SLOT(connectHost()));
+		sm->registerAction(mVerseConnectAct, "Verse Menu", "");
 
-	mVerseDisconnectAct = new QAction(tr("Disconnect"), this);
-	mVerseDisconnectAct->setStatusTip( tr("Disconnect from Verse Server") );
-	connect(mVerseDisconnectAct, SIGNAL(triggered()), mVerseDialog, SLOT(disconnectHost()));
-	sm->registerAction(mVerseDisconnectAct, "Verse Menu", "");
+		mVerseDisconnectAct = new QAction(tr("Disconnect"), this);
+		mVerseDisconnectAct->setStatusTip( tr("Disconnect from Verse Server") );
+		connect(mVerseDisconnectAct, SIGNAL(triggered()), mVerseDialog, SLOT(disconnectHost()));
+		sm->registerAction(mVerseDisconnectAct, "Verse Menu", "");
 
-	mVerseDisconnectAllAct = new QAction(tr("Disconnect All"), this);
-	mVerseDisconnectAllAct->setStatusTip( tr("Disconnect All Nodes") );
-	connect(mVerseDisconnectAllAct, SIGNAL(triggered()), mVerseDialog, SLOT(disconnectAll()));
-	sm->registerAction(mVerseDisconnectAllAct, "Verse Menu", "");
+		mVerseDisconnectAllAct = new QAction(tr("Disconnect All"), this);
+		mVerseDisconnectAllAct->setStatusTip( tr("Disconnect All Nodes") );
+		connect(mVerseDisconnectAllAct, SIGNAL(triggered()), mVerseDialog, SLOT(disconnectAll()));
+		sm->registerAction(mVerseDisconnectAllAct, "Verse Menu", "");
+	#endif
 	
 	mPerformRemeshingAct = new QAction(tr("Perform Remeshing"), this);
 	mPerformRemeshingAct->setStatusTip( tr("Perform the current remeshing scheme") );
@@ -511,14 +526,16 @@ void MainWindow::createMenus(){
 	fileMenu->addAction(mSaveAct);
 	fileMenu->addAction(mSavePatchesAct);
 	//fileMenu->addAction(mSaveAsAct);
-	fileMenu->addSeparator();
-	mVerseMenu = new QMenu(tr("&Verse"));
-	fileMenu->addMenu(mVerseMenu);
-	mVerseMenu->addAction(mVerseConnectLocalhostAct);
-	mVerseMenu->addAction(mVerseConnectAct);
-	mVerseMenu->addSeparator();
-	mVerseMenu->addAction(mVerseDisconnectAct);
-	mVerseMenu->addAction(mVerseDisconnectAllAct);
+	#ifdef WITH_VERSE
+		fileMenu->addSeparator();
+		mVerseMenu = new QMenu(tr("&Verse"));
+		fileMenu->addMenu(mVerseMenu);
+		mVerseMenu->addAction(mVerseConnectLocalhostAct);
+		mVerseMenu->addAction(mVerseConnectAct);
+		mVerseMenu->addSeparator();
+		mVerseMenu->addAction(mVerseDisconnectAct);
+		mVerseMenu->addAction(mVerseDisconnectAllAct);
+	#endif
 	fileMenu->addSeparator();
 	fileMenu->addAction(loadTextureAct);
 	fileMenu->addAction(printInfoAct);
@@ -554,10 +571,13 @@ void MainWindow::createMenus(){
 	displayMenu->addAction(showNormalsAct);
 	
 	#ifdef WITH_PYTHON
-	displayMenu->addAction(showScriptEditorAct);
+		displayMenu->addAction(showScriptEditorAct);
 	#endif
 	
-	displayMenu->addAction(mShowVerseDialogAct);
+	#ifdef WITH_VERSE
+		displayMenu->addAction(mShowVerseDialogAct);
+	#endif
+	
 	displayMenu->addAction(mFullscreenAct);
 
 	rendererMenu = new QMenu(tr("&Renderer"));
@@ -766,7 +786,7 @@ bool MainWindow::maybeSave() {
 }
 
 void MainWindow::loadFile(const QString &fileName) {
-  // QFile file(fileName);
+  QFile file(fileName);
   // if (!file.open(QFile::ReadOnly | QFile::Text)) {
   //     QMessageBox::warning(this, tr("Application"),
   //                          tr("Cannot read file %1:\n%2.")
@@ -780,8 +800,9 @@ void MainWindow::loadFile(const QString &fileName) {
   // this->setPlainText(in.readAll());
   // QApplication::restoreOverrideCursor();
   // 
+	openFile(fileName);
   setCurrentFile(fileName);
-  // statusBar()->showMessage(tr("File loaded"), 2000);
+  statusBar()->showMessage(tr("File loaded"), 2000);
 }
 
 bool MainWindow::saveFile(const QString &fileName) {
@@ -902,12 +923,15 @@ void MainWindow::showHideScriptEditor(){
 
 void MainWindow::showHideVerseDialog(){
 
+#ifdef WITH_VERSE
 	if( mVerseDialogDockWidget->isVisible( ) )
 	  mVerseDialogDockWidget->hide( );
 	else {
 	  mVerseDialogDockWidget->show( );
 	  mVerseDialogDockWidget->setFocus();
 	}
+#endif
+
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event) {

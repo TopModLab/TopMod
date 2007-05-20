@@ -2,6 +2,7 @@
  **
  **
  ****************************************************************************/
+#ifdef WITH_VERSE
 
 #ifndef VERSETOPMOD_H
 #define VERSETOPMOD_H
@@ -43,5 +44,7 @@ private:
   QTextEdit *mTextEdit;
   
 };
+
+#endif
 
 #endif
