@@ -250,6 +250,7 @@ void MainWindow::createActions()
 
 	showWireframeAct = new QAction(tr("Show &Wireframe"), this);
 	showWireframeAct->setCheckable(true);
+	showWireframeAct->setChecked(true);
 	sm->registerAction(showWireframeAct, "Display Menu", "W");
 	// showWireframeAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(showWireframeAct, SIGNAL(triggered()), mainWindow, SLOT(toggleWireframe()));
@@ -297,37 +298,37 @@ void MainWindow::createActions()
 	//Renderer Menu Actions
 	normalRendererAct = new QAction(tr("&Normal Renderer"), this);
 	normalRendererAct->setCheckable(true);
-	sm->registerAction(normalRendererAct, "Renderer Menu", "");
+	sm->registerAction(normalRendererAct, "Renderer Menu", "1");
 	// normalRendererAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(normalRendererAct, SIGNAL(triggered()), this, SLOT(use_normal_renderer()));
 
 	lightedRendererAct = new QAction(tr("&Lighted Renderer"), this);
 	lightedRendererAct->setCheckable(true);
-	sm->registerAction(lightedRendererAct, "Renderer Menu", "");
+	sm->registerAction(lightedRendererAct, "Renderer Menu", "2");
 	// lightedRendererAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(lightedRendererAct, SIGNAL(triggered()), this, SLOT(use_lighted_renderer()));
 
 	shadedRendererAct = new QAction(tr("&Shaded Renderer"), this);
 	shadedRendererAct->setCheckable(true);
-	sm->registerAction(shadedRendererAct, "Renderer Menu", "");
+	sm->registerAction(shadedRendererAct, "Renderer Menu", "3");
 	// shadedRendererAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(shadedRendererAct, SIGNAL(triggered()), this, SLOT(use_shaded_renderer()));
 
 	texturedRendererAct = new QAction(tr("&Textured Renderer"), this);
 	texturedRendererAct->setCheckable(true);
-	sm->registerAction(texturedRendererAct, "Renderer Menu", "");
+	sm->registerAction(texturedRendererAct, "Renderer Menu", "4");
 	// texturedRendererAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(texturedRendererAct, SIGNAL(triggered()), this, SLOT(use_textured_renderer()));
 
 	texturedLightedAct = new QAction(tr("Te&xtured Lighted Renderer"), this);
 	texturedLightedAct->setCheckable(true);
-	sm->registerAction(texturedLightedAct, "Renderer Menu", "");
+	sm->registerAction(texturedLightedAct, "Renderer Menu", "5");
 	// texturedLightedAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(texturedLightedAct, SIGNAL(triggered()), this, SLOT(use_textured_lit_renderer()));
 
 	patchRendererAct = new QAction(tr("&Patch Renderer"), this);
 	patchRendererAct->setCheckable(true);
-	sm->registerAction(patchRendererAct, "Renderer Menu", "");
+	sm->registerAction(patchRendererAct, "Renderer Menu", "6");
 	// patchRendererAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(patchRendererAct, SIGNAL(triggered()), this, SLOT(use_patch_renderer()));
 

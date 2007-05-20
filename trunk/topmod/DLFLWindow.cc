@@ -462,6 +462,8 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
                                                   GLWidget::clearSelectedFaces();
                                                   GLWidget::clearSelectedFaceVertices();
                                                   num_sel_faceverts = 0; num_sel_faces = 0;
+																									recomputePatches();
+																									recomputeNormals();
                                                   redraw();   
                                                 }
                                            }
@@ -478,6 +480,8 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
                                                 {
                                                   undoPush();
                                                   object.deleteEdge(septr,DLFLWindow::delete_edge_cleanup);
+																									recomputePatches();
+																									recomputeNormals();
                                                 }
                                              GLWidget::clearSelectedEdges();
                                              redraw();
@@ -491,6 +495,8 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
                                                 {
                                                   undoPush();
                                                   object.subDivideEdge(num_e_subdivs,septr);
+																									recomputePatches();
+																									recomputeNormals();
                                                 }
                                              GLWidget::clearSelectedEdges();
                                              redraw();
@@ -504,6 +510,8 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
                                                 {
                                                   undoPush();
                                                   object.collapseEdge(septr);
+																									recomputePatches();
+																									recomputeNormals();
                                                 }
                                              GLWidget::clearSelectedEdges();
                                              redraw();
@@ -523,6 +531,8 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
                                                   GLWidget::clearSelectedFaces();
                                                   GLWidget::clearSelectedFaceVertices();
                                                   num_sel_faceverts = 0; num_sel_faces = 0;
+																									recomputePatches();
+																									recomputeNormals();
                                                   redraw();   
                                                 }
                                            }
