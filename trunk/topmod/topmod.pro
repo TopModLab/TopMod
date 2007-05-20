@@ -6,7 +6,7 @@
 TEMPLATE = app
 TARGET = TopMod
 QT += opengl xml
-CONFIG += qt debug
+CONFIG += qt release
 
 DEPENDPATH += . \
               lang \
@@ -48,10 +48,13 @@ unix: {
  # INCLUDEPATH += /usr/include/python2.5
  # LIBS += -lpython2.5 -L/usr/lib/python2.5/config
 }
-win32: {
- INCLUDEPATH += C:\Python25\include
- QMAKE_LFLAGS += -LC:\Python25\libs
- LIBS += -lpython25
+win32 {
+ INCLUDEPATH += 
+ #C:\Python25\include
+ QMAKE_LFLAGS += 
+ #-LC:\Python25\libs
+ LIBS += 
+ #-lpython25
 }
 # Input
 HEADERS += 	DLFLScriptEditor.hh \

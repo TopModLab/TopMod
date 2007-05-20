@@ -24,10 +24,10 @@ public:
 	VerseTopMod(QWidget *parent = 0, Qt::WindowFlags f = Qt::Tool );
 	~VerseTopMod();
 #if 0	
-	void callback_node_create(void *user, VNodeID node_id, VNodeType type, VNodeOwner ownership);
+	// void callback_node_create(void *user, VNodeID node_id, VNodeType type, VNodeOwner ownership);
 	// static void wrapper_callback_node_create(void *user, VNodeID node_id, VNodeType type, VNodeOwner ownership);
 	
-	void callback_accept_connect(void *user, uint32 avatar, void *address, void *connection, uint8 *host_id);
+	// void callback_accept_connect(void *user, uint32 avatar, void *address, void *connection, uint8 *host_id);
 	// static void wrapper_callback_accept_connect(void *user, uint32 avatar, void *address, void *connection, uint8 *host_id);
 	
 public slots:
