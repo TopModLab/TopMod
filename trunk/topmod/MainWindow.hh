@@ -97,7 +97,8 @@ public:
 	void setMode(int m);
 	void setToolOptions(QWidget *optionsWidget);
 	void setRemeshingScheme(int m);
-	void loadFile(const QString &fileName);
+	void loadFile(QString fileName);
+	// void setCurrentFile(QString fileName);	
 
 protected:
   void closeEvent( QCloseEvent *event );
@@ -155,10 +156,8 @@ private:
   void writeSettings();
   bool maybeSave();
   // void loadFile(const QString &fileName);
-  bool saveFile(const QString &fileName);
-  void setCurrentFile(const QString &fileName);	
-	void openFile(const QString &fileName);
-
+  bool saveFile(QString fileName);
+	void openFile(QString fileName);
 
 	QMenuBar *menuBar;
 
@@ -272,7 +271,7 @@ private:
 		QAction *mVerseDisconnectAllAct;
 	#endif
 	
-  QString curFile;
+  // QString curFile;
 	
 	QWidget *mToolOptionsTitleBarWidget;
 	QBoxLayout *mToolOptionsTitleBarLayout;

@@ -46,14 +46,14 @@ class PatchRenderer : public DLFLRenderer
        if ( DLFLRenderer::render_flags & ShowWireframe )
 	  {
 	    glColor3f(0.0,0.0,0.0);
-	    glLineWidth(1.0);
+	    glLineWidth(.8);
 	    glDepthRange(0.0,1.0-0.0005);
 	    object->renderWireframePatches();
 	  }
     if ( DLFLRenderer::render_flags & ShowSilhouette )
 	  {
 	    glColor3f(0.4,0.6,0.4);
-	    glLineWidth(2.0);
+	    glLineWidth(3.0);
 	    glDepthRange(0.0,1.0-0.00055);
 	    object->renderPatchBoundaries();
 

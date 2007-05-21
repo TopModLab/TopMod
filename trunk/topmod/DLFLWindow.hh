@@ -18,6 +18,7 @@
 #include "GLWidget.hh"
 #include "DLFLConvexHull.hh"
 #include "include/ShadedRenderer.hh"
+#include "MainWindow.hh"
 
 typedef StringStream * StringStreamPtr;
 typedef list<StringStreamPtr> StringStreamPtrList;
@@ -163,6 +164,10 @@ class DLFLWindow : public QWidget {
     static double extrude_bendB;
 
 		QString curFile;
+		//document modified
+		bool isModified();
+		void setModified(bool isModified);
+		
   protected :
 
 		   //-- Selection count, used as index into selection lists --//
@@ -194,24 +199,30 @@ class DLFLWindow : public QWidget {
 
 private:
 	QVBoxLayout *layout;
+	//document modified
+	bool mIsModified;
+	QWidget *mParent;
+	
 
   public :
 
 		   // Constructor
 		DLFLWindow(int x, int y, int w, int h, QWidget *parent=0)
 		  :  QWidget(parent), top(NULL), persp(NULL), front(NULL), right(NULL), active(NULL),
-		    object(), mode(NormalMode), plight(), undoList(), redoList(), undolimit(20), useUndo(true)
+				object(), mode(NormalMode), plight(), undoList(), redoList(), undolimit(20), useUndo(true), mIsModified(false)
 		  {
 		       // Default renderer is NULL
 		    initialize(x,y,w,h,NULL);
+				mParent = parent;
 		  }
 
 		   // Constructor
 		DLFLWindow(int x, int y, int w, int h, DLFLRendererPtr rp, QWidget *parent=0)
 		  :  QWidget(parent), top(NULL), persp(NULL), front(NULL), right(NULL), active(NULL),
-		    object(), mode(NormalMode), plight(), undoList(), redoList(), undolimit(20), useUndo(true)
+		    object(), mode(NormalMode), plight(), undoList(), redoList(), undolimit(20), useUndo(true), mIsModified(false)
 		  {
 		    initialize(x,y,w,h,rp);
+				mParent = parent;
 		  }
 
 		   // Destructor
@@ -388,15 +399,15 @@ public slots:
 		// File handling
 		void openFile(void); 
 		void openFile(QString fileName);
-		void saveFile(bool with_normals=false, bool with_tex_coords=false);
+		bool saveFile(bool with_normals=false, bool with_tex_coords=false);
+		bool saveFileAs(bool with_normals=false, bool with_tex_coords=false);
 		void openFileOBJ(void);
 		void saveFileOBJ(bool with_normals=false, bool with_tex_coords=false);
 		void openFileDLFL(void);
 		void saveFileDLFL(void);
 		void saveFileBezierOBJ( );
 		void writePatchOBJ(const char *filename);
-		void loadFile(const QString &fileName);
-		void setCurrentFile(const QString &fileName);
+		void setCurrentFile(QString fileName);
 
 		void cleanupForExit(void);
 		void testConvexHull(void);

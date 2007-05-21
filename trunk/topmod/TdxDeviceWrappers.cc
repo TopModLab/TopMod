@@ -12,6 +12,8 @@
  *
  */
 
+#ifdef WITH_SPACENAV
+
 #include <unistd.h>
 #include <pthread.h>
 #include <Carbon/Carbon.h>
@@ -195,3 +197,5 @@ static void tdx_drv_handler(io_connect_t connection, natural_t messageType, void
 	#pragma unused(connection)
 #endif	
 }
+
+#endif

@@ -46,14 +46,26 @@ void MainWindow::save_file_patches()
 
 void MainWindow::load_texture()
 {
-  // char * texfile = fl_file_chooser("Load Texture","*.{jpg,png}","");
-  // if ( texfile != NULL )
-  //    {
-  //      textured->setTexture(texfile);
-  //      texturedlit->setTexture(texfile);
-  //      mainWindow->getActive()->valid(0); // To ensure new texture is loaded into OpenGL
-  //      mainWindow->redraw();
-  //    }
+	QString fileName = QFileDialog::getOpenFileName(this,
+																									tr("Open File..."),
+																									"$HOME",
+																									tr("All Supported Files (*.jpg *.png);;JPEG Files (*.jpg);;PNG Files (*.png);;All Files (*)"));
+	if (!fileName.isEmpty()){
+		// undoPush();
+		QByteArray ba = fileName.toLatin1();
+		const char *filename = ba.data();
+		
+		textured->setTexture(filename);
+		texturedlit->setTexture(filename);
+		mainWindow->getActive()->isValid(); // To ensure new texture is loaded into OpenGL
+		mainWindow->redraw();
+		
+		// readObject(filename);
+		// recomputePatches();
+		// recomputeNormals();
+		// //loadFile(fileName);
+		// active->redraw();
+	}
 }
 
 void MainWindow::print_info()

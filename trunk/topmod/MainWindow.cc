@@ -29,12 +29,12 @@ MainWindow::MainWindow(char *filename) {
 	setAttribute(Qt::WA_AcceptDrops, true);
 	// setAttribute(Qt::WA_MacMetalStyle, true);
 	setWindowFlags(Qt::Window);
-	setWindowTitle("TopMod");
+	setWindowTitle(tr("newfile[*] - TopMod"));
 	
   cWidget = new QWidget( );
 	
 	//create a container widget to hold multiple glwidgets
-	mainWindow = new DLFLWindow(0,0,1000,700);
+	mainWindow = new DLFLWindow(0,0,1000,700,MainWindow::lit,this);
 
   /** Setup Layouts **/
   layout = new QBoxLayout( QBoxLayout::TopToBottom, 0 );
@@ -89,6 +89,7 @@ MainWindow::MainWindow(char *filename) {
 	//style sheet editor
   mStyleSheetEditor = new StyleSheetEditor(this);
 
+	readSettings();
 	// if (filename){
 // 		mainWindow->openFile(QString(filename));
 // 	}
@@ -104,49 +105,8 @@ void MainWindow::setRemeshingScheme(int m){
 	mainWindow->setRemeshingScheme((DLFLWindow::RemeshingScheme)m);
 }
 
-void MainWindow::closeEvent(QCloseEvent *event)
-{
-}
-
-void MainWindow::newFile()
-{
-
-}
-
-void MainWindow::open() {
-	
-	mainWindow->openFile();
-}
-
-void MainWindow::openFile(const QString &fileName) {
-	
-	mainWindow->openFile(fileName);
-}
-
-bool MainWindow::save()
-{
-	mainWindow->saveFile();
-}
-
-bool MainWindow::saveAs()
-{
-	mainWindow->saveFile();
-}
-
-void MainWindow::about()
-{
-  QMessageBox::about(this, tr("About TopMod"),
-		     tr("The <b>Application</b> example demonstrates how to "
-			"write modern GUI applications using Qt, with a menu bar, "
-			"toolbars, and a status bar."));
-}
-
-void MainWindow::documentWasModified(){
-  // setWindowModified(this->document()->isModified());
-}
-
-void MainWindow::createActions()
-{	
+void MainWindow::createActions() {
+		
 	//File Menu Actions
 	mOpenAct = new QAction(QIcon(":images/open.png"),tr("&Open..."), this);
 	sm->registerAction(mOpenAct, "File Menu", "CTRL+O");
@@ -161,7 +121,7 @@ void MainWindow::createActions()
 	mSaveAsAct = new QAction(QIcon(":images/saveas.png"),tr("Save &As..."), this);
 	sm->registerAction(mSaveAsAct, "File Menu", "CTRL+SHIFT+S");
 	mSaveAsAct->setStatusTip(tr("Save the document under a new name"));
-	connect(mSaveAsAct, SIGNAL(triggered()), mainWindow, SLOT(saveFile()));
+	connect(mSaveAsAct, SIGNAL(triggered()), mainWindow, SLOT(saveFileAs()));
 
 	mSavePatchesAct = new QAction(QIcon(":images/saveas.png"),tr("Save &Patch OBJ..."), this);
 	sm->registerAction(mSavePatchesAct, "File Menu", "");
@@ -171,7 +131,7 @@ void MainWindow::createActions()
 	loadTextureAct = new QAction(tr("Load &Texture..."), this);
 	sm->registerAction(loadTextureAct, "File Menu", "CTRL+L");
 	loadTextureAct->setStatusTip(tr("Load Texture from file"));
-	//connect(mSaveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
+	connect(loadTextureAct, SIGNAL(triggered()), this, SLOT(load_texture()));
 
 	printInfoAct = new QAction(tr("Print &Information"), this);
 	sm->registerAction(printInfoAct, "File Menu", "CTRL+P");
@@ -299,37 +259,37 @@ void MainWindow::createActions()
 	normalRendererAct = new QAction(tr("&Normal Renderer"), this);
 	normalRendererAct->setCheckable(true);
 	sm->registerAction(normalRendererAct, "Renderer Menu", "1");
-	// normalRendererAct->setStatusTip(tr("Copy the current selection's contents to the "
+	normalRendererAct->setStatusTip(tr("Switch the current renderer to Normal"));
 	connect(normalRendererAct, SIGNAL(triggered()), this, SLOT(use_normal_renderer()));
-
-	lightedRendererAct = new QAction(tr("&Lighted Renderer"), this);
-	lightedRendererAct->setCheckable(true);
-	sm->registerAction(lightedRendererAct, "Renderer Menu", "2");
-	// lightedRendererAct->setStatusTip(tr("Copy the current selection's contents to the "
-	connect(lightedRendererAct, SIGNAL(triggered()), this, SLOT(use_lighted_renderer()));
 
 	shadedRendererAct = new QAction(tr("&Shaded Renderer"), this);
 	shadedRendererAct->setCheckable(true);
-	sm->registerAction(shadedRendererAct, "Renderer Menu", "3");
-	// shadedRendererAct->setStatusTip(tr("Copy the current selection's contents to the "
+	sm->registerAction(shadedRendererAct, "Renderer Menu", "2");
+	shadedRendererAct->setStatusTip(tr("Switch the current renderer to Shaded"));
 	connect(shadedRendererAct, SIGNAL(triggered()), this, SLOT(use_shaded_renderer()));
 
+	lightedRendererAct = new QAction(tr("&Lighted Renderer"), this);
+	lightedRendererAct->setCheckable(true);
+	sm->registerAction(lightedRendererAct, "Renderer Menu", "3");
+	lightedRendererAct->setStatusTip(tr("Switch the current renderer to Lighted"));
+	connect(lightedRendererAct, SIGNAL(triggered()), this, SLOT(use_lighted_renderer()));
+	
 	texturedRendererAct = new QAction(tr("&Textured Renderer"), this);
 	texturedRendererAct->setCheckable(true);
 	sm->registerAction(texturedRendererAct, "Renderer Menu", "4");
-	// texturedRendererAct->setStatusTip(tr("Copy the current selection's contents to the "
+	texturedRendererAct->setStatusTip(tr("Switch the current renderer to Textured"));
 	connect(texturedRendererAct, SIGNAL(triggered()), this, SLOT(use_textured_renderer()));
 
 	texturedLightedAct = new QAction(tr("Te&xtured Lighted Renderer"), this);
 	texturedLightedAct->setCheckable(true);
 	sm->registerAction(texturedLightedAct, "Renderer Menu", "5");
-	// texturedLightedAct->setStatusTip(tr("Copy the current selection's contents to the "
+	texturedLightedAct->setStatusTip(tr("Switch the current renderer to Textured Lit"));
 	connect(texturedLightedAct, SIGNAL(triggered()), this, SLOT(use_textured_lit_renderer()));
 
 	patchRendererAct = new QAction(tr("&Patch Renderer"), this);
 	patchRendererAct->setCheckable(true);
 	sm->registerAction(patchRendererAct, "Renderer Menu", "6");
-	// patchRendererAct->setStatusTip(tr("Copy the current selection's contents to the "
+	patchRendererAct->setStatusTip(tr("Switch the current renderer to Patch"));
 	connect(patchRendererAct, SIGNAL(triggered()), this, SLOT(use_patch_renderer()));
 
 	rendererActionGroup = new QActionGroup(this);
@@ -525,8 +485,9 @@ void MainWindow::createMenus(){
 	
 	fileMenu->addAction(mOpenAct);
 	fileMenu->addAction(mSaveAct);
+	fileMenu->addAction(mSaveAsAct);
 	fileMenu->addAction(mSavePatchesAct);
-	//fileMenu->addAction(mSaveAsAct);
+
 	#ifdef WITH_VERSE
 		fileMenu->addSeparator();
 		mVerseMenu = new QMenu(tr("&Verse"));
@@ -588,9 +549,9 @@ void MainWindow::createMenus(){
 	rendererMenu->addAction(shadedRendererAct);
 	rendererMenu->addAction(lightedRendererAct);
 	rendererMenu->addAction(texturedRendererAct);
-	texturedRendererAct->setEnabled(false);
+	// texturedRendererAct->setEnabled(false);
 	rendererMenu->addAction(texturedLightedAct);
-	texturedLightedAct->setEnabled(false);
+	// texturedLightedAct->setEnabled(false);
 	rendererMenu->addSeparator()->setText(tr("Special Mode??"));
 	rendererMenu->addAction(patchRendererAct);
 
@@ -749,102 +710,117 @@ void MainWindow::setToolOptions(QWidget *optionsWidget) {
 		mToolOptionsDockWidget->show();
 	else if (!mToolOptionsDockWidget->isHidden() && optionsWidget->windowTitle() == "")
 		mToolOptionsDockWidget->hide();
-
 }
 
 void MainWindow::createStatusBar() {
+	
   statusBar()->showMessage(tr("Welcome to TopMod"));
 }
 
 void MainWindow::readSettings() {
-  // QSettings settings("TopMod", "Topological Mesh Modeler");
-  // QPoint pos = settings.value("pos", QPoint(100, 100)).toPoint();
-  // QSize size = settings.value("size", QSize(800, 600)).toSize();
-  // resize(size);
-  // move(pos);
+	
+  QSettings settings("TopMod", "Topological Mesh Modeler");
+
+	settings.beginGroup("MainWindow");
+  QPoint pos = settings.value("pos", QPoint(100, 100)).toPoint();
+  QSize size = settings.value("size", QSize(800, 600)).toSize();
+	settings.endGroup();
+	
+  resize(size);
+  move(pos);
 }
 
 void MainWindow::writeSettings() {
-  // QSettings settings("TopMod", "Topological Mesh Modeler");
-  // settings.setValue("pos", pos());
-  // settings.setValue("size", size());
+	
+  QSettings settings("TopMod", "Topological Mesh Modeler");
+  
+	settings.beginGroup("MainWindow");
+	settings.setValue("pos", pos());
+  settings.setValue("size", size());
+	settings.endGroup();
 }
 
 bool MainWindow::maybeSave() {
-  // if (this->document()->isModified()) {
-  //     int ret = QMessageBox::warning(this, tr("Application"),
-  //                  tr("The document has been modified.\n"
-  //                     "Do you want to save your changes?"),
-  //                  QMessageBox::Yes | QMessageBox::Default,
-  //                  QMessageBox::No,
-  //                  QMessageBox::Cancel | QMessageBox::Escape);
-  //     if (ret == QMessageBox::Yes)
-  //         return save();
-  //     else if (ret == QMessageBox::Cancel)
-  //         return false;
-  // }
+  if (mainWindow->isModified()) {
+      int ret = QMessageBox::warning(this, tr("TopMod"),
+                   tr("The document has been modified.\n"
+                      "Do you want to save your changes?"),
+                   QMessageBox::Yes | QMessageBox::Default,
+                   QMessageBox::No,
+                   QMessageBox::Cancel | QMessageBox::Escape);
+      if (ret == QMessageBox::Yes)
+          return mainWindow->saveFile();
+      else if (ret == QMessageBox::Cancel)
+          return false;
+  }
   return true;
 }
 
-void MainWindow::loadFile(const QString &fileName) {
-  QFile file(fileName);
-  // if (!file.open(QFile::ReadOnly | QFile::Text)) {
-  //     QMessageBox::warning(this, tr("Application"),
-  //                          tr("Cannot read file %1:\n%2.")
-  //                          .arg(fileName)
-  //                          .arg(file.errorString()));
-  //     return;
-  // }
-  // 
-  // QTextStream in(&file);
-  // QApplication::setOverrideCursor(Qt::WaitCursor);
-  // this->setPlainText(in.readAll());
-  // QApplication::restoreOverrideCursor();
-  // 
+void MainWindow::loadFile(QString fileName) {
+  
 	openFile(fileName);
-  setCurrentFile(fileName);
+  mainWindow->setCurrentFile(fileName);
   statusBar()->showMessage(tr("File loaded"), 2000);
 }
 
-bool MainWindow::saveFile(const QString &fileName) {
-  // QFile file(fileName);
-  // if (!file.open(QFile::WriteOnly | QFile::Text)) {
-  //     QMessageBox::warning(this, tr("Application"),
-  //                          tr("Cannot write file %1:\n%2.")
-  //                          .arg(fileName)
-  //                          .arg(file.errorString()));
-  //     return false;
-  // }
-  // 
-  // QTextStream out(&file);
-  // QApplication::setOverrideCursor(Qt::WaitCursor);
-  // out << this->toPlainText();
-  // QApplication::restoreOverrideCursor();
-  // 
-  setCurrentFile(fileName);
-  // statusBar()->showMessage(tr("File saved"), 2000);
+bool MainWindow::saveFile(QString fileName) {
+
+  mainWindow->setCurrentFile(fileName);
+  statusBar()->showMessage(tr("File saved"), 2000);
   return true;
 }
 
-void MainWindow::setCurrentFile(const QString &fileName) {
-  curFile = fileName;
-  //this->document()->setModified(false);
-  setWindowModified(false);
-     
-  QString shownName;
-  if (curFile.isEmpty())
-    shownName = "untitled.obj";
-  else
-    shownName = curFile; //strippedName(curFile);
-    
-  setWindowTitle(tr("%1[*] - %2").arg(shownName).arg(tr("Application")));
+void MainWindow::closeEvent(QCloseEvent *event) {
+
+    if (maybeSave()) {
+        writeSettings();
+        event->accept();
+    } else {
+        event->ignore();
+    }
+}
+
+void MainWindow::newFile() {
+
+}
+
+void MainWindow::open() {
+	
+	mainWindow->openFile();
+}
+
+void MainWindow::openFile(QString fileName) {
+	
+	mainWindow->openFile(fileName);
+}
+
+bool MainWindow::save() {
+	
+	mainWindow->saveFile();
+}
+
+bool MainWindow::saveAs() {
+	
+	mainWindow->saveFileAs();
+}
+
+void MainWindow::about() {
+	
+  QMessageBox::about(this, tr("About TopMod"),
+		     tr("The <b>Application</b> example demonstrates how to "
+			"write modern GUI applications using Qt, with a menu bar, "
+			"toolbars, and a status bar."));
+}
+
+void MainWindow::documentWasModified() {
+	
+  setWindowModified(mainWindow->isModified());
 }
 
 void MainWindow::on_editStyleAction_triggered() {
   mStyleSheetEditor->show();
   mStyleSheetEditor->activateWindow();
 }
-
 
 void MainWindow::mousePressEvent(QMouseEvent *event) {
 	if ( event->buttons() == Qt::RightButton ){

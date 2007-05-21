@@ -388,21 +388,16 @@ void DLFLWindow::mousePressEvent(QMouseEvent *event) {
 void DLFLWindow::mouseMoveEvent(QMouseEvent *event) {
 	if ( mode != NormalMode )
 		doSelection(event->x(),this->size().height()-event->y() );
-	// QMessageBox::about(this, tr("About TopMod"),tr("%1").arg(QApplication::keyboardModifiers()));
-	//redraw();
 	else if ( event->buttons() == Qt::RightButton ){
 		event->ignore();
 	}
 }
 void DLFLWindow::mouseReleaseEvent(QMouseEvent *event) 
 {
-		 //mode = ExtrudeFace;
           // The mouse was dragged or released
           // Send this event to the subroutine handling the current event, if any
           // If we are not currently doing anything, nothing will happen
           // If ALT key is pressed we are mainpulating the view which is handled by the viewport
-       // if ( QApplication::keyboardModifiers() != Qt::AltModifier )
-       //    {
             if ( mode != NormalMode )
                {
                       switch ( mode )
@@ -457,7 +452,8 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
                                              if ( sfvptr1 && sfvptr2 )
                                                 {
                                                   DLFLMaterialPtr mptr = sfvptr1->getFacePtr()->material();
-                                                  undoPush();
+																									undoPush();
+																									setModified(true);
                                                   object.insertEdge(sfvptr1,sfvptr2,false,mptr);
                                                   GLWidget::clearSelectedFaces();
                                                   GLWidget::clearSelectedFaceVertices();
@@ -478,7 +474,8 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
                                              DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
                                              if ( septr )
                                                 {
-                                                  undoPush();
+																									undoPush();
+																									setModified(true);
                                                   object.deleteEdge(septr,DLFLWindow::delete_edge_cleanup);
 																									recomputePatches();
 																									recomputeNormals();
@@ -493,7 +490,8 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
                                              DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
                                              if ( septr )
                                                 {
-                                                  undoPush();
+																									undoPush();
+																									setModified(true);
                                                   object.subDivideEdge(num_e_subdivs,septr);
 																									recomputePatches();
 																									recomputeNormals();
@@ -508,7 +506,8 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
                                              DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
                                              if ( septr )
                                                 {
-                                                  undoPush();
+																									undoPush();
+																									setModified(true);
                                                   object.collapseEdge(septr);
 																									recomputePatches();
 																									recomputeNormals();
@@ -526,7 +525,8 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
                                              if ( sfvptr1 && sfvptr2 )
                                                 {
                                                   DLFLMaterialPtr mptr = sfvptr1->getFacePtr()->material();
-                                                  undoPush();
+																									undoPush();
+																									setModified(true);
                                                   object.spliceCorners(sfvptr1,sfvptr2);
                                                   GLWidget::clearSelectedFaces();
                                                   GLWidget::clearSelectedFaceVertices();
@@ -549,7 +549,8 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
                                              sfptr2 = GLWidget::getSelectedFace(1);
                                              if ( sfptr1 && sfptr2 )
                                                 {
-                                                  undoPush();
+																									undoPush();
+																									setModified(true);
                                                   object.connectFaces(sfptr1,sfptr2,num_segments);
                                                   recomputePatches();
                                                   recomputeNormals();
@@ -570,7 +571,8 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
                                              sfvptr2 = GLWidget::getSelectedFaceVertex(1);
                                              if ( sfvptr1 && sfvptr2 )
                                                 {
-                                                  undoPush();
+																									undoPush();
+																									setModified(true);
                                                   object.connectFaces(sfvptr1,sfvptr2,num_segments, max_segments);
                                                   GLWidget::clearSelectedFaces();
                                                   GLWidget::clearSelectedFaceVertices();
@@ -596,7 +598,8 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
                                              sfptr2 = GLWidget::getSelectedFace(1);
                                              if ( septr1 && septr2 )
                                                 {
-                                                  undoPush();
+																									undoPush();
+																									setModified(true);
                                                   object.connectEdges(septr1,sfptr1,septr2,sfptr2);
                                                   GLWidget::clearSelectedEdges();
                                                   GLWidget::clearSelectedFaces();
@@ -615,7 +618,8 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
                                              DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
                                              if ( sfptr )
                                                 {
-                                                  undoPush();
+																									undoPush();
+																									setModified(true);
                                                   object.extrudeFace(sfptr,extrude_dist,num_extrusions,
                                                                      extrude_rot,extrude_scale);
                                                   recomputePatches();
@@ -631,7 +635,8 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
                                              DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
                                              if ( sfptr )
                                                 {
-                                                  undoPush();
+																									undoPush();
+																									setModified(true);
                                                   object.extrudeFaceDS(sfptr,extrude_dist,num_extrusions,
                                                                        ds_ex_twist,extrude_scale);
                                                   recomputePatches();
@@ -647,7 +652,8 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
                                              DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
                                              if ( sfptr )
                                                 {
-                                                  undoPush();
+																									undoPush();
+																									setModified(true);
                                                   object.extrudeDualFace(sfptr,extrude_dist,num_extrusions,
                                                                          extrude_rot,extrude_scale,
                                                                          dual_mesh_edges_check);
@@ -664,7 +670,8 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
                                              DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
                                              if ( sfptr )
                                                 {
-                                                  undoPush();
+																									undoPush();
+																									setModified(true);
                                                   object.extrudeFaceDodeca(sfptr,extrude_dist,num_extrusions,
                                                                            ds_ex_twist,extrude_scale,
                                                                            hexagonalize_dodeca_extrude);
@@ -681,7 +688,8 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
                                              DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
                                              if ( sfptr )
                                                 {
-                                                  undoPush();
+																									undoPush();
+																									setModified(true);
                                                   object.extrudeFaceIcosa(sfptr,extrude_dist,num_extrusions,
                                                                           ds_ex_twist,extrude_scale);
                                                   recomputePatches();
@@ -697,7 +705,8 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
                                              DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
                                              if ( sfptr )
                                                 {
-                                                  undoPush();
+																									undoPush();
+																									setModified(true);
                                                   object.stellateFace(sfptr,extrude_dist);
                                                   recomputePatches();
                                                   recomputeNormals();
@@ -712,7 +721,8 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
                                              DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
                                              if ( sfptr )
                                                 {
-                                                  undoPush();
+																									undoPush();
+																									setModified(true);
                                                   object.doubleStellateFace(sfptr,extrude_dist);
                                                   recomputePatches();
                                                   recomputeNormals();
@@ -753,7 +763,8 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
                                              sfvptr2 = GLWidget::getSelectedFaceVertex(1);
                                              if ( sfvptr1 && sfvptr2 )
                                                 {
-                                                  undoPush();
+																									undoPush();
+																									setModified(true);
                                                   object.bezierConnectFaces(sfvptr1,sfvptr2,
                                                                             num_segments,nwt1,nwt2);
                                                   GLWidget::clearSelectedFaces();
@@ -777,7 +788,8 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
                                              sfvptr2 = GLWidget::getSelectedFaceVertex(1);
                                              if ( sfvptr1 && sfvptr2 )
                                                 {
-                                                  undoPush();
+																									undoPush();
+																									setModified(true);
                                                   if ( symmetric_weights )
                                                      object.hermiteConnectFaces(sfvptr1,sfvptr2,
                                                                                 num_segments,nwt1,nwt1,
@@ -1529,6 +1541,7 @@ void DLFLWindow::subDivideDualCheckerBoard(void) // Dual Checker board remeshing
 {
 // Implemented as Dual + Checker board + Dual
 undoPush();
+setModified(true);
 object.createDual(true); // Use accurate method
 object.checkerBoardRemeshing(DLFLWindow::checkerboard_thickness);
 object.createDual(true); // Use accurate method
@@ -1540,6 +1553,7 @@ DLFLWindow::clearSelected();
 void DLFLWindow::subDivideStar(void)               // Star subdivision - Doug
 {
 undoPush();
+setModified(true);
 object.starSubDivide(DLFLWindow::star_offset);
 recomputePatches();
 recomputeNormals();
@@ -1549,6 +1563,7 @@ DLFLWindow::clearSelected();
 void DLFLWindow::subDivideSqrt3(void)           // sqrt(3) subdivision - Doug
 {
 undoPush();
+setModified(true);
 object.sqrt3SubDivide();
 recomputePatches();
 recomputeNormals();
@@ -1558,6 +1573,7 @@ DLFLWindow::clearSelected();
 void DLFLWindow::subDivideFractal(void)                     // fractal - Doug
 {
 undoPush();
+setModified(true);
 object.fractalSubDivide(DLFLWindow::fractal_offset);
 recomputePatches();
 recomputeNormals();
@@ -1567,6 +1583,7 @@ DLFLWindow::clearSelected();
 void DLFLWindow::subStellate1(void)            // stellate subdivision - Eric
 {
 undoPush();
+setModified(true);
 object.stellateSubDivide();
 recomputePatches();
 recomputeNormals();
@@ -1576,6 +1593,7 @@ DLFLWindow::clearSelected();
 void DLFLWindow::subStellate2(void)            // stellate subdivision - Eric
 {
 undoPush();
+setModified(true);
 object.twostellateSubDivide(DLFLWindow::substellate_height, DLFLWindow::substellate_curve);
 recomputePatches();
 recomputeNormals();
@@ -1585,6 +1603,7 @@ DLFLWindow::clearSelected();
 void DLFLWindow::subDivideDome(void)                          // Bei & Cansin
 {
 	undoPush();
+setModified(true);
 	object.domeSubDivide(DLFLWindow::domeLength_factor, DLFLWindow::domeScale_factor);
 	recomputePatches();
 	recomputeNormals();
@@ -1594,6 +1613,7 @@ void DLFLWindow::subDivideDome(void)                          // Bei & Cansin
 void DLFLWindow::subDivideDooSabinBC(void) // Doo-Sabin(BC) subdivision - Bei & Cansin
 {
 	undoPush();
+setModified(true);
 	object.dooSabinSubDivideBC(DLFLWindow::doo_sabin_check);
 	recomputePatches();
 	recomputeNormals();
@@ -1603,6 +1623,7 @@ void DLFLWindow::subDivideDooSabinBC(void) // Doo-Sabin(BC) subdivision - Bei & 
 void DLFLWindow::subDivideDooSabinBCNew(void) // Doo-Sabin(BCNew) Bei & Cansin
 {
 	undoPush();
+setModified(true);
 	object.dooSabinSubDivideBCNew(DLFLWindow::dooSabinBCnewScale_factor,
 	                        DLFLWindow::dooSabinBCnewLength_factor);
 	recomputePatches();
@@ -1613,6 +1634,7 @@ void DLFLWindow::subDivideDooSabinBCNew(void) // Doo-Sabin(BCNew) Bei & Cansin
 void DLFLWindow::subDivideLoopStyle(void)     // Loop-style subdivision - Bei
 {
 	undoPush();
+setModified(true);
 	object.loopStyleSubDivide(DLFLWindow::loopLength_factor);
 	recomputePatches();
 	recomputeNormals();
@@ -1623,6 +1645,7 @@ void DLFLWindow::globalStellate(void)
 {
 	// Does not use length parameter for now. Uses subDivideFace method with triangles
 	undoPush();
+setModified(true);
 	object.subDivideAllFaces(false);
 	recomputePatches();
 	recomputeNormals();
@@ -1632,6 +1655,7 @@ void DLFLWindow::globalStellate(void)
 void DLFLWindow::splitValence2Vertices(void)      // Split Valence 2 vertices
 {
 	undoPush();
+setModified(true);
 	object.splitValence2Vertices(DLFLWindow::vertex_split_offset);
 	recomputePatches();
 	recomputeNormals();
@@ -1641,6 +1665,7 @@ void DLFLWindow::splitValence2Vertices(void)      // Split Valence 2 vertices
 void DLFLWindow::cleanupWingedVertices(void)     // Remove valence 2 vertices
 {
 	undoPush();
+setModified(true);
 	object.cleanupWingedVertices();
 	recomputePatches();
 	recomputeNormals();
@@ -1650,6 +1675,7 @@ void DLFLWindow::cleanupWingedVertices(void)     // Remove valence 2 vertices
 void DLFLWindow::createDual(void)                       // Create dual object
 {
 	undoPush();
+setModified(true);
 	object.createDual(DLFLWindow::accurate_dual);
 	recomputePatches();
 	recomputeNormals();
@@ -1659,6 +1685,7 @@ void DLFLWindow::createDual(void)                       // Create dual object
 void DLFLWindow::createCrust(bool use_scaling)        // Create a crust
 {
 	undoPush();
+setModified(true);
 	if ( use_scaling ) object.createCrustWithScaling(DLFLWindow::crust_scale_factor);
 	else object.createCrust(DLFLWindow::crust_thickness);
 	recomputePatches();
@@ -1669,6 +1696,7 @@ void DLFLWindow::createCrust(bool use_scaling)        // Create a crust
 void DLFLWindow::makeWireframe(void)                    // Create a wireframe
 {
 	undoPush();
+setModified(true);
 	object.makeWireframe(DLFLWindow::wireframe_thickness);
 	recomputePatches();
 	recomputeNormals();
@@ -1678,6 +1706,7 @@ void DLFLWindow::makeWireframe(void)                    // Create a wireframe
 void DLFLWindow::makeWireframeWithColumns(void) // Create a wireframe using columns
 {
 	undoPush();
+setModified(true);
 	object.makeWireframeWithColumns(DLFLWindow::column_thickness, DLFLWindow::column_segments);
 	recomputePatches();
 	recomputeNormals();
@@ -1687,6 +1716,7 @@ void DLFLWindow::makeWireframeWithColumns(void) // Create a wireframe using colu
 void DLFLWindow::makeUnitCube(double edgelength)
 {
 	undoPush();
+setModified(true);
 	DLFLObjectPtr unitcube = DLFLObject::makeUnitCube(edgelength);
 	object.reset();
 	object.splice(*unitcube);
@@ -1699,6 +1729,7 @@ void DLFLWindow::makeUnitCube(double edgelength)
 void DLFLWindow::makeUnitTetrahedron(double edgelength)
 {
 	undoPush();
+setModified(true);
 	DLFLObjectPtr unittetra = DLFLObject::makeUnitTetrahedron();
 	object.reset();
 	object.splice(*unittetra);
@@ -1711,6 +1742,7 @@ void DLFLWindow::makeUnitTetrahedron(double edgelength)
 void DLFLWindow::makeMengerSponge(int level)
 {
 	undoPush();
+setModified(true);
 	DLFLObjectPtr mengersponge = DLFLObject::makeMengerSponge(level);
 	object.reset();
 	object.splice(*mengersponge);
@@ -1723,6 +1755,7 @@ void DLFLWindow::makeMengerSponge(int level)
 void DLFLWindow::makeSierpinskiTetrahedron(int level)
 {
 	undoPush();
+setModified(true);
 	DLFLObjectPtr stetra = DLFLObject::makeSierpinskiTetrahedron(level);
 	object.reset();
 	object.splice(*stetra);
@@ -1745,6 +1778,7 @@ void DLFLWindow::assignTileTexCoords(void) // Assign texture coordinates for til
 void DLFLWindow::edgeCleanup(void) // Cleanup redundant edges
 {
 	undoPush();
+setModified(true);
 	object.edgeCleanup();
 	recomputePatches();
 	recomputeNormals();
@@ -1796,14 +1830,14 @@ void DLFLWindow::openFile(void)
 																									tr("All Supported Files (*.obj *.dlfl);;Wavefront Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"));
 	if (!fileName.isEmpty()){
 		undoPush();
+		setModified(true);
 		QByteArray ba = fileName.toLatin1();
 		const char *filename = ba.data();
-		// QMessageBox::about(this, tr("About TopMod"),tr("loading a cube %1").arg(filename) );
 		
 		readObject(filename);
 		recomputePatches();
 		recomputeNormals();
-		//loadFile(fileName);
+		setCurrentFile(fileName);
 		active->redraw();
 	}
 }
@@ -1812,41 +1846,68 @@ void DLFLWindow::openFile(QString fileName){
 
 	QFile file(fileName);
 	file.open(QIODevice::ReadOnly);
-// QDir::absoluteFilePath(fileName).toLatin1();
 	QFileInfo info(file);
-	QByteArray ba = 	info.absoluteFilePath().toLatin1();//file.fileName().toLatin1();//
+	QByteArray ba = 	info.absoluteFilePath().toLatin1();
 	const char *filename = ba.data();
-	// QMessageBox::about(this, tr("About TopMod"),tr("filename =  %1").arg(filename) );
 	
 	readObject(filename);
 	recomputePatches();
 	recomputeNormals();
-	//loadFile(fileName);
+	setCurrentFile(fileName);
 	active->redraw();
 }
 
-void DLFLWindow::saveFile(bool with_normals, bool with_tex_coords)
+bool DLFLWindow::saveFile(bool with_normals, bool with_tex_coords)
 {
-	QString fileName = QFileDialog::getSaveFileName(this,
-																									tr("Save File As..."),
-																									curFile,
-																									tr("All Supported Files (*.obj *.dlfl);;Wavefront Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"));
-	if (!fileName.isEmpty()){				
-		QByteArray ba = fileName.toLatin1();
-		const char *filename = ba.data();
-		writeObject(filename,with_normals,with_tex_coords);
-	}
+	// if (!curFile.isEmpty()){
+	// 	QByteArray ba = curFile.toLatin1();
+	// 	const char *filename = ba.data();
+	// 	writeObject(filename,with_normals,with_tex_coords);
+	// 	return true;
+	// }
+	// else {
+		QString fileName = QFileDialog::getSaveFileName(this,
+																										tr("Save File As..."),
+																										curFile,
+																										tr("All Supported Files (*.obj *.dlfl);;Wavefront Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"));
+		if (!fileName.isEmpty()){
+			setCurrentFile(fileName);	
+			QByteArray ba = fileName.toLatin1();
+			const char *filename = ba.data();
+			writeObject(filename,with_normals,with_tex_coords);
+		}
+		else return false;
+		return true;
+	// }
 }
 
-void DLFLWindow::openFileOBJ(void)
+bool DLFLWindow::saveFileAs(bool with_normals, bool with_tex_coords)
 {
+		QString fileName = QFileDialog::getSaveFileName(this,
+																										tr("Save File As..."),
+																										curFile,
+																										tr("All Supported Files (*.obj *.dlfl);;Wavefront Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"));
+		if (!fileName.isEmpty()){
+			setCurrentFile(fileName);				
+			QByteArray ba = fileName.toLatin1();
+			const char *filename = ba.data();
+			writeObject(filename,with_normals,with_tex_coords);
+		}
+		else return false;
+		return true;
+}
+
+void DLFLWindow::openFileOBJ(void) {
+	
 	QString fileName = QFileDialog::getOpenFileName(this,
 																									tr("Open File..."),
 																									"$HOME",
 																									tr("Wavefront Files (*.obj);;All Files (*)"));
-	if (!fileName.isEmpty()){
-		//loadFile(fileName);
+	if (!fileName.isEmpty()) {
+		
+		setCurrentFile(fileName);
 		undoPush();
+		setModified(true);
 		QByteArray ba = fileName.toLatin1();
 		const char *filename = ba.data();
 		readObjectOBJ(filename);
@@ -1855,8 +1916,8 @@ void DLFLWindow::openFileOBJ(void)
 	}
 }
 
-void DLFLWindow::saveFileOBJ(bool with_normals, bool with_tex_coords)
-{
+void DLFLWindow::saveFileOBJ(bool with_normals, bool with_tex_coords) {
+	
 	QString fileName = QFileDialog::getSaveFileName(this,
 																									tr("Save File As..."),
 																									curFile,
@@ -1869,8 +1930,8 @@ void DLFLWindow::saveFileOBJ(bool with_normals, bool with_tex_coords)
 }
 
 /* stuart - bezier export */
-void DLFLWindow::saveFileBezierOBJ( )
-{
+void DLFLWindow::saveFileBezierOBJ( ) {
+	
 	QString fileName = QFileDialog::getSaveFileName(this,
 																									tr("Save Bezier Patch (OBJ)..."),
 																									curFile,
@@ -1888,8 +1949,9 @@ void DLFLWindow::openFileDLFL(void) {
 																									"$HOME",
 																									tr("DLFL Files (*.dlfl);;All Files (*)"));
 	if (!fileName.isEmpty()){
-		loadFile(fileName);
+		setCurrentFile(fileName);
 		undoPush();
+		setModified(true);
 		QByteArray ba = fileName.toLatin1();
 		const char *filename = ba.data();
 		readObjectDLFL(filename);
@@ -1898,8 +1960,8 @@ void DLFLWindow::openFileDLFL(void) {
 	}
 }
 
-void DLFLWindow::saveFileDLFL(void)
-{
+void DLFLWindow::saveFileDLFL(void) {
+	
 	QString fileName = QFileDialog::getSaveFileName(this,
 																									tr("Save File As..."),
 																									curFile,
@@ -1911,22 +1973,17 @@ void DLFLWindow::saveFileDLFL(void)
 	}
 }
 
-
-void DLFLWindow::loadFile(const QString &fileName)
-{
-	setCurrentFile(fileName);
-}
-
-void DLFLWindow::setCurrentFile(const QString &fileName)
-{
+void DLFLWindow::setCurrentFile(QString fileName) {
+		 
 	curFile = fileName;
 	QString shownName;
 	if (curFile.isEmpty())
 		shownName = "untitled.obj";
 	else
-		shownName = curFile; //strippedName(curFile);
+		shownName = QFileInfo(curFile).fileName();
 
-	//setWindowTitle(tr("%1[*] - %2").arg(shownName).arg(tr("Application")));
+	((MainWindow*)mParent)->setWindowTitle( tr("%1[*] - %2").arg(shownName).arg(tr("TopMod")));
+	((MainWindow*)mParent)->setWindowModified(false);
 }
 
 void DLFLWindow::cleanupForExit(void) // Do memory cleanup if any before exit
@@ -1938,6 +1995,7 @@ void DLFLWindow::cleanupForExit(void) // Do memory cleanup if any before exit
 void DLFLWindow::performCutting(void)                      //perform Cutting
   {
     undoPush();
+		setModified(true);
     object.performCutting(DLFLWindow::mode,DLFLWindow::cutOffsetE_factor,DLFLWindow::cutOffsetV_factor,DLFLWindow::global_cut,DLFLWindow::selected_cut);
     recomputeNormals();
     DLFLWindow::clearSelected();
@@ -1946,6 +2004,7 @@ void DLFLWindow::performCutting(void)                      //perform Cutting
 void DLFLWindow::createConvexHull(void)                      //create convexhull
   {
     undoPush();
+		setModified(true);
     object.createConvexHull();
     recomputeNormals();
     DLFLWindow::clearSelected();
@@ -1954,6 +2013,7 @@ void DLFLWindow::createConvexHull(void)                      //create convexhull
 void DLFLWindow::createDualConvexHull(void)                //create dual convexhull
   {
     undoPush();
+		setModified(true);
     object.createDualConvexHull();
     recomputeNormals();
     DLFLWindow::clearSelected();
@@ -1961,6 +2021,7 @@ void DLFLWindow::createDualConvexHull(void)                //create dual convexh
 
 void DLFLWindow::loadCube(){	
 	undoPush();
+	setCurrentFile(tr("cube.obj"));
 	readObjectQFile(":/cube.obj");
 	recomputePatches();
 	recomputeNormals();
@@ -1969,6 +2030,7 @@ void DLFLWindow::loadCube(){
 
 void DLFLWindow::loadOctahedron(){	
 	undoPush();
+	setCurrentFile(tr("octahedron.obj"));
 	readObjectQFile(":/octahedron.obj");
 	recomputePatches();
 	recomputeNormals();
@@ -1977,6 +2039,7 @@ void DLFLWindow::loadOctahedron(){
 
 void DLFLWindow::loadTetrahedron(){	
 	undoPush();
+	setCurrentFile(tr("tetrahedron.obj"));
 	readObjectQFile(":/tetrahedron.obj");
 	recomputePatches();
 	recomputeNormals();
@@ -1985,6 +2048,7 @@ void DLFLWindow::loadTetrahedron(){
 
 void DLFLWindow::loadDodecahedron(){	
 	undoPush();
+	setCurrentFile(tr("dodecahedron.obj"));
 	readObjectQFile(":/dodecahedron.obj");
 	recomputePatches();
 	recomputeNormals();
@@ -1993,6 +2057,7 @@ void DLFLWindow::loadDodecahedron(){
 
 void DLFLWindow::loadIcosahedron(){	
 	undoPush();
+	setCurrentFile(tr("icosahedron.obj"));
 	readObjectQFile(":/icosahedron.obj");
 	recomputePatches();
 	recomputeNormals();
@@ -2001,7 +2066,7 @@ void DLFLWindow::loadIcosahedron(){
 
 void DLFLWindow::loadSoccerball(){	
 	undoPush();
-	
+	setCurrentFile(tr("soccerball.obj"));
 	readObjectQFile(":/soccerball.obj");
 	recomputePatches();
 	recomputeNormals();
@@ -2010,8 +2075,20 @@ void DLFLWindow::loadSoccerball(){
 
 void DLFLWindow::loadGeodesic(){	
 	undoPush();
+	setCurrentFile(tr("geodesic.obj"));
 	readObjectQFile(":/geodesic.obj");
 	recomputePatches();
 	recomputeNormals();
 	active->redraw();
+}
+
+bool DLFLWindow::isModified(){
+	
+	return mIsModified;
+}
+
+void DLFLWindow::setModified(bool isModified){
+	
+	mIsModified = isModified;
+	((MainWindow*)mParent)->setWindowModified(mIsModified);	
 }

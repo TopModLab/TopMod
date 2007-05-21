@@ -12,6 +12,8 @@
  *
  */
 
+#ifdef WITH_SPACENAV
+
 #ifndef __TdxDeviceWrappers_h__
 #define __TdxDeviceWrappers_h__
 
@@ -108,6 +110,8 @@ extern int TdxComputeButtons(UInt16 lastBtnPressed, SInt16 currentButtonState);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
 
 #endif

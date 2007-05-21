@@ -16,15 +16,9 @@
 #include "MainWindow.hh"
 #include "TopMod.hh"
 
-#ifndef WITH_VERSE
-	// #define WITH_VERSE
-#endif 
-// #define WITH_PYTHON
-// #define WITH_3DCONNEXION
 
-#ifdef WITH_3DCONEXXION
+#ifdef WITH_SPACENAV
 #ifdef __APPLE__
-
 /*
 #include "TdxDeviceWrappers.hh"
 
@@ -118,7 +112,7 @@ int main( int argc, char **argv ) {
 
 	TopMod app( argc, argv, true );
 
-	#ifdef WITH_3DCONNEXION
+	#ifdef WITH_SPACENAV
 		#ifdef __APPLE__
 			//3d connexion stuff ... isn't working right now
 			// OSStatus err;
