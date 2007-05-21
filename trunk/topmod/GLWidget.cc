@@ -227,11 +227,10 @@ void GLWidget::drawText(int width, int height ){
 
 void GLWidget::drawIDs( ) {
   glDisable(GL_DEPTH_TEST);
- 
   QFont font10("arial"); 
-  font10.setPointSize(10);
-  font10.setBold(true);
-	font10.setStyleStrategy(QFont::NoAntialias);
+  font10.setPointSize(12);
+  //font10.setBold(true);
+  font10.setStyleStrategy(QFont::NoAntialias);
 
   /* Draw Vertex IDs */
   if( mShowVertexIDs ) {
@@ -240,9 +239,11 @@ void GLWidget::drawIDs( ) {
     DLFLVertexPtrArray::iterator it;
     for( it = vparray.begin(); it != vparray.end(); it++) {
       QString id = QString::number( (*it)->getID() );
-      double x,y,z; (*it)->coords.get(x,y,z);
+      double x,y,z; 
+      Vector3d point = (*it)->coords;// + ((*it)->getNormal() * 0.2);
+      point.get(x,y,z);
       glColor3f(0.886,0.565,0.02);
-      renderText( x, y, z, id, font10 );
+      renderMyText( x, y, z, id, font10 );
     }
   }
 
@@ -255,7 +256,7 @@ void GLWidget::drawIDs( ) {
       QString id = QString::number( (*it)->getID() );
       double x,y,z; (*it)->getMidPoint().get(x,y,z);
       glColor3f(0.671,0.886,0.02);
-      renderText( x, y, z, id, font10 );
+      renderMyText( x, y, z, id, font10 );
     }
   }
 
@@ -266,11 +267,14 @@ void GLWidget::drawIDs( ) {
     DLFLFacePtrArray::iterator it;
     for( it = fparray.begin(); it != fparray.end(); it++) {
       QString id = QString::number( (*it)->getID() );
-      double x,y,z; (*it)->geomCentroid().get(x,y,z);
+      double x,y,z; 
+      Vector3d point = (*it)->geomCentroid();// + (*it)->getNormal();
+      point.get(x,y,z);
       glColor3f(0.886,0.02,0.875);
-      renderText( x, y, z, id, font10 );
+      renderMyText( x, y, z, id, font10 );
     }
   }
+
   glEnable(GL_DEPTH_TEST);
 }
 
@@ -839,3 +843,145 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *event) {
 // 			break;
 // 	}
 // } 
+
+static void qt_save_gl_state()
+{
+#ifndef Q_WS_QWS
+    glPushAttrib(GL_ALL_ATTRIB_BITS);
+#endif
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+
+    glShadeModel(GL_FLAT);
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_LIGHTING);
+    glDisable(GL_STENCIL_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+static void qt_restore_gl_state()
+{
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+#ifndef Q_WS_QWS
+    glPopAttrib();
+#endif
+}
+
+static void qt_gl_draw_text(QPainter *p, int x, int y, const QString &str,
+                            const QFont &font)
+{
+    GLfloat color[4];
+#ifndef Q_WS_QWS
+    glGetFloatv(GL_CURRENT_COLOR, &color[0]);
+#endif
+
+    int rx = x;
+    int ry = y;
+    int rw = 20;
+    int rh = 20;
+
+    QRect rectangle;//(rx,ry,rw,rh);
+    QPen old_pen = p->pen();
+    QBrush old_brush = p->brush();
+    //p->setPen(Qt::NoPen);
+    /*
+    //p->drawRoundRect(rectangle);
+    //p->setBrush(old_brush);*/
+
+    QColor col;
+    col.setRgbF(color[0], color[1], color[2],color[3]);
+    QFont old_font = p->font();
+    p->setPen(col);
+    p->setFont(font);
+    p->drawText(x, y, 35, 35, Qt::AlignLeft | Qt::AlignVCenter, str, &rectangle );
+
+    p->setBrush(Qt::white);
+    p->setPen(Qt::NoPen);
+    p->drawRect(rectangle);
+
+    p->setPen(old_pen);
+    p->setBrush(old_brush);
+    p->setFont(old_font);
+}
+
+/*! \overload
+
+    \a x, \a y and \a z are specified in scene or object coordinates
+    relative to the currently set projection and model matrices. This
+    can be useful if you want to annotate models with text labels and
+    have the labels move with the model as it is rotated etc.
+
+    Note that this function only works properly if \c GL_DEPTH_TEST is
+    enabled, and you have a properly initialized depth buffer.
+*/
+void GLWidget::renderMyText(double x, double y, double z, const QString &str, const QFont &font, int) {
+  //Q_D(QGLWidget);
+  if (str.isEmpty())
+    return;
+
+  bool auto_swap = autoBufferSwap();
+
+  GLdouble model[4][4], proj[4][4];
+  GLint view[4];
+#ifndef Q_WS_QWS
+  glGetDoublev(GL_MODELVIEW_MATRIX, &model[0][0]);
+  glGetDoublev(GL_PROJECTION_MATRIX, &proj[0][0]);
+  glGetIntegerv(GL_VIEWPORT, &view[0]);
+#endif
+  GLdouble win_x = 0, win_y = 0, win_z = 0;
+  gluProject(x, y, z, &model[0][0], &proj[0][0], &view[0],
+	      &win_x, &win_y, &win_z);
+  win_y = height() - win_y; // y is inverted
+
+  QPaintEngine *engine = paintEngine();
+  QPainter *p;
+  bool reuse_painter = false;
+  if (engine->isActive()) {
+    reuse_painter = true;
+    p = engine->painter();
+    qt_save_gl_state();
+  } else {
+    setAutoBufferSwap(false);
+    // disable glClear() as a result of QPainter::begin()
+    //context()->d_func()->clear_on_painter_begin = false;
+    setAutoFillBackground(false); // need this. same result as the line above
+    p = new QPainter(this);
+  }
+
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glViewport(0, 0, width(), height());
+#ifndef Q_WS_QWS
+  glOrtho(0, width(), height(), 0, 0, 1);
+#else
+  glOrthof(0, width(), height(), 0, 0, 1);
+#endif
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  glAlphaFunc(GL_GREATER, 0.0);
+  glEnable(GL_ALPHA_TEST);
+  glEnable(GL_DEPTH_TEST);
+#ifndef Q_WS_QWS
+  glTranslated(0, 0, -win_z);
+#else
+  glTranslatef(0, 0, -win_z);
+#endif
+
+  qt_gl_draw_text(p, qRound(win_x), qRound(win_y), str, font);
+
+  if (reuse_painter) {
+    qt_restore_gl_state();
+  } else {
+    p->end();
+    delete p;
+    setAutoBufferSwap(auto_swap);
+    //context()->d_func()->clear_on_painter_begin = true;
+    setAutoFillBackground(true);
+  }
+}

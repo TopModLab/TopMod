@@ -109,7 +109,8 @@ public :
 
 	QCursor *cursor;
 	void redraw();
-	
+  void renderMyText(double x, double y, double z, const QString & str,
+		    const QFont & fnt = QFont(), int listBase = 2000);
 	   //--- Initialize the selection lists ---//
 	static void initializeSelectionLists(int num)
 	  {
@@ -469,7 +470,8 @@ public:
 	// static void spaceNavEvent(io_connect_t connection, natural_t messageType, void *messageArgument);
 
 
-
+private :
+  friend class QGLFormat;
 };
 
 #endif 
