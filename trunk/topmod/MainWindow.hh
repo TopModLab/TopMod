@@ -38,6 +38,7 @@
 #include "include/TexturedRenderer.hh"
 #include "include/TexturedLitRenderer.hh"
 #include "include/PatchRenderer.hh"
+#include "TopModPreferences.hh"
 
 class BasicsMode;
 class ExtrusionMode;
@@ -308,6 +309,11 @@ private:
   StyleSheetEditor *mStyleSheetEditor;
   QAction *mEditStyleSheetAct;
 
+	TopModPreferences *mPreferencesDialog;
+	QAction *mPreferencesAct;
+	
+	QSettings *mSettings;
+
 public slots:
 
   void newFile();
@@ -436,6 +442,7 @@ public slots:
 	void changeMengerSpongeCollapseThreshold(double value);
 
   void on_editStyleAction_triggered(); // stylesheet editor
+	void openPreferences();
 
 	//conical operations from ozgur
   void perform_cutting();// ozgur

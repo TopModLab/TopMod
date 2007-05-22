@@ -78,6 +78,8 @@ void DLFLWindow::undo(void) {
 	}
 	if (undoList.empty()) {
 		setModified(false);
+		if (mWasPrimitive)
+			mIsPrimitive = true;
 	}
 }
 

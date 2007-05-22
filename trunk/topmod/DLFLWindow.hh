@@ -202,6 +202,7 @@ private:
 	//document modified
 	bool mIsModified;
 	bool mIsPrimitive;
+	bool mWasPrimitive;
 	QWidget *mParent;
 	
 
@@ -211,7 +212,7 @@ private:
 		DLFLWindow(int x, int y, int w, int h, QWidget *parent=0)
 		  :  QWidget(parent), top(NULL), persp(NULL), front(NULL), right(NULL), active(NULL),
 				object(), mode(NormalMode), plight(), undoList(), redoList(), undolimit(20), useUndo(true), 
-				mIsModified(false), mIsPrimitive(false)
+				mIsModified(false), mIsPrimitive(false), mWasPrimitive(false)
 		  {
 		       // Default renderer is NULL
 		    initialize(x,y,w,h,NULL);
@@ -222,7 +223,7 @@ private:
 		DLFLWindow(int x, int y, int w, int h, DLFLRendererPtr rp, QWidget *parent=0)
 		  :  QWidget(parent), top(NULL), persp(NULL), front(NULL), right(NULL), active(NULL),
 		    object(), mode(NormalMode), plight(), undoList(), redoList(), undolimit(20), useUndo(true), 
-				mIsModified(false), mIsPrimitive(false)
+				mIsModified(false), mIsPrimitive(false), mWasPrimitive(false)
 		  {
 		    initialize(x,y,w,h,rp);
 				mParent = parent;

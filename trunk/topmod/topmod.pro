@@ -111,6 +111,7 @@ win32 {
 # Input
 HEADERS += 	DLFLScriptEditor.hh \
 						VerseTopMod.hh \
+						TopModPreferences.hh \
 						TdxDeviceWrappers.hh \
 						GLWidget.hh \
 						TopMod.hh \
@@ -177,6 +178,7 @@ FORMS += shortcutdialog.ui stylesheeteditor.ui
 
 SOURCES += 	DLFLScriptEditor.cc \
 						VerseTopMod.cc \
+						TopModPreferences.cc \
 						TdxDeviceWrappers.cc \
 						GLWidget.cc \
 						TopMod.cc \

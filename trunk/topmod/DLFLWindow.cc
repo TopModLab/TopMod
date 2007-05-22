@@ -1824,7 +1824,8 @@ void DLFLWindow::openFile(void) {
 		}
 		QByteArray ba = fileName.toLatin1();
 		const char *filename = ba.data();
-		
+		mWasPrimitive = false;
+		mIsPrimitive = false;
 		readObject(filename);
 		recomputePatches();
 		recomputeNormals();
@@ -1839,7 +1840,8 @@ void DLFLWindow::openFile(QString fileName){
 	QFileInfo info(file);
 	QByteArray ba = 	info.absoluteFilePath().toLatin1();
 	const char *filename = ba.data();
-	
+	mWasPrimitive = false;
+	mIsPrimitive = false;
 	if (!curFile.isEmpty()){
 		undoPush();
 		setModified(false);
@@ -2017,6 +2019,7 @@ void DLFLWindow::loadCube(){
 		undoPush();
 	setModified(false);
 	mIsPrimitive = true;
+	mWasPrimitive = true;
 	setCurrentFile(tr("cube.obj"));
 	readObjectQFile(":/cube.obj");
 	recomputePatches();
@@ -2029,6 +2032,7 @@ void DLFLWindow::loadOctahedron(){
 		undoPush();
 	setModified(false);
 	mIsPrimitive = true;
+	mWasPrimitive = true;
 	setCurrentFile(tr("octahedron.obj"));
 	readObjectQFile(":/octahedron.obj");
 	recomputePatches();
@@ -2041,6 +2045,7 @@ void DLFLWindow::loadTetrahedron(){
 		undoPush();
 	setModified(false);
 	mIsPrimitive = true;
+	mWasPrimitive = true;
 	setCurrentFile(tr("tetrahedron.obj"));
 	readObjectQFile(":/tetrahedron.obj");
 	recomputePatches();
@@ -2053,6 +2058,7 @@ void DLFLWindow::loadDodecahedron(){
 		undoPush();
 	setModified(false);
 	mIsPrimitive = true;
+	mWasPrimitive = true;
 	setCurrentFile(tr("dodecahedron.obj"));
 	readObjectQFile(":/dodecahedron.obj");
 	recomputePatches();
@@ -2065,6 +2071,7 @@ void DLFLWindow::loadIcosahedron(){
 		undoPush();
 	setModified(false);	
 	mIsPrimitive = true;
+	mWasPrimitive = true;
 	setCurrentFile(tr("icosahedron.obj"));
 	readObjectQFile(":/icosahedron.obj");
 	recomputePatches();
@@ -2077,6 +2084,7 @@ void DLFLWindow::loadSoccerball(){
 		undoPush();
 	setModified(false);
 	mIsPrimitive = true;
+	mWasPrimitive = true;
 	setCurrentFile(tr("soccerball.obj"));
 	readObjectQFile(":/soccerball.obj");
 	recomputePatches();
@@ -2089,6 +2097,7 @@ void DLFLWindow::loadGeodesic(){
 		undoPush();
 	setModified(false);
 	mIsPrimitive = true;
+	mWasPrimitive = true;
 	setCurrentFile(tr("geodesic.obj"));
 	readObjectQFile(":/geodesic.obj");
 	recomputePatches();

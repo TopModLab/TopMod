@@ -47,7 +47,6 @@ MainWindow::MainWindow(char *filename) {
   cWidget->setLayout( layout );
   setCentralWidget( cWidget );
 
-	
 	#ifdef WITH_PYTHON
 		//the script editor widget will be placed into a QDockWidget
 		//and will be dockable in the top and bottom sections of the main window	
@@ -73,7 +72,7 @@ MainWindow::MainWindow(char *filename) {
 	
   //make a new instance of QShortcutManager
   sm = new QShortcutManager();
-
+	//instantiate toolbars
 	mBasicsMode = new BasicsMode(this, sm);
 	mExtrusionMode = new ExtrusionMode(this, sm);
 	mConicalMode = new ConicalMode(this, sm);
@@ -84,18 +83,16 @@ MainWindow::MainWindow(char *filename) {
   createActions();
   createToolBars();
   createMenus();
-
+	//initialize renderer
 	MainWindow::createRenderers();
   mainWindow->setRenderer(lit); // Default renderer is LightedRenderer
-	
 	//style sheet editor
   mStyleSheetEditor = new StyleSheetEditor(this);
-
+	//preference dialog
+	mSettings = new QSettings("TopMod", "Topological Mesh Modeler");
 	readSettings();
-	// if (filename){
-// 		mainWindow->openFile(QString(filename));
-// 	}
-	
+	mPreferencesDialog = new TopModPreferences(mSettings, this);
+	//read the settings that can be customized in the preferences dialog
 }
 
 void MainWindow::setMode(int m){
@@ -407,13 +404,18 @@ void MainWindow::createActions() {
 	// sm->connect( exitSelectionModeAct , SIGNAL( triggered() ), SLOT  ( exit_selection_mode() ) );
  
 	//SETTINGS ACTIONS
-	manageShortcutsAct = new QAction(tr("Shortcuts..."),this);
+	manageShortcutsAct = new QAction(tr("Short&cuts..."),this);
 	sm->connect( manageShortcutsAct , SIGNAL( triggered() ), SLOT  ( configure() ) );
 	sm->registerAction(manageShortcutsAct, "Settings", "CTRL+M");
 
-	mEditStyleSheetAct = new QAction(tr("Stylesheets..."),this);
+	mEditStyleSheetAct = new QAction(tr("&Stylesheets..."),this);
 	connect( mEditStyleSheetAct, SIGNAL( triggered() ), this, SLOT(on_editStyleAction_triggered()) );
 	sm->registerAction(mEditStyleSheetAct, "Settings", "CTRL+N");
+	
+	mPreferencesAct = new QAction(tr("&Preferences"), this);
+	sm->registerAction(mPreferencesAct, "Settings", "CTRL+,");
+	mPreferencesAct->setStatusTip(tr("Open the Preferences Dialog"));
+	connect(mPreferencesAct, SIGNAL(triggered()), this, SLOT(openPreferences()));	
 
 	//LANGUAGE MENU BAR ACTIONS
 	englishAct = new QAction(tr("English"),this);
@@ -616,6 +618,7 @@ void MainWindow::createMenus(){
 	languageMenu->addAction(frenchAct);
 	languageMenu->addAction(turkishAct);
 	languageMenu->addAction(catalanAct);
+	settingsMenu->addAction(mPreferencesAct);
 	
 }
 
@@ -718,24 +721,27 @@ void MainWindow::createStatusBar() {
 }
 
 void MainWindow::readSettings() {
-  QSettings settings("TopMod", "Topological Mesh Modeler");
+  // mSettings = new QSettings("TopMod", "Topological Mesh Modeler");
 
-	settings.beginGroup("MainWindow");
-  QPoint pos = settings.value("pos", QPoint(100, 100)).toPoint();
-  QSize size = settings.value("size", QSize(800, 600)).toSize();
-	settings.endGroup();
+	mSettings->beginGroup("MainWindow");
+  QPoint pos = mSettings->value("pos", QPoint(100, 100)).toPoint();
+  QSize size = mSettings->value("size", QSize(800, 600)).toSize();
+	mSettings->endGroup();
 	
   resize(size);
   move(pos);
 }
 
 void MainWindow::writeSettings() {
-  QSettings settings("TopMod", "Topological Mesh Modeler");
-  
-	settings.beginGroup("MainWindow");
-	settings.setValue("pos", pos());
-  settings.setValue("size", size());
-	settings.endGroup();
+	  
+	mSettings->beginGroup("MainWindow");
+	mSettings->setValue("pos", pos());
+  mSettings->setValue("size", size());
+	mSettings->endGroup();
+	
+	mSettings->beginGroup("ViewPortColors");
+	
+	mSettings->endGroup();
 }
 
 bool MainWindow::maybeSave() {
@@ -807,6 +813,11 @@ void MainWindow::documentWasModified() {
 void MainWindow::on_editStyleAction_triggered() {
   mStyleSheetEditor->show();
   mStyleSheetEditor->activateWindow();
+}
+
+void MainWindow::openPreferences() {
+  mPreferencesDialog->exec();
+  // mPreferencesDialog->activateWindow();
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event) {
