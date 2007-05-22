@@ -4,9 +4,9 @@
 
 //-- Subroutines dealing with undo and redo for DLFLWindow --//
 
-void DLFLWindow :: clearUndoList(void)
+void DLFLWindow::clearUndoList(void)
 {
-  StringStreamPtrList :: iterator first, last;
+  StringStreamPtrList::iterator first, last;
   first = undoList.begin(); last = undoList.end();
   while ( first != last )
      {
@@ -16,9 +16,9 @@ void DLFLWindow :: clearUndoList(void)
   undoList.clear();
 }
 
-void DLFLWindow :: clearRedoList(void)
+void DLFLWindow::clearRedoList(void)
 {
-  StringStreamPtrList :: iterator first, last;
+  StringStreamPtrList::iterator first, last;
   first = redoList.begin(); last = redoList.end();
   while ( first != last )
      {
@@ -28,7 +28,7 @@ void DLFLWindow :: clearRedoList(void)
   redoList.clear();
 }
 
-void DLFLWindow :: undoPush(void)
+void DLFLWindow::undoPush(void)
 {
      // Don't do anything unless undo is required
   if ( useUndo == false ) return;
@@ -53,48 +53,55 @@ void DLFLWindow :: undoPush(void)
   clearRedoList();
 }
 
-void DLFLWindow :: undo(void)
-{
-  if ( !undoList.empty() )
-     {
-          // Restore previous object
-          // Put current object to end of redo list
-          // Take last element of undo list and re-create current object
-       StringStreamPtr curobj = new StringStream;
-       object.writeDLFL(*curobj);
-       redoList.push_back(curobj);
+void DLFLWindow::undo(void) {
+	
+	if ( !undoList.empty() ) {		
+		// Restore previous object
+		// Put current object to end of redo list
+		// Take last element of undo list and re-create current object
+		StringStreamPtr curobj = new StringStream;
+		object.writeDLFL(*curobj);
+		redoList.push_back(curobj);
 
-       StringStreamPtr oldobj = undoList.back();;
-       object.readDLFL(*oldobj);
-       undoList.pop_back(); delete oldobj;
+		StringStreamPtr oldobj = undoList.back();;
+		object.readDLFL(*oldobj);
+		undoList.pop_back(); delete oldobj;
 
-       recomputePatches();
-       recomputeNormals();
-          // Clear selection lists to avoid dangling pointers
-       DLFLWindow::clearSelected();
-			 redraw();
-     }
+		recomputePatches();
+		recomputeNormals();
+		// Clear selection lists to avoid dangling pointers
+		DLFLWindow::clearSelected();
+		redraw();
+		/* is document modified? - dave */
+		setModified(true);
+		mIsPrimitive = false; 
+	}
+	if (undoList.empty()) {
+		setModified(false);
+	}
 }
 
-void DLFLWindow :: redo(void)
-{
-  if ( !redoList.empty() )
-     {
-          // Redo previously undone operation
-          // Put current object to end of undo list
-          // Take last element of redo list and re-create current object
-       StringStreamPtr curobj = new StringStream;
-       object.writeDLFL(*curobj);
-       undoList.push_back(curobj);
+void DLFLWindow::redo(void) {
+	
+  if ( !redoList.empty() ) {
+		// Redo previously undone operation
+		// Put current object to end of undo list
+		// Take last element of redo list and re-create current object
+		StringStreamPtr curobj = new StringStream;
+		object.writeDLFL(*curobj);
+		undoList.push_back(curobj);
 
-       StringStreamPtr newobj = redoList.back();
-       object.readDLFL(*newobj);
-       redoList.pop_back(); delete newobj;
+		StringStreamPtr newobj = redoList.back();
+		object.readDLFL(*newobj);
+		redoList.pop_back(); delete newobj;
 
-       recomputePatches();
-       recomputeNormals();
-          // Clear selection lists to avoid dangling pointers
-       DLFLWindow::clearSelected();
-			 redraw();
-     }
+		recomputePatches();
+		recomputeNormals();
+		// Clear selection lists to avoid dangling pointers
+		DLFLWindow::clearSelected();
+		redraw();
+		/* is document modified? - dave */
+		setModified(true);
+		mIsPrimitive = false;
+	}
 }

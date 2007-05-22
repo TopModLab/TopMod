@@ -35,7 +35,9 @@ MainWindow::MainWindow(char *filename) {
 	
 	//create a container widget to hold multiple glwidgets
 	mainWindow = new DLFLWindow(0,0,1000,700,MainWindow::lit,this);
-
+	//accept file drop events
+	mainWindow->setAcceptDrops(true);
+	
   /** Setup Layouts **/
   layout = new QBoxLayout( QBoxLayout::TopToBottom, 0 );
 
@@ -702,7 +704,6 @@ void MainWindow::createToolBars() {
 }
 
 void MainWindow::setToolOptions(QWidget *optionsWidget) {
-
 	mToolOptionsDockWidget->setWindowTitle(optionsWidget->windowTitle());
 	mToolOptionsStackedWidget->setCurrentWidget(optionsWidget);
 	// show or hide the dockwidget options
@@ -713,12 +714,10 @@ void MainWindow::setToolOptions(QWidget *optionsWidget) {
 }
 
 void MainWindow::createStatusBar() {
-	
   statusBar()->showMessage(tr("Welcome to TopMod"));
 }
 
 void MainWindow::readSettings() {
-	
   QSettings settings("TopMod", "Topological Mesh Modeler");
 
 	settings.beginGroup("MainWindow");
@@ -731,7 +730,6 @@ void MainWindow::readSettings() {
 }
 
 void MainWindow::writeSettings() {
-	
   QSettings settings("TopMod", "Topological Mesh Modeler");
   
 	settings.beginGroup("MainWindow");
@@ -757,55 +755,45 @@ bool MainWindow::maybeSave() {
 }
 
 void MainWindow::loadFile(QString fileName) {
-  
 	openFile(fileName);
   mainWindow->setCurrentFile(fileName);
   statusBar()->showMessage(tr("File loaded"), 2000);
 }
 
 bool MainWindow::saveFile(QString fileName) {
-
   mainWindow->setCurrentFile(fileName);
   statusBar()->showMessage(tr("File saved"), 2000);
   return true;
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
-
-    if (maybeSave()) {
-        writeSettings();
-        event->accept();
-    } else {
-        event->ignore();
-    }
+	if (maybeSave()) {
+	    writeSettings();
+	    event->accept();
+	} else {
+	    event->ignore();
+	}
 }
 
-void MainWindow::newFile() {
-
-}
+void MainWindow::newFile() { }
 
 void MainWindow::open() {
-	
 	mainWindow->openFile();
 }
 
 void MainWindow::openFile(QString fileName) {
-	
 	mainWindow->openFile(fileName);
 }
 
 bool MainWindow::save() {
-	
 	mainWindow->saveFile();
 }
 
 bool MainWindow::saveAs() {
-	
 	mainWindow->saveFileAs();
 }
 
 void MainWindow::about() {
-	
   QMessageBox::about(this, tr("About TopMod"),
 		     tr("The <b>Application</b> example demonstrates how to "
 			"write modern GUI applications using Qt, with a menu bar, "
@@ -813,7 +801,6 @@ void MainWindow::about() {
 }
 
 void MainWindow::documentWasModified() {
-	
   setWindowModified(mainWindow->isModified());
 }
 
@@ -895,11 +882,9 @@ void MainWindow::showHideScriptEditor(){
 	  mScriptEditorDockWidget->setFocus();
 	}
 #endif
-
 }
 
 void MainWindow::showHideVerseDialog(){
-
 #ifdef WITH_VERSE
 	if( mVerseDialogDockWidget->isVisible( ) )
 	  mVerseDialogDockWidget->hide( );
@@ -908,19 +893,19 @@ void MainWindow::showHideVerseDialog(){
 	  mVerseDialogDockWidget->setFocus();
 	}
 #endif
-
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
-	
-    if (event->mimeData()->hasFormat("obj"))
-        event->acceptProposedAction();
+	// QMessageBox::about(this,tr("mimetype"),tr("%1").arg(event->mimeData()->formats().join(",")));
+	// if (event->mimeData()->hasFormat("text/uri-list"))
+	// 	event->acceptProposedAction();
 }
 
 void MainWindow::dropEvent(QDropEvent *event) {
-    //textBrowser->setPlainText(event->mimeData()->text());
-    //mimeTypeCombo->clear();
-    //mimeTypeCombo->addItems(event->mimeData()->formats());
+	//textBrowser->setPlainText(event->mimeData()->text());
+	//mimeTypeCombo->clear();
+	//mimeTypeCombo->addItems(event->mimeData()->formats());
+	// QMessageBox::about(this,tr("mimetype"),tr("%1").arg(event->mimeData()->data("text/uri-list").data));
 
-    event->acceptProposedAction();
+	// event->acceptProposedAction();
 }

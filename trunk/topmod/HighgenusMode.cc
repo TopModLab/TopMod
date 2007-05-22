@@ -649,7 +649,7 @@ void HighgenusMode::setupMultiFaceHandle(){
 	multiFaceAlgorithmGroupBox->setLayout(mMultiFaceAlgorithmLayout);
 	
 	//add the groupbox to the multiface layout
-	// mMultiFaceHandleLayout->addWidget(multiFaceAlgorithmGroupBox);
+	mMultiFaceHandleLayout->addWidget(multiFaceAlgorithmGroupBox);
 
 	QPushButton *multiFaceHandleButton = new QPushButton("Connect Selected Faces", this);
 	connect(multiFaceHandleButton, SIGNAL(clicked()),

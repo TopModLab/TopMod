@@ -140,7 +140,7 @@ class DLFLRenderer
      static void drawWireframe(DLFLObjectPtr object)
        {
          glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-         glColor3f(0.1,0.1,0.2);
+         glColor4f(0.1,0.1,0.2,0.8);
          glDepthRange(0.0,1.0-0.0005);
          object->renderEdges(1.5);//32.03232
 	 glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
@@ -149,7 +149,7 @@ class DLFLRenderer
      static void drawSilhouette(DLFLObjectPtr object)
        {
          glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-         glColor3f(0.0,0.0,0.0);
+         glColor4f(0.0,0.0,0.0,0.8);
          glDepthRange(0.1,1.0);
          if ( reverse_object ) object->renderEdges(2.0);
          else object->renderEdges(6.0);
@@ -158,7 +158,7 @@ class DLFLRenderer
      
      static void drawVertices(DLFLObjectPtr object)
        {
-         glColor3f(0.5,1.0,0.0);
+         glColor4f(0.5,1.0,0.0,0.9);
          glDepthRange(0.0,1.0-0.00075);
          object->renderVertices(5.0);
        }

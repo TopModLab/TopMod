@@ -68,8 +68,8 @@ void GLWidget::initializeGL( ) {
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);			// Type Of Blending To Use
 
   mShowVertexIDs = false;
-  mShowEdgeIDs = false;
-  mShowFaceIDs = false;
+  mShowEdgeIDs   = false;
+  mShowFaceIDs   = false;
 }
 
 void GLWidget::paintGL( ) {
@@ -529,7 +529,7 @@ void GLWidget::drawSelected(void)
     // Selected vertices are shown in red color
     glPointSize(5.0);
     glBegin(GL_POINTS);
-    glColor3f(1,0,0);
+    glColor4f(1,0,0,0.6);
     DLFLVertexPtrArray::iterator first, last;
     first = sel_vptr_array.begin(); last = sel_vptr_array.end();
     while ( first != last ){
@@ -541,8 +541,8 @@ void GLWidget::drawSelected(void)
 
   if ( !sel_eptr_array.empty() ){
     // Selected edges are shown in blue color
-    glLineWidth(3.0);
-    glColor3f(0,0,1);
+    glLineWidth(4.0);
+    glColor4f(0,0,1,0.5);
     DLFLEdgePtrArray::iterator first, last;
     first = sel_eptr_array.begin(); last = sel_eptr_array.end();
     while ( first != last ){
@@ -552,9 +552,9 @@ void GLWidget::drawSelected(void)
   }
 
   if ( !sel_fptr_array.empty() ){
-    // Selected faces are shown in cyan color
-    glLineWidth(2.0);
-    glColor3f(0,1,1);
+    // Selected faces are shown in cyan color with a slight transparency
+    glLineWidth(3.0);
+    glColor4f(0,0.5,1,0.5);
     DLFLFacePtrArray::iterator first, last;
     first = sel_fptr_array.begin(); last = sel_fptr_array.end();
     while ( first != last )	{
@@ -565,8 +565,8 @@ void GLWidget::drawSelected(void)
 
   if ( !sel_fvptr_array.empty() ) {
     // Selected corners (vertices) are shown in green color
-    glPointSize(6.0);
-    glColor3f(0,1,0);
+    glPointSize(8.0);
+    glColor4f(0,1,0,.6);
     glBegin(GL_POINTS);
     DLFLFaceVertexPtrArray::iterator first, last;
     first = sel_fvptr_array.begin(); last = sel_fvptr_array.end();
