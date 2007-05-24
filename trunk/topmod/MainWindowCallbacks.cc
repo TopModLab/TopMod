@@ -142,6 +142,11 @@ void MainWindow::toggle_axes()
   mainWindow->redraw();
 }
 
+void MainWindow::use_wireframe_renderer() {
+  mainWindow->setRenderer(wired);
+  mainWindow->redraw();
+}
+
 void MainWindow::use_normal_renderer()
 {
   mainWindow->setRenderer(normal);

@@ -32,6 +32,7 @@
 
 #include "DLFLWindow.hh"
 #include "DLFLObject.hh"
+#include "include/WireframeRenderer.hh"
 #include "include/ShadedRenderer.hh"
 #include "include/NormalRenderer.hh"
 #include "include/LitRenderer.hh"
@@ -67,6 +68,9 @@ public:
 
 		      	// Create the renderers
 	void createRenderers(void){
+	  wired = new WireframeRenderer();
+	  //wired->setRenderFlags(DLFLRender::ShowWireframe); // redundant?
+
 		shaded = new ShadedRenderer();
 		shaded->setRenderFlags(DLFLRenderer::ShowWireframe);
 
@@ -131,12 +135,13 @@ protected:
 	static int MIN_H;                // Minimum height for app window
 
 	   // Renderers
-	static ShadedRendererPtr shaded;              // ShadedRenderer
-	static NormalRendererPtr normal;              // NormalRenderer
-	static LitRendererPtr lit;                    // LitRenderer
-	static TexturedRendererPtr textured;          // TexturedRenderer
-	static TexturedLitRendererPtr texturedlit; 		// TexturedLitRenderer
-	static PatchRendererPtr patch;		      			// PatchRenderer
+  static WireframeRendererPtr wired;            // WireframeRenderer
+  static ShadedRendererPtr shaded;              // ShadedRenderer
+  static NormalRendererPtr normal;              // NormalRenderer
+  static LitRendererPtr lit;                    // LitRenderer
+  static TexturedRendererPtr textured;          // TexturedRenderer
+  static TexturedLitRendererPtr texturedlit; 	// TexturedLitRenderer
+  static PatchRendererPtr patch;		// PatchRenderer
 	
 	BasicsMode *mBasicsMode;
 	ExtrusionMode *mExtrusionMode;
@@ -212,6 +217,7 @@ private:
   QAction *showCoordinateAxesAct;
 
   //Renderer Menu Actions
+  QAction *wireframeRendererAct;
   QAction *normalRendererAct;
   QAction *shadedRendererAct;
   QAction *lightedRendererAct;
@@ -352,12 +358,13 @@ public slots:
 	void toggle_grid();
 	void toggle_axes();
 
-	void use_normal_renderer();
-	void use_lighted_renderer();
-	void use_shaded_renderer();
-	void use_textured_renderer();
-	void use_textured_lit_renderer();
-	void use_patch_renderer();
+  void use_wireframe_renderer();
+  void use_normal_renderer();
+  void use_lighted_renderer();
+  void use_shaded_renderer();
+  void use_textured_renderer();
+  void use_textured_lit_renderer();
+  void use_patch_renderer();
 
 	void subdivide_all_edges();
 	void planarize_all_faces();

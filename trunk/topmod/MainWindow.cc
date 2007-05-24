@@ -11,6 +11,7 @@
 int MainWindow::MIN_W = 1200;                        // Minimum width for app window
 int MainWindow::MIN_H = 630;                        // Minimum height for app window
 
+WireframeRendererPtr MainWindow::wired;              // Wireframe Renderer
 ShadedRendererPtr MainWindow::shaded;                // ShadedRenderer
 NormalRendererPtr MainWindow::normal;                // NormalRenderer
 LitRendererPtr MainWindow::lit;                        // LitRenderer
@@ -254,7 +255,13 @@ void MainWindow::createActions() {
 		sm->registerAction(mShowVerseDialogAct, "Display Menu", "SHIFT+CTRL+V");
 	#endif	
 
-	//Renderer Menu Actions
+		//Renderer Menu Actions
+		wireframeRendererAct = new QAction(tr("&Wireframe Renderer"), this);
+		wireframeRendererAct->setCheckable(true);
+		sm->registerAction(wireframeRendererAct, "Renderer Menu", "0");
+		wireframeRendererAct->setStatusTip(tr("Switch the current renderer to Wireframe"));
+		connect(wireframeRendererAct, SIGNAL(triggered()), this, SLOT(use_wireframe_renderer()));	
+
 	normalRendererAct = new QAction(tr("&Normal Renderer"), this);
 	normalRendererAct->setCheckable(true);
 	sm->registerAction(normalRendererAct, "Renderer Menu", "1");
@@ -293,6 +300,7 @@ void MainWindow::createActions() {
 
 	rendererActionGroup = new QActionGroup(this);
 	rendererActionGroup->setExclusive(true);
+	rendererActionGroup->addAction(wireframeRendererAct);
 	rendererActionGroup->addAction(normalRendererAct);
 	rendererActionGroup->addAction(lightedRendererAct);
 	rendererActionGroup->addAction(shadedRendererAct);
@@ -549,6 +557,7 @@ void MainWindow::createMenus(){
 	rendererMenu = new QMenu(tr("&Renderer"));
 	rendererMenu->setTearOffEnabled(true);
 	menuBar->addMenu(rendererMenu);
+	rendererMenu->addAction(wireframeRendererAct);
 	rendererMenu->addAction(normalRendererAct);
 	rendererMenu->addAction(shadedRendererAct);
 	rendererMenu->addAction(lightedRendererAct);

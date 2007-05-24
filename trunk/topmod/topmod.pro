@@ -9,6 +9,7 @@ CONFIG += qt release
 # exclude verse python or spacenav drivers
 # or include them with CONFIG += 
 CONFIG -=  WITH_PYTHON WITH_SPACENAV WITH_VERSE
+CONFIG += WITH_PYTHON
 
 TEMPLATE = app
 
@@ -63,7 +64,7 @@ macx {
 	CONFIG(WITH_PYTHON){
 		INCLUDEPATH += /Library/Frameworks/Python.framework/Versions/2.5/include/python2.5 
 		QMAKE_LFLAGS += -L/Library/Frameworks/Python.framework 
-		LIBS += -lpython25
+		LIBS += -framework Python
 	}
 	CONFIG(WITH_SPACENAV){
 		INCLUDEPATH += /Library/Frameworks/3DconnexionClient.framework/Versions/A/Headers
@@ -73,9 +74,7 @@ macx {
 	CONFIG(WITH_VERSE){
 		LIBS += -lverse
 	}
-}
-
-unix {
+} else:unix {
 	CONFIG -= WITH_SPACENAV WITH_VERSE
 	
 	CONFIG(WITH_PYTHON){
@@ -88,9 +87,7 @@ unix {
 	CONFIG(WITH_VERSE){
 
 	}
-}
-
-win32 {
+} else:win32 {
 	CONFIG -= WITH_SPACENAV
 	
 	CONFIG(WITH_PYTHON){

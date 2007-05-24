@@ -886,28 +886,45 @@ static void qt_gl_draw_text(QPainter *p, int x, int y, const QString &str,
     int rw = 20;
     int rh = 20;
 
-    QRect rectangle;//(rx,ry,rw,rh);
-    QPen old_pen = p->pen();
-    QBrush old_brush = p->brush();
-    //p->setPen(Qt::NoPen);
-    /*
-    //p->drawRoundRect(rectangle);
-    //p->setBrush(old_brush);*/
+    // Save old states
+    QPen       old_pen     = p->pen();
+    QBrush     old_brush   = p->brush();
+    QBrush     old_bg      = p->background();
+    Qt::BGMode old_bgMode  = p->backgroundMode();
+    QFont      old_font    = p->font();
 
+    QBrush bgBrush(Qt::NoBrush);
+    //QBrush fillBrush(Qt::SolidPattern);
     QColor col;
-    col.setRgbF(color[0], color[1], color[2],color[3]);
-    QFont old_font = p->font();
+
+    // Setup so a background should show up
+    //p->setBackgroundMode( Qt::OpaqueMode );
+    //p->setBackground( bgBrush );
+
+    // Draw a shape (circle)
+    //fillBrush.setColor(QColor(255,255,255,255));
+    //p->setPen(Qt::NoPen);
+    //p->setBrush(Qt::SolidPattern);//fillBrush);
+    //p->drawEllipse(x,y,20,20);
+    //p->save(); p->translate(0,0);
+    //p->drawPie(QRect(-35, -35, 70, 70), 0, 90 * 16);
+    //p->restore();
+    //p->setBrush(old_brush);
+
+    // Setup the text color/font
+    col.setRgbF( color[0], color[1], color[2], color[3] );
     p->setPen(col);
     p->setFont(font);
-    p->drawText(x, y, 35, 35, Qt::AlignLeft | Qt::AlignVCenter, str, &rectangle );
 
-    p->setBrush(Qt::white);
-    p->setPen(Qt::NoPen);
-    p->drawRect(rectangle);
+    // Draw the text
+    p->drawText(x, y, 35, 35, Qt::AlignLeft | Qt::AlignVCenter, str );
 
+    // Restore the old states
     p->setPen(old_pen);
     p->setBrush(old_brush);
     p->setFont(old_font);
+    p->setBackground( old_bg );
+    p->setBackgroundMode( old_bgMode );
 }
 
 /*! \overload
@@ -922,6 +939,12 @@ static void qt_gl_draw_text(QPainter *p, int x, int y, const QString &str,
 */
 void GLWidget::renderMyText(double x, double y, double z, const QString &str, const QFont &font, int) {
   //Q_D(QGLWidget);
+
+  // Scale Up a little
+  x *= 1.05;
+  y *= 1.05;
+  z *= 1.05;
+
   if (str.isEmpty())
     return;
 
