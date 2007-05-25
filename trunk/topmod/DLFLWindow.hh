@@ -296,10 +296,10 @@ public slots:
 		// Override show() method to show subwindows also
 		void show(void);
 		// Return pointer to the active GLWidget
-		GLWidget *getActive(void);
+		GLWidget *getActive();
 
 		// Override redraw() method to mark subwindows also for redraw
-		void redraw(void);
+		void redraw();
 		// Override resize() method to properly resize subwindows
 		void resize(int x, int y, int w, int h);
 

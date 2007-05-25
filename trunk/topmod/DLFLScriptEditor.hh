@@ -1,5 +1,5 @@
-#ifndef _DLFLSCRIPT_EDITOR_CC_
-#define _DLFLSCRIPT_EDITOR_CC_
+#ifndef _DLFLSCRIPT_EDITOR_HH_
+#define _DLFLSCRIPT_EDITOR_HH_
 
 #ifdef WITH_PYTHON
 
@@ -42,4 +42,4 @@ private :
 
 #endif
 
-#endif // _DLFLSCRIPT_EDITOR_CC_
+#endif // _DLFLSCRIPT_EDITOR_HH_

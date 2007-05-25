@@ -41,6 +41,8 @@
 #include "include/PatchRenderer.hh"
 #include "TopModPreferences.hh"
 
+class TopModPreferences;
+
 class BasicsMode;
 class ExtrusionMode;
 class RemeshingMode;
@@ -104,6 +106,8 @@ public:
 	void setRemeshingScheme(int m);
 	void loadFile(QString fileName);
 	// void setCurrentFile(QString fileName);	
+	
+	DLFLWindow *getDLFLWindow(){ return mainWindow; };
 
 protected:
   void closeEvent( QCloseEvent *event );

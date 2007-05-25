@@ -48,9 +48,9 @@ public :
 	   // Constructor
 	GLWidget(int x, int y, int w, int h, QWidget *parent = 0 );
 	   // Constructor
-	GLWidget(int x, int y, int w, int h, DLFLRendererPtr rp, DLFLObjectPtr op=NULL, QWidget *parent = 0 );
+	GLWidget(int x, int y, int w, int h, DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op=NULL, QWidget *parent = 0 );
 
-	GLWidget(	int w, int h, DLFLRendererPtr rp, DLFLObjectPtr op, const QGLFormat & format, QWidget * parent = 0 );
+	GLWidget(	int w, int h, DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op, const QGLFormat & format, QWidget * parent = 0 );
 
 	~GLWidget( );
 
@@ -111,6 +111,13 @@ public :
 	void redraw();
   void renderMyText(double x, double y, double z, const QString & str,
 		    const QFont & fnt = QFont(), int listBase = 2000);
+	
+	void setViewportColor(QColor c);
+	QColor getViewportColor();
+	
+	void setRenderColor(QColor c);
+	QColor getRenderColor();
+	
 	   //--- Initialize the selection lists ---//
 	static void initializeSelectionLists(int num)
 	  {
@@ -472,6 +479,25 @@ public:
 
 private :
   friend class QGLFormat;
+	QColor mRenderColor;
+	QColor mViewportColor;
+	
+	QColor mVertexIDColor;
+	QColor mEdgeIDColor;
+	QColor mFaceIDColor;
+	QColor mVertexIDBgColor;
+	QColor mEdgeIDBgColor;
+	QColor mFaceIDBgColor;
+	
+	QColor mSelectedVertexColor;
+	QColor mSelectedFaceVertexColor;
+	QColor mSelectedFaceColor;
+	QColor mSelectedEdgeColor;
+	
+	QColor mXAxisColor;
+	QColor mYAxisColor;
+	QColor mZAxisColor;
+	
 };
 
 #endif 

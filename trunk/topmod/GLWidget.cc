@@ -13,13 +13,14 @@
 // Constructor
 GLWidget::GLWidget(int x, int y, int w, int h, QWidget *parent) : QGLWidget(parent),
 	viewport(w,h), object(NULL), renderer(NULL), /*grid(ZX,20.0,10),*/
-	showgrid(false), showaxes(false){
+	showgrid(false), showaxes(false) {
 
 }
 
 // Constructor
-GLWidget::GLWidget(int x, int y, int w, int h, DLFLRendererPtr rp, DLFLObjectPtr op, QWidget *parent ) : QGLWidget(parent),
-	viewport(w,h), object(op), renderer(rp),  /*grid(ZX,20.0,10),*/	showgrid(false), showaxes(false) {
+GLWidget::GLWidget(int x, int y, int w, int h, DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op, QWidget *parent ) 
+: QGLWidget(parent), viewport(w,h), object(op), renderer(rp), 
+	mRenderColor(color), mViewportColor(vcolor),  /*grid(ZX,20.0,10),*/	showgrid(false), showaxes(false) {
 		
 	// setupViewport(w,h);
 	// paintGL();
@@ -45,9 +46,12 @@ GLWidget::GLWidget(int x, int y, int w, int h, DLFLRendererPtr rp, DLFLObjectPtr
 	// 		     exit(0); // could not create stereo context
 }
 
-GLWidget::GLWidget(int w, int h, DLFLRendererPtr rp, DLFLObjectPtr op, const QGLFormat & format, QWidget * parent ) : QGLWidget(format, parent, NULL),
- 										viewport(w,h), object(op), renderer(rp), /*grid(ZX,20.0,10),*/ showgrid(false), showaxes(false) {
-	
+GLWidget::GLWidget(int w, int h, DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op, const QGLFormat & format, QWidget * parent ) 
+: QGLWidget(format, parent, NULL), viewport(w,h), object(op), renderer(rp), 
+	mRenderColor(color), mViewportColor(vcolor),/*grid(ZX,20.0,10),*/ showgrid(false), showaxes(false) {
+		// mViewportColor = QColor(1.0,1.0,1.0,1.0);
+		// mViewportColor = vcolor;
+		// QMessageBox::about(this,tr("topmod"),tr("%1").arg(vcolor.greenF()));
 }
 
 GLWidget::~GLWidget(){
@@ -61,8 +65,10 @@ void GLWidget::redraw() {
 
 void GLWidget::initializeGL( ) {
   setAutoBufferSwap( true );
-  glClearColor(0.29,0.33,0.37,1); // Modo's viewport color
-  viewport.resize(this->size().width(),this->size().height());
+	// QMessageBox::about(this,tr("topmod"),tr("%1").arg(mViewportColor.greenF()));
+  glClearColor(mViewportColor.redF(),mViewportColor.greenF(),mViewportColor.blueF(),mViewportColor.alphaF());
+	// glClearColor(1.0,1.0,1.0,1.0);
+	viewport.resize(this->size().width(),this->size().height());
   glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);					// Set Line Antialiasing
   glEnable(GL_BLEND);							// Enable Blending
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);			// Type Of Blending To Use
@@ -76,8 +82,9 @@ void GLWidget::paintGL( ) {
 
 	viewport.resize(this->size().width(),this->size().height());	
 	renderer->initialize();	
+	// glClearColor(1.0,1.0,1.0,1.0);
 	
-	glClearColor(0.29,0.33,0.37,1); // Modo's viewport color
+	glClearColor(mViewportColor.redF(),mViewportColor.greenF(),mViewportColor.blueF(),mViewportColor.alphaF());
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glEnable(GL_DEPTH_TEST);
@@ -119,7 +126,7 @@ void GLWidget::paintGL( ) {
     // Draw the actual object using the renderer.
     // Assumes that render flags have already been set for the renderer
     // Default color is slightly bluish
-    glColor3f(0.2,0.5,0.85);
+    glColor4f(mRenderColor.redF(),mRenderColor.greenF(),mRenderColor.blueF(),mRenderColor.alphaF());
 
     if ( renderer ) renderer->render(object);
     
@@ -204,6 +211,24 @@ void GLWidget::setupViewport(int width, int height){
   glTranslated(0.0, 0.0, -50.0);
 }
 
+void GLWidget::setViewportColor(QColor c){
+	mViewportColor = c;
+	redraw();
+}
+
+QColor GLWidget::getViewportColor(){
+	return mViewportColor;
+}
+
+void GLWidget::setRenderColor(QColor c){
+	mRenderColor = c;
+	redraw();
+}
+
+QColor GLWidget::getRenderColor(){
+	return mRenderColor;
+}
+
 void GLWidget::drawText(int width, int height ){
   // QString text = tr("Click and drag with the left mouse button "
   //                   "to rotate the Qt logo.");
@@ -228,9 +253,9 @@ void GLWidget::drawText(int width, int height ){
 void GLWidget::drawIDs( ) {
   glDisable(GL_DEPTH_TEST);
   QFont font10("arial"); 
-  font10.setPointSize(12);
+  font10.setPointSize(24);
   //font10.setBold(true);
-  font10.setStyleStrategy(QFont::NoAntialias);
+  font10.setStyleStrategy(QFont::PreferAntialias);
 
   /* Draw Vertex IDs */
   if( mShowVertexIDs ) {
@@ -881,50 +906,64 @@ static void qt_gl_draw_text(QPainter *p, int x, int y, const QString &str,
     glGetFloatv(GL_CURRENT_COLOR, &color[0]);
 #endif
 
-    int rx = x;
-    int ry = y;
-    int rw = 20;
-    int rh = 20;
+	int rx = x;
+	int ry = y;
+	int rw = 50;
+	int rh = 50;
 
-    // Save old states
-    QPen       old_pen     = p->pen();
-    QBrush     old_brush   = p->brush();
-    QBrush     old_bg      = p->background();
-    Qt::BGMode old_bgMode  = p->backgroundMode();
-    QFont      old_font    = p->font();
+	QRect rectangle;//(rx,ry,rw,rh);
+	//p->setPen(Qt::NoPen);
+	/*
+	//p->drawRoundRect(rectangle);
+	//p->setBrush(old_brush);*/
+	// Save old states
+	QPen       old_pen     = p->pen();
+	QBrush     old_brush   = p->brush();
+	QBrush     old_bg      = p->background();
+	Qt::BGMode old_bgMode  = p->backgroundMode();
+	QFont      old_font    = p->font();
 
-    QBrush bgBrush(Qt::NoBrush);
-    //QBrush fillBrush(Qt::SolidPattern);
-    QColor col;
+	QBrush bgBrush(Qt::NoBrush);
+	//QBrush fillBrush(Qt::SolidPattern);
+	QColor col;
 
-    // Setup so a background should show up
-    //p->setBackgroundMode( Qt::OpaqueMode );
-    //p->setBackground( bgBrush );
+	// Setup so a background should show up
+	//p->setBackgroundMode( Qt::OpaqueMode );
+	//p->setBackground( bgBrush );
 
-    // Draw a shape (circle)
-    //fillBrush.setColor(QColor(255,255,255,255));
-    //p->setPen(Qt::NoPen);
-    //p->setBrush(Qt::SolidPattern);//fillBrush);
-    //p->drawEllipse(x,y,20,20);
-    //p->save(); p->translate(0,0);
-    //p->drawPie(QRect(-35, -35, 70, 70), 0, 90 * 16);
-    //p->restore();
-    //p->setBrush(old_brush);
+	// Draw a shape (circle)
+	//fillBrush.setColor(QColor(255,255,255,255));
+	//p->setPen(Qt::NoPen);
+	//p->setBrush(Qt::SolidPattern);//fillBrush);
+	//p->drawEllipse(x,y,20,20);
+	//p->save(); p->translate(0,0);
+	//p->drawPie(QRect(-35, -35, 70, 70), 0, 90 * 16);
+	//p->restore();
+	//p->setBrush(old_brush);
 
-    // Setup the text color/font
-    col.setRgbF( color[0], color[1], color[2], color[3] );
-    p->setPen(col);
-    p->setFont(font);
+	// Setup the text color/font
+	col.setRgbF( color[0], color[1], color[2], color[3] );
 
-    // Draw the text
-    p->drawText(x, y, 35, 35, Qt::AlignLeft | Qt::AlignVCenter, str );
+	p->setPen(col);
+	p->setFont(font);
+	p->drawText(x, y, 35, 35, Qt::AlignLeft | Qt::AlignVCenter, str, &rectangle );
+	// p->drawText(QPointF(x, y), str );
 
-    // Restore the old states
-    p->setPen(old_pen);
-    p->setBrush(old_brush);
-    p->setFont(old_font);
-    p->setBackground( old_bg );
-    p->setBackgroundMode( old_bgMode );
+	int padding = 10;
+	rectangle.setLeft(rectangle.left()-padding);
+	rectangle.setRight(rectangle.right()+padding);
+	rectangle.setBottom(rectangle.bottom()+padding);
+	rectangle.setTop(rectangle.top()-padding);
+	
+	p->setBrush(Qt::black);
+	// p->setPen(Qt::NoPen);
+	p->drawRect(rectangle);
+	// Restore the old states
+	p->setPen(old_pen);
+	p->setBrush(old_brush);
+	p->setFont(old_font);
+	p->setBackground( old_bg );
+	p->setBackgroundMode( old_bgMode );
 }
 
 /*! \overload
@@ -958,8 +997,7 @@ void GLWidget::renderMyText(double x, double y, double z, const QString &str, co
   glGetIntegerv(GL_VIEWPORT, &view[0]);
 #endif
   GLdouble win_x = 0, win_y = 0, win_z = 0;
-  gluProject(x, y, z, &model[0][0], &proj[0][0], &view[0],
-	      &win_x, &win_y, &win_z);
+  gluProject(x, y, z, &model[0][0], &proj[0][0], &view[0], &win_x, &win_y, &win_z);
   win_y = height() - win_y; // y is inverted
 
   QPaintEngine *engine = paintEngine();

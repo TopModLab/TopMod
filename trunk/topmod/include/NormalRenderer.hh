@@ -12,35 +12,56 @@
 class NormalRenderer;
 typedef NormalRenderer *NormalRendererPtr;
 
-class NormalRenderer : public DLFLRenderer {
+class NormalRenderer : public DLFLRenderer{
+	
+private:
+	
+	QColor mNormalColor;
+	
 public :
 
-  /* Default constructor */
-  NormalRenderer() : DLFLRenderer() {}
+	/* Default constructor */
+	NormalRenderer()
+	: DLFLRenderer() {
+		mNormalColor.setRgbF(0.25,0.25,0.55,0.8);
+	}
+	
+	NormalRenderer(QColor wc, double wt, QColor sc, double st, QColor vc, double vt, QColor nc)
+	: DLFLRenderer(wc, wt, sc, st, vc, vt) {
+		mNormalColor = nc;
+	}
 
-  /* Copy constructor */
-  NormalRenderer(const NormalRenderer& nr) : DLFLRenderer(nr) {}
+	/* Copy constructor */
+	NormalRenderer(const NormalRenderer& nr)
+	: DLFLRenderer(nr) {
+		
+	}
+
+	/* Assignment operator */
+	NormalRenderer& operator = (const NormalRenderer& nr) {
+		DLFLRenderer::operator = (nr);
+		return (*this);
+	}
 
   /* Destructor */
   virtual ~NormalRenderer() {}
 
-  /* Assignment operator */
-  NormalRenderer& operator = (const NormalRenderer& nr) {
-    DLFLRenderer::operator = (nr);
-    return (*this);
-  }
+	/* Implement render function */
+	virtual int render(DLFLObjectPtr object)  {		
+		glEnable(GL_CULL_FACE);
+		setCulling();
+		glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+		glColor4f(mNormalColor.redF(),mNormalColor.greenF(),mNormalColor.blueF(),mNormalColor.alphaF());
+		object->plainRender();
+		drawOverlays(object);
+		glDisable(GL_CULL_FACE);
+		return 0;
+	}
+	
+	void setNormalColor(QColor c){ mNormalColor = c; }
+	QColor getNormalColor(){ return mNormalColor; }
 
-  /* Implement render function */
-  virtual int render(DLFLObjectPtr object) const {
-    glEnable(GL_CULL_FACE);
-    setCulling();
-    glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-    glColor3f(0.25,0.25,0.55);
-    object->plainRender();
-    drawOverlays(object);
-    glDisable(GL_CULL_FACE);
-    return 0;
-  }
 };
 
-#endif // _NORMAL_RENDERER_H_
+#endif /* #ifndef _NORMAL_RENDERER_HH_ */
+

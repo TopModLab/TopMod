@@ -97,7 +97,6 @@ MainWindow::MainWindow(char *filename) {
 }
 
 void MainWindow::setMode(int m){
-	
 	mainWindow->setMode((DLFLWindow::Mode)m);
 }
 

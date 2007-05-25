@@ -16,6 +16,8 @@
 #include "../Graphics/Color.hh"
 #include "../vecmat/Vector3d.hh"
 
+#include <QColor>
+
 enum LightType { Ambient=0, Directional=1, PtLight=2, Spot=3 };
 
 class Light;

@@ -16,42 +16,48 @@
 class LitRenderer;
 typedef LitRenderer * LitRendererPtr;
 
-class LitRenderer : public DLFLRenderer
-{
-  public :
+class LitRenderer : public DLFLRenderer {
+public :
 
-        /* Default constructor */
-     LitRenderer()
-       : DLFLRenderer()
-       {}
+	/* Default constructor */
+	LitRenderer()
+	: DLFLRenderer()	{
+		
+	}
+	
+	LitRenderer(QColor wc, double wt, QColor sc, double st, QColor vc, double vt)
+	: DLFLRenderer(wc, wt, sc, st, vc, vt) {
 
-        /* Copy constructor */
-     LitRenderer(const LitRenderer& lr)
-       : DLFLRenderer(lr)
-       {}
+	}
 
-        /* Assignment operator */
-     LitRenderer& operator = (const LitRenderer& lr)
-       {
-         DLFLRenderer::operator = (lr);
-         return (*this);
-       }
+	/* Copy constructor */
+	LitRenderer(const LitRenderer& lr)
+	: DLFLRenderer(lr)
+	{}
 
-        /* Destructor */
-     virtual ~LitRenderer()
-       {}
+	/* Assignment operator */
+	LitRenderer& operator = (const LitRenderer& lr) {
+		DLFLRenderer::operator = (lr);
+		return (*this);
+	}
 
-        /* Implement render function */
-     virtual int render(DLFLObjectPtr object) const
-       {
-         glEnable(GL_CULL_FACE);
-         setCulling();
-         glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-         object->renderFaces();
-         drawOverlays(object);
-         glDisable(GL_CULL_FACE);
-         return 0;
-       }
+	/* Destructor */
+	virtual ~LitRenderer() {}
+
+	/* Implement render function */
+	virtual int render(DLFLObjectPtr object) {
+		glEnable (GL_BLEND); 
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		
+		glEnable(GL_CULL_FACE);
+		setCulling();
+		glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+		object->renderFaces();
+		drawOverlays(object);
+		glDisable(GL_CULL_FACE);
+		return 0;
+	}
+
 };
 
 #endif /* #ifndef _LIT_RENDERER_HH_ */

@@ -6,8 +6,7 @@
 #include <iostream>
 #include <QtGui>
 
-DLFLScriptEditor::DLFLScriptEditor( QWidget *parent, Qt::WindowFlags f ) : QWidget(parent,f)
-{
+DLFLScriptEditor::DLFLScriptEditor( QWidget *parent, Qt::WindowFlags f ) : QWidget(parent,f) {
   // mHideButton = new QPushButton( QIcon(":/images/hide_scripteditor.png"), tr(""), this );
   // mHideButton->setToolTip(tr("Hide Script Editor"));
   // connect(mHideButton, SIGNAL(clicked()), this, SLOT(toggleShowHide()));

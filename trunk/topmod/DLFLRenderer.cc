@@ -4,6 +4,6 @@
 
 #include "DLFLRenderer.hh"
 
-int DLFLRenderer::render_flags = 0;
+// int DLFLRenderer::render_flags = 0;
 bool DLFLRenderer::reverse_object = false;
 

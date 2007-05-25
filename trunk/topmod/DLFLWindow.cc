@@ -123,7 +123,9 @@ void DLFLWindow::initialize(int x, int y, int w, int h, DLFLRendererPtr rp){
 	
 	QGLFormat fmt;
 	// fmt.setOverlay(true);
-	persp = new GLWidget(sw,sh,rp,&object,fmt, this);
+	// QColor v(1.0,1.0,1.0,1.0);
+	// QColor c(1.0,1.0,1.0,1.0);
+	persp = new GLWidget(sw,sh,rp, QColor(255,255,255,255),QColor(255,255,255,255) , &object,fmt, this);
 	persp->switchTo(VPPersp);
 	//this->addTab(persp, "Perspective View");
 	persp->setMinimumSize(400,400);
@@ -141,24 +143,24 @@ void DLFLWindow::initialize(int x, int y, int w, int h, DLFLRendererPtr rp){
 	// }
 
 
-	// 
-	top = new GLWidget(0,0,sw,sh,rp,&object);
-	top->switchTo(VPTop);
-	// // this->addTab(top, "Top View");    
 	// // 
-	front = new GLWidget(0,0,sw,sh,rp,&object);
-	front->switchTo(VPFront);
-	// // this->addTab(front, "Front View");
-	// // 
-	right = new GLWidget(0,0,sw,sh,rp,&object);
-	right->switchTo(VPRight);
-	// // this->addTab(right, "Right View");	
+	// top = new GLWidget(0,0,sw,sh,rp,QColor(0.2,0.5,0.85,0.8),QColor(0.29,0.33,0.37,1),&object);
+	// top->switchTo(VPTop);
+	// // // this->addTab(top, "Top View");    
+	// // // 
+	// front = new GLWidget(0,0,sw,sh,rp,QColor(0.2,0.5,0.85,0.8),QColor(0.29,0.33,0.37,1),&object);
+	// front->switchTo(VPFront);
+	// // // this->addTab(front, "Front View");
+	// // // 
+	// right = new GLWidget(0,0,sw,sh,rp,QColor(0.2,0.5,0.85,0.8),QColor(0.29,0.33,0.37,1),&object);
+	// right->switchTo(VPRight);
+	// // // this->addTab(right, "Right View");	
 
 	active = persp;
 	//initialize light color
 	plight.position.set(50,25,0);
 	// plight.warmcolor.set(1,1,1);
-		plight.warmcolor.set(1,1,0.6);
+	plight.warmcolor.set(1,1,0.6);
 	plight.coolcolor.set(0.2,0.2,0.4);
 		// plight.coolcolor.set(0.2,0.2,0.2);
 	plight.intensity = 2.0;
@@ -949,10 +951,10 @@ void DLFLWindow::performRemeshing(void)
 	     // Change the renderer for all viewports
 void DLFLWindow::setRenderer(DLFLRendererPtr rp)
 {
-	top->setRenderer(rp);
+	// top->setRenderer(rp);
 	persp->setRenderer(rp);
-	front->setRenderer(rp);
-	right->setRenderer(rp);
+	// front->setRenderer(rp);
+	// right->setRenderer(rp);
 }
 
 // void DLFLWindow::setPatchRenderer()

@@ -31,7 +31,7 @@ public :
   };
 
   /* Implement render function */
-  virtual int render( DLFLObjectPtr object ) const {
+  virtual int render( DLFLObjectPtr object ) {
     glEnable( GL_CULL_FACE );
 
     glEnable( GL_LINE_SMOOTH );
@@ -44,6 +44,7 @@ public :
     glDisable( GL_CULL_FACE );
     return 0;
   };
+
 };
 
 #endif // _WIREFRAME_RENDERER_H_
