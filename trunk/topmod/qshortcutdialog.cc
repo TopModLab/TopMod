@@ -377,7 +377,7 @@ enum NodeType
 };
 
 QShortcutDialog::QShortcutDialog(QShortcutManager *m, QWidget *p)
- : QDialog(p), pManager(m)
+ : QWidget(p), pManager(m)
 {
 	setupUi(this);
 }
@@ -478,6 +478,7 @@ void QShortcutDialog::exec()
 		} else {
 			item = new QTreeWidgetItem(QStringList(cxt.at(0)), Menu);
 			twShortcuts->addTopLevelItem(item);
+			twShortcuts->expandItem(item);
 		}
 		
 		cxt.removeAt(0);
@@ -514,13 +515,13 @@ void QShortcutDialog::exec()
 		item->addChild(child);
 	}
 	
-	QDialog::exec();
+	// QDialog::exec();
+	twShortcuts->resizeColumnToContents(0);
 	
 	pManager->writeXml();
 }
 
-void QShortcutDialog::on_twShortcuts_itemDoubleClicked(QTreeWidgetItem *i,
-														int col)
+void QShortcutDialog::on_twShortcuts_itemDoubleClicked(QTreeWidgetItem *i, int col)
 {
 	if ( !i || col != 1 )
 		return;
@@ -543,12 +544,7 @@ void QShortcutDialog::on_twShortcuts_itemDoubleClicked(QTreeWidgetItem *i,
 	
 	QString ns;
 	
-	ns = ShortcutGetter().exec(
-								pManager->node(
-										name,
-										cxt.join("/")
-									).attribute("shortcut")
-							);
+	ns = ShortcutGetter().exec( pManager->node(name,cxt.join("/")).attribute("shortcut")		);
 	
 	if ( ns.isNull() )
 		return;

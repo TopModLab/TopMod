@@ -14,6 +14,7 @@
 // silhouette and vertices, which can be used by derived classes
 
 #include <QColor>
+#include <QMessageBox>
 
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
@@ -28,7 +29,7 @@ class DLFLRenderer;
 typedef DLFLRenderer * DLFLRendererPtr;
 
 class DLFLRenderer {
-
+	
 private :
 
 		QColor mWireframeColor;
@@ -37,7 +38,6 @@ private :
 		double mWireframeThickness;
 		double mSilhouetteThickness;
 		double mVertexThickness;
-
 		
 protected :
 
@@ -151,7 +151,6 @@ public :
 	};
 
 	  /* Methods for various types of rendering */
-
 	void drawWireframe(DLFLObjectPtr object) {
 		glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 		glColor4f(mWireframeColor.redF(), mWireframeColor.greenF(), mWireframeColor.blueF(), mWireframeColor.alphaF());
@@ -164,7 +163,7 @@ public :
 		glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 		glColor4f(mSilhouetteColor.redF(),mSilhouetteColor.greenF(),mSilhouetteColor.blueF(),mSilhouetteColor.alphaF());
 		glDepthRange(0.1,1.0);
-		if ( DLFLRenderer::reverse_object ) object->renderEdges(2.0);
+		if ( DLFLRenderer::reverse_object ) object->renderEdges(mWireframeThickness);
 		else object->renderEdges(mSilhouetteThickness);
 		glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 	};

@@ -212,8 +212,7 @@ private:
 		DLFLWindow(int x, int y, int w, int h, QWidget *parent=0)
 		  :  QWidget(parent), top(NULL), persp(NULL), front(NULL), right(NULL), active(NULL),
 				object(), mode(NormalMode), plight(), undoList(), redoList(), undolimit(20), useUndo(true), 
-				mIsModified(false), mIsPrimitive(false), mWasPrimitive(false)
-		  {
+				mIsModified(false), mIsPrimitive(false), mWasPrimitive(false) {
 		       // Default renderer is NULL
 		    initialize(x,y,w,h,NULL);
 				mParent = parent;
@@ -223,8 +222,7 @@ private:
 		DLFLWindow(int x, int y, int w, int h, DLFLRendererPtr rp, QWidget *parent=0)
 		  :  QWidget(parent), top(NULL), persp(NULL), front(NULL), right(NULL), active(NULL),
 		    object(), mode(NormalMode), plight(), undoList(), redoList(), undolimit(20), useUndo(true), 
-				mIsModified(false), mIsPrimitive(false), mWasPrimitive(false)
-		  {
+				mIsModified(false), mIsPrimitive(false), mWasPrimitive(false) {
 		    initialize(x,y,w,h,rp);
 				mParent = parent;
 		  }
@@ -297,7 +295,12 @@ public slots:
 		void show(void);
 		// Return pointer to the active GLWidget
 		GLWidget *getActive();
-
+		
+		//set lighting colors... warm and cool
+		void setWarmLightColor(QColor c);
+		void setCoolLightColor(QColor c);
+		void setLightIntensity(double i);
+		
 		// Override redraw() method to mark subwindows also for redraw
 		void redraw();
 		// Override resize() method to properly resize subwindows

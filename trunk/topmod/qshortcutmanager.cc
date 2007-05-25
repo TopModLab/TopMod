@@ -51,12 +51,9 @@
 	\brief Constructor
 */
 QShortcutManager::QShortcutManager()
- : sLang("untranslated")
-{
+ : sLang("untranslated") {
 	pDialog = new QShortcutDialog(this);
-	
 	pDoc = new QDomDocument("SHORTCUTS");
-	
 	readXml();
 }
 
@@ -68,6 +65,10 @@ QShortcutManager::~QShortcutManager()
 	writeXml();
 	
 	delete pDoc;
+}
+
+QShortcutDialog* QShortcutManager::getShortcutDialog(){
+	return pDialog;
 }
 
 /*!

@@ -229,6 +229,56 @@ QColor GLWidget::getRenderColor(){
 	return mRenderColor;
 }
 
+void GLWidget::setWireframeColor(QColor c){
+	mWireframeColor = c;
+	renderer->setWireframeColor(mWireframeColor);
+	redraw();
+}
+
+QColor GLWidget::getWireframeColor(){
+	return mWireframeColor;
+}
+
+void GLWidget::setSilhouetteColor(QColor c){
+	mSilhouetteColor = c;
+	renderer->setSilhouetteColor(mSilhouetteColor);
+	redraw();
+}
+
+QColor GLWidget::getSilhouetteColor(){
+	return mSilhouetteColor;
+}
+
+void GLWidget::setWireframeThickness(double t){
+	mWireframeThickness = t;
+	renderer->setWireframeThickness(t);
+	// QMessageBox::about(this,tr("topmod"),tr("wireframe = %1").arg(renderer->getWireframeThickness()));
+	
+	redraw();
+}
+
+double GLWidget::getWireframeThickness(){
+	return mWireframeThickness;
+}
+
+void GLWidget::setVertexThickness(double t){
+	mVertexThickness = t;
+	renderer->setVertexThickness(t);
+	redraw();
+}
+double GLWidget::getVertexThickness(){
+	return mVertexThickness;
+}
+
+void GLWidget::setSilhouetteThickness(double t){
+	mSilhouetteThickness = t;
+	renderer->setSilhouetteThickness(t);
+	redraw();
+}
+double GLWidget::getSilhouetteThickness(){
+	return mSilhouetteThickness;
+}
+
 void GLWidget::drawText(int width, int height ){
   // QString text = tr("Click and drag with the left mouse button "
   //                   "to rotate the Qt logo.");

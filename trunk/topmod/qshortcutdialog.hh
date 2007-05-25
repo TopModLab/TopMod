@@ -39,15 +39,13 @@
 class QTreeWidgetItem;
 class QShortcutManager;
 
-class QCUMBER_EXPORT QShortcutDialog : public QDialog, private Ui::ShortcutDialog
+class QCUMBER_EXPORT QShortcutDialog : public QWidget, private Ui::ShortcutDialog
 {
 	Q_OBJECT
 	
 	public:
 		QShortcutDialog(QShortcutManager *m, QWidget *p = 0);
-		
 		void retranslate();
-		
 		void exec();
 		
 	private slots:

@@ -50,6 +50,8 @@ class QCUMBER_EXPORT QShortcutManager : public QObject
 		QShortcutManager();
 		virtual ~QShortcutManager();
 		
+		QShortcutDialog* getShortcutDialog();
+		
 		void applyAll();
 		void apply(const QString& s, const QString& t);
 		

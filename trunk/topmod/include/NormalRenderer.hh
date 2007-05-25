@@ -23,7 +23,7 @@ public :
 	/* Default constructor */
 	NormalRenderer()
 	: DLFLRenderer() {
-		mNormalColor.setRgbF(0.25,0.25,0.55,0.8);
+		mNormalColor.setRgbF(1.0,1.0,1.0,0.5);
 	}
 	
 	NormalRenderer(QColor wc, double wt, QColor sc, double st, QColor vc, double vt, QColor nc)

@@ -463,6 +463,7 @@ Vector3d DLFLEdge :: averageCornerNormal(void) const
 // Render the DLFLEdge as a line segment
 void DLFLEdge :: render(void) const
 {
+	// glLineWidth(10);
   glBegin(GL_LINES);
   glVertex3dv((fvpV1->vertex->coords).getCArray());
   glVertex3dv((fvpV2->vertex->coords).getCArray());

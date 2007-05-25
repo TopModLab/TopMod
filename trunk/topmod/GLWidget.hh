@@ -56,6 +56,10 @@ public :
 
 public slots :
   void toggleFullScreen( );
+	void setSilhouetteThickness(double t);
+	void setWireframeThickness(double t);
+	void setVertexThickness(double t);
+
 
 protected :
   
@@ -118,9 +122,19 @@ public :
 	void setRenderColor(QColor c);
 	QColor getRenderColor();
 	
+	void setWireframeColor(QColor c);
+	QColor getWireframeColor();
+	
+	void setSilhouetteColor(QColor c);
+	QColor getSilhouetteColor();
+	
+	double getWireframeThickness();
+	double getVertexThickness();
+	double getSilhouetteThickness();
+	
+	
 	   //--- Initialize the selection lists ---//
-	static void initializeSelectionLists(int num)
-	  {
+	static void initializeSelectionLists(int num) {
 	       // Reserves memory for the arrays to avoid reallocation
 	       // It is not mandatory to call this function, but recommended
 	    sel_vptr_array.reserve(num);
@@ -130,29 +144,24 @@ public :
 	  }
 
 	   //--- Add items to the selection lists - check for NULL pointers ---//
-	static void addToSelection(DLFLVertexPtr vp)
-	  {
+	static void addToSelection(DLFLVertexPtr vp) {
 	    if ( vp ) sel_vptr_array.push_back(vp);
 	  }
 
-	static void addToSelection(DLFLEdgePtr ep)
-	  {
+	static void addToSelection(DLFLEdgePtr ep) {
 	    if ( ep ) sel_eptr_array.push_back(ep);
 	  }
 
-	static void addToSelection(DLFLFacePtr fp)
-	  {
+	static void addToSelection(DLFLFacePtr fp) {
 	    if ( fp ) sel_fptr_array.push_back(fp);
 	  }
 
-	static void addToSelection(DLFLFaceVertexPtr fvp)
-	  {
+	static void addToSelection(DLFLFaceVertexPtr fvp) {
 	    if ( fvp ) sel_fvptr_array.push_back(fvp);
 	  }
 
 	   //--- Check if given item is there in the selection list ---//
-	static bool isSelected(DLFLVertexPtr vp)
-	  {
+	static bool isSelected(DLFLVertexPtr vp) {
 	    bool found = false;
 	    if ( vp )
 	       {
@@ -165,8 +174,7 @@ public :
 	    return found;
 	  }
 
-	static bool isSelected(DLFLEdgePtr ep)
-	  {
+	static bool isSelected(DLFLEdgePtr ep) {
 	    bool found = false;
 	    if ( ep )
 	       {
@@ -179,8 +187,7 @@ public :
 	    return found;
 	  }
 
-	static bool isSelected(DLFLFacePtr fp)
-	  {
+	static bool isSelected(DLFLFacePtr fp) {
 	    bool found = false;
 	    if ( fp )
 	       {
@@ -193,8 +200,7 @@ public :
 	    return found;
 	  }
 
-	static bool isSelected(DLFLFaceVertexPtr fvp)
-	  {
+	static bool isSelected(DLFLFaceVertexPtr fvp) {
 	    bool found = false;
 	    if ( fvp )
 	       {
@@ -209,8 +215,7 @@ public :
 
 	   //--- Set the selected item at given index ---//
 	   //--- If size of array is smaller than index item will be added to end of array ---//
-	static void setSelectedVertex(int index, DLFLVertexPtr vp)
-	  {
+	static void setSelectedVertex(int index, DLFLVertexPtr vp) {
 	    if ( vp && index >= 0 )
 	       {
 	         if ( (uint) index < sel_vptr_array.size() ) sel_vptr_array[index] = vp;
@@ -218,8 +223,7 @@ public :
 	       }
 	  }
 
-	static void setSelectedEdge(int index, DLFLEdgePtr ep)
-	  {
+	static void setSelectedEdge(int index, DLFLEdgePtr ep) {
 	    if ( ep && index >= 0 )
 	       {
 	         if ( (uint) index < sel_eptr_array.size() ) sel_eptr_array[index] = ep;
@@ -227,8 +231,7 @@ public :
 	       }
 	  }
 
-	static void setSelectedFace(int index, DLFLFacePtr fp)
-	  {
+	static void setSelectedFace(int index, DLFLFacePtr fp) {
 	    if ( fp && index >= 0 )
 	       {
 	         if ( (uint) index < sel_fptr_array.size() ) sel_fptr_array[index] = fp;
@@ -236,8 +239,7 @@ public :
 	       }
 	  }
 
-	static void setSelectedFaceVertex(int index, DLFLFaceVertexPtr fvp)
-	  {
+	static void setSelectedFaceVertex(int index, DLFLFaceVertexPtr fvp) {
 	    if ( fvp && index >= 0 )
 	       {
 	         if ( (uint) index < sel_fvptr_array.size() ) sel_fvptr_array[index] = fvp;
@@ -246,75 +248,62 @@ public :
 	  }
 
 	   //--- Return the selected items at given index ---//
-	static DLFLVertexPtr getSelectedVertex(int index)
-	  {
+	static DLFLVertexPtr getSelectedVertex(int index) {
 	    if ( (uint) index < sel_vptr_array.size() ) return sel_vptr_array[index];
 	    return NULL;
 	  }
 
-	static DLFLEdgePtr getSelectedEdge(int index)
-	  {
+	static DLFLEdgePtr getSelectedEdge(int index) {
 	    if ( (uint) index < sel_eptr_array.size() ) return sel_eptr_array[index];
 	    return NULL;
 	  }
 
-	static DLFLFacePtr getSelectedFace(int index)
-	  {
+	static DLFLFacePtr getSelectedFace(int index) {
 	    if ( (uint) index < sel_fptr_array.size() ) return sel_fptr_array[index];
 	    return NULL;
 	  }
 
-	static DLFLFaceVertexPtr getSelectedFaceVertex(int index)
-	  {
+	static DLFLFaceVertexPtr getSelectedFaceVertex(int index) {
 	    if ( (uint) index < sel_fvptr_array.size() ) return sel_fvptr_array[index];
 	    return NULL;
 	  }
 
 	   //--- Find the number of items in the selection lists ---//
-	static int numSelectedVertices(void)
-	  {
+	static int numSelectedVertices(void) {
 	    return sel_vptr_array.size();
 	  }
 
-	static int numSelectedEdges(void)
-	  {
+	static int numSelectedEdges(void) {
 	    return sel_eptr_array.size();
 	  }
 
-	static int numSelectedFaces(void)
-	  {
+	static int numSelectedFaces(void) {
 	    return sel_fptr_array.size();
 	  }
 
-	static int numSelectedFaceVertices(void)
-	  {
+	static int numSelectedFaceVertices(void) {
 	    return sel_fvptr_array.size();
 	  }
 
 	   //--- Clear individual selection lists ---//
-	static void clearSelectedVertices(void)
-	  {
+	static void clearSelectedVertices(void) {
 	    sel_vptr_array.clear();
 	  }
 
-	static void clearSelectedEdges(void)
-	  {
+	static void clearSelectedEdges(void) {
 	    sel_eptr_array.clear();
 	  }
 
-	static void clearSelectedFaces(void)
-	  {
+	static void clearSelectedFaces(void) {
 	    sel_fptr_array.clear();
 	  }
 
-	static void clearSelectedFaceVertices(void)
-	  {
+	static void clearSelectedFaceVertices(void) {
 	    sel_fvptr_array.clear();
 	  }
 
 	   // Reset all selection lists
-	static void clearSelected(void)
-	  {
+	static void clearSelected(void) {
 	    sel_vptr_array.clear();
 	    sel_eptr_array.clear();
 	    sel_fptr_array.clear();
@@ -325,16 +314,14 @@ public :
 	static void drawSelected(void);
 
 	   // Subroutine to translate FLTK events to Viewport events
-	static VPMouseEvent translateEvent(QMouseEvent *event)
-	  {
+	static VPMouseEvent translateEvent(QMouseEvent *event) {
 			// QMessageBox::about(NULL, tr("About TopMod"),tr("%1").arg(event->type()));
 	    return ( (event->type() == 2/*QEvent::mouseButtonPress*/) ? VPPush :
 	             ( (event->type() == 3/*QEvent::mouseButtonRelease*/) ? VPRelease :
 	               ( (event->type() == 5/*QEvent::mouseMove*/) ? VPDrag : VPUnknown ) ) );
 	  }
 
-	void switchTo(VPView view)
-	  {
+	void switchTo(VPView view) {
 	       // Change grid orientation for front/back and left/right views
 	    // switch ( view )
 	    //    {
@@ -356,59 +343,55 @@ public :
 	  }
 
 	   // Toggle grid display on/off
-	void toggleGrid(void)
-	  {
+	void toggleGrid(void) {
 	    // if ( showgrid == true ) showgrid = false;
 // 	    else showgrid = true;
 // 			this->updateGL();
 	  }
 
 	   // Toggle axis display on/off
-	void toggleAxes(void)
-	  {
+	void toggleAxes(void) {
 	    if ( showaxes == true ) showaxes = false;
 	    else showaxes = true;
 			this->updateGL();
 	  }
 
 	   // Set the object which should be shown in this viewport
-	void setObject(DLFLObjectPtr op)
-	  {
+	void setObject(DLFLObjectPtr op) {
 	    object = op;
 	  }
 
 	   // Set the renderer for this viewport
-	void setRenderer(DLFLRendererPtr rp)
-	  {
+	void setRenderer(DLFLRendererPtr rp) {
 	    renderer = rp;
 			this->updateGL();
 	  }
+	
+	DLFLRendererPtr getRenderer(){
+		return renderer;
+	}
 
 	   // Set the render flags
-	void setRenderFlags(int rflags)
-	  {
+	void setRenderFlags(int rflags) {
 	    if ( renderer ) renderer->setRenderFlags(rflags);
 			this->updateGL();
 	  }
 
 	   // Toggle wireframe
-	void toggleWireframe(void)
-	  {
+	void toggleWireframe(void) {
 	    if ( renderer ) renderer->toggleWireframe();
 			this->updateGL();
 	  }
 
 	   // Toggle silhouette
-	void toggleSilhouette(void)
-	  {
+	void toggleSilhouette(void) {
 	    if ( renderer ) renderer->toggleSilhouette();
 			this->updateGL();
 	
 	  }
 
 	   // Toggle vertices
-	void toggleVertices(void)
-	  {
+	void toggleVertices(void) {
 	    if ( renderer ) renderer->toggleVertices();
 			this->updateGL();
 	  }
@@ -429,24 +412,21 @@ public :
   }
 
 	   // Toggle object orientation
-	void toggleObjectOrientation(void)
-	  {
+	void toggleObjectOrientation(void) {
 	    if ( renderer ) renderer->toggleObjectOrientation();
 			this->updateGL();
 	
 	  }
 
 		   // Toggle object orientation
-		void toggleNormals(void)
-		  {
+		void toggleNormals(void) {
 		    if ( renderer ) renderer->toggleNormals();
 				this->updateGL();
 
 		  }
 		
 	   // Get the render flags
-	int getRenderFlags(void) const
-	  {
+	int getRenderFlags(void) const {
 	    if ( renderer )
 	       return renderer->getRenderFlags();
 	    return -1;
@@ -464,11 +444,8 @@ public :
 	   // Event handler for the viewport. handles only mouse events when glwidget has focus
 	   // which relate to navigational controls (ALT + push/drag/release)
 	void mouseMoveEvent(QMouseEvent *event);
-	
 	void mousePressEvent(QMouseEvent *event);
-	
 	void mouseReleaseEvent(QMouseEvent *event);
-	
 	void wheelEvent(QWheelEvent *event);
 	
 public:
@@ -482,6 +459,12 @@ private :
 	QColor mRenderColor;
 	QColor mViewportColor;
 	
+	QColor mWireframeColor;
+	QColor mSilhouetteColor;
+	double mWireframeThickness;
+	double mSilhouetteThickness;
+	double mVertexThickness;
+		
 	QColor mVertexIDColor;
 	QColor mEdgeIDColor;
 	QColor mFaceIDColor;

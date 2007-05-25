@@ -159,12 +159,29 @@ void DLFLWindow::initialize(int x, int y, int w, int h, DLFLRendererPtr rp){
 	active = persp;
 	//initialize light color
 	plight.position.set(50,25,0);
-	// plight.warmcolor.set(1,1,1);
 	plight.warmcolor.set(1,1,0.6);
 	plight.coolcolor.set(0.2,0.2,0.4);
-		// plight.coolcolor.set(0.2,0.2,0.2);
+	// plight.coolcolor.set(0.2,0.2,0.2);
 	plight.intensity = 2.0;
-	
+
+}
+
+void DLFLWindow::setWarmLightColor(QColor c){
+	plight.warmcolor.set(c.redF(),c.greenF(),c.blueF());
+	recomputeLighting();
+	redraw();
+}
+
+void DLFLWindow::setCoolLightColor(QColor c){
+	plight.coolcolor.set(c.redF(),c.greenF(),c.blueF());
+	recomputeLighting();
+	redraw();
+}
+
+void DLFLWindow::setLightIntensity(double i){
+	plight.intensity = i;
+	recomputeLighting();
+	redraw();
 }
 
 void DLFLWindow::setUndoLimit(int limit) {
@@ -956,6 +973,10 @@ void DLFLWindow::setRenderer(DLFLRendererPtr rp)
 	// front->setRenderer(rp);
 	// right->setRenderer(rp);
 }
+
+// DLFLRendererPtr getRenderer(){
+// 	return active->getRenderer();
+// }
 
 // void DLFLWindow::setPatchRenderer()
 // {

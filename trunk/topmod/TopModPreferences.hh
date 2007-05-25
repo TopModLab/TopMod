@@ -14,9 +14,15 @@
 #include <QColorDialog>
 #include <QColor>
 #include <QPalette>
+#include <QDoubleSpinBox>
+#include <QLabel>
 
 #include "MainWindow.hh"
+#include "qshortcutdialog.hh"
+#include "qshortcutmanager.hh"
 
+class QShortcutDialog;
+class QShortcutManager;
 class MainWindow;
 
 class TopModPreferences : public QDialog {
@@ -32,24 +38,75 @@ private:
 	
 	//tab pages
 	QWidget *mMainTab;
-	QWidget *mColorsTab;
-	QWidget *mStylesheetsTab;
-	QWidget *mShortcutsTab;
+	QWidget *mColorsTab;	
+	QShortcutDialog *mShortcutsTab;
+	QShortcutManager *mShortcutsManager;
+	StyleSheetEditor *mStyleSheetsTab;
 	
-	//color dialogs test
-	// QColorDialog *mViewportColorDialog;
+		//COLORS
+	
+	//viewport color
+	QColor mViewportColor;
 	QPushButton *mViewportColorButton;
 	QLabel *mViewportColorLabel;
 	
-	//colors
-	QColor mViewportColor;
+	//Render color
 	QColor mRenderColor;
+	QPushButton *mRenderColorButton;
+	QLabel *mRenderColorLabel;
+	
+	//Cool Light Color
 	QColor mCoolLightColor;
+	QPushButton *mCoolLightColorButton;
+	QLabel *mCoolLightColorLabel;
+	
+	//Warm Light Color
 	QColor mWarmLightColor;
+	QPushButton *mWarmLightColorButton;
+	QLabel *mWarmLightColorLabel;
+	
+	//Wireframe Color
+	QColor mWireframeColor;
+	QPushButton *mWireframeColorButton;
+	QLabel *mWireframeColorLabel;
+	
+	//Silhouette Color
+	QColor mSilhouetteColor;
+	QPushButton *mSilhouetteColorButton;
+	QLabel *mSilhouetteColorLabel;
+	
+	//patch boundary color
+	QColor mPatchBoundaryColor;
+	QPushButton *mPatchBoundaryColorButton;
+	QLabel *mPatchBoundaryColorLabel;
+	
+	//light intensity
+	double mLightIntensity;
+	QLabel *mLightIntensityLabel;
+	QDoubleSpinBox *mLightIntensitySpinBox;
+	
+	//wireframe thickness
+	double mWireframeThickness;
+	QLabel *mWireframeThicknessLabel;
+	QDoubleSpinBox *mWireframeThicknessSpinBox;
+	
+	//silhouette thickness
+	double mSilhouetteThickness;
+	QLabel *mSilhouetteThicknessLabel;
+	QDoubleSpinBox *mSilhouetteThicknessSpinBox;
+	
+	//vertex thickness
+	double mVertexThickness;
+	QLabel *mVertexThicknessLabel;
+	QDoubleSpinBox *mVertexThicknessSpinBox;
+	
 	
 public:
-	TopModPreferences(QSettings *settings, QWidget *parent = 0 );
+	TopModPreferences(QSettings *settings, StyleSheetEditor *sse, QShortcutManager *sm, QWidget *parent = 0 );
 	~TopModPreferences();
+	
+	int display();
+	void readSettings();
 
 protected:
 	void createTabs();
@@ -61,6 +118,15 @@ public slots:
 	void discardSettings();
 
 	void setViewportColor();
+	void setRenderColor();
+	void setCoolLightColor();
+	void setWarmLightColor();
+	void setWireframeColor();
+	void setSilhouetteColor();
+	void setPatchBoundaryColor();
+
+	
+	// void setLightIntensity();
 };
 
 #endif

@@ -7,6 +7,7 @@
 #include <QtOpenGL>
 #include "GLWidget.hh"
 #include "MainWindow.hh"
+// #include "qshortcutdialog.hh"
 
 int MainWindow::MIN_W = 1200;                        // Minimum width for app window
 int MainWindow::MIN_H = 630;                        // Minimum height for app window
@@ -73,6 +74,7 @@ MainWindow::MainWindow(char *filename) {
 	
   //make a new instance of QShortcutManager
   sm = new QShortcutManager();
+
 	//instantiate toolbars
 	mBasicsMode = new BasicsMode(this, sm);
 	mExtrusionMode = new ExtrusionMode(this, sm);
@@ -88,11 +90,12 @@ MainWindow::MainWindow(char *filename) {
 	MainWindow::createRenderers();
   mainWindow->setRenderer(lit); // Default renderer is LightedRenderer
 	//style sheet editor
-  mStyleSheetEditor = new StyleSheetEditor(this);
+  mStyleSheetEditor = new StyleSheetEditor;
+
 	//preference dialog
 	mSettings = new QSettings("TopMod", "Topological Mesh Modeler");
 	readSettings();
-	mPreferencesDialog = new TopModPreferences(mSettings, this);
+	mPreferencesDialog = new TopModPreferences(mSettings, mStyleSheetEditor, sm, this);
 	//read the settings that can be customized in the preferences dialog
 }
 
@@ -412,11 +415,11 @@ void MainWindow::createActions() {
  
 	//SETTINGS ACTIONS
 	manageShortcutsAct = new QAction(tr("Short&cuts..."),this);
-	sm->connect( manageShortcutsAct , SIGNAL( triggered() ), SLOT  ( configure() ) );
+	// sm->connect( manageShortcutsAct , SIGNAL( triggered() ), SLOT  ( configure() ) );
 	sm->registerAction(manageShortcutsAct, "Settings", "CTRL+M");
 
 	mEditStyleSheetAct = new QAction(tr("&Stylesheets..."),this);
-	connect( mEditStyleSheetAct, SIGNAL( triggered() ), this, SLOT(on_editStyleAction_triggered()) );
+	// connect( mEditStyleSheetAct, SIGNAL( triggered() ), this, SLOT(on_editStyleAction_triggered()) );
 	sm->registerAction(mEditStyleSheetAct, "Settings", "CTRL+N");
 	
 	mPreferencesAct = new QAction(tr("&Preferences"), this);
@@ -612,21 +615,21 @@ void MainWindow::createMenus(){
 	// selectionMenu->addAction(selectCornerAct);
 	// selectionMenu->addAction(exitSelectionModeAct);
 
-	settingsMenu = new QMenu(tr("Se&ttings"));
-	settingsMenu->setTearOffEnabled(true);
-	menuBar->addMenu(settingsMenu);
-	settingsMenu->addAction(manageShortcutsAct);
-	settingsMenu->addAction(mEditStyleSheetAct);
-	languageMenu = new QMenu(tr("&Language"));
-	languageMenu->setTearOffEnabled(true);
-	settingsMenu->addMenu(languageMenu);
-	languageMenu->addAction(englishAct);
-	languageMenu->addAction(spanishAct);
-	languageMenu->addAction(germanAct);
-	languageMenu->addAction(frenchAct);
-	languageMenu->addAction(turkishAct);
-	languageMenu->addAction(catalanAct);
-	settingsMenu->addAction(mPreferencesAct);
+	// settingsMenu = new QMenu(tr("Se&ttings"));
+	// settingsMenu->setTearOffEnabled(true);
+	// menuBar->addMenu(settingsMenu);
+	// settingsMenu->addAction(manageShortcutsAct);
+	// settingsMenu->addAction(mEditStyleSheetAct);
+	// languageMenu = new QMenu(tr("&Language"));
+	// languageMenu->setTearOffEnabled(true);
+	// settingsMenu->addMenu(languageMenu);
+	// languageMenu->addAction(englishAct);
+	// languageMenu->addAction(spanishAct);
+	// languageMenu->addAction(germanAct);
+	// languageMenu->addAction(frenchAct);
+	// languageMenu->addAction(turkishAct);
+	// languageMenu->addAction(catalanAct);
+	fileMenu->addAction(mPreferencesAct);
 	
 }
 
@@ -824,7 +827,7 @@ void MainWindow::on_editStyleAction_triggered() {
 }
 
 void MainWindow::openPreferences() {
-  mPreferencesDialog->exec();
+  mPreferencesDialog->display();
   // mPreferencesDialog->activateWindow();
 }
 
