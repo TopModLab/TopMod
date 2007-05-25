@@ -252,8 +252,6 @@ QColor GLWidget::getSilhouetteColor(){
 void GLWidget::setWireframeThickness(double t){
 	mWireframeThickness = t;
 	renderer->setWireframeThickness(t);
-	// QMessageBox::about(this,tr("topmod"),tr("wireframe = %1").arg(renderer->getWireframeThickness()));
-	
 	redraw();
 }
 

@@ -94,7 +94,7 @@ void TopModPreferences::readSettings(){
 	mRenderColor = mSettings->value("RenderColor", QColor(255,255,255)).value<QColor>();
 	mCoolLightColor = mSettings->value("CoolLightColor",QColor(51,51,102)).value<QColor>();
 	mWarmLightColor = mSettings->value("WarmLightColor",QColor(255,255,153)).value<QColor>();
-	mWireframeColor = mSettings->value("WireframeColor", QColor(0,1,0)).value<QColor>();
+	mWireframeColor = mSettings->value("WireframeColor", QColor(0,255,0)).value<QColor>();
 	mSilhouetteColor = mSettings->value("SilhouetteColor", QColor(0,0,0)).value<QColor>();
 	mPatchBoundaryColor = mSettings->value("PatchBoundaryColor", QColor(0,0,0)).value<QColor>();
 	mLightIntensity = mSettings->value("LightIntensity", 2.0).toDouble();
@@ -123,6 +123,66 @@ void TopModPreferences::readSettings(){
 
 void TopModPreferences::discardSettings(){
 	reject();
+}
+
+void TopModPreferences::loadDefaults(){
+	//load all the default settings and attach this as a signal for a reset button
+	mViewportColor.setRgb(255,255,255);
+	((MainWindow*)mParent)->getDLFLWindow()->getActive()->setViewportColor(mViewportColor);
+	QPalette p = mViewportColorButton->palette();
+	p.setColor(QPalette::Button, mViewportColor);
+	mViewportColorButton->setPalette(p);
+
+	mRenderColor.setRgb(255,255,255);
+	((MainWindow*)mParent)->getDLFLWindow()->getActive()->setRenderColor(mRenderColor);
+	p = mRenderColorButton->palette();
+	p.setColor(QPalette::Button, mRenderColor);
+	mRenderColorButton->setPalette(p);
+
+	mCoolLightColor.setRgb(51,51,102);
+	((MainWindow*)mParent)->getDLFLWindow()->setCoolLightColor(mCoolLightColor);
+	p = mCoolLightColorButton->palette();
+	p.setColor(QPalette::Button, mCoolLightColor);
+	mCoolLightColorButton->setPalette(p);
+
+	mWarmLightColor.setRgb(255,255,153);
+	((MainWindow*)mParent)->getDLFLWindow()->setWarmLightColor(mWarmLightColor);
+	p = mWarmLightColorButton->palette();
+	p.setColor(QPalette::Button, mWarmLightColor);
+	mWarmLightColorButton->setPalette(p);
+
+	mWireframeColor.setRgb(0,1,0);
+	((MainWindow*)mParent)->getDLFLWindow()->getActive()->setWireframeColor(mWireframeColor);
+	p = mWireframeColorButton->palette();
+	p.setColor(QPalette::Button, mWireframeColor);
+	mWireframeColorButton->setPalette(p);
+
+	mSilhouetteColor.setRgb(0,0,0);
+	((MainWindow*)mParent)->getDLFLWindow()->getActive()->setSilhouetteColor(mSilhouetteColor);
+	p = mSilhouetteColorButton->palette();
+	p.setColor(QPalette::Button, mSilhouetteColor);
+	mSilhouetteColorButton->setPalette(p);
+
+	mPatchBoundaryColor.setRgb(0,0,0);
+	// ((MainWindow*)mParent)->getDLFLWindow()->getActive()->setPatchBoundaryColor(mPatchBoundaryColor);
+	p = mPatchBoundaryColorButton->palette();
+	p.setColor(QPalette::Button, mPatchBoundaryColor);
+	mPatchBoundaryColorButton->setPalette(p);
+	
+	mLightIntensity = 2.0;
+	// ((MainWindow*)mParent)->getDLFLWindow(), SLOT(setLightIntensity(double)));
+	mLightIntensitySpinBox->setValue(mLightIntensity); 
+	mWireframeThickness = 1.5;
+	// ((MainWindow*)mParent)->getDLFLWindow()->getActive()->setWireframeThickness(mWireframeThickness);
+	mWireframeThicknessSpinBox->setValue(mWireframeThickness);	
+	mSilhouetteThickness = 6.0;
+	// ((MainWindow*)mParent)->getDLFLWindow()->getActive()->setSilhouetteThickness(mSilhouetteThickness);	
+	mSilhouetteThicknessSpinBox->setValue(mSilhouetteThickness);
+	mVertexThickness = 5.0;
+	// ((MainWindow*)mParent)->getDLFLWindow()->getActive()->setVertexThickness(mVertexThickness);
+	mVertexThicknessSpinBox->setValue(mVertexThickness);	
+	
+	
 }
 
 void TopModPreferences::setupColors(){
@@ -284,9 +344,15 @@ void TopModPreferences::setupColors(){
 	mColorsLayout->addWidget(mSilhouetteThicknessLabel,3,2);
 	mColorsLayout->addWidget(mSilhouetteThicknessSpinBox,3,3);
 	
-
+	mResetColorsButton = new QPushButton(tr("Reset"));
+	connect(mResetColorsButton,SIGNAL(clicked()),this, SLOT(loadDefaults()));
+	mColorsLayout->addWidget(mResetColorsButton,6,3);
+	
 	// mColorsLayout->addStretch(1);
 	mColorsTab->setLayout(mColorsLayout);	
+	
+	
+	
 }
 
 void TopModPreferences::setViewportColor(){

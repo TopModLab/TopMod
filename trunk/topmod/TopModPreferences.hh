@@ -100,6 +100,8 @@ private:
 	QLabel *mVertexThicknessLabel;
 	QDoubleSpinBox *mVertexThicknessSpinBox;
 	
+	//reset button
+	QPushButton *mResetColorsButton;
 	
 public:
 	TopModPreferences(QSettings *settings, StyleSheetEditor *sse, QShortcutManager *sm, QWidget *parent = 0 );
@@ -107,6 +109,7 @@ public:
 	
 	int display();
 	void readSettings();
+
 
 protected:
 	void createTabs();
@@ -124,9 +127,9 @@ public slots:
 	void setWireframeColor();
 	void setSilhouetteColor();
 	void setPatchBoundaryColor();
-
 	
-	// void setLightIntensity();
+	void loadDefaults();
+
 };
 
 #endif
