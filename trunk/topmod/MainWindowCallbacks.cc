@@ -224,6 +224,12 @@ void MainWindow::select_corner() {
 
 void MainWindow::exit_selection_mode() {
   mainWindow->setMode(DLFLWindow::NormalMode);
+	mainWindow->redraw();
+}
+
+void MainWindow::clear_selected(){
+	DLFLWindow::clearSelected();
+	mainWindow->redraw();
 }
 
 void MainWindow::exit_modes() {

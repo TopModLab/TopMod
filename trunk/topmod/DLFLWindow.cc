@@ -1107,6 +1107,7 @@ void DLFLWindow::setMode(Mode m)
 		case SelectFaceVertex :
 		DLFLWindow::num_sel_faceverts = 0;
 		break;
+		case NormalMode:
 		default :
 									// Nothing to be done for other modes except clearing selection lists
 		DLFLWindow::clearSelected();

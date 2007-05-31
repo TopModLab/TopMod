@@ -452,6 +452,10 @@ void MainWindow::createActions() {
 	exitSelectionModeAct = new QAction(tr("Exit Selection Mode"), this);
 	sm->registerAction(exitSelectionModeAct, "Settings", "SHIFT+X");
 	connect( exitSelectionModeAct , SIGNAL( triggered() ), this, SLOT( exit_selection_mode() ) );
+
+	clearSelectedModeAct = new QAction(tr("Clear Selected"), this);
+	sm->registerAction(clearSelectedModeAct, "Settings", "Escape");
+	connect( clearSelectedModeAct , SIGNAL( triggered() ), this, SLOT( clear_selected() ) );
  
 	//SETTINGS ACTIONS
 	manageShortcutsAct = new QAction(tr("Short&cuts..."),this);
@@ -667,6 +671,7 @@ void MainWindow::createMenus(){
 	selectionMenu->addAction(selectEdgeAct);
 	selectionMenu->addAction(selectCornerAct);
 	selectionMenu->addAction(exitSelectionModeAct);
+	selectionMenu->addAction(clearSelectedModeAct);
 
 	// settingsMenu = new QMenu(tr("Se&ttings"));
 	// settingsMenu->setTearOffEnabled(true);

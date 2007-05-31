@@ -263,6 +263,7 @@ class MainWindow : public QMainWindow {
 	  QAction *selectFaceAct;
 	  QAction *selectEdgeAct;
 	  QAction *selectCornerAct;
+	  QAction *clearSelectedModeAct;
 	  QAction *exitSelectionModeAct;
 	// 
 	//   //Mode Switching Actions
@@ -400,6 +401,7 @@ class MainWindow : public QMainWindow {
 		void select_edge();
 		void select_corner();
 		void exit_selection_mode();
+		void clear_selected();
 
 		void exit_modes();
 

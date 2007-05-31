@@ -164,23 +164,25 @@ void GLWidget::paintEvent(QPaintEvent *event){
   glMatrixMode(GL_PROJECTION);
   glPopMatrix();
 	
-	// painter.setPen(Qt::NoPen);
-	// QBrush brush = QBrush(QColor(0,0,0,127));
-	// painter.setBrush(brush);
-	// QRectF rectangle(3.0, 3.0, 150.0, 25.0);
-	// painter.drawRoundRect(rectangle,10,10);
-	// painter.setPen(Qt::white);
-	// #ifdef WITH_VERSE
-	// if (VerseConnected & T_VERSE_CONNECTED){
-	// 	painter.drawText(rectangle, Qt::AlignCenter,tr("verse connected"));
-	// 	// t_verse_update();
-	// }
-	// #endif
-	// 
-	// 
-	// drawSelectedIDs(&painter, &model[0][0], &proj[0][0], &view[0]);
-	// drawIDs(&painter, &model[0][0], &proj[0][0], &view[0]); // draw vertex, edge and face ids
-	//   
+	painter.setPen(Qt::NoPen);
+	QBrush brush = QBrush(QColor(0,0,0,127));
+	painter.setBrush(brush);
+	QRectF rectangle(3.0, 3.0, 100.0, 25.0);
+	painter.drawRoundRect(rectangle,10,10);
+	painter.setPen(Qt::white);
+	painter.drawText(rectangle, Qt::AlignCenter,tr("persp"));
+	
+	#ifdef WITH_VERSE
+	if (VerseConnected & T_VERSE_CONNECTED){
+		painter.drawText(rectangle, Qt::AlignCenter,tr("verse connected"));
+		// t_verse_update();
+	}
+	#endif
+	
+	
+	drawSelectedIDs(&painter, &model[0][0], &proj[0][0], &view[0]);
+	drawIDs(&painter, &model[0][0], &proj[0][0], &view[0]); // draw vertex, edge and face ids
+	  
 	painter.end();
 }
 
@@ -194,7 +196,7 @@ void GLWidget::setupViewport(int width, int height){
 	glViewport(0, 0, width, height);
 	// glMatrixMode(GL_PROJECTION);						// Select The Projection Matrix
 	// glLoadIdentity();												// Reset The Projection Matrix
-	// Calculate The Aspect Ratio Of The Window
+	// // Calculate The Aspect Ratio Of The Window
 	// gluPerspective(60.0f,(GLfloat)width/(GLfloat)height,0.1f,100.0f);
 	glMatrixMode(GL_MODELVIEW);						// Select The Modelview Matrix
 }
