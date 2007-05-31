@@ -1,4 +1,4 @@
-/* $Id: PointLight.hh,v 2.2 2000/03/02 07:43:19 vinod Exp $ */
+/* $Id: PointLight.hh,v 1.1 2006/09/04 19:22:53 stuart Exp $ */
 
 #ifndef _POINT_LIGHT_HH_
 
@@ -87,6 +87,12 @@ class PointLight : public Light
         // Same as above but with specular lighting also
      virtual RGBColor illuminate(const Vector3d& p, const Vector3d& n, const Vector3d& e) const
        {
+		// float spec=0;
+		// Vector3d V(e); // normalize(V);
+		// Vector3d L(position-p); normalize(L);
+		// Vector3d R(L - 2.0f * (L*N)*N);
+		// float dot = V*R;
+		// if (dot > 0) spec = powf( dot, 20 );
          if ( state == false ) return RGBColor(0);
             // For now do only diffuse lighting
          return illuminate(p,n);
@@ -98,6 +104,9 @@ class PointLight : public Light
 
 /*
   $Log: PointLight.hh,v $
+  Revision 1.1  2006/09/04 19:22:53  stuart
+  Added includes and libs.
+
   Revision 2.2  2000/03/02 07:43:19  vinod
   Added illuminates and cosfactor functions
 

@@ -124,6 +124,7 @@ class Camera
        {
          center = v; dist = norm(eye-center);
        }
+			
 
      void setCenter(double x, double y, double z)
        {

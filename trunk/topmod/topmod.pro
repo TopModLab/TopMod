@@ -4,19 +4,20 @@
 
 # TARGET = TopMod
 QT += opengl xml
-CONFIG += qt release  
+CONFIG += qt debug  
 
 # exclude verse python or spacenav drivers
 # or include them with CONFIG += 
 CONFIG -=  WITH_PYTHON WITH_SPACENAV WITH_VERSE
-CONFIG += WITH_PYTHON
+CONFIG += WITH_PYTHON WITH_VERSE
+DEFINES += TOPMOD_VERSION
 
 TEMPLATE = app
 
 # TopModd will be the name for the debug version, 
 # and TopMod will be the release version
 CONFIG(debug, debug|release) {
-TARGET = TopModd
+TARGET = TopMod
 } else {
 TARGET = TopMod
 }
@@ -27,13 +28,15 @@ DEPENDPATH += . \
 							include/Base \
 							include/Graphics \ 
 							include/Light \
-							include/vecmat
+							include/vecmat \
+							include/verse
 
 INCLUDEPATH += . \
                include/arcball \
                include/vecmat \
                include/Base \
-               include/Graphics
+               include/Graphics \
+							 include/verse
 
 CONFIG(WITH_VERSE){
 	message("VERSE will be included")
@@ -107,7 +110,6 @@ macx {
 
 # Input
 HEADERS += 	DLFLScriptEditor.hh \
-						VerseTopMod.hh \
 						TopModPreferences.hh \
 						TdxDeviceWrappers.hh \
 						GLWidget.hh \
@@ -169,12 +171,11 @@ HEADERS += 	DLFLScriptEditor.hh \
 						include/vecmat/Vector.hh \
 						include/vecmat/Vector2d.hh \
 						include/vecmat/Vector3d.hh \
-						include/vecmat/Vector4d.hh 
+						include/vecmat/Vector4d.hh
 
 FORMS += shortcutdialog.ui stylesheeteditor.ui
 
 SOURCES += 	DLFLScriptEditor.cc \
-						VerseTopMod.cc \
 						TopModPreferences.cc \
 						TdxDeviceWrappers.cc \
 						GLWidget.cc \
@@ -228,6 +229,45 @@ SOURCES += 	DLFLScriptEditor.cc \
 						include/vecmat/Vector2d.cc \
 						include/vecmat/Vector3d.cc \
 						include/vecmat/Vector4d.cc  
+
+CONFIG(WITH_VERSE){
+	
+HEADERS += 	include/verse/TKE_verse.h \
+						include/verse/TIF_verse.h \
+						include/verse/MEM_guardedalloc.h \
+						include/verse/DNA_mesh_types.h \
+						include/verse/DNA_meshdata_types.h \
+						include/verse/DNA_scriptlink_types.h \
+						include/verse/DNA_object_types.h \
+						include/verse/DNA_ID.h \
+						include/verse/DNA_listBase.h \
+						include/verse/mydevice.h \
+						include/verse/TLI_dynamiclist.h \
+						include/verse/TLI_util.h \
+						include/verse/TLI_toplib.h \
+						include/verse/TLI_arithb.h \
+						include/verse/TKE_utildefines.h \
+						include/verse/TIF_space.h \
+						include/verse/TIF_editmesh.h \
+						include/verse/TKE_depsgraph.h \
+						include/verse/TKE_global.h \
+						include/verse/TKE_mesh.h \
+						include/verse/TLI_editVert.h \
+						include/verse/TKE_object.h \
+						# include/verse/TIF_screen.h \
+						VerseTopMod.hh 
+
+SOURCES += 	include/verse/verse_session.cc \
+						include/verse/mallocn.cc \
+						include/verse/verse_common.cc \
+						include/verse/util.cc \
+						include/verse/verse_geometry_node.cc \
+						include/verse/verse_mesh.cc \
+						include/verse/verse_node.cc \
+						include/verse/verse_object.cc \
+						include/verse/verse_object_node.cc \
+						VerseTopMod.cc
+}
 
 RESOURCES += application.qrc
 

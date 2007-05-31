@@ -7,25 +7,40 @@
 #ifndef VERSETOPMOD_H
 #define VERSETOPMOD_H
 
-//#include "verse.h"
-
 #include <QWidget>
+#include <QTimer>
+#include "TKE_verse.h"
+#include "TIF_verse.h"
+#include "TKE_global.h"
+
+// #include "TLI_dynamiclist.h"
+// #include "verse_session.c"
+// #include "verse.h"
 
 class QLineEdit;
 class QTextEdit;
-// class QProcess;
 
-// void* mVerseTopModPtr;        // global variable which points to an arbitrary object
+// extern ListBase session_list;
 
 class VerseTopMod : public QWidget {
 	Q_OBJECT
 	
 public:
+  static VerseTopMod* Instance();
+	void write(QString s);
+protected:
+	// VerseTopMod();
 	VerseTopMod(QWidget *parent = 0, Qt::WindowFlags f = Qt::Tool );
+	VerseTopMod(const VerseTopMod&);
+	VerseTopMod& operator= (const VerseTopMod&);
 	~VerseTopMod();
-
-	void callback_node_create(void *user, VNodeID node_id, VNodeType type, VNodeOwner ownership);
-	void callback_accept_connect(void *user, uint32 avatar, void *address, void *connection, uint8 *host_id);
+private:
+	bool isConnected;
+  QLineEdit *mLineEdit;
+  QTextEdit *mTextEdit;
+	static VerseTopMod* pinstance;    
+	// QEventLoop *mEventLoop;
+	QTimer *mTimer;
 	
 public slots:
 	void executeCommand();
@@ -33,12 +48,8 @@ public slots:
 	void connectLocalhost();
 	void connectHost();
 	void disconnectHost();
-	void disconnectAll();
-     
-private:
-  QLineEdit *mLineEdit;
-  QTextEdit *mTextEdit;
-  
+	void disconnectAll();  
+	void updateVerse();
 };
 
 #endif

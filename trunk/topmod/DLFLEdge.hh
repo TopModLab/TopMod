@@ -35,7 +35,8 @@ class DLFLEdge
   public :
 
      unsigned long      flags;                         // Variable for general use to store flags, etc.
-
+		 uint ismarked; //ozgur
+		
   protected:
 
         // Generate a new unique ID
@@ -50,6 +51,7 @@ class DLFLEdge
      void assignID(void)
        {
          uID = DLFLEdge :: newID();
+				ismarked = 0; // ozgur
        }
 
 	// Update the mid point for this edge

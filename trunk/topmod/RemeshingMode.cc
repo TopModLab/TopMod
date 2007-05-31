@@ -1245,7 +1245,7 @@ void RemeshingMode::triggerDualLoopStyleRemeshingSix(){
 	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::HexagonPreserving);
 }
 
-void RemeshingMode::triggerLoopStyleRemeshingSixWidget(){
+void RemeshingMode::triggerLoopStyleRemeshingSix(){
 
 	((MainWindow*)mParent)->setToolOptions(mLoopStyleRemeshingSixWidget);
 	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::DualHexagonPreserving);

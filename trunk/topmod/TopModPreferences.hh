@@ -99,9 +99,52 @@ private:
 	double mVertexThickness;
 	QLabel *mVertexThicknessLabel;
 	QDoubleSpinBox *mVertexThicknessSpinBox;
+
+	//selected vertex thickness
+	double mSelectedVertexThickness;
+	QLabel *mSelectedVertexThicknessLabel;
+	QDoubleSpinBox *mSelectedVertexThicknessSpinBox;
+
+	//selected edge thickness
+	double mSelectedEdgeThickness;
+	QLabel *mSelectedEdgeThicknessLabel;
+	QDoubleSpinBox *mSelectedEdgeThicknessSpinBox;
+	
+	//selected edge color
+	QColor mSelectedEdgeColor;
+	QPushButton *mSelectedEdgeColorButton;
+	QLabel *mSelectedEdgeColorLabel;
+	
+	//selected vertex color
+	QColor mSelectedVertexColor;
+	QPushButton *mSelectedVertexColorButton;
+	QLabel *mSelectedVertexColorLabel;
+	
+	//selected face color
+	QColor mSelectedFaceColor;
+	QPushButton *mSelectedFaceColorButton;
+	QLabel *mSelectedFaceColorLabel;
+	
+	//vertex id bg color
+	QColor mVertexIDBgColor;
+	QPushButton *mVertexIDBgColorButton;
+	QLabel *mVertexIDBgColorLabel;
+	
+	//face id bg color
+	QColor mFaceIDBgColor;
+	QPushButton *mFaceIDBgColorButton;
+	QLabel *mFaceIDBgColorLabel;
+	
+	//edge id bg color
+	QColor mEdgeIDBgColor;
+	QPushButton *mEdgeIDBgColorButton;
+	QLabel *mEdgeIDBgColorLabel;
 	
 	//reset button
 	QPushButton *mResetColorsButton;
+	
+	//reset camera button
+	QPushButton *mResetCameraButton;
 	
 public:
 	TopModPreferences(QSettings *settings, StyleSheetEditor *sse, QShortcutManager *sm, QWidget *parent = 0 );
@@ -110,10 +153,10 @@ public:
 	int display();
 	void readSettings();
 
-
 protected:
 	void createTabs();
 	void setupColors();
+	void setupMain();
 	
 public slots:
 
@@ -127,7 +170,13 @@ public slots:
 	void setWireframeColor();
 	void setSilhouetteColor();
 	void setPatchBoundaryColor();
-	
+	void setSelectedVertexColor();
+	void setSelectedEdgeColor();
+	void setSelectedFaceColor();
+	void setVertexIDBgColor();
+	void setFaceIDBgColor();
+	void setEdgeIDBgColor();
+
 	void loadDefaults();
 
 };

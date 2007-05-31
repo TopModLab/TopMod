@@ -23,7 +23,7 @@ PatchRendererPtr MainWindow::patch;		       // PatchRenderer
 //DLFLWindowPtr MainWindow::mainWindowPtr;            // Pointer to the main window
 
 MainWindow::MainWindow(char *filename) {
-	
+		
 	// setUnifiedTitleAndToolBarOnMac(false);
 	mStatusBar = new QStatusBar();
 	setStatusBar(mStatusBar);
@@ -63,13 +63,14 @@ MainWindow::MainWindow(char *filename) {
 	
 	#ifdef WITH_VERSE
 		//verse script box
-		mVerseDialog = new VerseTopMod(this );
+		mVerseDialog = VerseTopMod::Instance();
 		mVerseDialogDockWidget = new QDockWidget(tr("Verse-TopMod"), this);
 		mVerseDialogDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
 		mVerseDialogDockWidget->setWidget(mVerseDialog);
 		addDockWidget(Qt::BottomDockWidgetArea, mVerseDialogDockWidget);
 		mVerseDialogDockWidget->hide();
 		mVerseDialogDockWidget->setMaximumHeight(200);
+		// VerseTopMod::Instance()->write("hey\n");
 	#endif
 	
   //make a new instance of QShortcutManager
@@ -96,7 +97,10 @@ MainWindow::MainWindow(char *filename) {
 	mSettings = new QSettings("TopMod", "Topological Mesh Modeler");
 	readSettings();
 	mPreferencesDialog = new TopModPreferences(mSettings, mStyleSheetEditor, sm, this);
-	//read the settings that can be customized in the preferences dialog
+	
+	// while(TRUE)
+	// verse_callback_update(100);   /* Listen to network, get callbacks. */
+	
 }
 
 void MainWindow::setMode(int m){
@@ -175,6 +179,42 @@ void MainWindow::createActions() {
 	sm->registerAction(mRedoAct, "Edit Menu", "CTRL+SHIFT+Z");
 	mUndoAct->setStatusTip(tr("Redo the last operation"));
 	connect(mRedoAct, SIGNAL(triggered()), mainWindow, SLOT(redo()));
+	
+	//View Menu Actions
+	mPerspViewAct = new QAction( tr("&Reset Camera"), this);
+	sm->registerAction(mPerspViewAct, "View Menu", "F");
+	mPerspViewAct->setStatusTip(tr("Reset Camera Position to default"));
+	connect(mPerspViewAct, SIGNAL(triggered()), mainWindow, SLOT(switchPerspView()));
+
+	mTopViewAct = new QAction( tr("&Top View"), this);
+	sm->registerAction(mTopViewAct, "View Menu", "");
+	mTopViewAct->setStatusTip(tr("Switch to Top View"));
+	connect(mTopViewAct, SIGNAL(triggered()), mainWindow, SLOT(switchTopView()));
+
+	mBottomViewAct = new QAction( tr("&Bottom View"), this);
+	sm->registerAction(mBottomViewAct, "View Menu", "");
+	mBottomViewAct->setStatusTip(tr("Switch to Bottom View"));
+	connect(mBottomViewAct, SIGNAL(triggered()), mainWindow, SLOT(switchBottomView()));
+	
+	mFrontViewAct = new QAction( tr("&Front View"), this);
+	sm->registerAction(mFrontViewAct, "View Menu", "");
+	mFrontViewAct->setStatusTip(tr("Switch to Front View"));
+	connect(mFrontViewAct, SIGNAL(triggered()), mainWindow, SLOT(switchFrontView()));
+
+	mBackViewAct = new QAction( tr("B&ack View"), this);
+	sm->registerAction(mBackViewAct, "View Menu", "");
+	mBackViewAct->setStatusTip(tr("Switch to Back View"));
+	connect(mBackViewAct, SIGNAL(triggered()), mainWindow, SLOT(switchBackView()));
+
+	mLeftViewAct = new QAction( tr("&Left View"), this);
+	sm->registerAction(mLeftViewAct, "View Menu", "");
+	mLeftViewAct->setStatusTip(tr("Switch to Left View"));
+	connect(mLeftViewAct, SIGNAL(triggered()), mainWindow, SLOT(switchLeftView()));
+
+	mRightViewAct = new QAction( tr("&Right View"), this);
+	sm->registerAction(mRightViewAct, "View Menu", "");
+	mRightViewAct->setStatusTip(tr("Switch to Right View"));
+	connect(mRightViewAct, SIGNAL(triggered()), mainWindow, SLOT(switchRightView()));
 
 	//Display Menu Actions
 	mFullscreenAct = new QAction(tr("&Full Screen"), this);
@@ -389,29 +429,29 @@ void MainWindow::createActions() {
 	connect(assignTextureCoordinatesAct, SIGNAL(triggered()), this, SLOT(assign_texture_coordinates()));
 
 	// //SELECTION MENU ACTIONS
-	// selectVertexAct = new QAction(tr("Select &Vertex"), this);
-	// sm->registerAction(selectVertexAct, "Settings", "CTRL+M");
-	// // selectVertexAct->setStatusTip(tr("Copy the current selection's contents to the "
-	// connect(selectVertexAct, SIGNAL(triggered()), this, SLOT(select_vertex()));
-	// 
-	// selectFaceAct = new QAction(tr("Select &Face"), this);
-	// sm->registerAction(selectFaceAct, "Settings", "CTRL+M");
-	// // selectFaceAct->setStatusTip(tr("Copy the current selection's contents to the "
-	// connect(selectFaceAct, SIGNAL(triggered()), this, SLOT(select_face() ) );
-	// 
-	// selectEdgeAct = new QAction(tr("Select &Edge"), this);
-	// sm->registerAction(selectEdgeAct, "Settings", "CTRL+M");
-	// // selectCornerAct->setStatusTip(tr("Copy the current selection's contents to the "));
-	// sm->connect( selectEdgeAct , SIGNAL( triggered() ), SLOT  ( select_edge() ) );
-	// 
-	// selectCornerAct = new QAction(tr("Select &Corner"), this);
-	// sm->registerAction(selectCornerAct, "Settings", "CTRL+M");
-	// // selectCornerAct->setStatusTip(tr("Copy the current selection's contents to the "));
-	// sm->connect( selectCornerAct , SIGNAL( triggered() ), SLOT  ( select_corner() ) );
-	// 
-	// exitSelectionModeAct = new QAction(tr("Exit Selection Mode"), this);
-	// //sm->registerAction(exitSelectionModeAct, "Settings", "CTRL+X");
-	// sm->connect( exitSelectionModeAct , SIGNAL( triggered() ), SLOT  ( exit_selection_mode() ) );
+	selectVertexAct = new QAction(tr("Select &Vertex"), this);
+	sm->registerAction(selectVertexAct, "Settings", "SHIFT+V");
+	// selectVertexAct->setStatusTip(tr("Copy the current selection's contents to the "
+	connect(selectVertexAct, SIGNAL(triggered()), this, SLOT(select_vertex()));
+	
+	selectFaceAct = new QAction(tr("Select &Face"), this);
+	sm->registerAction(selectFaceAct, "Settings", "SHIFT+F");
+	// selectFaceAct->setStatusTip(tr("Copy the current selection's contents to the "
+	connect(selectFaceAct, SIGNAL(triggered()), this, SLOT(select_face() ) );
+	
+	selectEdgeAct = new QAction(tr("Select &Edge"), this);
+	sm->registerAction(selectEdgeAct, "Settings", "SHIFT+E");
+	// selectCornerAct->setStatusTip(tr("Copy the current selection's contents to the "));
+	connect( selectEdgeAct , SIGNAL( triggered() ), this,SLOT( select_edge() ) );
+	
+	selectCornerAct = new QAction(tr("Select &Corner"), this);
+	sm->registerAction(selectCornerAct, "Settings", "SHIFT+C");
+	// selectCornerAct->setStatusTip(tr("Copy the current selection's contents to the "));
+	connect( selectCornerAct , SIGNAL( triggered() ), this, SLOT( select_corner() ) );
+	
+	exitSelectionModeAct = new QAction(tr("Exit Selection Mode"), this);
+	sm->registerAction(exitSelectionModeAct, "Settings", "SHIFT+X");
+	connect( exitSelectionModeAct , SIGNAL( triggered() ), this, SLOT( exit_selection_mode() ) );
  
 	//SETTINGS ACTIONS
 	manageShortcutsAct = new QAction(tr("Short&cuts..."),this);
@@ -527,6 +567,19 @@ void MainWindow::createMenus(){
 	editMenu->addAction(mUndoAct);
 	editMenu->addAction(mRedoAct);
 	editMenu->setTearOffEnabled(true);
+	editMenu->addSeparator();
+	editMenu->addAction(mPreferencesAct);
+	
+	mViewMenu = new QMenu(tr("&View"));
+	mViewMenu->setTearOffEnabled(true);
+	menuBar->addMenu(mViewMenu);
+	mViewMenu->addAction(mPerspViewAct);
+	// mViewMenu->addAction(mTopViewAct);
+	// mViewMenu->addAction(mBottomViewAct);
+	// mViewMenu->addAction(mLeftViewAct);
+	// mViewMenu->addAction(mRightViewAct);
+	// mViewMenu->addAction(mFrontViewAct);
+	// mViewMenu->addAction(mBackViewAct);
 
 	displayMenu = new QMenu(tr("&Display"));
 	displayMenu->setTearOffEnabled(true);
@@ -607,13 +660,13 @@ void MainWindow::createMenus(){
 	objectMenu->addAction(computeNormalsAndLightingAct);
 	objectMenu->addAction(assignTextureCoordinatesAct);
 
-	// selectionMenu = new QMenu(tr("&Selection"));
-	// // menuBar->addMenu(selectionMenu);
-	// selectionMenu->addAction(selectVertexAct);
-	// selectionMenu->addAction(selectFaceAct);
-	// selectionMenu->addAction(selectEdgeAct);
-	// selectionMenu->addAction(selectCornerAct);
-	// selectionMenu->addAction(exitSelectionModeAct);
+	selectionMenu = new QMenu(tr("&Selection"));
+	menuBar->addMenu(selectionMenu);
+	selectionMenu->addAction(selectVertexAct);
+	selectionMenu->addAction(selectFaceAct);
+	selectionMenu->addAction(selectEdgeAct);
+	selectionMenu->addAction(selectCornerAct);
+	selectionMenu->addAction(exitSelectionModeAct);
 
 	// settingsMenu = new QMenu(tr("Se&ttings"));
 	// settingsMenu->setTearOffEnabled(true);
@@ -629,7 +682,6 @@ void MainWindow::createMenus(){
 	// languageMenu->addAction(frenchAct);
 	// languageMenu->addAction(turkishAct);
 	// languageMenu->addAction(catalanAct);
-	fileMenu->addAction(mPreferencesAct);
 	
 }
 
@@ -685,9 +737,9 @@ void MainWindow::createToolBars() {
 	addToolBar(Qt::TopToolBarArea,mExtrusionToolBar);
 	mExtrusionToolBar->setIconSize(QSize(32,32));
 	
-	// mConicalToolBar = new QToolBar(tr("Conical Tools"));
+	mConicalToolBar = new QToolBar(tr("Conical Tools"));
 	// addToolBar(Qt::TopToolBarArea,mConicalToolBar);
-	// mConicalToolBar->setIconSize(QSize(32,32));
+	mConicalToolBar->setIconSize(QSize(32,32));
 		
 	mHighgenusToolBar = new QToolBar(tr("High Genus Tools"));
 	addToolBar(Qt::TopToolBarArea,mHighgenusToolBar);
@@ -707,7 +759,7 @@ void MainWindow::createToolBars() {
 		
 	mBasicsMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);	
 	mExtrusionMode->addActions(mToolsActionGroup, mExtrusionToolBar, mToolOptionsStackedWidget);
-	// mConicalMode->addActions(mToolsActionGroup, mConicalToolBar, mToolOptionsStackedWidget);
+	mConicalMode->addActions(mToolsActionGroup, mConicalToolBar, mToolOptionsStackedWidget);
 	
 	mRemeshingActionGroup = new QActionGroup(this);
 	mRemeshingMode->addActions(mToolsActionGroup, mRemeshingToolBar, mToolOptionsStackedWidget);
@@ -916,6 +968,23 @@ void MainWindow::showHideVerseDialog(){
 	}
 #endif
 }
+
+// #ifdef WITH_VERSE
+// void MainWindow::verseConnectHost(){
+// 	char address[64];		/* length of domain name is 63 characters or less */
+// 	VerseSession *session = NULL;
+// 	
+// 	bool ok;
+// 	QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
+//  																				tr("Server Address:"), QLineEdit::Normal,
+// 																				tr("localhost"), &ok);
+// 	if (ok && !text.isEmpty() && text.length() < 64){
+// 		QByteArray ba = text.toLatin1();
+// 		address = ba.data();
+// 		VerseTopMod::Instance()->connectHost(address);
+// 	}
+// }
+// #endif
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
 	// QMessageBox::about(this,tr("mimetype"),tr("%1").arg(event->mimeData()->formats().join(",")));

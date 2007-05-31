@@ -30,6 +30,9 @@
 #include "DLFLObject.hh"
 #include "DLFLRenderer.hh"
 
+#include "TKE_verse.h"
+#include "TIF_verse.h"
+
 class QCursor;
 class QImage;
 // class QPaintEvent;
@@ -50,7 +53,7 @@ public :
 	   // Constructor
 	GLWidget(int x, int y, int w, int h, DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op=NULL, QWidget *parent = 0 );
 
-	GLWidget(	int w, int h, DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op, const QGLFormat & format, QWidget * parent = 0 );
+	GLWidget(	int w, int h , VPView v, DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op, const QGLFormat & format, QWidget * parent = 0 );
 
 	~GLWidget( );
 
@@ -59,29 +62,34 @@ public slots :
 	void setSilhouetteThickness(double t);
 	void setWireframeThickness(double t);
 	void setVertexThickness(double t);
-
+	void setSelectedVertexThickness(double t);
+	void setSelectedEdgeThickness(double t);
+	void switchTo(VPView view);
 
 protected :
   
   void initializeGL( );
-  void paintGL( );
+	void paintEvent(QPaintEvent *event);
+	// void paintGL( );
 
 	void drawText( int width, int height );
-  void drawIDs( );
+  void drawIDs( QPainter *painter, const GLdouble *model, const GLdouble *proj, const GLint	*view);
+	void drawSelectedIDs( QPainter *painter, const GLdouble *model, const GLdouble *proj, const GLint	*view);
 	void resizeGL( int width, int height );
 	
 	void setupViewport(int width, int height);
 
 	// void showEvent(QShowEvent *event);
 
-	void paintOverlayGL();
-	void initializeOverlayGL();
-	void resizeOverlayGL(int width, int height);
+	// void paintOverlayGL();
+	// void initializeOverlayGL();
+	// void resizeOverlayGL(int width, int height);
 	
   bool mIsFullScreen;
   bool mShowFaceIDs;
   bool mShowVertexIDs;
   bool mShowEdgeIDs;
+	bool mShowFaceVertexIDs;
 
 	   // Selection lists - these are shared by all viewports
 	static DLFLVertexPtrArray sel_vptr_array; // List of selected DLFLVertex pointers
@@ -113,8 +121,8 @@ public :
 
 	QCursor *cursor;
 	void redraw();
-  void renderMyText(double x, double y, double z, const QString & str,
-		    const QFont & fnt = QFont(), int listBase = 2000);
+  // void renderMyText(double x, double y, double z, const QString & str,
+  // 		    const QFont & fnt = QFont(), int listBase = 2000);
 	
 	void setViewportColor(QColor c);
 	QColor getViewportColor();
@@ -128,10 +136,29 @@ public :
 	void setSilhouetteColor(QColor c);
 	QColor getSilhouetteColor();
 	
+	void setSelectedVertexColor(QColor c);
+	QColor getSelectedVertexColor();
+	
+	void setSelectedEdgeColor(QColor c);
+	QColor getSelectedEdgeColor();
+	
+	void setSelectedFaceColor(QColor c);
+	QColor getSelectedFaceColor();
+
+	void setVertexIDBgColor(QColor c);
+	QColor getVertexIDBgColor();
+
+	void setFaceIDBgColor(QColor c);
+	QColor getFaceIDBgColor();
+
+	void setEdgeIDBgColor(QColor c);
+	QColor getEdgeIDBgColor();
+	
 	double getWireframeThickness();
 	double getVertexThickness();
 	double getSilhouetteThickness();
-	
+	double getSelectedVertexThickness();
+	double getSelectedEdgeThickness();	
 	
 	   //--- Initialize the selection lists ---//
 	static void initializeSelectionLists(int num) {
@@ -311,7 +338,7 @@ public :
 	  }
 
 	   // Draw the selected items
-	static void drawSelected(void);
+	void drawSelected(void);
 
 	   // Subroutine to translate FLTK events to Viewport events
 	static VPMouseEvent translateEvent(QMouseEvent *event) {
@@ -321,39 +348,18 @@ public :
 	               ( (event->type() == 5/*QEvent::mouseMove*/) ? VPDrag : VPUnknown ) ) );
 	  }
 
-	void switchTo(VPView view) {
-	       // Change grid orientation for front/back and left/right views
-	    // switch ( view )
-	    //    {
-	    //      case VPFront :
-	    //      case VPBack :
-	    //                   // grid.setPlane(XY);
-	    //                   break;
-	    //      case VPLeft :
-	    //      case VPRight :
-	    //                   // grid.setPlane(YZ);
-	    //                   break;
-	    //      default :
-	    //                   // grid.setPlane(ZX);
-	    //    }
-	    viewport.switchTo(view);
-	    if ( view == VPPersp )
-	          // Change camera settings to zoom in closer in perspective view
-	       viewport.setPerspView(10,10,10,0,0,0,0,1,0);
-	  }
-
 	   // Toggle grid display on/off
 	void toggleGrid(void) {
 	    // if ( showgrid == true ) showgrid = false;
 // 	    else showgrid = true;
-// 			this->updateGL();
+// 			this->repaint();
 	  }
 
 	   // Toggle axis display on/off
 	void toggleAxes(void) {
 	    if ( showaxes == true ) showaxes = false;
 	    else showaxes = true;
-			this->updateGL();
+			this->repaint();
 	  }
 
 	   // Set the object which should be shown in this viewport
@@ -364,7 +370,7 @@ public :
 	   // Set the renderer for this viewport
 	void setRenderer(DLFLRendererPtr rp) {
 	    renderer = rp;
-			this->updateGL();
+			this->repaint();
 	  }
 	
 	DLFLRendererPtr getRenderer(){
@@ -374,54 +380,54 @@ public :
 	   // Set the render flags
 	void setRenderFlags(int rflags) {
 	    if ( renderer ) renderer->setRenderFlags(rflags);
-			this->updateGL();
+			this->repaint();
 	  }
 
 	   // Toggle wireframe
 	void toggleWireframe(void) {
 	    if ( renderer ) renderer->toggleWireframe();
-			this->updateGL();
+			this->repaint();
 	  }
 
 	   // Toggle silhouette
 	void toggleSilhouette(void) {
 	    if ( renderer ) renderer->toggleSilhouette();
-			this->updateGL();
+			this->repaint();
 	
 	  }
 
 	   // Toggle vertices
 	void toggleVertices(void) {
 	    if ( renderer ) renderer->toggleVertices();
-			this->updateGL();
+			this->repaint();
 	  }
 
   void toggleFaceIDs( ) {
     mShowFaceIDs = !mShowFaceIDs;
-    this->updateGL();
+    this->repaint();
   }
 
   void toggleEdgeIDs( ) {
     mShowEdgeIDs = !mShowEdgeIDs;
-    this->updateGL();
+    this->repaint();
   }
 
   void toggleVertexIDs( ) {
     mShowVertexIDs = !mShowVertexIDs;
-    this->updateGL();
+    this->repaint();
   }
 
 	   // Toggle object orientation
 	void toggleObjectOrientation(void) {
 	    if ( renderer ) renderer->toggleObjectOrientation();
-			this->updateGL();
+			this->repaint();
 	
 	  }
 
 		   // Toggle object orientation
 		void toggleNormals(void) {
 		    if ( renderer ) renderer->toggleNormals();
-				this->updateGL();
+				this->repaint();
 
 		  }
 		
@@ -432,27 +438,18 @@ public :
 	    return -1;
 	  }
 
-	   // Subroutines for selecting Vertices, Edges, Faces and FaceVertices (Corners)
+	// Subroutines for selecting Vertices, Edges, Faces and FaceVertices (Corners)
 	DLFLVertexPtr selectVertex(int mx, int my);
 	DLFLEdgePtr selectEdge(int mx, int my);
 	DLFLFacePtr selectFace(int mx, int my);
 	DLFLFaceVertexPtr selectFaceVertex(DLFLFacePtr fp, int mx, int my);
 
-	   // Implement the draw method of Fl_Gl_Window base class
-	//void draw(void);
-
-	   // Event handler for the viewport. handles only mouse events when glwidget has focus
-	   // which relate to navigational controls (ALT + push/drag/release)
+	// Event handler for the viewport. handles only mouse events when glwidget has focus
+	// which relate to navigational controls (ALT + push/drag/release)
 	void mouseMoveEvent(QMouseEvent *event);
 	void mousePressEvent(QMouseEvent *event);
 	void mouseReleaseEvent(QMouseEvent *event);
 	void wheelEvent(QWheelEvent *event);
-	
-public:
-	
-	//for the space navigator SDK
-	// static void spaceNavEvent(io_connect_t connection, natural_t messageType, void *messageArgument);
-
 
 private :
   friend class QGLFormat;
@@ -473,9 +470,10 @@ private :
 	QColor mFaceIDBgColor;
 	
 	QColor mSelectedVertexColor;
-	QColor mSelectedFaceVertexColor;
+	double mSelectedVertexThickness;
 	QColor mSelectedFaceColor;
 	QColor mSelectedEdgeColor;
+	double mSelectedEdgeThickness;
 	
 	QColor mXAxisColor;
 	QColor mYAxisColor;

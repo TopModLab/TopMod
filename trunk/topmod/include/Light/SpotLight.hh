@@ -123,8 +123,8 @@ class SpotLight : public Light
         // Same as above but with specular lighting also
      virtual RGBColor illuminate(const Vector3d& p, const Vector3d& n, const Vector3d& e) const
        {
+					// e = e;
          if ( state == false ) return RGBColor(0);
-         
             // For now do only diffuse lighting
          return illuminate(p,n);
        }

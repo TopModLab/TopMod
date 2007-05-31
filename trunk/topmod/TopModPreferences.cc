@@ -6,11 +6,12 @@ TopModPreferences::TopModPreferences(QSettings *settings, StyleSheetEditor *sse,
 	mSettings = settings;
 	mParent = parent;
 	setSizeGripEnabled(false);
-	resize(600,400);
-	setMinimumSize(600,400);
+	resize(600,500);
+	setMinimumSize(600,500);
 	setWindowTitle(tr("TopMod Preferences"));
-	setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
+	// setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
 	
+	// mMainTab = new QWidget;
 	mStyleSheetsTab = sse;
 	mShortcutsManager = sm;
 	mShortcutsTab = sm->getShortcutDialog();
@@ -32,14 +33,10 @@ TopModPreferences::TopModPreferences(QSettings *settings, StyleSheetEditor *sse,
 	lowLayout->addWidget(mCancelButton);
 	setLayout(mainLayout);
 
-
 	createTabs();
-
 	readSettings();
-	
 	setupColors();
-	
-
+	setupMain();
 
 }
 
@@ -73,6 +70,12 @@ void TopModPreferences::saveSettings(){
 	mSettings->setValue("WireframeColor",mWireframeColor);
 	mSettings->setValue("SilhouetteColor",mSilhouetteColor);
 	mSettings->setValue("PatchBoundaryColor",mPatchBoundaryColor);
+	mSettings->setValue("SelectedVertexColor",mSelectedVertexColor);
+	mSettings->setValue("SelectedEdgeColor",mSelectedEdgeColor);
+	mSettings->setValue("SelectedFaceColor",mSelectedFaceColor);
+	mSettings->setValue("VertexIDBgColor",mVertexIDBgColor);
+	mSettings->setValue("EdgeIDBgColor",mEdgeIDBgColor);
+	mSettings->setValue("FaceIDBgColor",mFaceIDBgColor);
 	mSettings->setValue("LightIntensity",mLightIntensity);
 	mSettings->endGroup();
 	
@@ -80,6 +83,8 @@ void TopModPreferences::saveSettings(){
 	mSettings->setValue("WireframeThickness", mWireframeThickness);
 	mSettings->setValue("SilhouetteThickness", mSilhouetteThickness);
 	mSettings->setValue("VertexThickness", mVertexThickness);
+	mSettings->setValue("SelectedVertexThickness", mSelectedVertexThickness);
+	mSettings->setValue("SelectedEdgeThickness", mSelectedEdgeThickness);
 	mSettings->endGroup();
 
 	
@@ -94,16 +99,24 @@ void TopModPreferences::readSettings(){
 	mRenderColor = mSettings->value("RenderColor", QColor(255,255,255)).value<QColor>();
 	mCoolLightColor = mSettings->value("CoolLightColor",QColor(51,51,102)).value<QColor>();
 	mWarmLightColor = mSettings->value("WarmLightColor",QColor(255,255,153)).value<QColor>();
-	mWireframeColor = mSettings->value("WireframeColor", QColor(0,255,0)).value<QColor>();
-	mSilhouetteColor = mSettings->value("SilhouetteColor", QColor(0,0,0)).value<QColor>();
+	mWireframeColor = mSettings->value("WireframeColor", QColor(0,255,0,127)).value<QColor>();
+	mSilhouetteColor = mSettings->value("SilhouetteColor", QColor(0,0,0,127)).value<QColor>();
 	mPatchBoundaryColor = mSettings->value("PatchBoundaryColor", QColor(0,0,0)).value<QColor>();
+	mSelectedVertexColor = mSettings->value("SelectedVertexColor", QColor(0,127,0,127)).value<QColor>();
+	mSelectedEdgeColor = mSettings->value("SelectedEdgeColor", QColor(127,0,0,127)).value<QColor>();
+	mSelectedFaceColor = mSettings->value("SelectedFaceColor", QColor(0,0,127,127)).value<QColor>();
+	mVertexIDBgColor = mSettings->value("VertexIDBgColor", QColor(127,0,0,127)).value<QColor>();
+	mEdgeIDBgColor = mSettings->value("EdgeIDBgColor", QColor(0,127,0,127)).value<QColor>();
+	mFaceIDBgColor = mSettings->value("FaceIDBgColor", QColor(0,0,127,127)).value<QColor>();
 	mLightIntensity = mSettings->value("LightIntensity", 2.0).toDouble();
 	mSettings->endGroup();
 	
 	mSettings->beginGroup("Display");
-	mWireframeThickness = mSettings->value("WireframeThickness", 5.0).toDouble();
+	mWireframeThickness = mSettings->value("WireframeThickness", 0.1).toDouble();
 	mSilhouetteThickness = mSettings->value("SilhouetteThickness", 6.0).toDouble();
 	mVertexThickness = mSettings->value("VertexThickness",5.0).toDouble();
+	mSelectedVertexThickness = mSettings->value("SelectedVertexThickness",8.0).toDouble();
+	mSelectedEdgeThickness = mSettings->value("SelectedEdgeThickness",5.0).toDouble();
 	mSettings->endGroup();
 	//initialize the settings
 	
@@ -113,11 +126,19 @@ void TopModPreferences::readSettings(){
 	((MainWindow*)mParent)->getDLFLWindow()->setWarmLightColor(mWarmLightColor);
 	((MainWindow*)mParent)->getDLFLWindow()->getActive()->setWireframeColor(mWireframeColor);
 	((MainWindow*)mParent)->getDLFLWindow()->getActive()->setSilhouetteColor(mSilhouetteColor);
+	((MainWindow*)mParent)->getDLFLWindow()->getActive()->setSelectedVertexColor(mSelectedVertexColor);
+	((MainWindow*)mParent)->getDLFLWindow()->getActive()->setSelectedEdgeColor(mSelectedEdgeColor);
+	((MainWindow*)mParent)->getDLFLWindow()->getActive()->setSelectedFaceColor(mSelectedFaceColor);
 	// ((MainWindow*)mParent)->getDLFLWindow()->getActive()->setPatchBoundaryColor(mPatchBoundaryColor);
+	((MainWindow*)mParent)->getDLFLWindow()->getActive()->setVertexIDBgColor(mVertexIDBgColor);
+	((MainWindow*)mParent)->getDLFLWindow()->getActive()->setEdgeIDBgColor(mEdgeIDBgColor);
+	((MainWindow*)mParent)->getDLFLWindow()->getActive()->setFaceIDBgColor(mFaceIDBgColor);
 	
 	((MainWindow*)mParent)->getDLFLWindow()->getActive()->setWireframeThickness(mWireframeThickness);	
 	((MainWindow*)mParent)->getDLFLWindow()->getActive()->setSilhouetteThickness(mSilhouetteThickness);	
 	((MainWindow*)mParent)->getDLFLWindow()->getActive()->setVertexThickness(mVertexThickness);	
+	((MainWindow*)mParent)->getDLFLWindow()->getActive()->setSelectedVertexThickness(mSelectedVertexThickness);	
+	((MainWindow*)mParent)->getDLFLWindow()->getActive()->setSelectedEdgeThickness(mSelectedEdgeThickness);	
 
 }
 
@@ -169,20 +190,73 @@ void TopModPreferences::loadDefaults(){
 	p.setColor(QPalette::Button, mPatchBoundaryColor);
 	mPatchBoundaryColorButton->setPalette(p);
 	
+	mSelectedVertexColor.setRgb(0,127,0,127);
+	((MainWindow*)mParent)->getDLFLWindow()->getActive()->setSelectedVertexColor(mSelectedVertexColor);
+	p = mSelectedVertexColorButton->palette();
+	p.setColor(QPalette::Button, mSelectedVertexColor);
+	mSelectedVertexColorButton->setPalette(p);
+	
+	mSelectedEdgeColor.setRgb(127,0,0,127);
+	((MainWindow*)mParent)->getDLFLWindow()->getActive()->setSelectedEdgeColor(mSelectedEdgeColor);
+	p = mSelectedEdgeColorButton->palette();
+	p.setColor(QPalette::Button, mSelectedEdgeColor);
+	mSelectedEdgeColorButton->setPalette(p);
+	
+	mSelectedFaceColor.setRgb(0,0,127,127);
+	((MainWindow*)mParent)->getDLFLWindow()->getActive()->setSelectedFaceColor(mSelectedFaceColor);
+	p = mSelectedFaceColorButton->palette();
+	p.setColor(QPalette::Button, mSelectedFaceColor);
+	mSelectedFaceColorButton->setPalette(p);
+	
+	mVertexIDBgColor.setRgb(127,0,0,127);
+	((MainWindow*)mParent)->getDLFLWindow()->getActive()->setVertexIDBgColor(mVertexIDBgColor);
+	p = mVertexIDBgColorButton->palette();
+	p.setColor(QPalette::Button, mVertexIDBgColor);
+	mVertexIDBgColorButton->setPalette(p);
+	
+	mEdgeIDBgColor.setRgb(0,127,0,127);
+	((MainWindow*)mParent)->getDLFLWindow()->getActive()->setEdgeIDBgColor(mEdgeIDBgColor);
+	p = mEdgeIDBgColorButton->palette();
+	p.setColor(QPalette::Button, mEdgeIDBgColor);
+	mEdgeIDBgColorButton->setPalette(p);
+	
+	mFaceIDBgColor.setRgb(0,0,127,127);
+	((MainWindow*)mParent)->getDLFLWindow()->getActive()->setFaceIDBgColor(mFaceIDBgColor);
+	p = mFaceIDBgColorButton->palette();
+	p.setColor(QPalette::Button, mFaceIDBgColor);
+	mFaceIDBgColorButton->setPalette(p);
+	
 	mLightIntensity = 2.0;
-	// ((MainWindow*)mParent)->getDLFLWindow(), SLOT(setLightIntensity(double)));
 	mLightIntensitySpinBox->setValue(mLightIntensity); 
-	mWireframeThickness = 1.5;
-	// ((MainWindow*)mParent)->getDLFLWindow()->getActive()->setWireframeThickness(mWireframeThickness);
+	
+	mWireframeThickness = 0.1;
 	mWireframeThicknessSpinBox->setValue(mWireframeThickness);	
+	
 	mSilhouetteThickness = 6.0;
-	// ((MainWindow*)mParent)->getDLFLWindow()->getActive()->setSilhouetteThickness(mSilhouetteThickness);	
 	mSilhouetteThicknessSpinBox->setValue(mSilhouetteThickness);
+	
 	mVertexThickness = 5.0;
-	// ((MainWindow*)mParent)->getDLFLWindow()->getActive()->setVertexThickness(mVertexThickness);
 	mVertexThicknessSpinBox->setValue(mVertexThickness);	
 	
+	mSelectedVertexThickness = 8.0;
+	mVertexThicknessSpinBox->setValue(mSelectedVertexThickness);
 	
+	mSelectedEdgeThickness = 5.0;
+	mSelectedEdgeThicknessSpinBox->setValue(mSelectedVertexThickness);
+}
+
+void TopModPreferences::setupMain(){
+
+	QGridLayout *mMainLayout = new QGridLayout;
+	
+	mResetCameraButton = new QPushButton(tr("Reset"));
+	connect(mResetCameraButton,SIGNAL(clicked()),
+					((MainWindow*)mParent)->getDLFLWindow(), SLOT(switchPerspView()));
+	
+	mMainTab->setLayout(mMainLayout);
+	mMainLayout->addWidget(mResetCameraButton,0,0);
+	
+	// persp->switchTo(VPPersp);
 }
 
 void TopModPreferences::setupColors(){
@@ -282,7 +356,85 @@ void TopModPreferences::setupColors(){
 	connect(mPatchBoundaryColorButton,SIGNAL(clicked()),this,SLOT(setPatchBoundaryColor()));
 	mColorsLayout->addWidget(mPatchBoundaryColorLabel,6,0);
 	mColorsLayout->addWidget(mPatchBoundaryColorButton,6,1);
-
+	
+	//SelectedVertex  color
+	mSelectedVertexColorLabel = new QLabel(tr("Selected Vertex Color:"));
+	mSelectedVertexColorButton = new QPushButton(mColorsTab);
+	mSelectedVertexColorButton->setMaximumSize(QSize(100,25));
+	mSelectedVertexColorButton->setAutoFillBackground(true);
+	mSelectedVertexColorButton->setStyle(colorPickerStyle);
+	p = mSelectedVertexColorButton->palette();
+	p.setColor(mSelectedVertexColorButton->backgroundRole(), mSelectedVertexColor);
+	mSelectedVertexColorButton->setPalette(p);	
+	connect(mSelectedVertexColorButton,SIGNAL(clicked()),this,SLOT(setSelectedVertexColor()));
+	mColorsLayout->addWidget(mSelectedVertexColorLabel,7,0);
+	mColorsLayout->addWidget(mSelectedVertexColorButton,7,1);
+	
+	//SelectedEdge  color
+	mSelectedEdgeColorLabel = new QLabel(tr("Selected Edge Color:"));
+	mSelectedEdgeColorButton = new QPushButton(mColorsTab);
+	mSelectedEdgeColorButton->setMaximumSize(QSize(100,25));
+	mSelectedEdgeColorButton->setAutoFillBackground(true);
+	mSelectedEdgeColorButton->setStyle(colorPickerStyle);
+	p = mSelectedEdgeColorButton->palette();
+	p.setColor(mSelectedEdgeColorButton->backgroundRole(), mSelectedEdgeColor);
+	mSelectedEdgeColorButton->setPalette(p);	
+	connect(mSelectedEdgeColorButton,SIGNAL(clicked()),this,SLOT(setSelectedEdgeColor()));
+	mColorsLayout->addWidget(mSelectedEdgeColorLabel,8,0);
+	mColorsLayout->addWidget(mSelectedEdgeColorButton,8,1);
+	
+	//SelectedFace  color
+	mSelectedFaceColorLabel = new QLabel(tr("Selected Face Color:"));
+	mSelectedFaceColorButton = new QPushButton(mColorsTab);
+	mSelectedFaceColorButton->setMaximumSize(QSize(100,25));
+	mSelectedFaceColorButton->setAutoFillBackground(true);
+	mSelectedFaceColorButton->setStyle(colorPickerStyle);
+	p = mSelectedFaceColorButton->palette();
+	p.setColor(mSelectedFaceColorButton->backgroundRole(), mSelectedFaceColor);
+	mSelectedFaceColorButton->setPalette(p);	
+	connect(mSelectedFaceColorButton,SIGNAL(clicked()),this,SLOT(setSelectedFaceColor()));
+	mColorsLayout->addWidget(mSelectedFaceColorLabel,9,0);
+	mColorsLayout->addWidget(mSelectedFaceColorButton,9,1);
+	
+	//VertexIDBg  color
+	mVertexIDBgColorLabel = new QLabel(tr("Vertex ID Bg Color:"));
+	mVertexIDBgColorButton = new QPushButton(mColorsTab);
+	mVertexIDBgColorButton->setMaximumSize(QSize(100,25));
+	mVertexIDBgColorButton->setAutoFillBackground(true);
+	mVertexIDBgColorButton->setStyle(colorPickerStyle);
+	p = mVertexIDBgColorButton->palette();
+	p.setColor(mVertexIDBgColorButton->backgroundRole(), mVertexIDBgColor);
+	mVertexIDBgColorButton->setPalette(p);	
+	connect(mVertexIDBgColorButton,SIGNAL(clicked()),this,SLOT(setVertexIDBgColor()));
+	mColorsLayout->addWidget(mVertexIDBgColorLabel,10,0);
+	mColorsLayout->addWidget(mVertexIDBgColorButton,10,1);
+	
+	//FaceIDBg  color
+	mFaceIDBgColorLabel = new QLabel(tr("Face ID Bg Color:"));
+	mFaceIDBgColorButton = new QPushButton(mColorsTab);
+	mFaceIDBgColorButton->setMaximumSize(QSize(100,25));
+	mFaceIDBgColorButton->setAutoFillBackground(true);
+	mFaceIDBgColorButton->setStyle(colorPickerStyle);
+	p = mFaceIDBgColorButton->palette();
+	p.setColor(mFaceIDBgColorButton->backgroundRole(), mFaceIDBgColor);
+	mFaceIDBgColorButton->setPalette(p);	
+	connect(mFaceIDBgColorButton,SIGNAL(clicked()),this,SLOT(setFaceIDBgColor()));
+	mColorsLayout->addWidget(mFaceIDBgColorLabel,11,0);
+	mColorsLayout->addWidget(mFaceIDBgColorButton,11,1);
+	
+	//EdgeIDBg  color
+	mEdgeIDBgColorLabel = new QLabel(tr("Edge ID Bg Color:"));
+	mEdgeIDBgColorButton = new QPushButton(mColorsTab);
+	mEdgeIDBgColorButton->setMaximumSize(QSize(100,25));
+	mEdgeIDBgColorButton->setAutoFillBackground(true);
+	mEdgeIDBgColorButton->setStyle(colorPickerStyle);
+	p = mEdgeIDBgColorButton->palette();
+	p.setColor(mEdgeIDBgColorButton->backgroundRole(), mEdgeIDBgColor);
+	mEdgeIDBgColorButton->setPalette(p);	
+	connect(mEdgeIDBgColorButton,SIGNAL(clicked()),this,SLOT(setEdgeIDBgColor()));
+	mColorsLayout->addWidget(mEdgeIDBgColorLabel,12,0);
+	mColorsLayout->addWidget(mEdgeIDBgColorButton,12,1);
+	
 	//light intensity
 	mLightIntensityLabel = new QLabel(tr("Light Intensity:"));
 	mLightIntensitySpinBox = new QDoubleSpinBox;
@@ -304,7 +456,7 @@ void TopModPreferences::setupColors(){
 	mWireframeThicknessSpinBox = new QDoubleSpinBox;
 	mWireframeThicknessSpinBox->setRange(0.1, 30.0);
 	mWireframeThicknessSpinBox->setSingleStep(0.1);
-	mWireframeThicknessSpinBox->setValue(1.5);
+	mWireframeThicknessSpinBox->setValue(0.1);
 	mWireframeThicknessSpinBox->setDecimals(1);
 	mWireframeThicknessSpinBox->setMaximumSize(100,25);
 	connect(mWireframeThicknessSpinBox, SIGNAL(valueChanged(double)),
@@ -340,13 +492,40 @@ void TopModPreferences::setupColors(){
 	mSilhouetteThicknessSpinBox->setMaximumSize(100,25);
 	connect(mSilhouetteThicknessSpinBox, SIGNAL(valueChanged(double)),
           ((MainWindow*)mParent)->getDLFLWindow()->getActive(), SLOT(setSilhouetteThickness(double)));
-	
 	mColorsLayout->addWidget(mSilhouetteThicknessLabel,3,2);
 	mColorsLayout->addWidget(mSilhouetteThicknessSpinBox,3,3);
 	
+	//SelectedVertex thickness
+	mSelectedVertexThicknessLabel = new QLabel(tr("Selected Vertex Thickness:"));
+	mSelectedVertexThicknessSpinBox = new QDoubleSpinBox;
+	mSelectedVertexThicknessSpinBox = new QDoubleSpinBox;
+	mSelectedVertexThicknessSpinBox->setRange(0, 15.0);
+	mSelectedVertexThicknessSpinBox->setSingleStep(0.2);
+	mSelectedVertexThicknessSpinBox->setValue(8.0);
+	mSelectedVertexThicknessSpinBox->setDecimals(1);
+	mSelectedVertexThicknessSpinBox->setMaximumSize(100,25);
+	connect(mSelectedVertexThicknessSpinBox, SIGNAL(valueChanged(double)),
+          ((MainWindow*)mParent)->getDLFLWindow()->getActive(), SLOT(setSelectedVertexThickness(double)));
+	mColorsLayout->addWidget(mSelectedVertexThicknessLabel,4,2);
+	mColorsLayout->addWidget(mSelectedVertexThicknessSpinBox,4,3);
+
+	//SelectedEdge thickness
+	mSelectedEdgeThicknessLabel = new QLabel(tr("Selected Edge Thickness:"));
+	mSelectedEdgeThicknessSpinBox = new QDoubleSpinBox;
+	mSelectedEdgeThicknessSpinBox = new QDoubleSpinBox;
+	mSelectedEdgeThicknessSpinBox->setRange(0, 15.0);
+	mSelectedEdgeThicknessSpinBox->setSingleStep(0.2);
+	mSelectedEdgeThicknessSpinBox->setValue(5.0);
+	mSelectedEdgeThicknessSpinBox->setDecimals(1);
+	mSelectedEdgeThicknessSpinBox->setMaximumSize(100,25);
+	connect(mSelectedEdgeThicknessSpinBox, SIGNAL(valueChanged(double)),
+          ((MainWindow*)mParent)->getDLFLWindow()->getActive(), SLOT(setSelectedEdgeThickness(double)));
+	mColorsLayout->addWidget(mSelectedEdgeThicknessLabel,5,2);
+	mColorsLayout->addWidget(mSelectedEdgeThicknessSpinBox,5,3);
+
 	mResetColorsButton = new QPushButton(tr("Reset"));
 	connect(mResetColorsButton,SIGNAL(clicked()),this, SLOT(loadDefaults()));
-	mColorsLayout->addWidget(mResetColorsButton,6,3);
+	mColorsLayout->addWidget(mResetColorsButton,9,3);
 	
 	// mColorsLayout->addStretch(1);
 	mColorsTab->setLayout(mColorsLayout);	
@@ -356,8 +535,7 @@ void TopModPreferences::setupColors(){
 }
 
 void TopModPreferences::setViewportColor(){
-	QColorDialog::setCustomColor(1,mViewportColor.rgb());
-	mViewportColor = QColorDialog::getColor();
+	mViewportColor.setRgba(QColorDialog::getRgba(mViewportColor.rgba()));
 	if (mViewportColor.isValid()){
 		((MainWindow*)mParent)->getDLFLWindow()->getActive()->setViewportColor(mViewportColor);
 		QPalette p = mViewportColorButton->palette();
@@ -367,7 +545,7 @@ void TopModPreferences::setViewportColor(){
 }
 
 void TopModPreferences::setRenderColor(){
-	mRenderColor = QColorDialog::getRgba();
+	mRenderColor.setRgba(QColorDialog::getRgba(mRenderColor.rgba()));
 	if (mRenderColor.isValid()){
 		((MainWindow*)mParent)->getDLFLWindow()->getActive()->setRenderColor(mRenderColor);
 		QPalette p = mRenderColorButton->palette();
@@ -377,7 +555,7 @@ void TopModPreferences::setRenderColor(){
 }
 
 void TopModPreferences::setCoolLightColor(){
-	mCoolLightColor = QColorDialog::getRgba();
+	mCoolLightColor.setRgba(QColorDialog::getRgba(mCoolLightColor.rgba()));
 	if (mCoolLightColor.isValid()){
 		((MainWindow*)mParent)->getDLFLWindow()->setCoolLightColor(mCoolLightColor);
 		QPalette p = mCoolLightColorButton->palette();
@@ -387,7 +565,7 @@ void TopModPreferences::setCoolLightColor(){
 }
 
 void TopModPreferences::setWarmLightColor(){
-	mWarmLightColor = QColorDialog::getRgba();
+	mWarmLightColor.setRgba(QColorDialog::getRgba(mWarmLightColor.rgba()));
 	if (mWarmLightColor.isValid()){
 		((MainWindow*)mParent)->getDLFLWindow()->setWarmLightColor(mWarmLightColor);
 		QPalette p = mWarmLightColorButton->palette();
@@ -397,7 +575,7 @@ void TopModPreferences::setWarmLightColor(){
 }
 
 void TopModPreferences::setWireframeColor(){
-	mWireframeColor = QColorDialog::getRgba();
+	mWireframeColor.setRgba(QColorDialog::getRgba(mWireframeColor.rgba()));
 	if (mWireframeColor.isValid()){
 		((MainWindow*)mParent)->getDLFLWindow()->getActive()->setWireframeColor(mWireframeColor);
 		QPalette p = mWireframeColorButton->palette();
@@ -407,7 +585,7 @@ void TopModPreferences::setWireframeColor(){
 }
 
 void TopModPreferences::setSilhouetteColor(){
-	mSilhouetteColor = QColorDialog::getRgba();
+	mSilhouetteColor.setRgba(QColorDialog::getRgba(mSilhouetteColor.rgba()));
 	if (mSilhouetteColor.isValid()){
 		((MainWindow*)mParent)->getDLFLWindow()->getActive()->setSilhouetteColor(mSilhouetteColor);
 		QPalette p = mSilhouetteColorButton->palette();
@@ -417,11 +595,71 @@ void TopModPreferences::setSilhouetteColor(){
 }
 
 void TopModPreferences::setPatchBoundaryColor(){
-	mPatchBoundaryColor = QColorDialog::getRgba();
+	mPatchBoundaryColor.setRgba(QColorDialog::getRgba(mPatchBoundaryColor.rgba()));
 	if (mPatchBoundaryColor.isValid()){
 		// ((MainWindow*)mParent)->getDLFLWindow()->getActive()->setPatchBoundaryColor(mPatchBoundaryColor);
 		QPalette p = mPatchBoundaryColorButton->palette();
 		p.setColor(QPalette::Button, mPatchBoundaryColor);
 		mPatchBoundaryColorButton->setPalette(p);
+	}
+}
+
+void TopModPreferences::setSelectedVertexColor(){
+	mSelectedVertexColor.setRgba(QColorDialog::getRgba(mSelectedVertexColor.rgba()));
+	if (mSelectedVertexColor.isValid()){
+		((MainWindow*)mParent)->getDLFLWindow()->getActive()->setSelectedVertexColor(mSelectedVertexColor);
+		QPalette p = mSelectedVertexColorButton->palette();
+		p.setColor(QPalette::Button, mSelectedVertexColor);
+		mSelectedVertexColorButton->setPalette(p);
+	}
+}
+
+void TopModPreferences::setSelectedEdgeColor(){
+	mSelectedEdgeColor.setRgba(QColorDialog::getRgba(mSelectedEdgeColor.rgba()));
+	if (mSelectedEdgeColor.isValid()){
+		((MainWindow*)mParent)->getDLFLWindow()->getActive()->setSelectedEdgeColor(mSelectedEdgeColor);
+		QPalette p = mSelectedEdgeColorButton->palette();
+		p.setColor(QPalette::Button, mSelectedEdgeColor);
+		mSelectedEdgeColorButton->setPalette(p);
+	}
+}
+
+void TopModPreferences::setSelectedFaceColor(){
+	mSelectedFaceColor.setRgba(QColorDialog::getRgba(mSelectedFaceColor.rgba()));
+	if (mSelectedFaceColor.isValid()){
+		((MainWindow*)mParent)->getDLFLWindow()->getActive()->setSelectedFaceColor(mSelectedFaceColor);
+		QPalette p = mSelectedFaceColorButton->palette();
+		p.setColor(QPalette::Button, mSelectedFaceColor);
+		mSelectedFaceColorButton->setPalette(p);
+	}
+}
+
+void TopModPreferences::setFaceIDBgColor(){
+	mFaceIDBgColor.setRgba(QColorDialog::getRgba(mFaceIDBgColor.rgba()));
+	if (mFaceIDBgColor.isValid()){
+		((MainWindow*)mParent)->getDLFLWindow()->getActive()->setFaceIDBgColor(mFaceIDBgColor);
+		QPalette p = mFaceIDBgColorButton->palette();
+		p.setColor(QPalette::Button, mFaceIDBgColor);
+		mFaceIDBgColorButton->setPalette(p);
+	}
+}
+
+void TopModPreferences::setVertexIDBgColor(){
+	mVertexIDBgColor.setRgba(QColorDialog::getRgba(mVertexIDBgColor.rgba()));
+	if (mVertexIDBgColor.isValid()){
+		((MainWindow*)mParent)->getDLFLWindow()->getActive()->setVertexIDBgColor(mVertexIDBgColor);
+		QPalette p = mVertexIDBgColorButton->palette();
+		p.setColor(QPalette::Button, mVertexIDBgColor);
+		mVertexIDBgColorButton->setPalette(p);
+	}
+}
+
+void TopModPreferences::setEdgeIDBgColor(){
+	mEdgeIDBgColor.setRgba(QColorDialog::getRgba(mEdgeIDBgColor.rgba()));
+	if (mEdgeIDBgColor.isValid()){
+		((MainWindow*)mParent)->getDLFLWindow()->getActive()->setEdgeIDBgColor(mEdgeIDBgColor);
+		QPalette p = mEdgeIDBgColorButton->palette();
+		p.setColor(QPalette::Button, mEdgeIDBgColor);
+		mEdgeIDBgColorButton->setPalette(p);
 	}
 }

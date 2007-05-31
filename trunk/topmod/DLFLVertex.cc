@@ -74,6 +74,46 @@ void DLFLVertex :: setColor(const RGBColor& color)
      }
 }
 
+
+//    // Set the normals for all FaceVertexes referring to this vertex
+// void DLFLVertex :: setNormal(const Vector3d& normal)
+// {
+//   DLFLFaceVertexPtrList :: iterator first, last;
+// 
+//   first = fvpList.begin(); last = fvpList.end();
+//   while ( first != last )
+//      {
+//        (*first)->normal = normal;
+//        ++first;
+//      }
+// }
+
+   // Set the normals for all FaceVertexes referring to this vertex
+Vector3d DLFLVertex :: computeNormal(bool set)
+{
+  DLFLFaceVertexPtrList :: iterator first, last;
+  Vector3d normal;
+  int i=0;
+
+  first = fvpList.begin(); last = fvpList.end();
+  while ( first != last )
+     {
+       normal += (*first)->computeNormal();
+       ++first; ++i;
+     }
+  normal /= i;
+  if ( set )
+     {
+       first = fvpList.begin();
+       while ( first != last )
+          {
+            (*first)->normal = normal;
+            ++first;
+          }
+     }
+  return normal;
+}
+
    // Compute the normals for all FaceVertexes referring to this vertex
    // Update the vertex normal and return it
 Vector3d DLFLVertex :: updateNormal(bool recompute)

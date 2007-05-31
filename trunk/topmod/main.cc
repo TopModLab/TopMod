@@ -16,6 +16,15 @@
 #include "MainWindow.hh"
 #include "TopMod.hh"
 
+#define max(a, b)   (((a) < (b)) ? (b) : (a))
+#define min(x1,x2) ((x1)<(x2)?(x1):(x2))
+
+// #ifdef TOPMOD_VERSION
+// TOPMOD_VERSION 2.1
+// #endif
+
+Global G;
+
 
 #ifdef WITH_SPACENAV
 #ifdef __APPLE__

@@ -525,11 +525,22 @@ RGBColor computeLighting(const Vector3d p, const Vector3d n, const RGBColor& bas
 {
   RGBColor color;
 
-  color = Kd * lightptr->illuminate(p,n);
+  color = Kd * lightptr->illuminate(p,n) ;
   color += (1.0 - Kd) * basecolor;
 
   return color;
 }
+
+// vector3 V = a_Ray.GetDirection();
+// vector3 R = L - 2.0f * DOT( L, N ) * N;
+// 
+// float dot = DOT( V, R );
+// if (dot > 0)
+// {
+// 	float spec = powf( dot, 20 ) * prim->GetMaterial()->GetSpecular() * shade;
+// 	// add specular component to ray color
+// 	a_Acc += spec * light->GetMaterial()->GetColor();
+// }
 
 // Find the intersection point between two coplanar lines specified by their end points
 Vector3d intersectCoplanarLines(const Vector3d& p00, const Vector3d& p01,

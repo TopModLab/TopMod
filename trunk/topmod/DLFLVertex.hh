@@ -29,8 +29,9 @@ class DLFLVertex
 
      Vector3d              coords;                     // Coordinates of vertex
      unsigned long         flags;                      // Variable for general use to store flags, etc.
+    uint ismarked; //ozgur
      uint		   CHullIndex;		       // Index used for convex hull - Esan
-
+		
   protected :
 
      uint                  uID;                        // ID for this DLFLVertex
@@ -47,6 +48,7 @@ class DLFLVertex
        {
          uID = DLFLVertex :: newID();
          index = 0;
+    ismarked = 0; // ozgur
        }
 
   public :
@@ -255,6 +257,10 @@ class DLFLVertex
         // Update the vertex normal. Returns the vertex normal
      Vector3d updateNormal(bool recompute=true);
 
+	        // Compute normals for all FaceVertexes referring to this vertex, average them
+	        // and set their normals to be the average if flag is true. Returns the normal
+	   Vector3d computeNormal(bool set=false);
+	
         // Retained for backward compatibility
         // Same as updateNormal but doesn't recompute the corner normals
      Vector3d averageNormal(void)

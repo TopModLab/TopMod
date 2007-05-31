@@ -161,6 +161,10 @@ class Vector3d : public BaseObject
          arr[0] = elem[0]; arr[1] = elem[1]; arr[2] = elem[2];
        }
 
+			double lengthsqr(){
+				return elem[0]*elem[0] + elem[1]*elem[1] + elem[2]*elem[2];
+			}
+
 #ifndef __GNUG__     
         /* GCC 3.0 and later have problems with having this and the [] operator */
         // Pointer cast operator

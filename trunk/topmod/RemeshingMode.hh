@@ -222,7 +222,7 @@ public slots:
 	void triggerDualPentagonPreserving();
 
 	void triggerDualLoopStyleRemeshingSix();
-	void triggerLoopStyleRemeshingSixWidget();
+	void triggerLoopStyleRemeshingSix();
 
 	void triggerFractal();
 	void triggerDoubleStellateMisc();

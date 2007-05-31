@@ -261,6 +261,14 @@ private:
 		// void setMode(Mode m){ mode = m; }
 public slots:
 
+		void switchPerspView();
+		void switchTopView();
+		void switchBottomView();
+		void switchRightView();
+		void switchLeftView();
+		void switchFrontView();
+		void switchBackView();
+		
 		// Read the DLFL object from a file
 		void readObject(const char * filename);
 		void readObjectQFile(QString file);

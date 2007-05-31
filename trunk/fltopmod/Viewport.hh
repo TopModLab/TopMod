@@ -275,25 +275,19 @@ class Viewport
             }
        }
 
-     virtual bool send_to_current(VPMouseEvent event, int event_x, int event_y)
-       {
-            // Send the given event to the subroutine handling the current transformation
-         bool handled = true;
-         switch ( currenttr )
-            {
-              case VPPan :
-                           handle_pan(event,event_x,event_y); break;
-              case VPZoom :
-                           handle_zoom(event,event_x,event_y); break;
-              case VPRotate :
-                           handle_rotate(event,event_x,event_y); break;
-              case VPDolly :
-                           handle_dolly(event,event_x,event_y); break;
-              default :
-                           handled = false;
-            }
-         return handled;
-       }
+			virtual bool send_to_current(VPMouseEvent event, int event_x, int event_y) {
+				// Send the given event to the subroutine handling the current transformation
+				bool handled = true;
+				switch ( currenttr ) {
+					case VPPan : 		handle_pan(event,event_x,event_y); break;
+					case VPZoom : 	handle_zoom(event,event_x,event_y); break;
+					case VPRotate : handle_rotate(event,event_x,event_y); break;
+					case VPDolly : 	handle_dolly(event,event_x,event_y); break;
+					case VPNone :
+					default : 			handled = false;
+				};
+				return handled;
+			}
 
      void apply_transform(void) const                  // Apply the transformation
        {
