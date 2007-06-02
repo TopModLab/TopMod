@@ -59,9 +59,10 @@ public :
 
 public slots :
   void toggleFullScreen( );
-	void setSilhouetteThickness(double t);
-	void setWireframeThickness(double t);
-	void setVertexThickness(double t);
+  void setSilhouetteThickness(double t);
+  void setWireframeThickness(double t);
+  void setVertexThickness(double t);
+  void update() { repaint(); };
 	void setSelectedVertexThickness(double t);
 	void setSelectedEdgeThickness(double t);
 	void switchTo(VPView view);

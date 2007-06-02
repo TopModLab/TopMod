@@ -186,7 +186,6 @@ void clear(DLFLMaterialPtrList& mplist);
 
 #endif /* #ifndef _DLFL_COMMON_HH_ */
 
-
 /*
   $Log: DLFLCommon.hh,v $
   Revision 4.4  2004/01/20 22:16:36  vinod

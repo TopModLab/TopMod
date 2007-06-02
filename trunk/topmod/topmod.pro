@@ -9,7 +9,7 @@ CONFIG += qt debug
 # exclude verse python or spacenav drivers
 # or include them with CONFIG += 
 CONFIG -=  WITH_PYTHON WITH_SPACENAV WITH_VERSE
-CONFIG += WITH_PYTHON WITH_VERSE
+CONFIG += WITH_PYTHON 
 DEFINES += TOPMOD_VERSION
 
 TEMPLATE = app

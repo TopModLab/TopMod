@@ -1806,6 +1806,10 @@ void DLFLWindow::readObjectQFile(QString filename) {
 	else if ( filename.indexOf(".OBJ") == filename.length()-4 || filename.indexOf(".obj") == filename.length()-4 )
 		object.readObject(filestring);
 	file.close();
+
+  DLFLObjectPtr obj = &object;
+  if( obj )
+    emit loadedObject(obj,filename);
 }
 
 	// Read the DLFL object from a file - use alternate OBJ reader for OBJ files
@@ -1867,25 +1871,31 @@ void DLFLWindow::writeObjectDLFL(const char * filename) {
 
 // File handling
 void DLFLWindow::openFile(void) {
-	QString fileName = QFileDialog::getOpenFileName(this,
-		tr("Open File..."),
-		"$HOME",
-		tr("All Supported Files (*.obj *.dlfl);;Wavefront Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"));
-	if (!fileName.isEmpty()){
-		if (!curFile.isEmpty()){
-			undoPush();
-			setModified(false);
-		}
-		QByteArray ba = fileName.toLatin1();
-		const char *filename = ba.data();
-		mWasPrimitive = false;
-		mIsPrimitive = false;
-		readObject(filename);
-		recomputePatches();
-		recomputeNormals();
-		setCurrentFile(fileName);
-		active->redraw();
-	}
+  QString fileName = QFileDialog::getOpenFileName(this,
+						  tr("Open File..."),
+						  "$HOME",
+						  tr("All Supported Files (*.obj *.dlfl);;Wavefront Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"));
+  if (!fileName.isEmpty()){
+    if (!curFile.isEmpty()){
+      undoPush();
+      setModified(false);
+    }
+    QByteArray ba = fileName.toLatin1();
+    const char *filename = ba.data();
+    mWasPrimitive = false;
+    mIsPrimitive = false;
+    readObject(filename);
+#ifdef WITH_PYTHON
+    // Emit and send to python script editor
+    DLFLObjectPtr obj = &object;
+    if( obj )
+      emit loadedObject(obj,fileName);
+#endif
+    recomputePatches();
+    recomputeNormals();
+    setCurrentFile(fileName);
+    active->redraw();
+  }
 }
 
 void DLFLWindow::openFile(QString fileName){
@@ -1902,6 +1912,9 @@ void DLFLWindow::openFile(QString fileName){
 	}
 
 	readObject(filename);
+	DLFLObjectPtr obj = &object;
+	if( obj )
+	  emit loadedObject(obj,fileName);
 	recomputePatches();
 	recomputeNormals();
 	setCurrentFile(fileName);

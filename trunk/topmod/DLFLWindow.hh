@@ -259,8 +259,11 @@ private:
 		void mouseMoveEvent(QMouseEvent *event);
 		// Mode getMode(){ return mode; }
 		// void setMode(Mode m){ mode = m; }
+signals:
+#ifdef WITH_PYTHON
+  void loadedObject( DLFLObject *obj, QString fileName );
+#endif
 public slots:
-
 		void switchPerspView();
 		void switchTopView();
 		void switchBottomView();
@@ -341,6 +344,13 @@ public slots:
 		void freezeTransforms(void);
 
 		// Global operations (don't require selection)
+#ifdef WITH_PYTHON
+  // run after an operation is done via python
+  void recomputeAll() { 
+    recomputePatches();
+    recomputeNormals();
+  };
+#endif
 		void recomputeNormals(void);
 		void recomputeLighting(void);
 		void recomputePatches(void);

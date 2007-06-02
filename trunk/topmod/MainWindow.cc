@@ -59,8 +59,13 @@ MainWindow::MainWindow(char *filename) {
 		addDockWidget(Qt::BottomDockWidgetArea, mScriptEditorDockWidget);
 		mScriptEditorDockWidget->hide();
 		mScriptEditorDockWidget->setMaximumHeight(200);
+		connect( mainWindow, SIGNAL(loadedObject(DLFLObject*,QString)), 
+			 mScriptEditor, SLOT(loadObject(DLFLObject*,QString)) );
+		//connect( mScriptEditor, SIGNAL(cmdExecuted()), mainWindow, SLOT(recomputeAll()) );
+		//connect( mScriptEditor, SIGNAL(cmdExecuted()), mainWindow->getActive(), SLOT(update()) );
 	#endif
 	
+
 	#ifdef WITH_VERSE
 		//verse script box
 		mVerseDialog = VerseTopMod::Instance();
@@ -829,7 +834,7 @@ bool MainWindow::maybeSave() {
 }
 
 void MainWindow::loadFile(QString fileName) {
-	openFile(fileName);
+  openFile(fileName);
   mainWindow->setCurrentFile(fileName);
   statusBar()->showMessage(tr("File loaded"), 2000);
 }
@@ -856,7 +861,7 @@ void MainWindow::open() {
 }
 
 void MainWindow::openFile(QString fileName) {
-	mainWindow->openFile(fileName);
+  mainWindow->openFile(fileName);
 }
 
 bool MainWindow::save() {

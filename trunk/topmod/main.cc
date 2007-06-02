@@ -23,7 +23,7 @@
 // TOPMOD_VERSION 2.1
 // #endif
 
-Global G;
+//Global G;
 
 
 #ifdef WITH_SPACENAV

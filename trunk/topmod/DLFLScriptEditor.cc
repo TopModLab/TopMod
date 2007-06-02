@@ -2,7 +2,6 @@
 
 #include "DLFLScriptEditor.hh"
 
-
 #include <iostream>
 #include <QtGui>
 
@@ -81,6 +80,7 @@ void DLFLScriptEditor::executeCommand( )
 	  Py_DECREF( resultObject );
 	}
 	Py_DECREF( rstring );
+	emit cmdExecuted();
       } else {
 	//PyErr_Print();
 	PyObject *object, *data, *traceback;
@@ -122,11 +122,22 @@ void DLFLScriptEditor::PyInit( )
 
   if( Py_IsInitialized() ) {
     PyObject *dlfl_module = PyImport_ImportModule("dlfl");
+    PyObject* dlfl_dict = PyModule_GetDict( dlfl_module );
+
+    if( dlfl_module != NULL && dlfl_dict != NULL ) {
+      PyObject *c_api_object = PyDict_GetItemString( dlfl_dict, "_C_API" );
+      if (PyCObject_Check(c_api_object)) {
+	PyDLFL_API = (void **)PyCObject_AsVoidPtr(c_api_object);
+      }
+
+      PyDLFL_UsingGUI(true);
+    }
+
     const char *version = Py_GetVersion( );
     QString qversion(version);
     mTextEdit->append("Python " + qversion + "\n" );
     if( dlfl_module != NULL )
-      mTextEdit->append("dlfl> import dlfl\n");
+      mTextEdit->append("dlfl> from dlfl import *\n");
     else {
       mTextEdit->append("no dlfl python module found");
       mTextEdit->insertPlainText("\n");
@@ -147,6 +158,12 @@ void DLFLScriptEditor::keyPressEvent( QKeyEvent * e ) {
   }
 
   int y = x;
+}
+
+void DLFLScriptEditor::loadObject( DLFLObject *obj, QString fileName ) {
+  PyDLFL_PassObject( obj );
+  QString command = tr("load(\"")+fileName+tr("\")");
+  mTextEdit->insertPlainText( "\ndlfl> " + command );
 }
 
 #endif
