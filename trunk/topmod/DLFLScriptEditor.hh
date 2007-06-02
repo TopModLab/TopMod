@@ -31,20 +31,14 @@ public:
   ~DLFLScriptEditor( );
 signals :
   void cmdExecuted( );
-  //void findNext( const QString &str, Qt::CaseSensitivity cs );
-  //void findPrevious( const QString &str, Qt::CaseSensitivity cs );
-  // public slots :
-  // void toggleShowHide( );
 private slots :
   void executeCommand( );
-  //void readStandardOut( );
   void keyPressEvent ( QKeyEvent * e );
 public slots :
   void loadObject( DLFLObject* obj, QString fileName );
 private :
   QLineEdit *mLineEdit;
   QTextEdit *mTextEdit;
-  //QProcess  *mShell;
 
   QPushButton *mHideButton;
 

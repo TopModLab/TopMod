@@ -2,13 +2,9 @@
 
 #include "DLFLScriptEditor.hh"
 
-#include <iostream>
 #include <QtGui>
 
 DLFLScriptEditor::DLFLScriptEditor( QWidget *parent, Qt::WindowFlags f ) : QWidget(parent,f) {
-  // mHideButton = new QPushButton( QIcon(":/images/hide_scripteditor.png"), tr(""), this );
-  // mHideButton->setToolTip(tr("Hide Script Editor"));
-  // connect(mHideButton, SIGNAL(clicked()), this, SLOT(toggleShowHide()));
 
   mTextEdit = new QTextEdit;    
   mLineEdit = new QLineEdit;
@@ -21,22 +17,9 @@ DLFLScriptEditor::DLFLScriptEditor( QWidget *parent, Qt::WindowFlags f ) : QWidg
   mLineEdit->setPalette( whiteOnBlack );
 
   QVBoxLayout *mainLayout = new QVBoxLayout;
-  // mainLayout->addWidget(mHideButton);
   mainLayout->addWidget(mTextEdit);
   mainLayout->addWidget(mLineEdit);
   setLayout(mainLayout);
-    
-  //mShell = new QProcess();
-  //processChannelMode = QProcess::SeparateChannels;
-  //mShell->setProcessChannelMode(QProcess::MergedChannels);
-  // QObject::connect(mShell, SIGNAL(readyRead()), this, SLOT(readStandardOut()));
-  //mShell->start("sh", QStringList() << "-i", QIODevice::ReadWrite);
-  
-  //setWindowTitle(tr("Script Editor"));
-  //QSize size( 700, 200 );
-  //size = size.expandedTo(minimumSizeHint());
-  //setMaximumSize ( size );
-  //resize(size);
 
   PyInit( );
 }
@@ -46,18 +29,8 @@ DLFLScriptEditor::~DLFLScriptEditor( ) {
     Py_Finalize( );
 }
 
-// void DLFLScriptEditor::toggleShowHide( )
-// {
-//   if( isVisible( ) )
-//     hide( );
-//   else {
-//     show( );
-//     mLineEdit->setFocus();
-//   }
-// }
 
-void DLFLScriptEditor::executeCommand( )
-{
+void DLFLScriptEditor::executeCommand( ) {
   QString command = mLineEdit->text();
   QString result;
 
@@ -96,7 +69,6 @@ void DLFLScriptEditor::executeCommand( )
   }
 
   const QByteArray cmd(command.toLatin1());
-  //mShell->write(cmd);
   mTextEdit->insertPlainText( "\ndlfl> " + command );
   if( !result.isEmpty() )
   mTextEdit->insertPlainText( "\n"+result );
@@ -106,33 +78,25 @@ void DLFLScriptEditor::executeCommand( )
   vBar->triggerAction(QAbstractSlider::SliderToMaximum);
 }
 
-/*void DLFLScriptEditor::readStandardOut( )
-{
-  mTextEdit->append(mShell->readAll());    
-}
-*/
-
-void DLFLScriptEditor::PyInit( ) 
-{
-  //#if defined(__APPLE__) && PY_MAJOR_VERSION==2 && PY_MINOR_VERSION<=1
-  //PyMac_Initialize( );
-  //#else
+void DLFLScriptEditor::PyInit( ) {
   Py_Initialize( );
-  //#endif
 
   if( Py_IsInitialized() ) {
+    // Import the DLFL Module
     PyObject *dlfl_module = PyImport_ImportModule("dlfl");
     PyObject* dlfl_dict = PyModule_GetDict( dlfl_module );
 
     if( dlfl_module != NULL && dlfl_dict != NULL ) {
+      // Setup the Python DLFL Module C API
       PyObject *c_api_object = PyDict_GetItemString( dlfl_dict, "_C_API" );
       if (PyCObject_Check(c_api_object)) {
 	PyDLFL_API = (void **)PyCObject_AsVoidPtr(c_api_object);
       }
-
+      // Tell the module we're working inside the GUI
       PyDLFL_UsingGUI(true);
     }
 
+    // Print out the standard version info and such
     const char *version = Py_GetVersion( );
     QString qversion(version);
     mTextEdit->append("Python " + qversion + "\n" );
@@ -146,22 +110,10 @@ void DLFLScriptEditor::PyInit( )
   }
 }
 
-void DLFLScriptEditor::keyPressEvent( QKeyEvent * e ) {
-  int x = 0;
-  switch( e->key() ) {
-  case Qt::Key_Up :
-    x = 1;
-    break;
-  case Qt::Key_Down :
-    x = 2;
-    break;
-  }
-
-  int y = x;
-}
-
+// A slot to pass the GUI object pointer to the DLFLModule
 void DLFLScriptEditor::loadObject( DLFLObject *obj, QString fileName ) {
   PyDLFL_PassObject( obj );
+  // Print out the equivalent command to loading an object
   QString command = tr("load(\"")+fileName+tr("\")");
   mTextEdit->insertPlainText( "\ndlfl> " + command );
 }
