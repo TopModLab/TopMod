@@ -1810,9 +1810,11 @@ void DLFLWindow::readObjectQFile(QString filename) {
 		object.readObject(filestring);
 	file.close();
 
+#ifdef WITH_PYTHON
   DLFLObjectPtr obj = &object;
   if( obj )
     emit loadedObject(obj,filename);
+#endif
 }
 
 	// Read the DLFL object from a file - use alternate OBJ reader for OBJ files
@@ -1905,7 +1907,7 @@ void DLFLWindow::openFile(QString fileName){
 	QFile file(fileName);
 	file.open(QIODevice::ReadOnly);
 	QFileInfo info(file);
-	QByteArray ba = 	info.absoluteFilePath().toLatin1();
+	QByteArray ba = info.absoluteFilePath().toLatin1();
 	const char *filename = ba.data();
 	mWasPrimitive = false;
 	mIsPrimitive = false;
@@ -1915,9 +1917,11 @@ void DLFLWindow::openFile(QString fileName){
 	}
 
 	readObject(filename);
+#ifdef WITH_PYTHON
 	DLFLObjectPtr obj = &object;
 	if( obj )
 	  emit loadedObject(obj,fileName);
+#endif
 	recomputePatches();
 	recomputeNormals();
 	setCurrentFile(fileName);
