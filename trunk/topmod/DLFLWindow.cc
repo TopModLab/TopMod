@@ -1798,7 +1798,6 @@ void DLFLWindow::readObject(const char * filename) {
 void DLFLWindow::readObjectQFile(QString filename) {
 	QFile file(filename);
 	file.open(QIODevice::ReadOnly);
-	// QMessageBox::about(this, tr("asdf"),tr("%1").arg(file.exists()));
 
 	QByteArray ba = file.readAll();
 	const char *filecontents = ba.data();
