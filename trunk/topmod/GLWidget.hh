@@ -332,6 +332,17 @@ public :
 	static void clearSelectedFaces(void) {
 	    sel_fptr_array.clear();
 	  }
+	
+	static void clearSelectedFace(DLFLFacePtr fp){
+		vector<DLFLFacePtr>::iterator fiterator;
+		for(fiterator = sel_fptr_array.begin(); fiterator != sel_fptr_array.end(); fiterator++) {
+			if (fp == *fiterator){
+				delete fp;
+				sel_fptr_array.erase(fiterator);
+				return;
+			}
+		}
+	}
 
 	static void clearSelectedFaceVertices(void) {
 	    sel_fvptr_array.clear();

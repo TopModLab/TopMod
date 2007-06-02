@@ -23,8 +23,9 @@
 // TOPMOD_VERSION 2.1
 // #endif
 
-//Global G;
-
+#ifdef WITH_VERSE
+Global G;
+#endif
 
 #ifdef WITH_SPACENAV
 #ifdef __APPLE__

@@ -260,7 +260,7 @@ void DLFLWindow::doSelection(int x, int y)
 		if ( !GLWidget::isSelected(sfptr) )
 			GLWidget::setSelectedFace(num_sel_faces,sfptr);
 		else {
-			GLWidget::clearSelectedFace(num_sel_faces,sfptr);
+			GLWidget::clearSelectedFace(sfptr);
 			num_sel_faces--;
 		}
 		break;
