@@ -66,6 +66,11 @@ public slots :
 	void setSelectedVertexThickness(double t);
 	void setSelectedEdgeThickness(double t);
 	void switchTo(VPView view);
+	
+	void toggleHUD() {
+		mShowHUD = !mShowHUD;
+		this->repaint();
+	}
 
 protected :
   
@@ -76,6 +81,7 @@ protected :
 	void drawText( int width, int height );
   void drawIDs( QPainter *painter, const GLdouble *model, const GLdouble *proj, const GLint	*view);
 	void drawSelectedIDs( QPainter *painter, const GLdouble *model, const GLdouble *proj, const GLint	*view);
+	void drawHUD(QPainter *painter);
 	void resizeGL( int width, int height );
 	
 	void setupViewport(int width, int height);
@@ -91,6 +97,7 @@ protected :
   bool mShowVertexIDs;
   bool mShowEdgeIDs;
 	bool mShowFaceVertexIDs;
+	bool mShowHUD;
 
 	   // Selection lists - these are shared by all viewports
 	static DLFLVertexPtrArray sel_vptr_array; // List of selected DLFLVertex pointers
@@ -417,6 +424,8 @@ public :
     mShowVertexIDs = !mShowVertexIDs;
     this->repaint();
   }
+
+
 
 	   // Toggle object orientation
 	void toggleObjectOrientation(void) {

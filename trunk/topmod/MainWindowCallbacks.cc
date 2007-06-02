@@ -214,6 +214,10 @@ void MainWindow::select_face() {
   mainWindow->setMode(DLFLWindow::SelectFace);
 }
 
+void MainWindow::select_multiple_faces() {
+  mainWindow->setMode(DLFLWindow::MultiSelectFace);
+}
+
 void MainWindow::select_edge() {
   mainWindow->setMode(DLFLWindow::SelectEdge);
 }

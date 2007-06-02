@@ -68,7 +68,7 @@ MainWindow::MainWindow(char *filename) {
 
 	#ifdef WITH_VERSE
 		//verse script box
-		mVerseDialog = VerseTopMod::Instance();
+		mVerseDialog = VerseTopMod::Instance(this);
 		mVerseDialogDockWidget = new QDockWidget(tr("Verse-TopMod"), this);
 		mVerseDialogDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
 		mVerseDialogDockWidget->setWidget(mVerseDialog);
@@ -286,6 +286,12 @@ void MainWindow::createActions() {
 	// showGridAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(showGridAct, SIGNAL(triggered()), mainWindow, SLOT(toggleGrid()));
 
+	showHUDAct = new QAction(tr("Show &Heads Up Display"), this);
+	showHUDAct->setCheckable(true);
+	sm->registerAction(showHUDAct, "Display Menu", "H");
+	showHUDAct->setStatusTip(tr("Show the Heads Up Display"));
+	connect(showHUDAct, SIGNAL(triggered()), mainWindow->getActive(), SLOT(toggleHUD()));
+
 	#ifdef WITH_PYTHON
 		showScriptEditorAct = new QAction(tr("Show Script &Editor"), this);
 		showScriptEditorAct->setCheckable(true);
@@ -444,6 +450,10 @@ void MainWindow::createActions() {
 	// selectFaceAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(selectFaceAct, SIGNAL(triggered()), this, SLOT(select_face() ) );
 	
+	selectMultipleFacesAct = new QAction(tr("Select &Multiple Faces"), this);
+	sm->registerAction(selectMultipleFacesAct, "Settings", "SHIFT+G");
+	connect( selectMultipleFacesAct , SIGNAL( triggered() ), this, SLOT( select_multiple_faces() ) );
+
 	selectEdgeAct = new QAction(tr("Select &Edge"), this);
 	sm->registerAction(selectEdgeAct, "Settings", "SHIFT+E");
 	// selectCornerAct->setStatusTip(tr("Copy the current selection's contents to the "));
@@ -454,11 +464,11 @@ void MainWindow::createActions() {
 	// selectCornerAct->setStatusTip(tr("Copy the current selection's contents to the "));
 	connect( selectCornerAct , SIGNAL( triggered() ), this, SLOT( select_corner() ) );
 	
-	exitSelectionModeAct = new QAction(tr("Exit Selection Mode"), this);
+	exitSelectionModeAct = new QAction(tr("E&xit Selection Mode"), this);
 	sm->registerAction(exitSelectionModeAct, "Settings", "SHIFT+X");
 	connect( exitSelectionModeAct , SIGNAL( triggered() ), this, SLOT( exit_selection_mode() ) );
 
-	clearSelectedModeAct = new QAction(tr("Clear Selected"), this);
+	clearSelectedModeAct = new QAction(tr("&Clear Selected"), this);
 	sm->registerAction(clearSelectedModeAct, "Settings", "Escape");
 	connect( clearSelectedModeAct , SIGNAL( triggered() ), this, SLOT( clear_selected() ) );
  
@@ -503,7 +513,7 @@ void MainWindow::createActions() {
 	
 	#ifdef WITH_VERSE
 		//verse menu actions
-		mVerseConnectLocalhostAct = new QAction(tr("Connect to localhost"), this);
+		mVerseConnectLocalhostAct = new QAction(tr("Connect to localhost..."), this);
 		mVerseConnectLocalhostAct->setStatusTip( tr("Connect to localhost") );
 		connect(mVerseConnectLocalhostAct, SIGNAL(triggered()), mVerseDialog, SLOT(connectLocalhost()));
 		sm->registerAction(mVerseConnectLocalhostAct, "Verse Menu", "");
@@ -513,15 +523,25 @@ void MainWindow::createActions() {
 		connect(mVerseConnectAct, SIGNAL(triggered()), mVerseDialog, SLOT(connectHost()));
 		sm->registerAction(mVerseConnectAct, "Verse Menu", "");
 
-		mVerseDisconnectAct = new QAction(tr("Disconnect"), this);
-		mVerseDisconnectAct->setStatusTip( tr("Disconnect from Verse Server") );
+		mVerseDisconnectAct = new QAction(tr("Disconnect session"), this);
+		mVerseDisconnectAct->setStatusTip( tr("Disconnect Verse Session") );
 		connect(mVerseDisconnectAct, SIGNAL(triggered()), mVerseDialog, SLOT(disconnectHost()));
 		sm->registerAction(mVerseDisconnectAct, "Verse Menu", "");
 
-		mVerseDisconnectAllAct = new QAction(tr("Disconnect All"), this);
-		mVerseDisconnectAllAct->setStatusTip( tr("Disconnect All Nodes") );
+		mVerseDisconnectAllAct = new QAction(tr("Disconnect All Sessions"), this);
+		mVerseDisconnectAllAct->setStatusTip( tr("Disconnect All Sessions") );
 		connect(mVerseDisconnectAllAct, SIGNAL(triggered()), mVerseDialog, SLOT(disconnectAll()));
 		sm->registerAction(mVerseDisconnectAllAct, "Verse Menu", "");
+		
+		mVerseStartServerAct = new QAction(tr("Start Verse Server"), this);
+		mVerseStartServerAct->setStatusTip( tr("Disconnect All Nodes") );
+		connect(mVerseStartServerAct, SIGNAL(triggered()), mVerseDialog, SLOT(startServer()));
+		sm->registerAction(mVerseStartServerAct, "Verse Menu", "");
+
+		mVerseKillServerAct = new QAction(tr("Kill Verse Server"), this);
+		mVerseKillServerAct->setStatusTip( tr("Kill the Local Verse server process") );
+		connect(mVerseKillServerAct, SIGNAL(triggered()), mVerseDialog, SLOT(killServer()));
+		sm->registerAction(mVerseKillServerAct, "Verse Menu", "");
 	#endif
 	
 	mPerformRemeshingAct = new QAction(tr("Perform Remeshing"), this);
@@ -555,12 +575,17 @@ void MainWindow::createMenus(){
 		fileMenu->addSeparator();
 		mVerseMenu = new QMenu(tr("&Verse"));
 		fileMenu->addMenu(mVerseMenu);
+		mVerseMenu->addAction(mVerseStartServerAct);
+		// mVerseMenu->addAction(mVerseKillServerAct);
+		mVerseMenu->addSeparator();
 		mVerseMenu->addAction(mVerseConnectLocalhostAct);
 		mVerseMenu->addAction(mVerseConnectAct);
+		// mVerseMenu->removeAction(mVerseConnectAct);
 		mVerseMenu->addSeparator();
-		mVerseMenu->addAction(mVerseDisconnectAct);
-		mVerseMenu->addAction(mVerseDisconnectAllAct);
+		// mVerseMenu->addAction(mVerseDisconnectAct);
+		// mVerseMenu->addAction(mVerseDisconnectAllAct);
 	#endif
+	
 	fileMenu->addSeparator();
 	fileMenu->addAction(loadTextureAct);
 	fileMenu->addAction(printInfoAct);
@@ -605,6 +630,7 @@ void MainWindow::createMenus(){
 	displayMenu->addAction(showWireframeAct);
 	displayMenu->addAction(showCoordinateAxesAct);
 	displayMenu->addAction(showGridAct);
+	displayMenu->addAction(showHUDAct);
 	displayMenu->addAction(objectOrientationAct);
 	displayMenu->addAction(showNormalsAct);
 	
@@ -673,6 +699,7 @@ void MainWindow::createMenus(){
 	menuBar->addMenu(selectionMenu);
 	selectionMenu->addAction(selectVertexAct);
 	selectionMenu->addAction(selectFaceAct);
+	selectionMenu->addAction(selectMultipleFacesAct);
 	selectionMenu->addAction(selectEdgeAct);
 	selectionMenu->addAction(selectCornerAct);
 	selectionMenu->addAction(exitSelectionModeAct);
@@ -1010,3 +1037,27 @@ void MainWindow::dropEvent(QDropEvent *event) {
 
 	// event->acceptProposedAction();
 }
+
+#ifdef WITH_VERSE
+void MainWindow::verseConnected(){
+	mVerseMenu->insertAction(mVerseConnectLocalhostAct, mVerseDisconnectAct);
+	mVerseMenu->removeAction(mVerseConnectLocalhostAct);
+	mVerseMenu->removeAction(mVerseConnectAct);
+}
+
+void MainWindow::verseDisconnected(){
+	mVerseMenu->insertAction(mVerseDisconnectAct,mVerseConnectLocalhostAct);
+	mVerseMenu->insertAction(mVerseDisconnectAct,mVerseConnectAct);
+	mVerseMenu->removeAction(mVerseDisconnectAct);
+}
+void MainWindow::verseStarted(){
+	mVerseMenu->insertAction(mVerseStartServerAct, mVerseKillServerAct);
+	mVerseMenu->removeAction(mVerseStartServerAct);	
+}
+
+void MainWindow::verseKilled(){
+	mVerseMenu->insertAction(mVerseKillServerAct, mVerseStartServerAct);
+	mVerseMenu->removeAction(mVerseKillServerAct);		
+}
+#endif
+

@@ -263,6 +263,7 @@ class MainWindow : public QMainWindow {
 	  //Selection Menu Actions
 	  QAction *selectVertexAct;
 	  QAction *selectFaceAct;
+		QAction *selectMultipleFacesAct;
 	  QAction *selectEdgeAct;
 	  QAction *selectCornerAct;
 	  QAction *clearSelectedModeAct;
@@ -402,6 +403,7 @@ class MainWindow : public QMainWindow {
 
 		void select_vertex();
 		void select_face();
+		void select_multiple_faces();
 		void select_edge();
 		void select_corner();
 		void exit_selection_mode();
