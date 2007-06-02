@@ -211,8 +211,9 @@ void post_node_name_set(VNode *vnode)
  */
 void post_connect_accept(VerseSession *session)
 {
-	VerseConnected |= T_VERSE_CONNECTED;
-	printf("post_connect_accept called");
+	// VerseConnected |= T_VERSE_CONNECTED;
+	VerseConnected = true;
+	printf("post_connect_accept called\n");
 
 	session->counter = 0;
 
@@ -226,7 +227,8 @@ void post_connect_terminated(VerseSession *session)
 {
 	/* if it is last session, then no other will exist ... set Global flag */
 	if((session->prev==NULL) && (session->next==NULL))
-		VerseConnected &= ~T_VERSE_CONNECTED;
+		// VerseConnected &= ~T_VERSE_CONNECTED;
+		VerseConnected = false;
 
 /*	allqueue(REDRAWOOPS, 0);*/
 }

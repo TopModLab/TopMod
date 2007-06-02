@@ -171,25 +171,40 @@ class DLFLObject
          return uID;
        }
 
-     size_t num_vertices(void) const
+     uint num_vertices(void) const
        {
-         return vertex_list.size();
+         return (uint)vertex_list.size();
        }
 
-     size_t num_edges(void) const
+     uint num_edges(void) const
        {
-         return edge_list.size();
+         return (uint)edge_list.size();
        }
 
-     size_t num_faces(void) const
+     uint num_faces(void) const
        {
-         return face_list.size();
+         return (uint)face_list.size();
        }
 
      size_t num_materials(void) const
        {
          return matl_list.size();
        }
+
+	     // uint num_vertices(void) const
+	     //   {
+	     //     return (uint)vertex_list.size();
+	     //   }
+	     // 
+	     // uint num_edges(void) const
+	     //   {
+	     //     return (uint)edge_list.size();
+	     //   }
+	     // 
+	     // uint num_faces(void) const
+	     //   {
+	     //     return (uint)face_list.size();
+	     //   }
 
         //-- List based access to the 3 lists --//
      

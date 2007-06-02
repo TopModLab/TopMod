@@ -36,9 +36,10 @@
 #include "verse.h"
 
 #ifndef T_VERSE_CONNECTED
-#define T_VERSE_CONNECTED  (1 << 0)
+#define T_VERSE_CONNECTED  (1 << 10)
 #endif
-static int VerseConnected;
+// static int VerseConnected;
+static bool VerseConnected = false;
 
 struct VNode;
 

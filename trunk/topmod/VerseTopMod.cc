@@ -29,10 +29,17 @@
 
 VerseTopMod* VerseTopMod::pinstance = 0;// initialize pointer
 
+VerseTopMod* VerseTopMod::Instance (QWidget *parent) 
+{
+  if (pinstance == 0)  // is it the first call?
+    pinstance = new VerseTopMod(parent); // create sole instance
+  return pinstance; // address of sole instance
+}
+
 VerseTopMod* VerseTopMod::Instance () 
 {
   if (pinstance == 0)  // is it the first call?
-    pinstance = new VerseTopMod(0); // create sole instance
+    pinstance = new VerseTopMod(); // create sole instance
   return pinstance; // address of sole instance
 }
 
@@ -40,6 +47,7 @@ VerseTopMod* VerseTopMod::Instance ()
 VerseTopMod::VerseTopMod(QWidget *parent, Qt::WindowFlags f)
 	: QWidget(parent), isConnected(false) {
 	
+	mParent = parent;
 	mTextEdit = new QTextEdit;    
 	mLineEdit = new QLineEdit;
 	QObject::connect(mLineEdit, SIGNAL(returnPressed()), this, SLOT(executeCommand()));    
@@ -57,6 +65,9 @@ VerseTopMod::VerseTopMod(QWidget *parent, Qt::WindowFlags f)
 	//create update timer 
 	mTimer = new QTimer(this);
   connect(mTimer, SIGNAL(timeout()), this, SLOT(updateVerse()));
+
+	mProcess = new QProcess(this);
+	// connect(mProcess, SIGNAL(readyRead()), this, SLOT(writeStandardOutput()));
 }
 
 VerseTopMod::VerseTopMod(const VerseTopMod& v) : QWidget(0){
@@ -107,6 +118,7 @@ void VerseTopMod::connectLocalhost(){
 	// verse_callback_update(100);   /* Listen to network, get callbacks. */
 	
   mTimer->start(100);
+	((MainWindow*)mParent)->verseConnected();
 }
 
 void VerseTopMod::connectHost(){	
@@ -119,6 +131,7 @@ void VerseTopMod::connectHost(){
 		QByteArray ba = text.toLatin1();
 		t_verse_connect(ba.data());
 		mTimer->start(100);
+		((MainWindow*)mParent)->verseConnected();		
 	}
 	
 }
@@ -129,22 +142,43 @@ void VerseTopMod::disconnectHost(){
 	if (session){
 		write(tr("Disconnecting session %1!").arg(session->address));
 		end_verse_session(session);	
-		mTimer->stop();
+		// mTimer->stop();
 	}
+	end_all_verse_sessions();
+	((MainWindow*)mParent)->verseDisconnected();
 }
 
 void VerseTopMod::disconnectAll(){
 	write(tr("Disconnecting all sessions!"));	
 	end_all_verse_sessions();
-	mTimer->stop();
+	// mTimer->stop();
+	((MainWindow*)mParent)->verseDisconnected();
 }
 
 void VerseTopMod::updateVerse(){
-	// write(tr("Disconnecting all sessions!"));	
+	// write(tr("Update Verse"));	
 	t_verse_update();
 }
 
+void VerseTopMod::writeStandardOutput(){
+	write(QString(mProcess->readAllStandardOutput()));
+}
 
-VerseTopMod::~VerseTopMod(){}
+void VerseTopMod::startServer(){
+	connect(mProcess, SIGNAL(readyRead()), this, SLOT(writeStandardOutput()));
+	#ifdef WIN32
+	mProcess->start("verse.exe");
+	#else
+	mProcess->start("verse");
+	#endif
+	((MainWindow*)mParent)->verseStarted();
+}
+
+void VerseTopMod::killServer(){
+	mProcess->kill();
+	((MainWindow*)mParent)->verseKilled();	
+}
+
+VerseTopMod::~VerseTopMod(){ }
 
 #endif

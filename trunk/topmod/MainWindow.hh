@@ -50,6 +50,7 @@ class RemeshingMode;
 class ConicalMode;
 class HighgenusMode;
 class TexturingMode;
+class VerseTopMod;
 
 // class QPainter;
 class QPen;
@@ -228,6 +229,7 @@ class MainWindow : public QMainWindow {
 		QAction *objectOrientationAct;
 		QAction *showNormalsAct;
 		QAction *showGridAct;
+		QAction *showHUDAct;
 		QAction *showCoordinateAxesAct;
 
 	//Renderer Menu Actions
@@ -291,6 +293,8 @@ class MainWindow : public QMainWindow {
 		QAction *mVerseConnectAct;
 		QAction *mVerseDisconnectAct;
 		QAction *mVerseDisconnectAllAct;
+		QAction *mVerseStartServerAct;
+		QAction *mVerseKillServerAct;
 	#endif
 
 	// QString curFile;
@@ -523,7 +527,13 @@ class MainWindow : public QMainWindow {
 
 		void dragEnterEvent(QDragEnterEvent *event);
 		void dropEvent(QDropEvent *event);
-		
+
+		#ifdef WITH_VERSE
+		void verseConnected();
+		void verseDisconnected();
+		void verseStarted();
+		void verseKilled();
+		#endif				
 	};
 
 #endif

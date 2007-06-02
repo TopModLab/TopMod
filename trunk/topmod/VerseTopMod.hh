@@ -8,7 +8,10 @@
 #define VERSETOPMOD_H
 
 #include <QWidget>
+#include <QProcess>
 #include <QTimer>
+
+#include "MainWindow.hh"
 #include "TKE_verse.h"
 #include "TIF_verse.h"
 #include "TKE_global.h"
@@ -17,6 +20,7 @@
 // #include "verse_session.c"
 // #include "verse.h"
 
+class MainWindow;
 class QLineEdit;
 class QTextEdit;
 
@@ -26,6 +30,7 @@ class VerseTopMod : public QWidget {
 	Q_OBJECT
 	
 public:
+  static VerseTopMod* Instance(QWidget *parent);
   static VerseTopMod* Instance();
 	void write(QString s);
 protected:
@@ -41,8 +46,14 @@ private:
 	static VerseTopMod* pinstance;    
 	// QEventLoop *mEventLoop;
 	QTimer *mTimer;
+	QProcess *mProcess;
+	QWidget *mParent;
 	
 public slots:
+
+	void killServer();
+	void startServer();
+	void writeStandardOutput();
 	void executeCommand();
 	//actions in the file menu
 	void connectLocalhost();

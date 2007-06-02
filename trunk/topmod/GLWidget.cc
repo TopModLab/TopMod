@@ -74,16 +74,10 @@ void GLWidget::initializeGL( ) {
 	mShowEdgeIDs   = false;
 	mShowFaceIDs   = false;
 	mShowFaceVertexIDs = false;
+	mShowHUD = false;
 }
 
 void GLWidget::paintEvent(QPaintEvent *event){
-	
-	// #ifdef WITH_VERSE
-	// if (VerseConnected & T_VERSE_CONNECTED){
-	// 	
-	// 	t_verse_update();
-	// }
-	// #endif
 	QPainter painter;
 	painter.begin(this);
 	painter.setRenderHint(QPainter::Antialiasing);
@@ -164,22 +158,15 @@ void GLWidget::paintEvent(QPaintEvent *event){
   glMatrixMode(GL_PROJECTION);
   glPopMatrix();
 	
-	painter.setPen(Qt::NoPen);
-	QBrush brush = QBrush(QColor(0,0,0,127));
-	painter.setBrush(brush);
-	QRectF rectangle(3.0, 3.0, 100.0, 25.0);
-	painter.drawRoundRect(rectangle,10,10);
-	painter.setPen(Qt::white);
-	painter.drawText(rectangle, Qt::AlignCenter,tr("persp"));
-	
+		
 	#ifdef WITH_VERSE
 	if (VerseConnected & T_VERSE_CONNECTED){
-		painter.drawText(rectangle, Qt::AlignCenter,tr("verse connected"));
+		// painter.drawText(rectangle, Qt::AlignCenter,tr("verse connected"));
 		// t_verse_update();
 	}
 	#endif
 	
-	
+	drawHUD(&painter);
 	drawSelectedIDs(&painter, &model[0][0], &proj[0][0], &view[0]);
 	drawIDs(&painter, &model[0][0], &proj[0][0], &view[0]); // draw vertex, edge and face ids
 	  
@@ -202,6 +189,28 @@ void GLWidget::setupViewport(int width, int height){
 }
 
 void GLWidget::drawText(int width, int height ){	
+}
+
+void GLWidget::drawHUD(QPainter *painter){	
+	if (mShowHUD){
+		QString s = "Vertices: " + QString("%1").arg((uint)object->num_vertices()) +
+		 						"\nEdges: " + QString("%1").arg((uint)object->num_edges()) +
+								"\nFaces: " + QString("%1").arg((uint)object->num_faces()) +
+								"\nGenus: " + QString("%1").arg(object->genus()) +
+								"\nVerse: " + QString("%1").arg(VerseConnected) + "\n";
+
+		QFont font("times", 14);
+		QFontMetrics fm(font);
+		painter->setFont(font);
+		QRect r(fm.boundingRect(s));
+		painter->setPen(Qt::NoPen);
+		QBrush brush = QBrush(QColor(0,0,0,127));
+		painter->setBrush(brush);
+		QRectF rectangle(10.0, 10.0, r.width()/2.5, r.height()*6);
+		painter->drawRoundRect(QRect(3.0,3.0,rectangle.width(),rectangle.height()),25,25);
+		painter->setPen(Qt::white);
+		painter->drawText(rectangle, Qt::AlignLeft, s);
+	}
 }
 
 void GLWidget::drawIDs( QPainter *painter, const GLdouble *model, const GLdouble *proj, const GLint	*view) {

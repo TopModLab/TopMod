@@ -90,10 +90,10 @@ static void cb_connect_accept( void *user_data, uint32 avatar, void *address, vo
 	session->flag |= VERSE_CONNECTED;
 	session->flag &= ~VERSE_CONNECTING;
 
-	VerseTopMod::Instance()->write("\nTopMod was connected to verse server: ");//" + address + "\n");
-	VerseTopMod::Instance()->write("\tVerseSession->counter: " );//+ session->counter + "\n");
-	// printf("\nTopMod was connected to verse server: %s\n", (char*)address);
-	// printf("\tVerseSession->counter: %d\n", session->counter);
+	// VerseTopMod::Instance()->write("\nTopMod was connected to verse server: ");//" + address + "\n");
+	// VerseTopMod::Instance()->write(QString("VerseSession->counter: %1\n").arg(session->counter));
+	printf("\nTopMod was connected to verse server: %s\n", (char*)address);
+	printf("\tVerseSession->counter: %d\n", session->counter);
 
 	session->avatar = avatar;
 
@@ -145,7 +145,7 @@ void t_verse_update(void)
 		next_session = session->next;
 		verse_session_set(session->vsession);
 		if((session->flag & VERSE_CONNECTED) || (session->flag & VERSE_CONNECTING)) {
-			verse_callback_update(10);
+			verse_callback_update(1000);
 			session->post_connect_update(session);
 		}
 		session = next_session;
@@ -313,7 +313,6 @@ void t_verse_connect(char *address)
 		VerseTopMod::Instance()->write("establishing first connection to verse server...");
 		set_all_callbacks();
 	}
-		
 
 	/* create new session */
 	if(address)
@@ -325,7 +324,7 @@ void t_verse_connect(char *address)
 
 		/* add verse handler if this is first session */
 		if(session_list.first == session_list.last){
-			// t_verse_update();
+			t_verse_update();
 		}
 /*			add_screenhandler(G.curscreen, SCREEN_HANDLER_VERSE, 1);*/
 

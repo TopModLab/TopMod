@@ -525,88 +525,90 @@ static void cb_node_destroy( void *user_data, VNodeID node_id)
  */
 static void cb_node_create( void *user_data, VNodeID node_id, uint8 type, VNodeID owner_id)
 {
-	// struct VerseSession *session = (VerseSession*)current_verse_session();
-	// struct VNode *vnode;
-	// 
-	// if(!session) return;
-	// 
-	// if((type==V_NT_OBJECT) || (type==V_NT_GEOMETRY))
-	// 	verse_send_node_subscribe(node_id);
-	// else
-	// 	return;
-	// 
-	// switch(type){
-	// 	case V_NT_OBJECT :
-	// 		if(owner_id==VN_OWNER_MINE) {
-	// 			/* collect VerseNode from VerseNode queue */
-	// 			move_verse_node_to_dlist(session, node_id);
-	// 			/* send next VerseNode waiting in queue */
-	// 			if(session->queue.first) send_verse_node(session->queue.first);
-	// 			/* get received VerseNode from list of VerseNodes */
-	// 			vnode = TLI_dlist_find_link(&(session->nodes), node_id);
-	// 			/* set up ID */
-	// 			vnode->id = node_id;
-	// 			/* send name of object node */
-	// 			verse_send_node_name_set(node_id, vnode->name);
-	// 			/* subscribe to changes of object node transformations */
-	// 			verse_send_o_transform_subscribe(node_id, 0);
-	// 			/* send object transformation matrix */
-	// 			send_verse_object_position(vnode);
-	// 			send_verse_object_rotation(vnode);
-	// 			send_verse_object_scale(vnode);
-	// 		}
-	// 		else {
-	// 			/* create new VerseNode */
-	// 			vnode = create_verse_node(session->vsession, node_id, type, owner_id);
-	// 			/* add VerseNode to list of nodes */
-	// 			TLI_dlist_add_item_index(&(session->nodes), (void*)vnode, (unsigned int)node_id);
-	// 			/* create object data */
-	// 			vnode->data = create_object_data();
-	// 			/* set up avatar's name */
-	// 			if(node_id == session->avatar) {
-	// 				char *client_name;
-	// 				client_name = verse_client_name();
-	// 				verse_send_node_name_set(node_id, client_name);
-	// 				MEM_freeN(client_name);
-	// 			}
-	// 		}
-	// 		break;
-	// 	case V_NT_GEOMETRY :
-	// 		if(owner_id==VN_OWNER_MINE){
-	// 			struct VLink *vlink;
-	// 			/* collect VerseNode from VerseNode queue */
-	// 			move_verse_node_to_dlist(session, node_id);
-	// 			/* send next VerseNode waiting in queue */
-	// 			if(session->queue.first) send_verse_node(session->queue.first);
-	// 			/* get received VerseNode from list of VerseNodes */
-	// 			vnode = TLI_dlist_find_link(&(session->nodes), node_id);
-	// 			/* set up ID */
-	// 			vnode->id = node_id;
-	// 			/* find unsent link pointing at this VerseNode */
-	// 			vlink = find_unsent_link(session, vnode);
-	// 			/* send VerseLink */
-	// 			send_verse_link(vlink);
-	// 			/* send name of geometry node */
-	// 			verse_send_node_name_set(node_id, vnode->name);
-	// 			/* send two verse layers to verse server */
-	// 			verse_send_g_layer_create(node_id, 0, "vertex", VN_G_LAYER_VERTEX_XYZ, 0, 0);
-	// 			verse_send_g_layer_create(node_id, 1, "polygon", VN_G_LAYER_POLYGON_CORNER_UINT32, 0, 0);
-	// 			verse_send_g_layer_create(node_id, -1, "smooth", VN_G_LAYER_POLYGON_FACE_UINT8, 0, 0);
-	// 		}
-	// 		else {
-	// 			/* create new VerseNode*/
-	// 			vnode = create_verse_node(session->vsession, node_id, type, owner_id);
-	// 			/* add VerseNode to dlist of nodes */
-	// 			TLI_dlist_add_item_index(&(session->nodes), (void*)vnode, (unsigned int)node_id);
-	// 			/* create geometry data */
-	// 			vnode->data = create_geometry_data();
-	// 		}
-	// 		break;
-	// 	default:
-	// 		break;
-	// }
-	// 
-	// vnode->post_node_create(vnode);
+	printf("cb_node_create called");
+	
+	struct VerseSession *session = (VerseSession*)current_verse_session();
+	struct VNode *vnode;
+	
+	if(!session) return;
+	
+	if((type==V_NT_OBJECT) || (type==V_NT_GEOMETRY))
+		verse_send_node_subscribe(node_id);
+	else
+		return;
+	
+	switch(type){
+		case V_NT_OBJECT :
+			if(owner_id==VN_OWNER_MINE) {
+				/* collect VerseNode from VerseNode queue */
+				move_verse_node_to_dlist(session, node_id);
+				/* send next VerseNode waiting in queue */
+				if(session->queue.first) send_verse_node((VNode*)session->queue.first);
+				/* get received VerseNode from list of VerseNodes */
+				vnode = (VNode*)TLI_dlist_find_link(&(session->nodes), node_id);
+				/* set up ID */
+				vnode->id = node_id;
+				/* send name of object node */
+				verse_send_node_name_set(node_id, vnode->name);
+				/* subscribe to changes of object node transformations */
+				verse_send_o_transform_subscribe(node_id, (VNRealFormat)0);
+				/* send object transformation matrix */
+				send_verse_object_position(vnode);
+				send_verse_object_rotation(vnode);
+				send_verse_object_scale(vnode);
+			}
+			else {
+				/* create new VerseNode */
+				vnode = create_verse_node(session->vsession, node_id, type, owner_id);
+				/* add VerseNode to list of nodes */
+				TLI_dlist_add_item_index(&(session->nodes), (void*)vnode, (unsigned int)node_id);
+				/* create object data */
+				vnode->data = create_object_data();
+				/* set up avatar's name */
+				if(node_id == session->avatar) {
+					char *client_name;
+					client_name = verse_client_name();
+					verse_send_node_name_set(node_id, client_name);
+					MEM_freeN(client_name);
+				}
+			}
+			break;
+		case V_NT_GEOMETRY :
+			if(owner_id==VN_OWNER_MINE){
+				struct VLink *vlink;
+				/* collect VerseNode from VerseNode queue */
+				move_verse_node_to_dlist(session, node_id);
+				/* send next VerseNode waiting in queue */
+				if(session->queue.first) send_verse_node((VNode*)session->queue.first);
+				/* get received VerseNode from list of VerseNodes */
+				vnode = (VNode*)TLI_dlist_find_link(&(session->nodes), node_id);
+				/* set up ID */
+				vnode->id = node_id;
+				/* find unsent link pointing at this VerseNode */
+				vlink = find_unsent_link(session, vnode);
+				/* send VerseLink */
+				send_verse_link(vlink);
+				/* send name of geometry node */
+				verse_send_node_name_set(node_id, vnode->name);
+				/* send two verse layers to verse server */
+				verse_send_g_layer_create(node_id, 0, "vertex", VN_G_LAYER_VERTEX_XYZ, 0, 0);
+				verse_send_g_layer_create(node_id, 1, "polygon", VN_G_LAYER_POLYGON_CORNER_UINT32, 0, 0);
+				verse_send_g_layer_create(node_id, -1, "smooth", VN_G_LAYER_POLYGON_FACE_UINT8, 0, 0);
+			}
+			else {
+				/* create new VerseNode*/
+				vnode = create_verse_node(session->vsession, node_id, type, owner_id);
+				/* add VerseNode to dlist of nodes */
+				TLI_dlist_add_item_index(&(session->nodes), (void*)vnode, (unsigned int)node_id);
+				/* create geometry data */
+				vnode->data = create_geometry_data();
+			}
+			break;
+		default:
+			break;
+	}
+	
+	vnode->post_node_create(vnode);
 }
 
 /*
