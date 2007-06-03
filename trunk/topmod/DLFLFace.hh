@@ -315,6 +315,11 @@ class DLFLFace
         // Does this Face contain the given face-vertex?
      bool contains(DLFLFaceVertexPtr dfvp);
 
+			//does this face share only one vertex with the given face?
+		bool sharesOneVertex(DLFLFacePtr dfp);
+
+		void DLFLFace :: getNeighboringFaces(DLFLFacePtrArray& fparray);
+
         // Find the DLFLFaceVertex following the given DLFLFaceVertex in this DLFLFace
         // If only one DLFLFaceVertex is there in the DLFLFace returns itself
      DLFLFaceVertexPtr nextFaceVertex(DLFLFaceVertexPtr fvptr);

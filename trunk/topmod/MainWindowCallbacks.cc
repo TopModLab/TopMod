@@ -216,7 +216,14 @@ void MainWindow::select_face() {
 
 void MainWindow::select_multiple_faces() {
   mainWindow->setMode(DLFLWindow::MultiSelectFace);
+	mainWindow->getActive()->showBrush();
 }
+
+void MainWindow::select_checkerboard_faces() {
+  mainWindow->setMode(DLFLWindow::SelectCheckerboard);
+	// mainWindow->getActive()->showBrush();
+}
+
 
 void MainWindow::select_edge() {
   mainWindow->setMode(DLFLWindow::SelectEdge);
@@ -238,6 +245,7 @@ void MainWindow::clear_selected(){
 
 void MainWindow::exit_modes() {
   mainWindow->setMode(DLFLWindow::NormalMode);
+	mainWindow->getActive()->hideBrush();
 }
 
 // Basics.
@@ -375,6 +383,12 @@ void MainWindow::crust_modeling1() {
 void MainWindow::crust_modeling2() {
   mainWindow->setMode(DLFLWindow::CrustModeling);
   mainWindow->createCrust(false);
+  mainWindow->redraw();
+}
+
+void MainWindow::crust_modeling3() {
+  // mainWindow->setMode(DLFLWindow::CrustModelingPainting);
+  mainWindow->createCrust2(false);
   mainWindow->redraw();
 }
 

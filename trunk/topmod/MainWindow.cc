@@ -232,53 +232,58 @@ void MainWindow::createActions() {
 	showVerticesAct->setCheckable(true);
 	sm->registerAction(showVerticesAct, "Display Menu", "V");
 	// showVerticesAct->setStatusTip(tr("Copy the current selection's contents to the "
-	connect(showVerticesAct, SIGNAL(triggered()), mainWindow, SLOT(toggleVertices()));
+	connect(showVerticesAct, SIGNAL(triggered()), mainWindow->getActive(), SLOT(toggleVertices()));
 
 	mShowFaceIDsAct = new QAction(tr("Show &Face IDs"), this);
 	mShowFaceIDsAct->setCheckable(true);
 	sm->registerAction(mShowFaceIDsAct, "Display Menu", "CTRL+F");
-	connect(mShowFaceIDsAct, SIGNAL(triggered()), mainWindow, SLOT(toggleFaceIDs()));
+	connect(mShowFaceIDsAct, SIGNAL(triggered()), mainWindow->getActive(), SLOT(toggleFaceIDs()));
 
 	mShowEdgeIDsAct = new QAction(tr("Show &Edge IDs"), this);
 	mShowEdgeIDsAct->setCheckable(true);
 	sm->registerAction(mShowEdgeIDsAct, "Display Menu", "CTRL+E");
-	connect(mShowEdgeIDsAct, SIGNAL(triggered()), mainWindow, SLOT(toggleEdgeIDs()));
+	connect(mShowEdgeIDsAct, SIGNAL(triggered()), mainWindow->getActive(), SLOT(toggleEdgeIDs()));
 
 	mShowVertexIDsAct = new QAction(tr("Show &Vertex IDs"), this);
 	mShowVertexIDsAct->setCheckable(true);
 	sm->registerAction(mShowVertexIDsAct, "Display Menu", "CTRL+V");
-	connect(mShowVertexIDsAct, SIGNAL(triggered()), mainWindow, SLOT(toggleVertexIDs()));
+	connect(mShowVertexIDsAct, SIGNAL(triggered()), mainWindow->getActive(), SLOT(toggleVertexIDs()));
+
+	mShowSelectedIDsAct = new QAction(tr("Show &Selected IDs"), this);
+	mShowSelectedIDsAct->setCheckable(true);
+	sm->registerAction(mShowSelectedIDsAct, "Display Menu", "SHIFT+S");
+	connect(mShowSelectedIDsAct, SIGNAL(triggered()), mainWindow->getActive(), SLOT(toggleSelectedIDs()));
 
 	showSilhouetteAct = new QAction(tr("Show &Silhouette"), this);
 	showSilhouetteAct->setCheckable(true);
 	sm->registerAction(showSilhouetteAct, "Display Menu", "S" );
 	// showSilhouetteAct->setStatusTip((tr"Blah"));
-	connect(showSilhouetteAct, SIGNAL(triggered()), mainWindow, SLOT(toggleSilhouette()));
+	connect(showSilhouetteAct, SIGNAL(triggered()), mainWindow->getActive(), SLOT(toggleSilhouette()));
 
 	showWireframeAct = new QAction(tr("Show &Wireframe"), this);
 	showWireframeAct->setCheckable(true);
 	showWireframeAct->setChecked(true);
 	sm->registerAction(showWireframeAct, "Display Menu", "W");
 	// showWireframeAct->setStatusTip(tr("Copy the current selection's contents to the "
-	connect(showWireframeAct, SIGNAL(triggered()), mainWindow, SLOT(toggleWireframe()));
+	connect(showWireframeAct, SIGNAL(triggered()), mainWindow->getActive(), SLOT(toggleWireframe()));
 
 	showCoordinateAxesAct = new QAction(tr("Show &Coordinate Axes"), this);
 	showCoordinateAxesAct->setCheckable(true);
 	sm->registerAction(showCoordinateAxesAct, "Display Menu", "X");
 	// showCoordinateAxesAct->setStatusTip(tr("Copy the current selection's contents to the "
-	connect(showCoordinateAxesAct, SIGNAL(triggered()), mainWindow, SLOT(toggleAxes()));
+	connect(showCoordinateAxesAct, SIGNAL(triggered()), mainWindow->getActive(), SLOT(toggleAxes()));
 
 	objectOrientationAct = new QAction(tr("Reverse Object"), this);
 	objectOrientationAct->setCheckable(true);
 	sm->registerAction(objectOrientationAct, "Display Menu", "R");
 	// objectOrienationAct->setStatusTip(tr("Copy the current selection's contents to the "
-	connect(objectOrientationAct, SIGNAL(triggered()), mainWindow, SLOT(toggleObjectOrientation()));
+	connect(objectOrientationAct, SIGNAL(triggered()), mainWindow->getActive(), SLOT(toggleObjectOrientation()));
 
 	showNormalsAct = new QAction(tr("Show Normals"), this);
 	showNormalsAct->setCheckable(true);
 	sm->registerAction(showNormalsAct, "Display Menu", "N");
 	// objectOrienationAct->setStatusTip(tr("Copy the current selection's contents to the "
-	connect(showNormalsAct, SIGNAL(triggered()), mainWindow, SLOT(toggleNormals()));
+	connect(showNormalsAct, SIGNAL(triggered()), mainWindow->getActive(), SLOT(toggleNormals()));
 
 	showGridAct = new QAction(tr("Show &Grid"), this);
 	showGridAct->setCheckable(true);
@@ -454,6 +459,14 @@ void MainWindow::createActions() {
 	sm->registerAction(selectMultipleFacesAct, "Settings", "SHIFT+G");
 	connect( selectMultipleFacesAct , SIGNAL( triggered() ), this, SLOT( select_multiple_faces() ) );
 
+	selectCheckerboardFacesAct = new QAction(tr("C&heckerboard Select Faces"), this);
+	sm->registerAction(selectCheckerboardFacesAct, "Settings", "");
+	connect( selectCheckerboardFacesAct , SIGNAL( triggered() ), this, SLOT( select_checkerboard_faces() ) );
+
+	selectAllFacesAct = new QAction(tr("Select &All Faces"), this);
+	sm->registerAction(selectAllFacesAct, "Settings", "CTRL+A");
+	connect( selectAllFacesAct , SIGNAL( triggered() ), mainWindow->getActive(), SLOT( selectAllFaces() ) );
+
 	selectEdgeAct = new QAction(tr("Select &Edge"), this);
 	sm->registerAction(selectEdgeAct, "Settings", "SHIFT+E");
 	// selectCornerAct->setStatusTip(tr("Copy the current selection's contents to the "));
@@ -626,6 +639,7 @@ void MainWindow::createMenus(){
 	mShowIDsMenu->addAction(mShowFaceIDsAct);
 	mShowIDsMenu->addAction(mShowEdgeIDsAct);
 	mShowIDsMenu->addAction(mShowVertexIDsAct);
+	mShowIDsMenu->addAction(mShowSelectedIDsAct);
 	displayMenu->addAction(showSilhouetteAct);
 	displayMenu->addAction(showWireframeAct);
 	displayMenu->addAction(showCoordinateAxesAct);
@@ -700,6 +714,8 @@ void MainWindow::createMenus(){
 	selectionMenu->addAction(selectVertexAct);
 	selectionMenu->addAction(selectFaceAct);
 	selectionMenu->addAction(selectMultipleFacesAct);
+	selectionMenu->addAction(selectCheckerboardFacesAct);
+	selectionMenu->addAction(selectAllFacesAct);
 	selectionMenu->addAction(selectEdgeAct);
 	selectionMenu->addAction(selectCornerAct);
 	selectionMenu->addAction(exitSelectionModeAct);

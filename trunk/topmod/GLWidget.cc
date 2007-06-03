@@ -74,7 +74,11 @@ void GLWidget::initializeGL( ) {
 	mShowEdgeIDs   = false;
 	mShowFaceIDs   = false;
 	mShowFaceVertexIDs = false;
+	mShowSelectedIDs = false;
 	mShowHUD = false;
+	mBrushSize = 2.5;
+	mShowBrush = false;
+	setMouseTracking(true);
 }
 
 void GLWidget::paintEvent(QPaintEvent *event){
@@ -166,6 +170,7 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	}
 	#endif
 	
+	drawBrush(&painter);
 	drawHUD(&painter);
 	drawSelectedIDs(&painter, &model[0][0], &proj[0][0], &view[0]);
 	drawIDs(&painter, &model[0][0], &proj[0][0], &view[0]); // draw vertex, edge and face ids
@@ -191,15 +196,30 @@ void GLWidget::setupViewport(int width, int height){
 void GLWidget::drawText(int width, int height ){	
 }
 
+void GLWidget::drawBrush(QPainter *painter){
+	if (mShowBrush){
+		QBrush brush = QBrush(QColor(255,0,0,127));
+		QPen pen = QPen(brush,4.0);
+		painter->setPen(pen);
+		painter->setBrush(Qt::NoBrush);
+		//get the mouse position from global coordinate system
+		int x = mapFromGlobal(QCursor::pos()).x();
+		int y = mapFromGlobal(QCursor::pos()).y();
+		painter->drawEllipse(x - mBrushSize/2, y - mBrushSize/2, mBrushSize, mBrushSize);
+		painter->drawLine(x-10,y,x+10,y);
+		painter->drawLine(x,y-10,x,y+10);
+	}
+}
+
 void GLWidget::drawHUD(QPainter *painter){	
 	if (mShowHUD){
 		QString s = "Vertices: " + QString("%1").arg((uint)object->num_vertices()) +
 		 						"\nEdges: " + QString("%1").arg((uint)object->num_edges()) +
 								"\nFaces: " + QString("%1").arg((uint)object->num_faces()) +
-								"\nGenus: " + QString("%1").arg(object->genus()) +
-								"\nVerse: " + QString("%1").arg(VerseConnected) + "\n";
+								"\nGenus: " + QString("%1").arg(object->genus());
+								// "\nVerse: " + QString("%1").arg(VerseConnected) + "\n";
 
-		QFont font("times", 14);
+		QFont font("verdana", 14);
 		QFontMetrics fm(font);
 		painter->setFont(font);
 		QRect r(fm.boundingRect(s));
@@ -323,111 +343,112 @@ void GLWidget::drawIDs( QPainter *painter, const GLdouble *model, const GLdouble
 	glEnable(GL_DEPTH_TEST);
 }
 
-void GLWidget::drawSelectedIDs( QPainter *painter, const GLdouble *model, const GLdouble *proj, const GLint	*view){
+void GLWidget::drawSelectedIDs( QPainter *painter, const GLdouble *model, const GLdouble *proj, const GLint	*view) {
+	if (mShowSelectedIDs){
+		glDisable(GL_DEPTH_TEST);
 	
-	glDisable(GL_DEPTH_TEST);
+		double x,y,z;
+		QBrush brush;
+		QRectF rectangle;
+		QString id;
+		GLdouble win_x = 0, win_y = 0, win_z = 0;
 	
-	double x,y,z;
-	QBrush brush;
-	QRectF rectangle;
-	QString id;
-	GLdouble win_x = 0, win_y = 0, win_z = 0;
-	
-	if( !mShowVertexIDs ) {
-		if ( !sel_vptr_array.empty() ){
-			DLFLVertexPtrArray::iterator first, last;
-			first = sel_vptr_array.begin(); last = sel_vptr_array.end();
-			while ( first != last ){
-				QString id = QString::number( (*first)->getID() );
-				double x,y,z;
-				Vector3d point = (*first)->coords;// + (*it)->getNormal();
-				point.get(x,y,z);
-				win_x = 0, win_y = 0, win_z = 0;
-				gluProject(x, y, z, model, proj, view, &win_x, &win_y, &win_z);
-				win_y = height() - win_y; // y is inverted
-				painter->setPen(Qt::NoPen);
-				brush = QBrush(QColor(mVertexIDBgColor));
-				painter->setBrush(brush);
-				rectangle = QRectF(win_x, win_y, 40, 20);
-				painter->drawRoundRect(rectangle,6,6);
-				painter->setPen(Qt::white);
-				painter->drawText(rectangle, Qt::AlignCenter,id);
-				++first;
+		if( !mShowVertexIDs ) {
+			if ( !sel_vptr_array.empty() ){
+				DLFLVertexPtrArray::iterator first, last;
+				first = sel_vptr_array.begin(); last = sel_vptr_array.end();
+				while ( first != last ){
+					QString id = QString::number( (*first)->getID() );
+					double x,y,z;
+					Vector3d point = (*first)->coords;// + (*it)->getNormal();
+					point.get(x,y,z);
+					win_x = 0, win_y = 0, win_z = 0;
+					gluProject(x, y, z, model, proj, view, &win_x, &win_y, &win_z);
+					win_y = height() - win_y; // y is inverted
+					painter->setPen(Qt::NoPen);
+					brush = QBrush(QColor(mVertexIDBgColor));
+					painter->setBrush(brush);
+					rectangle = QRectF(win_x, win_y, 40, 20);
+					painter->drawRoundRect(rectangle,6,6);
+					painter->setPen(Qt::white);
+					painter->drawText(rectangle, Qt::AlignCenter,id);
+					++first;
+				}
 			}
 		}
-	}
 	
-	if( !mShowEdgeIDs ) {
-		if ( !sel_eptr_array.empty() ){
-			DLFLEdgePtrArray::iterator first, last;
-			first = sel_eptr_array.begin(); last = sel_eptr_array.end();
-			while ( first != last ){
-				QString id = QString::number( (*first)->getID() );
-				(*first)->getMidPoint().get(x,y,z);
-				win_x = 0, win_y = 0, win_z = 0;
-				gluProject(x, y, z, model, proj, view, &win_x, &win_y, &win_z);
-				win_y = height() - win_y; // y is inverted
-				painter->setPen(Qt::NoPen);
-				QBrush brush = QBrush(QColor(mEdgeIDBgColor));
-				painter->setBrush(brush);
-				rectangle = QRectF(win_x, win_y, 40, 20);
-				painter->drawRoundRect(rectangle,6,6);
-				painter->setPen(Qt::white);
-				painter->drawText(rectangle, Qt::AlignCenter,id);
-				++first;
+		if( !mShowEdgeIDs ) {
+			if ( !sel_eptr_array.empty() ){
+				DLFLEdgePtrArray::iterator first, last;
+				first = sel_eptr_array.begin(); last = sel_eptr_array.end();
+				while ( first != last ){
+					QString id = QString::number( (*first)->getID() );
+					(*first)->getMidPoint().get(x,y,z);
+					win_x = 0, win_y = 0, win_z = 0;
+					gluProject(x, y, z, model, proj, view, &win_x, &win_y, &win_z);
+					win_y = height() - win_y; // y is inverted
+					painter->setPen(Qt::NoPen);
+					QBrush brush = QBrush(QColor(mEdgeIDBgColor));
+					painter->setBrush(brush);
+					rectangle = QRectF(win_x, win_y, 40, 20);
+					painter->drawRoundRect(rectangle,6,6);
+					painter->setPen(Qt::white);
+					painter->drawText(rectangle, Qt::AlignCenter,id);
+					++first;
+				}
 			}
 		}
-	}
 
-	if( !mShowFaceIDs ) {
-		if ( !sel_fptr_array.empty() ){
-			DLFLFacePtrArray::iterator first, last;
-			first = sel_fptr_array.begin(); last = sel_fptr_array.end();
-			while ( first != last )	{
-				QString id = QString::number( (*first)->getID() );
-				double x,y,z; 
-				Vector3d point = (*first)->geomCentroid();// + (*it)->getNormal();
-				point.get(x,y,z);
-				win_x = 0, win_y = 0, win_z = 0;
-				gluProject(x, y, z, model, proj, view, &win_x, &win_y, &win_z);
-				win_y = height() - win_y; // y is inverted
-				painter->setPen(Qt::NoPen);
-				brush = QBrush(QColor(mFaceIDBgColor));
-				painter->setBrush(brush);
-				rectangle = QRectF(win_x, win_y, 40, 20);
-				painter->drawRoundRect(rectangle,6,6);
-				painter->setPen(Qt::white);
-				painter->drawText(rectangle, Qt::AlignCenter,id);
-				++first;
+		if( !mShowFaceIDs ) {
+			if ( !sel_fptr_array.empty() ){
+				DLFLFacePtrArray::iterator first, last;
+				first = sel_fptr_array.begin(); last = sel_fptr_array.end();
+				while ( first != last )	{
+					QString id = QString::number( (*first)->getID() );
+					double x,y,z; 
+					Vector3d point = (*first)->geomCentroid();// + (*it)->getNormal();
+					point.get(x,y,z);
+					win_x = 0, win_y = 0, win_z = 0;
+					gluProject(x, y, z, model, proj, view, &win_x, &win_y, &win_z);
+					win_y = height() - win_y; // y is inverted
+					painter->setPen(Qt::NoPen);
+					brush = QBrush(QColor(mFaceIDBgColor));
+					painter->setBrush(brush);
+					rectangle = QRectF(win_x, win_y, 40, 20);
+					painter->drawRoundRect(rectangle,6,6);
+					painter->setPen(Qt::white);
+					painter->drawText(rectangle, Qt::AlignCenter,id);
+					++first;
+				}
 			}
 		}
-	}
 
-	if( !mShowFaceVertexIDs ) {
-		if ( !sel_fvptr_array.empty() ) {
-			DLFLFaceVertexPtrArray::iterator first, last;
-			first = sel_fvptr_array.begin(); last = sel_fvptr_array.end();
-			while ( first != last ){
-				QString id = QString::number( (*first)->vertex->getID() );
-				double x,y,z; 
-				Vector3d point = (*first)->vertex->coords;
-				point.get(x,y,z);
-				win_x = 0, win_y = 0, win_z = 0;
-				gluProject(x, y, z, model, proj, view, &win_x, &win_y, &win_z);
-				win_y = height() - win_y; // y is inverted
-				painter->setPen(Qt::NoPen);
-				brush = QBrush(QColor(mVertexIDBgColor));
-				painter->setBrush(brush);
-				rectangle = QRectF(win_x, win_y, 40, 20);
-				painter->drawRoundRect(rectangle,6,6);
-				painter->setPen(Qt::white);
-				painter->drawText(rectangle, Qt::AlignCenter,id);
-				++first;
+		if( !mShowFaceVertexIDs ) {
+			if ( !sel_fvptr_array.empty() ) {
+				DLFLFaceVertexPtrArray::iterator first, last;
+				first = sel_fvptr_array.begin(); last = sel_fvptr_array.end();
+				while ( first != last ){
+					QString id = QString::number( (*first)->vertex->getID() );
+					double x,y,z; 
+					Vector3d point = (*first)->vertex->coords;
+					point.get(x,y,z);
+					win_x = 0, win_y = 0, win_z = 0;
+					gluProject(x, y, z, model, proj, view, &win_x, &win_y, &win_z);
+					win_y = height() - win_y; // y is inverted
+					painter->setPen(Qt::NoPen);
+					brush = QBrush(QColor(mVertexIDBgColor));
+					painter->setBrush(brush);
+					rectangle = QRectF(win_x, win_y, 40, 20);
+					painter->drawRoundRect(rectangle,6,6);
+					painter->setPen(Qt::white);
+					painter->drawText(rectangle, Qt::AlignCenter,id);
+					++first;
+				}
 			}
 		}
-	}
 	
-	glEnable(GL_DEPTH_TEST);
+		glEnable(GL_DEPTH_TEST);
+	}
 }
 
 void GLWidget::toggleFullScreen( ) {
@@ -617,6 +638,134 @@ DLFLFacePtr GLWidget::selectFace(int mx, int my) {
 		sel = DLFLObject::fparray[closest];
 	}	
 	return sel;
+}
+
+// Subroutine for selecting multiple faces at once
+DLFLFacePtrArray GLWidget::selectFaces(int mx, int my) {
+	glEnable(GL_CULL_FACE);
+	GLuint selectBuf[1024];
+	uint closest;
+	GLuint dist;
+	long hits, index;
+	DLFLFacePtr sel(NULL);
+	DLFLFacePtrArray fparray;
+
+	glSelectBuffer(1024,selectBuf);
+	glRenderMode(GL_SELECT);
+
+	glInitNames(); glPushName(0);
+
+	GLint vp[4];
+	glGetIntegerv(GL_VIEWPORT, vp);
+	viewport.camera.enterSelectionMode(mx,my,mBrushSize,mBrushSize,vp);
+
+	// Make sure earlier matrices are preserved, since multiple windows
+	// seem to be sharing the same matrix stacks
+	// glLoadIdentity();
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+
+	viewport.reshape();
+	viewport.apply_transform();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	object->renderFacesForSelect();
+	glFlush();
+
+	glPopMatrix();
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+
+	viewport.camera.leaveSelectionMode();
+
+	hits = glRenderMode(GL_RENDER);
+	if ( hits > 0 ){
+		closest = 0; dist = 0xffffffff;
+		while ( hits ){
+			index = (hits-1)*4;
+			// if ( selectBuf[index+1] < dist ){
+				// dist = selectBuf[index+1];
+				// closest = selectBuf[index+3];
+			// }
+			
+			//if (DLFLObject::fparray[selectBuf[index+3]].normalCentroid()*camera.getPos()){
+			if(!isSelected(DLFLObject::fparray[selectBuf[index+3]]))
+				fparray.push_back(DLFLObject::fparray[selectBuf[index+3]]);
+			//}
+			hits--;
+		}
+		// closest now has the id of the selected face
+		//sel = DLFLObject::fparray[closest];
+	}	
+	glDisable(GL_CULL_FACE);
+	return fparray;
+}
+
+// Subroutine for selecting multiple faces at once
+DLFLFacePtrArray GLWidget::deselectFaces(int mx, int my) {
+	glEnable(GL_CULL_FACE);
+	GLuint selectBuf[1024];
+	uint closest;
+	GLuint dist;
+	long hits, index;
+	DLFLFacePtr sel(NULL);
+	DLFLFacePtrArray fparray;
+
+	glSelectBuffer(1024,selectBuf);
+	glRenderMode(GL_SELECT);
+
+	glInitNames(); glPushName(0);
+
+	GLint vp[4];
+	glGetIntegerv(GL_VIEWPORT, vp);
+	viewport.camera.enterSelectionMode(mx,my,mBrushSize,mBrushSize,vp);
+
+	// Make sure earlier matrices are preserved, since multiple windows
+	// seem to be sharing the same matrix stacks
+	// glLoadIdentity();
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+
+	viewport.reshape();
+	viewport.apply_transform();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	object->renderFacesForSelect();
+	glFlush();
+
+	glPopMatrix();
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+
+	viewport.camera.leaveSelectionMode();
+
+	hits = glRenderMode(GL_RENDER);
+	if ( hits > 0 ){
+		closest = 0; dist = 0xffffffff;
+		while ( hits ){
+			index = (hits-1)*4;
+			// if ( selectBuf[index+1] < dist ){
+				// dist = selectBuf[index+1];
+				// closest = selectBuf[index+3];
+			// }
+			
+			//if (DLFLObject::fparray[selectBuf[index+3]].normalCentroid()*camera.getPos()){
+			if(isSelected(DLFLObject::fparray[selectBuf[index+3]]))
+				fparray.push_back(DLFLObject::fparray[selectBuf[index+3]]);
+			//}
+			hits--;
+		}
+		// closest now has the id of the selected face
+		//sel = DLFLObject::fparray[closest];
+	}	
+	glDisable(GL_CULL_FACE);
+	return fparray;
 }
 
 // Subroutine for selecting a FaceVertex (Corner) within a Face
@@ -867,34 +1016,36 @@ void GLWidget::mousePressEvent(QMouseEvent *event) {
 			setCursor(Qt::CrossCursor);
 		}
 	}
-	else if ( event->buttons() == Qt::RightButton ){
-		event->ignore();
+	else if ( event->buttons() == Qt::RightButton && QApplication::keyboardModifiers() == Qt::ShiftModifier){
+		// event->ignore();
+		if (!isBrushVisible()) showBrush();
+		mBrushStartX = event->x();
+		// mBrushStartY = event->y();
 	}
-	else { event->ignore(); }
+	else event->ignore();
 }
 
 // this has been modified for the QT interface, so it handles focus automatically
 void GLWidget::mouseMoveEvent(QMouseEvent *event) {	
 	int x = event->x(), y = event->y();
+	if (isBrushVisible()) repaint();
+	
 
 	if ( QApplication::keyboardModifiers() == Qt::AltModifier ) {
 		if ( viewport.send_to_current(GLWidget::translateEvent(event),x,y) ) {
-			//updateGL();
-		repaint();
+			repaint();
 		}
 	} 
 	else if ( QApplication::keyboardModifiers() == (Qt::AltModifier | Qt::ShiftModifier) ) {
 		if ( viewport.send_to_current(GLWidget::translateEvent(event),x,y) ) {
-			//updateGL();
-		repaint();
+			repaint();
 		}
 	}
-	else if ( event->buttons() == Qt::RightButton ){
-		event->ignore();
+	else if ( event->buttons() == Qt::RightButton && QApplication::keyboardModifiers() == Qt::ShiftModifier){
+		// event->ignore();
+		setBrushSize(mBrushSize+event->x()-mBrushStartX);
 	}
-	else {
-		event->ignore();
-	}
+	else event->ignore();
 }
 
 void GLWidget::mouseReleaseEvent(QMouseEvent *event) {
@@ -913,10 +1064,11 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *event) {
 		repaint();
 		}
 	}
-	else if ( event->buttons() == Qt::RightButton ){
-		event->ignore();
+	else if ( event->buttons() == Qt::RightButton && QApplication::keyboardModifiers() == Qt::ShiftModifier){
+		mBrushStartX = 0;
+		// mBrushStartY = 0;
 	}
-	else { event->ignore(); }
+	else event->ignore();
 }
 
 void GLWidget::setViewportColor(QColor c){

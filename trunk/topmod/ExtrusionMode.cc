@@ -138,7 +138,7 @@ void ExtrusionMode::triggerDooSabinExtrude(){
 void ExtrusionMode::triggerCubicalExtrude(){
 
 	((MainWindow*)mParent)->setToolOptions(mCubicalExtrudeWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::ExtrudeFace);	
+	((MainWindow*)mParent)->setMode(DLFLWindow::ExtrudeMultipleFaces);	
 }
 
 void ExtrusionMode::triggerDodecahedralExtrude(){

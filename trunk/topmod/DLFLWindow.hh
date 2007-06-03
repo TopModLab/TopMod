@@ -33,10 +33,10 @@ class DLFLWindow : public QWidget {
 		{
 		  NormalMode=0,
 		  SelectVertex=1, SelectEdge=2, SelectFace=3, SelectFaceVertex=4, // Simple selection
-		  MultiSelectVertex=5, MultiSelectEdge=6, MultiSelectFace=7, MultiSelectFaceVertex=8, // Multiple selection
+		  MultiSelectVertex=5, MultiSelectEdge=6, MultiSelectFace=7, MultiSelectFaceVertex=8, SelectCheckerboard=9,// Multiple selection
 		  InsertEdge=11, DeleteEdge=12, SubDivideEdge=13, CollapseEdge=14, SpliceCorners=15, // Edge operations
 		  ConnectEdges=21, // Connect two half-edges
-		  ExtrudeFace=31, ExtrudeFaceDS=32, ExtrudeDualFace=33, ExtrudeFaceDodeca=34, ExtrudeFaceIcosa=35, // Extrusions
+		  ExtrudeFace=31, ExtrudeFaceDS=32, ExtrudeDualFace=33, ExtrudeFaceDodeca=34, ExtrudeFaceIcosa=35, ExtrudeMultipleFaces=36, // Extrusions
 		  StellateFace=41, DoubleStellateFace = 42,
 		  ConnectFaceVertices=51, ConnectFaces=52, BezierConnectFaces=53, HermiteConnectFaces=54, // Handles
 		  ReorderFace=61, SubDivideFace=62, // Face operations
@@ -259,6 +259,9 @@ private:
 		void mouseMoveEvent(QMouseEvent *event);
 		// Mode getMode(){ return mode; }
 		// void setMode(Mode m){ mode = m; }
+		
+		void getCheckerboardSelection(DLFLFacePtr fptr);
+
 signals:
 #ifdef WITH_PYTHON
   void loadedObject( DLFLObject *obj, QString fileName );
@@ -333,6 +336,10 @@ public slots:
 			// Switch to specified operating mode
 		void setMode(Mode m);
 		void setRemeshingScheme(RemeshingScheme scheme);
+		
+		// void selectAllFaces();
+		// void selectAllEdges();
+		// void selectAllVertices();
 
 			// Geometric transformations
 		void translatex(double x);
@@ -402,6 +409,7 @@ public slots:
 		void cleanupWingedVertices(void);
 		void createDual(void);
 		void createCrust(bool use_scaling=false);
+		void createCrust2(bool use_scaling=false);
 		void makeWireframe(void);
 		void makeWireframeWithColumns(void);
 		void makeUnitCube(double edgelength);

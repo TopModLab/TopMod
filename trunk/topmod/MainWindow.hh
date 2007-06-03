@@ -224,6 +224,7 @@ class MainWindow : public QMainWindow {
 		QAction *mShowFaceIDsAct;
 		QAction *mShowEdgeIDsAct;
 		QAction *mShowVertexIDsAct;
+		QAction *mShowSelectedIDsAct;
 		QAction *showSilhouetteAct;
 		QAction *showWireframeAct;
 		QAction *objectOrientationAct;
@@ -264,6 +265,8 @@ class MainWindow : public QMainWindow {
 	  QAction *selectVertexAct;
 	  QAction *selectFaceAct;
 		QAction *selectMultipleFacesAct;
+		QAction *selectCheckerboardFacesAct;
+		QAction *selectAllFacesAct;
 	  QAction *selectEdgeAct;
 	  QAction *selectCornerAct;
 	  QAction *clearSelectedModeAct;
@@ -404,6 +407,7 @@ class MainWindow : public QMainWindow {
 		void select_vertex();
 		void select_face();
 		void select_multiple_faces();
+		void select_checkerboard_faces();
 		void select_edge();
 		void select_corner();
 		void exit_selection_mode();
@@ -416,6 +420,7 @@ class MainWindow : public QMainWindow {
 
 		void crust_modeling1();
 		void crust_modeling2();
+		void crust_modeling3();
 		void wireframe_modeling();
 		void column_modeling(); // Esan
 

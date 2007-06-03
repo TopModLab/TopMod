@@ -203,6 +203,8 @@ void DLFLWindow::doSelection(int x, int y)
 	DLFLEdgePtr septr = NULL;
 	DLFLFacePtr sfptr = NULL;
 	DLFLFaceVertexPtr sfvptr = NULL;
+	DLFLFacePtrArray sfptrarr;
+	DLFLFacePtrArray::iterator first, last;
 
 	switch ( mode ) {
 
@@ -252,17 +254,65 @@ void DLFLWindow::doSelection(int x, int y)
 		sfptr = active->selectFace(x,y);
 		GLWidget::setSelectedFace(num_sel_faces,sfptr);
 		break;
-
+		case ExtrudeMultipleFaces :
 		case MultiSelectFace :
 		case SubDivideFace :
 									// No duplicates allowed
-		sfptr = active->selectFace(x,y);
-		if ( !GLWidget::isSelected(sfptr) )
-			GLWidget::setSelectedFace(num_sel_faces,sfptr);
-		else {
-			GLWidget::clearSelectedFace(sfptr);
-			num_sel_faces--;
+		// sfptr = active->selectFace(x,y);
+		// if ( !GLWidget::isSelected(sfptr) ){
+		// 	GLWidget::setSelectedFace(num_sel_faces,sfptr);
+		// 	num_sel_faces++;
+		// }
+		// else if ( GLWidget::isSelected(sfptr) && QApplication::keyboardModifiers() == Qt::ControlModifier) {
+		// 	GLWidget::clearSelectedFace(sfptr);
+		// 	num_sel_faces--;
+		// }
+		if ( QApplication::keyboardModifiers() == Qt::ControlModifier) {
+			sfptrarr = active->deselectFaces(x,y);
+			first = sfptrarr.begin(); last = sfptrarr.end();
+			while ( first != last ){
+				GLWidget::clearSelectedFace(*first);
+				++first;
+				num_sel_faces--;
+			}
+			active->redraw();
+			sfptrarr.clear();
 		}
+		else {
+			sfptrarr = active->selectFaces(x,y);
+			first = sfptrarr.begin(); last = sfptrarr.end();
+			while ( first != last ){
+				GLWidget::setSelectedFace(num_sel_faces,*first);
+				++first;
+				num_sel_faces++;
+			}
+			active->redraw();
+			sfptrarr.clear();
+		}
+
+		break;
+		case SelectCheckerboard :
+		//get one selected face
+		sfptr = active->selectFace(x,y);
+		if (!GLWidget::isSelected(sfptr) && sfptr){
+			GLWidget::setSelectedFace(num_sel_faces,sfptr);
+			num_sel_faces++;
+			getCheckerboardSelection(sfptr);
+			// sfptrarr.push_back(sfptr);
+			// DLFLFacePtrArray fparray;
+			// sfptr->getNeighboringFaces(fparray);
+			// first = fparray.begin(); last = fparray.end();
+			// while ( first != last ){
+			// 	if (sfptr->sharesOneVertex((*first)) && !GLWidget::isSelected(*first)){
+			// 		GLWidget::setSelectedFace(num_sel_faces,(*first));
+			// 		num_sel_faces++;
+			// 	}
+			// 	first++;
+			// }//end while first
+		}		
+		active->redraw();
+		sfptrarr.clear();
+
 		break;
 
 		case SelectFaceVertex :
@@ -311,18 +361,25 @@ void DLFLWindow::mousePressEvent(QMouseEvent *event) {
 	if ( event->buttons() == Qt::LeftButton && mode != NormalMode ){
 		doSelection(event->x(),this->size().height()-event->y());
 	}
-	else if ( event->buttons() == Qt::RightButton ){
-		event->ignore();
-	}
+	// else if ( event->buttons() == Qt::RightButton && QApplication::keyboardModifiers() == Qt::ShiftModifier){
+	// 	// event->ignore();
+	// 	if (!active->isBrushVisible()) active->showBrush();
+	// 	mBrushStartX = event->x();
+	// 	// mBrushStartY = event->y();
+	// }
+	else event->ignore();
 }
 
 
 void DLFLWindow::mouseMoveEvent(QMouseEvent *event) {
+	// if (active->isBrushVisible()) active->redraw();
 	if ( mode != NormalMode )
 		doSelection(event->x(),this->size().height()-event->y() );
-	else if ( event->buttons() == Qt::RightButton ){
-		event->ignore();
-	}
+	// else if ( event->buttons() == Qt::RightButton && QApplication::keyboardModifiers() == Qt::ShiftModifier){
+	// 	// event->ignore();
+	// 	setBrushSize(mBrushSize+event->x()-mBrushStartX);
+	// }
+	else event->ignore();
 }
 void DLFLWindow::mouseReleaseEvent(QMouseEvent *event) 
 {
@@ -553,10 +610,28 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
 				{
 					undoPush();
 					setModified(true);
-					object.extrudeFace(sfptr,extrude_dist,num_extrusions,
-						extrude_rot,extrude_scale);
+					object.extrudeFace(sfptr,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
 					recomputePatches();
 					recomputeNormals();
+				}
+				GLWidget::clearSelectedFaces();
+				redraw();
+			}
+			break;
+			case ExtrudeMultipleFaces :
+			if ( GLWidget::numSelectedFaces() >= 1 )
+			{
+				DLFLFacePtrArray sfptrarr = GLWidget::getSelectedFaces();
+				if ( sfptrarr[0] )
+				{
+					undoPush();
+					setModified(true);
+					vector<DLFLFacePtr>::iterator it;
+					for(it = sfptrarr.begin(); it != sfptrarr.end(); it++) {
+						object.extrudeFace(*it,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
+						recomputePatches();
+						recomputeNormals();						
+					}
 				}
 				GLWidget::clearSelectedFaces();
 				redraw();
@@ -754,7 +829,7 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
 			break;
 			case SubDivideFace :
 			case MultiSelectFace :
-			num_sel_faces++;
+			// num_sel_faces++;
 			break;
 //from ozgur
 			case CutEdge :
@@ -862,9 +937,12 @@ void DLFLWindow::mouseReleaseEvent(QMouseEvent *event)
 		}//end switch (mode)
 
 	}//end if (mode != NormalMode)
-	else if ( event->buttons() == Qt::RightButton ){
-		event->ignore();
-	}
+	// else if ( event->buttons() == Qt::RightButton && QApplication::keyboardModifiers() == Qt::ShiftModifier){
+	// 	// event->ignore();
+	// 	mBrushStartX = 0;
+	// 	// mBrushStartY = 0;
+	// }
+	else event->ignore();
 }//end function mousereleaseevent
 
 
@@ -1117,6 +1195,9 @@ void DLFLWindow::setMode(Mode m)
 		DLFLWindow::clearSelected();
 		break;
 	}
+	if (mode != MultiSelectFace)
+		active->hideBrush();
+	else active->showBrush();
 }
 
 void DLFLWindow::setRemeshingScheme(RemeshingScheme scheme)
@@ -1655,6 +1736,33 @@ void DLFLWindow::createCrust(bool use_scaling)        // Create a crust
 	DLFLWindow::clearSelected();
 }
 
+void DLFLWindow::createCrust2(bool use_scaling) {
+	// DLFLFacePtrArray::iterator first, last;
+	vector<DLFLFacePtr>::iterator it;
+			
+	undoPush();
+	setModified(true);
+	if ( use_scaling ) object.createCrustWithScaling(DLFLWindow::crust_scale_factor);
+	else object.createCrust(DLFLWindow::crust_thickness);
+	recomputePatches();
+	recomputeNormals();
+	if ( GLWidget::numSelectedFaces() >= 1 ) {
+		DLFLFacePtrArray sfptrarr = GLWidget::getSelectedFaces();
+		if ( sfptrarr[0] ) {
+			for(it = sfptrarr.begin(); it != sfptrarr.end(); it++) {
+				object.cmMakeHole(*it,crust_cleanup);
+			}
+		}
+	}
+	recomputePatches();
+	recomputeNormals();
+	GLWidget::clearSelectedFaces();
+	setMode(DLFLWindow::MultiSelectFace);
+	redraw();	
+}
+
+
+
 void DLFLWindow::makeWireframe(void)                    // Create a wireframe
 {
 	undoPush();
@@ -1785,6 +1893,7 @@ void DLFLWindow::toggleGrid(void)                   // Toggle display of grid
 
 	// Read the DLFL object from a file
 void DLFLWindow::readObject(const char * filename) {
+	active->clearSelected();
 	ifstream file;
 	file.open(filename);
 	if ( strstr(filename,".dlfl") || strstr(filename,".DLFL") )
@@ -1796,6 +1905,7 @@ void DLFLWindow::readObject(const char * filename) {
 
 	// Read the DLFL object from a file
 void DLFLWindow::readObjectQFile(QString filename) {
+	active->clearSelected();
 	QFile file(filename);
 	file.open(QIODevice::ReadOnly);
 
@@ -1819,6 +1929,7 @@ void DLFLWindow::readObjectQFile(QString filename) {
 
 	// Read the DLFL object from a file - use alternate OBJ reader for OBJ files
 void DLFLWindow::readObjectAlt(const char * filename) {
+	active->clearSelected();
 	ifstream file;
 	file.open(filename);
 	if ( strstr(filename,".dlfl") || strstr(filename,".DLFL") )
@@ -1829,6 +1940,7 @@ void DLFLWindow::readObjectAlt(const char * filename) {
 }
 
 void DLFLWindow::readObjectOBJ(const char * filename) {
+	active->clearSelected();
 	ifstream file;
 	file.open(filename);
 	object.readObject(file);
@@ -1836,6 +1948,7 @@ void DLFLWindow::readObjectOBJ(const char * filename) {
 }
 
 void DLFLWindow::readObjectDLFL(const char * filename) {
+	active->clearSelected();
 	ifstream file;
 	file.open(filename);
 	object.readDLFL(file);
@@ -2221,4 +2334,27 @@ void DLFLWindow::switchFrontView(){
 void DLFLWindow::switchBackView(){
 	active->switchTo(VPBack);
 	active->redraw();
+}
+
+//recurse through selected faces to get a list of checkerboard selection for the entire object
+void DLFLWindow::getCheckerboardSelection(DLFLFacePtr fptr) {
+	// fparray.clear();
+	// sfptr = active->selectFace(x,y);
+	if (fptr){
+		int numShared = 0;
+		DLFLFacePtrArray fparray;
+		vector<DLFLFacePtr>::iterator it;
+		fptr->getNeighboringFaces(fparray);
+		for ( it = fparray.begin(); it != fparray.end(); it++){
+			if (fptr->sharesOneVertex((*it)) && !GLWidget::isSelected(*it)){
+				numShared++;
+				GLWidget::setSelectedFace(num_sel_faces,(*it));
+				num_sel_faces++;
+				getCheckerboardSelection((*it));
+			}
+		}//end for loop
+		if (numShared == 0) return; //break out of recursive loop is there are no one vertex sharing faces
+	}		
+	
+	// active->redraw();
 }

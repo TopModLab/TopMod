@@ -883,6 +883,53 @@ bool DLFLFace :: contains(DLFLFaceVertexPtr fvptr)
   return false;
 }
 
+//does this face share only one vertex with the given face?
+bool DLFLFace::sharesOneVertex(DLFLFacePtr dfp){
+	if ( head){
+		int numSharedVerts = 0;
+		DLFLFaceVertexPtr current = head;
+		DLFLFaceVertexPtrArray dfvparray;
+		dfp->getCorners(dfvparray);
+		vector<DLFLFaceVertexPtr>::iterator it;
+		for ( it = dfvparray.begin(); it != dfvparray.end(); it++){
+			current = head;
+			if (current->getVertexPtr() == (*it)->getVertexPtr())
+				numSharedVerts++;
+			current = current->next();
+			while (current != head){
+				if (current->getVertexPtr() == (*it)->getVertexPtr())
+					numSharedVerts++;
+				current = current->next();
+			}
+			// cout << numSharedVerts << std::endl;
+		}//end for it loop
+		if (numSharedVerts == 1) return true;
+		else return false;
+	}
+	return false;	
+}
+
+//store all neighboring faces in fparray, passed by reference
+void DLFLFace :: getNeighboringFaces(DLFLFacePtrArray& fparray) {
+	fparray.clear();
+	DLFLFaceVertexPtr current = head;
+	DLFLFacePtrArray fparr;
+	vector<DLFLFacePtr>::iterator it;
+	current->getVertexPtr()->getFaces(fparr);
+	for ( it = fparr.begin(); it != fparr.end(); it++){
+		if ((*it) != this) 
+			fparray.push_back((*it));
+	}	
+	current = current->next();
+	while (current != head){
+		current->getVertexPtr()->getFaces(fparr);
+		for ( it = fparr.begin(); it != fparr.end(); it++){
+			if ((*it) != this) 
+				fparray.push_back((*it));
+		}
+		current = current->next();
+	}
+}
 
 // Find next DLFLFaceVertex - just return the next() for given face-vertex
 DLFLFaceVertexPtr DLFLFace :: nextFaceVertex(DLFLFaceVertexPtr fvptr)

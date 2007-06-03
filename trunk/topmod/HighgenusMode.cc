@@ -17,6 +17,7 @@ HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm)
   mAddHandleSIWidget = new QWidget;
   mRindModelingScalingWidget = new QWidget;
   mRindModelingThicknessWidget = new QWidget;
+  mRindModelingPaintingWidget = new QWidget;
   mWireframeModelingWidget = new QWidget;
   mColumnModelingWidget = new QWidget;
 	mSierpinskyWidget = new QWidget;
@@ -28,6 +29,7 @@ HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm)
 	setupAddHandleSI();
 	setupRindModelingScaling();
 	setupRindModelingThickness();
+	setupRindModelingPainting();
 	setupWireframeModeling();
 	setupColumnModeling();
 	setupSierpinsky();
@@ -69,6 +71,13 @@ HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm)
 	mRindModelingThicknessAction->setStatusTip(tr("Enter Rind Modeling Thickness Mode"));
 	mRindModelingThicknessAction->setToolTip(tr("Rind Modeling Thickness Mode"));
 	connect(mRindModelingThicknessAction, SIGNAL(triggered()), this, SLOT(triggerRindModelingThickness()));
+
+	mRindModelingPaintingAction = new QAction(QIcon(":images/highgenus_rind.png"),tr("Rind Modeling Painting"),this);
+	mRindModelingPaintingAction->setCheckable(true);
+	sm->registerAction(mRindModelingPaintingAction, "High Genus Operations", "");
+	mRindModelingPaintingAction->setStatusTip(tr("Enter Rind Modeling Painting Mode"));
+	mRindModelingPaintingAction->setToolTip(tr("Rind Modeling Painting Mode"));
+	connect(mRindModelingPaintingAction, SIGNAL(triggered()), this, SLOT(triggerRindModelingPainting()));
 
 	mWireframeModelingAction = new QAction(QIcon(":images/highgenus_wireframe.png"),tr("Wireframe Modeling"),this);
 	mWireframeModelingAction->setCheckable(true);
@@ -115,6 +124,7 @@ QMenu* HighgenusMode::getMenu(){
 	mHighgenusMenu->addAction(mAddHandleSIAction);
 	mHighgenusMenu->addAction(mRindModelingScalingAction); 
 	mHighgenusMenu->addAction(mRindModelingThicknessAction);
+	mHighgenusMenu->addAction(mRindModelingPaintingAction);
 	mHighgenusMenu->addAction(mWireframeModelingAction); 
 	mHighgenusMenu->addAction(mColumnModelingAction);	
 	mHighgenusMenu->addAction(mSierpinskyAction);
@@ -132,6 +142,7 @@ void HighgenusMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 	actionGroup->addAction(mAddHandleSIAction);
 	actionGroup->addAction(mRindModelingScalingAction); 
 	actionGroup->addAction(mRindModelingThicknessAction);
+	actionGroup->addAction(mRindModelingPaintingAction);
 	actionGroup->addAction(mWireframeModelingAction); 
 	actionGroup->addAction(mColumnModelingAction);	
 	actionGroup->addAction(mSierpinskyAction);
@@ -143,6 +154,7 @@ void HighgenusMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 	toolBar->addAction(mAddHandleSIAction);
 	toolBar->addAction(mRindModelingScalingAction); 
 	toolBar->addAction(mRindModelingThicknessAction);
+	toolBar->addAction(mRindModelingPaintingAction);
 	toolBar->addAction(mWireframeModelingAction); 
 	toolBar->addAction(mColumnModelingAction);	
 	toolBar->addAction(mSierpinskyAction);
@@ -154,6 +166,7 @@ void HighgenusMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 	stackedWidget->addWidget(mAddHandleSIWidget);
 	stackedWidget->addWidget(mRindModelingScalingWidget); 
 	stackedWidget->addWidget(mRindModelingThicknessWidget);
+	stackedWidget->addWidget(mRindModelingPaintingWidget);
 	stackedWidget->addWidget(mWireframeModelingWidget); 
 	stackedWidget->addWidget(mColumnModelingWidget);	
 	stackedWidget->addWidget(mSierpinskyWidget);
@@ -192,6 +205,12 @@ void HighgenusMode::triggerRindModelingThickness(){
 	((MainWindow*)mParent)->setMode(DLFLWindow::NormalMode);
 }
 
+void HighgenusMode::triggerRindModelingPainting(){
+	
+	((MainWindow*)mParent)->setToolOptions(mRindModelingPaintingWidget);
+	((MainWindow*)mParent)->setMode(DLFLWindow::MultiSelectFace);
+}
+
 void HighgenusMode::triggerWireframeModeling(){
 	
 	((MainWindow*)mParent)->setToolOptions(mWireframeModelingWidget);
@@ -225,6 +244,7 @@ void HighgenusMode::triggerMengerSponge(){
 void HighgenusMode::toggleCrustCleanupFlag(int state)
 {
 	rindModelingThicknessCleanupCheckBox->setChecked(state);
+	rindModelingPaintingCleanupCheckBox->setChecked(state);
 	rindModelingScalingCleanupCheckBox->setChecked(state);
 	
 	((MainWindow*)mParent)->toggleCrustCleanupFlag(state);
@@ -507,6 +527,44 @@ void HighgenusMode::setupRindModelingThickness(){
 	mRindModelingThicknessLayout->addStretch(1);
 	mRindModelingThicknessWidget->setWindowTitle("Rind Modeling (Thickness)");
 	mRindModelingThicknessWidget->setLayout(mRindModelingThicknessLayout);
+}
+
+void HighgenusMode::setupRindModelingPainting(){
+
+	mRindModelingPaintingLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	mRindModelingPaintingLayout->setMargin(0);
+	
+	//Painting
+	QLabel *rindModelingPaintingLabel = new QLabel(tr("Painting:"));
+	QDoubleSpinBox *rindModelingPaintingSpinBox = new QDoubleSpinBox;
+	rindModelingPaintingSpinBox->setRange(-1.0, 1.0);
+	rindModelingPaintingSpinBox->setSingleStep(0.01);
+	rindModelingPaintingSpinBox->setValue(0.5);
+	rindModelingPaintingSpinBox->setDecimals(2);
+	rindModelingPaintingSpinBox->setMaximumSize(75,25);
+	connect(rindModelingPaintingSpinBox, SIGNAL(valueChanged(double)),
+          ((MainWindow*)mParent), SLOT(changeCrustThickness(double)));
+	
+	mRindModelingPaintingLayout->addWidget(rindModelingPaintingLabel);
+  mRindModelingPaintingLayout->addWidget(rindModelingPaintingSpinBox);
+	
+	//symmetric weights checkbox
+	rindModelingPaintingCleanupCheckBox = new QCheckBox(tr("Cleanup when peeling"),this);
+	rindModelingPaintingCleanupCheckBox->setChecked(Qt::Unchecked);
+	connect(rindModelingPaintingCleanupCheckBox, SIGNAL(stateChanged(int)),
+          this, SLOT(toggleCrustCleanupFlag(int)));
+
+	mRindModelingPaintingLayout->addWidget(rindModelingPaintingCleanupCheckBox);
+	//create crust button
+	QPushButton *rindModelingPaintingCreateButton = new QPushButton("Create Crust", this);
+	connect(rindModelingPaintingCreateButton, SIGNAL(clicked()),
+          ((MainWindow*)mParent), SLOT(crust_modeling3()));
+
+	mRindModelingPaintingLayout->addWidget(rindModelingPaintingCreateButton);	
+	//set layout and add stretch
+	mRindModelingPaintingLayout->addStretch(1);
+	mRindModelingPaintingWidget->setWindowTitle("Rind Modeling (Painting)");
+	mRindModelingPaintingWidget->setLayout(mRindModelingPaintingLayout);
 }
 
 void HighgenusMode::setupWireframeModeling(){

@@ -9,7 +9,7 @@ CONFIG += qt debug warn_off
 # exclude verse python or spacenav drivers
 # or include them with CONFIG += 
 CONFIG -=  WITH_PYTHON WITH_SPACENAV WITH_VERSE
-CONFIG += WITH_PYTHON 
+# CONFIG += WITH_PYTHON 
 DEFINES += TOPMOD_VERSION
 
 TEMPLATE = app
@@ -112,6 +112,7 @@ macx {
 HEADERS += 	DLFLScriptEditor.hh \
 						TopModPreferences.hh \
 						TdxDeviceWrappers.hh \
+						DLFLWindow.hh \
 						GLWidget.hh \
 						TopMod.hh \
 						MainWindow.hh \
@@ -136,7 +137,6 @@ HEADERS += 	DLFLScriptEditor.hh \
 						DLFLObject.hh \
 						DLFLRenderer.hh \
 						DLFLVertex.hh \
-						DLFLWindow.hh \
 						Viewport.hh \
 						include/Graphics/TMPatchFace.hh \
 						include/Graphics/TMPatchObject.hh \

@@ -36,7 +36,7 @@ class DLFLWindow : public Fl_Double_Window
        MultiSelectVertex=5, MultiSelectEdge=6, MultiSelectFace=7, MultiSelectFaceVertex=8, // Multiple selection
        InsertEdge=11, DeleteEdge=12, SubDivideEdge=13, CollapseEdge=14, SpliceCorners=15, // Edge operations
        ConnectEdges=21, // Connect two half-edges
-       ExtrudeFace=31, ExtrudeFaceDS=32, ExtrudeDualFace=33, ExtrudeFaceDodeca=34, ExtrudeFaceIcosa=35, // Extrusions
+       ExtrudeFace=31, ExtrudeFaceDS=32, ExtrudeDualFace=33, ExtrudeFaceDodeca=34, ExtrudeFaceIcosa=35, ExtrudeMultipleFaces=36, // Extrusions
        StellateFace=41, DoubleStellateFace = 42,
        ConnectFaceVertices=51, ConnectFaces=52, BezierConnectFaces=53, HermiteConnectFaces=54, // Handles
        ReorderFace=61, SubDivideFace=62, // Face operations
