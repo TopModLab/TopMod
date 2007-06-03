@@ -4,7 +4,7 @@
 
 # TARGET = TopMod
 QT += opengl xml
-CONFIG += qt debug  
+CONFIG += qt debug warn_off
 
 # exclude verse python or spacenav drivers
 # or include them with CONFIG += 

@@ -33,7 +33,6 @@ signals :
   void cmdExecuted( );
 private slots :
   void executeCommand( );
-  void keyPressEvent ( QKeyEvent * e );
 public slots :
   void loadObject( DLFLObject* obj, QString fileName );
 private :
