@@ -137,6 +137,7 @@ HEADERS += 	DLFLScriptEditor.hh \
 						DLFLObject.hh \
 						DLFLRenderer.hh \
 						DLFLVertex.hh \
+						DLFLLocator.hh \
 						Viewport.hh \
 						include/Graphics/TMPatchFace.hh \
 						include/Graphics/TMPatchObject.hh \
@@ -206,6 +207,7 @@ SOURCES += 	DLFLScriptEditor.cc \
 						DLFLFile.cc \
 						DLFLFileAlt.cc \
 						DLFLLighting.cc \
+						DLFLLocator.cc \
 						DLFLMeshSmooth.cc \
 						DLFLMultiConnect.cc \
 						DLFLObject.cc \

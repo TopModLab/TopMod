@@ -210,8 +210,16 @@ void MainWindow::select_vertex() {
   mainWindow->setMode(DLFLWindow::SelectVertex);
 }
 
+void MainWindow::edit_vertex() {
+  mainWindow->setMode(DLFLWindow::EditVertex);
+}
+
 void MainWindow::select_face() {
   mainWindow->setMode(DLFLWindow::SelectFace);
+}
+
+void MainWindow::select_face_loop() {
+  mainWindow->setMode(DLFLWindow::SelectFaceLoop);
 }
 
 void MainWindow::select_multiple_faces() {
@@ -219,14 +227,21 @@ void MainWindow::select_multiple_faces() {
 	mainWindow->getActive()->showBrush();
 }
 
-void MainWindow::select_checkerboard_faces() {
-  mainWindow->setMode(DLFLWindow::SelectCheckerboard);
+void MainWindow::select_similar_faces() {
+  mainWindow->setMode(DLFLWindow::SelectSimilarFaces);
 	// mainWindow->getActive()->showBrush();
 }
 
+void MainWindow::select_checkerboard_faces() {
+  mainWindow->setMode(DLFLWindow::SelectCheckerboard);
+}
 
 void MainWindow::select_edge() {
   mainWindow->setMode(DLFLWindow::SelectEdge);
+}
+
+void MainWindow::select_edge_loop() {
+  mainWindow->setMode(DLFLWindow::SelectEdgeLoop);
 }
 
 void MainWindow::select_corner() {

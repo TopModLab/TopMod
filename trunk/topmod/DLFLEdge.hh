@@ -118,6 +118,15 @@ class DLFLEdge
          return auxcoords;
        }
 
+			// bool sharesNoFaces(DLFLEdgePtr eptr); //dave ??
+
+     // void geomCentroid(void); // brianb
+
+     // DLFLControlPoint getCentroid(void) const  //brianb
+     //   {
+     //     return centroid;
+     //   }
+
      Vector3d getAuxNormal(void) const
        {
          return auxnormal;

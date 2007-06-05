@@ -8,6 +8,13 @@
 
 uint DLFLEdge :: suLastID = 0;
 
+//		// Compute center between the two vertices // brianb
+// void DLFLEdge :: geomCentroid(void)
+// {
+//   centroid = (fvpV1->getVertexPtr()->getCoords() +
+//               fvpV2->getVertexPtr()->getCoords()) / 2.0;
+// }
+
 void DLFLEdge :: dump(ostream& o) const
 {
   o << "DLFLEdge" << endl

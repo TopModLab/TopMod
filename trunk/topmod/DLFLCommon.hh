@@ -44,8 +44,10 @@ class DLFLObject;
 class DLFLMaterial;
 class TMPatch;
 class TMPatchFace;
+class DLFLLocator;  // brianb
 
 typedef DLFLVertex * DLFLVertexPtr;
+typedef DLFLLocator * DLFLLocatorPtr; // brianb
 typedef DLFLFaceVertex * DLFLFaceVertexPtr;
 typedef DLFLEdge * DLFLEdgePtr;
 typedef DLFLFace * DLFLFacePtr;
@@ -54,6 +56,12 @@ typedef DLFLMaterial * DLFLMaterialPtr;
 typedef TMPatch * TMPatchPtr;
 typedef TMPatchFace * TMPatchFacePtr;
 
+typedef Vector3d DLFLControlPoint;                         // brianb
+typedef vector<DLFLControlPoint> DLFLControlPointArray; // brianb
+typedef vector<DLFLControlPoint> DLFLControlPoint2dArray;// brianb
+
+typedef vector<DLFLLocator> DLFLLocatorArray;        // brianb
+typedef vector<DLFLLocatorPtr> DLFLLocatorPtrArray; // brianb
 typedef vector<DLFLVertex> DLFLVertexArray;
 typedef vector<DLFLVertexPtr> DLFLVertexPtrArray;
 typedef list<DLFLVertex> DLFLVertexList;
@@ -169,6 +177,7 @@ void erase_dep(DLFLEdgePtr ep);
 void erase_dfp(DLFLFacePtr fp);
 void erase_dop(DLFLObjectPtr op);
 void erase_dmp(DLFLMaterialPtr mp);
+void erase_dlp(DLFLLocatorPtr lp);  // brianb
 
 void clear(DLFLVertexPtrArray& vparray);
 void clear(DLFLFaceVertexPtrArray& fvparray);

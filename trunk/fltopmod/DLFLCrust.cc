@@ -8,15 +8,15 @@
 #include "DLFLAux.hh"
 #include "DLFLConvexHull.hh"
 
-DLFLFacePtrArray DLFLObject :: crustfp1;
-DLFLFacePtrArray DLFLObject :: crustfp2;
-int DLFLObject :: crust_num_old_faces;
-int DLFLObject :: crust_min_face_id;
+DLFLFacePtrArray DLFLObject::crustfp1;
+DLFLFacePtrArray DLFLObject::crustfp2;
+int DLFLObject::crust_num_old_faces;
+int DLFLObject::crust_min_face_id;
 
-DLFLVertexPtrArray DLFLObject :: crustvp1;
-DLFLVertexPtrArray DLFLObject :: crustvp2;
-int DLFLObject :: crust_min_vert_id;
-int DLFLObject :: crust_num_old_verts;
+DLFLVertexPtrArray DLFLObject::crustvp1;
+DLFLVertexPtrArray DLFLObject::crustvp2;
+int DLFLObject::crust_min_vert_id;
+int DLFLObject::crust_num_old_verts;
 
 /*
   Create a crust for this object.
@@ -28,7 +28,7 @@ int DLFLObject :: crust_num_old_verts;
   for normal averaging.
 */
 
-void DLFLObject :: createCrust(double thickness, bool uniform)
+void DLFLObject::createCrust(double thickness, bool uniform)
 {
   if ( !isNonZero(thickness) ) return;
 
@@ -53,7 +53,7 @@ void DLFLObject :: createCrust(double thickness, bool uniform)
      // Fill the arrays storing information for crust modeling
      // Since we are traversing the faces, also compute and store
      // the normals at corners of each face for use later
-  DLFLFacePtrList :: iterator fl_first, fl_last;
+  DLFLFacePtrList::iterator fl_first, fl_last;
   DLFLFacePtr fp;
   int num_faces = 0;
   fl_first = face_list.begin(); fl_last = face_list.end();
@@ -73,7 +73,7 @@ void DLFLObject :: createCrust(double thickness, bool uniform)
 
      // If thickness is negative move the old vertices outward
      // Otherwise move the new vertices inward
-  DLFLVertexPtrList :: iterator vl_first, vl_last;
+  DLFLVertexPtrList::iterator vl_first, vl_last;
   DLFLVertexPtr vp;
   Vector3dArray normals;
   Vector3d avenormal, newpos;
@@ -146,7 +146,7 @@ void DLFLObject :: createCrust(double thickness, bool uniform)
   w.r.t centroid of object.
 */
 
-void DLFLObject :: createCrustWithScaling(double scale_factor)
+void DLFLObject::createCrustWithScaling(double scale_factor)
 {
   if ( !isNonZero(scale_factor) ) return;
   
@@ -167,7 +167,7 @@ void DLFLObject :: createCrustWithScaling(double scale_factor)
   Vector3d objcen;
      // We need to find the centroid of the object
      // We can find num of vertices at the same time
-  DLFLVertexPtrList :: iterator first, last;
+  DLFLVertexPtrList::iterator first, last;
   first = vertex_list.begin(); last = vertex_list.end();
   objcen.reset(); num_old_verts = 0;
   while ( first != last )
@@ -180,7 +180,7 @@ void DLFLObject :: createCrustWithScaling(double scale_factor)
   readDLFL(dlflstream,false);
 
      // Fill the arrays storing information for crust modeling
-  DLFLFacePtrList :: iterator fl_first, fl_last;
+  DLFLFacePtrList::iterator fl_first, fl_last;
   DLFLFacePtr fp;
   int num_faces = 0;
   fl_first = face_list.begin(); fl_last = face_list.end();
@@ -205,7 +205,7 @@ void DLFLObject :: createCrustWithScaling(double scale_factor)
   
      // If scale_factor is negative scale the old vertices using scale_factor > 1
      // Otherwise scale the new vertices using scale_factor < 1
-  DLFLVertexPtrList :: iterator vl_first, vl_last;
+  DLFLVertexPtrList::iterator vl_first, vl_last;
   DLFLVertexPtr vp;
   Vector3d normal, newpos;
   int num_verts = 0;
@@ -236,7 +236,7 @@ void DLFLObject :: createCrustWithScaling(double scale_factor)
   crust_min_face_id = (face_list.front())->getID();
 }
 
-void DLFLObject :: cmMakeHole(DLFLFacePtr fp, bool cleanup)
+void DLFLObject::cmMakeHole(DLFLFacePtr fp, bool cleanup)
 {
   int index = fp->getID() - crust_min_face_id;
   DLFLFacePtr fp1,fp2;
@@ -299,7 +299,7 @@ void DLFLObject :: cmMakeHole(DLFLFacePtr fp, bool cleanup)
      }
 }
 
-void DLFLObject :: createCrustForWireframe(double thickness)
+void DLFLObject::createCrustForWireframe(double thickness)
 {
   if ( !isNonZero(thickness) ) return;
 
@@ -324,7 +324,7 @@ void DLFLObject :: createCrustForWireframe(double thickness)
      // Fill the arrays storing information for crust modeling
      // Since we are traversing the faces, also compute and store
      // the normals at corners of each face for use later
-  DLFLFacePtrList :: iterator fl_first, fl_last;
+  DLFLFacePtrList::iterator fl_first, fl_last;
   DLFLFacePtr fp;
   int num_faces = 0;
   fl_first = face_list.begin(); fl_last = face_list.end();
@@ -345,7 +345,7 @@ void DLFLObject :: createCrustForWireframe(double thickness)
      // If thickness is negative move the old vertices outward
      // Otherwise move the new vertices inward
 
-  DLFLVertexPtrList :: iterator vl_first, vl_first_old;
+  DLFLVertexPtrList::iterator vl_first, vl_first_old;
   DLFLVertexPtr vp,vpNew;
   Vector3d normal, newpos;
   int num_verts = 0;
@@ -376,7 +376,7 @@ void DLFLObject :: createCrustForWireframe(double thickness)
                // get the face that has the current vertex as one of its vertices
                // and is marked for making a hole
 
-            DLFLFaceVertexPtrList :: iterator first = fvplist.begin(), last = fvplist.end();
+            DLFLFaceVertexPtrList::iterator first = fvplist.begin(), last = fvplist.end();
             while ( first != last )
                {
                  fvptemp = (*first);
@@ -452,15 +452,15 @@ void DLFLObject :: createCrustForWireframe(double thickness)
   crust_min_face_id = (face_list.front())->getID();
 }
 
-void DLFLObject :: createWireframeWithSegments(double thickness, int numSides) // Esan
+void DLFLObject::createWireframeWithSegments(double thickness, int numSides) // Esan
 {
   DLFLFacePtrArray edge_connect_fparray, temp_face_array;
   DLFLEdgePtrArray edge_array, temp_edge_ptr_array;
   DLFLFaceVertexPtrArray fvparray;
 
-  DLFLEdgePtrList :: iterator el_first, el_last;
-  DLFLFacePtrList :: iterator fl_first, fl_last;
-  DLFLVertexPtrList :: iterator vl_first, vl_last, vl_tempLast;
+  DLFLEdgePtrList::iterator el_first, el_last;
+  DLFLFacePtrList::iterator fl_first, fl_last;
+  DLFLVertexPtrList::iterator vl_first, vl_last, vl_tempLast;
 
   DLFLEdgePtr eptr = NULL,eptr_temp1,eptr_temp2, ep_temp;
   DLFLVertexPtr  vp,newvptr,temp_vptr,VListPtr, vp1, vp2;
@@ -917,9 +917,9 @@ void DLFLObject :: createWireframeWithSegments(double thickness, int numSides) /
   edge_connect_fparray.clear();
 }
 
-void DLFLObject :: tagMatchingFaces(DLFLFacePtr fptr)
+void DLFLObject::tagMatchingFaces(DLFLFacePtr fptr)
 {
-  DLFLFacePtrList :: iterator fl_first=face_list.begin(), fl_last = face_list.end();
+  DLFLFacePtrList::iterator fl_first=face_list.begin(), fl_last = face_list.end();
   DLFLFacePtr fp;
   int facevalence = fptr->size();
   int count=0;
@@ -942,12 +942,12 @@ void DLFLObject :: tagMatchingFaces(DLFLFacePtr fptr)
      }
 }
 
-void DLFLObject :: punchHoles(void)
+void DLFLObject::punchHoles(void)
 {
      // Go through list of faces and punch holes through faces that have type
      // flag set to FTHole
      // Assumes that the crust has already been created.
-  DLFLFacePtrList :: iterator fl_first=face_list.begin(), fl_last=face_list.end();
+  DLFLFacePtrList::iterator fl_first=face_list.begin(), fl_last=face_list.end();
   DLFLFacePtrList hole_faces;
   DLFLFacePtr fp;
   while ( fl_first != fl_last )
@@ -968,7 +968,7 @@ void DLFLObject :: punchHoles(void)
      }
 }
 
-void DLFLObject :: makeWireframe(double crust_thickness, bool split)
+void DLFLObject::makeWireframe(double crust_thickness, bool split)
 {
      // Make a wireframe from the given model.
 
@@ -985,7 +985,7 @@ void DLFLObject :: makeWireframe(double crust_thickness, bool split)
   punchHoles();
 }
 
-void DLFLObject :: makeWireframeWithColumns(double wireframe_thickness, int wireframe_segments)
+void DLFLObject::makeWireframeWithColumns(double wireframe_thickness, int wireframe_segments)
 {
   createWireframeWithSegments(wireframe_thickness,wireframe_segments);
 }

@@ -6,6 +6,7 @@
 
 //-- Define static members --//
 
+// DLFLLocatorPtrArray DLFLViewport::sel_lptr_array; // brianb
 DLFLVertexPtrArray DLFLViewport::sel_vptr_array;
 DLFLEdgePtrArray DLFLViewport::sel_eptr_array;
 DLFLFacePtrArray DLFLViewport::sel_fptr_array;

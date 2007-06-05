@@ -210,7 +210,8 @@ class MainWindow : public QMainWindow {
 	//Edit Menu Actions
 		QAction *mUndoAct;
 		QAction *mRedoAct;
-
+		QAction *mClearUndoListAct;
+		
 		QAction *mTopViewAct;
 		QAction *mBottomViewAct;
 		QAction *mLeftViewAct;
@@ -263,11 +264,15 @@ class MainWindow : public QMainWindow {
 
 	  //Selection Menu Actions
 	  QAction *selectVertexAct;
+	  QAction *editVertexAct;
 	  QAction *selectFaceAct;
+	  QAction *selectFaceLoopAct;
 		QAction *selectMultipleFacesAct;
+		QAction *selectSimilarFacesAct;
 		QAction *selectCheckerboardFacesAct;
 		QAction *selectAllFacesAct;
 	  QAction *selectEdgeAct;
+	  QAction *selectEdgeLoopAct;
 	  QAction *selectCornerAct;
 	  QAction *clearSelectedModeAct;
 	  QAction *exitSelectionModeAct;
@@ -405,10 +410,14 @@ class MainWindow : public QMainWindow {
 		void assign_texture_coordinates();
 
 		void select_vertex();
+		void edit_vertex();
 		void select_face();
+		void select_face_loop();
 		void select_multiple_faces();
+		void select_similar_faces();
 		void select_checkerboard_faces();
 		void select_edge();
+		void select_edge_loop();
 		void select_corner();
 		void exit_selection_mode();
 		void clear_selected();

@@ -196,6 +196,7 @@ class GLWidget : public QGLWidget {
 	int mBrushStartX;
 
 		// Selection lists - these are shared by all viewports
+	static DLFLLocatorPtrArray sel_lptr_array; // List of selected DLFLLocator pointers  // brianb  
 	static DLFLVertexPtrArray sel_vptr_array; // List of selected DLFLVertex pointers
 	static DLFLEdgePtrArray sel_eptr_array; // List of selected DLFLEdge pointers
 	static DLFLFacePtrArray sel_fptr_array; // List of selected DLFLFace pointers
@@ -214,6 +215,9 @@ class GLWidget : public QGLWidget {
 
 		// Each viewport will have its own grid
 	// Grid grid;                                        // Display grid
+
+	// Default Locator object // brianb
+	DLFLLocatorPtr locatorPtr;
 
 		// Boolean flags - these are viewport specific
 	bool showgrid;                           // Should grid be shown?
@@ -265,6 +269,23 @@ class GLWidget : public QGLWidget {
 	double getBrushSize(){ return mBrushSize;}
 	void setBrushSize(double s){ mBrushSize = max(2.0,min(200.0,s)); repaint();	}
 
+  Viewport* getViewport() // brianb
+    {
+      return &viewport;
+    }
+
+  void renderLocatorsForSelect() // brianb
+    {
+      locatorPtr->setRenderSelection(true);
+      locatorPtr->render();
+      locatorPtr->setRenderSelection(false);
+    }
+
+  void resetLocator() // brianb
+    {
+      locatorPtr->setActiveVertex(NULL);
+    }
+
 		//--- Initialize the selection lists ---//
 	static void initializeSelectionLists(int num) {
 				// Reserves memory for the arrays to avoid reallocation
@@ -273,9 +294,15 @@ class GLWidget : public QGLWidget {
 		sel_eptr_array.reserve(num);
 		sel_fptr_array.reserve(num);
 		sel_fvptr_array.reserve(num);
+		sel_lptr_array.reserve(num); // brianb
 	}
 
 		//--- Add items to the selection lists - check for NULL pointers ---//
+  static void addToSelection(DLFLLocatorPtr lp) // brianb
+    {
+			if ( lp ) sel_lptr_array.push_back(lp);
+    }
+
 	static void addToSelection(DLFLVertexPtr vp) {
 		if ( vp ) sel_vptr_array.push_back(vp);
 	}
@@ -293,6 +320,20 @@ class GLWidget : public QGLWidget {
 	}
 
 		//--- Check if given item is there in the selection list ---//
+  static bool isSelected(DLFLLocatorPtr vp)
+    {
+      bool found = false;
+      if ( vp )
+         {
+           for (int i=0; i < sel_lptr_array.size(); ++i)
+              if ( sel_lptr_array[i] == vp )
+                 {
+                   found = true; break;
+                 }
+         }
+      return found;
+    }
+
 	static bool isSelected(DLFLVertexPtr vp) {
 		bool found = false;
 		if ( vp )
@@ -347,6 +388,15 @@ class GLWidget : public QGLWidget {
 
 		//--- Set the selected item at given index ---//
 		//--- If size of array is smaller than index item will be added to end of array ---//
+  static void setSelectedLocator(int index, DLFLLocatorPtr vp) // brianb
+    {
+      if ( vp && index >= 0 )
+         {
+           if ( index < sel_lptr_array.size() ) sel_lptr_array[index] = vp;
+           else sel_lptr_array.push_back(vp);
+         }
+    }
+
 	static void setSelectedVertex(int index, DLFLVertexPtr vp) {
 		if ( vp && index >= 0 )
 		{
@@ -380,6 +430,17 @@ class GLWidget : public QGLWidget {
 	}
 
 		//--- Return the selected items at given index ---//
+  DLFLLocatorPtr getLocatorPtr() const  // brianb
+    {
+      return locatorPtr;
+    }
+
+  static DLFLLocatorPtr getSelectedLocator(int index) // brianb
+    {
+      if ( index < sel_lptr_array.size() ) return sel_lptr_array[index];
+      return NULL;
+    }
+
 	static DLFLVertexPtr getSelectedVertex(int index) {
 		if ( (uint) index < sel_vptr_array.size() ) return sel_vptr_array[index];
 		return NULL;
@@ -409,6 +470,10 @@ class GLWidget : public QGLWidget {
 		return sel_vptr_array.size();
 	}
 
+  static int numSelectedLocators(void) { // brianb
+      return sel_lptr_array.size();
+	}
+	
 	static int numSelectedEdges(void) {
 		return sel_eptr_array.size();
 	}
@@ -422,6 +487,11 @@ class GLWidget : public QGLWidget {
 	}
 
 		//--- Clear individual selection lists ---//
+  static void clearSelectedLocators(void)
+    {
+      sel_lptr_array.clear();
+    }
+
 	static void clearSelectedVertices(void) {
 		sel_vptr_array.clear();
 	}
@@ -445,12 +515,43 @@ class GLWidget : public QGLWidget {
 		}
 	}
 
+	static void clearSelectedEdge(DLFLEdgePtr ep){
+		vector<DLFLEdgePtr>::iterator it;
+		for(it = sel_eptr_array.begin(); it != sel_eptr_array.end(); it++) {
+			if (ep == *it){
+				sel_eptr_array.erase(it);
+				return;
+			}
+		}
+	}
+
+	static void clearSelectedVertex(DLFLVertexPtr vp){
+		vector<DLFLVertexPtr>::iterator it;
+		for(it = sel_vptr_array.begin(); it != sel_vptr_array.end(); it++) {
+			if (vp == *it){
+				sel_vptr_array.erase(it);
+				return;
+			}
+		}
+	}
+	
+	static void clearSelectedFaceVertex(DLFLFaceVertexPtr fvp){
+		vector<DLFLFaceVertexPtr>::iterator it;
+		for(it = sel_fvptr_array.begin(); it != sel_fvptr_array.end(); it++) {
+			if (fvp == *it){
+				sel_fvptr_array.erase(it);
+				return;
+			}
+		}
+	}
+
 	static void clearSelectedFaceVertices(void) {
 		sel_fvptr_array.clear();
 	}
 
 		// Reset all selection lists
 	static void clearSelected(void) {
+		sel_lptr_array.clear(); // brianb
 		sel_vptr_array.clear();
 		sel_eptr_array.clear();
 		sel_fptr_array.clear();
@@ -497,6 +598,7 @@ class GLWidget : public QGLWidget {
 	}
 
 	// Subroutines for selecting Vertices, Edges, Faces and FaceVertices (Corners)
+  DLFLLocatorPtr selectLocator(int mx, int my);  // brianb
 	DLFLVertexPtr selectVertex(int mx, int my);
 	DLFLEdgePtr selectEdge(int mx, int my);
 	DLFLFacePtr selectFace(int mx, int my);

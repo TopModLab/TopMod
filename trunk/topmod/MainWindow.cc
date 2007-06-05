@@ -182,8 +182,13 @@ void MainWindow::createActions() {
 
 	mRedoAct = new QAction(QIcon(":images/redo.png"), tr("&Redo"), this);
 	sm->registerAction(mRedoAct, "Edit Menu", "CTRL+SHIFT+Z");
-	mUndoAct->setStatusTip(tr("Redo the last operation"));
+	mRedoAct->setStatusTip(tr("Redo the last operation"));
 	connect(mRedoAct, SIGNAL(triggered()), mainWindow, SLOT(redo()));
+
+	mClearUndoListAct = new QAction(tr("&Clear Undo List"), this);
+	sm->registerAction(mClearUndoListAct, "Edit Menu", "CTRL+SHIFT+Z");
+	mClearUndoListAct->setStatusTip(tr("Clear the Undo List to free up some memory"));
+	connect(mClearUndoListAct, SIGNAL(triggered()), mainWindow, SLOT(clearUndoList()));
 	
 	//View Menu Actions
 	mPerspViewAct = new QAction( tr("&Reset Camera"), this);
@@ -447,17 +452,31 @@ void MainWindow::createActions() {
 	// //SELECTION MENU ACTIONS
 	selectVertexAct = new QAction(tr("Select &Vertex"), this);
 	sm->registerAction(selectVertexAct, "Settings", "SHIFT+V");
-	// selectVertexAct->setStatusTip(tr("Copy the current selection's contents to the "
+	selectVertexAct->setStatusTip(tr("Select a Vertex"));
 	connect(selectVertexAct, SIGNAL(triggered()), this, SLOT(select_vertex()));
+
+	editVertexAct = new QAction(tr("Edit Verte&x"), this);
+	sm->registerAction(editVertexAct, "Settings", "SHIFT+V");
+	editVertexAct->setStatusTip(tr("Select and Move Vertices One at a time."));
+	connect(editVertexAct, SIGNAL(triggered()), this, SLOT(edit_vertex()));
 	
 	selectFaceAct = new QAction(tr("Select &Face"), this);
 	sm->registerAction(selectFaceAct, "Settings", "SHIFT+F");
-	// selectFaceAct->setStatusTip(tr("Copy the current selection's contents to the "
+	selectFaceAct->setStatusTip(tr("Select One Face. Just for practice. :)"));
 	connect(selectFaceAct, SIGNAL(triggered()), this, SLOT(select_face() ) );
+
+	selectFaceLoopAct = new QAction(tr("Select Face Loo&p"), this);
+	sm->registerAction(selectFaceLoopAct, "Settings", "SHIFT+P");
+	selectFaceLoopAct->setStatusTip(tr("Select a Face Loop."));
+	connect(selectFaceLoopAct, SIGNAL(triggered()), this, SLOT(select_face_loop() ) );
 	
 	selectMultipleFacesAct = new QAction(tr("Select &Multiple Faces"), this);
 	sm->registerAction(selectMultipleFacesAct, "Settings", "SHIFT+G");
 	connect( selectMultipleFacesAct , SIGNAL( triggered() ), this, SLOT( select_multiple_faces() ) );
+
+	selectSimilarFacesAct = new QAction(tr("Select &Similar Faces"), this);
+	sm->registerAction(selectSimilarFacesAct, "Settings", "SHIFT+G");
+	connect( selectSimilarFacesAct , SIGNAL( triggered() ), this, SLOT( select_similar_faces() ) );
 
 	selectCheckerboardFacesAct = new QAction(tr("C&heckerboard Select Faces"), this);
 	sm->registerAction(selectCheckerboardFacesAct, "Settings", "");
@@ -469,12 +488,17 @@ void MainWindow::createActions() {
 
 	selectEdgeAct = new QAction(tr("Select &Edge"), this);
 	sm->registerAction(selectEdgeAct, "Settings", "SHIFT+E");
-	// selectCornerAct->setStatusTip(tr("Copy the current selection's contents to the "));
+	selectEdgeAct->setStatusTip(tr("Select one Edge"));
 	connect( selectEdgeAct , SIGNAL( triggered() ), this,SLOT( select_edge() ) );
+
+	selectEdgeLoopAct = new QAction(tr("Select Edge &Loop"), this);
+	sm->registerAction(selectEdgeLoopAct, "Settings", "SHIFT+L");
+	selectEdgeLoopAct->setStatusTip(tr("Select an Edge Loop"));
+	connect( selectEdgeLoopAct , SIGNAL( triggered() ), this,SLOT( select_edge_loop() ) );
 	
 	selectCornerAct = new QAction(tr("Select &Corner"), this);
 	sm->registerAction(selectCornerAct, "Settings", "SHIFT+C");
-	// selectCornerAct->setStatusTip(tr("Copy the current selection's contents to the "));
+	selectCornerAct->setStatusTip(tr("Select a Face Vertex"));
 	connect( selectCornerAct , SIGNAL( triggered() ), this, SLOT( select_corner() ) );
 	
 	exitSelectionModeAct = new QAction(tr("E&xit Selection Mode"), this);
@@ -615,6 +639,8 @@ void MainWindow::createMenus(){
 	editMenu->addAction(mRedoAct);
 	editMenu->setTearOffEnabled(true);
 	editMenu->addSeparator();
+	editMenu->addAction(mClearUndoListAct);
+	editMenu->addSeparator();
 	editMenu->addAction(mPreferencesAct);
 	
 	mViewMenu = new QMenu(tr("&View"));
@@ -712,11 +738,15 @@ void MainWindow::createMenus(){
 	selectionMenu = new QMenu(tr("&Selection"));
 	menuBar->addMenu(selectionMenu);
 	selectionMenu->addAction(selectVertexAct);
+	selectionMenu->addAction(editVertexAct);
 	selectionMenu->addAction(selectFaceAct);
+	selectionMenu->addAction(selectFaceLoopAct);
 	selectionMenu->addAction(selectMultipleFacesAct);
+	selectionMenu->addAction(selectSimilarFacesAct);
 	selectionMenu->addAction(selectCheckerboardFacesAct);
 	selectionMenu->addAction(selectAllFacesAct);
 	selectionMenu->addAction(selectEdgeAct);
+	selectionMenu->addAction(selectEdgeLoopAct);
 	selectionMenu->addAction(selectCornerAct);
 	selectionMenu->addAction(exitSelectionModeAct);
 	selectionMenu->addAction(clearSelectedModeAct);

@@ -42,7 +42,9 @@ class DLFLWindow : public QWidget {
 		  ReorderFace=61, SubDivideFace=62, // Face operations
 		  CrustModeling=71, // Crust modeling
 			CutEdge=200, CutVertex=201, CutEdgeandVertex = 202, CutFace = 203, //Conical sculpting Ozgur
-			TruncateEdge=204, MarkEdge=206, MarkVertex=207, ConvexHullMode=301
+			TruncateEdge=204, MarkEdge=206, MarkVertex=207, ConvexHullMode=301,
+			EditVertex=81, //brianb
+			SelectEdgeLoop=82, SelectFaceLoop=83, SelectSimilarFaces=84 //dave
 		};
 
 		   // Enumerations for various multi-face-handle algorithms
@@ -175,7 +177,18 @@ class DLFLWindow : public QWidget {
 		static int num_sel_edges;                // No. of selected edges
 		static int num_sel_faces;                // No. of selected faces
 		static int num_sel_faceverts;    // No. of selected face vertices
+		
+			//-- should we deselect or select the current faces? --//
+		static bool deselect_verts;
+		static bool deselect_edges;
+		static bool deselect_faces;
+		static bool deselect_faceverts;
 
+			//face loop stuff // dave
+		static DLFLEdgePtr face_loop_start_edge;
+		// static DLFLFacePtr face_loop_marker;
+		static bool face_loop_start;
+		
 		   //-- Viewports --//
 		GLWidget *top;                              // Top viewport
 		GLWidget *persp;                    // Perspective viewport
@@ -196,6 +209,11 @@ class DLFLWindow : public QWidget {
 
 		   // Initialize the viewports, etc.
 		void initialize(int x, int y, int w, int h, DLFLRendererPtr rp);
+		
+			//-- Parameters used in various operations on the DLFL object --// // brianb
+		static int  drag_startx;
+		static int  drag_starty;
+		static bool is_editing;
 
 private:
 	QVBoxLayout *layout;
@@ -205,7 +223,6 @@ private:
 	bool mWasPrimitive;
 	QWidget *mParent;
 	
-
   public :
 
 		   // Constructor
@@ -244,6 +261,12 @@ private:
 				GLWidget::clearSelected();
 				DLFLWindow::clearNumSelected();
 			}
+			
+			static void startDrag(int x, int y) // brianb
+       {
+         drag_startx = x;
+         drag_starty = y;
+       }
 
 			static void DLFLWindow::clearNumSelected(void)
 			{
@@ -261,6 +284,8 @@ private:
 		// void setMode(Mode m){ mode = m; }
 		
 		void getCheckerboardSelection(DLFLFacePtr fptr);
+		void getEdgeLoopSelection(DLFLEdgePtr eptr);
+		void getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr face_loop_marker);
 
 signals:
 #ifdef WITH_PYTHON
@@ -304,6 +329,7 @@ public slots:
 		// to the selection lists in the GLWidget class, which are assumed
 		// to have been cleared before calling this function
 		void doSelection(int x, int y);
+    void doDrag(int x, int y);
 
 		// Override show() method to show subwindows also
 		void show(void);

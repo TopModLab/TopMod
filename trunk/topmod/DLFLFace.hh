@@ -126,6 +126,10 @@ class DLFLFace
         // Don't do any averaging, etc.
      void storeNormals(void);
      
+     Vector3d getGeomCentroid(void) const {
+       return centroid;
+     }
+
         // Compute all centroids
      void getCentroids(Vector3d& cen, Vector2d& texc, RGBColor& colc, Vector3d& nc) const;
 
@@ -167,7 +171,6 @@ class DLFLFace
      }
 
         //--- Mutative Functions ---//
-
      void makeUnique(void)
        {
          assignID();
