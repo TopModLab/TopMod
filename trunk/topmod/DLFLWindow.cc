@@ -2658,7 +2658,7 @@ void DLFLWindow::getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr 
 	if ( (eptr == face_loop_start_edge) && !start) 
 		return;
 		
-	// face_loop_start = false;÷
+	// face_loop_start = false;√∑
 	int idx = 0;
 	DLFLEdgePtrArray edges;
 	vector<DLFLEdgePtr>::iterator it;

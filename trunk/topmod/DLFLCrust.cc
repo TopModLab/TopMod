@@ -998,6 +998,23 @@ void DLFLObject::makeWireframe(double crust_thickness, bool split)
 	punchHoles();
 }
 
+void DLFLObject::makeWireframe2(double crust_thickness, bool split)
+{
+		// Make a wireframe from the given model.
+
+		// First do a modified corner-cutting subdivision
+	modifiedCornerCuttingSubDivide(crust_thickness);
+
+		// Split Valence 2 vertices if 'split' flag is true
+	if ( split ) splitValence2Vertices(-1.0);
+
+		// Create a crust with specified thickness
+	createCrustForWireframe(crust_thickness);
+
+		// Punch holes to get the wireframe
+	punchHoles();
+}
+
 void DLFLObject::makeWireframeWithColumns(double wireframe_thickness, int wireframe_segments)
 {
 	createWireframeWithSegments(wireframe_thickness,wireframe_segments);

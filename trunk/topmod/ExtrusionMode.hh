@@ -11,7 +11,7 @@
 #include "MainWindow.hh"
 
 class MainWindow;
-class DLFLWindow;
+// class DLFLWindow;
 
 class ExtrusionMode : public QWidget {
 	Q_OBJECT

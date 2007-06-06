@@ -9,7 +9,7 @@
 #include "MainWindow.hh"
 
 class MainWindow;
-class DLFLWindow;
+// class DLFLWindow;
 
 class HighgenusMode : public QWidget {
 	Q_OBJECT
@@ -26,6 +26,7 @@ public:
 	QAction *mRindModelingThicknessAction;
 	QAction *mRindModelingPaintingAction;
 	QAction *mWireframeModelingAction; 
+	QAction *mWireframeModeling2Action; 
 	QAction *mColumnModelingAction;	
 	QAction *mSierpinskyAction;
 	QAction *mMultiFaceHandleAction;
@@ -38,6 +39,7 @@ public:
 	QWidget *mRindModelingThicknessWidget;
 	QWidget *mRindModelingPaintingWidget;
 	QWidget *mWireframeModelingWidget; 
+	QWidget *mWireframeModeling2Widget; 
 	QWidget *mColumnModelingWidget;	
 	QWidget *mSierpinskyWidget;
 	QWidget *mMultiFaceHandleWidget;
@@ -50,6 +52,7 @@ public:
 	QBoxLayout *mRindModelingThicknessLayout;
 	QBoxLayout *mRindModelingPaintingLayout;
 	QBoxLayout *mWireframeModelingLayout;
+	QBoxLayout *mWireframeModeling2Layout;
 	QBoxLayout *mColumnModelingLayout; 
 	QBoxLayout *mSierpinskyLayout;
 	QBoxLayout *mMultiFaceHandleLayout; 
@@ -64,6 +67,7 @@ protected:
 	void setupRindModelingThickness();
 	void setupRindModelingPainting();
 	void setupWireframeModeling();
+	void setupWireframeModeling2();
 	void setupColumnModeling();
 	void setupSierpinsky();
 	void setupMultiFaceHandle();
@@ -85,6 +89,7 @@ public slots:
 	void triggerRindModelingThickness();
 	void triggerRindModelingPainting();
 	void triggerWireframeModeling();
+	void triggerWireframeModeling2();
 	void triggerColumnModeling();
 	void triggerSierpinsky();
 	void triggerMultiFaceHandle();

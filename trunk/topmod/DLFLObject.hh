@@ -952,6 +952,7 @@ class DLFLObject
 	void createCrustForWireframe(double thickness=0.1);
 	void punchHoles(void);
 	void makeWireframe(double crust_thickness=0.1, bool split=true);
+	void makeWireframe2(double crust_thickness=0.1, bool split=true);
 
 				//-- Column Modeling (Esan) --//
 	void createWireframeWithSegments(double thickness=0.1,int numSides=4);

@@ -19,6 +19,7 @@ HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm)
   mRindModelingThicknessWidget = new QWidget;
   mRindModelingPaintingWidget = new QWidget;
   mWireframeModelingWidget = new QWidget;
+  mWireframeModeling2Widget = new QWidget;
   mColumnModelingWidget = new QWidget;
 	mSierpinskyWidget = new QWidget;
 	mMultiFaceHandleWidget = new QWidget;                
@@ -31,6 +32,7 @@ HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm)
 	setupRindModelingThickness();
 	setupRindModelingPainting();
 	setupWireframeModeling();
+	setupWireframeModeling2();
 	setupColumnModeling();
 	setupSierpinsky();
 	setupMultiFaceHandle();
@@ -86,6 +88,13 @@ HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm)
 	mWireframeModelingAction->setToolTip(tr("Wireframe Modeling Mode"));
 	connect(mWireframeModelingAction, SIGNAL(triggered()), this, SLOT(triggerWireframeModeling()));
 
+	mWireframeModeling2Action = new QAction(QIcon(":images/highgenus_wireframe.png"),tr("Wireframe Modeling"),this);
+	mWireframeModeling2Action->setCheckable(true);
+	sm->registerAction(mWireframeModeling2Action, "High Genus Operations", "");
+	mWireframeModeling2Action->setStatusTip(tr("Enter Wireframe Modeling Mode"));
+	mWireframeModeling2Action->setToolTip(tr("Wireframe Modeling Mode"));
+	connect(mWireframeModeling2Action, SIGNAL(triggered()), this, SLOT(triggerWireframeModeling2()));
+
 	mColumnModelingAction = new QAction(QIcon(":images/highgenus_column.png"),tr("Column Modeling"),this);
 	mColumnModelingAction->setCheckable(true);
 	sm->registerAction(mColumnModelingAction, "High Genus Operations", "");
@@ -126,6 +135,7 @@ QMenu* HighgenusMode::getMenu(){
 	mHighgenusMenu->addAction(mRindModelingThicknessAction);
 	mHighgenusMenu->addAction(mRindModelingPaintingAction);
 	mHighgenusMenu->addAction(mWireframeModelingAction); 
+	mHighgenusMenu->addAction(mWireframeModeling2Action); 
 	mHighgenusMenu->addAction(mColumnModelingAction);	
 	mHighgenusMenu->addAction(mSierpinskyAction);
 	mHighgenusMenu->addAction(mMultiFaceHandleAction);
@@ -144,6 +154,7 @@ void HighgenusMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 	actionGroup->addAction(mRindModelingThicknessAction);
 	actionGroup->addAction(mRindModelingPaintingAction);
 	actionGroup->addAction(mWireframeModelingAction); 
+	actionGroup->addAction(mWireframeModeling2Action); 
 	actionGroup->addAction(mColumnModelingAction);	
 	actionGroup->addAction(mSierpinskyAction);
 	actionGroup->addAction(mMultiFaceHandleAction);
@@ -156,6 +167,7 @@ void HighgenusMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 	toolBar->addAction(mRindModelingThicknessAction);
 	toolBar->addAction(mRindModelingPaintingAction);
 	toolBar->addAction(mWireframeModelingAction); 
+	toolBar->addAction(mWireframeModeling2Action); 
 	toolBar->addAction(mColumnModelingAction);	
 	toolBar->addAction(mSierpinskyAction);
 	toolBar->addAction(mMultiFaceHandleAction);
@@ -168,6 +180,7 @@ void HighgenusMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 	stackedWidget->addWidget(mRindModelingThicknessWidget);
 	stackedWidget->addWidget(mRindModelingPaintingWidget);
 	stackedWidget->addWidget(mWireframeModelingWidget); 
+	stackedWidget->addWidget(mWireframeModeling2Widget); 
 	stackedWidget->addWidget(mColumnModelingWidget);	
 	stackedWidget->addWidget(mSierpinskyWidget);
 	stackedWidget->addWidget(mMultiFaceHandleWidget);
@@ -178,67 +191,73 @@ void HighgenusMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 void HighgenusMode::triggerAddHoleHandle(){
 	
 	((MainWindow*)mParent)->setToolOptions(mAddHoleHandleWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::ConnectFaceVertices);
+	((MainWindow*)mParent)->setMode(MainWindow::ConnectFaceVertices);
 }
 
 void HighgenusMode::triggerAddHoleHandleCV(){
 
 	((MainWindow*)mParent)->setToolOptions(mAddHoleHandleCVWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::ConnectFaces);	
+	((MainWindow*)mParent)->setMode(MainWindow::ConnectFaces);	
 }
 
 void HighgenusMode::triggerAddHandleSI(){
 	
 	((MainWindow*)mParent)->setToolOptions(mAddHandleSIWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::HermiteConnectFaces);
+	((MainWindow*)mParent)->setMode(MainWindow::HermiteConnectFaces);
 }
 
 void HighgenusMode::triggerRindModelingScaling(){
 	
 	((MainWindow*)mParent)->setToolOptions(mRindModelingScalingWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::NormalMode);
+	((MainWindow*)mParent)->setMode(MainWindow::SelectFaceLoop);
 }
 
 void HighgenusMode::triggerRindModelingThickness(){
 	
 	((MainWindow*)mParent)->setToolOptions(mRindModelingThicknessWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::NormalMode);
+	((MainWindow*)mParent)->setMode(MainWindow::MultiSelectFace);
 }
 
 void HighgenusMode::triggerRindModelingPainting(){
 	
 	((MainWindow*)mParent)->setToolOptions(mRindModelingPaintingWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::MultiSelectFace);
+	((MainWindow*)mParent)->setMode(MainWindow::MultiSelectFace);
 }
 
 void HighgenusMode::triggerWireframeModeling(){
 	
 	((MainWindow*)mParent)->setToolOptions(mWireframeModelingWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::NormalMode);
+	((MainWindow*)mParent)->setMode(MainWindow::NormalMode);
+}
+
+void HighgenusMode::triggerWireframeModeling2(){
+	
+	((MainWindow*)mParent)->setToolOptions(mWireframeModeling2Widget);
+	((MainWindow*)mParent)->setMode(MainWindow::NormalMode);
 }
 
 void HighgenusMode::triggerColumnModeling(){
 	
 	((MainWindow*)mParent)->setToolOptions(mColumnModelingWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::NormalMode);
+	((MainWindow*)mParent)->setMode(MainWindow::NormalMode);
 }
 
 void HighgenusMode::triggerSierpinsky(){
 	
 	((MainWindow*)mParent)->setToolOptions(mSierpinskyWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::NormalMode);
+	((MainWindow*)mParent)->setMode(MainWindow::NormalMode);
 }
 
 void HighgenusMode::triggerMultiFaceHandle(){
 	
 	((MainWindow*)mParent)->setToolOptions(mMultiFaceHandleWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::MultiSelectFace);
+	((MainWindow*)mParent)->setMode(MainWindow::MultiSelectFace);
 }
 
 void HighgenusMode::triggerMengerSponge(){
 	
 	((MainWindow*)mParent)->setToolOptions(mMengerSpongeWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::NormalMode);
+	((MainWindow*)mParent)->setMode(MainWindow::NormalMode);
 }
 
 void HighgenusMode::toggleCrustCleanupFlag(int state)
@@ -482,7 +501,8 @@ void HighgenusMode::setupRindModelingScaling(){
 	//create crust button
 	QPushButton *rindModelingScalingCreateCrustButton = new QPushButton("Create Crust", this);
 	connect(rindModelingScalingCreateCrustButton, SIGNAL(clicked()),
-          ((MainWindow*)mParent), SLOT(crust_modeling1()));
+          // ((MainWindow*)mParent), SLOT(crust_modeling1())); //crust_modeling3
+          ((MainWindow*)mParent), SLOT(crust_modeling4()));
 
 	mRindModelingScalingLayout->addWidget(rindModelingScalingCreateCrustButton);	
 	//set layout and add stretch
@@ -588,12 +608,41 @@ void HighgenusMode::setupWireframeModeling(){
 	//create wireframe button
 	QPushButton *wireframeModelingCreateButton = new QPushButton("Create Wireframe", this);
 	connect(wireframeModelingCreateButton, SIGNAL(clicked()),
-          ((MainWindow*)mParent), SLOT(wireframe_modeling()));
+          ((MainWindow*)mParent), SLOT(makeWireframe()));
 	mWireframeModelingLayout->addWidget(wireframeModelingCreateButton);	
 	//set layout and add stretch
 	mWireframeModelingLayout->addStretch(1);
 	mWireframeModelingWidget->setWindowTitle("Wireframe Modeling");
 	mWireframeModelingWidget->setLayout(mWireframeModelingLayout);
+}
+
+void HighgenusMode::setupWireframeModeling2(){
+	
+	mWireframeModeling2Layout = new QBoxLayout(QBoxLayout::LeftToRight);
+	mWireframeModeling2Layout->setMargin(0);
+	
+	//thickness
+	QLabel *WireframeModeling2ThicknessLabel = new QLabel(tr("Thickness:"));
+	QDoubleSpinBox *WireframeModeling2ThicknessSpinBox = new QDoubleSpinBox;
+	WireframeModeling2ThicknessSpinBox->setRange(0.0, 1.0);
+	WireframeModeling2ThicknessSpinBox->setSingleStep(0.01);
+	WireframeModeling2ThicknessSpinBox->setValue(0.25);
+	WireframeModeling2ThicknessSpinBox->setDecimals(2);
+	WireframeModeling2ThicknessSpinBox->setMaximumSize(75,25);
+	connect(WireframeModeling2ThicknessSpinBox, SIGNAL(valueChanged(double)),
+          ((MainWindow*)mParent), SLOT(changeWireframeThickness(double)));
+	
+	mWireframeModeling2Layout->addWidget(WireframeModeling2ThicknessLabel);
+  mWireframeModeling2Layout->addWidget(WireframeModeling2ThicknessSpinBox);
+	//create wireframe button
+	QPushButton *WireframeModeling2CreateButton = new QPushButton("Create Wireframe", this);
+	connect(WireframeModeling2CreateButton, SIGNAL(clicked()),
+          ((MainWindow*)mParent), SLOT(makeWireframe2()));
+	mWireframeModeling2Layout->addWidget(WireframeModeling2CreateButton);	
+	//set layout and add stretch
+	mWireframeModeling2Layout->addStretch(1);
+	mWireframeModeling2Widget->setWindowTitle("Wireframe Modeling");
+	mWireframeModeling2Widget->setLayout(mWireframeModeling2Layout);
 }
 
 void HighgenusMode::setupColumnModeling(){
@@ -628,7 +677,7 @@ void HighgenusMode::setupColumnModeling(){
 	//create column button
 	QPushButton *columnModelingCreateButton = new QPushButton("Create Wireframe with Columns", this);
 	connect(columnModelingCreateButton, SIGNAL(clicked()),
-          ((MainWindow*)mParent), SLOT(column_modeling()));
+          ((MainWindow*)mParent), SLOT(makeWireframeWithColumns()));
 	mColumnModelingLayout->addWidget(columnModelingCreateButton);	
 	//set layout and add stretch
 	mColumnModelingLayout->addStretch(1);
@@ -644,7 +693,7 @@ void HighgenusMode::setupSierpinsky(){
 	//create column button
 	QPushButton *sierpinskyButton = new QPushButton("Create Sierpinsky Tetrahedra", this);
 	connect(sierpinskyButton, SIGNAL(clicked()),
-          ((MainWindow*)mParent), SLOT(create_sierpinsky_tetrahedra()));
+          ((MainWindow*)mParent), SLOT(multiConnectMidpoints()));
 
 	mSierpinskyLayout->addWidget(sierpinskyButton);
 	
@@ -711,7 +760,7 @@ void HighgenusMode::setupMultiFaceHandle(){
 
 	QPushButton *multiFaceHandleButton = new QPushButton("Connect Selected Faces", this);
 	connect(multiFaceHandleButton, SIGNAL(clicked()),
-          ((MainWindow*)mParent), SLOT(create_multi_face_handle()));
+          ((MainWindow*)mParent), SLOT(createMultiFaceHandle()));
 
 	mMultiFaceHandleLayout->addWidget(multiFaceHandleButton);
 	mMultiFaceHandleLayout->addStretch(1);
@@ -803,7 +852,7 @@ void HighgenusMode::setupMengerSponge(){
 	//create menger sponge button
 	QPushButton *mengerSpongeButton = new QPushButton("Create Menger Sponge", this);
 	connect(mengerSpongeButton, SIGNAL(clicked()),
-          ((MainWindow*)mParent), SLOT(create_menger_sponge()));
+          ((MainWindow*)mParent), SLOT(createSponge()));
 
 	mMengerSpongeLayout->addWidget(mengerSpongeButton);	
 	mMengerSpongeLayout->addStretch(1);

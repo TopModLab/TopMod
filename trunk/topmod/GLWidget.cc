@@ -67,9 +67,9 @@ void GLWidget::initializeGL( ) {
 	setAutoBufferSwap( true );
 	glClearColor(mViewportColor.redF(),mViewportColor.greenF(),mViewportColor.blueF(),mViewportColor.alphaF());
 	viewport.resize(this->size().width(),this->size().height());
-	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);									// Set Line Antialiasing
-	glEnable(GL_BLEND);																			// Enable Blending
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);			// Type Of Blending To Use
+	// glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);									// Set Line Antialiasing
+	// glEnable(GL_BLEND);																			// Enable Blending
+	// glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);			// Type Of Blending To Use
 
 	mShowVertexIDs = false;
 	mShowEdgeIDs   = false;

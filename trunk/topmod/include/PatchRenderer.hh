@@ -84,14 +84,14 @@ public :
 
 	/* Implement render function */
 	virtual int render(DLFLObjectPtr object) {
-		glEnable(GL_CULL_FACE);					
-		//added by dave...
-		glEnable(GL_LINE_SMOOTH);
+				//added by dave...
+		// glEnable(GL_LINE_SMOOTH);
 		glEnable (GL_BLEND);
 		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glHint (GL_LINE_SMOOTH_HINT, GL_NICEST);
+		// glHint (GL_LINE_SMOOTH_HINT, GL_NICEST);
 		// glLineWidth (1.5);
 
+		glEnable(GL_CULL_FACE);					
 		setCulling();
 		glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 		glColor3f(0.3,0.5,0.8);

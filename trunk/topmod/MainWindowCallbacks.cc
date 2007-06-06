@@ -1,42 +1,8 @@
 /* $Id: MainWindowCallbacks.cc,v 4.13 2004/01/20 22:18:36 vinod Exp $ */
 
 // Definitions for callback functions in the MainWindow class
-// All these are static methods
 
 #include "MainWindow.hh"
-
-// File Menu.
-void MainWindow::open_file() {
-  mainWindow->openFile();
-  mainWindow->redraw();
-}
-
-void MainWindow::save_file() {
-  mainWindow->saveFile(false,false);
-}
-
-void MainWindow::save_file_with_normals() {
-     // Save the file with normal information.
-     // Relevant only for OBJ files. DLFL files always have normal information.
-  mainWindow->saveFile(true,false);
-}
-
-void MainWindow::save_file_with_tex_coords() {
-     // Save the file with texture coordinates
-     // Relevant only for OBJ files. DLFL files always have texture coordinates.
-  mainWindow->saveFile(false,true);
-}
-
-void MainWindow::save_file_extended() {
-     // Saves with all extra information. Currently only normals and tex coords
-     // Relevant only for OBJ files. DLFL files always have normals and texture coordinates.
-  mainWindow->saveFile(true,true);
-}
-
-/* stuart - bezier export */
-void MainWindow::save_file_patches() {
-  mainWindow->saveFileBezierOBJ( );
-}
 
 void MainWindow::load_texture() {
 	QString fileName = QFileDialog::getOpenFileName(this,
@@ -50,306 +16,167 @@ void MainWindow::load_texture() {
 		
 		textured->setTexture(filename);
 		texturedlit->setTexture(filename);
-		mainWindow->getActive()->isValid(); // To ensure new texture is loaded into OpenGL
-		mainWindow->redraw();
-		
-		// readObject(filename);
-		// recomputePatches();
-		// recomputeNormals();
-		// //loadFile(fileName);
-		// active->redraw();
+		active->isValid(); // To ensure new texture is loaded into OpenGL
+		redraw();
 	}
 }
 
-void MainWindow::print_info() {
-  mainWindow->printSummary();
+//use a specific renderer...
+void MainWindow::useWireframeRenderer() {
+  setRenderer(wired);
+  redraw();
 }
 
-void MainWindow::print_flist() {
-  mainWindow->printFaceList();
+void MainWindow::useNormalRenderer() {
+  setRenderer(normal);
+  redraw();
 }
 
-void MainWindow::print_vlist() {
-  mainWindow->printVertexList();
+void MainWindow::useLightedRenderer() {
+  recomputeNormals();
+  setRenderer(lit);
+  redraw();
 }
 
-void MainWindow::print_elist() {
-  mainWindow->printEdgeList();
+void MainWindow::useShadedRenderer() {
+  setRenderer(shaded);
+  redraw();
 }
 
-void MainWindow::print_cvlist() {
-  mainWindow->printCVList();
+void MainWindow::useTexturedRenderer() {
+  setRenderer(textured);
+  redraw();
 }
 
-void MainWindow::quit() {
-  mainWindow->cleanupForExit();
-  exit(0);
+void MainWindow::useTexturedLitRenderer() {
+  setRenderer(texturedlit);
+  redraw();
 }
 
-void MainWindow::undo() {
-  mainWindow->undo();
-  mainWindow->redraw();
-}
-
-void MainWindow::redo() {
-  mainWindow->redo();
-  mainWindow->redraw();
-}
-
-// Display Menu.
-void MainWindow::toggle_vertices() {
-  mainWindow->toggleVertices();
-  mainWindow->redraw();
-}
-
-void MainWindow::toggle_silhouette() {
-  mainWindow->toggleSilhouette();
-  mainWindow->redraw();
-}
-
-void MainWindow::toggle_wireframe() {
-  mainWindow->toggleWireframe();
-  mainWindow->redraw();
-}
-
-void MainWindow::toggle_grid() {
-  mainWindow->toggleGrid();
-  mainWindow->redraw();
-}
-
-void MainWindow::toggle_axes() {
-  mainWindow->toggleAxes();
-  mainWindow->redraw();
-}
-
-void MainWindow::use_wireframe_renderer() {
-  mainWindow->setRenderer(wired);
-  mainWindow->redraw();
-}
-
-void MainWindow::use_normal_renderer() {
-  mainWindow->setRenderer(normal);
-  //mainWindow->getActive()->invalidate();
-  mainWindow->redraw();
-}
-
-void MainWindow::use_lighted_renderer() {
-  mainWindow->recomputeNormals();
-  mainWindow->setRenderer(lit);
-  // mainWindow->getActive()->invalidate();
-  mainWindow->redraw();
-}
-
-void MainWindow::use_shaded_renderer() {
-  mainWindow->setRenderer(shaded);
-  // mainWindow->getActive()->invalidate();
-  mainWindow->redraw();
-}
-
-void MainWindow::use_textured_renderer() {
-  mainWindow->setRenderer(textured);
-  // mainWindow->getActive()->invalidate();
-  mainWindow->redraw();
-}
-
-void MainWindow::use_textured_lit_renderer() {
-  mainWindow->setRenderer(texturedlit);
-  // mainWindow->getActive()->invalidate();
-  mainWindow->redraw();
-}
-
-void MainWindow::use_patch_renderer() {
-  mainWindow->setRenderer(patch);
-  // mainWindow->getActive()->invalidate();
-  mainWindow->redraw();
-}
-
-// Object Menu.
-void MainWindow::subdivide_all_edges() {
-   mainWindow->subDivideAllEdges();
-   mainWindow->redraw();
-}
-
-void MainWindow::planarize_all_faces() {
-   mainWindow->planarizeFaces();
-   mainWindow->redraw();
-}
-
-void MainWindow::make_object_spherical() {
-   mainWindow->spheralizeObject();
-   mainWindow->redraw();
-}
-
-void MainWindow::make_object_smooth() {
-   mainWindow->smoothMesh();
-   mainWindow->redraw();
-}
-
-void MainWindow::create_crust() {
-  mainWindow->createCrust();
-  mainWindow->redraw();
-}
-
-void MainWindow::compute_lighting() {
-  mainWindow->recomputeLighting();
-  mainWindow->redraw();
-}
-
-void MainWindow::compute_normals_and_lighting() {
-  mainWindow->recomputeNormals();
-  mainWindow->redraw();
-}
-
-void MainWindow::assign_texture_coordinates() {
-  mainWindow->randomAssignTexCoords();
-  mainWindow->redraw();
+void MainWindow::usePatchRenderer() {
+  setRenderer(patch);
+  redraw();
 }
 
 // Selection Menu.
 void MainWindow::select_vertex() {
-  mainWindow->setMode(DLFLWindow::SelectVertex);
+  setMode(MainWindow::SelectVertex);
 }
 
 void MainWindow::edit_vertex() {
-  mainWindow->setMode(DLFLWindow::EditVertex);
+  setMode(MainWindow::EditVertex);
 }
 
 void MainWindow::select_face() {
-  mainWindow->setMode(DLFLWindow::SelectFace);
+  setMode(MainWindow::SelectFace);
 }
 
 void MainWindow::select_face_loop() {
-  mainWindow->setMode(DLFLWindow::SelectFaceLoop);
+  setMode(MainWindow::SelectFaceLoop);
 }
 
 void MainWindow::select_multiple_faces() {
-  mainWindow->setMode(DLFLWindow::MultiSelectFace);
-	mainWindow->getActive()->showBrush();
+  setMode(MainWindow::MultiSelectFace);
+	getActive()->showBrush();
 }
 
 void MainWindow::select_similar_faces() {
-  mainWindow->setMode(DLFLWindow::SelectSimilarFaces);
-	// mainWindow->getActive()->showBrush();
+  setMode(MainWindow::SelectSimilarFaces);
 }
 
 void MainWindow::select_checkerboard_faces() {
-  mainWindow->setMode(DLFLWindow::SelectCheckerboard);
+  setMode(MainWindow::SelectCheckerboard);
 }
 
 void MainWindow::select_edge() {
-  mainWindow->setMode(DLFLWindow::SelectEdge);
+  setMode(MainWindow::SelectEdge);
 }
 
 void MainWindow::select_edge_loop() {
-  mainWindow->setMode(DLFLWindow::SelectEdgeLoop);
+  setMode(MainWindow::SelectEdgeLoop);
 }
 
 void MainWindow::select_corner() {
-  mainWindow->setMode(DLFLWindow::SelectFaceVertex);
+  setMode(MainWindow::SelectFaceVertex);
+}
+
+void MainWindow::select_vertices() {
+  setSelectionMask(MainWindow::MaskVertices);
+}
+
+void MainWindow::select_faces() {
+  setSelectionMask(MainWindow::MaskFaces);
+}
+
+void MainWindow::select_edges() {
+  setSelectionMask(MainWindow::MaskEdges);
+}
+
+void MainWindow::select_face_vertices() {
+  setSelectionMask(MainWindow::MaskFaceVertices);
 }
 
 void MainWindow::exit_selection_mode() {
-  mainWindow->setMode(DLFLWindow::NormalMode);
-	mainWindow->redraw();
+  setMode(MainWindow::NormalMode);
+	redraw();
 }
 
 void MainWindow::clear_selected(){
-	DLFLWindow::clearSelected();
-	mainWindow->redraw();
-}
-
-void MainWindow::exit_modes() {
-  mainWindow->setMode(DLFLWindow::NormalMode);
-	mainWindow->getActive()->hideBrush();
+	MainWindow::clearSelected();
+redraw();	redraw();
 }
 
 // Basics.
 void MainWindow::toggleDeleteEdgeCleanupFlag(int state) {
-	// QMessageBox::about(this, tr("About TopMod"),tr("%1").arg(state));
-	DLFLWindow::delete_edge_cleanup = bool(state);
+	MainWindow::delete_edge_cleanup = bool(state);
 }
 
 void MainWindow::changeNumSubDivs(int value) {
-  DLFLWindow::num_e_subdivs = value;
-}
-
-void MainWindow::translatex(double value) {
-  mainWindow->translatex(value);
-  mainWindow->redraw();
-}
-
-void MainWindow::translatey(double value) {
-  mainWindow->translatey(value);
-  mainWindow->redraw();
-}
-
-void MainWindow::translatez(double value) {
-  mainWindow->translatez(value);
-  mainWindow->redraw();
-}
-
-void MainWindow::scalex(double value) {
-  mainWindow->scalex(value);
-  mainWindow->redraw();
-}
-
-void MainWindow::scaley(double value) {
-  mainWindow->scaley(value);
-  mainWindow->redraw();
-}
-
-void MainWindow::scalez(double value) {
-  mainWindow->scalez(value);
-  mainWindow->redraw();
-}
-
-void MainWindow::freeze_transforms() {
-  mainWindow->freezeTransforms();
-  mainWindow->redraw();
+  MainWindow::num_e_subdivs = value;
 }
 
 void MainWindow::changeTileTexNum(int value) {
-  DLFLWindow::tile_tex_n = value;
+  MainWindow::tile_tex_n = value;
 }
 
 // Extrusions.
 void MainWindow::changeExtrudeLength(double value) {
-  DLFLWindow::extrude_dist = value;
+  MainWindow::extrude_dist = value;
 }
 
 void MainWindow::changeExtrudeRotation(int value) {
-  DLFLWindow::extrude_rot = value;
+  MainWindow::extrude_rot = value;
 }
 
 void MainWindow::changeExtrudeScale(double value) {
-  DLFLWindow::extrude_scale = value;
+  MainWindow::extrude_scale = value;
 }
 
 void MainWindow::changeNumExtrusions(int value) {
-  DLFLWindow::num_extrusions = value;
+  MainWindow::num_extrusions = value;
 }
 
 void MainWindow::toggleDualMeshEdgesFlag(int state) {
-  DLFLWindow::dual_mesh_edges_check = bool(state);
+  MainWindow::dual_mesh_edges_check = bool(state);
 }
 
 void MainWindow::toggleHexagonalizeDodecaExtrudeFlag(int state) {
-  DLFLWindow::hexagonalize_dodeca_extrude = bool(state);
+  MainWindow::hexagonalize_dodeca_extrude = bool(state);
 }
 
 // Stellation
 void MainWindow::changeStellateLength(double value) {
-  DLFLWindow::extrude_dist = value;
+  MainWindow::extrude_dist = value;
 }
 
 
 // Holes and Handles.
 void MainWindow::changeMaxSegments(int value) {
-  DLFLWindow::max_segments = value;
+  MainWindow::max_segments = value;
 }
 
 void MainWindow::changeNumSegments(int value) {
-	DLFLWindow::num_segments = value;
+	MainWindow::num_segments = value;
 }
 
 void MainWindow::changeNumSegments2(int value){
@@ -361,171 +188,156 @@ void MainWindow::changeMaxSegments2(int value){
 }
 
 void MainWindow::changeWeight1(double value) {
-  DLFLWindow::nwt1 = value;
+  MainWindow::nwt1 = value;
 }
 
 void MainWindow::toggleSymmetricWeightsFlag(int state) {
-	DLFLWindow::symmetric_weights = bool(state);
+	MainWindow::symmetric_weights = bool(state);
 }
 
 void MainWindow::changeWeight2(double value) {
-	DLFLWindow::nwt2 = value;
+	MainWindow::nwt2 = value;
 }
 
 void MainWindow::changeExtraTwists(int value) {
-  DLFLWindow::num_extra_twists = value;
+  MainWindow::num_extra_twists = value;
 }
 
 // Crust Modeling.
 void MainWindow::changeCrustScaleFactor(double value) {
-  DLFLWindow::crust_scale_factor = value;
+  MainWindow::crust_scale_factor = value;
 }
 
 void MainWindow::changeCrustThickness(double value) {
-  DLFLWindow::crust_thickness = value;
+  MainWindow::crust_thickness = value;
 }
 
 void MainWindow::toggleCrustCleanupFlag(int state) {
-  DLFLWindow::crust_cleanup = bool(state);
+  MainWindow::crust_cleanup = bool(state);
 }
 
 void MainWindow::crust_modeling1() {
-  mainWindow->setMode(DLFLWindow::CrustModeling);
-  mainWindow->createCrust(true);
-  mainWindow->redraw();
+	setMode(MainWindow::CrustModeling);
+  createCrust(true);
+  redraw();
 }
 
 void MainWindow::crust_modeling2() {
-  mainWindow->setMode(DLFLWindow::CrustModeling);
-  mainWindow->createCrust(false);
-  mainWindow->redraw();
+  setMode(MainWindow::CrustModeling);
+  createCrust(false);
+  redraw();
 }
 
 void MainWindow::crust_modeling3() {
-  // mainWindow->setMode(DLFLWindow::CrustModelingPainting);
-  mainWindow->createCrust2(false);
-  mainWindow->redraw();
+  // setMode(MainWindow::CrustModelingPainting);
+  createCrust2(false);
+  redraw();
+}
+
+void MainWindow::crust_modeling4() {
+  // setMode(MainWindow::CrustModelingPainting);
+  createCrust2(true);
+  redraw();
 }
 
 //column modeling and wireframe modeling
 void MainWindow::changeWireframeThickness(double value) {
-  DLFLWindow::wireframe_thickness = value;
+  MainWindow::wireframe_thickness = value;
 }
 
 void MainWindow::changeColumnThickness(double value) {
-  DLFLWindow::column_thickness = value;
+  MainWindow::column_thickness = value;
 }
 
 void MainWindow::changeColumnSegments(int value) {
-  DLFLWindow::column_segments = value;
+  MainWindow::column_segments = value;
 }
-
-void MainWindow::wireframe_modeling() {
-  mainWindow->makeWireframe();
-  mainWindow->setMode(DLFLWindow::NormalMode);
-  mainWindow->redraw();
-}
-
-void MainWindow::column_modeling() {
-  mainWindow->makeWireframeWithColumns();
-  mainWindow->setMode(DLFLWindow::NormalMode);
-  mainWindow->redraw();
-}
-
-//sierpinsky
-void MainWindow::create_sierpinsky_tetrahedra() {
-  mainWindow->multiConnectMidpoints();
-  mainWindow->redraw();
-}
-
 
 // Multi-face handle
 void MainWindow::mfh_use_closest_edge_algo() {
-  DLFLWindow::mfh_algo = DLFLWindow::ClosestEdge;
+  MainWindow::mfh_algo = MainWindow::ClosestEdge;
 }
 
 void MainWindow::mfh_use_convex_hull_algo() {
-  DLFLWindow::mfh_algo = DLFLWindow::ConvexHull;
+  MainWindow::mfh_algo = MainWindow::ConvexHull;
 }
 
 void MainWindow::changeMultiFaceHandleScaleFactor(double value) {
-  DLFLWindow::mfh_scale_factor = value;
+  MainWindow::mfh_scale_factor = value;
 }
 
 void MainWindow::changeMultiFaceHandleExtrudeDist(double value) {
-  DLFLWindow::mfh_extrude_dist = value;
+  MainWindow::mfh_extrude_dist = value;
 }
 
 void MainWindow::toggleMultiFaceHandleUseMaxOffsetFlag(int state) {
-  DLFLWindow::mfh_use_max_offsets = bool(state);
-}
-
-void MainWindow::create_multi_face_handle() {
-  mainWindow->createMultiFaceHandle();
-  mainWindow->redraw();
+  MainWindow::mfh_use_max_offsets = bool(state);
 }
 
 //menger sponge operations
 void MainWindow::changeMengerSpongeThickness(double value) {
-  DLFLWindow::sponge_thickness = value;
+  MainWindow::sponge_thickness = value;
 }
 
 void MainWindow::changeMengerSpongeCollapseThreshold(double value) {
-  DLFLWindow::sponge_collapse_threshold = value;
+  MainWindow::sponge_collapse_threshold = value;
 }
 
 void MainWindow::toggleMengerSpongeFractionalThicknessFlag(int state) {
-  DLFLWindow::sponge_fractional_thickness = bool(state);
+  MainWindow::sponge_fractional_thickness = bool(state);
 }
 
-void MainWindow::create_menger_sponge() {
-  mainWindow->createSponge();
-  mainWindow->redraw();
-}
-
+/* begin ozgur */
 //sculpting operations from ozgur
-void MainWindow::perform_cutting() {
-  mainWindow->performCutting();
-  mainWindow->redraw();
+//conical stuff from ozgur
+void MainWindow::performCutting() {
+	undoPush();
+	setModified(true);
+	object.performCutting(MainWindow::mode,MainWindow::cutOffsetE_factor,MainWindow::cutOffsetV_factor,MainWindow::global_cut,MainWindow::selected_cut);
+	// recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
 }
 
-// void MainWindow::perform_vertex_cutting() {
-//   mainWindow->performVertexCutting();
-//   mainWindow->redraw();
-// }
-
-
-void MainWindow::create_convexhull() {
-  mainWindow->createConvexHull();
-  mainWindow->redraw();
+void MainWindow::createConvexHull() {
+	undoPush();
+	setModified(true);
+	object.createConvexHull();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
 }
 
-void MainWindow::create_dual_convexhull() {
-  mainWindow->createDualConvexHull();
-  mainWindow->redraw();
+void MainWindow::createDualConvexHull() {
+	undoPush();
+	setModified(true);
+	object.createDualConvexHull();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
 }
 
 void MainWindow::changeCutOffsetE(double value) {
-  DLFLWindow::cutOffsetE_factor= value;
+  MainWindow::cutOffsetE_factor= value;
 }
 
 void MainWindow::changeCutOffsetV(double value) {
-  DLFLWindow::cutOffsetV_factor= value;
+  MainWindow::cutOffsetV_factor= value;
 }
 
 void MainWindow::changePNormalBendS(double value) {
-  DLFLWindow:: pnormalBendS_factor= value;
+  MainWindow:: pnormalBendS_factor= value;
 }
 
 void MainWindow::changePNormalBendT(double value) {
-  DLFLWindow:: pnormalBendT_factor= value;
+  MainWindow:: pnormalBendT_factor= value;
 }
 
 void MainWindow::toggleGlobalCut(int state){    //ozgur
-	DLFLWindow::global_cut = bool(state);	
+	MainWindow::global_cut = bool(state);	
 }
 void MainWindow::toggleSelectedCut(int state){  //ozgur
-	DLFLWindow::selected_cut = bool(state);
+	MainWindow::selected_cut = bool(state);
 }
 
 void MainWindow::changeTiltPlane1(double value){
@@ -533,4 +345,724 @@ void MainWindow::changeTiltPlane1(double value){
 }
 void MainWindow::changeTiltPlane2(double value){
 	
+}
+/* end ozgur */
+
+// Geometric transformations
+void MainWindow::translatex(double x) {
+	object.position[0] = x;
+	redraw();
+}
+
+void MainWindow::translatey(double y) {
+	object.position[1] = y;
+	redraw();
+}
+
+void MainWindow::translatez(double z) {
+	object.position[2] = z;
+	redraw();
+}
+
+void MainWindow::scalex(double x) {
+	object.scale_factor[0] = x;
+	redraw();
+}
+
+void MainWindow::scaley(double y) {
+	object.scale_factor[1] = y;
+	redraw();
+}
+
+void MainWindow::scalez(double z) {
+	object.scale_factor[2] = z;
+	redraw();
+}
+
+void MainWindow::freezeTransforms() {
+	object.freezeTransformations();
+	object.position.reset();
+	object.scale_factor.set(1,1,1);
+	object.rotation.reset();
+	redraw();
+}
+
+// Global operations (don't require selection)
+void MainWindow::recomputeNormals() {    // Recompute normals and lighting {
+	object.computeNormals();
+	object.computeLighting(&plight);
+	active->redraw();
+}
+
+void MainWindow::recomputeLighting() {               // Recompute lighting {
+	object.computeLighting(&plight);
+	active->redraw();
+}
+
+void MainWindow::recomputePatches() { // Recompute the patches for patch rendering {
+	object.updatePatches();
+	active->redraw();
+}
+
+void MainWindow::subDivideAllEdges()  {            // Sub-divide all edges {
+	undoPush();
+	object.subDivideAllEdges(MainWindow::num_e_subdivs);
+	MainWindow::clearSelected();
+redraw();	active->redraw();
+}
+
+void MainWindow::subDivideSelectedFaces() {// Subdivide all selected faces {
+	undoPush();
+	DLFLFacePtrArray fparray;
+	fparray.resize(GLWidget::numSelectedFaces());
+	for (int i=0; i < GLWidget::numSelectedFaces(); ++i)	{
+		fparray[i] = GLWidget::getSelectedFace(i);
+	}
+	object.subDivideFaces(fparray,use_quads);
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideAllFaces() {// Subdivide all the faces {
+	undoPush();
+	object.subDivideAllFaces(use_quads);
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::createMultiFaceHandle() { // Create multi-face handle between selected faes {
+	int numsel = GLWidget::numSelectedFaces();
+	if ( numsel < 3 ) return;
+	undoPush();
+	DLFLFacePtrArray sel_faces;
+	DLFLFacePtr sfptr;
+	for (int i=0; i < numsel; ++i)	{
+		sfptr = GLWidget::getSelectedFace(i);
+		if ( sfptr ) sel_faces.push_back(sfptr);
+	}
+	switch ( MainWindow::mfh_algo )	{
+		case ConvexHull :
+		object.multiConnectFaces(sel_faces,MainWindow::mfh_scale_factor,
+			MainWindow::mfh_extrude_dist,
+			MainWindow::mfh_use_max_offsets);
+		break;
+		case ClosestEdge :
+		object.multiConnectFaces(sel_faces);
+		break;
+		default :
+		break;
+	}
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::multiConnectMidpoints() {
+	// Multi-connect midpoints after simplest-subdivision without edge deletion
+	undoPush();
+	object.multiConnectMidpoints();
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::multiConnectCrust() {
+	// Multi-connect after creating crust
+	undoPush();
+	object.multiConnectCrust();
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::modifiedMultiConnectCrust() {
+	// Modified multi-connect after creating crust
+	undoPush();
+	object.modifiedMultiConnectCrust();
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::createSponge() {
+	undoPush();
+	object.createSponge(MainWindow::sponge_thickness,
+		MainWindow::sponge_collapse_threshold);
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::planarizeFaces() {
+// Planarize all faces {
+	undoPush();
+	object.planarize();
+	recomputePatches();
+	recomputeNormals();
+}
+
+void MainWindow::spheralizeObject() {
+	// Spheralize object vertices {
+	undoPush();
+	object.spheralize();
+	recomputePatches();
+	recomputeNormals();
+}
+
+void MainWindow::smoothMesh() {
+	// Smooth the mesh {
+	undoPush();
+	object.meshsmooth();
+	recomputePatches();
+	recomputeNormals();
+}
+
+void MainWindow::subDivideCatmullClark()  {   
+	// Catmull-Clark subdivision {
+	undoPush();
+	object.catmullClarkSubDivide();
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideDooSabin() {
+ 	// Doo-Sabin subdivision {
+	undoPush();
+	object.dooSabinSubDivide(doo_sabin_check);
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideHoneycomb() {
+	// Honeycomb subdivision {
+	undoPush();
+	object.honeycombSubDivide();
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideRoot4() {
+	// Root-4 subdivision {
+	undoPush();
+	object.root4SubDivide(MainWindow::weight_factor,MainWindow::twist_factor);
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideCornerCutting() {
+	// Corner-cutting subdivision {
+	undoPush();
+	object.cornerCuttingSubDivide();
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideLinearVertexInsertion() {
+	// Bi-linear Vertex-insertion remeshing {
+	undoPush();
+	object.subDivideAllFaces(true);
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideSimplest() {
+	// Corner-cutting subdivision {
+	undoPush();
+	object.simplestSubDivide();
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideVertexCutting() {
+	// Vertex-cutting subdivision {
+	undoPush();
+	object.vertexCuttingSubDivide(MainWindow::vertex_cutting_offset);
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDividePentagonal() {
+	// Pentagonal subdivision {
+	undoPush();
+	object.pentagonalSubDivide(MainWindow::pentagonal_offset);
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideCubicPentagonal() {
+	// Cubic Pentagonal remeshing scheme {
+// Implemented as Pentagonal + Dual + Dual
+	undoPush();
+	object.pentagonalSubDivide(MainWindow::pentagonal_offset);
+	object.createDual(true); // Use accurate method
+	object.createDual(true); // Use accurate method
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideDualPentagonal() {
+	// Dual-Pentagonal subdivision {
+// Implemented as Dual + Pentagonal + Dual
+	undoPush();
+	object.createDual(true); // Use accurate method
+	object.pentagonalSubDivide(MainWindow::pentagonal_offset);
+	object.createDual(true); // Use accurate method
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDividePentagonPreserving() {
+	// Pentagon preserving remeshing {
+	undoPush();
+	object.pentagonalSubDivide2(MainWindow::pentagonal_scale);
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideDualPentagonPreserving() {
+	// Dual Pentagon preserving remeshing {
+// Implemented as Dual + Pentagonal + Dual
+	undoPush();
+	object.createDual(true); // Use accurate method
+	object.pentagonalSubDivide2(MainWindow::pentagonal_scale);
+	object.createDual(true); // Use accurate method
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideDualHexagonPreserving() {
+	// Dual Hexagon Preserving remeshing {
+// Implemented as Dual + Root4 + Dual
+	undoPush();
+	object.createDual(true); // Use accurate method
+	object.root4SubDivide(MainWindow::weight_factor,MainWindow::twist_factor);
+	object.createDual(true); // Use accurate method
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideRoot3() {
+	// Root-3 remeshing {
+// Implemented as Dual + Honeycomb + Dual
+	undoPush();
+	object.createDual(true); // Use accurate method
+	object.honeycombSubDivide();
+	object.createDual(true); // Use accurate method
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideLoop() {
+	// Loop subdivision {
+	undoPush();
+	object.loopSubDivide();
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideDualLoop() {
+	// Dual of Loop subdivision {
+// Implemented as Dual + Loop + Dual
+	undoPush();
+	object.createDual(true); // Use accurate method
+	object.loopSubDivide();
+	object.createDual(true); // Use accurate method
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivide1264() {
+	// 12-6-4 remeshing {
+// Implemented as Dual + Dual 12-6-4 + Dual
+	undoPush();
+	object.createDual(true); // Use accurate method
+	object.dual1264SubDivide(MainWindow::dual1264_scale_factor);
+	object.createDual(true); // Use accurate method
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideDual1264() {
+	// Dual of 12-6-4 remeshing - Bei & Cansin {
+	undoPush();
+	object.dual1264SubDivide(MainWindow::dual1264_scale_factor);
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideCheckerBoard() {
+	// Checker board remeshing {
+	undoPush();
+	object.checkerBoardRemeshing(MainWindow::checkerboard_thickness);
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideDualCheckerBoard() {
+	// Dual Checker board remeshing {
+// Implemented as Dual + Checker board + Dual
+	undoPush();
+	setModified(true);
+	object.createDual(true); // Use accurate method
+	object.checkerBoardRemeshing(MainWindow::checkerboard_thickness);
+	object.createDual(true); // Use accurate method
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideStar() {
+	// Star subdivision - Doug {
+	undoPush();
+	setModified(true);
+	object.starSubDivide(MainWindow::star_offset);
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideSqrt3() {
+	// sqrt(3) subdivision - Doug {
+	undoPush();
+	setModified(true);
+	object.sqrt3SubDivide();
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideFractal() {
+	// fractal - Doug {
+	undoPush();
+	setModified(true);
+	object.fractalSubDivide(MainWindow::fractal_offset);
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subStellate1() {
+	// stellate subdivision - Eric {
+	undoPush();
+	setModified(true);
+	object.stellateSubDivide();
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subStellate2() {// stellate subdivision - Eric {
+	
+	undoPush();
+	setModified(true);
+	object.twostellateSubDivide(MainWindow::substellate_height, MainWindow::substellate_curve);
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideDome() {
+	// Bei & Cansin {
+	undoPush();
+	setModified(true);
+	object.domeSubDivide(MainWindow::domeLength_factor, MainWindow::domeScale_factor);
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideDooSabinBC() {
+	// Doo-Sabin(BC) subdivision - Bei & Cansin {
+	undoPush();
+	setModified(true);
+	object.dooSabinSubDivideBC(MainWindow::doo_sabin_check);
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideDooSabinBCNew() {
+	// Doo-Sabin(BCNew) Bei & Cansin {
+	undoPush();
+	setModified(true);
+	object.dooSabinSubDivideBCNew(MainWindow::dooSabinBCnewScale_factor,
+		MainWindow::dooSabinBCnewLength_factor);
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::subDivideLoopStyle() {
+	// Loop-style subdivision - Bei {
+	undoPush();
+	setModified(true);
+	object.loopStyleSubDivide(MainWindow::loopLength_factor);
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::globalStellate() {
+	// Does not use length parameter for now. Uses subDivideFace method with triangles
+	undoPush();
+	setModified(true);
+	object.subDivideAllFaces(false);
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::splitValence2Vertices() {
+	// Split Valence 2 vertices {
+	undoPush();
+	setModified(true);
+	object.splitValence2Vertices(MainWindow::vertex_split_offset);
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::cleanupWingedVertices() {
+// Remove valence 2 vertices {
+	undoPush();
+	setModified(true);
+	object.cleanupWingedVertices();
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::createDual() {
+	// Create dual object {
+	undoPush();
+	setModified(true);
+	object.createDual(MainWindow::accurate_dual);
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::createCrust(bool use_scaling) {
+	 // Create a crust {
+	undoPush();
+	setModified(true);
+	if ( use_scaling ) object.createCrustWithScaling(MainWindow::crust_scale_factor);
+	else object.createCrust(MainWindow::crust_thickness);
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::createCrust2(bool use_scaling) {
+	// DLFLFacePtrArray::iterator first, last;
+	vector<DLFLFacePtr>::iterator it;
+
+	undoPush();
+	setModified(true);
+	if ( use_scaling ) object.createCrustWithScaling(MainWindow::crust_scale_factor);
+	else object.createCrust(MainWindow::crust_thickness);
+	recomputePatches();
+	recomputeNormals();
+	if ( GLWidget::numSelectedFaces() >= 1 ) {
+		DLFLFacePtrArray sfptrarr = GLWidget::getSelectedFaces();
+		if ( sfptrarr[0] ) {
+			for(it = sfptrarr.begin(); it != sfptrarr.end(); it++) {
+				object.cmMakeHole(*it,crust_cleanup);
+			}
+		}
+	}
+	recomputePatches();
+	recomputeNormals();
+	GLWidget::clearSelectedFaces();
+	setMode(MainWindow::MultiSelectFace);
+	redraw();	
+}
+
+void MainWindow::makeWireframe() {
+	// Create a wireframe {
+	undoPush();
+	setModified(true);
+	object.makeWireframe(MainWindow::wireframe_thickness);
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::makeWireframe2() {// Create a wireframe // dave {
+	undoPush();
+	setModified(true);
+	object.makeWireframe2(MainWindow::wireframe_thickness);
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::makeWireframeWithColumns() {// Create a wireframe using columns {
+	undoPush();
+	setModified(true);
+	object.makeWireframeWithColumns(MainWindow::column_thickness, MainWindow::column_segments);
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::makeUnitCube(double edgelength) {
+	undoPush();
+	setModified(true);
+	DLFLObjectPtr unitcube = DLFLObject::makeUnitCube(edgelength);
+	object.reset();
+	object.splice(*unitcube);
+	delete unitcube;
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::makeUnitTetrahedron(double edgelength) {
+	undoPush();
+	setModified(true);
+	DLFLObjectPtr unittetra = DLFLObject::makeUnitTetrahedron();
+	object.reset();
+	object.splice(*unittetra);
+	delete unittetra;
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+redraw();
+}
+
+void MainWindow::makeMengerSponge(int level) {
+	undoPush();
+	setModified(true);
+	DLFLObjectPtr mengersponge = DLFLObject::makeMengerSponge(level);
+	object.reset();
+	object.splice(*mengersponge);
+	delete mengersponge;
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::makeSierpinskiTetrahedron(int level) {
+	undoPush();
+	setModified(true);
+	DLFLObjectPtr stetra = DLFLObject::makeSierpinskiTetrahedron(level);
+	object.reset();
+	object.splice(*stetra);
+	delete stetra;
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::randomAssignTexCoords() {
+	// Randomly assign texture coordinates {
+	object.randomAssignTexCoords();
+}
+
+void MainWindow::assignTileTexCoords() {
+	// Assign texture coordinates for tile texturing {
+	object.assignTileTexCoords(MainWindow::tile_tex_n);
+}
+
+void MainWindow::edgeCleanup() {
+	// Cleanup redundant edges {
+	undoPush();
+	setModified(true);
+	object.edgeCleanup();
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
+void MainWindow::printSummary() {
+	// Print summary information {
+	object.print();
+}
+
+void MainWindow::printVertexList() {
+	// Print vertex list {
+	object.printVertexList();
+}
+
+void MainWindow::printEdgeList() {
+	// Print edge list {
+	object.printEdgeList();
+}
+
+void MainWindow::printCVList() {
+	// Print CV list {
+	object.printPatchCVList();
+}
+
+void MainWindow::printFaceList() {
+	// Print face list {
+	object.printFaces();
 }

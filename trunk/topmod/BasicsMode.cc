@@ -13,7 +13,7 @@ BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm)
 	mParent = parent;
 	
 	//here we set the default mode for when the application is executed.
-	((MainWindow*)mParent)->setMode(DLFLWindow::InsertEdge);
+	((MainWindow*)mParent)->setMode(MainWindow::InsertEdge);
 	
 	mInsertEdgeWidget = new QWidget;
   mDeleteEdgeWidget = new QWidget;
@@ -110,43 +110,43 @@ QMenu* BasicsMode::getMenu(){
 void BasicsMode::triggerInsertEdge(){
 	
 	((MainWindow*)mParent)->setToolOptions(mInsertEdgeWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::InsertEdge);
+	((MainWindow*)mParent)->setMode(MainWindow::InsertEdge);
 }
 
 void BasicsMode::triggerDeleteEdge(){
 	
 	((MainWindow*)mParent)->setToolOptions(mDeleteEdgeWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::DeleteEdge);
+	((MainWindow*)mParent)->setMode(MainWindow::DeleteEdge);
 }
 
 void BasicsMode::triggerCollapseEdge(){
 	
 	((MainWindow*)mParent)->setToolOptions(mCollapseEdgeWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::CollapseEdge);
+	((MainWindow*)mParent)->setMode(MainWindow::CollapseEdge);
 }
 
 void BasicsMode::triggerSubdivideEdge(){
 	
 	((MainWindow*)mParent)->setToolOptions(mSubdivideEdgeWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::SubDivideEdge);
+	((MainWindow*)mParent)->setMode(MainWindow::SubDivideEdge);
 }
 
 void BasicsMode::triggerConnectEdges(){
 	
 	((MainWindow*)mParent)->setToolOptions(mConnectEdgesWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::ConnectEdges);
+	((MainWindow*)mParent)->setMode(MainWindow::ConnectEdges);
 }
 
 void BasicsMode::triggerSpliceCorners(){
 	
 	((MainWindow*)mParent)->setToolOptions(mSpliceCornersWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::SpliceCorners);
+	((MainWindow*)mParent)->setMode(MainWindow::SpliceCorners);
 }
 
 void BasicsMode::triggerTransforms(){
 	
 	((MainWindow*)mParent)->setToolOptions(mTransformsWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::NormalMode);
+	((MainWindow*)mParent)->setMode(MainWindow::NormalMode);
 }
 
 void BasicsMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget){
@@ -344,7 +344,7 @@ void BasicsMode::setupTransforms(){
 
 	QPushButton *freezeTransformsButton = new QPushButton(tr("&Freeze Transforms"));
 	connect(freezeTransformsButton, SIGNAL(clicked()),
-          this, SLOT(freeze_transforms()));
+          this, SLOT(freezeTransforms()));
 	
 	mTransformsLayout->addWidget(freezeTransformsButton);	
 	mTransformsLayout->addStretch(1);
@@ -352,9 +352,9 @@ void BasicsMode::setupTransforms(){
 	mTransformsWidget->setLayout(mTransformsLayout);	
 }
 
-void BasicsMode::freeze_transforms()
+void BasicsMode::freezeTransforms()
 {
-	((MainWindow*)mParent)->freeze_transforms();
+	((MainWindow*)mParent)->freezeTransforms();
 	xPosSpinBox->setValue(0.0);
 	yPosSpinBox->setValue(0.0);
 	zPosSpinBox->setValue(0.0);

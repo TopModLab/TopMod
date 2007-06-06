@@ -112,7 +112,7 @@ macx {
 HEADERS += 	DLFLScriptEditor.hh \
 						TopModPreferences.hh \
 						TdxDeviceWrappers.hh \
-						DLFLWindow.hh \
+						# DLFLWindow.hh \
 						GLWidget.hh \
 						TopMod.hh \
 						MainWindow.hh \
@@ -220,7 +220,7 @@ SOURCES += 	DLFLScriptEditor.cc \
 						DLFLSculpting.cc \
 						DLFLUndo.cc \
 						DLFLVertex.cc \
-						DLFLWindow.cc \
+						# DLFLWindow.cc \
 						stylesheeteditor.cc \
 						include/arcball/Arcball.cc \
 						include/arcball/BallMath.cc \

@@ -12,7 +12,7 @@ RemeshingMode::RemeshingMode(QWidget *parent, QShortcutManager *sm)
 	setParent(0);
 	mParent = parent;
 	
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::Dual);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::Dual);
 	
 	//setup stacked widget pages here, 
 	setupDual();
@@ -493,7 +493,7 @@ void RemeshingMode::setupDual(){
 	//create crust button
 	QPushButton *dualCreateButton = new QPushButton(tr("Create Dual"), this);
 	connect(dualCreateButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 
 	mDualLayout->addWidget(dualCreateButton);	
 	mDualLayout->addStretch(1);
@@ -504,7 +504,7 @@ void RemeshingMode::setupDual(){
 void RemeshingMode::triggerDual(){
 
 	((MainWindow*)mParent)->setToolOptions(mDualWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::Dual);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::Dual);
 }
 
 void RemeshingMode::setupThreeConversion(){
@@ -524,7 +524,7 @@ void RemeshingMode::setupThreeConversion(){
 	mRootThreeLayout->setMargin(0);
 	QPushButton *rootThreeCreateButton = new QPushButton(tr("Perform Root 3 Remeshing"), this);
 	connect(rootThreeCreateButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 	mRootThreeLayout->addWidget(rootThreeCreateButton);
 	mRootThreeLayout->addStretch(1);
 	mRootThreeWidget->setWindowTitle("Root-3 Remeshing");
@@ -535,7 +535,7 @@ void RemeshingMode::setupThreeConversion(){
 	mDualVertexTruncationLayout->setMargin(0);
 	QPushButton *dualVertexTruncationButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dualVertexTruncationButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 	mDualVertexTruncationLayout->addWidget(dualVertexTruncationButton);
 	mDualVertexTruncationLayout->addStretch(1);
 	mDualVertexTruncationWidget->setWindowTitle("Dual Vertex Truncation");
@@ -546,7 +546,7 @@ void RemeshingMode::setupThreeConversion(){
 	mStellationLayout->setMargin(0);
 	QPushButton *stellationButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(stellationButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 	mStellationLayout->addWidget(stellationButton);
 	mStellationLayout->addStretch(1);
 	mStellationWidget->setWindowTitle("Stellation Remeshing");
@@ -570,7 +570,7 @@ void RemeshingMode::setupThreeConversion(){
 	//create button
 	QPushButton *starButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(starButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 	mDoubleStellationLayout->addWidget(starButton);
 	mDoubleStellationLayout->addStretch(1);
 	mDoubleStellationWidget->setWindowTitle("Double Stellation Remeshing");
@@ -594,7 +594,7 @@ void RemeshingMode::setupThreeConversion(){
 	//create button
 	QPushButton *twelveSixFourButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(twelveSixFourButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 	mTwelveSixFourLayout->addWidget(twelveSixFourButton);
 	mTwelveSixFourLayout->addStretch(1);
 	mTwelveSixFourWidget->setWindowTitle("12.6.4");
@@ -605,7 +605,7 @@ void RemeshingMode::setupThreeConversion(){
 	mHoneycombLayout->setMargin(0);
 	QPushButton *honeycombButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(honeycombButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 	mHoneycombLayout->addWidget(honeycombButton);
 	mHoneycombLayout->addStretch(1);
 	mHoneycombWidget->setWindowTitle("Honeycomb Remeshing");
@@ -628,7 +628,7 @@ void RemeshingMode::setupThreeConversion(){
   mVertexTruncationLayout->addWidget(vertexTruncationSpinBox);
 	QPushButton *vertexTruncationButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(vertexTruncationButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 	mVertexTruncationLayout->addWidget(vertexTruncationButton);
 	mVertexTruncationLayout->addStretch(1);
 	mVertexTruncationWidget->setWindowTitle("Vertex Truncation Remeshing");
@@ -652,7 +652,7 @@ void RemeshingMode::setupThreeConversion(){
 	//create button
 	QPushButton *dualTwelveSixFourButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dualTwelveSixFourButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 					
 	mDualTwelveSixFourLayout->addWidget(dualTwelveSixFourButton);
 	mDualTwelveSixFourLayout->addStretch(1);
@@ -664,49 +664,49 @@ void RemeshingMode::setupThreeConversion(){
 void RemeshingMode::triggerRootThree(){
 
 	((MainWindow*)mParent)->setToolOptions(mRootThreeWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::Root3);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::Root3);
 }
 
 void RemeshingMode::triggerDualVertexTruncation(){
 
 	((MainWindow*)mParent)->setToolOptions(mDualVertexTruncationWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::DualVertexTrunc);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::DualVertexTrunc);
 }
 
 void RemeshingMode::triggerStellation(){
 
 	((MainWindow*)mParent)->setToolOptions(mStellationWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::GlobalStellate);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::GlobalStellate);
 }
 
 void RemeshingMode::triggerDoubleStellation(){
 
 	((MainWindow*)mParent)->setToolOptions(mDoubleStellationWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::Star);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::Star);
 }
 
 void RemeshingMode::triggerTwelveSixFour(){
 
 	((MainWindow*)mParent)->setToolOptions(mTwelveSixFourWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::Generic1264);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::Generic1264);
 }
 
 void RemeshingMode::triggerHoneycomb(){
 
 	((MainWindow*)mParent)->setToolOptions(mHoneycombWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::Honeycomb);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::Honeycomb);
 }
 
 void RemeshingMode::triggerVertexTruncation(){
 
 	((MainWindow*)mParent)->setToolOptions(mVertexTruncationWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::VertexTrunc);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::VertexTrunc);
 }
 
 void RemeshingMode::triggerDualTwelveSixFour(){
 
 	((MainWindow*)mParent)->setToolOptions(mDualTwelveSixFourWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::DualGeneric1264);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::DualGeneric1264);
 }
 
 void RemeshingMode::setupFourConversion(){
@@ -723,7 +723,7 @@ void RemeshingMode::setupFourConversion(){
 	mLinearVertexLayout->setMargin(0);
 	QPushButton *linearVertexCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(linearVertexCreateButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 					
 	mLinearVertexLayout->addWidget(linearVertexCreateButton);
 	mLinearVertexLayout->addStretch(1);
@@ -735,7 +735,7 @@ void RemeshingMode::setupFourConversion(){
 	mCatmullClarkLayout->setMargin(0);
 	QPushButton *catmullClarkCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(catmullClarkCreateButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 					
 	mCatmullClarkLayout->addWidget(catmullClarkCreateButton);
 	mCatmullClarkLayout->addStretch(1);
@@ -747,7 +747,7 @@ void RemeshingMode::setupFourConversion(){
 	mStellateEdgeRemovalLayout->setMargin(0);
 	QPushButton *stellateEdgeRemovalCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(stellateEdgeRemovalCreateButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 					
 	mStellateEdgeRemovalLayout->addWidget(stellateEdgeRemovalCreateButton);
 	mStellateEdgeRemovalLayout->addStretch(1);
@@ -764,7 +764,7 @@ void RemeshingMode::setupFourConversion(){
 					((MainWindow*)mParent),SLOT(toggleDooSabinEdgeFlag(int)) );
 	QPushButton *dooSabinCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dooSabinCreateButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 	mDooSabinLayout->addWidget(dooSabinCreateButton);
 	mDooSabinLayout->addStretch(1);
 	mDooSabinWidget->setWindowTitle("Doo Sabin Remeshing");
@@ -775,7 +775,7 @@ void RemeshingMode::setupFourConversion(){
 	mCornerCuttingLayout->setMargin(0);
 	QPushButton *cornerCuttingCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(cornerCuttingCreateButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 	mCornerCuttingLayout->addWidget(cornerCuttingCreateButton);
 	mCornerCuttingLayout->addStretch(1);
 	mCornerCuttingWidget->setWindowTitle("Corner Cutting Remeshing");
@@ -786,7 +786,7 @@ void RemeshingMode::setupFourConversion(){
 	mSimplestLayout->setMargin(0);
 	QPushButton *simplestCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(simplestCreateButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 	mSimplestLayout->addWidget(simplestCreateButton);
 	mSimplestLayout->addStretch(1);
 	mSimplestWidget->setWindowTitle("Simplest Remeshing Scheme");
@@ -797,37 +797,37 @@ void RemeshingMode::setupFourConversion(){
 void RemeshingMode::triggerLinearVertex(){
 
 	((MainWindow*)mParent)->setToolOptions(mLinearVertexWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::LinearVertexInsertion);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::LinearVertexInsertion);
 }
 
 void RemeshingMode::triggerCatmullClark(){
 
 	((MainWindow*)mParent)->setToolOptions(mCatmullClarkWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::CatmullClark);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::CatmullClark);
 }
 
 void RemeshingMode::triggerStellateEdgeRemoval(){
 
 	((MainWindow*)mParent)->setToolOptions(mStellateEdgeRemovalWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::ModifiedStellate);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::ModifiedStellate);
 }
 
 void RemeshingMode::triggerDooSabin(){
 
 	((MainWindow*)mParent)->setToolOptions(mDooSabinWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::DooSabin);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::DooSabin);
 }
 
 void RemeshingMode::triggerCornerCutting(){
 
 	((MainWindow*)mParent)->setToolOptions(mCornerCuttingWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::CornerCutting);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::CornerCutting);
 }
 
 void RemeshingMode::triggerSimplest(){
 
 	((MainWindow*)mParent)->setToolOptions(mSimplestWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::Simplest);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::Simplest);
 }
 
 void RemeshingMode::setupFiveConversion(){
@@ -854,7 +854,7 @@ void RemeshingMode::setupFiveConversion(){
   mPentagonalizationLayout->addWidget(pentagonalizationSpinBox);
 	QPushButton *pentagonalizationCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(pentagonalizationCreateButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 					
 	mPentagonalizationLayout->addWidget(pentagonalizationCreateButton);
 	mPentagonalizationLayout->addStretch(1);
@@ -878,7 +878,7 @@ void RemeshingMode::setupFiveConversion(){
   mCubicPentagonalizationLayout->addWidget(cubicPentagonalizationSpinBox);
 	QPushButton *cubicPentagonalizationCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(cubicPentagonalizationCreateButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 					
 	mCubicPentagonalizationLayout->addWidget(cubicPentagonalizationCreateButton);
 	mCubicPentagonalizationLayout->addStretch(1);
@@ -890,7 +890,7 @@ void RemeshingMode::setupFiveConversion(){
 	mDualPentagonalizationLayout->setMargin(0);
 	QPushButton *dualPentagonalizationCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dualPentagonalizationCreateButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 	mDualPentagonalizationLayout->addWidget(dualPentagonalizationCreateButton);
 	mDualPentagonalizationLayout->addStretch(1);
 	mDualPentagonalizationWidget->setWindowTitle("Dual Pentagonalization Remeshing");
@@ -901,19 +901,19 @@ void RemeshingMode::setupFiveConversion(){
 void RemeshingMode::triggerPentagonalization(){
 
 	((MainWindow*)mParent)->setToolOptions(mPentagonalizationWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::Pentagonal);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::Pentagonal);
 }
 
 void RemeshingMode::triggerCubicPentagonalization(){
 
 	((MainWindow*)mParent)->setToolOptions(mCubicPentagonalizationWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::CubicPentagonal);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::CubicPentagonal);
 }
 
 void RemeshingMode::triggerDualPentagonalization(){
 
 	((MainWindow*)mParent)->setToolOptions(mDualPentagonalizationWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::DualPentagonal);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::DualPentagonal);
 }
 
 void RemeshingMode::setupThreePreservation(){
@@ -941,7 +941,7 @@ void RemeshingMode::setupThreePreservation(){
   mLoopStyleRemeshingLayout->addWidget(loopStyleRemeshingSpinBox);
 	QPushButton *loopStyleRemeshingButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(loopStyleRemeshingButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 	
 	mLoopStyleRemeshingLayout->addWidget(loopStyleRemeshingButton);
 	mLoopStyleRemeshingLayout->addStretch(1);
@@ -953,7 +953,7 @@ void RemeshingMode::setupThreePreservation(){
 	mLoopSubdivisionLayout->setMargin(0);
 	QPushButton *loopSubdivisionCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(loopSubdivisionCreateButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 	mLoopSubdivisionLayout->addWidget(loopSubdivisionCreateButton);
 	mLoopSubdivisionLayout->addStretch(1);
 	mLoopSubdivisionWidget->setWindowTitle("Loop Subdivision Remeshing");
@@ -989,7 +989,7 @@ void RemeshingMode::setupThreePreservation(){
 
 	QPushButton *dualLoopStyleRemeshingButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dualLoopStyleRemeshingButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 					
 	mDualLoopStyleRemeshingLayout->addWidget(dualLoopStyleRemeshingButton);
 	mDualLoopStyleRemeshingLayout->addStretch(1);
@@ -1001,7 +1001,7 @@ void RemeshingMode::setupThreePreservation(){
 	mDualLoopSubdivisionLayout->setMargin(0);
 	QPushButton *dualLoopSubdivisionCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dualLoopSubdivisionCreateButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 					
 	mDualLoopSubdivisionLayout->addWidget(dualLoopSubdivisionCreateButton);
 	mDualLoopSubdivisionLayout->addStretch(1);
@@ -1013,25 +1013,25 @@ void RemeshingMode::setupThreePreservation(){
 void RemeshingMode::triggerLoopStyleRemeshing(){
 
 	((MainWindow*)mParent)->setToolOptions(mLoopStyleRemeshingWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::LoopStyle);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::LoopStyle);
 }
 
 void RemeshingMode::triggerLoopSubdivision(){
 
 	((MainWindow*)mParent)->setToolOptions(mLoopSubdivisionWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::Loop);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::Loop);
 }
 
 void RemeshingMode::triggerDualLoopStyleRemeshing(){
 
 	((MainWindow*)mParent)->setToolOptions(mDualLoopStyleRemeshingWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::Root4);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::Root4);
 }
 
 void RemeshingMode::triggerDualLoopSubdivision(){
 
 	((MainWindow*)mParent)->setToolOptions(mDualLoopSubdivisionWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::DualLoop);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::DualLoop);
 }
 
 void RemeshingMode::setupFourPreservation(){
@@ -1046,7 +1046,7 @@ void RemeshingMode::setupFourPreservation(){
 	mGlobalExtrudeLayout->setMargin(0);
 	QPushButton *globalExtrudeButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(globalExtrudeButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 					
 	mGlobalExtrudeLayout->addWidget(globalExtrudeButton);
 	mGlobalExtrudeLayout->addStretch(1);
@@ -1058,7 +1058,7 @@ void RemeshingMode::setupFourPreservation(){
 	mCheckerboardLayout->setMargin(0);
 	QPushButton *checkerboardCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(checkerboardCreateButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 					
 	mCheckerboardLayout->addWidget(checkerboardCreateButton);
 	mCheckerboardLayout->addStretch(1);
@@ -1070,7 +1070,7 @@ void RemeshingMode::setupFourPreservation(){
 	mDualGlobalExtrudeLayout->setMargin(0);
 	QPushButton *dualGlobalExtrudeButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dualGlobalExtrudeButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 					
 	mDualGlobalExtrudeLayout->addWidget(dualGlobalExtrudeButton);
 	mDualGlobalExtrudeLayout->addStretch(1);
@@ -1082,7 +1082,7 @@ void RemeshingMode::setupFourPreservation(){
 	mDualCheckerboardLayout->setMargin(0);
 	QPushButton *dualCheckerboardCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dualCheckerboardCreateButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 					
 	mDualCheckerboardLayout->addWidget(dualCheckerboardCreateButton);
 	mDualCheckerboardLayout->addStretch(1);
@@ -1094,25 +1094,25 @@ void RemeshingMode::setupFourPreservation(){
 void RemeshingMode::triggerGlobalExtrude(){
 
 	((MainWindow*)mParent)->setToolOptions(mGlobalExtrudeWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::GlobalCubicExtrude);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::GlobalCubicExtrude);
 }
 
 void RemeshingMode::triggerCheckerboard(){
 
 	((MainWindow*)mParent)->setToolOptions(mCheckerboardWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::CheckerBoard);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::CheckerBoard);
 }
 
 void RemeshingMode::triggerDualGlobalExtrude(){
 
 	((MainWindow*)mParent)->setToolOptions(mDualGlobalExtrudeWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::DualGlobalCubicExtrude);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::DualGlobalCubicExtrude);
 }
 
 void RemeshingMode::triggerDualCheckerboard(){
 
 	((MainWindow*)mParent)->setToolOptions(mDualCheckerboardWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::DualCheckerBoard);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::DualCheckerBoard);
 }
 
 void RemeshingMode::setupFivePreservation(){
@@ -1138,7 +1138,7 @@ void RemeshingMode::setupFivePreservation(){
 
 	QPushButton *pentagonPreservingButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(pentagonPreservingButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 					
 	mPentagonPreservingLayout->addWidget(pentagonPreservingButton);
 	mPentagonPreservingLayout->addStretch(1);
@@ -1150,7 +1150,7 @@ void RemeshingMode::setupFivePreservation(){
 	mDualPentagonPreservingLayout->setMargin(0);
 	QPushButton *dualPentagonPreservingCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dualPentagonPreservingCreateButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 					
 	mDualPentagonPreservingLayout->addWidget(dualPentagonPreservingCreateButton);
 	mDualPentagonPreservingLayout->addStretch(1);
@@ -1162,13 +1162,13 @@ void RemeshingMode::setupFivePreservation(){
 void RemeshingMode::triggerPentagonPreserving(){
 
 	((MainWindow*)mParent)->setToolOptions(mPentagonPreservingWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::PentagonPreserving);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::PentagonPreserving);
 }
 
 void RemeshingMode::triggerDualPentagonPreserving(){
 
 	((MainWindow*)mParent)->setToolOptions(mDualPentagonPreservingWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::DualPentagonPreserving);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::DualPentagonPreserving);
 }
 
 void RemeshingMode::setupSixPreservation(){
@@ -1206,7 +1206,7 @@ void RemeshingMode::setupSixPreservation(){
 
 	QPushButton *dualLoopStyleRemeshingSixButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dualLoopStyleRemeshingSixButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 					
 	mDualLoopStyleRemeshingSixLayout->addWidget(dualLoopStyleRemeshingSixButton);
 	mDualLoopStyleRemeshingSixLayout->addStretch(1);
@@ -1230,7 +1230,7 @@ void RemeshingMode::setupSixPreservation(){
   mLoopStyleRemeshingSixLayout->addWidget(loopStyleRemeshingSixSpinBox);
 	QPushButton *loopStyleRemeshingSixButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(loopStyleRemeshingSixButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 					
 	mLoopStyleRemeshingSixLayout->addWidget(loopStyleRemeshingSixButton);
 	mLoopStyleRemeshingSixLayout->addStretch(1);
@@ -1242,13 +1242,13 @@ void RemeshingMode::setupSixPreservation(){
 void RemeshingMode::triggerDualLoopStyleRemeshingSix(){
 
 	((MainWindow*)mParent)->setToolOptions(mDualLoopStyleRemeshingSixWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::HexagonPreserving);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::HexagonPreserving);
 }
 
 void RemeshingMode::triggerLoopStyleRemeshingSix(){
 
 	((MainWindow*)mParent)->setToolOptions(mLoopStyleRemeshingSixWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::DualHexagonPreserving);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::DualHexagonPreserving);
 }
 
 void RemeshingMode::setupMiscellaneous(){
@@ -1278,7 +1278,7 @@ void RemeshingMode::setupMiscellaneous(){
 
 	QPushButton *fractalButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(fractalButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 					
 	mFractalLayout->addWidget(fractalButton);
 	mFractalLayout->addStretch(1);
@@ -1315,7 +1315,7 @@ void RemeshingMode::setupMiscellaneous(){
 
 	QPushButton *doubleStellateMiscButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(doubleStellateMiscButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 					
 	mDoubleStellateMiscLayout->addWidget(doubleStellateMiscButton);
 	mDoubleStellateMiscLayout->addStretch(1);
@@ -1327,7 +1327,7 @@ void RemeshingMode::setupMiscellaneous(){
 	mDooSabinBCLayout->setMargin(0);
 	QPushButton *dooSabinBCButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dooSabinBCButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 					
 	mDooSabinBCLayout->addWidget(dooSabinBCButton);
 	mDooSabinBCLayout->addStretch(1);
@@ -1364,7 +1364,7 @@ void RemeshingMode::setupMiscellaneous(){
 
 	QPushButton *dooSabinBCNewButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(dooSabinBCNewButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 					
 	mDooSabinBCNewLayout->addWidget(dooSabinBCNewButton);
 	mDooSabinBCNewLayout->addStretch(1);
@@ -1401,7 +1401,7 @@ void RemeshingMode::setupMiscellaneous(){
 
 	QPushButton *domeButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(domeButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(perform_remeshing()) );
+					((MainWindow*)mParent),SLOT(performRemeshing()) );
 	mDomeLayout->addWidget(domeButton);
 	mDomeLayout->addStretch(1);
 	mDomeWidget->setWindowTitle("Dome Remeshing");
@@ -1419,7 +1419,7 @@ void RemeshingMode::setupMiscellaneous(){
 	subdivideFaceCheckBox->setChecked(true);
 	QPushButton *subdivideFaceButton = new QPushButton(tr("Subdivide Selected Faces"), this);
 	connect(subdivideFaceButton, SIGNAL(clicked()),
-					((MainWindow*)mParent),SLOT(subdivide_face()) );
+					((MainWindow*)mParent),SLOT(subDivideSelectedFaces()) );
 					
 	mSubdivideFaceLayout->addWidget(subdivideFaceButton);
 	mSubdivideFaceLayout->addStretch(1);
@@ -1431,35 +1431,35 @@ void RemeshingMode::setupMiscellaneous(){
 void RemeshingMode::triggerFractal(){
 
 	((MainWindow*)mParent)->setToolOptions(mFractalWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::Fractal);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::Fractal);
 }
 
 void RemeshingMode::triggerDoubleStellateMisc(){
 
 	((MainWindow*)mParent)->setToolOptions(mDoubleStellateMiscWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::ModifiedDoubleStellate);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::ModifiedDoubleStellate);
 }
 
 void RemeshingMode::triggerDooSabinBC(){
 
 	((MainWindow*)mParent)->setToolOptions(mDooSabinBCWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::DooSabinBC);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::DooSabinBC);
 }
 
 void RemeshingMode::triggerDooSabinBCNew(){
 
 	((MainWindow*)mParent)->setToolOptions(mDooSabinBCNewWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::DooSabinBCNew);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::DooSabinBCNew);
 }
 
 void RemeshingMode::triggerDome(){
 
 	((MainWindow*)mParent)->setToolOptions(mDomeWidget);
-	((MainWindow*)mParent)->setRemeshingScheme(DLFLWindow::Dome);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::Dome);
 }
 
 void RemeshingMode::triggerSubdivideFace(){
 
 	((MainWindow*)mParent)->setToolOptions(mSubdivideFaceWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::SubDivideFace);
+	((MainWindow*)mParent)->setMode(MainWindow::SubDivideFace);
 }

@@ -15,7 +15,7 @@
 #include "MainWindow.hh"
 
 class MainWindow;
-class DLFLWindow;
+// class DLFLWindow;
 
 class ConicalMode : public QWidget {
 	Q_OBJECT

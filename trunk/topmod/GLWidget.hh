@@ -72,63 +72,63 @@ class GLWidget : public QGLWidget {
 
 	void toggleHUD() {
 		mShowHUD = !mShowHUD;
-		this->repaint();
+		repaint();
 	}
 
 			// Toggle wireframe
 	void toggleWireframe(void) {
 		if ( renderer ) renderer->toggleWireframe();
-		this->repaint();
+		repaint();
 	}
 
 			// Toggle silhouette
 	void toggleSilhouette(void) {
 		if ( renderer ) renderer->toggleSilhouette();
-		this->repaint();
+		repaint();
 
 	}
 
 			// Toggle vertices
 	void toggleVertices(void) {
 		if ( renderer ) renderer->toggleVertices();
-		this->repaint();
+		repaint();
 	}
 
 	void toggleFaceIDs( ) {
 		mShowFaceIDs = !mShowFaceIDs;
-		this->repaint();
+		repaint();
 	}
 
 	void toggleEdgeIDs( ) {
 		mShowEdgeIDs = !mShowEdgeIDs;
-		this->repaint();
+		repaint();
 	}
 
 	void toggleVertexIDs( ) {
 		mShowVertexIDs = !mShowVertexIDs;
-		this->repaint();
+		repaint();
 	}
 
 	void toggleSelectedIDs( ) {
 		mShowSelectedIDs = !mShowSelectedIDs;
-		this->repaint();
+		repaint();
 	}
 
 	void toggleBrush( ) {
 		mShowBrush = !mShowBrush;
-		this->repaint();
+		repaint();
 	}
 
 	void showBrush( ) {
 		mShowBrush = true;
 		setCursor(Qt::BlankCursor);
-		this->repaint();
+		repaint();
 	}
 	
 	void hideBrush( ) {
 		mShowBrush = false;
 		setCursor(Qt::ArrowCursor);
-		this->repaint();
+		repaint();
 	}
 	
 	bool isBrushVisible(){ return mShowBrush; }
@@ -136,13 +136,13 @@ class GLWidget : public QGLWidget {
 			// Toggle object orientation
 	void toggleObjectOrientation(void) {
 		if ( renderer ) renderer->toggleObjectOrientation();
-		this->repaint();
+		repaint();
 
 	}
 
 	void toggleNormals(void) {
 		if ( renderer ) renderer->toggleNormals();
-		this->repaint();
+		repaint();
 	}
 	
 	void selectAllFaces(){
@@ -150,18 +150,35 @@ class GLWidget : public QGLWidget {
 		object->getFaces(sel_fptr_array);
 		repaint();
 	}
+
+	void selectInverseFaces(){
+		// clearSelectedFaces();
+		DLFLFacePtrArray fparray;
+		// vector<DLFLFacePtr>::iterator it;
+		vector<DLFLFacePtr>::iterator it;
+		// int idx 
+		object->getFaces(fparray);
+		for (it = fparray.begin(); it != fparray.end(); it++){
+			if (!GLWidget::isSelected(*it)){
+				addToSelection(*it);
+			}
+			else clearSelectedFace(*it);
+		}
+		repaint();
+	}
+
 		// Toggle grid display on/off
 	void toggleGrid(void) {
 			// if ( showgrid == true ) showgrid = false;
 	// 	    else showgrid = true;
-	// 			this->repaint();
+	// 			repaint();
 	}
 
 		// Toggle axis display on/off
 	void toggleAxes(void) {
 		if ( showaxes == true ) showaxes = false;
 		else showaxes = true;
-		this->repaint();
+		repaint();
 	}
 
 	protected :
@@ -577,7 +594,7 @@ class GLWidget : public QGLWidget {
 		// Set the renderer for this viewport
 	void setRenderer(DLFLRendererPtr rp) {
 		renderer = rp;
-		this->repaint();
+		repaint();
 	}
 
 	DLFLRendererPtr getRenderer(){
@@ -587,7 +604,7 @@ class GLWidget : public QGLWidget {
 		// Set the render flags
 	void setRenderFlags(int rflags) {
 		if ( renderer ) renderer->setRenderFlags(rflags);
-		this->repaint();
+		repaint();
 	}
 
 		// Get the render flags

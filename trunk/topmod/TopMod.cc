@@ -18,7 +18,7 @@ TopMod::TopMod(int & argc, char ** argv, bool GUIenabled )
 
 	processEvents( );
 
-	mainWindow->resize( 1000, 800 );
+	// mainWindow->resize( 1000, 800 );
 	mainWindow->show();
 }
 
