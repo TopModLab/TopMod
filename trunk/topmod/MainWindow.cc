@@ -136,7 +136,9 @@ bool MainWindow::deselect_faceverts = false;
 // for face loop selection 
 DLFLEdgePtr MainWindow::face_loop_start_edge = NULL;
 
-MainWindow::MainWindow(char *filename) {
+MainWindow::MainWindow(char *filename) :
+	object(), mode(NormalMode), undoList(), redoList(), undolimit(20), useUndo(true), 
+	mIsModified(false), mIsPrimitive(false), mWasPrimitive(false) {
 	//initialize the OpenGL Window GLWidget
 	QGLFormat fmt;
 	//initialize renderer
@@ -154,13 +156,10 @@ MainWindow::MainWindow(char *filename) {
 	setAttribute(Qt::WA_AcceptDrops, true);
 	setWindowFlags(Qt::Window);
 	setWindowTitle(tr("newfile[*] - TopMod"));
-	
   cWidget = new QWidget( );	
-
 	//accept file drop events
 	setAcceptDrops(true);
-	
-  /** Setup Main Layout and add the glwidget to it **/
+	/** Setup Main Layout and add the glwidget to it **/
   layout = new QBoxLayout( QBoxLayout::TopToBottom, 0 );
   layout->addWidget( active , 0 );
 	layout->setMargin(0);
@@ -941,7 +940,7 @@ void MainWindow::createToolBars() {
 	
 	//selection masks toolbar
 	mSelectionMaskToolBar = new QToolBar(tr("Selection Masks"));
-	addToolBar(Qt::TopToolBarArea,mSelectionMaskToolBar);
+	//addToolBar(Qt::TopToolBarArea,mSelectionMaskToolBar);
 	mSelectionMaskToolBar->addAction(mSelectVerticesMaskAct);
 	mSelectionMaskToolBar->addAction(mSelectFacesMaskAct);
 	mSelectionMaskToolBar->addAction(mSelectEdgesMaskAct);
