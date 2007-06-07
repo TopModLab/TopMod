@@ -981,7 +981,8 @@ void DLFLObject :: modifiedCornerCuttingSubDivide(double thickness)
           ////////////////////////////////////////////////////////////////////
        fl_last_hole = face_list.end();
        --fl_last_hole; --fl_last_hole; 
-       (*fl_last_hole)->setType(FTHole);
+       // if (fp->getType() == FTHole)
+				 (*fl_last_hole)->setType(FTHole);
 
           //////////////////////////////////////////////////////////////////////
             

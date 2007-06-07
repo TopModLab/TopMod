@@ -13,6 +13,7 @@
 
 #include <iostream>
 #include <QMainWindow>
+#include <QAssistantClient>
 #include <QWidget>
 #include <QComboBox>
 #include <QKeyEvent>
@@ -61,6 +62,7 @@ class GLWidget;
 class QBoxLayout;
 class QComboBox;
 class QMenuBar;
+// class QAssistantClient;
 
 typedef StringStream * StringStreamPtr;
 typedef list<StringStreamPtr> StringStreamPtrList;
@@ -348,8 +350,12 @@ class MainWindow : public QMainWindow {
 			void readSettings();
 			void writeSettings();
 			bool maybeSave();
+			void initializeHelp();
 
-		//top level and sublevel menus
+			// help file viewer
+			QAssistantClient *mAssistantClient;
+			
+			//top level and sublevel menus
 			QMenuBar *menuBar;
 			QMenu *fileMenu;
 			QMenu *editMenu;
@@ -364,6 +370,7 @@ class MainWindow : public QMainWindow {
 			QMenu *mSelectionMaskMenu;
 			QMenu *settingsMenu;
 			QMenu *languageMenu;
+			QMenu *mHelpMenu;
 
 	#ifdef WITH_VERSE
 			QMenu *mVerseMenu;
@@ -474,6 +481,11 @@ class MainWindow : public QMainWindow {
 			QAction *frenchAct;
 			QAction *turkishAct;
 			QAction *catalanAct;
+			
+		//help menu
+			QAction *mAboutQtAct;
+			QAction *mHelpAct;
+			QAction *mAboutAct;
 
 	#ifdef WITH_VERSE
 		//verse menu actions
@@ -523,7 +535,8 @@ class MainWindow : public QMainWindow {
 
 			public slots:
 
-			void about();
+			void about(); //TODO: topmod developer credits 
+			void help(); //open the qtassistantclient help viewer
 			void documentWasModified();
 
 			void showHideScriptEditor();

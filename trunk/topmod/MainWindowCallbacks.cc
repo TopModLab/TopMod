@@ -913,10 +913,10 @@ void MainWindow::createCrust(bool use_scaling) {
 	redraw();
 }
 
+//this function will tag all currently selected faces with the FTHole type
+//when the user presses the rind modeling button, and it will punch out all those faces
 void MainWindow::createCrust2(bool use_scaling) {
-	// DLFLFacePtrArray::iterator first, last;
 	vector<DLFLFacePtr>::iterator it;
-
 	undoPush();
 	setModified(true);
 	if ( use_scaling ) object.createCrustWithScaling(MainWindow::crust_scale_factor);
@@ -926,15 +926,15 @@ void MainWindow::createCrust2(bool use_scaling) {
 	if ( GLWidget::numSelectedFaces() >= 1 ) {
 		DLFLFacePtrArray sfptrarr = GLWidget::getSelectedFaces();
 		if ( sfptrarr[0] ) {
-			for(it = sfptrarr.begin(); it != sfptrarr.end(); it++) {
-				object.cmMakeHole(*it,crust_cleanup);
-			}
+			//mark all the faces for hole punching
+			for(it = sfptrarr.begin(); it != sfptrarr.end(); it++)
+				(*it)->setType(FTHole);
+			object.punchHoles();
 		}
 	}
 	recomputePatches();
 	recomputeNormals();
 	GLWidget::clearSelectedFaces();
-	setMode(MainWindow::MultiSelectFace);
 	redraw();	
 }
 
@@ -950,9 +950,22 @@ void MainWindow::makeWireframe() {
 }
 
 void MainWindow::makeWireframe2() {// Create a wireframe // dave {
+	vector<DLFLFacePtr>::iterator it;
 	undoPush();
 	setModified(true);
-	object.makeWireframe2(MainWindow::wireframe_thickness);
+	object.makeWireframe(MainWindow::wireframe_thickness);
+	// recomputePatches();
+	// recomputeNormals();
+	// if ( GLWidget::numSelectedFaces() >= 1 ) {
+	// 	DLFLFacePtrArray sfptrarr = GLWidget::getSelectedFaces();
+	// 	if ( sfptrarr[0] ) {
+	// 		//mark all the faces for hole punching
+	// 		for(it = sfptrarr.begin(); it != sfptrarr.end(); it++)
+	// 			(*it)->setType(FTHole);
+	// 		// object.punchHoles();
+	// 		object.makeWireframe2(MainWindow::wireframe_thickness);
+	// 	}
+	// }
 	recomputePatches();
 	recomputeNormals();
 	MainWindow::clearSelected();

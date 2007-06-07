@@ -24,7 +24,6 @@ public:
 	QAction *mAddHandleSIAction;
 	QAction *mRindModelingScalingAction; 
 	QAction *mRindModelingThicknessAction;
-	QAction *mRindModelingPaintingAction;
 	QAction *mWireframeModelingAction; 
 	QAction *mWireframeModeling2Action; 
 	QAction *mColumnModelingAction;	
@@ -37,7 +36,6 @@ public:
 	QWidget *mAddHandleSIWidget;
 	QWidget *mRindModelingScalingWidget; 
 	QWidget *mRindModelingThicknessWidget;
-	QWidget *mRindModelingPaintingWidget;
 	QWidget *mWireframeModelingWidget; 
 	QWidget *mWireframeModeling2Widget; 
 	QWidget *mColumnModelingWidget;	
@@ -50,7 +48,6 @@ public:
 	QBoxLayout *mAddHandleSILayout;
 	QBoxLayout *mRindModelingScalingLayout;
 	QBoxLayout *mRindModelingThicknessLayout;
-	QBoxLayout *mRindModelingPaintingLayout;
 	QBoxLayout *mWireframeModelingLayout;
 	QBoxLayout *mWireframeModeling2Layout;
 	QBoxLayout *mColumnModelingLayout; 
@@ -65,7 +62,6 @@ protected:
 	void setupAddHandleSI();
 	void setupRindModelingScaling();
 	void setupRindModelingThickness();
-	void setupRindModelingPainting();
 	void setupWireframeModeling();
 	void setupWireframeModeling2();
 	void setupColumnModeling();
@@ -87,7 +83,6 @@ public slots:
 	void triggerAddHandleSI();
 	void triggerRindModelingScaling();
 	void triggerRindModelingThickness();
-	void triggerRindModelingPainting();
 	void triggerWireframeModeling();
 	void triggerWireframeModeling2();
 	void triggerColumnModeling();
@@ -105,7 +100,6 @@ private:
 	QButtonGroup *multiFaceAlgorithmButtonGroup;
 	
 	QCheckBox *rindModelingThicknessCleanupCheckBox;
-	QCheckBox *rindModelingPaintingCleanupCheckBox;
 	QCheckBox *rindModelingScalingCleanupCheckBox;
 
 	QSpinBox *addHoleHandleNumSegmentsConnectSpinBox;

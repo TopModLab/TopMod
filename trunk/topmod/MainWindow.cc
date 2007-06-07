@@ -144,14 +144,12 @@ MainWindow::MainWindow(char *filename) :
 	//initialize renderer
 	createRenderers();
 	active = new GLWidget(500,600, VPPersp, lit, QColor(255,255,255,255),QColor(255,255,255,255) , &object,fmt, this);
-  // setRenderer(lit); // Default renderer is LightedRenderer	
 	active->switchTo(VPPersp);	
-	// active->resize(1000,800);
 	active->redraw();
 	active->setMinimumSize(400,400);
 	active->setFocusPolicy(Qt::StrongFocus);
 	//status bar
-	mStatusBar = new QStatusBar();
+	mStatusBar = new QStatusBar(this);
 	// setStatusBar(mStatusBar);
 	setAttribute(Qt::WA_AcceptDrops, true);
 	setWindowFlags(Qt::Window);
@@ -161,10 +159,11 @@ MainWindow::MainWindow(char *filename) :
 	setAcceptDrops(true);
 	/** Setup Main Layout and add the glwidget to it **/
   layout = new QBoxLayout( QBoxLayout::TopToBottom, 0 );
-  layout->addWidget( active , 0 );
+  layout->addWidget(active);
 	layout->setMargin(0);
+	// layout->addStretch(1);
   cWidget->setLayout( layout );
-  setCentralWidget( cWidget );
+  setCentralWidget( active );
 
 	//initialize light color
 	plight.position.set(50,25,0);
@@ -215,6 +214,8 @@ MainWindow::MainWindow(char *filename) :
   createActions();
   createToolBars();
   createMenus();
+	//initialize the help file...
+	initializeHelp();
 	//style sheet editor
   mStyleSheetEditor = new StyleSheetEditor;
 
@@ -718,6 +719,22 @@ void MainWindow::createActions() {
 	connect(mPerformRemeshingAct, SIGNAL(triggered()), this, SLOT(performRemeshing()));
 	sm->registerAction(mPerformRemeshingAct, "Remeshing Menu", "CTRL+R");
 	
+	//help menu actions
+	mHelpAct = new QAction(tr("&Help Contents"), this);
+	mHelpAct->setStatusTip( tr("View the help file") );
+	connect(mHelpAct, SIGNAL(triggered()), this, SLOT(help()));
+	sm->registerAction(mHelpAct, "Help Menu", "F1");
+
+	mAboutAct = new QAction(tr("&About TopMod"), this);
+	mAboutAct->setStatusTip( tr("About TopMod") );
+	connect(mAboutAct, SIGNAL(triggered()), this, SLOT(about()));
+	sm->registerAction(mAboutAct, "Help Menu", "");
+
+	mAboutQtAct = new QAction(tr("About &Qt"), this);
+	mAboutQtAct->setStatusTip( tr("About Qt") );
+	connect(mAboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+	sm->registerAction(mAboutQtAct, "Help Menu", "");
+	
 }
 
 void MainWindow::createMenus(){
@@ -891,6 +908,12 @@ void MainWindow::createMenus(){
 	mSelectionMaskMenu->addAction(mSelectFacesMaskAct);
 	mSelectionMaskMenu->addAction(mSelectEdgesMaskAct);
 	mSelectionMaskMenu->addAction(mSelectFaceVerticesMaskAct);
+	
+	mHelpMenu = new QMenu(tr("&Help"));
+	menuBar->addMenu(mHelpMenu);
+	mHelpMenu->addAction(mHelpAct);
+	mHelpMenu->addAction(mAboutAct);
+	mHelpMenu->addAction(mAboutQtAct);
 	
 	// settingsMenu = new QMenu(tr("Se&ttings"));
 	// settingsMenu->setTearOffEnabled(true);
@@ -1069,6 +1092,10 @@ bool MainWindow::saveFile(QString fileName) {
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
+	//close the help file if it's open... not sure this is necessary
+	if (mAssistantClient)
+		mAssistantClient->closeAssistant();
+
 	if (maybeSave()) {
 	    writeSettings();
 	    event->accept();
@@ -1102,11 +1129,27 @@ void MainWindow::openFile(QString fileName){
 	active->redraw();
 }
 
+// void MainWindow::aboutQt() {
+//   QMessageBox::about(this, tr("About Qt"),
+// 		     tr("The <b>Application</b> example demonstrates how to "
+// 			"write modern GUI applications using Qt, with a menu bar, "
+// 			"toolbars, and a status bar."));
+// }
+
 void MainWindow::about() {
   QMessageBox::about(this, tr("About TopMod"),
-		     tr("The <b>Application</b> example demonstrates how to "
-			"write modern GUI applications using Qt, with a menu bar, "
-			"toolbars, and a status bar."));
+		     tr("The About page for TopMod is still in the works \n stay tuned... \n"));
+}
+
+void MainWindow::initializeHelp(){
+	mAssistantClient = new QAssistantClient(QLibraryInfo::location(QLibraryInfo::BinariesPath), this);
+  // QStringList arguments;
+  // arguments << "-profile" << QString("documentation") + QDir::separator() + QString("simpletextviewer.adp");
+  // mAssistantClient->setArguments(arguments);
+}
+
+void MainWindow::help() {
+	mAssistantClient->showPage("");
 }
 
 void MainWindow::documentWasModified() {
@@ -2031,13 +2074,8 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			if ( GLWidget::numSelectedFaces() >= 1 )
 			{
 				DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
-				if ( sfptr )
-				{
-																										// No undo for hole punching in crust modeling mode
-																										// because the ids in the recreated object
-																										// will be different
-					if ( QApplication::keyboardModifiers() == Qt::ShiftModifier )
-					{
+				if ( sfptr ) {
+					if ( QApplication::keyboardModifiers() == Qt::ShiftModifier ) {
 						object.tagMatchingFaces(sfptr);
 						object.punchHoles();
 						recomputePatches();
@@ -2045,7 +2083,6 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 					}
 					else
 						object.cmMakeHole(sfptr,crust_cleanup);
-//                                                  recomputeNormals();
 				}
 				GLWidget::clearSelectedFaces();
 				redraw();
@@ -2387,9 +2424,6 @@ GLWidget *MainWindow::getActive() {
 void MainWindow::redraw() {
 	active->redraw();
 }
-
-// Override resize() method to properly resize subwindows
-// void MainWindow::resize(int x, int y, int w, int h) { }
 
 //--- Methods to perform various operations ---//
 
