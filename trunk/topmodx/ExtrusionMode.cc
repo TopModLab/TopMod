@@ -132,43 +132,43 @@ void ExtrusionMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 void ExtrusionMode::triggerDooSabinExtrude(){
 	
 	((MainWindow*)mParent)->setToolOptions(mDooSabinExtrudeWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::ExtrudeFaceDS);
+	((MainWindow*)mParent)->setMode(MainWindow::ExtrudeFaceDS);
 }
 
 void ExtrusionMode::triggerCubicalExtrude(){
 
 	((MainWindow*)mParent)->setToolOptions(mCubicalExtrudeWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::ExtrudeMultipleFaces);	
+	((MainWindow*)mParent)->setMode(MainWindow::ExtrudeMultipleFaces);	
 }
 
 void ExtrusionMode::triggerDodecahedralExtrude(){
 	
 	((MainWindow*)mParent)->setToolOptions(mDodecahedralExtrudeWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::ExtrudeFaceDodeca);
+	((MainWindow*)mParent)->setMode(MainWindow::ExtrudeFaceDodeca);
 }
 
 void ExtrusionMode::triggerIcosahedralExtrude(){
 	
 	((MainWindow*)mParent)->setToolOptions(mIcosahedralExtrudeWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::ExtrudeFaceIcosa);
+	((MainWindow*)mParent)->setMode(MainWindow::ExtrudeFaceIcosa);
 }
 
 void ExtrusionMode::triggerOctahedralExtrude(){
 	
 	((MainWindow*)mParent)->setToolOptions(mOctahedralExtrudeWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::ExtrudeDualFace);
+	((MainWindow*)mParent)->setMode(MainWindow::ExtrudeDualFace);
 }
 
 void ExtrusionMode::triggerStellateExtrude(){
 	
 	((MainWindow*)mParent)->setToolOptions(mStellateExtrudeWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::StellateFace);
+	((MainWindow*)mParent)->setMode(MainWindow::StellateFace);
 }
 
 void ExtrusionMode::triggerDoubleStellateExtrude(){
 	
 	((MainWindow*)mParent)->setToolOptions(mDoubleStellateExtrudeWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::DoubleStellateFace);
+	((MainWindow*)mParent)->setMode(MainWindow::DoubleStellateFace);
 }
 
 void ExtrusionMode::setLength(double value){

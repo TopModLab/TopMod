@@ -13,7 +13,6 @@
 #include "MainWindow.hh"
 
 class MainWindow;
-class DLFLWindow;
 
 class QComboBox;
 class QPushButton;

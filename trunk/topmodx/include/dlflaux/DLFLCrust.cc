@@ -839,6 +839,18 @@ namespace DLFL {
     }
   }
 
+	//selects all faces with same number of vertices as the face passed to the function
+	//initializes them in fparray by reference
+	void selectMatchingFaces(DLFLObjectPtr obj, DLFLFacePtr fptr, DLFLFacePtrArray &fparray) {
+		fparray.clear();
+		DLFLFacePtrList::iterator fl_first=obj->beginFace(), fl_last = obj->endFace();
+
+		while ( fl_first != fl_last )	{
+			if ( (*fl_first)->size() == fptr->size() ) fparray.push_back(*fl_first);
+			fl_first++;
+		}
+	}
+
   void punchHoles( DLFLObjectPtr obj ) {
     // Go through list of faces and punch holes through faces that have type
     // flag set to FTHole

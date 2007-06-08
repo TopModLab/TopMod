@@ -1,14 +1,13 @@
 #include "GLWidget.hh"
 #include "DLFLSelection.hh"
 
-// //==============================================================================
-// // Make the linker happy for the framework check (see link below for more info)
-// // http://developer.apple.com/documentation/MacOSX/Conceptual/BPFrameworks/Concepts/WeakLinking.html
-// 
-// extern OSErr InstallConnexionHandlers() __attribute__((weak_import));
-// 
-// OSErr	error = InstallConnexionHandlers(GLWidget::spaceNavEvent, 0L, 0L);;
-// UInt16 fConnexionClientID = RegisterConnexionClient('MCTt', (UInt8*)"\pTopMod", kConnexionClientModeTakeOver, kConnexionMaskAll);
+//-- Define static members --//
+
+DLFLLocatorPtrArray GLWidget::sel_lptr_array;
+DLFLVertexPtrArray GLWidget::sel_vptr_array;
+DLFLEdgePtrArray GLWidget::sel_eptr_array;
+DLFLFacePtrArray GLWidget::sel_fptr_array;
+DLFLFaceVertexPtrArray GLWidget::sel_fvptr_array;
 
 // Constructor
 GLWidget::GLWidget(int x, int y, int w, int h, QWidget *parent) 
@@ -78,6 +77,9 @@ void GLWidget::initializeGL( ) {
 	mBrushSize = 2.5;
 	mShowBrush = false;
 	setMouseTracking(true);
+	
+	locatorPtr = new DLFLLocator(); // brianb
+	
 }
 
 void GLWidget::paintEvent(QPaintEvent *event){
@@ -471,13 +473,6 @@ void GLWidget::toggleFullScreen( ) {
 	mIsFullScreen != mIsFullScreen;
 }
 
-//-- Define static members --//
-
-DLFLVertexPtrArray GLWidget::sel_vptr_array;
-DLFLEdgePtrArray GLWidget::sel_eptr_array;
-DLFLFacePtrArray GLWidget::sel_fptr_array;
-DLFLFaceVertexPtrArray GLWidget::sel_fvptr_array;
-
 // Subroutine for selecting a Vertex
 DLFLVertexPtr GLWidget::selectVertex(int mx, int my) {
 	GLuint selectBuf[1024];
@@ -532,6 +527,69 @@ DLFLVertexPtr GLWidget::selectVertex(int mx, int my) {
 	}
 	return sel;
 }
+
+// Subroutine for selecting a Vertex
+DLFLLocatorPtr GLWidget::selectLocator(int mx, int my) // brianb
+{
+  GLuint selectBuf[1024];
+  uint closest;
+  GLuint dist;
+  long hits, index;
+
+  glSelectBuffer(1024,selectBuf);
+  glRenderMode(GL_SELECT);
+
+  glInitNames(); glPushName(0);
+
+  GLint vp[4];
+  glGetIntegerv(GL_VIEWPORT, vp);
+  viewport.camera.enterSelectionMode(mx,my,10,10,vp); // Reduced sensitivity for picking points
+
+  // Make sure earlier matrices are preserved, since multiple windows
+  // seem to be sharing the same matrix stacks
+
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+
+  viewport.reshape();
+  viewport.apply_transform();
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  renderLocatorsForSelect();
+  glFlush();
+
+  glPopMatrix();
+
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+
+  viewport.camera.leaveSelectionMode();
+  hits = glRenderMode(GL_RENDER);
+  if ( hits > 0 )
+  {
+    closest = 0; dist = 0xffffffff;
+    while ( hits )
+    {
+      index = (hits-1)*4;
+      if ( selectBuf[index+1] < dist )
+      {
+        dist = selectBuf[index+1];
+        closest = selectBuf[index+3];
+      }
+      hits--;
+    }
+    
+    // closest now has the hit axis
+    GLWidget::locatorPtr->setSelectedAxis(closest);
+
+    // Only one locator for now, return pointer to DLFLViewport::locator
+    return GLWidget::locatorPtr;
+  }
+  
+  return NULL;
+}  // brianb
 
 // Subroutine for selecting an Edge
 DLFLEdgePtr GLWidget::selectEdge(int mx, int my) {
@@ -828,6 +886,11 @@ DLFLFaceVertexPtr GLWidget::selectFaceVertex(DLFLFacePtr fp, int mx, int my) {
 
 // Draw the selected items
 void GLWidget::drawSelected(void) {
+	if ( !sel_lptr_array.empty() ) // brianb
+    {
+      sel_lptr_array[0]->render();
+    }
+
 	if ( !sel_vptr_array.empty() ){
 		glPointSize(mSelectedVertexThickness);
 		glBegin(GL_POINTS);
@@ -1235,3 +1298,5 @@ void GLWidget::switchTo(VPView view){
 	if ( view == VPPersp ) // Change camera settings to zoom in closer in perspective view
 		viewport.setPerspView(10,10,10,0,0,0,0,1,0);
 }
+//for vertex locator moving...
+void erase_dlp(DLFLLocatorPtr lp)  { delete lp; } // brianb

@@ -13,7 +13,6 @@
 #include "MainWindow.hh"
 
 class MainWindow;
-class DLFLWindow;
 
 class QComboBox;
 class QPushButton;
@@ -77,7 +76,7 @@ private:
 	QDoubleSpinBox *zPosSpinBox;
 	
 public slots:
-	void freeze_transforms();
+	void freezeTransforms();
 		
 	void triggerInsertEdge();
 	void triggerDeleteEdge();

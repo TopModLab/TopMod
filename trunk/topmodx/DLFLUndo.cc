@@ -1,10 +1,10 @@
 /* $Id: DLFLUndo.cc,v 4.1 2004/02/24 20:41:44 vinod Exp $ */
 
-#include "DLFLWindow.hh"
+#include "MainWindow.hh"
 
 //-- Subroutines dealing with undo and redo for DLFLWindow --//
 
-void DLFLWindow::clearUndoList(void)
+void MainWindow::clearUndoList(void)
 {
   StringStreamPtrList::iterator first, last;
   first = undoList.begin(); last = undoList.end();
@@ -16,7 +16,7 @@ void DLFLWindow::clearUndoList(void)
   undoList.clear();
 }
 
-void DLFLWindow::clearRedoList(void)
+void MainWindow::clearRedoList(void)
 {
   StringStreamPtrList::iterator first, last;
   first = redoList.begin(); last = redoList.end();
@@ -28,7 +28,7 @@ void DLFLWindow::clearRedoList(void)
   redoList.clear();
 }
 
-void DLFLWindow::undoPush(void)
+void MainWindow::undoPush(void)
 {
      // Don't do anything unless undo is required
   if ( useUndo == false ) return;
@@ -53,7 +53,7 @@ void DLFLWindow::undoPush(void)
   clearRedoList();
 }
 
-void DLFLWindow::undo(void) {
+void MainWindow::undo(void) {
 	
 	if ( !undoList.empty() ) {		
 		// Restore previous object
@@ -70,7 +70,7 @@ void DLFLWindow::undo(void) {
 		recomputePatches();
 		recomputeNormals();
 		// Clear selection lists to avoid dangling pointers
-		DLFLWindow::clearSelected();
+		MainWindow::clearSelected();
 		redraw();
 		/* is document modified? - dave */
 		setModified(true);
@@ -83,7 +83,7 @@ void DLFLWindow::undo(void) {
 	}
 }
 
-void DLFLWindow::redo(void) {
+void MainWindow::redo(void) {
 	
   if ( !redoList.empty() ) {
 		// Redo previously undone operation
@@ -100,7 +100,7 @@ void DLFLWindow::redo(void) {
 		recomputePatches();
 		recomputeNormals();
 		// Clear selection lists to avoid dangling pointers
-		DLFLWindow::clearSelected();
+		MainWindow::clearSelected();
 		redraw();
 		/* is document modified? - dave */
 		setModified(true);

@@ -38,7 +38,7 @@ QMenu* TexturingMode::getMenu(){
 void TexturingMode::triggerTileTexturing(){
 	
 	((MainWindow*)mParent)->setToolOptions(mTileTexturingWidget);
-	((MainWindow*)mParent)->setMode(DLFLWindow::NormalMode);
+	((MainWindow*)mParent)->setMode(MainWindow::NormalMode);
 	
 }
 
@@ -71,7 +71,7 @@ void TexturingMode::setupTileTexturing(){
 	QPushButton *tileTexturingAssignButton = new QPushButton(tr("Assign Texture Coordinates"), this);
 	
 	connect(tileTexturingAssignButton, SIGNAL(clicked()),
-          ((MainWindow*)mParent), SLOT(assign_texture_coordinates()));
+          ((MainWindow*)mParent), SLOT(assignTileTexCoords()));
 
 	mTileTexturingLayout->addWidget(tileTexturingAssignButton);
 	mTileTexturingLayout->addStretch(1);

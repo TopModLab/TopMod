@@ -1757,6 +1757,8 @@ void DLFLWindow::createCrust(bool use_scaling)        // Create a crust
 	DLFLWindow::clearSelected();
 }
 
+//this function will tag all currently selected faces with the FTHole type
+//when the user presses the rind modeling button, and it will punch out all those faces
 void DLFLWindow::createCrust2(bool use_scaling) {
 	// DLFLFacePtrArray::iterator first, last;
 	vector<DLFLFacePtr>::iterator it;
@@ -1772,19 +1774,16 @@ void DLFLWindow::createCrust2(bool use_scaling) {
 	if ( GLWidget::numSelectedFaces() >= 1 ) {
 		DLFLFacePtrArray sfptrarr = GLWidget::getSelectedFaces();
 		if ( sfptrarr[0] ) {
-			for(it = sfptrarr.begin(); it != sfptrarr.end(); it++) {
-				DLFL::cmMakeHole(&object,*it,crust_cleanup);
-			}
+			for(it = sfptrarr.begin(); it != sfptrarr.end(); it++) 
+				(*it)->setType(FTHole);
+			DLFL::punchHoles(&object);
 		}
 	}
 	recomputePatches();
 	recomputeNormals();
 	GLWidget::clearSelectedFaces();
-	setMode(DLFLWindow::MultiSelectFace);
 	redraw();	
 }
-
-
 
 void DLFLWindow::makeWireframe(void)                    // Create a wireframe
 {
@@ -1794,6 +1793,29 @@ void DLFLWindow::makeWireframe(void)                    // Create a wireframe
 	recomputePatches();
 	recomputeNormals();
 	DLFLWindow::clearSelected();
+}
+
+void MainWindow::makeWireframe2() {// Create a wireframe // dave {
+	vector<DLFLFacePtr>::iterator it;
+	undoPush();
+	setModified(true);
+	DLFL::makeWireframe(&object,MainWindow::wireframe_thickness);
+	// recomputePatches();
+	// recomputeNormals();
+	// if ( GLWidget::numSelectedFaces() >= 1 ) {
+	// 	DLFLFacePtrArray sfptrarr = GLWidget::getSelectedFaces();
+	// 	if ( sfptrarr[0] ) {
+	// 		//mark all the faces for hole punching
+	// 		for(it = sfptrarr.begin(); it != sfptrarr.end(); it++)
+	// 			(*it)->setType(FTHole);
+	// 		// object.punchHoles();
+	// 		object.makeWireframe2(MainWindow::wireframe_thickness);
+	// 	}
+	// }
+	recomputePatches();
+	recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
 }
 
 void DLFLWindow::makeWireframeWithColumns(void) // Create a wireframe using columns
