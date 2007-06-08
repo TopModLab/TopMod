@@ -104,7 +104,6 @@ QMenu* BasicsMode::getMenu(){
 	mBasicsMenu->addAction(mTransformsAction);
 	
 	return mBasicsMenu;
-	
 }
 
 void BasicsMode::triggerInsertEdge(){

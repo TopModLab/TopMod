@@ -9,44 +9,32 @@ DLFLEdgePtrArray GLWidget::sel_eptr_array;
 DLFLFacePtrArray GLWidget::sel_fptr_array;
 DLFLFaceVertexPtrArray GLWidget::sel_fvptr_array;
 
-// Constructor
-GLWidget::GLWidget(int x, int y, int w, int h, QWidget *parent) 
-  : QGLWidget(parent), viewport(w,h), object(NULL), patchObject(NULL), renderer(NULL), /*grid(ZX,20.0,10),*/
-showgrid(false), showaxes(false) {
-}
-
-// Constructor
-GLWidget::GLWidget(int x, int y, int w, int h, DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op, QWidget *parent ) 
-: QGLWidget(parent), viewport(w,h), object(op), renderer(rp), 
-mRenderColor(color), mViewportColor(vcolor),  /*grid(ZX,20.0,10),*/	showgrid(false), showaxes(false) {
-  if( patchObject ) { delete patchObject; patchObject = 0; }
-	// setupViewport(w,h);
-	// paintGL();
-
-	// QGLContext *cx;
-	// 		QGLFormat f;
-	// 		f.setStereo( TRUE );
-	// 		QGLFormat::setDefaultFormat( f );
-	// 		cx->setFormat( f );
-	// 		if ( !cx->create() )
-	// 		    // printf("FALSE \n");
-	// 			QMessageBox::about(this, tr("false"),tr("false"));
-	// 		if ( !cx->format().stereo() )
-
-	// // 			QMessageBox::about(this, tr("false"),tr("false"));
-	// 		QGLFormat f;
-	// 		f.setStereo(true);
-	// 		QGLContext *cx = new QGLContext(f);
-	// 		 // cx->setFormat(f);
-	// 		 if (!cx->create())
-	// 		     exit(0); // no OpenGL support, or cannot render on the specified paintdevice
-	// 		 if (!cx->format().stereo())
-	// 		     exit(0); // could not create stereo context
-}
+// QGLContext *cx;
+// QGLFormat f;
+// f.setStereo( TRUE );
+// QGLFormat::setDefaultFormat( f );
+// cx->setFormat( f );
+// if ( !cx->create() )
+// // printf("FALSE \n");
+// QMessageBox::about(this, tr("false"),tr("false"));
+// if ( !cx->format().stereo() )
+// 
+// // 			QMessageBox::about(this, tr("false"),tr("false"));
+// QGLFormat f;
+// f.setStereo(true);
+// QGLContext *cx = new QGLContext(f);
+// // cx->setFormat(f);
+// if (!cx->create())
+// exit(0); // no OpenGL support, or cannot render on the specified paintdevice
+// if (!cx->format().stereo())
+// exit(0); // could not create stereo context
 
 GLWidget::GLWidget(int w, int h, VPView v, DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op, TMPatchObjectPtr pop, const QGLFormat & format, QWidget * parent ) 
-  : QGLWidget(format, parent, NULL), viewport(w,h,v), object(op), patchObject(pop), renderer(rp), 
-	mRenderColor(color), mViewportColor(vcolor),/*grid(ZX,20.0,10),*/ showgrid(false), showaxes(false) { }
+ : QGLWidget(format, parent, NULL), viewport(w,h,v), object(op), patchObject(pop), renderer(rp), 
+mRenderColor(color), mViewportColor(vcolor),/*grid(ZX,20.0,10),*/ showgrid(false), showaxes(false) { 
+
+	// if( patchObject ) { delete patchObject; patchObject = 0; }
+}
 
 GLWidget::~GLWidget(){
 	// UnregisterConnexionClient(fConnexionClientID); 
@@ -217,6 +205,10 @@ void GLWidget::drawBrush(QPainter *painter){
 	}
 }
 
+//the Heads up display should show the current object's 
+//number of vertices, faces, edges, the genus
+//number of selected vertices, edges, faces, face vertices, and eventually objects
+//other data that could be shown will be added later
 void GLWidget::drawHUD(QPainter *painter){	
 	if (mShowHUD){
 		QString s = "Vertices: " + QString("%1").arg((uint)object->num_vertices()) +

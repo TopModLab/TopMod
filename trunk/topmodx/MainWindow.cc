@@ -1,13 +1,13 @@
 /****************************************************************************
- **
- **
- ****************************************************************************/
+**
+	**
+	****************************************************************************/
 
 #include <QtGui>
 #include <QtOpenGL>
 #include "MainWindow.hh"
 
-WireframeRendererPtr MainWindow::wired;              // Wireframe Renderer
+	WireframeRendererPtr MainWindow::wired;              // Wireframe Renderer
 NormalRendererPtr MainWindow::normal;                // NormalRenderer
 LitRendererPtr MainWindow::lit;                        // LitRenderer
 TexturedRendererPtr MainWindow::textured;          // TexturedRenderer
@@ -134,101 +134,96 @@ bool MainWindow::deselect_faceverts = false;
 DLFLEdgePtr MainWindow::face_loop_start_edge = NULL;
 
 MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(), redoList(), 
-	undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimitive(false) {
+undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimitive(false) {
 		//initialize the OpenGL Window GLWidget
-		QGLFormat fmt;
+	QGLFormat fmt;
 		//initialize renderer
-		createRenderers();
-
+	createRenderers();
 		//patch object initialization
-		patchObject = new TMPatchObject( object.getID() );
+	patchObject = new TMPatchObject( object.getID() );
 
-		active = new GLWidget(500,600, VPPersp, lit, QColor(255,255,255,255),QColor(255,255,255,255) , &object, patchObject,fmt, this);
-		active->switchTo(VPPersp);	
-		active->redraw();
-		active->setMinimumSize(400,400);
-		active->setFocusPolicy(Qt::StrongFocus);
-		
-		
+	active = new GLWidget(500,600, VPPersp, lit, QColor(255,255,255,255),QColor(255,255,255,255) , &object, patchObject,fmt, this);
+	active->switchTo(VPPersp);	
+	setRenderer(lit);
+	active->redraw();
+	active->setMinimumSize(400,400);
+	active->setFocusPolicy(Qt::StrongFocus);
+	// active->setResizeEnabled(true);
 		//status bar
-		mStatusBar = new QStatusBar(this);
+	mStatusBar = new QStatusBar(this);
+	//statusbar is not working!!! it throws off glwidget's pick coordinates.... :(
 		// setStatusBar(mStatusBar);
-		setAttribute(Qt::WA_AcceptDrops, true);
-		setWindowFlags(Qt::Window);
-		setWindowTitle(tr("newfile[*] - TopMod"));
-	  cWidget = new QWidget( );	
+	setAttribute(Qt::WA_AcceptDrops, true);
+	setWindowFlags(Qt::Window);
+	setWindowTitle(tr("newfile[*] - TopMod"));
+	cWidget = new QWidget( );	
 		//accept file drop events
-		setAcceptDrops(true);
+	setAcceptDrops(true);
 		/** Setup Main Layout and add the glwidget to it **/
-	  layout = new QBoxLayout( QBoxLayout::TopToBottom, 0 );
-	  layout->addWidget(active);
-		layout->setMargin(0);
-		// layout->addStretch(1);
-	  cWidget->setLayout( layout );
-	  setCentralWidget( active );
+	layout = new QBoxLayout( QBoxLayout::TopToBottom, 0 );
+	layout->addWidget(active);
+	layout->setMargin(0);
+	cWidget->setLayout( layout );
+	setCentralWidget( active );
 
 		//initialize light color
-		plight.position.set(50,25,0);
-		plight.warmcolor.set(1,1,0.6);
-		plight.coolcolor.set(0.2,0.2,0.4);
-		plight.intensity = 2.0;
+	plight.position.set(50,25,0);
+	plight.warmcolor.set(1,1,0.6);
+	plight.coolcolor.set(0.2,0.2,0.4);
+	plight.intensity = 2.0;
 
 		#ifdef WITH_PYTHON
 			//the script editor widget will be placed into a QDockWidget
 			//and will be dockable in the top and bottom sections of the main window	
-			mScriptEditor = new DLFLScriptEditor( );
-			mScriptEditorDockWidget = new QDockWidget(tr("Script Editor"), this);
-			mScriptEditorDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
-			mScriptEditorDockWidget->setWidget(mScriptEditor);
-			addDockWidget(Qt::BottomDockWidgetArea, mScriptEditorDockWidget);
-			mScriptEditorDockWidget->hide();
-			mScriptEditorDockWidget->setMaximumHeight(200);
-			connect( this, SIGNAL(loadedObject(DLFLObject*,QString)), 
-				 mScriptEditor, SLOT(loadObject(DLFLObject*,QString)) );
+	mScriptEditor = new DLFLScriptEditor( );
+	mScriptEditorDockWidget = new QDockWidget(tr("Script Editor"), this);
+	mScriptEditorDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
+	mScriptEditorDockWidget->setWidget(mScriptEditor);
+	addDockWidget(Qt::BottomDockWidgetArea, mScriptEditorDockWidget);
+	mScriptEditorDockWidget->hide();
+	mScriptEditorDockWidget->setMaximumHeight(200);
+	connect( this, SIGNAL(loadedObject(DLFLObject*,QString)),mScriptEditor, SLOT(loadObject(DLFLObject*,QString)) );
 			//connect( mScriptEditor, SIGNAL(cmdExecuted()), this, SLOT(recomputeAll()) );
 			//connect( mScriptEditor, SIGNAL(cmdExecuted()), this->getActive(), SLOT(update()) );
 		#endif
 
 
 		#ifdef WITH_VERSE
-			//verse script box
-			mVerseDialog = VerseTopMod::Instance(this);
-			mVerseDialogDockWidget = new QDockWidget(tr("Verse-TopMod"), this);
-			mVerseDialogDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
-			mVerseDialogDockWidget->setWidget(mVerseDialog);
-			addDockWidget(Qt::BottomDockWidgetArea, mVerseDialogDockWidget);
-			mVerseDialogDockWidget->hide();
-			mVerseDialogDockWidget->setMaximumHeight(200);
-			// VerseTopMod::Instance()->write("hey\n");
+	mVerseDialog = VerseTopMod::Instance(this);
+	mVerseDialogDockWidget = new QDockWidget(tr("Verse-TopMod"), this);
+	mVerseDialogDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
+	mVerseDialogDockWidget->setWidget(mVerseDialog);
+	addDockWidget(Qt::BottomDockWidgetArea, mVerseDialogDockWidget);
+	mVerseDialogDockWidget->hide();
+	mVerseDialogDockWidget->setMaximumHeight(200);
 		#endif
 
-	  //make a new instance of QShortcutManager
-	  sm = new QShortcutManager();
+	//make a new instance of QShortcutManager
+	sm = new QShortcutManager();
 
 		//instantiate toolbars
-		mBasicsMode = new BasicsMode(this, sm);
-		mExtrusionMode = new ExtrusionMode(this, sm);
-		mConicalMode = new ConicalMode(this, sm);
-		mRemeshingMode = new RemeshingMode(this, sm);
-		mHighgenusMode = new HighgenusMode(this, sm);
-		mTexturingMode = new TexturingMode(this, sm);
+	mBasicsMode = new BasicsMode(this, sm);
+	mExtrusionMode = new ExtrusionMode(this, sm);
+	mConicalMode = new ConicalMode(this, sm);
+	mRemeshingMode = new RemeshingMode(this, sm);
+	mHighgenusMode = new HighgenusMode(this, sm);
+	mTexturingMode = new TexturingMode(this, sm);
 
-	  createActions();
-	  createToolBars();
-	  createMenus();
+	createActions();
+	createToolBars();
+	createMenus();
 		//initialize the help file...
-		initializeHelp();
+	initializeHelp();
 		//style sheet editor
-	  mStyleSheetEditor = new StyleSheetEditor;
-
+	mStyleSheetEditor = new StyleSheetEditor;
 		//preference dialog
-		mSettings = new QSettings("TopMod", "Topological Mesh Modeler");
-		readSettings();
-		mPreferencesDialog = new TopModPreferences(mSettings, mStyleSheetEditor, sm, this);	
+	mSettings = new QSettings("TopMod", "Topological Mesh Modeler");
+	readSettings();
+	mPreferencesDialog = new TopModPreferences(mSettings, mStyleSheetEditor, sm, this);	
 }
 
 void MainWindow::createActions() {
-		
+
 	//File Menu Actions
 	mOpenAct = new QAction(QIcon(":images/open.png"),tr("&Open..."), this);
 	sm->registerAction(mOpenAct, "File Menu", "CTRL+O");
@@ -295,12 +290,12 @@ void MainWindow::createActions() {
 	sm->registerAction(mRedoAct, "Edit Menu", "CTRL+SHIFT+Z");
 	mUndoAct->setStatusTip(tr("Redo the last operation"));
 	connect(mRedoAct, SIGNAL(triggered()), this, SLOT(redo()));
-	
+
 	mClearUndoListAct = new QAction(tr("&Clear Undo List"), this);
 	sm->registerAction(mClearUndoListAct, "Edit Menu", "CTRL+SHIFT+Z");
 	mClearUndoListAct->setStatusTip(tr("Clear the Undo List to free up some memory"));
 	connect(mClearUndoListAct, SIGNAL(triggered()), this, SLOT(clearUndoList()));
-	
+
 	//View Menu Actions
 	mPerspViewAct = new QAction( tr("&Reset Camera"), this);
 	sm->registerAction(mPerspViewAct, "View Menu", "F");
@@ -316,7 +311,7 @@ void MainWindow::createActions() {
 	sm->registerAction(mBottomViewAct, "View Menu", "");
 	mBottomViewAct->setStatusTip(tr("Switch to Bottom View"));
 	connect(mBottomViewAct, SIGNAL(triggered()), this, SLOT(switchBottomView()));
-	
+
 	mFrontViewAct = new QAction( tr("&Front View"), this);
 	sm->registerAction(mFrontViewAct, "View Menu", "");
 	mFrontViewAct->setStatusTip(tr("Switch to Front View"));
@@ -414,27 +409,27 @@ void MainWindow::createActions() {
 	connect(showHUDAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleHUD()));
 
 	#ifdef WITH_PYTHON
-		mShowScriptEditorAct = new QAction(tr("Show Script &Editor"), this);
-		mShowScriptEditorAct->setCheckable(true);
-		mShowScriptEditorAct->setStatusTip( tr("Show the script editor to execute DLFL commands") );
-		connect(mShowScriptEditorAct, SIGNAL(triggered()), this, SLOT(showHideScriptEditor()));
-		sm->registerAction(mShowScriptEditorAct, "Display Menu", "SHIFT+CTRL+E");
+	mShowScriptEditorAct = new QAction(tr("Show Script &Editor"), this);
+	mShowScriptEditorAct->setCheckable(true);
+	mShowScriptEditorAct->setStatusTip( tr("Show the script editor to execute DLFL commands") );
+	connect(mShowScriptEditorAct, SIGNAL(triggered()), this, SLOT(showHideScriptEditor()));
+	sm->registerAction(mShowScriptEditorAct, "Display Menu", "SHIFT+CTRL+E");
 	#endif
-	
+
 	#ifdef WITH_VERSE
-		mShowVerseDialogAct = new QAction(tr("Show Verse &Dialog"), this);
-		mShowVerseDialogAct->setCheckable(true);
-		mShowVerseDialogAct->setStatusTip( tr("Show the verse dialog to view verse server connection status") );
-		connect(mShowVerseDialogAct, SIGNAL(triggered()), this, SLOT(showHideVerseDialog()));
-		sm->registerAction(mShowVerseDialogAct, "Display Menu", "SHIFT+CTRL+V");
+	mShowVerseDialogAct = new QAction(tr("Show Verse &Dialog"), this);
+	mShowVerseDialogAct->setCheckable(true);
+	mShowVerseDialogAct->setStatusTip( tr("Show the verse dialog to view verse server connection status") );
+	connect(mShowVerseDialogAct, SIGNAL(triggered()), this, SLOT(showHideVerseDialog()));
+	sm->registerAction(mShowVerseDialogAct, "Display Menu", "SHIFT+CTRL+V");
 	#endif	
 
 		//Renderer Menu Actions
-		wireframeRendererAct = new QAction(tr("&Wireframe Renderer"), this);
-		wireframeRendererAct->setCheckable(true);
-		sm->registerAction(wireframeRendererAct, "Renderer Menu", "1");
-		wireframeRendererAct->setStatusTip(tr("Switch the current renderer to Wireframe"));
-		connect(wireframeRendererAct, SIGNAL(triggered()), this, SLOT(useWireframeRenderer()));	
+	wireframeRendererAct = new QAction(tr("&Wireframe Renderer"), this);
+	wireframeRendererAct->setCheckable(true);
+	sm->registerAction(wireframeRendererAct, "Renderer Menu", "1");
+	wireframeRendererAct->setStatusTip(tr("Switch the current renderer to Wireframe"));
+	connect(wireframeRendererAct, SIGNAL(triggered()), this, SLOT(useWireframeRenderer()));	
 
 	normalRendererAct = new QAction(tr("&Normal Renderer"), this);
 	normalRendererAct->setCheckable(true);
@@ -447,7 +442,7 @@ void MainWindow::createActions() {
 	sm->registerAction(lightedRendererAct, "Renderer Menu", "3");
 	lightedRendererAct->setStatusTip(tr("Switch the current renderer to Lighted"));
 	connect(lightedRendererAct, SIGNAL(triggered()), this, SLOT(useLightedRenderer()));
-	
+
 	texturedRendererAct = new QAction(tr("&Textured Renderer"), this);
 	texturedRendererAct->setCheckable(true);
 	sm->registerAction(texturedRendererAct, "Renderer Menu", "4");
@@ -511,7 +506,7 @@ void MainWindow::createActions() {
 	sm->registerAction(pGeodesicAct, "Primitives Menu", "CTRL+7");
 	pGeodesicAct->setStatusTip(tr("Load a geodesic dome"));
 	connect(pGeodesicAct, SIGNAL(triggered()), this, SLOT(loadGeodesic()));
-	
+
 	//Object Menu Actions
 	subdivideAllEdgesAct = new QAction(tr("Subdivide All &Edges"), this);
 	sm->registerAction(subdivideAllEdgesAct, "Settings", "");
@@ -563,7 +558,7 @@ void MainWindow::createActions() {
 	sm->registerAction(editVertexAct, "Selection", "SHIFT+V");
 	editVertexAct->setStatusTip(tr("Select and Move Vertices One at a time."));
 	connect(editVertexAct, SIGNAL(triggered()), this, SLOT(edit_vertex()));
-	
+
 	selectFaceAct = new QAction(tr("Select &Face"), this);
 	sm->registerAction(selectFaceAct, "Selection", "SHIFT+F");
 	selectFaceAct->setStatusTip(tr("Select One Face. Just for practice. :)"));
@@ -573,7 +568,7 @@ void MainWindow::createActions() {
 	sm->registerAction(selectFaceLoopAct, "Selection", "SHIFT+P");
 	selectFaceLoopAct->setStatusTip(tr("Select a Face Loop."));
 	connect(selectFaceLoopAct, SIGNAL(triggered()), this, SLOT(select_face_loop() ) );
-	
+
 	selectMultipleFacesAct = new QAction(tr("Select &Multiple Faces"), this);
 	sm->registerAction(selectMultipleFacesAct, "Selection", "SHIFT+G");
 	connect( selectMultipleFacesAct , SIGNAL( triggered() ), this, SLOT( select_multiple_faces() ) );
@@ -586,13 +581,13 @@ void MainWindow::createActions() {
 	sm->registerAction(selectCheckerboardFacesAct, "Selection", "");
 	connect( selectCheckerboardFacesAct , SIGNAL( triggered() ), this, SLOT( select_checkerboard_faces() ) );
 
-	selectAllFacesAct = new QAction(tr("Select &All Faces"), this);
-	sm->registerAction(selectAllFacesAct, "Selection", "CTRL+A");
-	connect( selectAllFacesAct , SIGNAL( triggered() ), this->getActive(), SLOT( selectAllFaces() ) );
+	selectAllAct = new QAction(tr("Select &All"), this);
+	sm->registerAction(selectAllAct, "Selection", "CTRL+A");
+	connect( selectAllAct , SIGNAL( triggered() ), this, SLOT( selectAll() ) );
 
 	selectInverseFacesAct = new QAction(tr("Select &Inverse Faces"), this);
 	sm->registerAction(selectInverseFacesAct, "Selection", "CTRL+I");
-	connect( selectInverseFacesAct , SIGNAL( triggered() ), this->getActive(), SLOT( selectInverseFaces() ) );
+	connect( selectInverseFacesAct , SIGNAL( triggered() ), this, SLOT( selectInverse() ) );
 
 	selectEdgeAct = new QAction(tr("Select &Edge"), this);
 	sm->registerAction(selectEdgeAct, "Selection", "SHIFT+E");
@@ -603,12 +598,12 @@ void MainWindow::createActions() {
 	sm->registerAction(selectEdgeLoopAct, "Selection", "SHIFT+L");
 	selectEdgeLoopAct->setStatusTip(tr("Select an Edge Loop"));
 	connect( selectEdgeLoopAct , SIGNAL( triggered() ), this,SLOT( select_edge_loop() ) );
-	
+
 	selectCornerAct = new QAction(tr("Select &Corner"), this);
 	sm->registerAction(selectCornerAct, "Selection", "SHIFT+C");
 	selectCornerAct->setStatusTip(tr("Select a Face Vertex"));
 	connect( selectCornerAct , SIGNAL( triggered() ), this, SLOT( select_corner() ) );
-	
+
 	exitSelectionModeAct = new QAction(tr("E&xit Selection Mode"), this);
 	sm->registerAction(exitSelectionModeAct, "Selection", "SHIFT+X");
 	connect( exitSelectionModeAct , SIGNAL( triggered() ), this, SLOT( exit_selection_mode() ) );
@@ -618,25 +613,37 @@ void MainWindow::createActions() {
 	connect( clearSelectedModeAct , SIGNAL( triggered() ), this, SLOT( clear_selected() ) );
 
 	mSelectVerticesMaskAct = new QAction(tr("Select &Vertices"), this);
+	mSelectVerticesMaskAct->setCheckable(true);
 	sm->registerAction(mSelectVerticesMaskAct, "Selection", "");
 	mSelectVerticesMaskAct->setStatusTip(tr("Select by Component type: Vertices"));
-	connect( mSelectVerticesMaskAct , SIGNAL( triggered() ), this, SLOT( select_vertices() ) );
+	connect( mSelectVerticesMaskAct , SIGNAL( triggered() ), this, SLOT( selectionMaskVertices() ) );
 
 	mSelectEdgesMaskAct = new QAction(tr("Select &Edges"), this);
+	mSelectEdgesMaskAct->setCheckable(true);
 	sm->registerAction(mSelectEdgesMaskAct, "Selection", "");
 	mSelectEdgesMaskAct->setStatusTip(tr("Select by Component type: Edges"));
-	connect( mSelectEdgesMaskAct , SIGNAL( triggered() ), this, SLOT( select_edges() ) );
+	connect( mSelectEdgesMaskAct , SIGNAL( triggered() ), this, SLOT( selectionMaskEdges() ) );
 
 	mSelectFacesMaskAct = new QAction(tr("Select &Faces"), this);
+	mSelectFacesMaskAct->setCheckable(true);
 	sm->registerAction(mSelectFacesMaskAct, "Selection", "");
 	mSelectFacesMaskAct->setStatusTip(tr("Select by Component type: Faces"));
-	connect( mSelectFacesMaskAct , SIGNAL( triggered() ), this, SLOT( select_faces() ) );
+	connect( mSelectFacesMaskAct , SIGNAL( triggered() ), this, SLOT( selectionMaskFaces() ) );
 
-	mSelectFaceVerticesMaskAct = new QAction(tr("Select &Corner"), this);
+	mSelectFaceVerticesMaskAct = new QAction(tr("Select &Face Vertex"), this);
+	mSelectFaceVerticesMaskAct->setCheckable(true);
 	sm->registerAction(mSelectFaceVerticesMaskAct, "Selection", "");
 	mSelectFaceVerticesMaskAct->setStatusTip(tr("Select by Component type: Face-Vertices"));
-	connect( mSelectFaceVerticesMaskAct , SIGNAL( triggered() ), this, SLOT( select_face_vertices() ) );
- 
+	connect( mSelectFaceVerticesMaskAct , SIGNAL( triggered() ), this, SLOT( selectionMaskFaceVertices() ) );
+
+	mSelectionMaskActionGroup = new QActionGroup(this);
+	mSelectionMaskActionGroup->setExclusive(true);
+	mSelectionMaskActionGroup->addAction(mSelectVerticesMaskAct);
+	mSelectionMaskActionGroup->addAction(mSelectFacesMaskAct);
+	mSelectionMaskActionGroup->addAction(mSelectEdgesMaskAct);
+	mSelectionMaskActionGroup->addAction(mSelectFaceVerticesMaskAct);
+	mSelectFaceVerticesMaskAct->setChecked(true);
+
 	//SETTINGS ACTIONS	
 	mPreferencesAct = new QAction(tr("&Preferences"), this);
 	sm->registerAction(mPreferencesAct, "Settings", "CTRL+,");
@@ -667,45 +674,45 @@ void MainWindow::createActions() {
 	catalanAct = new QAction(tr("Catalan"),this);
 	// sm->connect( catalanAct , SIGNAL( triggered() ), SLOT  ( configure() ) );
 	sm->registerAction(catalanAct, "Languages", "CTRL+F12");
-	
+
 	#ifdef WITH_VERSE
 		//verse menu actions
-		mVerseConnectLocalhostAct = new QAction(tr("Connect to localhost..."), this);
-		mVerseConnectLocalhostAct->setStatusTip( tr("Connect to localhost") );
-		connect(mVerseConnectLocalhostAct, SIGNAL(triggered()), mVerseDialog, SLOT(connectLocalhost()));
-		sm->registerAction(mVerseConnectLocalhostAct, "Verse Menu", "");
-	
-		mVerseConnectAct = new QAction(tr("Connect to host..."), this);
-		mVerseConnectAct->setStatusTip( tr("Connect to host...") );
-		connect(mVerseConnectAct, SIGNAL(triggered()), mVerseDialog, SLOT(connectHost()));
-		sm->registerAction(mVerseConnectAct, "Verse Menu", "");
+	mVerseConnectLocalhostAct = new QAction(tr("Connect to localhost..."), this);
+	mVerseConnectLocalhostAct->setStatusTip( tr("Connect to localhost") );
+	connect(mVerseConnectLocalhostAct, SIGNAL(triggered()), mVerseDialog, SLOT(connectLocalhost()));
+	sm->registerAction(mVerseConnectLocalhostAct, "Verse Menu", "");
 
-		mVerseDisconnectAct = new QAction(tr("Disconnect session"), this);
-		mVerseDisconnectAct->setStatusTip( tr("Disconnect Verse Session") );
-		connect(mVerseDisconnectAct, SIGNAL(triggered()), mVerseDialog, SLOT(disconnectHost()));
-		sm->registerAction(mVerseDisconnectAct, "Verse Menu", "");
+	mVerseConnectAct = new QAction(tr("Connect to host..."), this);
+	mVerseConnectAct->setStatusTip( tr("Connect to host...") );
+	connect(mVerseConnectAct, SIGNAL(triggered()), mVerseDialog, SLOT(connectHost()));
+	sm->registerAction(mVerseConnectAct, "Verse Menu", "");
 
-		mVerseDisconnectAllAct = new QAction(tr("Disconnect All Sessions"), this);
-		mVerseDisconnectAllAct->setStatusTip( tr("Disconnect All Sessions") );
-		connect(mVerseDisconnectAllAct, SIGNAL(triggered()), mVerseDialog, SLOT(disconnectAll()));
-		sm->registerAction(mVerseDisconnectAllAct, "Verse Menu", "");
-		
-		mVerseStartServerAct = new QAction(tr("Start Verse Server"), this);
-		mVerseStartServerAct->setStatusTip( tr("Disconnect All Nodes") );
-		connect(mVerseStartServerAct, SIGNAL(triggered()), mVerseDialog, SLOT(startServer()));
-		sm->registerAction(mVerseStartServerAct, "Verse Menu", "");
+	mVerseDisconnectAct = new QAction(tr("Disconnect session"), this);
+	mVerseDisconnectAct->setStatusTip( tr("Disconnect Verse Session") );
+	connect(mVerseDisconnectAct, SIGNAL(triggered()), mVerseDialog, SLOT(disconnectHost()));
+	sm->registerAction(mVerseDisconnectAct, "Verse Menu", "");
 
-		mVerseKillServerAct = new QAction(tr("Kill Verse Server"), this);
-		mVerseKillServerAct->setStatusTip( tr("Kill the Local Verse server process") );
-		connect(mVerseKillServerAct, SIGNAL(triggered()), mVerseDialog, SLOT(killServer()));
-		sm->registerAction(mVerseKillServerAct, "Verse Menu", "");
+	mVerseDisconnectAllAct = new QAction(tr("Disconnect All Sessions"), this);
+	mVerseDisconnectAllAct->setStatusTip( tr("Disconnect All Sessions") );
+	connect(mVerseDisconnectAllAct, SIGNAL(triggered()), mVerseDialog, SLOT(disconnectAll()));
+	sm->registerAction(mVerseDisconnectAllAct, "Verse Menu", "");
+
+	mVerseStartServerAct = new QAction(tr("Start Verse Server"), this);
+	mVerseStartServerAct->setStatusTip( tr("Disconnect All Nodes") );
+	connect(mVerseStartServerAct, SIGNAL(triggered()), mVerseDialog, SLOT(startServer()));
+	sm->registerAction(mVerseStartServerAct, "Verse Menu", "");
+
+	mVerseKillServerAct = new QAction(tr("Kill Verse Server"), this);
+	mVerseKillServerAct->setStatusTip( tr("Kill the Local Verse server process") );
+	connect(mVerseKillServerAct, SIGNAL(triggered()), mVerseDialog, SLOT(killServer()));
+	sm->registerAction(mVerseKillServerAct, "Verse Menu", "");
 	#endif
-	
+
 	mPerformRemeshingAct = new QAction(tr("Perform Remeshing"), this);
 	mPerformRemeshingAct->setStatusTip( tr("Perform the current remeshing scheme") );
 	connect(mPerformRemeshingAct, SIGNAL(triggered()), this, SLOT(performRemeshing()));
 	sm->registerAction(mPerformRemeshingAct, "Remeshing Menu", "CTRL+R");
-	
+
 	//help menu actions
 	mHelpAct = new QAction(tr("&Help Contents"), this);
 	mHelpAct->setStatusTip( tr("View the help file") );
@@ -721,43 +728,43 @@ void MainWindow::createActions() {
 	mAboutQtAct->setStatusTip( tr("About Qt") );
 	connect(mAboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 	sm->registerAction(mAboutQtAct, "Help Menu", "");
-	
+
 }
 
 void MainWindow::createMenus(){
 	#ifdef __APPLE__
-		menuBar = new QMenuBar(0);
-		setMenuBar(menuBar);
+	menuBar = new QMenuBar(0);
+	setMenuBar(menuBar);
 		// setUnifiedTitleAndToolBarOnMac(true);
 	#else
-		menuBar = new QMenuBar(this);
-		setMenuBar(menuBar);
+	menuBar = new QMenuBar(this);
+	setMenuBar(menuBar);
 	#endif
-	
+
 	fileMenu = new QMenu(tr("&File"));
 	menuBar->addMenu(fileMenu);
 	fileMenu->setTearOffEnabled(true);
-	
+
 	fileMenu->addAction(mOpenAct);
 	fileMenu->addAction(mSaveAct);
 	fileMenu->addAction(mSaveAsAct);
 	fileMenu->addAction(mSavePatchesAct);
 
 	#ifdef WITH_VERSE
-		fileMenu->addSeparator();
-		mVerseMenu = new QMenu(tr("&Verse"));
-		fileMenu->addMenu(mVerseMenu);
-		mVerseMenu->addAction(mVerseStartServerAct);
+	fileMenu->addSeparator();
+	mVerseMenu = new QMenu(tr("&Verse"));
+	fileMenu->addMenu(mVerseMenu);
+	mVerseMenu->addAction(mVerseStartServerAct);
 		// mVerseMenu->addAction(mVerseKillServerAct);
-		mVerseMenu->addSeparator();
-		mVerseMenu->addAction(mVerseConnectLocalhostAct);
-		mVerseMenu->addAction(mVerseConnectAct);
+	mVerseMenu->addSeparator();
+	mVerseMenu->addAction(mVerseConnectLocalhostAct);
+	mVerseMenu->addAction(mVerseConnectAct);
 		// mVerseMenu->removeAction(mVerseConnectAct);
-		mVerseMenu->addSeparator();
+	mVerseMenu->addSeparator();
 		// mVerseMenu->addAction(mVerseDisconnectAct);
 		// mVerseMenu->addAction(mVerseDisconnectAllAct);
 	#endif
-	
+
 	fileMenu->addSeparator();
 	fileMenu->addAction(loadTextureAct);
 	fileMenu->addAction(printInfoAct);
@@ -777,7 +784,7 @@ void MainWindow::createMenus(){
 	editMenu->addAction(mClearUndoListAct);
 	editMenu->addSeparator();
 	editMenu->addAction(mPreferencesAct);
-	
+
 	mViewMenu = new QMenu(tr("&View"));
 	mViewMenu->setTearOffEnabled(true);
 	menuBar->addMenu(mViewMenu);
@@ -793,7 +800,7 @@ void MainWindow::createMenus(){
 	displayMenu->setTearOffEnabled(true);
 	menuBar->addMenu(displayMenu);
 	displayMenu->addAction(showVerticesAct);
-	
+
 	mShowIDsMenu = new QMenu(tr("&Show IDs"));
 	displayMenu->addMenu(mShowIDsMenu);
 	mShowIDsMenu->setTearOffEnabled(true);
@@ -808,15 +815,15 @@ void MainWindow::createMenus(){
 	displayMenu->addAction(showHUDAct);
 	displayMenu->addAction(objectOrientationAct);
 	displayMenu->addAction(showNormalsAct);
-	
+
 	#ifdef WITH_PYTHON
-		displayMenu->addAction(mShowScriptEditorAct);
+	displayMenu->addAction(mShowScriptEditorAct);
 	#endif
-	
+
 	#ifdef WITH_VERSE
-		displayMenu->addAction(mShowVerseDialogAct);
+	displayMenu->addAction(mShowVerseDialogAct);
 	#endif
-	
+
 	displayMenu->addAction(mFullscreenAct);
 
 	rendererMenu = new QMenu(tr("&Renderer"));
@@ -842,7 +849,7 @@ void MainWindow::createMenus(){
 	primitivesMenu->addAction(pIcosahedronAct);
 	primitivesMenu->addAction(pSoccerBallAct);
 	primitivesMenu->addAction(pGeodesicAct);
-	
+
 	mToolsMenu = new QMenu(tr("&Tools"));
 	mToolsMenu->setTearOffEnabled(true);
 	mToolsMenu->addMenu(mBasicsMode->getMenu());
@@ -851,7 +858,7 @@ void MainWindow::createMenus(){
 	mToolsMenu->addMenu(mHighgenusMode->getMenu());
 	mToolsMenu->addMenu(mTexturingMode->getMenu());
 	menuBar->addMenu(mToolsMenu);
-	
+
 	mRemeshingMenu = mRemeshingMode->getMenu();
 	mRemeshingMenu->addAction(mPerformRemeshingAct);
 	mRemeshingMenu->setTearOffEnabled(true);
@@ -878,7 +885,7 @@ void MainWindow::createMenus(){
 	selectionMenu->addAction(selectMultipleFacesAct);
 	selectionMenu->addAction(selectSimilarFacesAct);
 	selectionMenu->addAction(selectCheckerboardFacesAct);
-	selectionMenu->addAction(selectAllFacesAct);
+	selectionMenu->addAction(selectAllAct);
 	selectionMenu->addAction(selectInverseFacesAct);
 	selectionMenu->addAction(selectEdgeAct);
 	selectionMenu->addAction(selectEdgeLoopAct);
@@ -893,13 +900,13 @@ void MainWindow::createMenus(){
 	mSelectionMaskMenu->addAction(mSelectFacesMaskAct);
 	mSelectionMaskMenu->addAction(mSelectEdgesMaskAct);
 	mSelectionMaskMenu->addAction(mSelectFaceVerticesMaskAct);
-	
+
 	mHelpMenu = new QMenu(tr("&Help"));
 	menuBar->addMenu(mHelpMenu);
 	mHelpMenu->addAction(mHelpAct);
 	mHelpMenu->addAction(mAboutAct);
 	mHelpMenu->addAction(mAboutQtAct);
-	
+
 	// settingsMenu = new QMenu(tr("Se&ttings"));
 	// settingsMenu->setTearOffEnabled(true);
 	// menuBar->addMenu(settingsMenu);
@@ -914,11 +921,11 @@ void MainWindow::createMenus(){
 	// languageMenu->addAction(frenchAct);
 	// languageMenu->addAction(turkishAct);
 	// languageMenu->addAction(catalanAct);
-	
+
 }
 
 void MainWindow::createToolBars() {
-	
+
 	//the main tool options DockWidget
 	mToolOptionsDockWidget = new QDockWidget(tr("Tool Options"),this);
 	mToolOptionsDockWidget->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable /* | QDockWidget::DockWidgetClosable*/);
@@ -927,7 +934,7 @@ void MainWindow::createToolBars() {
 	// mToolOptionsDockWidget->setFloating(true);
 	mToolOptionsDockWidget->hide();
 	mToolOptionsDockWidget->setWidget(mToolOptionsStackedWidget);
-	
+
 	mToolOptionsDockWidget->setFloating(false);
 	// mToolOptionsTitleBarLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	// mToolOptionsTitleBarWidget = new QWidget;
@@ -937,7 +944,7 @@ void MainWindow::createToolBars() {
 	// mToolOptionsDockWidget->move(0,22);
 	// mToolOptionsDockWidget->setWindowTitle("Insert Edge Mode");
 	addDockWidget(Qt::TopDockWidgetArea, mToolOptionsDockWidget);
-	
+
 	mEditToolBar = new QToolBar(tr("Edit"));
 	addToolBar(Qt::TopToolBarArea,mEditToolBar);
 	mEditToolBar->addAction(mOpenAct);
@@ -945,7 +952,7 @@ void MainWindow::createToolBars() {
 	mEditToolBar->addAction(mUndoAct);
 	mEditToolBar->addAction(mRedoAct);
 	mEditToolBar->setIconSize(QSize(32,32));
-	
+
 	//selection masks toolbar
 	mSelectionMaskToolBar = new QToolBar(tr("Selection Masks"));
 	//addToolBar(Qt::TopToolBarArea,mSelectionMaskToolBar);
@@ -953,8 +960,8 @@ void MainWindow::createToolBars() {
 	mSelectionMaskToolBar->addAction(mSelectFacesMaskAct);
 	mSelectionMaskToolBar->addAction(mSelectEdgesMaskAct);
 	mSelectionMaskToolBar->addAction(mSelectFaceVerticesMaskAct);
-	
-		
+
+
 	mPrimitivesToolBar = new QToolBar(tr("Primitives"));
 	// mPrimitivesToolBar->setFloatable(true);
 	addToolBar(Qt::TopToolBarArea,mPrimitivesToolBar);
@@ -966,45 +973,45 @@ void MainWindow::createToolBars() {
 	mPrimitivesToolBar->addAction(pIcosahedronAct);
 	mPrimitivesToolBar->addAction(pSoccerBallAct);
 	mPrimitivesToolBar->addAction(pGeodesicAct);
-	
+
 	//basic tools - six buttons
 	mToolsToolBar = new QToolBar(tr("Tools"));
 	addToolBar(Qt::TopToolBarArea,mToolsToolBar);
 	mToolsToolBar->setIconSize(QSize(32,32));
-		
+
 	addToolBarBreak();
-	
+
 	mExtrusionToolBar = new QToolBar(tr("Extrusion Tools"));
 	addToolBar(Qt::TopToolBarArea,mExtrusionToolBar);
 	mExtrusionToolBar->setIconSize(QSize(32,32));
-	
+
 	mConicalToolBar = new QToolBar(tr("Conical Tools"));
 	// addToolBar(Qt::TopToolBarArea,mConicalToolBar);
 	mConicalToolBar->setIconSize(QSize(32,32));
-		
+
 	mHighgenusToolBar = new QToolBar(tr("High Genus Tools"));
 	addToolBar(Qt::TopToolBarArea,mHighgenusToolBar);
 	mHighgenusToolBar->setIconSize(QSize(32,32));
-	
+
 	mTexturingToolBar = new QToolBar(tr("Texturing Tools"));
 	addToolBar(Qt::TopToolBarArea,mTexturingToolBar);
 	mTexturingToolBar->setIconSize(QSize(32,32));
-	
+
 	mRemeshingToolBar = new QToolBar(tr("Remeshing"));
 	// addToolBar(Qt::TopToolBarArea,mRemeshingToolBar);
 	mRemeshingToolBar->setIconSize(QSize(32,32));
-	
+
 	//tools ction group initialization
 	mToolsActionGroup = new QActionGroup(this);
 	mToolsActionGroup->setExclusive(true);
-		
+
 	mBasicsMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);	
 	mExtrusionMode->addActions(mToolsActionGroup, mExtrusionToolBar, mToolOptionsStackedWidget);
 	mConicalMode->addActions(mToolsActionGroup, mConicalToolBar, mToolOptionsStackedWidget);
-	
+
 	mRemeshingActionGroup = new QActionGroup(this);
 	mRemeshingMode->addActions(mToolsActionGroup, mRemeshingToolBar, mToolOptionsStackedWidget);
-	
+
 	mHighgenusMode->addActions(mToolsActionGroup, mHighgenusToolBar, mToolOptionsStackedWidget);
 	mTexturingMode->addActions(mToolsActionGroup, mTexturingToolBar, mToolOptionsStackedWidget);
 
@@ -1021,477 +1028,474 @@ void MainWindow::setToolOptions(QWidget *optionsWidget) {
 }
 
 void MainWindow::createStatusBar() {
-  statusBar()->showMessage(tr("Welcome to TopMod"));
+	statusBar()->showMessage(tr("Welcome to TopMod"));
 }
 
 void MainWindow::readSettings() {
 	mSettings->beginGroup("MainWindow");
-  QPoint pos = mSettings->value("pos", QPoint(100, 100)).toPoint();
-  QSize size = mSettings->value("size", QSize(800, 600)).toSize();
+	QPoint pos = mSettings->value("pos", QPoint(100, 100)).toPoint();
+	QSize size = mSettings->value("size", QSize(800, 600)).toSize();
 	mSettings->endGroup();
-	
+
 	resize(size.width(),size.height());
-  move(pos);}
+	move(pos);}
 
-void MainWindow::writeSettings() {
-	  
-	mSettings->beginGroup("MainWindow");
-	mSettings->setValue("pos", pos());
-  mSettings->setValue("size", size());
-	mSettings->endGroup();
-	
-	mSettings->beginGroup("ViewPortColors");
-	
-	mSettings->endGroup();
-}
+	void MainWindow::writeSettings() {
 
-bool MainWindow::maybeSave() {
-  if (this->isModified()) {
-      int ret = QMessageBox::warning(this, tr("TopMod"),
-                   tr("The document has been modified.\n"
-                      "Do you want to save your changes?"),
-                   QMessageBox::Yes | QMessageBox::Default,
-                   QMessageBox::No,
-                   QMessageBox::Cancel | QMessageBox::Escape);
-      if (ret == QMessageBox::Yes)
-          return this->saveFile();
-      else if (ret == QMessageBox::Cancel)
-          return false;
-  }
-  return true;
-}
+		mSettings->beginGroup("MainWindow");
+		mSettings->setValue("pos", pos());
+		mSettings->setValue("size", size());
+		mSettings->endGroup();
 
-void MainWindow::loadFile(QString fileName) {
-  openFile(fileName);
-  this->setCurrentFile(fileName);
-  statusBar()->showMessage(tr("File loaded"), 2000);
-}
+		mSettings->beginGroup("ViewPortColors");
 
-bool MainWindow::saveFile(QString fileName) {
-  this->setCurrentFile(fileName);
-  statusBar()->showMessage(tr("File saved"), 2000);
-  return true;
-}
-
-void MainWindow::closeEvent(QCloseEvent *event) {
-	//close the help file if it's open... not sure this is necessary
-	if (mAssistantClient)
-		mAssistantClient->closeAssistant();
-
-	if (maybeSave()) {
-	    writeSettings();
-	    event->accept();
-	} else event->ignore();
-}
-
-void MainWindow::openFile(QString fileName){
-	QFile file(fileName);
-	file.open(QIODevice::ReadOnly);
-	QFileInfo info(file);
-	QByteArray ba = info.absoluteFilePath().toLatin1();
-	const char *filename = ba.data();
-	mWasPrimitive = false;
-	mIsPrimitive = false;
-	if (!curFile.isEmpty()){
-		undoPush();
-		setModified(false);
+		mSettings->endGroup();
 	}
 
-	readObject(filename);
-#ifdef WITH_PYTHON
-	DLFLObjectPtr obj = &object;
-	if( obj )
-		emit loadedObject(obj,fileName);
-#endif
-	recomputePatches();
-	recomputeNormals();
-	setCurrentFile(fileName);
-	active->redraw();
-}
-
-void MainWindow::about() {
-  QMessageBox::about(this, tr("About TopMod"),
-		     tr("The About page for TopMod is still in the works \n stay tuned... \n"));
-}
-
-void MainWindow::initializeHelp(){
-	mAssistantClient = new QAssistantClient(QLibraryInfo::location(QLibraryInfo::BinariesPath), this);
-  // QStringList arguments;
-  // arguments << "-profile" << QString("documentation") + QDir::separator() + QString("simpletextviewer.adp");
-  // mAssistantClient->setArguments(arguments);
-}
-
-void MainWindow::help() {
-	mAssistantClient->showPage("");
-}
-
-void MainWindow::documentWasModified() {
-  setWindowModified(this->isModified());
-}
-
-void MainWindow::on_editStyleAction_triggered() {
-  mStyleSheetEditor->show();
-  mStyleSheetEditor->activateWindow();
-}
-
-void MainWindow::openPreferences() {
-  mPreferencesDialog->display();
-}
-
-void MainWindow::showHideScriptEditor(){
-	
-#ifdef WITH_PYTHON
-	if( mScriptEditorDockWidget->isVisible( ) )
-	  mScriptEditorDockWidget->hide( );
-	else {
-	  mScriptEditorDockWidget->show( );
-	  mScriptEditorDockWidget->setFocus();
-	}
-#endif
-}
-
-void MainWindow::showHideVerseDialog(){
-#ifdef WITH_VERSE
-	if( mVerseDialogDockWidget->isVisible( ) )
-	  mVerseDialogDockWidget->hide( );
-	else {
-	  mVerseDialogDockWidget->show( );
-	  mVerseDialogDockWidget->setFocus();
-	}
-#endif
-}
-
-#ifdef WITH_VERSE
-void MainWindow::verseConnected(){
-	mVerseMenu->insertAction(mVerseConnectLocalhostAct, mVerseDisconnectAct);
-	mVerseMenu->removeAction(mVerseConnectLocalhostAct);
-	mVerseMenu->removeAction(mVerseConnectAct);
-}
-
-void MainWindow::verseDisconnected(){
-	mVerseMenu->insertAction(mVerseDisconnectAct,mVerseConnectLocalhostAct);
-	mVerseMenu->insertAction(mVerseDisconnectAct,mVerseConnectAct);
-	mVerseMenu->removeAction(mVerseDisconnectAct);
-}
-void MainWindow::verseStarted(){
-	mVerseMenu->insertAction(mVerseStartServerAct, mVerseKillServerAct);
-	mVerseMenu->removeAction(mVerseStartServerAct);	
-}
-
-void MainWindow::verseKilled(){
-	mVerseMenu->insertAction(mVerseKillServerAct, mVerseStartServerAct);
-	mVerseMenu->removeAction(mVerseKillServerAct);		
-}
-#endif
-
-void MainWindow::createRenderers(){
-	wired = new WireframeRenderer();
-//wired->setRenderFlags(DLFLRender::ShowWireframe); // redundant?
-
-	normal = new NormalRenderer();
-	normal->setRenderFlags(DLFLRenderer::ShowWireframe);
-
-	lit = new LitRenderer();
-	lit->setRenderFlags(DLFLRenderer::ShowWireframe);
-
-	textured = new TexturedRenderer();
-	textured->setRenderFlags(DLFLRenderer::ShowWireframe);
-
-	texturedlit = new TexturedLitRenderer();
-	texturedlit->setRenderFlags(DLFLRenderer::ShowWireframe);
-
-	patch = new PatchRenderer();
-	patch->setRenderFlags(DLFLRenderer::ShowWireframe);
-}
-
-void MainWindow::destroyRenderers(){
-	delete wired;
-	delete normal;
-	delete lit;
-	delete textured;
-	delete texturedlit;
-	delete patch;
-};
-
-void MainWindow::setWarmLightColor(QColor c){
-	plight.warmcolor.set(c.redF(),c.greenF(),c.blueF());
-	recomputeLighting();
-	redraw();
-}
-
-void MainWindow::setCoolLightColor(QColor c){
-	plight.coolcolor.set(c.redF(),c.greenF(),c.blueF());
-	recomputeLighting();
-	redraw();
-}
-
-void MainWindow::setLightIntensity(double i){
-	plight.intensity = i;
-	recomputeLighting();
-	redraw();
-}
-
-void MainWindow::setUndoLimit(int limit) {
-	undolimit = limit;
-}
-
-void MainWindow::toggleUndo(void) {
-	if ( useUndo ) useUndo = false;
-	else useUndo = true;
-}
-
-void MainWindow::doDrag(int x, int y) { // brianb
-	int drag_endx = x;
-int drag_endy = y;
-
-GLdouble obj_world[3],  // Object world coordinates
-	obj_window[3], // Object window coordinates 
-	ms_window[3],  // Mouse start drag window
-	ms_world[3],   // Mouse start drag world
-	me_window[3],  // Mouse end drag window
-	me_world[3];   // Mouse end drag world
-GLdouble modelMatrix[16], projMatrix[16];
-GLint viewport[4];
-GLint realy;
-DLFLVertexPtr vptr;
-Viewport* viewp;
-
-switch ( mode ) {
-	case EditVertex:
-	if (GLWidget::numSelectedLocators() > 0)
-	{
-		if (!is_editing) {
-			undoPush();
-			is_editing = true;
+	bool MainWindow::maybeSave() {
+		if (this->isModified()) {
+			int ret = QMessageBox::warning(this, tr("TopMod"),
+				tr("The document has been modified.\n"
+				"Do you want to save your changes?"),
+				QMessageBox::Yes | QMessageBox::Default,
+				QMessageBox::No,
+				QMessageBox::Cancel | QMessageBox::Escape);
+			if (ret == QMessageBox::Yes)
+				return this->saveFile();
+			else if (ret == QMessageBox::Cancel)
+				return false;
 		}
-		vptr = active->getLocatorPtr()->getActiveVertex();
+		return true;
+	}
+
+	void MainWindow::loadFile(QString fileName) {
+		openFile(fileName);
+		this->setCurrentFile(fileName);
+		statusBar()->showMessage(tr("File loaded"), 2000);
+	}
+
+	bool MainWindow::saveFile(QString fileName) {
+		this->setCurrentFile(fileName);
+		statusBar()->showMessage(tr("File saved"), 2000);
+		return true;
+	}
+
+	void MainWindow::closeEvent(QCloseEvent *event) {
+	//close the help file if it's open... not sure this is necessary
+		if (mAssistantClient)
+			mAssistantClient->closeAssistant();
+
+		if (maybeSave()) {
+			writeSettings();
+			event->accept();
+			} else event->ignore();
+		}
+
+		void MainWindow::openFile(QString fileName){
+			QFile file(fileName);
+			file.open(QIODevice::ReadOnly);
+			QFileInfo info(file);
+			QByteArray ba = info.absoluteFilePath().toLatin1();
+			const char *filename = ba.data();
+			mWasPrimitive = false;
+			mIsPrimitive = false;
+			if (!curFile.isEmpty()){
+				undoPush();
+				setModified(false);
+			}
+
+			readObject(filename);
+#ifdef WITH_PYTHON
+			DLFLObjectPtr obj = &object;
+			if( obj )
+				emit loadedObject(obj,fileName);
+#endif
+			recomputePatches();
+			recomputeNormals();
+			setCurrentFile(fileName);
+			active->redraw();
+		}
+
+		void MainWindow::about() {
+			QMessageBox::about(this, tr("About TopMod"),
+				tr("The About page for TopMod is still in the works \n stay tuned... \n"));
+		}
+
+		void MainWindow::initializeHelp(){
+			mAssistantClient = new QAssistantClient(QLibraryInfo::location(QLibraryInfo::BinariesPath), this);
+// QStringList arguments;
+// arguments << "-profile" << QString("documentation") + QDir::separator() + QString("simpletextviewer.adp");
+// mAssistantClient->setArguments(arguments);
+		}
+
+		void MainWindow::help() {
+			mAssistantClient->showPage("");
+		}
+
+		void MainWindow::documentWasModified() {
+			setWindowModified(this->isModified());
+		}
+
+		void MainWindow::on_editStyleAction_triggered() {
+			mStyleSheetEditor->show();
+			mStyleSheetEditor->activateWindow();
+		}
+
+		void MainWindow::openPreferences() {
+			mPreferencesDialog->display();
+		}
+
+		void MainWindow::showHideScriptEditor(){
+
+#ifdef WITH_PYTHON
+			if( mScriptEditorDockWidget->isVisible( ) )
+				mScriptEditorDockWidget->hide( );
+			else {
+				mScriptEditorDockWidget->show( );
+				mScriptEditorDockWidget->setFocus();
+			}
+#endif
+		}
+
+		void MainWindow::showHideVerseDialog(){
+#ifdef WITH_VERSE
+			if( mVerseDialogDockWidget->isVisible( ) )
+				mVerseDialogDockWidget->hide( );
+			else {
+				mVerseDialogDockWidget->show( );
+				mVerseDialogDockWidget->setFocus();
+			}
+#endif
+		}
+
+#ifdef WITH_VERSE
+		void MainWindow::verseConnected(){
+			mVerseMenu->insertAction(mVerseConnectLocalhostAct, mVerseDisconnectAct);
+			mVerseMenu->removeAction(mVerseConnectLocalhostAct);
+			mVerseMenu->removeAction(mVerseConnectAct);
+		}
+
+		void MainWindow::verseDisconnected(){
+			mVerseMenu->insertAction(mVerseDisconnectAct,mVerseConnectLocalhostAct);
+			mVerseMenu->insertAction(mVerseDisconnectAct,mVerseConnectAct);
+			mVerseMenu->removeAction(mVerseDisconnectAct);
+		}
+		void MainWindow::verseStarted(){
+			mVerseMenu->insertAction(mVerseStartServerAct, mVerseKillServerAct);
+			mVerseMenu->removeAction(mVerseStartServerAct);	
+		}
+
+		void MainWindow::verseKilled(){
+			mVerseMenu->insertAction(mVerseKillServerAct, mVerseStartServerAct);
+			mVerseMenu->removeAction(mVerseKillServerAct);		
+		}
+#endif
+
+		void MainWindow::createRenderers(){
+			wired = new WireframeRenderer();
+			wired->setRenderFlags(DLFLRenderer::ShowWireframe);
+
+			normal = new NormalRenderer();
+			normal->setRenderFlags(DLFLRenderer::ShowWireframe);
+
+			lit = new LitRenderer();
+			lit->setRenderFlags(DLFLRenderer::ShowWireframe);
+
+			textured = new TexturedRenderer();
+			textured->setRenderFlags(DLFLRenderer::ShowWireframe);
+
+			texturedlit = new TexturedLitRenderer();
+			texturedlit->setRenderFlags(DLFLRenderer::ShowWireframe);
+
+			patch = new PatchRenderer();
+			patch->setRenderFlags(DLFLRenderer::ShowWireframe);
+		}
+
+		void MainWindow::destroyRenderers(){
+			delete wired;
+			delete normal;
+			delete lit;
+			delete textured;
+			delete texturedlit;
+			delete patch;
+		};
+
+		void MainWindow::setWarmLightColor(QColor c){
+			plight.warmcolor.set(c.redF(),c.greenF(),c.blueF());
+			recomputeLighting();
+			redraw();
+		}
+
+		void MainWindow::setCoolLightColor(QColor c){
+			plight.coolcolor.set(c.redF(),c.greenF(),c.blueF());
+			recomputeLighting();
+			redraw();
+		}
+
+		void MainWindow::setLightIntensity(double i){
+			plight.intensity = i;
+			recomputeLighting();
+			redraw();
+		}
+
+		void MainWindow::setUndoLimit(int limit) {
+			undolimit = limit;
+		}
+
+		void MainWindow::toggleUndo(void) {
+			if ( useUndo ) useUndo = false;
+			else useUndo = true;
+		}
+
+		void MainWindow::doDrag(int x, int y) { // brianb
+			int drag_endx = x;
+		int drag_endy = y;
+
+		GLdouble obj_world[3],  // Object world coordinates
+			obj_window[3], // Object window coordinates 
+			ms_window[3],  // Mouse start drag window
+			ms_world[3],   // Mouse start drag world
+			me_window[3],  // Mouse end drag window
+			me_world[3];   // Mouse end drag world
+		GLdouble modelMatrix[16], projMatrix[16];
+		GLint viewport[4];
+		GLint realy;
+		DLFLVertexPtr vptr;
+		Viewport* viewp;
+
+		switch ( mode ) {
+			case EditVertex:
+			if (GLWidget::numSelectedLocators() > 0)
+			{
+				if (!is_editing) {
+					undoPush();
+					is_editing = true;
+				}
+				vptr = active->getLocatorPtr()->getActiveVertex();
 
 				// Save previous transformations
-		glMatrixMode(GL_PROJECTION);
-		glPushMatrix();
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
+				glMatrixMode(GL_PROJECTION);
+				glPushMatrix();
+				glMatrixMode(GL_MODELVIEW);
+				glPushMatrix();
 
 				// Apply current transformation
-		viewp = active->getViewport();
-		viewp->reshape();
-		viewp->apply_transform();
+				viewp = active->getViewport();
+				viewp->reshape();
+				viewp->apply_transform();
 
 				// Get the info
-		glGetIntegerv(GL_VIEWPORT, viewport);
-		glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix);
-		glGetDoublev(GL_PROJECTION_MATRIX, projMatrix);
+				glGetIntegerv(GL_VIEWPORT, viewport);
+				glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix);
+				glGetDoublev(GL_PROJECTION_MATRIX, projMatrix);
 
-		obj_world[0] = vptr->getCoords()[0]; 
-		obj_world[1] = vptr->getCoords()[1]; 
-		obj_world[2] = vptr->getCoords()[2];
+				obj_world[0] = vptr->getCoords()[0]; 
+				obj_world[1] = vptr->getCoords()[1]; 
+				obj_world[2] = vptr->getCoords()[2];
 
 				// Project object coordinates to window coordinates (to get accurate window depth)
-		gluProject(obj_world[0],obj_world[1],obj_world[2],
-			modelMatrix,projMatrix,viewport,
-			&obj_window[0],&obj_window[1],&obj_window[2]);
+				gluProject(obj_world[0],obj_world[1],obj_world[2],
+					modelMatrix,projMatrix,viewport,
+					&obj_window[0],&obj_window[1],&obj_window[2]);
 
 				// Set start and end window coordinates using depth coordinate found above
-		ms_window[0] = drag_startx;  ms_window[1] = drag_starty;  ms_window[2] = obj_window[2];
-		me_window[0] = drag_endx;    me_window[1] = drag_endy;    me_window[2] = obj_window[2];
+				ms_window[0] = drag_startx;  ms_window[1] = drag_starty;  ms_window[2] = obj_window[2];
+				me_window[0] = drag_endx;    me_window[1] = drag_endy;    me_window[2] = obj_window[2];
 
 				// Unproject start drag window coordinates to world coordinates
-		gluUnProject(ms_window[0],ms_window[1],ms_window[2],
-			modelMatrix, projMatrix, viewport,
-			&ms_world[0],&ms_world[1],&ms_world[2]);
+				gluUnProject(ms_window[0],ms_window[1],ms_window[2],
+					modelMatrix, projMatrix, viewport,
+					&ms_world[0],&ms_world[1],&ms_world[2]);
 
 				// Unproject end drag window coordinates to world coordinates
-		gluUnProject(me_window[0],me_window[1],me_window[2],
-			modelMatrix, projMatrix, viewport,
-			&me_world[0],&me_world[1],&me_world[2]);
+				gluUnProject(me_window[0],me_window[1],me_window[2],
+					modelMatrix, projMatrix, viewport,
+					&me_world[0],&me_world[1],&me_world[2]);
 
 				// Switch on locked axis and update object world position
-		switch (active->getLocatorPtr()->getSelectedAxis())
-		{
-			case 0: // X-axis
-			obj_world[0] = obj_world[0] + me_world[0] - ms_world[0];     
-			break;
+				switch (active->getLocatorPtr()->getSelectedAxis())
+				{
+					case 0: // X-axis
+					obj_world[0] = obj_world[0] + me_world[0] - ms_world[0];     
+					break;
 
-			case 1: // Y-axis
-			obj_world[1] = obj_world[1] + me_world[1] - ms_world[1];                     
-			break;
+					case 1: // Y-axis
+					obj_world[1] = obj_world[1] + me_world[1] - ms_world[1];                     
+					break;
 
-			case 2: // Z-axis
-			obj_world[2] = obj_world[2] + me_world[2] - ms_world[2];                 
-			break;
+					case 2: // Z-axis
+					obj_world[2] = obj_world[2] + me_world[2] - ms_world[2];                 
+					break;
 
-			case 3:  // User can drag freely along viewing place
-			default: 
-			obj_world[0] = obj_world[0] + me_world[0] - ms_world[0];             
-			obj_world[1] = obj_world[1] + me_world[1] - ms_world[1];
-			obj_world[2] = obj_world[2] + me_world[2] - ms_world[2];
-			break;
-		}
+					case 3:  // User can drag freely along viewing place
+					default: 
+					obj_world[0] = obj_world[0] + me_world[0] - ms_world[0];             
+					obj_world[1] = obj_world[1] + me_world[1] - ms_world[1];
+					obj_world[2] = obj_world[2] + me_world[2] - ms_world[2];
+					break;
+				}
 
-		vptr->setCoords(Vector3d(obj_world[0],obj_world[1],obj_world[2]));
-
-				// Update patches
-				//object.bezierDefaults();
+				vptr->setCoords(Vector3d(obj_world[0],obj_world[1],obj_world[2]));
 
 				// Reset drag start points
-		startDrag(drag_endx,drag_endy);
+				startDrag(drag_endx,drag_endy);
 
 				// Restore previous transformations
-		glPopMatrix();
-		glMatrixMode(GL_PROJECTION);
-		glPopMatrix();
+				glPopMatrix();
+				glMatrixMode(GL_PROJECTION);
+				glPopMatrix();
 
-		redraw();
-	}
-	break;
+				redraw();
+			}
+			break;
 
-	default:
-	doSelection(x,y);
-	break;
-}
-}// brianb
+			default:
+			doSelection(x,y);
+			break;
+		}
+	}// brianb
 
 	// Do selection of various entities depending on current mode
-void MainWindow::doSelection(int x, int y) {
-	DLFLVertexPtr svptr = NULL;
-	DLFLEdgePtr septr = NULL;
-	DLFLFacePtr sfptr = NULL;
-	DLFLFaceVertexPtr sfvptr = NULL;
-	DLFLLocatorPtr slptr = NULL; // brianb
+	void MainWindow::doSelection(int x, int y) {
+		DLFLVertexPtr svptr = NULL;
+		DLFLEdgePtr septr = NULL;
+		DLFLFacePtr sfptr = NULL;
+		DLFLFaceVertexPtr sfvptr = NULL;
+		DLFLLocatorPtr slptr = NULL; // brianb
 
-	DLFLEdgePtrArray septrarr;
-	DLFLEdgePtrArray::iterator eit;
-	DLFLFacePtrArray sfptrarr;
-	DLFLFacePtrArray::iterator first, last;
+		DLFLEdgePtrArray septrarr;
+		DLFLEdgePtrArray::iterator eit;
+		DLFLFacePtrArray sfptrarr;
+		DLFLFacePtrArray::iterator first, last;
 
-	switch ( mode ) {
+		switch ( mode ) {
 
-		case EditVertex:     // brianb
-		slptr = active->getLocatorPtr();
-		svptr = active->getLocatorPtr()->getActiveVertex();
-		if (svptr == NULL) {
-			svptr = active->selectVertex(x,y);
-			slptr->setActiveVertex(svptr);
-		}
-								// Test for locator selection
-		if (slptr->getActiveVertex() != NULL)	{
-			slptr = active->selectLocator(x,y);
-			if (slptr != NULL) {
-				GLWidget::setSelectedLocator(0,slptr);
-				startDrag(x,y);
+			case EditVertex:     // brianb
+			slptr = active->getLocatorPtr();
+			svptr = active->getLocatorPtr()->getActiveVertex();
+			if (svptr == NULL) {
+				svptr = active->selectVertex(x,y);
+				slptr->setActiveVertex(svptr);
 			}
-			else {
-				active->getLocatorPtr()->setActiveVertex(NULL);
-				GLWidget::clearSelectedLocators();
-			} 
-		}
-		break;
-		case SelectVertex:
-		case MarkVertex:
-		case CutVertex://ozgur
-		svptr = active->selectVertex(x,y);
-		GLWidget::setSelectedVertex(num_sel_verts,svptr);
-		break;
-		case MultiSelectVertex :
-		svptr = active->selectVertex(x,y);
-		if ( !GLWidget::isSelected(svptr) )
+								// Test for locator selection
+			if (slptr->getActiveVertex() != NULL)	{
+				slptr = active->selectLocator(x,y);
+				if (slptr != NULL) {
+					GLWidget::setSelectedLocator(0,slptr);
+					startDrag(x,y);
+				}
+				else {
+					active->getLocatorPtr()->setActiveVertex(NULL);
+					GLWidget::clearSelectedLocators();
+				} 
+			}
+			break;
+			case SelectVertex:
+			case MarkVertex:
+			case CutVertex://ozgur
+			svptr = active->selectVertex(x,y);
 			GLWidget::setSelectedVertex(num_sel_verts,svptr);
-		break;
-		case DeleteEdge :
-		case SubdivideEdge :
-		case CollapseEdge :
-		case SelectEdge :
-		case CutEdge :
-		case TruncateEdge :
-		case MarkEdge ://ozgur
-		septr = active->selectEdge(x,y);
-		GLWidget::setSelectedEdge(num_sel_edges,septr);
-		break;
-		case CutEdgeandVertex://ozgur
-		septr = active->selectEdge(x,y);
-		svptr = active->selectVertex(x,y);
-		GLWidget::setSelectedEdge(num_sel_edges,septr);
-		GLWidget::setSelectedVertex(num_sel_verts,svptr);
-		break;
-		case MultiSelectEdge :
-		septr = active->selectEdge(x,y);
-		if ( !GLWidget::isSelected(septr) )
+			break;
+			case MultiSelectVertex :
+			svptr = active->selectVertex(x,y);
+			if ( !GLWidget::isSelected(svptr) )
+				GLWidget::setSelectedVertex(num_sel_verts,svptr);
+			break;
+			case DeleteEdge :
+			case SubdivideEdge :
+			case CollapseEdge :
+			case SelectEdge :
+			case CutEdge :
+			case TruncateEdge :
+			case MarkEdge ://ozgur
+			septr = active->selectEdge(x,y);
 			GLWidget::setSelectedEdge(num_sel_edges,septr);
-		break;
-		case SelectEdgeLoop:
-		if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
-			GLWidget::clearSelectedEdges();
-		}
-		septr = active->selectEdge(x,y);
-		if (septr && QApplication::keyboardModifiers() == Qt::ControlModifier && GLWidget::isSelected(septr)){
-			deselect_edges = true;
-			GLWidget::clearSelectedEdge(septr);
-			num_sel_edges--;
-			getEdgeLoopSelection(septr);
-			deselect_edges = false;
-		}
-		else if ( septr && !GLWidget::isSelected(septr)){
+			break;
+			case CutEdgeandVertex://ozgur
+			septr = active->selectEdge(x,y);
+			svptr = active->selectVertex(x,y);
 			GLWidget::setSelectedEdge(num_sel_edges,septr);
-			num_sel_edges++;
-			getEdgeLoopSelection(septr);
-		}
-		active->redraw();
-		break;
-		case SelectFace :
-		case ExtrudeFace :
-		case ExtrudeFaceDS :
-		case ExtrudeDualFace :
-		case ExtrudeFaceDodeca :
-		case ExtrudeFaceIcosa :
-		case StellateFace :
-		case DoubleStellateFace :
-		case CrustModeling :
-		case ConnectFaces :
-		case CutFace://ozgur
-		sfptr = active->selectFace(x,y);
-		GLWidget::setSelectedFace(num_sel_faces,sfptr);
-		break;
-		case SelectSimilarFaces :
-		//clear selection if shift isn't down
-		if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
-			GLWidget::clearSelectedFaces();
-		sfptr = active->selectFace(x,y);
-		if (sfptr){
+			GLWidget::setSelectedVertex(num_sel_verts,svptr);
+			break;
+			case MultiSelectEdge :
+			septr = active->selectEdge(x,y);
+			if ( !GLWidget::isSelected(septr) )
+				GLWidget::setSelectedEdge(num_sel_edges,septr);
+			break;
+			case SelectEdgeLoop:
+			if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
+				GLWidget::clearSelectedEdges();
+			}
+			septr = active->selectEdge(x,y);
+			if (septr && QApplication::keyboardModifiers() == Qt::ControlModifier && GLWidget::isSelected(septr)){
+				deselect_edges = true;
+				GLWidget::clearSelectedEdge(septr);
+				num_sel_edges--;
+				getEdgeLoopSelection(septr);
+				deselect_edges = false;
+			}
+			else if ( septr && !GLWidget::isSelected(septr)){
+				GLWidget::setSelectedEdge(num_sel_edges,septr);
+				num_sel_edges++;
+				getEdgeLoopSelection(septr);
+			}
+			active->redraw();
+			break;
+			case SelectFace :
+			case ExtrudeFace :
+			case ExtrudeFaceDS :
+			case ExtrudeDualFace :
+			case ExtrudeFaceDodeca :
+			case ExtrudeFaceIcosa :
+			case StellateFace :
+			case DoubleStellateFace :
+			case CrustModeling :
+			case ConnectFaces :
+			case CutFace://ozgur
+			sfptr = active->selectFace(x,y);
 			GLWidget::setSelectedFace(num_sel_faces,sfptr);
-			num_sel_faces++;
-			DLFLFacePtrArray sfptrarray;
-			vector<DLFLFacePtr>::iterator it;
-			DLFL::selectMatchingFaces(&object, sfptr, sfptrarray);
-			for (it = sfptrarray.begin(); it != sfptrarray.end(); it++){
-				if (!GLWidget::isSelected(*it)){
-					GLWidget::setSelectedFace(num_sel_faces,*it);
-					num_sel_faces++;
+			break;
+			case SelectSimilarFaces :
+		//clear selection if shift isn't down
+			if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
+				GLWidget::clearSelectedFaces();
+			sfptr = active->selectFace(x,y);
+			if (sfptr){
+				GLWidget::setSelectedFace(num_sel_faces,sfptr);
+				num_sel_faces++;
+				DLFLFacePtrArray sfptrarray;
+				vector<DLFLFacePtr>::iterator it;
+				DLFL::selectMatchingFaces(&object, sfptr, sfptrarray);
+				for (it = sfptrarray.begin(); it != sfptrarray.end(); it++){
+					if (!GLWidget::isSelected(*it)){
+						GLWidget::setSelectedFace(num_sel_faces,*it);
+						num_sel_faces++;
+					}
 				}
 			}
-		}
-		active->redraw();
-		break;
-		case SelectFaceLoop:
-		if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
-			GLWidget::clearSelectedFaces();
-		}
-		septr = active->selectEdge(x,y);
-		GLWidget::setSelectedEdge(num_sel_edges,septr);
-		if ( septr ){
-			if (QApplication::keyboardModifiers() == Qt::ControlModifier){ // deselect
-				face_loop_start_edge = septr;
+			active->redraw();
+			break;
+			case SelectFaceLoop:
+			if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
+				GLWidget::clearSelectedFaces();
+			}
+			septr = active->selectEdge(x,y);
+			GLWidget::setSelectedEdge(num_sel_edges,septr);
+			if ( septr ){
+				if (QApplication::keyboardModifiers() == Qt::ControlModifier){ // deselect
+					face_loop_start_edge = septr;
 				getFaceLoopSelection(septr, true, NULL, false);
 			}
 			else { //select
 				face_loop_start_edge = septr;
-				getFaceLoopSelection(septr, true, NULL, true);
-			}
+			getFaceLoopSelection(septr, true, NULL, true);
 		}
-		active->redraw();
-		break;
-		case ExtrudeMultipleFaces :
-		case MultiSelectFace :
-		case SubdivideFace :
+	}
+	active->redraw();
+	break;
+	case ExtrudeMultipleFaces :
+	case MultiSelectFace :
+	case SubdivideFace :
 									// No duplicates allowed
 		// sfptr = active->selectFace(x,y);
 		// if ( !GLWidget::isSelected(sfptr) ){
@@ -1502,88 +1506,88 @@ void MainWindow::doSelection(int x, int y) {
 		// 	GLWidget::clearSelectedFace(sfptr);
 		// 	num_sel_faces--;
 		// }
-		if ( QApplication::keyboardModifiers() == Qt::ControlModifier) {
-			sfptrarr = active->deselectFaces(x,y);
-			first = sfptrarr.begin(); last = sfptrarr.end();
-			while ( first != last ){
-				GLWidget::clearSelectedFace(*first);
-				++first;
-				num_sel_faces--;
-			}
-			active->redraw();
-			sfptrarr.clear();
-		}
-		else {
-			sfptrarr = active->selectFaces(x,y);
-			first = sfptrarr.begin(); last = sfptrarr.end();
-			while ( first != last ){
-				GLWidget::setSelectedFace(num_sel_faces,*first);
-				++first;
-				num_sel_faces++;
-			}
-			active->redraw();
-			sfptrarr.clear();
-		}
-		break;
-		case SelectCheckerboard :
-		if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
-			GLWidget::clearSelectedFaces();
-		}
-		//get one selected face
-		sfptr = active->selectFace(x,y);
-		if (sfptr && GLWidget::isSelected(sfptr) && QApplication::keyboardModifiers() == Qt::ControlModifier){
-			deselect_edges = true;
-			GLWidget::clearSelectedFace(sfptr);
+	if ( QApplication::keyboardModifiers() == Qt::ControlModifier) {
+		sfptrarr = active->deselectFaces(x,y);
+		first = sfptrarr.begin(); last = sfptrarr.end();
+		while ( first != last ){
+			GLWidget::clearSelectedFace(*first);
+			++first;
 			num_sel_faces--;
-			getCheckerboardSelection(sfptr);
-			deselect_edges = false;
 		}
-		else if (sfptr && !GLWidget::isSelected(sfptr) ){
-			GLWidget::setSelectedFace(num_sel_faces,sfptr);
-			num_sel_faces++;
-			getCheckerboardSelection(sfptr);
-		}		
 		active->redraw();
 		sfptrarr.clear();
-		break;
-		case SelectFaceVertex :
-		case ReorderFace :
-		case InsertEdge :
-		case SpliceCorners :
-		case ConnectFaceVertices :
-		case BezierConnectFaces :
-		case HermiteConnectFaces :
-		sfptr = active->selectFace(x,y);
+	}
+	else {
+		sfptrarr = active->selectFaces(x,y);
+		first = sfptrarr.begin(); last = sfptrarr.end();
+		while ( first != last ){
+			GLWidget::setSelectedFace(num_sel_faces,*first);
+			++first;
+			num_sel_faces++;
+		}
+		active->redraw();
+		sfptrarr.clear();
+	}
+	break;
+	case SelectCheckerboard :
+	if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
+		GLWidget::clearSelectedFaces();
+	}
+		//get one selected face
+	sfptr = active->selectFace(x,y);
+	if (sfptr && GLWidget::isSelected(sfptr) && QApplication::keyboardModifiers() == Qt::ControlModifier){
+		deselect_edges = true;
+		GLWidget::clearSelectedFace(sfptr);
+		num_sel_faces--;
+		getCheckerboardSelection(sfptr);
+		deselect_edges = false;
+	}
+	else if (sfptr && !GLWidget::isSelected(sfptr) ){
 		GLWidget::setSelectedFace(num_sel_faces,sfptr);
-		if ( sfptr )
-		{
-			sfvptr = active->selectFaceVertex(sfptr,x,y);
+		num_sel_faces++;
+		getCheckerboardSelection(sfptr);
+	}		
+	active->redraw();
+	sfptrarr.clear();
+	break;
+	case SelectFaceVertex :
+	case ReorderFace :
+	case InsertEdge :
+	case SpliceCorners :
+	case ConnectFaceVertices :
+	case BezierConnectFaces :
+	case HermiteConnectFaces :
+	sfptr = active->selectFace(x,y);
+	GLWidget::setSelectedFace(num_sel_faces,sfptr);
+	if ( sfptr )
+	{
+		sfvptr = active->selectFaceVertex(sfptr,x,y);
+		GLWidget::setSelectedFaceVertex(num_sel_faceverts,sfvptr);
+	}
+	break;
+
+	case MultiSelectFaceVertex :
+	sfptr = active->selectFace(x,y);
+	GLWidget::setSelectedFace(num_sel_faces,sfptr);
+	if ( sfptr )
+	{
+		sfvptr = active->selectFaceVertex(sfptr,x,y);
+		if ( !GLWidget::isSelected(sfvptr) )
 			GLWidget::setSelectedFaceVertex(num_sel_faceverts,sfvptr);
-		}
-		break;
+	}
+	break;
 
-		case MultiSelectFaceVertex :
-		sfptr = active->selectFace(x,y);
-		GLWidget::setSelectedFace(num_sel_faces,sfptr);
-		if ( sfptr )
-		{
-			sfvptr = active->selectFaceVertex(sfptr,x,y);
-			if ( !GLWidget::isSelected(sfvptr) )
-				GLWidget::setSelectedFaceVertex(num_sel_faceverts,sfvptr);
-		}
-		break;
-
-		case ConnectEdges :
-		sfptr = active->selectFace(x,y);
-		GLWidget::setSelectedFace(num_sel_faces,sfptr);
-		if ( sfptr )
-		{
-			septr = active->selectEdge(x,y);
-			GLWidget::setSelectedEdge(num_sel_edges,septr);
-		}
-		break;
-	};	
-	if ( svptr != NULL || septr != NULL || sfptr != NULL ) redraw();
+	case ConnectEdges :
+	sfptr = active->selectFace(x,y);
+	GLWidget::setSelectedFace(num_sel_faces,sfptr);
+	if ( sfptr )
+	{
+		septr = active->selectEdge(x,y);
+		GLWidget::setSelectedEdge(num_sel_edges,septr);
+	}
+	break;
+};	
+if ( svptr != NULL || septr != NULL || sfptr != NULL ) redraw();
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
@@ -1683,570 +1687,570 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 				if (septr){
 					if (QApplication::keyboardModifiers() == Qt::ControlModifier){ // deselect
 						face_loop_start_edge = septr;
-						getFaceLoopSelection(septr, true, NULL, false);
-					}
-					else { //select
-						face_loop_start_edge = septr;
-						getFaceLoopSelection(septr, true, NULL, true);
-					}
+					getFaceLoopSelection(septr, true, NULL, false);
+				}
+				else { //select
+					face_loop_start_edge = septr;
+				getFaceLoopSelection(septr, true, NULL, true);
+			}
+		}
+	}
+	GLWidget::clearSelectedEdges();
+	active->redraw();
+	break;
+	case SelectFace :
+	if ( GLWidget::numSelectedFaces() >= 1 )
+	{
+		DLFLFacePtr fp = GLWidget::getSelectedFace(0);
+		fp->print();
+		GLWidget::clearSelectedFaces();
+		num_sel_faces = 0;
+		redraw();
+	}
+	break;
+	case SelectSimilarFaces :
+	if ( GLWidget::numSelectedFaces() >= 1 ){
+		DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);			
+		if (sfptr){
+			DLFLFacePtrArray sfptrarray;
+			vector<DLFLFacePtr>::iterator it;
+			DLFL::selectMatchingFaces(&object, sfptr, sfptrarray);
+			for (it = sfptrarray.begin(); it != sfptrarray.end(); it++){
+				if (!GLWidget::isSelected(*it)){
+					GLWidget::setSelectedFace(num_sel_faces,*it);
+					num_sel_faces++;
 				}
 			}
-			GLWidget::clearSelectedEdges();
-			active->redraw();
-			break;
-			case SelectFace :
-			if ( GLWidget::numSelectedFaces() >= 1 )
-			{
-				DLFLFacePtr fp = GLWidget::getSelectedFace(0);
-				fp->print();
-				GLWidget::clearSelectedFaces();
-				num_sel_faces = 0;
-				redraw();
-			}
-			break;
-			case SelectSimilarFaces :
-			if ( GLWidget::numSelectedFaces() >= 1 ){
-				DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);			
-				if (sfptr){
-					DLFLFacePtrArray sfptrarray;
-					vector<DLFLFacePtr>::iterator it;
-					DLFL::selectMatchingFaces(&object, sfptr, sfptrarray);
-					for (it = sfptrarray.begin(); it != sfptrarray.end(); it++){
-						if (!GLWidget::isSelected(*it)){
-							GLWidget::setSelectedFace(num_sel_faces,*it);
-							num_sel_faces++;
-						}
-					}
-					redraw();
-				}
-			}
-			break;
-			case SelectFaceVertex :
-			if ( GLWidget::numSelectedFaceVertices() >= 1 )
-			{
-				DLFLFaceVertexPtr fvp = GLWidget::getSelectedFaceVertex(0);
-				fvp->print();
-				GLWidget::clearSelectedFaceVertices();
-				GLWidget::clearSelectedFaces();
-				num_sel_faceverts = 0; num_sel_faces = 0;
-				redraw();
-			}
-			break;
-						case InsertEdge :
-						if ( GLWidget::numSelectedFaceVertices() >= 2 )
-						{
-							DLFLFaceVertexPtr sfvptr1, sfvptr2;
-							sfvptr1 = GLWidget::getSelectedFaceVertex(0);
-							sfvptr2 = GLWidget::getSelectedFaceVertex(1);
-							if ( sfvptr1 && sfvptr2 )
-							{
-								DLFLMaterialPtr mptr = sfvptr1->getFacePtr()->material();
-								undoPush();
-								setModified(true);
+			redraw();
+		}
+	}
+	break;
+	case SelectFaceVertex :
+	if ( GLWidget::numSelectedFaceVertices() >= 1 )
+	{
+		DLFLFaceVertexPtr fvp = GLWidget::getSelectedFaceVertex(0);
+		fvp->print();
+		GLWidget::clearSelectedFaceVertices();
+		GLWidget::clearSelectedFaces();
+		num_sel_faceverts = 0; num_sel_faces = 0;
+		redraw();
+	}
+	break;
+	case InsertEdge :
+	if ( GLWidget::numSelectedFaceVertices() >= 2 )
+	{
+		DLFLFaceVertexPtr sfvptr1, sfvptr2;
+		sfvptr1 = GLWidget::getSelectedFaceVertex(0);
+		sfvptr2 = GLWidget::getSelectedFaceVertex(1);
+		if ( sfvptr1 && sfvptr2 )
+		{
+			DLFLMaterialPtr mptr = sfvptr1->getFacePtr()->material();
+			undoPush();
+			setModified(true);
 								//object.insertEdge(sfvptr1,sfvptr2,false,mptr);
-								DLFL::insertEdge(&object,sfvptr1,sfvptr2,false,mptr);
-								GLWidget::clearSelectedFaces();
-								GLWidget::clearSelectedFaceVertices();
-								num_sel_faceverts = 0; num_sel_faces = 0;
-								recomputePatches();
-								recomputeNormals();
-								redraw();   
-							}
-						}
-						else if ( GLWidget::numSelectedFaceVertices() == 1 )
-						{
-							num_sel_faceverts=1; num_sel_faces=1;
-						}
-						break;
-						case DeleteEdge :
-						if ( GLWidget::numSelectedEdges() >= 1 )
-						{
-							DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
-							if ( septr )
-							{
-								undoPush();
-								setModified(true);
+			DLFL::insertEdge(&object,sfvptr1,sfvptr2,false,mptr);
+			GLWidget::clearSelectedFaces();
+			GLWidget::clearSelectedFaceVertices();
+			num_sel_faceverts = 0; num_sel_faces = 0;
+			recomputePatches();
+			recomputeNormals();
+			redraw();   
+		}
+	}
+	else if ( GLWidget::numSelectedFaceVertices() == 1 )
+	{
+		num_sel_faceverts=1; num_sel_faces=1;
+	}
+	break;
+	case DeleteEdge :
+	if ( GLWidget::numSelectedEdges() >= 1 )
+	{
+		DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
+		if ( septr )
+		{
+			undoPush();
+			setModified(true);
 								//object.deleteEdge(septr,MainWindow::delete_edge_cleanup);
-								DLFL::deleteEdge( &object, septr, MainWindow::delete_edge_cleanup);
-								recomputePatches();
-								recomputeNormals();
-							}
-							GLWidget::clearSelectedEdges();
-							redraw();
-						}
-						break;
-						case SubdivideEdge :
-						if ( GLWidget::numSelectedEdges() >= 1 )
-						{
-							DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
-							if ( septr )
-							{
-								undoPush();
-								setModified(true);
+			DLFL::deleteEdge( &object, septr, MainWindow::delete_edge_cleanup);
+			recomputePatches();
+			recomputeNormals();
+		}
+		GLWidget::clearSelectedEdges();
+		redraw();
+	}
+	break;
+	case SubdivideEdge :
+	if ( GLWidget::numSelectedEdges() >= 1 )
+	{
+		DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
+		if ( septr )
+		{
+			undoPush();
+			setModified(true);
 								//object.subdivideEdge(num_e_subdivs,septr);
-								DLFL::subdivideEdge(&object, num_e_subdivs,septr);
-								recomputePatches();
-								recomputeNormals();
-							}
-							GLWidget::clearSelectedEdges();
-							redraw();
-						}
-						break;
-						case CollapseEdge :
-						if ( GLWidget::numSelectedEdges() >= 1 )
-						{
-							DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
-							if ( septr )
-							{
-								undoPush();
-								setModified(true);
+			DLFL::subdivideEdge(&object, num_e_subdivs,septr);
+			recomputePatches();
+			recomputeNormals();
+		}
+		GLWidget::clearSelectedEdges();
+		redraw();
+	}
+	break;
+	case CollapseEdge :
+	if ( GLWidget::numSelectedEdges() >= 1 )
+	{
+		DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
+		if ( septr )
+		{
+			undoPush();
+			setModified(true);
 								//object.collapseEdge(septr);
-								DLFL::collapseEdge(&object,septr);
-								recomputePatches();
-								recomputeNormals();
-							}
-							GLWidget::clearSelectedEdges();
-							redraw();
-						}
-						break;
-						case SpliceCorners :
-						if ( GLWidget::numSelectedFaceVertices() >= 2 )
-						{
-							DLFLFaceVertexPtr sfvptr1, sfvptr2;
-							sfvptr1 = GLWidget::getSelectedFaceVertex(0);
-							sfvptr2 = GLWidget::getSelectedFaceVertex(1);
-							if ( sfvptr1 && sfvptr2 )
-							{
-								DLFLMaterialPtr mptr = sfvptr1->getFacePtr()->material();
-								undoPush();
-								setModified(true);
+			DLFL::collapseEdge(&object,septr);
+			recomputePatches();
+			recomputeNormals();
+		}
+		GLWidget::clearSelectedEdges();
+		redraw();
+	}
+	break;
+	case SpliceCorners :
+	if ( GLWidget::numSelectedFaceVertices() >= 2 )
+	{
+		DLFLFaceVertexPtr sfvptr1, sfvptr2;
+		sfvptr1 = GLWidget::getSelectedFaceVertex(0);
+		sfvptr2 = GLWidget::getSelectedFaceVertex(1);
+		if ( sfvptr1 && sfvptr2 )
+		{
+			DLFLMaterialPtr mptr = sfvptr1->getFacePtr()->material();
+			undoPush();
+			setModified(true);
 								//object.spliceCorners(sfvptr1,sfvptr2);
-								DLFL::spliceCorners(&object,sfvptr1,sfvptr2);
-								GLWidget::clearSelectedFaces();
-								GLWidget::clearSelectedFaceVertices();
-								num_sel_faceverts = 0; num_sel_faces = 0;
-								recomputePatches();
-								recomputeNormals();
-								redraw();   
-							}
-						}
-						else if ( GLWidget::numSelectedFaceVertices() == 1 )
-						{
-							num_sel_faceverts=1; num_sel_faces=1;
-						}
-						break;
-						case ConnectFaces :
-						if ( GLWidget::numSelectedFaces() >= 2 )
-						{
-							DLFLFacePtr sfptr1, sfptr2;
-							sfptr1 = GLWidget::getSelectedFace(0);
-							sfptr2 = GLWidget::getSelectedFace(1);
-							if ( sfptr1 && sfptr2 )
-							{
-								undoPush();
-								setModified(true);
-								DLFL::connectFaces(&object,sfptr1,sfptr2,num_segments);
-								recomputePatches();
-								recomputeNormals();
-								GLWidget::clearSelectedFaces();
-								redraw();   
-							}
-						}
-						else if ( GLWidget::numSelectedFaces() == 1 )
-						{
-							num_sel_faces = 1;
-						}
-						break;
-						case ConnectFaceVertices :
-						if ( GLWidget::numSelectedFaceVertices() >= 2 )
-						{
-							DLFLFaceVertexPtr sfvptr1, sfvptr2;
-							sfvptr1 = GLWidget::getSelectedFaceVertex(0);
-							sfvptr2 = GLWidget::getSelectedFaceVertex(1);
-							if ( sfvptr1 && sfvptr2 )
-							{
-								undoPush();
-								setModified(true);
-								DLFL::connectFaces(&object,sfvptr1,sfvptr2,num_segments, max_segments);
-								GLWidget::clearSelectedFaces();
-								GLWidget::clearSelectedFaceVertices();
-								num_sel_faceverts = 0; num_sel_faces = 0;
-								recomputePatches();
-								recomputeNormals();
-								redraw();   
-							}
-						}
-						else if ( GLWidget::numSelectedFaceVertices() == 1 )
-						{
-							num_sel_faceverts = 1; num_sel_faces = 1;
-						}
-						break;
-						case ConnectEdges :
-						if ( GLWidget::numSelectedEdges() >= 2 )
-						{
-							DLFLEdgePtr septr1, septr2;
-							DLFLFacePtr sfptr1, sfptr2;
-							septr1 = GLWidget::getSelectedEdge(0);
-							septr2 = GLWidget::getSelectedEdge(1);
-							sfptr1 = GLWidget::getSelectedFace(0);
-							sfptr2 = GLWidget::getSelectedFace(1);
-							if ( septr1 && septr2 )
-							{
-								undoPush();
-								setModified(true);
-								DLFL::connectEdges(&object,septr1,sfptr1,septr2,sfptr2);
-								GLWidget::clearSelectedEdges();
-								GLWidget::clearSelectedFaces();
-								num_sel_edges = 0; num_sel_faces = 0;
-								redraw();   
-							}
-						}
-						else if ( GLWidget::numSelectedEdges() == 1 )
-						{
-							num_sel_edges = 1; num_sel_faces = 1;
-						}
-						break;
-						case ExtrudeFace :
-						if ( GLWidget::numSelectedFaces() >= 1 )
-						{
-							DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
-							if ( sfptr )
-							{
-								undoPush();
-								setModified(true);
-								DLFL::extrudeFace(&object,sfptr,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
-								recomputePatches();
-								recomputeNormals();
-							}
-							GLWidget::clearSelectedFaces();
-							redraw();
-						}
-						break;
-						case ExtrudeMultipleFaces :
-						if ( GLWidget::numSelectedFaces() >= 1 )
-						{
-							DLFLFacePtrArray sfptrarr = GLWidget::getSelectedFaces();
-							if ( sfptrarr[0] )
-							{
-								undoPush();
-								setModified(true);
-								vector<DLFLFacePtr>::iterator it;
-								for(it = sfptrarr.begin(); it != sfptrarr.end(); it++) {
-									DLFL::extrudeFace(&object,*it,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
-									recomputePatches();
-									recomputeNormals();						
-								}
-							}
-							GLWidget::clearSelectedFaces();
-							redraw();
-						}
-						break;
-						case ExtrudeFaceDS :
-						if ( GLWidget::numSelectedFaces() >= 1 )
-						{
-							DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
-							if ( sfptr )
-							{
-								undoPush();
-								setModified(true);
-								DLFL::extrudeFaceDS(&object,sfptr,extrude_dist,num_extrusions,
-									ds_ex_twist,extrude_scale);
-								recomputePatches();
-								recomputeNormals();
-							}
-							GLWidget::clearSelectedFaces();
-							redraw();
-						}
-						break;
-						case ExtrudeDualFace :
-						if ( GLWidget::numSelectedFaces() >= 1 )
-						{
-							DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
-							if ( sfptr )
-							{
-								undoPush();
-								setModified(true);
-								DLFL::extrudeDualFace(&object,sfptr,extrude_dist,num_extrusions,
-									extrude_rot,extrude_scale,
-									dual_mesh_edges_check);
-								recomputePatches();
-								recomputeNormals();
-							}
-							GLWidget::clearSelectedFaces();
-							redraw();
-						}
-						break;
-						case ExtrudeFaceDodeca :
-						if ( GLWidget::numSelectedFaces() >= 1 )
-						{
-							DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
-							if ( sfptr )
-							{
-								undoPush();
-								setModified(true);
-								DLFL::extrudeFaceDodeca(&object,sfptr,extrude_dist,num_extrusions,
-									ds_ex_twist,extrude_scale,
-									hexagonalize_dodeca_extrude);
-								recomputePatches();
-								recomputeNormals();
-							}
-							GLWidget::clearSelectedFaces();
-							redraw();
-						}
-						break;
-						case ExtrudeFaceIcosa :
-						if ( GLWidget::numSelectedFaces() >= 1 )
-						{
-							DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
-							if ( sfptr )
-							{
-								undoPush();
-								setModified(true);
-								DLFL::extrudeFaceIcosa(&object,sfptr,extrude_dist,num_extrusions,
-									ds_ex_twist,extrude_scale);
-								recomputePatches();
-								recomputeNormals();
-							}
-							GLWidget::clearSelectedFaces();
-							redraw();
-						}
-						break;
-						case StellateFace :
-						if ( GLWidget::numSelectedFaces() >= 1 )
-						{
-							DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
-							if ( sfptr )
-							{
-								undoPush();
-								setModified(true);
-								DLFL::stellateFace(&object,sfptr,extrude_dist);
-								recomputePatches();
-								recomputeNormals();
-							}
-							GLWidget::clearSelectedFaces();
-							redraw();
-						}
-						break;
-						case DoubleStellateFace :
-						if ( GLWidget::numSelectedFaces() >= 1 )
-						{
-							DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
-							if ( sfptr )
-							{
-								undoPush();
-								setModified(true);
-								DLFL::doubleStellateFace(&object,sfptr,extrude_dist);
-								recomputePatches();
-								recomputeNormals();
-							}
-							GLWidget::clearSelectedFaces();
-							redraw();
-						}
-						break;
-						case CrustModeling :
-						if ( GLWidget::numSelectedFaces() >= 1 )
-						{
-							DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
-							if ( sfptr )
-							{
+			DLFL::spliceCorners(&object,sfvptr1,sfvptr2);
+			GLWidget::clearSelectedFaces();
+			GLWidget::clearSelectedFaceVertices();
+			num_sel_faceverts = 0; num_sel_faces = 0;
+			recomputePatches();
+			recomputeNormals();
+			redraw();   
+		}
+	}
+	else if ( GLWidget::numSelectedFaceVertices() == 1 )
+	{
+		num_sel_faceverts=1; num_sel_faces=1;
+	}
+	break;
+	case ConnectFaces :
+	if ( GLWidget::numSelectedFaces() >= 2 )
+	{
+		DLFLFacePtr sfptr1, sfptr2;
+		sfptr1 = GLWidget::getSelectedFace(0);
+		sfptr2 = GLWidget::getSelectedFace(1);
+		if ( sfptr1 && sfptr2 )
+		{
+			undoPush();
+			setModified(true);
+			DLFL::connectFaces(&object,sfptr1,sfptr2,num_segments);
+			recomputePatches();
+			recomputeNormals();
+			GLWidget::clearSelectedFaces();
+			redraw();   
+		}
+	}
+	else if ( GLWidget::numSelectedFaces() == 1 )
+	{
+		num_sel_faces = 1;
+	}
+	break;
+	case ConnectFaceVertices :
+	if ( GLWidget::numSelectedFaceVertices() >= 2 )
+	{
+		DLFLFaceVertexPtr sfvptr1, sfvptr2;
+		sfvptr1 = GLWidget::getSelectedFaceVertex(0);
+		sfvptr2 = GLWidget::getSelectedFaceVertex(1);
+		if ( sfvptr1 && sfvptr2 )
+		{
+			undoPush();
+			setModified(true);
+			DLFL::connectFaces(&object,sfvptr1,sfvptr2,num_segments, max_segments);
+			GLWidget::clearSelectedFaces();
+			GLWidget::clearSelectedFaceVertices();
+			num_sel_faceverts = 0; num_sel_faces = 0;
+			recomputePatches();
+			recomputeNormals();
+			redraw();   
+		}
+	}
+	else if ( GLWidget::numSelectedFaceVertices() == 1 )
+	{
+		num_sel_faceverts = 1; num_sel_faces = 1;
+	}
+	break;
+	case ConnectEdges :
+	if ( GLWidget::numSelectedEdges() >= 2 )
+	{
+		DLFLEdgePtr septr1, septr2;
+		DLFLFacePtr sfptr1, sfptr2;
+		septr1 = GLWidget::getSelectedEdge(0);
+		septr2 = GLWidget::getSelectedEdge(1);
+		sfptr1 = GLWidget::getSelectedFace(0);
+		sfptr2 = GLWidget::getSelectedFace(1);
+		if ( septr1 && septr2 )
+		{
+			undoPush();
+			setModified(true);
+			DLFL::connectEdges(&object,septr1,sfptr1,septr2,sfptr2);
+			GLWidget::clearSelectedEdges();
+			GLWidget::clearSelectedFaces();
+			num_sel_edges = 0; num_sel_faces = 0;
+			redraw();   
+		}
+	}
+	else if ( GLWidget::numSelectedEdges() == 1 )
+	{
+		num_sel_edges = 1; num_sel_faces = 1;
+	}
+	break;
+	case ExtrudeFace :
+	if ( GLWidget::numSelectedFaces() >= 1 )
+	{
+		DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
+		if ( sfptr )
+		{
+			undoPush();
+			setModified(true);
+			DLFL::extrudeFace(&object,sfptr,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
+			recomputePatches();
+			recomputeNormals();
+		}
+		GLWidget::clearSelectedFaces();
+		redraw();
+	}
+	break;
+	case ExtrudeMultipleFaces :
+	if ( GLWidget::numSelectedFaces() >= 1 )
+	{
+		DLFLFacePtrArray sfptrarr = GLWidget::getSelectedFaces();
+		if ( sfptrarr[0] )
+		{
+			undoPush();
+			setModified(true);
+			vector<DLFLFacePtr>::iterator it;
+			for(it = sfptrarr.begin(); it != sfptrarr.end(); it++) {
+				DLFL::extrudeFace(&object,*it,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
+				recomputePatches();
+				recomputeNormals();						
+			}
+		}
+		GLWidget::clearSelectedFaces();
+		redraw();
+	}
+	break;
+	case ExtrudeFaceDS :
+	if ( GLWidget::numSelectedFaces() >= 1 )
+	{
+		DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
+		if ( sfptr )
+		{
+			undoPush();
+			setModified(true);
+			DLFL::extrudeFaceDS(&object,sfptr,extrude_dist,num_extrusions,
+				ds_ex_twist,extrude_scale);
+			recomputePatches();
+			recomputeNormals();
+		}
+		GLWidget::clearSelectedFaces();
+		redraw();
+	}
+	break;
+	case ExtrudeDualFace :
+	if ( GLWidget::numSelectedFaces() >= 1 )
+	{
+		DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
+		if ( sfptr )
+		{
+			undoPush();
+			setModified(true);
+			DLFL::extrudeDualFace(&object,sfptr,extrude_dist,num_extrusions,
+				extrude_rot,extrude_scale,
+				dual_mesh_edges_check);
+			recomputePatches();
+			recomputeNormals();
+		}
+		GLWidget::clearSelectedFaces();
+		redraw();
+	}
+	break;
+	case ExtrudeFaceDodeca :
+	if ( GLWidget::numSelectedFaces() >= 1 )
+	{
+		DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
+		if ( sfptr )
+		{
+			undoPush();
+			setModified(true);
+			DLFL::extrudeFaceDodeca(&object,sfptr,extrude_dist,num_extrusions,
+				ds_ex_twist,extrude_scale,
+				hexagonalize_dodeca_extrude);
+			recomputePatches();
+			recomputeNormals();
+		}
+		GLWidget::clearSelectedFaces();
+		redraw();
+	}
+	break;
+	case ExtrudeFaceIcosa :
+	if ( GLWidget::numSelectedFaces() >= 1 )
+	{
+		DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
+		if ( sfptr )
+		{
+			undoPush();
+			setModified(true);
+			DLFL::extrudeFaceIcosa(&object,sfptr,extrude_dist,num_extrusions,
+				ds_ex_twist,extrude_scale);
+			recomputePatches();
+			recomputeNormals();
+		}
+		GLWidget::clearSelectedFaces();
+		redraw();
+	}
+	break;
+	case StellateFace :
+	if ( GLWidget::numSelectedFaces() >= 1 )
+	{
+		DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
+		if ( sfptr )
+		{
+			undoPush();
+			setModified(true);
+			DLFL::stellateFace(&object,sfptr,extrude_dist);
+			recomputePatches();
+			recomputeNormals();
+		}
+		GLWidget::clearSelectedFaces();
+		redraw();
+	}
+	break;
+	case DoubleStellateFace :
+	if ( GLWidget::numSelectedFaces() >= 1 )
+	{
+		DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
+		if ( sfptr )
+		{
+			undoPush();
+			setModified(true);
+			DLFL::doubleStellateFace(&object,sfptr,extrude_dist);
+			recomputePatches();
+			recomputeNormals();
+		}
+		GLWidget::clearSelectedFaces();
+		redraw();
+	}
+	break;
+	case CrustModeling :
+	if ( GLWidget::numSelectedFaces() >= 1 )
+	{
+		DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
+		if ( sfptr )
+		{
 																													// No undo for hole punching in crust modeling mode
 																													// because the ids in the recreated object
 																													// will be different
-								if ( QApplication::keyboardModifiers() == Qt::ShiftModifier )
-								{
-									DLFL::tagMatchingFaces(&object,sfptr);
-									DLFL::punchHoles(&object);
-									recomputePatches();
-									recomputeNormals();
-								}
-								else
-									DLFL::cmMakeHole(&object,sfptr,crust_cleanup);
+			if ( QApplication::keyboardModifiers() == Qt::ShiftModifier )
+			{
+				DLFL::tagMatchingFaces(&object,sfptr);
+				DLFL::punchHoles(&object);
+				recomputePatches();
+				recomputeNormals();
+			}
+			else
+				DLFL::cmMakeHole(&object,sfptr,crust_cleanup);
 			//                                                  recomputeNormals();
-							}
-							GLWidget::clearSelectedFaces();
-							redraw();
-						}
-						break;
-						case BezierConnectFaces :
-						if ( GLWidget::numSelectedFaceVertices() >= 2 )
-						{
-							DLFLFaceVertexPtr sfvptr1, sfvptr2;
-							sfvptr1 = GLWidget::getSelectedFaceVertex(0);
-							sfvptr2 = GLWidget::getSelectedFaceVertex(1);
-							if ( sfvptr1 && sfvptr2 )
-							{
-								undoPush();
-								setModified(true);
-								DLFL::bezierConnectFaces(&object,sfvptr1,sfvptr2,
-									num_segments,nwt1,nwt2);
-								GLWidget::clearSelectedFaces();
-								GLWidget::clearSelectedFaceVertices();
-								num_sel_faceverts = 0; num_sel_faces = 0;
-								recomputePatches();
-								recomputeNormals();
-								redraw();   
-							}
-						}
-						else if ( GLWidget::numSelectedFaceVertices() == 1 )
-						{
-							num_sel_faceverts = 1; num_sel_faces = 1;
-						}
-						break;
-						case HermiteConnectFaces :
-						if ( GLWidget::numSelectedFaceVertices() >= 2 )
-						{
-							DLFLFaceVertexPtr sfvptr1, sfvptr2;
-							sfvptr1 = GLWidget::getSelectedFaceVertex(0);
-							sfvptr2 = GLWidget::getSelectedFaceVertex(1);
-							if ( sfvptr1 && sfvptr2 )
-							{
-								undoPush();
-								setModified(true);
-								if ( symmetric_weights )
-									DLFL::hermiteConnectFaces(&object,sfvptr1,sfvptr2,
-									num_segments,nwt1,nwt1,
-									max_segments,num_extra_twists);
-								else
-									DLFL::hermiteConnectFaces(&object,sfvptr1,sfvptr2,
-									num_segments,nwt1,nwt2,
-									max_segments,num_extra_twists);
-								GLWidget::clearSelectedFaces();
-								GLWidget::clearSelectedFaceVertices();
-								num_sel_faceverts = 0; num_sel_faces = 0;
-								recomputePatches();
-								recomputeNormals();
-								redraw();
-							}
-						}
-						else if ( GLWidget::numSelectedFaceVertices() == 1 )
-						{
-							num_sel_faceverts = 1; num_sel_faces = 1;
-						}
-						break;
-						case ReorderFace :
-						if ( GLWidget::numSelectedFaceVertices() >= 1 )
-						{
-							DLFLFaceVertexPtr sfvptr = GLWidget::getSelectedFaceVertex(0);
-							if ( sfvptr ) sfvptr->getFacePtr()->reorder(sfvptr);
-							redraw();
-						}
-						break;
-						case SubdivideFace :
-						case MultiSelectFace :
+		}
+		GLWidget::clearSelectedFaces();
+		redraw();
+	}
+	break;
+	case BezierConnectFaces :
+	if ( GLWidget::numSelectedFaceVertices() >= 2 )
+	{
+		DLFLFaceVertexPtr sfvptr1, sfvptr2;
+		sfvptr1 = GLWidget::getSelectedFaceVertex(0);
+		sfvptr2 = GLWidget::getSelectedFaceVertex(1);
+		if ( sfvptr1 && sfvptr2 )
+		{
+			undoPush();
+			setModified(true);
+			DLFL::bezierConnectFaces(&object,sfvptr1,sfvptr2,
+				num_segments,nwt1,nwt2);
+			GLWidget::clearSelectedFaces();
+			GLWidget::clearSelectedFaceVertices();
+			num_sel_faceverts = 0; num_sel_faces = 0;
+			recomputePatches();
+			recomputeNormals();
+			redraw();   
+		}
+	}
+	else if ( GLWidget::numSelectedFaceVertices() == 1 )
+	{
+		num_sel_faceverts = 1; num_sel_faces = 1;
+	}
+	break;
+	case HermiteConnectFaces :
+	if ( GLWidget::numSelectedFaceVertices() >= 2 )
+	{
+		DLFLFaceVertexPtr sfvptr1, sfvptr2;
+		sfvptr1 = GLWidget::getSelectedFaceVertex(0);
+		sfvptr2 = GLWidget::getSelectedFaceVertex(1);
+		if ( sfvptr1 && sfvptr2 )
+		{
+			undoPush();
+			setModified(true);
+			if ( symmetric_weights )
+				DLFL::hermiteConnectFaces(&object,sfvptr1,sfvptr2,
+				num_segments,nwt1,nwt1,
+				max_segments,num_extra_twists);
+			else
+				DLFL::hermiteConnectFaces(&object,sfvptr1,sfvptr2,
+				num_segments,nwt1,nwt2,
+				max_segments,num_extra_twists);
+			GLWidget::clearSelectedFaces();
+			GLWidget::clearSelectedFaceVertices();
+			num_sel_faceverts = 0; num_sel_faces = 0;
+			recomputePatches();
+			recomputeNormals();
+			redraw();
+		}
+	}
+	else if ( GLWidget::numSelectedFaceVertices() == 1 )
+	{
+		num_sel_faceverts = 1; num_sel_faces = 1;
+	}
+	break;
+	case ReorderFace :
+	if ( GLWidget::numSelectedFaceVertices() >= 1 )
+	{
+		DLFLFaceVertexPtr sfvptr = GLWidget::getSelectedFaceVertex(0);
+		if ( sfvptr ) sfvptr->getFacePtr()->reorder(sfvptr);
+		redraw();
+	}
+	break;
+	case SubdivideFace :
+	case MultiSelectFace :
 						// num_sel_faces++;
-						break;
+	break;
 			//from ozgur
-						case CutEdge :
-						if ( GLWidget::numSelectedEdges() >= 1 )
-						{
-							DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
-							if ( septr )
-							{
-								undoPush();
-								septr->ismarked = 1- septr->ismarked;
+	case CutEdge :
+	if ( GLWidget::numSelectedEdges() >= 1 )
+	{
+		DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
+		if ( septr )
+		{
+			undoPush();
+			septr->ismarked = 1- septr->ismarked;
 																					// DLFL::cutEdge( &object, septr, peelDistance_factor,pnormalBendS_factor,pnormalBendT_factor, peel_all_edges);
-							}
-							GLWidget::clearSelectedEdges();
-							redraw();
-						}
-						break;
-						case TruncateEdge :
-						if ( GLWidget::numSelectedEdges() >= 1 )
-						{
-							DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
-							if ( septr )
-							{
-								undoPush();
-								septr->ismarked = 1- septr->ismarked;
+		}
+		GLWidget::clearSelectedEdges();
+		redraw();
+	}
+	break;
+	case TruncateEdge :
+	if ( GLWidget::numSelectedEdges() >= 1 )
+	{
+		DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
+		if ( septr )
+		{
+			undoPush();
+			septr->ismarked = 1- septr->ismarked;
 																					// DLFL::cutEdge( &object, septr, peelDistance_factor,pnormalBendS_factor,pnormalBendT_factor, peel_all_edges);
-							}
-							GLWidget::clearSelectedEdges();
-							redraw();
-						}
-						break;
-						case CutVertex :
-						if ( GLWidget::numSelectedVertices() >= 1 )
-						{
-							DLFLVertexPtr svptr = GLWidget::getSelectedVertex(0);
-							if ( svptr )
-							{
-								undoPush();
-								svptr->ismarked = 1 - svptr->ismarked;
-							}
+		}
+		GLWidget::clearSelectedEdges();
+		redraw();
+	}
+	break;
+	case CutVertex :
+	if ( GLWidget::numSelectedVertices() >= 1 )
+	{
+		DLFLVertexPtr svptr = GLWidget::getSelectedVertex(0);
+		if ( svptr )
+		{
+			undoPush();
+			svptr->ismarked = 1 - svptr->ismarked;
+		}
 							// GLWidget::clearSelectedVertices();
-							redraw();
-						}
-						break;
+		redraw();
+	}
+	break;
 
-						case CutEdgeandVertex :
-						if ( GLWidget::numSelectedEdges() >= 1 )
-						{	
-							if ( GLWidget::numSelectedEdges() >= 1 ) {
-								DLFLVertexPtr svptr = GLWidget::getSelectedVertex(0);
-								DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
-								if ( septr ) {
-									if (svptr) {
-										undoPush();
-										septr->ismarked = 1- septr->ismarked;
+	case CutEdgeandVertex :
+	if ( GLWidget::numSelectedEdges() >= 1 )
+	{	
+		if ( GLWidget::numSelectedEdges() >= 1 ) {
+			DLFLVertexPtr svptr = GLWidget::getSelectedVertex(0);
+			DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
+			if ( septr ) {
+				if (svptr) {
+					undoPush();
+					septr->ismarked = 1- septr->ismarked;
 									// DLFL::cutEdge( &object, septr, peelDistance_factor,pnormalBendS_factor,pnormalBendT_factor, peel_all_edges);
-									}
-								}
-								GLWidget::clearSelectedEdges();
-								GLWidget::clearSelectedVertices();
-								redraw();
-							}
-						}
-						break;
-						case MarkEdge:
-						if ( GLWidget::numSelectedEdges() >= 1 )
-						{
-							DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
-							if ( septr )
-							{
-								undoPush();
-								septr->ismarked = 1- septr->ismarked;
-							}
-							GLWidget::clearSelectedEdges();
-							redraw();
-						}
-						break;
+				}
+			}
+			GLWidget::clearSelectedEdges();
+			GLWidget::clearSelectedVertices();
+			redraw();
+		}
+	}
+	break;
+	case MarkEdge:
+	if ( GLWidget::numSelectedEdges() >= 1 )
+	{
+		DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
+		if ( septr )
+		{
+			undoPush();
+			septr->ismarked = 1- septr->ismarked;
+		}
+		GLWidget::clearSelectedEdges();
+		redraw();
+	}
+	break;
 
-						case MarkVertex :
-						if ( GLWidget::numSelectedVertices() >= 1 )
-						{
-							DLFLVertexPtr svptr = GLWidget::getSelectedVertex(0);
-							if ( svptr )
-							{
-								undoPush();
-								svptr->ismarked = 1 - svptr->ismarked;
-							}
-							GLWidget::clearSelectedVertices();
-							redraw();
-						}
-						break;
+	case MarkVertex :
+	if ( GLWidget::numSelectedVertices() >= 1 )
+	{
+		DLFLVertexPtr svptr = GLWidget::getSelectedVertex(0);
+		if ( svptr )
+		{
+			undoPush();
+			svptr->ismarked = 1 - svptr->ismarked;
+		}
+		GLWidget::clearSelectedVertices();
+		redraw();
+	}
+	break;
 
-						case CutFace :
-						if ( GLWidget::numSelectedFaces() >= 1 )
-						{
-							DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
-							if ( sfptr )
-							{
-								undoPush();
-								sfptr->ismarked = 1 - sfptr->ismarked;
-							}
-							GLWidget::clearSelectedFaces();
-							redraw();
-						}
-						break;
-					}//end switch (mode)
+	case CutFace :
+	if ( GLWidget::numSelectedFaces() >= 1 )
+	{
+		DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
+		if ( sfptr )
+		{
+			undoPush();
+			sfptr->ismarked = 1 - sfptr->ismarked;
+		}
+		GLWidget::clearSelectedFaces();
+		redraw();
+	}
+	break;
+}//end switch (mode)
 
-				}//end if (mode != NormalMode)
+}//end if (mode != NormalMode)
 				// else if ( event->buttons() == Qt::RightButton && QApplication::keyboardModifiers() == Qt::ShiftModifier){
 				// 	// event->ignore();
 				// 	mBrushStartX = 0;
 				// 	// mBrushStartY = 0;
 				// }
-				else event->ignore();
+else event->ignore();
 }//end function mousereleaseevent
 
 
@@ -2415,32 +2419,73 @@ void MainWindow::setMode(Mode m) {
 		//       break;
 		case EditVertex :    // brianb
 		case SelectVertex :
+		case MultiSelectVertex :
+		case CutVertex :
+		case MarkVertex :
+		setSelectionMask(MainWindow::MaskVertices);
 		MainWindow::num_sel_verts = 0;
 		break;
 		case SelectEdge :
 		case SelectEdgeLoop :
+		case MultiSelectEdge :
+		case DeleteEdge :
+		case SubdivideEdge :
+		case CollapseEdge :
+		case ConnectEdges :
+		case CutEdge :
+		case TruncateEdge :
+		case MarkEdge :
+		setSelectionMask(MainWindow::MaskEdges);
 		MainWindow::num_sel_edges = 0;
 		break;
 		case SelectFace :
 		case SelectFaceLoop :
+		case MultiSelectFace :
+		case SelectCheckerboard :
+		case ExtrudeFace :
+		case ExtrudeFaceDS :
+		case ExtrudeDualFace :
+		case ExtrudeFaceDodeca :
+		case ExtrudeFaceIcosa :
+		case ExtrudeMultipleFaces :
+		case StellateFace :
+		case DoubleStellateFace :
+		case ConnectFaces :
+		case BezierConnectFaces :
+		case HermiteConnectFaces :
+		case ReorderFace :
+		case SubdivideFace :
+		case CrustModeling :
+		case CutFace :
+		case SelectSimilarFaces :
+		setSelectionMask(MainWindow::MaskFaces);
 		MainWindow::num_sel_faces = 0;
 		break;
 		case SelectFaceVertex :
+		case MultiSelectFaceVertex :
+		case InsertEdge :
+		case SpliceCorners :
+		case ConnectFaceVertices :
+		setSelectionMask(MainWindow::MaskFaceVertices);
 		MainWindow::num_sel_faceverts = 0;
 		break;
 		case NormalMode:
+		setSelectionMask(MainWindow::MaskObject);
 		default :
 									// Nothing to be done for other modes except clearing selection lists
+		setSelectionMask(MainWindow::MaskObject);									
 		MainWindow::clearSelected();
 		break;
 	}
 	if (mode != MultiSelectFace)
 		active->hideBrush();
-	else active->showBrush();
+	else active->showBrush();	
 }
 
 void MainWindow::setSelectionMask(SelectionMask m){
 	selectionmask = m;
+	GLWidget::clearSelected();
+	active->repaint();
 	switch(selectionmask){
 		case MaskVertices :
 		break;
@@ -2937,7 +2982,7 @@ void MainWindow::getEdgeLoopSelection(DLFLEdgePtr eptr) {
 void MainWindow::getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr face_loop_marker, bool select_face_loop) {
 	if ( (eptr == face_loop_start_edge) && !start) 
 		return;
-		
+
 	int idx = 0;
 	DLFLEdgePtrArray edges;
 	vector<DLFLEdgePtr>::iterator it;
@@ -2947,41 +2992,41 @@ void MainWindow::getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr 
 	//check if the two faces are quads
 	if (fptr1 && fptr1->numFaceVertexes() == 4 && !(fptr1 == face_loop_marker) ){
 		// cout << select_face_loop << "\t" << !GLWidget::isSelected(fptr1) << std::endl;
-			if (/*select_face_loop &&*/ !GLWidget::isSelected(fptr1)){
-					GLWidget::setSelectedFace(num_sel_faces,fptr1);
-					num_sel_faces++;
-			}
+		if (/*select_face_loop &&*/ !GLWidget::isSelected(fptr1)){
+			GLWidget::setSelectedFace(num_sel_faces,fptr1);
+			num_sel_faces++;
+		}
 			/*else if (GLWidget::isSelected(fptr1)){
-				GLWidget::clearSelectedFace(fptr1);
-				num_sel_faces--;
-			}*/
+		GLWidget::clearSelectedFace(fptr1);
+		num_sel_faces--;
+		}*/
 			fptr1->getEdges(edges);
-			idx =0;
-			for (it = edges.begin(); it != edges.end(); it++){
-				if (*it == eptr){
-					getFaceLoopSelection(edges[(idx+2)%4],false,fptr1, select_face_loop);
-				}
-				idx++;
-			}//end for loop
+		idx =0;
+		for (it = edges.begin(); it != edges.end(); it++){
+			if (*it == eptr){
+				getFaceLoopSelection(edges[(idx+2)%4],false,fptr1, select_face_loop);
+			}
+			idx++;
+		}//end for loop
 	}
 	if (fptr2 && fptr2->numFaceVertexes() == 4 && !(fptr2 == face_loop_marker) ){
-			if (/*select_face_loop &&*/!GLWidget::isSelected(fptr2)){
-				GLWidget::setSelectedFace(num_sel_faces,fptr2);
-				num_sel_faces++;
-			}
+		if (/*select_face_loop &&*/!GLWidget::isSelected(fptr2)){
+			GLWidget::setSelectedFace(num_sel_faces,fptr2);
+			num_sel_faces++;
+		}
 			/*else if (GLWidget::isSelected(fptr2)){
-				GLWidget::clearSelectedFace(fptr2);
-				num_sel_faces--;				
-			}*/
+		GLWidget::clearSelectedFace(fptr2);
+		num_sel_faces--;				
+		}*/
 			fptr2->getEdges(edges);
-			idx =0;
-			for (it = edges.begin(); it != edges.end(); it++){
-				if (*it == eptr){
-					getFaceLoopSelection(edges[(idx+2)%4], false, fptr2, select_face_loop);
+		idx =0;
+		for (it = edges.begin(); it != edges.end(); it++){
+			if (*it == eptr){
+				getFaceLoopSelection(edges[(idx+2)%4], false, fptr2, select_face_loop);
 					// return;
-				}
-				idx++;
-			}//end for loop
+			}
+			idx++;
+		}//end for loop
 		// }//end if fptr2	
 	}
 }

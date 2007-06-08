@@ -106,7 +106,7 @@ class MainWindow : public QMainWindow {
 			};
 
 				// Enumerations for Selection Masking (e.g. vertices, faces, edges, face-vertices, and eventually objects... ?)
-			enum SelectionMask { MaskVertices=0,MaskEdges,MaskFaces,MaskFaceVertices };
+			enum SelectionMask { MaskObject=0,MaskVertices,MaskEdges,MaskFaces,MaskFaceVertices };
 
 				// Enumerations for various multi-face-handle algorithms
 			enum MFHAlgo { ConvexHull=0, ClosestEdge=1 };
@@ -475,7 +475,7 @@ class MainWindow : public QMainWindow {
 			QAction *selectMultipleFacesAct;
 			QAction *selectSimilarFacesAct;
 			QAction *selectCheckerboardFacesAct;
-			QAction *selectAllFacesAct;
+			QAction *selectAllAct;
 			QAction *selectInverseFacesAct;
 			QAction *selectEdgeAct;
 			QAction *selectEdgeLoopAct;
@@ -530,6 +530,7 @@ class MainWindow : public QMainWindow {
 			QActionGroup *mToolsActionGroup;
 			QActionGroup *mRendererActionGroup;
 			QActionGroup *mRemeshingActionGroup;
+			QActionGroup *mSelectionMaskActionGroup;
 
 		//the status bar
 			QStatusBar *mStatusBar;
@@ -577,10 +578,12 @@ public slots:
 			void select_corner();
 			void exit_selection_mode();
 			void clear_selected();
-			void select_vertices();
-			void select_faces();
-			void select_edges();
-			void select_face_vertices();
+			void selectionMaskVertices();
+			void selectionMaskFaces();
+			void selectionMaskEdges();
+			void selectionMaskFaceVertices();
+			void selectAll();
+			void selectInverse();
 
 	//Basics Widget
 			void toggleDeleteEdgeCleanupFlag(int state);
@@ -736,10 +739,6 @@ public slots:
 			// void turnOffOverlays();
 			// void toggleObjectOrientation();
 			// void toggleNormals();
-
-				// void selectAllFaces();
-				// void selectAllEdges();
-				// void selectAllVertices();
 
 					// Geometric transformations
 			void translatex(double x);

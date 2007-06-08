@@ -32,16 +32,10 @@ class QImage;
 
 #include "DLFLLocator.hh"     // brianb
 
-// class DLFLLocator;
-
 class GLWidget : public QGLWidget {
 	Q_OBJECT        // must include this if you use Qt signals/slots
 
 public :
-	// Constructor
-	GLWidget(int x, int y, int w, int h, QWidget *parent = 0 );
-		// Constructor
-	GLWidget(int x, int y, int w, int h, DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op=NULL, QWidget *parent = 0 );
 
 	GLWidget(	int w, int h , VPView v, DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op, TMPatchObjectPtr pop, const QGLFormat & format, QWidget * parent = 0 );
 
@@ -138,13 +132,28 @@ public :
 		object->getFaces(sel_fptr_array);
 		repaint();
 	}
+
+	void selectAllEdges(){
+		clearSelectedEdges();
+		object->getEdges(sel_eptr_array);
+		repaint();
+	}
+
+	void selectAllVertices(){
+		clearSelectedVertices();
+		object->getVertices(sel_vptr_array);
+		repaint();
+	}
+
+	void selectAllFaceVertices(){
+		clearSelectedFaceVertices();
+		// object->getVertices(sel_vptr_array);
+		repaint();
+	}
 	
 	void selectInverseFaces(){
-		// clearSelectedFaces();
 		DLFLFacePtrArray fparray;
-		// vector<DLFLFacePtr>::iterator it;
 		vector<DLFLFacePtr>::iterator it;
-		// int idx 
 		object->getFaces(fparray);
 		for (it = fparray.begin(); it != fparray.end(); it++){
 			if (!GLWidget::isSelected(*it)){
@@ -153,6 +162,45 @@ public :
 			else clearSelectedFace(*it);
 		}
 		repaint();
+	}
+
+	void selectInverseEdges(){
+		DLFLEdgePtrArray eparray;
+		vector<DLFLEdgePtr>::iterator it;
+		object->getEdges(eparray);
+		for (it = eparray.begin(); it != eparray.end(); it++){
+			if (!GLWidget::isSelected(*it)){
+				addToSelection(*it);
+			}
+			else clearSelectedEdge(*it);
+		}
+		repaint();
+	}
+
+	void selectInverseVertices(){
+		DLFLVertexPtrArray vparray;
+		vector<DLFLVertexPtr>::iterator it;
+		object->getVertices(vparray);
+		for (it = vparray.begin(); it != vparray.end(); it++){
+			if (!GLWidget::isSelected(*it)){
+				addToSelection(*it);
+			}
+			else clearSelectedVertex(*it);
+		}
+		repaint();
+	}
+		//maybe this isn't necessary? ??
+	void selectInverseFaceVertices(){
+		// DLFLFaceVertexPtrArray fvparray;
+		// vector<DLFLFaceVertexPtr>::iterator it;
+		// object->getFaceVertices(fvparray);
+		// for (it = fvparray.begin(); it != fvparray.end(); it++){
+		// 	if (!GLWidget::isSelected(*it)){
+		// 		addToSelection(*it);
+		// 	}
+		// 	else clearSelectedFaceVertex(*it);
+		// }
+		// repaint();
 	}
 	
 		// Toggle grid display on/off

@@ -43,6 +43,13 @@ public :
     return 0;
   };
 
+  virtual void setState( ) {
+    gr->useColor = false;
+    gr->useMaterial = false;
+    gr->useTexture = false;
+    gr->useOutline = false;
+  }
+
 };
 
 #endif // _WIREFRAME_RENDERER_H_

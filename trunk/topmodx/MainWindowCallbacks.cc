@@ -7,19 +7,19 @@
 
 void MainWindow::load_texture() {
 	QString fileName = QFileDialog::getOpenFileName(this,
-																									tr("Open File..."),
-																									"$HOME",
-																									tr("All Supported Files (*.jpg *.png);;JPEG Files (*.jpg);;PNG Files (*.png);;All Files (*)"));
+		tr("Open File..."),
+		"$HOME",
+		tr("All Supported Files (*.jpg *.png);;JPEG Files (*.jpg);;PNG Files (*.png);;All Files (*)"));
 	if (!fileName.isEmpty()){
 		// undoPush();
 		QByteArray ba = fileName.toLatin1();
 		const char *filename = ba.data();
-		
+
 		textured->setTexture(filename);
 		texturedlit->setTexture(filename);
 		getActive()->isValid(); // To ensure new texture is loaded into OpenGL
 		redraw();
-		
+
 		// readObject(filename);
 		// recomputePatches();
 		// recomputeNormals();
@@ -30,96 +30,137 @@ void MainWindow::load_texture() {
 
 //use a specific renderer...
 void MainWindow::useWireframeRenderer() {
-  setRenderer(wired);
-  redraw();
+	setRenderer(wired);
+	redraw();
 }
 
 void MainWindow::useNormalRenderer() {
-  setRenderer(normal);
-  redraw();
+	setRenderer(normal);
+	redraw();
 }
 
 void MainWindow::useLightedRenderer() {
-  recomputeNormals();
-  setRenderer(lit);
-  redraw();
+	recomputeNormals();
+	setRenderer(lit);
+	redraw();
 }
 
 void MainWindow::useTexturedRenderer() {
-  setRenderer(textured);
-  redraw();
+	setRenderer(textured);
+	redraw();
 }
 
 void MainWindow::useTexturedLitRenderer() {
-  setRenderer(texturedlit);
-  redraw();
+	setRenderer(texturedlit);
+	redraw();
 }
 
 void MainWindow::usePatchRenderer() {
-  setRenderer(patch);
-  redraw();
+	setRenderer(patch);
+	redraw();
 }
 
 // Selection Menu.
 void MainWindow::select_vertex() {
-  setMode(MainWindow::SelectVertex);
+	setMode(MainWindow::SelectVertex);
 }
 
 void MainWindow::edit_vertex() {
-  setMode(MainWindow::EditVertex);
+	setMode(MainWindow::EditVertex);
 }
 
 void MainWindow::select_face() {
-  setMode(MainWindow::SelectFace);
+	setMode(MainWindow::SelectFace);
 }
 
 void MainWindow::select_face_loop() {
-  setMode(MainWindow::SelectFaceLoop);
+	setMode(MainWindow::SelectFaceLoop);
 }
 
 void MainWindow::select_multiple_faces() {
-  setMode(MainWindow::MultiSelectFace);
+	setMode(MainWindow::MultiSelectFace);
 	getActive()->showBrush();
 }
 
 void MainWindow::select_similar_faces() {
-  setMode(MainWindow::SelectSimilarFaces);
+	setMode(MainWindow::SelectSimilarFaces);
 }
 
 void MainWindow::select_checkerboard_faces() {
-  setMode(MainWindow::SelectCheckerboard);
+	setMode(MainWindow::SelectCheckerboard);
 }
 
 void MainWindow::select_edge() {
-  setMode(MainWindow::SelectEdge);
+	setMode(MainWindow::SelectEdge);
 }
 
 void MainWindow::select_edge_loop() {
-  setMode(MainWindow::SelectEdgeLoop);
+	setMode(MainWindow::SelectEdgeLoop);
 }
 
 void MainWindow::select_corner() {
-  setMode(MainWindow::SelectFaceVertex);
+	setMode(MainWindow::SelectFaceVertex);
 }
 
-void MainWindow::select_vertices() {
-  setSelectionMask(MainWindow::MaskVertices);
+void MainWindow::selectionMaskVertices() {
+	setSelectionMask(MainWindow::MaskVertices);
 }
 
-void MainWindow::select_faces() {
-  setSelectionMask(MainWindow::MaskFaces);
+void MainWindow::selectionMaskFaces() {
+	setSelectionMask(MainWindow::MaskFaces);
 }
 
-void MainWindow::select_edges() {
-  setSelectionMask(MainWindow::MaskEdges);
+void MainWindow::selectionMaskEdges() {
+	setSelectionMask(MainWindow::MaskEdges);
 }
 
-void MainWindow::select_face_vertices() {
-  setSelectionMask(MainWindow::MaskFaceVertices);
+void MainWindow::selectionMaskFaceVertices() {
+	setSelectionMask(MainWindow::MaskFaceVertices);
 }
 
+void MainWindow::selectAll(){
+	switch (selectionmask){
+		case MaskVertices:
+		active->selectAllVertices();
+		break;
+		case MaskEdges:
+		active->selectAllEdges();
+		break;
+		case MaskFaces:
+		active->selectAllFaces();
+		break;
+		case MaskFaceVertices:
+		active->selectAllFaceVertices();
+		case MaskObject:
+		break;
+		default:
+		// active->selectAllVertices();
+		break;
+	};
+}
+
+void MainWindow::selectInverse(){
+	switch (selectionmask){
+		case MaskVertices:
+		active->selectInverseVertices();
+		break;
+		case MaskEdges:
+		active->selectInverseEdges();
+		break;
+		case MaskFaces:
+		active->selectInverseFaces();
+		break;
+		case MaskFaceVertices:
+		active->selectInverseFaceVertices();
+		case MaskObject:
+		break;
+		default:
+		// active->selectInverseVertices();
+		break;
+	};
+}
 void MainWindow::exit_selection_mode() {
-  setMode(MainWindow::NormalMode);
+	setMode(MainWindow::NormalMode);
 	redraw();
 }
 
@@ -134,46 +175,46 @@ void MainWindow::toggleDeleteEdgeCleanupFlag(int state) {
 }
 
 void MainWindow::changeNumSubDivs(int value) {
-  MainWindow::num_e_subdivs = value;
+	MainWindow::num_e_subdivs = value;
 }
 
 void MainWindow::changeTileTexNum(int value) {
-  MainWindow::tile_tex_n = value;
+	MainWindow::tile_tex_n = value;
 }
 
 // Extrusions.
 void MainWindow::changeExtrudeLength(double value) {
-  MainWindow::extrude_dist = value;
+	MainWindow::extrude_dist = value;
 }
 
 void MainWindow::changeExtrudeRotation(int value) {
-  MainWindow::extrude_rot = value;
+	MainWindow::extrude_rot = value;
 }
 
 void MainWindow::changeExtrudeScale(double value) {
-  MainWindow::extrude_scale = value;
+	MainWindow::extrude_scale = value;
 }
 
 void MainWindow::changeNumExtrusions(int value) {
-  MainWindow::num_extrusions = value;
+	MainWindow::num_extrusions = value;
 }
 
 void MainWindow::toggleDualMeshEdgesFlag(int state) {
-  MainWindow::dual_mesh_edges_check = bool(state);
+	MainWindow::dual_mesh_edges_check = bool(state);
 }
 
 void MainWindow::toggleHexagonalizeDodecaExtrudeFlag(int state) {
-  MainWindow::hexagonalize_dodeca_extrude = bool(state);
+	MainWindow::hexagonalize_dodeca_extrude = bool(state);
 }
 
 // Stellation
 void MainWindow::changeStellateLength(double value) {
-  MainWindow::extrude_dist = value;
+	MainWindow::extrude_dist = value;
 }
 
 // Holes and Handles.
 void MainWindow::changeMaxSegments(int value) {
-  MainWindow::max_segments = value;
+	MainWindow::max_segments = value;
 }
 
 void MainWindow::changeNumSegments(int value) {
@@ -181,15 +222,15 @@ void MainWindow::changeNumSegments(int value) {
 }
 
 void MainWindow::changeNumSegments2(int value){
-	
+
 }
 
 void MainWindow::changeMaxSegments2(int value){
-	
+
 }
 
 void MainWindow::changeWeight1(double value) {
-  MainWindow::nwt1 = value;
+	MainWindow::nwt1 = value;
 }
 
 void MainWindow::toggleSymmetricWeightsFlag(int state) {
@@ -201,91 +242,91 @@ void MainWindow::changeWeight2(double value) {
 }
 
 void MainWindow::changeExtraTwists(int value) {
-  MainWindow::num_extra_twists = value;
+	MainWindow::num_extra_twists = value;
 }
 
 // Crust Modeling.
 void MainWindow::changeCrustScaleFactor(double value) {
-  MainWindow::crust_scale_factor = value;
+	MainWindow::crust_scale_factor = value;
 }
 
 void MainWindow::changeCrustThickness(double value) {
-  MainWindow::crust_thickness = value;
+	MainWindow::crust_thickness = value;
 }
 
 void MainWindow::toggleCrustCleanupFlag(int state) {
-  MainWindow::crust_cleanup = bool(state);
+	MainWindow::crust_cleanup = bool(state);
 }
 
 void MainWindow::crustModeling1() {
 	setMode(MainWindow::CrustModeling);
-  createCrust(true);
-  redraw();
+	createCrust(true);
+	redraw();
 }
 
 void MainWindow::crustModeling2() {
-  setMode(MainWindow::CrustModeling);
-  createCrust(false);
-  redraw();
+	setMode(MainWindow::CrustModeling);
+	createCrust(false);
+	redraw();
 }
 
 void MainWindow::crustModeling3() {
-  // setMode(MainWindow::CrustModelingPainting);
-  createCrust2(false);
-  redraw();
+// setMode(MainWindow::CrustModelingPainting);
+	createCrust2(false);
+	redraw();
 }
 
 void MainWindow::crustModeling4() {
-  // setMode(MainWindow::CrustModelingPainting);
-  createCrust2(true);
-  redraw();
+// setMode(MainWindow::CrustModelingPainting);
+	createCrust2(true);
+	redraw();
 }
 
 //column modeling and wireframe modeling
 void MainWindow::changeWireframeThickness(double value) {
-  MainWindow::wireframe_thickness = value;
+	MainWindow::wireframe_thickness = value;
 }
 
 void MainWindow::changeColumnThickness(double value) {
-  MainWindow::column_thickness = value;
+	MainWindow::column_thickness = value;
 }
 
 void MainWindow::changeColumnSegments(int value) {
-  MainWindow::column_segments = value;
+	MainWindow::column_segments = value;
 }
 
 // Multi-face handle
 void MainWindow::mfh_use_closest_edge_algo() {
-  MainWindow::mfh_algo = MainWindow::ClosestEdge;
+	MainWindow::mfh_algo = MainWindow::ClosestEdge;
 }
 
 void MainWindow::mfh_use_convex_hull_algo() {
-  MainWindow::mfh_algo = MainWindow::ConvexHull;
+	MainWindow::mfh_algo = MainWindow::ConvexHull;
 }
 
 void MainWindow::changeMultiFaceHandleScaleFactor(double value) {
-  MainWindow::mfh_scale_factor = value;
+	MainWindow::mfh_scale_factor = value;
 }
 
 void MainWindow::changeMultiFaceHandleExtrudeDist(double value) {
-  MainWindow::mfh_extrude_dist = value;
+	MainWindow::mfh_extrude_dist = value;
 }
 
 void MainWindow::toggleMultiFaceHandleUseMaxOffsetFlag(int state) {
-  MainWindow::mfh_use_max_offsets = bool(state);
+	MainWindow::mfh_use_max_offsets = bool(state);
 }
 
 //menger sponge operations
 void MainWindow::changeMengerSpongeThickness(double value) {
-  MainWindow::sponge_thickness = value;
+	MainWindow::sponge_thickness = value;
 }
 
 void MainWindow::changeMengerSpongeCollapseThreshold(double value) {
-  MainWindow::sponge_collapse_threshold = value;
+	MainWindow::sponge_collapse_threshold = value;
 }
 
 void MainWindow::toggleMengerSpongeFractionalThicknessFlag(int state) {
-  MainWindow::sponge_fractional_thickness = bool(state);
+	MainWindow::sponge_fractional_thickness = bool(state);
 }
 
 /* begin ozgur */
@@ -320,19 +361,19 @@ void MainWindow::createDualConvexHull() {
 }
 
 void MainWindow::changeCutOffsetE(double value) {
-  MainWindow::cutOffsetE_factor= value;
+	MainWindow::cutOffsetE_factor= value;
 }
 
 void MainWindow::changeCutOffsetV(double value) {
-  MainWindow::cutOffsetV_factor= value;
+	MainWindow::cutOffsetV_factor= value;
 }
 
 void MainWindow::changePNormalBendS(double value) {
-  MainWindow:: pnormalBendS_factor= value;
+	MainWindow:: pnormalBendS_factor= value;
 }
 
 void MainWindow::changePNormalBendT(double value) {
-  MainWindow:: pnormalBendT_factor= value;
+	MainWindow:: pnormalBendT_factor= value;
 }
 
 void MainWindow::toggleGlobalCut(int state){    //ozgur
@@ -343,10 +384,10 @@ void MainWindow::toggleSelectedCut(int state){  //ozgur
 }
 
 void MainWindow::changeTiltPlane1(double value){
-	
+
 }
 void MainWindow::changeTiltPlane2(double value){
-	
+
 }
 /* end ozgur */
 
@@ -392,19 +433,19 @@ void MainWindow::freezeTransforms() {
 // Global operations (don't require selection)
 void MainWindow::recomputeNormals(void)     // Recompute normals and lighting
 {
-  object.computeNormals();
-  computeLighting( &object, patchObject, &plight);
+	object.computeNormals();
+	computeLighting( &object, patchObject, &plight);
 }
 
 void MainWindow::recomputeLighting(void)                // Recompute lighting
 {
-  computeLighting( &object, patchObject, &plight);
+	computeLighting( &object, patchObject, &plight);
 }
 
 void MainWindow::recomputePatches(void) // Recompute the patches for patch rendering
 {
-  if(patchObject)
-    patchObject->updatePatches(&object);
+	if(patchObject)
+		patchObject->updatePatches(&object);
 }
 
 void MainWindow::subdivideAllEdges(void)              // Sub-divide all edges
@@ -876,9 +917,9 @@ void MainWindow::createCrust(bool use_scaling)        // Create a crust
 	undoPush();
 	setModified(true);
 	if ( use_scaling ) 
-	  DLFL::createCrustWithScaling(&object,MainWindow::crust_scale_factor);
+		DLFL::createCrustWithScaling(&object,MainWindow::crust_scale_factor);
 	else 
-	  DLFL::createCrust(&object,MainWindow::crust_thickness);
+		DLFL::createCrust(&object,MainWindow::crust_thickness);
 	recomputePatches();
 	recomputeNormals();
 	MainWindow::clearSelected();
@@ -890,13 +931,13 @@ void MainWindow::createCrust(bool use_scaling)        // Create a crust
 void MainWindow::createCrust2(bool use_scaling) {
 	// DLFLFacePtrArray::iterator first, last;
 	vector<DLFLFacePtr>::iterator it;
-			
+
 	undoPush();
 	setModified(true);
 	if ( use_scaling ) 
-	  DLFL::createCrustWithScaling(&object,MainWindow::crust_scale_factor);
+		DLFL::createCrustWithScaling(&object,MainWindow::crust_scale_factor);
 	else 
-	  DLFL::createCrust(&object,MainWindow::crust_thickness);
+		DLFL::createCrust(&object,MainWindow::crust_thickness);
 	recomputePatches();
 	recomputeNormals();
 	if ( GLWidget::numSelectedFaces() >= 1 ) {
@@ -1045,7 +1086,7 @@ void MainWindow::printEdgeList(void)                       // Print edge list
 
 void MainWindow::printCVList(void)                       // Print CV list
 {
-  ///object.printPatchCVList();
+///object.printPatchCVList();
 }
 
 void MainWindow::printFaceList(void)                       // Print face list
