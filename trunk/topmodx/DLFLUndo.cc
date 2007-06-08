@@ -56,17 +56,15 @@ void MainWindow::undoPush(void)
 void MainWindow::undo(void) {
 	
 	if ( !undoList.empty() ) {		
-		// Restore previous object
+ 		// Restore previous object
 		// Put current object to end of redo list
 		// Take last element of undo list and re-create current object
 		StringStreamPtr curobj = new StringStream;
 		object.writeDLFL(*curobj);
 		redoList.push_back(curobj);
-
-		StringStreamPtr oldobj = undoList.back();;
-		object.readDLFL(*oldobj);
+		StringStreamPtr oldobj = undoList.back();
+		object.readDLFL(*oldobj,true);
 		undoList.pop_back(); delete oldobj;
-
 		recomputePatches();
 		recomputeNormals();
 		// Clear selection lists to avoid dangling pointers

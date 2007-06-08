@@ -203,7 +203,7 @@ namespace DLFL {
     addEdgePtr(eptr);
     current1 = current1->next(); current2 = current2->prev();
     while ( current1 != head1 && current2 != head2 ) {
-      eptr = new DLFLEdge(current1,current2);
+      eptr = new DLFLEdge(current1,current2,false);
       eptr->updateFaceVertices();
       addEdgePtr(eptr);
       current1 = current1->next(); current2 = current2->prev();

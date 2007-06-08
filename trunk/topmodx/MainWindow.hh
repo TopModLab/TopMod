@@ -8,6 +8,7 @@
 
 #include "stylesheeteditor.hh"
 #include "qshortcutmanager.hh"
+#include "qshortcutdialog.hh"
 #include "DLFLScriptEditor.hh"
 #include "VerseTopMod.hh"
 
