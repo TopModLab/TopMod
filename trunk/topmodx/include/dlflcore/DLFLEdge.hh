@@ -62,7 +62,7 @@ namespace DLFL {
     void updateMidPoint(void);
 
     // Update the edge normal - average of normals at the 4 corners adjacent to this edge
-    //void updateNormal(void);
+    void updateNormal(void);
 
   public :
 
@@ -76,8 +76,9 @@ namespace DLFL {
       : fvpV1(fvp1), fvpV2(fvp2), etType(ETNormal), auxcoords(), auxnormal(), midpoint(), normal(), flags(0)
     {
       if ( update ) {
-	  updateMidPoint(); //updateNormal();
-	}
+	updateNormal();
+      }
+      updateMidPoint();
       assignID();
     }
 
@@ -256,22 +257,25 @@ namespace DLFL {
     void setFaceVertexPtr1(DLFLFaceVertexPtr fvptr, bool update=true) {
       fvpV1 = fvptr;
       if ( update ) {
-	  updateMidPoint(); //updateNormal();
-	}
+	updateNormal();
+      }
+      updateMidPoint();
     }
 
     void setFaceVertexPtr2(DLFLFaceVertexPtr fvptr, bool update=true) {
       fvpV2 = fvptr;
       if ( update ) {
-	  updateMidPoint(); //updateNormal();
-	}
+	updateNormal();
+      }
+      updateMidPoint();
     }
 
     void setFaceVertexPointers(DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2, bool update=true) {
       fvpV1 = fvptr1; fvpV2 = fvptr2;
       if ( update ) {
-	  updateMidPoint(); //updateNormal();
-	}
+	updateNormal();
+      }
+      updateMidPoint();
     }
      
     void makeUnique(void) {

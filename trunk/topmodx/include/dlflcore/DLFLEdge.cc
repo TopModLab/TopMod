@@ -29,15 +29,13 @@ namespace DLFL {
   }
 
   // Update the edge normal - average of normals at the 4 corners adjacent to this edge
-  /*void DLFLEdge::updateNormal(void)
-    {
-    if ( fvpV1 != NULL && fvpV2 != NULL )
-    {
-    normal = fvpV1->computeNormal() + fvpV1->next()->computeNormal() +
-    fvpV2->computeNormal() + fvpV2->next()->computeNormal();
-    normalize(normal);
+  void DLFLEdge::updateNormal(void) {
+    if ( fvpV1 != NULL && fvpV2 != NULL ) {
+      normal = fvpV1->computeNormal() + fvpV1->next()->computeNormal() +
+	fvpV2->computeNormal() + fvpV2->next()->computeNormal();
+      normalize(normal);
     }
-    }*/
+  }
 
   // Reverse the DLFL edge. Update face-vertex pointers appropriately
   // See comment in header file before using this function

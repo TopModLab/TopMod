@@ -184,7 +184,7 @@ namespace DLFL {
   
     // Add the new faces to the list
     addFacePtr(newface1); addFacePtr(newface2);
-    //newface1->setMaterial(matl); newface2->setMaterial(matl);
+    newface1->setMaterial(matl); newface2->setMaterial(matl);
 
     newface1->computeNormal(); newface2->computeNormal();
 
