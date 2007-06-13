@@ -118,12 +118,12 @@ public :
 
   void toggleObjectOrientation(void) {
     DLFLRenderer::reverse_object != DLFLRenderer::reverse_object;
-      if(gr) gr->isReversed = DLFLRenderer::reverse_object;
-    /*if ( DLFLRenderer::reverse_object ) {
+    if(gr) gr->isReversed = DLFLRenderer::reverse_object;
+    if ( DLFLRenderer::reverse_object ) {
       DLFLRenderer::reverse_object = false;
     } else {
       DLFLRenderer::reverse_object = true;
-      }*/
+    }
   };
 
   static bool isReversed(void) {

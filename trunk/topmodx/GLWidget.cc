@@ -121,7 +121,6 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	// Draw the actual object using the renderer.
 	// Assumes that render flags have already been set for the renderer
 	// Default color is slightly bluish
-	glColor4f(mRenderColor.redF(),mRenderColor.greenF(),mRenderColor.blueF(),mRenderColor.alphaF());
 	// glDepthRange(0,1);
 	
 	if ( renderer ) {
@@ -878,25 +877,24 @@ DLFLFaceVertexPtr GLWidget::selectFaceVertex(DLFLFacePtr fp, int mx, int my) {
 
 // Draw the selected items
 void GLWidget::drawSelected(void) {
-	if ( !sel_lptr_array.empty() ) // brianb
-    {
-      sel_lptr_array[0]->render();
-    }
+  if ( !sel_lptr_array.empty() ) {
+    sel_lptr_array[0]->render();
+  }
 
-	if ( !sel_vptr_array.empty() ){
-		glPointSize(mSelectedVertexThickness);
-		glBegin(GL_POINTS);
-		glColor4f(mSelectedVertexColor.redF(),mSelectedVertexColor.greenF(),mSelectedVertexColor.blueF(),mSelectedVertexColor.alphaF());
-		DLFLVertexPtrArray::iterator first, last;
-		first = sel_vptr_array.begin(); last = sel_vptr_array.end();
-		while ( first != last ){
-		  GeometryRenderer::instance()->renderVertex(*first);
-		  ///(*first)->render(); 
-		    ++first;
-		}
-		glEnd();
-		glPointSize(1.0);
-	}
+  if ( !sel_vptr_array.empty() ) {
+    glPointSize(mSelectedVertexThickness);
+    //glBegin(GL_POINTS);
+    glColor4f(mSelectedVertexColor.redF(),mSelectedVertexColor.greenF(),mSelectedVertexColor.blueF(),mSelectedVertexColor.alphaF());
+    DLFLVertexPtrArray::iterator first, last;
+    first = sel_vptr_array.begin(); last = sel_vptr_array.end();
+    while ( first != last ){
+      GeometryRenderer::instance()->renderVertex(*first);
+      ///(*first)->render(); 
+      ++first;
+    }
+    //glEnd();
+    glPointSize(1.0);
+  }
 
 	if ( !sel_eptr_array.empty() ){
 		glLineWidth(mSelectedEdgeThickness);
@@ -919,7 +917,7 @@ void GLWidget::drawSelected(void) {
 	  DLFLFacePtrArray::iterator first, last;
 	  first = sel_fptr_array.begin(); last = sel_fptr_array.end();
 	  while ( first != last )	{
-	    GeometryRenderer::instance()->renderFace(*first);
+	    GeometryRenderer::instance()->renderFace(*first,false);
 	    ///(*first)->render_FVN(); 
 	    ++first;
 	  }
@@ -933,7 +931,7 @@ void GLWidget::drawSelected(void) {
 		DLFLFaceVertexPtrArray::iterator first, last;
 		first = sel_fvptr_array.begin(); last = sel_fvptr_array.end();
 		while ( first != last ){
-		  GeometryRenderer::instance()->renderFaceVertex(*first);
+		  GeometryRenderer::instance()->renderFaceVertex(*first,false);
 		  ///(*first)->render(); 
 		  ++first;
 		}
@@ -1151,6 +1149,11 @@ QColor GLWidget::getViewportColor(){
 
 void GLWidget::setRenderColor(QColor c){
 	mRenderColor = c;
+	GeometryRenderer *gr = GeometryRenderer::instance();
+	gr->renderColor[0] = c.redF();
+	gr->renderColor[1] = c.greenF();
+	gr->renderColor[2] = c.blueF();
+	gr->renderColor[3] = c.alphaF();
 	redraw();
 }
 

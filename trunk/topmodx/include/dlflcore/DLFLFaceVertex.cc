@@ -9,23 +9,25 @@
 
 namespace DLFL {
 
+  uint DLFLFaceVertex::suLastID = 0;
+
   // Default constructor
   DLFLFaceVertex::DLFLFaceVertex( bool bf )
     : vertex(NULL), normal(), color(1), texcoord(), backface(bf), index(0),
       epEPtr(NULL), fpFPtr(NULL), fvpNext(NULL), fvpPrev(NULL), fvtType(FVTNormal), 
       auxcoords(), auxnormal() 
-  { fvpNext = this; fvpPrev = this; }
+  { assignID(); fvpNext = this; fvpPrev = this; }
 
   // 2 arg-constructor - copy the pointers
   DLFLFaceVertex::DLFLFaceVertex( DLFLVertexPtr vptr, DLFLEdgePtr eptr, bool bf )
     : vertex(vptr), normal(), color(1), texcoord(), backface(bf), index(0),
       epEPtr(eptr), fpFPtr(NULL), fvpNext(NULL), fvpPrev(NULL),
       fvtType(FVTNormal), auxcoords(), auxnormal()
-  { fvpNext = this; fvpPrev = this; }
+  { assignID(); fvpNext = this; fvpPrev = this; }
   
   // Copy constructor
   DLFLFaceVertex::DLFLFaceVertex( const DLFLFaceVertex& dfv )
-    : vertex(dfv.vertex), normal(dfv.normal), color(dfv.color), texcoord(dfv.texcoord),
+    : uID(dfv.uID), vertex(dfv.vertex), normal(dfv.normal), color(dfv.color), texcoord(dfv.texcoord),
       backface(false), index(dfv.index), epEPtr(dfv.epEPtr), fpFPtr(dfv.fpFPtr), 
       fvpNext(NULL), fvpPrev(NULL), fvtType(dfv.fvtType), auxcoords(dfv.auxcoords), auxnormal(dfv.auxnormal)
   { fvpNext = this; fvpPrev = this; }

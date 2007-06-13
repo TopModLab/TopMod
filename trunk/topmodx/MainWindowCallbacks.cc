@@ -444,8 +444,8 @@ void MainWindow::recomputeLighting(void)                // Recompute lighting
 
 void MainWindow::recomputePatches(void) // Recompute the patches for patch rendering
 {
-	if(patchObject)
-		patchObject->updatePatches(&object);
+  if(patchObject)
+    patchObject->updatePatches(&object);
 }
 
 void MainWindow::subdivideAllEdges(void)              // Sub-divide all edges

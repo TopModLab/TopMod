@@ -567,6 +567,7 @@ namespace DLFL {
     newfv2->setVertexPtr(nvp);
     newfv2->setFacePtr(f2);
 
+    DLFLFaceVertexType vt1,vt2;
     //Set type if caller requested it
     if (set_type) {
       //Always set it to new Edge point.Caller can change it to a new Face point
@@ -574,6 +575,8 @@ namespace DLFL {
       nvp->setType(VTNewEdgePoint);
       newfv1->setType(FVTNew);
       newfv2->setType(FVTNew);
+      vt1 = newfv1->getType();
+      vt2 = newfv2->getType();
     }
     //Insert the new FaceVertexes into the respective
     // Faces at the appropriate locations

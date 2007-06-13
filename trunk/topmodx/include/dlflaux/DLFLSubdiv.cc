@@ -608,7 +608,7 @@ namespace DLFL {
     eplist1.resize(num_old_edges,NULL); eplist2.resize(num_old_edges,NULL);
   
     // Find starting edge ID to use as offset.
-    eistart = (obj->lastEdge())->getID();
+    eistart = (obj->firstEdge())->getID();
 
     fl_first = obj->beginFace(); fl_last = obj->endFace(); num_faces = 0;
     while ( fl_first != fl_last && num_faces < num_old_faces ) {
@@ -2112,6 +2112,7 @@ namespace DLFL {
 	faceptr->getCorners(corners);
 	for (int i=0; i < corners.size(); ++i) {
 	  if ( corners[i]->getType() == FVTNew ) {
+	    DLFLFaceVertexType vt = corners[i]->getType();
 	    // Reset the type of the corner as well as the vertex
 	    // Get both edges related to this corner and add them
 	    // to the list for resetting type later.

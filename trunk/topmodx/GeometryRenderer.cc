@@ -15,17 +15,21 @@ void GeometryRenderer::render( DLFLObjectPtr obj ) const {
   } glPopMatrix( );
 }
 
-void GeometryRenderer::renderFace( DLFLFacePtr df ) const {
-  glBeginFace( df->size(), useOutline ); {
-    DLFLFaceVertexPtr head, curr;
-    curr = head = df->front();
-    renderFaceVertex( curr );
+void GeometryRenderer::renderFace( DLFLFacePtr df, bool useAttrs ) const {
+  if( useAttrs ) {
+    glBeginFace( df->size(), useOutline );
+  } else {
+    glBeginFace( df->size(), false );
+  }
+  DLFLFaceVertexPtr head, curr;
+  curr = head = df->front();
+  renderFaceVertex( curr, useAttrs );
+  curr = curr->next();
+  while( curr != head ) {
+    renderFaceVertex( curr, useAttrs );
     curr = curr->next();
-    while( curr != head ) {
-      renderFaceVertex( curr );
-      curr = curr->next();
-    }
-  } glEnd( );
+  }
+  glEnd( );
 
   if( drawFaceCentroid || drawFaceNormals )
     df->updateCentroid( );
@@ -52,15 +56,25 @@ void GeometryRenderer::renderFace( DLFLFacePtr df ) const {
   } 
 }
  
-void GeometryRenderer::renderFaceVertex( DLFLFaceVertexPtr dfv ) const {
+void GeometryRenderer::renderFaceVertex( DLFLFaceVertexPtr dfv, bool useAttrs ) const {
   if( dfv->vertex ) {
-    if( useNormal ) { glNormal3dv( dfv->normal.getCArray() ); }
-    if( useColor ) { glColor( dfv->color ); }
-    if( useTexture ) { 
-      if( isReversed )
-	glTexCoord2d(1.0-dfv->texcoord[0],1.0-dfv->texcoord[1]);
-      else
-	glTexCoord2d(1.0-dfv->texcoord[0],1.0-dfv->texcoord[1]);
+    if( useAttrs ) {
+      if( useNormal ) { glNormal3dv( dfv->normal.getCArray() ); }
+      if( useColor && useMaterial ) {
+	// Lighting and solid color material
+	RGBColor rgb(renderColor[0], renderColor[1], renderColor[2] );
+	rgb = product(rgb, dfv->color);
+	glColor4f( rgb.r, rgb.g, rgb. b, renderColor[3]);
+      } else {
+	if( useColor ) { glColor( dfv->color ); } // Actually means use lighting
+	if( useMaterial ) { glColor4dv(renderColor); }
+      }
+      if( useTexture ) { 
+	if( isReversed )
+	  glTexCoord2d(1.0-dfv->texcoord[0],1.0-dfv->texcoord[1]);
+	else
+	  glTexCoord2d(1.0-dfv->texcoord[0],1.0-dfv->texcoord[1]);
+      }
     }
     DLFLVertexPtr vp = dfv->vertex;
     glVertex3dv( vp->coords.getCArray() );

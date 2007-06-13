@@ -1,6 +1,6 @@
 
 QT += opengl xml
-CONFIG += qt debug warn_off assistant
+CONFIG += qt debug warn_off assistant link_prl
 
 # exclude verse python or spacenav drivers
 # or include them with CONFIG += 
@@ -193,6 +193,7 @@ SOURCES += \
 	# DLFLWindow.cc \
 	DLFLLocator.cc \
 	TMPatchObject.cc \
+        TMPatchFace.cc \
 	stylesheeteditor.cc
 
 CONFIG(WITH_VERSE){

@@ -50,7 +50,7 @@ public :
 
   virtual void setState( ) {
     gr->useColor = true;
-    gr->useMaterial = false;
+    gr->useMaterial = true;
     gr->useTexture = false;
     gr->useOutline = false;
   }

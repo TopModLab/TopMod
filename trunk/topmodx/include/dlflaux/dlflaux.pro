@@ -1,7 +1,7 @@
 TEMPLATE = lib
 CONFIG -= qt
 CONFIG += static #dll # build shared library
-CONFIG += debug warn_off
+CONFIG += debug warn_off create_prl
 TARGET = dlflaux
 INCLUDEPATH += .. ../vecmat ../dlflcore
 DESTDIR = ../../lib

@@ -59,13 +59,14 @@ namespace DLFL {
       // This can be done by checking if the 2 corners are adjacent
       if ( (e1fvp1->next() == e2fvp2) || (e1fvp1->prev() == e2fvp2) ) {
 	// Edge already exists. Don't insert a new edge
-      } else
+      } else {
 	insertEdgeWithoutCheck(obj,e1fvp1,e2fvp2); // Use version which doesn't check for self loops
-
+      }
       if ( (e1fvp2->next() == e2fvp1) || (e1fvp2->prev() == e2fvp1) ) {
 	// Edge already exists. Don't insert a new edge
-      } else
+      } else {
 	insertEdgeWithoutCheck(obj,e1fvp2,e2fvp1); // Use version which doesn't check for self loops
+      }
     } else {
       // Use versions which doesn't check for self loops
       insertEdgeWithoutCheck(obj,e1fvp1,e2fvp2);

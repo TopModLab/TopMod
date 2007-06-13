@@ -25,6 +25,20 @@
 namespace DLFL {
 
   class DLFLFaceVertex {
+  public:
+    static void setLastID( uint id ) {
+      if( id > suLastID )
+	suLastID = id;
+    };
+  protected:
+    static uint suLastID;
+
+    static uint newID( ) {
+      uint temp = suLastID;
+      suLastID++;
+      return temp;
+    };
+
   public :
     DLFLVertexPtr      vertex;                        // Associated vertex pointer
     Vector3d           normal;                        // Normal
@@ -34,6 +48,7 @@ namespace DLFL {
                                                       // Used in reading OBJ files
                                                       // Default value is 'false'
   protected :
+    uint               uID;                            // Id for face vertex
     uint               index;                         // Index for use in file output
     DLFLEdgePtr        epEPtr;                        // Pointer to the Edge
     DLFLFacePtr        fpFPtr;                        // Pointer to the Face
@@ -47,6 +62,10 @@ namespace DLFL {
     Vector3d           auxnormal;                     // Additional storage for normal
     Vector3d           ds2coords[4];                  // Level-2 Doo Sabin coordinates
     //TMPatchPtr         tmpp;                          // Pointer to the TMPatch corresponding to this corner
+
+    void assignID( ) {
+      uID = DLFLFaceVertex::newID();
+    };
 
   public :
     // Default constructor
@@ -74,6 +93,7 @@ namespace DLFL {
 
     // Query Functions
     uint getIndex( ) const { return index; };
+    uint getID( ) const { return uID; };
     DLFLFaceVertexType getType( ) const { return fvtType; };
     DLFLVertexType getVertexType( ) const { return vertex->getType(); };
     DLFLVertexPtr getVertexPtr( ) const { return vertex; };

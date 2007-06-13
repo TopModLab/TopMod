@@ -22,14 +22,20 @@ struct compare {
 static std::map<uint, TMPatchPtr, compare> patchMap;
   
 static void setPatchPtr( TMPatchPtr p, DLFLFaceVertexPtr fvp ) {
-  uint id = fvp->getIndex( );
+  uint id = fvp->getID( );
   patchMap[id] = p;
 };
+
 static TMPatchPtr getPatchPtr( DLFLFaceVertexPtr fvp )  {
-  uint id = fvp->getIndex( );
+  uint id = fvp->getID ( );
   std::map<uint, TMPatchPtr, compare>::iterator it;
   it = patchMap.find(id);
   return (*it).second;
+};
+
+static bool destroyPatchMap( ) { 
+ patchMap.clear(); 
+ return patchMap.empty();
 };
 
 class TMPatch {

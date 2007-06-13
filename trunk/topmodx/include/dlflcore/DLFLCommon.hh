@@ -142,7 +142,7 @@ namespace DLFL {
   enum DLFLFaceVertexType { 
     FVTNormal=0, 
     FVTNew=1, 
-    FVTWire=2  };
+    FVTWire=2 };
 
   enum DLFLEdgeType { 
     ETNormal=0, 

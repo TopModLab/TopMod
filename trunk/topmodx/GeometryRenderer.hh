@@ -10,14 +10,14 @@ public :
   /** Singleton Methods **/
   //static GeometryRenderer& instance( );
   static GeometryRenderer* instance( );
-  ~GeometryRenderer( ) { };
+  ~GeometryRenderer( ) { delete renderColor; renderColor = 0; };
 
   //void setObject( DLFLObjectPtr obj ) { mObj = obj; };
   static void glBeginFace( int num, bool outline = false );
 
   void render( DLFLObjectPtr obj ) const;
-  void renderFace( DLFLFacePtr dfp ) const;
-  void renderFaceVertex( DLFLFaceVertexPtr dfvp ) const;
+  void renderFace( DLFLFacePtr dfp, bool useAttrs = true ) const;
+  void renderFaceVertex( DLFLFaceVertexPtr dfvp, bool useAttrs = true ) const;
   void renderEdge( DLFLEdgePtr dep ) const;
   void renderVertex( DLFLVertexPtr dvp ) const;
 
@@ -38,6 +38,8 @@ public :
   bool drawCVs;
   bool drawPatchNormals;
 
+  GLdouble* renderColor;
+
 private :
   //DLFLObjectPtr mObj;
 
@@ -45,7 +47,9 @@ private :
   GeometryRenderer( ) : useMaterial(false), useColor(false), 
 			useNormal(false), useTexture(false), 
 			useOutline(false), drawFaceCentroid(false),
-			drawFaceNormals(false), isReversed(false) { };//, mObj(0) { };
+			drawFaceNormals(false), isReversed(false) { 
+    renderColor = new GLdouble[4];
+  };
 };
 
 #endif // _GEOMETRY_RENDERER_H_

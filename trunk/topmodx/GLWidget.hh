@@ -627,7 +627,7 @@ static VPMouseEvent translateEvent(QMouseEvent *event) {
 void setObject(DLFLObjectPtr op) {
 	object = op;
 	if( patchObject ) { delete patchObject; patchObject = 0; }
-	patchObject = new TMPatchObject( object->getID() );
+	//patchObject = new TMPatchObject( object->getID() );
 }
 
 		// Set the renderer for this viewport

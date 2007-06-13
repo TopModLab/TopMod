@@ -133,14 +133,14 @@ bool MainWindow::deselect_faceverts = false;
 // for face loop selection 
 DLFLEdgePtr MainWindow::face_loop_start_edge = NULL;
 
-MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(), redoList(), 
+MainWindow::MainWindow(char *filename) : object(), patchObject(NULL), mode(NormalMode), undoList(), redoList(), 
 undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimitive(false) {
 		//initialize the OpenGL Window GLWidget
 	QGLFormat fmt;
 		//initialize renderer
 	createRenderers();
 		//patch object initialization
-	patchObject = new TMPatchObject( object.getID() );
+	//patchObject = new TMPatchObject( object.getID() );
 
 	active = new GLWidget(500,600, VPPersp, lit, QColor(255,255,255,255),QColor(255,255,255,255) , &object, patchObject,fmt, this);
 	active->switchTo(VPPersp);	
@@ -183,8 +183,8 @@ undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimi
 	mScriptEditorDockWidget->hide();
 	mScriptEditorDockWidget->setMaximumHeight(200);
 	connect( this, SIGNAL(loadedObject(DLFLObject*,QString)),mScriptEditor, SLOT(loadObject(DLFLObject*,QString)) );
-			//connect( mScriptEditor, SIGNAL(cmdExecuted()), this, SLOT(recomputeAll()) );
-			//connect( mScriptEditor, SIGNAL(cmdExecuted()), this->getActive(), SLOT(update()) );
+	connect( mScriptEditor, SIGNAL(cmdExecuted()), this, SLOT(recomputeAll()) );
+	connect( mScriptEditor, SIGNAL(cmdExecuted()), this->getActive(), SLOT(update()) );
 		#endif
 
 
