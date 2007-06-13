@@ -279,6 +279,13 @@ void MainWindow::createActions() {
 	sm->registerAction(mExitAct, "File Menu", "CTRL+Q");
 	mExitAct->setStatusTip(tr("Exit the application"));
 	connect(mExitAct, SIGNAL(triggered()), this, SLOT(close()));
+	
+	//quick command quicksilver like interface
+	mQuickCommandAct = new QAction(tr("Quick Command"), this);
+	sm->registerAction(mQuickCommandAct, "Tools Menu", "CTRL+X");
+	mQuickCommandAct->setStatusTip(tr("Quick Command Access with Autocompletion"));
+	connect(mQuickCommandAct, SIGNAL(triggered()), this, SLOT(getCommand()));
+	
 
 	//Edit Menu Actions
 	mUndoAct = new QAction(QIcon(":images/undo.png"), tr("&Undo"), this);
@@ -514,37 +521,37 @@ void MainWindow::createActions() {
 	connect(subdivideAllEdgesAct, SIGNAL(triggered()), this, SLOT(subdivideAllEdges()));
 
 	planarizeAllFacesAct = new QAction(tr("Planarize All &Faces"), this);
-	sm->registerAction(planarizeAllFacesAct, "Settings", "CTRL+X");
+	sm->registerAction(planarizeAllFacesAct, "Settings", "");
 	// planarizeAllFacesAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(planarizeAllFacesAct, SIGNAL(triggered()), this, SLOT(planarizeFaces()));
 
 	makeObjectSphericalAct = new QAction(tr("Make &Object Spherical"), this);
-	sm->registerAction(makeObjectSphericalAct, "Settings", "CTRL+X");
+	sm->registerAction(makeObjectSphericalAct, "Settings", "");
 	// makeObjectSphericalAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(makeObjectSphericalAct, SIGNAL(triggered()), this, SLOT(spheralizeObject()));
 
 	makeObjectSmoothAct = new QAction(tr("Make Object &Smooth"), this);
-	sm->registerAction(makeObjectSmoothAct, "Settings", "CTRL+X");
+	sm->registerAction(makeObjectSmoothAct, "Settings", "");
 	// makeObjectSmoothAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(makeObjectSmoothAct, SIGNAL(triggered()), this, SLOT(smoothMesh()));
 
 	createCrustAct = new QAction(tr("&Create Crust"), this);
-	sm->registerAction(createCrustAct, "Settings", "CTRL+X");
+	sm->registerAction(createCrustAct, "Settings", "");
 	// createCrustAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(createCrustAct, SIGNAL(triggered()), this, SLOT(createCrust()));
 
 	computeLightingAct = new QAction(tr("Compute &Lighting"), this);
-	sm->registerAction(computeLightingAct, "Settings", "CTRL+X");
+	sm->registerAction(computeLightingAct, "Settings", "");
 	// computeLightingAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(computeLightingAct, SIGNAL(triggered()), this, SLOT(recomputeLighting()));
 
 	computeNormalsAndLightingAct = new QAction(tr("Compute &Normals and Lighting"), this);
-	sm->registerAction(computeNormalsAndLightingAct, "Settings", "CTRL+X");
+	sm->registerAction(computeNormalsAndLightingAct, "Settings", "");
 	// computeNormalsAndLightingAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(computeNormalsAndLightingAct, SIGNAL(triggered()), this, SLOT(recomputeNormals()));
 
 	assignTextureCoordinatesAct = new QAction(tr("Assign &Texture Coordinates"), this);
-	sm->registerAction(assignTextureCoordinatesAct, "Settings", "CTRL+X");
+	sm->registerAction(assignTextureCoordinatesAct, "Settings", "");
 	// assignTextureCoordinatesAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(assignTextureCoordinatesAct, SIGNAL(triggered()), this, SLOT(assignTileTexCoords()));
 
@@ -852,6 +859,7 @@ void MainWindow::createMenus(){
 
 	mToolsMenu = new QMenu(tr("&Tools"));
 	mToolsMenu->setTearOffEnabled(true);
+	mToolsMenu->addAction(mQuickCommandAct);
 	mToolsMenu->addMenu(mBasicsMode->getMenu());
 	mToolsMenu->addMenu(mExtrusionMode->getMenu());
 	// mToolsMenu->addMenu(mConicalMode->getMenu());
@@ -3029,4 +3037,11 @@ void MainWindow::getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr 
 		}//end for loop
 		// }//end if fptr2	
 	}
+}
+
+void MainWindow::getCommand(){
+	CommandCompleter *commandCompleter = new CommandCompleter(this);
+	QString text = commandCompleter->exec();
+  // if (ok && !text.isEmpty())
+      // textLabel->setText(text);	
 }

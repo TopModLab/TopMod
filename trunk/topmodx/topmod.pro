@@ -5,7 +5,7 @@ CONFIG += qt debug warn_off assistant
 # exclude verse python or spacenav drivers
 # or include them with CONFIG += 
 CONFIG -=  WITH_PYTHON WITH_SPACENAV WITH_VERSE
-CONFIG += WITH_PYTHON 
+# CONFIG += WITH_PYTHON 
 DEFINES += TOPMOD_VERSION
 
 TEMPLATE = app
@@ -126,7 +126,7 @@ HEADERS += \
 	DLFLScriptEditor.hh \
 	TopModPreferences.hh \
 	TdxDeviceWrappers.hh \
-	# DLFLWindow.hh \
+	CommandCompleter.hh \
 	DLFLLocator.hh \
 	GLWidget.hh \
 	TopMod.hh \

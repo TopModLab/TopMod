@@ -32,6 +32,9 @@
 #include "ConicalMode.hh"
 #include "TexturingMode.hh"
 
+//new command auto completion interface - like quicksilver inside topmod
+#include "CommandCompleter.hh"
+
 #include "DLFLLighting.hh"
 #include <DLFLObject.hh>
 #include <DLFLConvexHull.hh>
@@ -411,6 +414,7 @@ class MainWindow : public QMainWindow {
 			
 			QAction *mFullscreenAct;
 			QAction *mPerformRemeshingAct;
+			QAction *mQuickCommandAct;
 
 		//Edit Menu Actions
 			QAction *mUndoAct;
@@ -554,6 +558,8 @@ public slots:
 			void about(); //TODO: topmod developer credits 
 			void help(); //open the qtassistantclient help viewer
 			void documentWasModified();
+			
+			void getCommand(); //this will open up the quicksilver like interface and accept a value from the user
 
 			void showHideScriptEditor();
 			void showHideVerseDialog();

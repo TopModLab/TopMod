@@ -65,5 +65,6 @@
 	<file>images/doosabin_extrude.png</file>
 	<file>images/open.png</file>
 	<file>images/saveas.png</file>
+	<file>resources/commands.txt</file>
 </qresource>
 </RCC>

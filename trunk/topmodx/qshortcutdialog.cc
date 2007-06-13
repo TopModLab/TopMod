@@ -60,6 +60,7 @@ static void initKeyMap()
 		I'm a bit unsure about these one...
 	*/
 	keyMap[Qt::Key_Escape] = "Escape";
+	keyMap[Qt::Key_Space] = "Space";
 	keyMap[Qt::Key_Return] = "Return";
 	keyMap[Qt::Key_Enter] = "Enter";
 	keyMap[Qt::Key_Insert] = "Ins";
