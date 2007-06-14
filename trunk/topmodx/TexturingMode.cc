@@ -6,7 +6,7 @@
 
 #include "TexturingMode.hh"
 
-TexturingMode::TexturingMode(QWidget *parent, QShortcutManager *sm)
+TexturingMode::TexturingMode(QWidget *parent, QShortcutManager *sm, QWidget *actionList)
 		: QWidget(parent)
 {		
 	setParent(0);
@@ -22,6 +22,7 @@ TexturingMode::TexturingMode(QWidget *parent, QShortcutManager *sm)
 	mTileTexturingAction->setStatusTip(tr("Enter Tile Texturing Mode"));
 	mTileTexturingAction->setToolTip(tr("Tile Texturing Mode"));
 	connect(mTileTexturingAction, SIGNAL(triggered()), this, SLOT(triggerTileTexturing()));
+	actionList->addAction(mTileTexturingAction);
 
 }
 

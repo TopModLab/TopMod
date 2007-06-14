@@ -16,7 +16,7 @@ class ExtrusionMode : public QWidget {
 	Q_OBJECT
 
 public:
-	ExtrusionMode(QWidget *parent , QShortcutManager *sm);
+	ExtrusionMode(QWidget *parent , QShortcutManager *sm, QWidget *actionList);
 	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
 	QMenu* getMenu();
 	

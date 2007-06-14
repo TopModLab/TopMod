@@ -6,7 +6,7 @@
 
 #include "HighgenusMode.hh"
 
-HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm)
+HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm, QWidget *actionList)
 		: QWidget(parent)
 {		
 	setParent(0);
@@ -43,6 +43,7 @@ HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm)
 	mAddHoleHandleAction->setStatusTip(tr("Enter Add Hole/Handle Mode"));
 	mAddHoleHandleAction->setToolTip(tr("Add Hole/Handle Mode"));
 	connect(mAddHoleHandleAction, SIGNAL(triggered()), this, SLOT(triggerAddHoleHandle()));
+	actionList->addAction(mAddHoleHandleAction);
 	
 	mAddHoleHandleCVAction = new QAction(QIcon(":images/highgenus_addholehandlecv.png"),tr("Add Hole/Handle CV"),this);
 	mAddHoleHandleCVAction->setCheckable(true);
@@ -50,6 +51,7 @@ HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm)
 	mAddHoleHandleCVAction->setStatusTip(tr("Enter Add Hole/Handle CV Mode"));
 	mAddHoleHandleCVAction->setToolTip(tr("Add Hole/Handle CV Mode"));
 	connect(mAddHoleHandleCVAction, SIGNAL(triggered()), this, SLOT(triggerAddHoleHandleCV()));
+	actionList->addAction(mAddHoleHandleCVAction);
 
 	mAddHandleSIAction = new QAction(QIcon(":images/highgenus_addhandlesi.png"),tr("Add Handle SI"),this);
 	mAddHandleSIAction->setCheckable(true);
@@ -57,6 +59,7 @@ HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm)
 	mAddHandleSIAction->setStatusTip(tr("Enter Add Handle (Shape Interpolation) Mode"));
 	mAddHandleSIAction->setToolTip(tr("Add Handle (Shape Interpolation) Mode"));
 	connect(mAddHandleSIAction, SIGNAL(triggered()), this, SLOT(triggerAddHandleSI()));
+	actionList->addAction(mAddHandleSIAction);
 
 	mRindModelingScalingAction = new QAction(QIcon(":images/highgenus_rind.png"),tr("Rind Modeling Scaling"),this);
 	mRindModelingScalingAction->setCheckable(true);
@@ -64,6 +67,7 @@ HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm)
 	mRindModelingScalingAction->setStatusTip(tr("Enter Rind Modeling Scaling Mode"));
 	mRindModelingScalingAction->setToolTip(tr("Rind Modeling Scaling Mode"));
 	connect(mRindModelingScalingAction, SIGNAL(triggered()), this, SLOT(triggerRindModelingScaling()));
+	actionList->addAction(mRindModelingScalingAction);
 
 	mRindModelingThicknessAction = new QAction(QIcon(":images/highgenus_rind.png"),tr("Rind Modeling Thickness"),this);
 	mRindModelingThicknessAction->setCheckable(true);
@@ -71,6 +75,7 @@ HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm)
 	mRindModelingThicknessAction->setStatusTip(tr("Enter Rind Modeling Thickness Mode"));
 	mRindModelingThicknessAction->setToolTip(tr("Rind Modeling Thickness Mode"));
 	connect(mRindModelingThicknessAction, SIGNAL(triggered()), this, SLOT(triggerRindModelingThickness()));
+	actionList->addAction(mRindModelingThicknessAction);
 
 	mWireframeModelingAction = new QAction(QIcon(":images/highgenus_wireframe.png"),tr("Wireframe Modeling"),this);
 	mWireframeModelingAction->setCheckable(true);
@@ -78,6 +83,7 @@ HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm)
 	mWireframeModelingAction->setStatusTip(tr("Enter Wireframe Modeling Mode"));
 	mWireframeModelingAction->setToolTip(tr("Wireframe Modeling Mode"));
 	connect(mWireframeModelingAction, SIGNAL(triggered()), this, SLOT(triggerWireframeModeling()));
+	actionList->addAction(mWireframeModelingAction);
 
 	mWireframeModeling2Action = new QAction(QIcon(":images/highgenus_wireframe.png"),tr("Wireframe Modeling *EXP!!!"),this);
 	mWireframeModeling2Action->setCheckable(true);
@@ -85,6 +91,7 @@ HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm)
 	mWireframeModeling2Action->setStatusTip(tr("Enter Wireframe Modeling Mode"));
 	mWireframeModeling2Action->setToolTip(tr("Wireframe Modeling Mode"));
 	connect(mWireframeModeling2Action, SIGNAL(triggered()), this, SLOT(triggerWireframeModeling2()));
+	actionList->addAction(mWireframeModeling2Action);
 
 	mColumnModelingAction = new QAction(QIcon(":images/highgenus_column.png"),tr("Column Modeling"),this);
 	mColumnModelingAction->setCheckable(true);
@@ -92,6 +99,7 @@ HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm)
 	mColumnModelingAction->setStatusTip(tr("Enter Column Modeling Mode"));
 	mColumnModelingAction->setToolTip(tr("Column Modeling Mode"));
 	connect(mColumnModelingAction, SIGNAL(triggered()), this, SLOT(triggerColumnModeling()));
+	actionList->addAction(mColumnModelingAction);
 
 	mSierpinskyAction = new QAction(QIcon(":images/highgenus_sierpinsky.png"),tr("Sierpinsky"),this);
 	mSierpinskyAction->setCheckable(true);
@@ -99,6 +107,7 @@ HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm)
 	mSierpinskyAction->setStatusTip(tr("Enter Sierpinsky Mode"));
 	mSierpinskyAction->setToolTip(tr("Sierpinsky Mode"));
 	connect(mSierpinskyAction, SIGNAL(triggered()), this, SLOT(triggerSierpinsky()));
+	actionList->addAction(mSierpinskyAction);
 
 	mMultiFaceHandleAction = new QAction(QIcon(":images/highgenus_multifacehandle.png"),tr("Multi-face Handle"),this);
 	mMultiFaceHandleAction->setCheckable(true);
@@ -106,6 +115,7 @@ HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm)
 	mMultiFaceHandleAction->setStatusTip(tr("Enter Multi-face Handle Mode"));
 	mMultiFaceHandleAction->setToolTip(tr("Multi-face Handle Mode"));
 	connect(mMultiFaceHandleAction, SIGNAL(triggered()), this, SLOT(triggerMultiFaceHandle()));
+	actionList->addAction(mMultiFaceHandleAction);
 
 	mMengerSpongeAction = new QAction(QIcon(":images/highgenus_mengersponge.png"),tr("Menger Sponge"),this);
 	mMengerSpongeAction->setCheckable(true);
@@ -113,7 +123,7 @@ HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm)
 	mMengerSpongeAction->setStatusTip(tr("Enter Menger Sponge Mode"));
 	mMengerSpongeAction->setToolTip(tr("Menger Sponge Mode"));
 	connect(mMengerSpongeAction, SIGNAL(triggered()), this, SLOT(triggerMengerSponge()));
-	
+	actionList->addAction(mMengerSpongeAction);
 }
 
 QMenu* HighgenusMode::getMenu(){

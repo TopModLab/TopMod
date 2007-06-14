@@ -6,7 +6,7 @@
 
 #include "ExtrusionMode.hh"
 
-ExtrusionMode::ExtrusionMode(QWidget *parent, QShortcutManager *sm)
+ExtrusionMode::ExtrusionMode(QWidget *parent, QShortcutManager *sm, QWidget *actionList)
 		: QWidget(parent)
 {		
 	setParent(0);
@@ -37,6 +37,7 @@ ExtrusionMode::ExtrusionMode(QWidget *parent, QShortcutManager *sm)
 	mDooSabinExtrudeAction->setStatusTip(tr("Enter Doo Sabin Extrude Mode"));
 	mDooSabinExtrudeAction->setToolTip(tr("Doo Sabin Extrude Mode"));
 	connect(mDooSabinExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerDooSabinExtrude()));
+	actionList->addAction(mDooSabinExtrudeAction);
 	
 	mCubicalExtrudeAction = new QAction(QIcon(":images/extrude_cubical.png"),tr("Cubical"),this);
 	mCubicalExtrudeAction->setCheckable(true);
@@ -44,6 +45,7 @@ ExtrusionMode::ExtrusionMode(QWidget *parent, QShortcutManager *sm)
 	mCubicalExtrudeAction->setStatusTip(tr("Enter Cubical Extrude Mode"));
 	mCubicalExtrudeAction->setToolTip(tr("Cubical Extrude Mode"));
 	connect(mCubicalExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerCubicalExtrude()));
+	actionList->addAction(mCubicalExtrudeAction);
 	
 	mDodecahedralExtrudeAction = new QAction(QIcon(":images/extrude_dodecahedral.png"),tr("Dodecahedral"),this);
 	mDodecahedralExtrudeAction->setCheckable(true);
@@ -52,6 +54,7 @@ ExtrusionMode::ExtrusionMode(QWidget *parent, QShortcutManager *sm)
 	mDodecahedralExtrudeAction->setStatusTip(tr("Enter Dodecahedral Extrude Mode"));
 	mDodecahedralExtrudeAction->setToolTip(tr("Dodecahedral Extrude Mode"));
 	connect(mDodecahedralExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerDodecahedralExtrude()));
+	actionList->addAction(mDodecahedralExtrudeAction);
 	
 	mIcosahedralExtrudeAction = new QAction(QIcon(":images/extrude_icosahedral.png"),tr("Icosahedral"),this);
 	mIcosahedralExtrudeAction->setCheckable(true);
@@ -60,6 +63,7 @@ ExtrusionMode::ExtrusionMode(QWidget *parent, QShortcutManager *sm)
 	mIcosahedralExtrudeAction->setStatusTip(tr("Enter Icosahedral Extrude Mode"));
 	mIcosahedralExtrudeAction->setToolTip(tr("Icosahedral Extrude Mode"));
 	connect(mIcosahedralExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerIcosahedralExtrude()));
+	actionList->addAction(mIcosahedralExtrudeAction);
 	
 	mOctahedralExtrudeAction = new QAction(QIcon(":images/extrude_octahedral.png"),tr("Octahedral"),this);
 	mOctahedralExtrudeAction->setCheckable(true);
@@ -68,6 +72,7 @@ ExtrusionMode::ExtrusionMode(QWidget *parent, QShortcutManager *sm)
 	mOctahedralExtrudeAction->setStatusTip(tr("Enter Octahedral Extrude Mode"));
 	mOctahedralExtrudeAction->setToolTip(tr("Octahedral Extrude Mode"));
 	connect(mOctahedralExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerOctahedralExtrude()));
+	actionList->addAction(mOctahedralExtrudeAction);
 	
 	mStellateExtrudeAction = new QAction(QIcon(":images/extrude_stellate.png"),tr("Stellate"),this);
 	mStellateExtrudeAction->setCheckable(true);
@@ -75,6 +80,7 @@ ExtrusionMode::ExtrusionMode(QWidget *parent, QShortcutManager *sm)
 	mStellateExtrudeAction->setStatusTip(tr("Enter Stellate Extrude Mode"));
 	mStellateExtrudeAction->setToolTip(tr("Stellate Extrude Mode"));
 	connect(mStellateExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerStellateExtrude()));
+	actionList->addAction(mStellateExtrudeAction);
 	
 	mDoubleStellateExtrudeAction = new QAction(QIcon(":images/extrude_doublestellate.png"),tr("Double Stellate"),this);
 	mDoubleStellateExtrudeAction->setCheckable(true);
@@ -82,7 +88,7 @@ ExtrusionMode::ExtrusionMode(QWidget *parent, QShortcutManager *sm)
 	mDoubleStellateExtrudeAction->setStatusTip(tr("Enter Double Stellate Mode"));
 	mDoubleStellateExtrudeAction->setToolTip(tr("Double Stellate Mode"));
 	connect(mDoubleStellateExtrudeAction, SIGNAL(triggered()), this, SLOT(triggerDoubleStellateExtrude()));
-
+	actionList->addAction(mDoubleStellateExtrudeAction);
 }
 
 QMenu* ExtrusionMode::getMenu(){

@@ -10,57 +10,71 @@
 #include <QFile>
 #include <QStringListModel>
 #include <QApplication>
+#include <QLabel>
+#include <QStyle>
+#include <QPalette>
+#include <QShortcut>
+#include <QStandardItemModel>
+#include <QAction>
 
 class CommandCompleter : public QDialog {
 	Q_OBJECT
 
 public:
 
-	CommandCompleter ( QWidget * parent = 0, Qt::WindowFlags f = 0 ) : QDialog(parent, f) {
-		lineEdit = new QLineEdit(this);
+	// CommandCompleter ( QStringList words, QWidget * parent = 0, Qt::WindowFlags f = 0 ) : QDialog(parent, f) {
+	CommandCompleter ( QWidget *m, QWidget * parent = 0, Qt::WindowFlags f = 0 ) : QDialog(parent, f) {
+		setSizeGripEnabled(false);
+		setWindowFlags(Qt::SplashScreen);
+		setWindowOpacity(0.7);
+		
+		// QStyle* plastiqueStyle = new QPlastiqueStyle;
+		mQuickCommandLabel = new QLabel(tr("Type a command:"));
+		this->setAutoFillBackground(true);
+		// this->setStyle(plastiqueStyle);
+		QPalette p = this->palette();
+		p.setColor(this->backgroundRole(), QColor(255,255,255,127));
+		this->setPalette(p);	
+		
+		mLineEdit = new QLineEdit(this);
+		mCompleter = new QCompleter(this);
 
-		completer = new QCompleter(this);
-		completer->setCaseSensitivity(Qt::CaseInsensitive);
-		completer->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
-		completer->setModel(modelFromFile(":/resources/commands.txt"));
+		mCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+		mCompleter->setCompletionMode(QCompleter::PopupCompletion);
+		//loop through the actions added to the widget *m, add the text to a word list for now
+		for (int i = 0; i < m->actions().count(); ++i)
+			mWordList << ((QAction*)(m->actions().at(i)))->text();
 
-		lineEdit->setCompleter(completer);
+		mModel = new QStringListModel(mWordList,mCompleter);
+		mCompleter->setModel(mModel);
+		mLineEdit->setCompleter(mCompleter);
 		
 		QVBoxLayout *vbox = new QVBoxLayout(this);
-		vbox->addWidget(lineEdit);
+		vbox->addWidget(mQuickCommandLabel);
+		vbox->addWidget(mLineEdit);
 
-	}
-	
-	QAbstractItemModel *modelFromFile(const QString& fileName) {
-	    QFile file(fileName);
-	    if (!file.open(QFile::ReadOnly))
-	        return new QStringListModel(completer);
-
-	    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-	    QStringList words;
-	    while (!file.atEnd()) {
-	        QByteArray line = file.readLine();
-	        if (!line.isEmpty())
-	            words << line.trimmed();
-	    }
-	    QApplication::restoreOverrideCursor();
-			return new QStringListModel(words, completer);
+		// QShortcut *shortcut = new QShortcut(QKeySequence(tr("Enter")),this);
+		connect(mLineEdit, SIGNAL(editingFinished()), this, SLOT(accept()));
 	}
 	
 private:
 	
-	QLineEdit *lineEdit;
+	QLineEdit *mLineEdit;
 	QStringList wordList;
-	QCompleter *completer;
+	QCompleter *mCompleter;
+	QLabel *mQuickCommandLabel;
+	QStringListModel *mModel;
+	QStringList mWordList;
 		
 public slots:
 
-	QString exec(){
+	int exec(){
+		mLineEdit->clear();
 		if ( QDialog::exec() == QDialog::Accepted )
-			return lineEdit->text();
-		return QString();
+			return mWordList.indexOf(mLineEdit->text());
+		// else hide();
+		return -2;
 	}
-
 
 };
 	

@@ -15,7 +15,7 @@ class HighgenusMode : public QWidget {
 	Q_OBJECT
 
 public:
-	HighgenusMode(QWidget *parent, QShortcutManager *sm);
+	HighgenusMode(QWidget *parent, QShortcutManager *sm, QWidget *actionList);
 	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
 	QMenu* getMenu();
 	

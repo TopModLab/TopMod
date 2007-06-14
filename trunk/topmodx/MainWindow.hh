@@ -353,8 +353,15 @@ class MainWindow : public QMainWindow {
 			HighgenusMode *mHighgenusMode;
 			TexturingMode *mTexturingMode;
 
-	//Stuff for the shortcut manager test
+			//Stuff for the shortcut manager test
 			QShortcutManager *sm;
+			
+			//this standard item model will store all the actions in topmod. 
+			//It will be sent to the commandcompleter class in order to create an 
+			//index of the possible actions based on the text and icon associated
+			//with each action
+			QStandardItemModel *mActionModel; 
+			QWidget *mActionListWidget;
 
 		private:
 		//document modified
@@ -553,6 +560,8 @@ class MainWindow : public QMainWindow {
 			TopModPreferences *mPreferencesDialog;
 			QAction *mPreferencesAct;
 			QSettings *mSettings;
+			CommandCompleter *mCommandCompleter;
+			QStringList mCommandList;
 
 public slots:
 			void about(); //TODO: topmod developer credits 
@@ -560,6 +569,7 @@ public slots:
 			void documentWasModified();
 			
 			void getCommand(); //this will open up the quicksilver like interface and accept a value from the user
+			void createCommandList(); //this will create a list of all the commands and index them in an array
 
 			void showHideScriptEditor();
 			void showHideVerseDialog();

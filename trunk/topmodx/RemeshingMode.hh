@@ -25,7 +25,7 @@ class RemeshingMode : public QWidget {
 	Q_OBJECT
 
 public:
-	RemeshingMode(QWidget *parent, QShortcutManager *sm);
+	RemeshingMode(QWidget *parent, QShortcutManager *sm, QWidget *actionList);
 	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
 	QMenu *getMenu();
 

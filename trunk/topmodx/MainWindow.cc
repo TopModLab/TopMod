@@ -200,15 +200,20 @@ undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimi
 
 	//make a new instance of QShortcutManager
 	sm = new QShortcutManager();
+	mActionModel = new QStandardItemModel();
+	mActionListWidget = new QWidget;
 
 		//instantiate toolbars
-	mBasicsMode = new BasicsMode(this, sm);
-	mExtrusionMode = new ExtrusionMode(this, sm);
+	mBasicsMode = new BasicsMode(this, sm, mActionListWidget);
+	mExtrusionMode = new ExtrusionMode(this, sm, mActionListWidget);
 	mConicalMode = new ConicalMode(this, sm);
-	mRemeshingMode = new RemeshingMode(this, sm);
-	mHighgenusMode = new HighgenusMode(this, sm);
-	mTexturingMode = new TexturingMode(this, sm);
+	mRemeshingMode = new RemeshingMode(this, sm, mActionListWidget);
+	mHighgenusMode = new HighgenusMode(this, sm, mActionListWidget);
+	mTexturingMode = new TexturingMode(this, sm, mActionListWidget);
 
+
+	createCommandList(); // create the main list of all topmod commands that a user may want to access through the auto completer interface
+	mCommandCompleter = new CommandCompleter(mActionListWidget, this);
 	createActions();
 	createToolBars();
 	createMenus();
@@ -282,7 +287,9 @@ void MainWindow::createActions() {
 	
 	//quick command quicksilver like interface
 	mQuickCommandAct = new QAction(tr("Quick Command"), this);
-	sm->registerAction(mQuickCommandAct, "Tools Menu", "CTRL+X");
+	// sm->registerAction(mQuickCommandAct, "Tools Menu", "CTRL+X");
+	QShortcut *shortcut = new QShortcut(QKeySequence(Qt::Key_Space), this);
+	connect(shortcut, SIGNAL(activated()), this, SLOT(getCommand()));
 	mQuickCommandAct->setStatusTip(tr("Quick Command Access with Autocompletion"));
 	connect(mQuickCommandAct, SIGNAL(triggered()), this, SLOT(getCommand()));
 	
@@ -3037,11 +3044,4 @@ void MainWindow::getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr 
 		}//end for loop
 		// }//end if fptr2	
 	}
-}
-
-void MainWindow::getCommand(){
-	CommandCompleter *commandCompleter = new CommandCompleter(this);
-	QString text = commandCompleter->exec();
-  // if (ok && !text.isEmpty())
-      // textLabel->setText(text);	
 }

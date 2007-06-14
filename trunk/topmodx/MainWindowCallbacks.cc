@@ -1093,3 +1093,13 @@ void MainWindow::printFaceList(void)                       // Print face list
 {
 	object.printFaces();
 }
+
+void MainWindow::getCommand(){
+	int i = mCommandCompleter->exec();
+	// QMessageBox::about(this, tr("%1").arg(text),tr("%1").arg(mCommandList.indexOf(text)));
+	if (i > -1)
+		mActionListWidget->actions().at(i)->activate(QAction::Trigger);
+		
+}
+//probably delete this soon...
+void MainWindow::createCommandList(){ }

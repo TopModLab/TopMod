@@ -6,7 +6,7 @@
 
 #include "BasicsMode.hh"
 
-BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm)
+BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm, QWidget *actionList)
 		: QWidget(parent) {
 		
 	setParent(0);
@@ -41,6 +41,7 @@ BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm)
 	mInsertEdgeAction->setStatusTip(tr("Enter Insert Edge Mode"));
 	mInsertEdgeAction->setToolTip(tr("Insert Edge Mode"));
 	connect(mInsertEdgeAction, SIGNAL(triggered()), this, SLOT(triggerInsertEdge()));
+	actionList->addAction(mInsertEdgeAction);	
 
 	mDeleteEdgeAction = new QAction(tr("Delete Edge"),this);
 	mDeleteEdgeAction->setIcon(QIcon(":/images/delete_edge.png"));
@@ -49,6 +50,7 @@ BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm)
 	mDeleteEdgeAction->setStatusTip(tr("Enter Delete Edge Mode"));
 	mDeleteEdgeAction->setToolTip(tr("Delete Edge Mode"));
 	connect(mDeleteEdgeAction, SIGNAL(triggered()), this, SLOT(triggerDeleteEdge()));
+	actionList->addAction(mDeleteEdgeAction);
 
 	mCollapseEdgeAction = new QAction(tr("Collapse Edge"),this);
 	mCollapseEdgeAction->setIcon(QIcon(":/images/collapse_edge.png"));
@@ -57,6 +59,7 @@ BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm)
 	mCollapseEdgeAction->setStatusTip(tr("Enter Collapse Edge Mode"));
 	mCollapseEdgeAction->setToolTip(tr("Collapse Edge Mode"));
 	connect(mCollapseEdgeAction, SIGNAL(triggered()), this, SLOT(triggerCollapseEdge()));
+	actionList->addAction(mCollapseEdgeAction);
 
 	mSubdivideEdgeAction = new QAction(tr("Subdivide Edge"),this);
 	mSubdivideEdgeAction->setIcon(QIcon(":/images/subdivide_edge.png"));
@@ -65,6 +68,7 @@ BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm)
 	mSubdivideEdgeAction->setStatusTip(tr("Enter Subdivide Edge Mode"));
 	mSubdivideEdgeAction->setToolTip(tr("Subdivide Edge Mode"));
 	connect(mSubdivideEdgeAction, SIGNAL(triggered()), this, SLOT(triggerSubdivideEdge()));
+	actionList->addAction(mSubdivideEdgeAction);
 	
 	mConnectEdgesAction = new QAction(tr("Connect Edges"),this);
 	mConnectEdgesAction->setIcon(QIcon(":/images/connect_edges.png"));
@@ -73,6 +77,7 @@ BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm)
 	mConnectEdgesAction->setStatusTip(tr("Enter Connect Edges Mode"));
 	mConnectEdgesAction->setToolTip(tr("Connect Edges Mode"));
 	connect(mConnectEdgesAction, SIGNAL(triggered()), this, SLOT(triggerConnectEdges()));
+	actionList->addAction(mConnectEdgesAction);
 	
 	mSpliceCornersAction = new QAction(tr("Splice Corners"),this);
 	mSpliceCornersAction->setIcon(QIcon(":/images/splice_corners.png"));
@@ -81,6 +86,7 @@ BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm)
 	mSpliceCornersAction->setStatusTip(tr("Enter Splice Corners Mode"));
 	mSpliceCornersAction->setToolTip(tr("Splice Corners Mode"));
 	connect(mSpliceCornersAction, SIGNAL(triggered()), this, SLOT(triggerSpliceCorners()));
+	actionList->addAction(mSpliceCornersAction);
 
 	mTransformsAction = new QAction(tr("Transforms"),this);
 	mTransformsAction->setIcon(QIcon(":/images/transforms.png"));
@@ -89,6 +95,7 @@ BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm)
 	mTransformsAction->setStatusTip(tr("Enter Transforms Mode"));
 	mTransformsAction->setToolTip(tr("Transforms Mode"));
 	connect(mTransformsAction, SIGNAL(triggered()), this, SLOT(triggerTransforms()));
+	actionList->addAction(mTransformsAction);
 		
 }
 
@@ -150,14 +157,14 @@ void BasicsMode::triggerTransforms(){
 
 void BasicsMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget){
 	
-	actionGroup->addAction(mInsertEdgeAction);
+	actionGroup->addAction(mInsertEdgeAction);	
 	actionGroup->addAction(mDeleteEdgeAction);	
 	actionGroup->addAction(mCollapseEdgeAction);	
 	actionGroup->addAction(mSubdivideEdgeAction);	
 	actionGroup->addAction(mConnectEdgesAction);	
 	actionGroup->addAction(mSpliceCornersAction);
 	actionGroup->addAction(mTransformsAction);
-	
+		
 	toolBar->addAction(mInsertEdgeAction);
 	toolBar->addAction(mDeleteEdgeAction);	
 	toolBar->addAction(mCollapseEdgeAction);	
