@@ -212,9 +212,9 @@ undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimi
 	mTexturingMode = new TexturingMode(this, sm, mActionListWidget);
 
 
+	createActions();
 	createCommandList(); // create the main list of all topmod commands that a user may want to access through the auto completer interface
 	mCommandCompleter = new CommandCompleter(mActionListWidget, this);
-	createActions();
 	createToolBars();
 	createMenus();
 		//initialize the help file...
@@ -234,56 +234,67 @@ void MainWindow::createActions() {
 	sm->registerAction(mOpenAct, "File Menu", "CTRL+O");
 	mOpenAct->setStatusTip(tr("Open an existing file"));
 	connect(mOpenAct, SIGNAL(triggered()), this, SLOT(openFile()));
-
+	mActionListWidget->addAction(mOpenAct);
+	
 	mSaveAct = new QAction(QIcon(":images/saveas.png"),tr("&Save"), this);
 	sm->registerAction(mSaveAct, "File Menu", "CTRL+S");
 	mSaveAct->setStatusTip(tr("Save the document to disk"));
 	connect(mSaveAct, SIGNAL(triggered()), this, SLOT(saveFile()));
+	mActionListWidget->addAction(mSaveAct);
 
 	mSaveAsAct = new QAction(QIcon(":images/saveas.png"),tr("Save &As..."), this);
 	sm->registerAction(mSaveAsAct, "File Menu", "CTRL+SHIFT+S");
 	mSaveAsAct->setStatusTip(tr("Save the document under a new name"));
 	connect(mSaveAsAct, SIGNAL(triggered()), this, SLOT(saveFileAs()));
+	mActionListWidget->addAction(mSaveAsAct);
 
 	mSavePatchesAct = new QAction(QIcon(":images/saveas.png"),tr("Save &Patch OBJ..."), this);
 	sm->registerAction(mSavePatchesAct, "File Menu", "");
 	mSavePatchesAct->setStatusTip(tr("Save a bezier patch .obj file"));
 	connect(mSavePatchesAct, SIGNAL(triggered()), this, SLOT(saveFileBezierOBJ()));
+	mActionListWidget->addAction(mSavePatchesAct);
 
 	loadTextureAct = new QAction(tr("Load &Texture..."), this);
 	sm->registerAction(loadTextureAct, "File Menu", "CTRL+L");
 	loadTextureAct->setStatusTip(tr("Load Texture from file"));
 	connect(loadTextureAct, SIGNAL(triggered()), this, SLOT(load_texture()));
+	mActionListWidget->addAction(loadTextureAct);
 
 	printInfoAct = new QAction(tr("Print &Information"), this);
 	sm->registerAction(printInfoAct, "File Menu", "CTRL+P");
 	printInfoAct->setStatusTip(tr("Print Information to the console"));
 	connect(printInfoAct, SIGNAL(triggered()), this, SLOT(printSummary()));
+	mActionListWidget->addAction(printInfoAct);
 
 	printFaceListAct = new QAction(tr("Print &Face List"), this);
 	sm->registerAction(printFaceListAct, "File Menu", "CTRL+ALT+P");
 	printFaceListAct->setStatusTip(tr("Print Face List to the console"));
 	// connect(printFaceListAct, SIGNAL(triggered()), this, SLOT(saveAs()));
+	mActionListWidget->addAction(printFaceListAct);
 
 	printVertexListAct = new QAction(tr("Save &As..."), this);
 	sm->registerAction(printVertexListAct, "File Menu", "CTRL+SHIFT+P");
 	printVertexListAct->setStatusTip(tr("Save the document under a new name"));
 	// connect(printVertexListAct, SIGNAL(triggered()), this, SLOT(saveAs()));
+	mActionListWidget->addAction(printVertexListAct);
 
 	printEdgeListAct = new QAction(tr("Print &Edge List"), this);
 	sm->registerAction(printEdgeListAct, "File Menu", "CTRL+ALT+SHIFT+P");
 	printEdgeListAct->setStatusTip(tr("Print Edge list to the console"));
 	// connect(printEdgeListAct, SIGNAL(triggered()), this, SLOT(saveAs()));
+	mActionListWidget->addAction(printEdgeListAct);
 
 	mPrintCVListAct = new QAction(tr("Print &CV List"), this);
 	sm->registerAction(mPrintCVListAct, "File Menu", "");
 	mPrintCVListAct->setStatusTip(tr("Print CV list to the console"));
 	// connect(mPrintCVListAct, SIGNAL(triggered()), this, SLOT(saveAs()));
+	mActionListWidget->addAction(mPrintCVListAct);
 
 	mExitAct = new QAction(tr("E&xit"), this);
 	sm->registerAction(mExitAct, "File Menu", "CTRL+Q");
 	mExitAct->setStatusTip(tr("Exit the application"));
 	connect(mExitAct, SIGNAL(triggered()), this, SLOT(close()));
+	// mActionListWidget->addAction(mExitAct);
 	
 	//quick command quicksilver like interface
 	mQuickCommandAct = new QAction(tr("Quick Command"), this);
@@ -292,59 +303,69 @@ void MainWindow::createActions() {
 	connect(shortcut, SIGNAL(activated()), this, SLOT(getCommand()));
 	mQuickCommandAct->setStatusTip(tr("Quick Command Access with Autocompletion"));
 	connect(mQuickCommandAct, SIGNAL(triggered()), this, SLOT(getCommand()));
+	// mActionListWidget->addAction(mQuickCommandAct);
 	
-
 	//Edit Menu Actions
 	mUndoAct = new QAction(QIcon(":images/undo.png"), tr("&Undo"), this);
 	sm->registerAction(mUndoAct, "Edit Menu", "CTRL+Z");
 	mUndoAct->setStatusTip(tr("Undo the last operation"));
 	connect(mUndoAct, SIGNAL(triggered()), this, SLOT(undo()));
+	mActionListWidget->addAction(mUndoAct);
 
 	mRedoAct = new QAction(QIcon(":images/redo.png"), tr("&Redo"), this);
 	sm->registerAction(mRedoAct, "Edit Menu", "CTRL+SHIFT+Z");
 	mUndoAct->setStatusTip(tr("Redo the last operation"));
 	connect(mRedoAct, SIGNAL(triggered()), this, SLOT(redo()));
+	mActionListWidget->addAction(mRedoAct);
 
 	mClearUndoListAct = new QAction(tr("&Clear Undo List"), this);
 	sm->registerAction(mClearUndoListAct, "Edit Menu", "CTRL+SHIFT+Z");
 	mClearUndoListAct->setStatusTip(tr("Clear the Undo List to free up some memory"));
 	connect(mClearUndoListAct, SIGNAL(triggered()), this, SLOT(clearUndoList()));
+	mActionListWidget->addAction(mClearUndoListAct);
 
 	//View Menu Actions
 	mPerspViewAct = new QAction( tr("&Reset Camera"), this);
 	sm->registerAction(mPerspViewAct, "View Menu", "F");
 	mPerspViewAct->setStatusTip(tr("Reset Camera Position to default"));
 	connect(mPerspViewAct, SIGNAL(triggered()), this, SLOT(switchPerspView()));
+	mActionListWidget->addAction(mPerspViewAct);
 
 	mTopViewAct = new QAction( tr("&Top View"), this);
 	sm->registerAction(mTopViewAct, "View Menu", "");
 	mTopViewAct->setStatusTip(tr("Switch to Top View"));
 	connect(mTopViewAct, SIGNAL(triggered()), this, SLOT(switchTopView()));
+	// mActionListWidget->addAction(mTopViewAct);
 
 	mBottomViewAct = new QAction( tr("&Bottom View"), this);
 	sm->registerAction(mBottomViewAct, "View Menu", "");
 	mBottomViewAct->setStatusTip(tr("Switch to Bottom View"));
 	connect(mBottomViewAct, SIGNAL(triggered()), this, SLOT(switchBottomView()));
+	// mActionListWidget->addAction(mBottomViewAct);
 
 	mFrontViewAct = new QAction( tr("&Front View"), this);
 	sm->registerAction(mFrontViewAct, "View Menu", "");
 	mFrontViewAct->setStatusTip(tr("Switch to Front View"));
 	connect(mFrontViewAct, SIGNAL(triggered()), this, SLOT(switchFrontView()));
+	// mActionListWidget->addAction(mFrontViewAct);
 
 	mBackViewAct = new QAction( tr("B&ack View"), this);
 	sm->registerAction(mBackViewAct, "View Menu", "");
 	mBackViewAct->setStatusTip(tr("Switch to Back View"));
 	connect(mBackViewAct, SIGNAL(triggered()), this, SLOT(switchBackView()));
+	// mActionListWidget->addAction(mBackViewAct);
 
 	mLeftViewAct = new QAction( tr("&Left View"), this);
 	sm->registerAction(mLeftViewAct, "View Menu", "");
 	mLeftViewAct->setStatusTip(tr("Switch to Left View"));
 	connect(mLeftViewAct, SIGNAL(triggered()), this, SLOT(switchLeftView()));
+	// mActionListWidget->addAction(mLeftViewAct);
 
 	mRightViewAct = new QAction( tr("&Right View"), this);
 	sm->registerAction(mRightViewAct, "View Menu", "");
 	mRightViewAct->setStatusTip(tr("Switch to Right View"));
 	connect(mRightViewAct, SIGNAL(triggered()), this, SLOT(switchRightView()));
+	// mActionListWidget->addAction(mRightViewAct);
 
 	//Display Menu Actions
 	mFullscreenAct = new QAction(tr("&Full Screen"), this);
@@ -352,38 +373,45 @@ void MainWindow::createActions() {
 	sm->registerAction( mFullscreenAct, "Display Menu", "");
 	mFullscreenAct->setStatusTip(tr("Toggle Full Screen"));
 	//  connect(mFullscreenAct, SIGNAL(triggered()), glWidget, SLOT(toggleFullScreen()) );
+	mActionListWidget->addAction(mFullscreenAct);
 
 	showVerticesAct = new QAction(tr("Show &Vertices"), this);
 	showVerticesAct->setCheckable(true);
 	sm->registerAction(showVerticesAct, "Display Menu", "V");
 	// showVerticesAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(showVerticesAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleVertices()));
+	mActionListWidget->addAction(showVerticesAct);
 
 	mShowFaceIDsAct = new QAction(tr("Show &Face IDs"), this);
 	mShowFaceIDsAct->setCheckable(true);
 	sm->registerAction(mShowFaceIDsAct, "Display Menu", "CTRL+F");
 	connect(mShowFaceIDsAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleFaceIDs()));
+	mActionListWidget->addAction(mShowFaceIDsAct);
 
 	mShowEdgeIDsAct = new QAction(tr("Show &Edge IDs"), this);
 	mShowEdgeIDsAct->setCheckable(true);
 	sm->registerAction(mShowEdgeIDsAct, "Display Menu", "CTRL+E");
 	connect(mShowEdgeIDsAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleEdgeIDs()));
+	mActionListWidget->addAction(mShowEdgeIDsAct);
 
 	mShowVertexIDsAct = new QAction(tr("Show &Vertex IDs"), this);
 	mShowVertexIDsAct->setCheckable(true);
 	sm->registerAction(mShowVertexIDsAct, "Display Menu", "CTRL+V");
 	connect(mShowVertexIDsAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleVertexIDs()));
+	mActionListWidget->addAction(mShowVertexIDsAct);
 
 	mShowSelectedIDsAct = new QAction(tr("Show &Selected IDs"), this);
 	mShowSelectedIDsAct->setCheckable(true);
 	sm->registerAction(mShowSelectedIDsAct, "Display Menu", "SHIFT+S");
 	connect(mShowSelectedIDsAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleSelectedIDs()));
+	mActionListWidget->addAction(mShowSelectedIDsAct);
 
 	showSilhouetteAct = new QAction(tr("Show &Silhouette"), this);
 	showSilhouetteAct->setCheckable(true);
 	sm->registerAction(showSilhouetteAct, "Display Menu", "S" );
 	// showSilhouetteAct->setStatusTip((tr"Blah"));
 	connect(showSilhouetteAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleSilhouette()));
+	mActionListWidget->addAction(showSilhouetteAct);
 
 	showWireframeAct = new QAction(tr("Show &Wireframe"), this);
 	showWireframeAct->setCheckable(true);
@@ -391,36 +419,42 @@ void MainWindow::createActions() {
 	sm->registerAction(showWireframeAct, "Display Menu", "W");
 	// showWireframeAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(showWireframeAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleWireframe()));
+	mActionListWidget->addAction(showWireframeAct);
 
 	showCoordinateAxesAct = new QAction(tr("Show &Coordinate Axes"), this);
 	showCoordinateAxesAct->setCheckable(true);
 	sm->registerAction(showCoordinateAxesAct, "Display Menu", "X");
 	// showCoordinateAxesAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(showCoordinateAxesAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleAxes()));
+	mActionListWidget->addAction(showCoordinateAxesAct);
 
 	objectOrientationAct = new QAction(tr("Reverse Object"), this);
 	objectOrientationAct->setCheckable(true);
 	sm->registerAction(objectOrientationAct, "Display Menu", "R");
 	// objectOrienationAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(objectOrientationAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleObjectOrientation()));
+	mActionListWidget->addAction(objectOrientationAct);
 
 	showNormalsAct = new QAction(tr("Show Normals"), this);
 	showNormalsAct->setCheckable(true);
 	sm->registerAction(showNormalsAct, "Display Menu", "N");
 	// objectOrienationAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(showNormalsAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleNormals()));
+	mActionListWidget->addAction(showNormalsAct);
 
 	showGridAct = new QAction(tr("Show &Grid"), this);
 	showGridAct->setCheckable(true);
 	sm->registerAction(showGridAct, "Display Menu", "G");
 	// showGridAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(showGridAct, SIGNAL(triggered()), getActive(), SLOT(toggleGrid()));
+	mActionListWidget->addAction(showGridAct);
 
 	showHUDAct = new QAction(tr("Show &Heads Up Display"), this);
 	showHUDAct->setCheckable(true);
 	sm->registerAction(showHUDAct, "Display Menu", "H");
 	showHUDAct->setStatusTip(tr("Show the Heads Up Display"));
 	connect(showHUDAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleHUD()));
+	mActionListWidget->addAction(showHUDAct);
 
 	#ifdef WITH_PYTHON
 	mShowScriptEditorAct = new QAction(tr("Show Script &Editor"), this);
@@ -428,6 +462,7 @@ void MainWindow::createActions() {
 	mShowScriptEditorAct->setStatusTip( tr("Show the script editor to execute DLFL commands") );
 	connect(mShowScriptEditorAct, SIGNAL(triggered()), this, SLOT(showHideScriptEditor()));
 	sm->registerAction(mShowScriptEditorAct, "Display Menu", "SHIFT+CTRL+E");
+	mActionListWidget->addAction(mShowScriptEditorAct);
 	#endif
 
 	#ifdef WITH_VERSE
@@ -436,6 +471,7 @@ void MainWindow::createActions() {
 	mShowVerseDialogAct->setStatusTip( tr("Show the verse dialog to view verse server connection status") );
 	connect(mShowVerseDialogAct, SIGNAL(triggered()), this, SLOT(showHideVerseDialog()));
 	sm->registerAction(mShowVerseDialogAct, "Display Menu", "SHIFT+CTRL+V");
+	mActionListWidget->addAction(mShowVerseDialogAct);
 	#endif	
 
 		//Renderer Menu Actions
@@ -444,36 +480,42 @@ void MainWindow::createActions() {
 	sm->registerAction(wireframeRendererAct, "Renderer Menu", "1");
 	wireframeRendererAct->setStatusTip(tr("Switch the current renderer to Wireframe"));
 	connect(wireframeRendererAct, SIGNAL(triggered()), this, SLOT(useWireframeRenderer()));	
+	mActionListWidget->addAction(wireframeRendererAct);
 
 	normalRendererAct = new QAction(tr("&Normal Renderer"), this);
 	normalRendererAct->setCheckable(true);
 	sm->registerAction(normalRendererAct, "Renderer Menu", "2");
 	normalRendererAct->setStatusTip(tr("Switch the current renderer to Normal"));
 	connect(normalRendererAct, SIGNAL(triggered()), this, SLOT(useNormalRenderer()));
+	mActionListWidget->addAction(normalRendererAct);
 
 	lightedRendererAct = new QAction(tr("&Lighted Renderer"), this);
 	lightedRendererAct->setCheckable(true);
 	sm->registerAction(lightedRendererAct, "Renderer Menu", "3");
 	lightedRendererAct->setStatusTip(tr("Switch the current renderer to Lighted"));
 	connect(lightedRendererAct, SIGNAL(triggered()), this, SLOT(useLightedRenderer()));
+	mActionListWidget->addAction(lightedRendererAct);
 
 	texturedRendererAct = new QAction(tr("&Textured Renderer"), this);
 	texturedRendererAct->setCheckable(true);
 	sm->registerAction(texturedRendererAct, "Renderer Menu", "4");
 	texturedRendererAct->setStatusTip(tr("Switch the current renderer to Textured"));
 	connect(texturedRendererAct, SIGNAL(triggered()), this, SLOT(useTexturedRenderer()));
+	mActionListWidget->addAction(texturedRendererAct);
 
 	texturedLightedAct = new QAction(tr("Te&xtured Lighted Renderer"), this);
 	texturedLightedAct->setCheckable(true);
 	sm->registerAction(texturedLightedAct, "Renderer Menu", "5");
 	texturedLightedAct->setStatusTip(tr("Switch the current renderer to Textured Lit"));
 	connect(texturedLightedAct, SIGNAL(triggered()), this, SLOT(useTexturedLitRenderer()));
+	mActionListWidget->addAction(texturedLightedAct);
 
 	patchRendererAct = new QAction(tr("&Patch Renderer"), this);
 	patchRendererAct->setCheckable(true);
 	sm->registerAction(patchRendererAct, "Renderer Menu", "6");
 	patchRendererAct->setStatusTip(tr("Switch the current renderer to Patch"));
 	connect(patchRendererAct, SIGNAL(triggered()), this, SLOT(usePatchRenderer()));
+	mActionListWidget->addAction(patchRendererAct);
 
 	mRendererActionGroup = new QActionGroup(this);
 	mRendererActionGroup->setExclusive(true);
@@ -490,165 +532,198 @@ void MainWindow::createActions() {
 	sm->registerAction(pCubeAct, "Primitives Menu", "CTRL+1");
 	pCubeAct->setStatusTip(tr("Load a Cube"));
 	connect(pCubeAct, SIGNAL(triggered()), this, SLOT(loadCube()));
+	mActionListWidget->addAction(pCubeAct);
 
 	pOctahedronAct = new QAction(QIcon(":/images/prim_octahedron.png"), tr("&Octahedron"), this);
 	sm->registerAction(pOctahedronAct, "Primitives Menu", "CTRL+2");
 	pOctahedronAct->setStatusTip(tr("Load an octahedron"));
 	connect(pOctahedronAct, SIGNAL(triggered()), this, SLOT(loadOctahedron()));
+	mActionListWidget->addAction(pOctahedronAct);
 
 	pTetrahedronAct = new QAction(QIcon(":/images/prim_tetrahedron.png"), tr("&Tetrahedron"), this);
 	sm->registerAction(pTetrahedronAct, "Primitives Menu", "CTRL+3");
 	pTetrahedronAct->setStatusTip(tr("Load a tetrahedron"));
 	connect(pTetrahedronAct, SIGNAL(triggered()), this, SLOT(loadTetrahedron()));
+	mActionListWidget->addAction(pTetrahedronAct);
 
 	pDodecahedronAct = new QAction(QIcon(":/images/prim_dodecahedron.png"), tr("&Dodecahedron"), this);
 	sm->registerAction(pDodecahedronAct, "Primitives Menu", "CTRL+4");
 	pDodecahedronAct->setStatusTip(tr("Load a dodecahedron"));
 	connect(pDodecahedronAct, SIGNAL(triggered()), this, SLOT(loadDodecahedron()));
+	mActionListWidget->addAction(pDodecahedronAct);
 
 	pIcosahedronAct = new QAction(QIcon(":/images/prim_icosahedron.png"), tr("&Icosahedron"), this);
 	sm->registerAction(pIcosahedronAct, "Primitives Menu", "CTRL+5");
 	pIcosahedronAct->setStatusTip(tr("Load an icosahedron"));
 	connect(pIcosahedronAct, SIGNAL(triggered()), this, SLOT(loadIcosahedron()));
+	mActionListWidget->addAction(pIcosahedronAct);
 
 	pSoccerBallAct = new QAction(QIcon(":/images/prim_soccerball.png"), tr("&Soccer ball"), this);
 	sm->registerAction(pSoccerBallAct, "Primitives Menu", "CTRL+6");
 	pSoccerBallAct->setStatusTip(tr("Load a soccer ball"));
 	connect(pSoccerBallAct, SIGNAL(triggered()), this, SLOT(loadSoccerball()));
+	mActionListWidget->addAction(pSoccerBallAct);
 
 	pGeodesicAct = new QAction(QIcon(":/images/prim_geodesic.png"), tr("&Geodesic Dome"), this);
 	sm->registerAction(pGeodesicAct, "Primitives Menu", "CTRL+7");
 	pGeodesicAct->setStatusTip(tr("Load a geodesic dome"));
 	connect(pGeodesicAct, SIGNAL(triggered()), this, SLOT(loadGeodesic()));
+	mActionListWidget->addAction(pGeodesicAct);
 
 	//Object Menu Actions
 	subdivideAllEdgesAct = new QAction(tr("Subdivide All &Edges"), this);
 	sm->registerAction(subdivideAllEdgesAct, "Settings", "");
 	// subdivideAllEdgesAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(subdivideAllEdgesAct, SIGNAL(triggered()), this, SLOT(subdivideAllEdges()));
+	mActionListWidget->addAction(subdivideAllEdgesAct);
 
 	planarizeAllFacesAct = new QAction(tr("Planarize All &Faces"), this);
 	sm->registerAction(planarizeAllFacesAct, "Settings", "");
 	// planarizeAllFacesAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(planarizeAllFacesAct, SIGNAL(triggered()), this, SLOT(planarizeFaces()));
+	mActionListWidget->addAction(planarizeAllFacesAct);
 
 	makeObjectSphericalAct = new QAction(tr("Make &Object Spherical"), this);
 	sm->registerAction(makeObjectSphericalAct, "Settings", "");
 	// makeObjectSphericalAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(makeObjectSphericalAct, SIGNAL(triggered()), this, SLOT(spheralizeObject()));
+	mActionListWidget->addAction(makeObjectSphericalAct);
 
 	makeObjectSmoothAct = new QAction(tr("Make Object &Smooth"), this);
 	sm->registerAction(makeObjectSmoothAct, "Settings", "");
 	// makeObjectSmoothAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(makeObjectSmoothAct, SIGNAL(triggered()), this, SLOT(smoothMesh()));
+	mActionListWidget->addAction(makeObjectSmoothAct);
 
 	createCrustAct = new QAction(tr("&Create Crust"), this);
 	sm->registerAction(createCrustAct, "Settings", "");
 	// createCrustAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(createCrustAct, SIGNAL(triggered()), this, SLOT(createCrust()));
+	mActionListWidget->addAction(createCrustAct);
 
 	computeLightingAct = new QAction(tr("Compute &Lighting"), this);
 	sm->registerAction(computeLightingAct, "Settings", "");
 	// computeLightingAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(computeLightingAct, SIGNAL(triggered()), this, SLOT(recomputeLighting()));
+	mActionListWidget->addAction(computeLightingAct);
 
 	computeNormalsAndLightingAct = new QAction(tr("Compute &Normals and Lighting"), this);
 	sm->registerAction(computeNormalsAndLightingAct, "Settings", "");
 	// computeNormalsAndLightingAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(computeNormalsAndLightingAct, SIGNAL(triggered()), this, SLOT(recomputeNormals()));
+	mActionListWidget->addAction(computeNormalsAndLightingAct);
 
 	assignTextureCoordinatesAct = new QAction(tr("Assign &Texture Coordinates"), this);
 	sm->registerAction(assignTextureCoordinatesAct, "Settings", "");
 	// assignTextureCoordinatesAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(assignTextureCoordinatesAct, SIGNAL(triggered()), this, SLOT(assignTileTexCoords()));
+	mActionListWidget->addAction(assignTextureCoordinatesAct);
 
 	// //SELECTION MENU ACTIONS
 	selectVertexAct = new QAction(tr("Select &Vertex"), this);
 	sm->registerAction(selectVertexAct, "Selection", "SHIFT+V");
 	selectVertexAct->setStatusTip(tr("Select a Vertex"));
 	connect(selectVertexAct, SIGNAL(triggered()), this, SLOT(select_vertex()));
+	mActionListWidget->addAction(selectVertexAct);
 
 	editVertexAct = new QAction(tr("Edit Verte&x"), this);
 	sm->registerAction(editVertexAct, "Selection", "SHIFT+V");
 	editVertexAct->setStatusTip(tr("Select and Move Vertices One at a time."));
 	connect(editVertexAct, SIGNAL(triggered()), this, SLOT(edit_vertex()));
+	mActionListWidget->addAction(editVertexAct);
 
 	selectFaceAct = new QAction(tr("Select &Face"), this);
 	sm->registerAction(selectFaceAct, "Selection", "SHIFT+F");
 	selectFaceAct->setStatusTip(tr("Select One Face. Just for practice. :)"));
 	connect(selectFaceAct, SIGNAL(triggered()), this, SLOT(select_face() ) );
+	mActionListWidget->addAction(selectFaceAct);
 
 	selectFaceLoopAct = new QAction(tr("Select Face Loo&p"), this);
 	sm->registerAction(selectFaceLoopAct, "Selection", "SHIFT+P");
 	selectFaceLoopAct->setStatusTip(tr("Select a Face Loop."));
 	connect(selectFaceLoopAct, SIGNAL(triggered()), this, SLOT(select_face_loop() ) );
+	mActionListWidget->addAction(selectFaceLoopAct);
 
 	selectMultipleFacesAct = new QAction(tr("Select &Multiple Faces"), this);
 	sm->registerAction(selectMultipleFacesAct, "Selection", "SHIFT+G");
 	connect( selectMultipleFacesAct , SIGNAL( triggered() ), this, SLOT( select_multiple_faces() ) );
+	mActionListWidget->addAction(selectMultipleFacesAct);
 
 	selectSimilarFacesAct = new QAction(tr("Select &Similar Faces"), this);
 	sm->registerAction(selectSimilarFacesAct, "Selection", "SHIFT+G");
 	connect( selectSimilarFacesAct , SIGNAL( triggered() ), this, SLOT( select_similar_faces() ) );
+	mActionListWidget->addAction(selectSimilarFacesAct);
 
 	selectCheckerboardFacesAct = new QAction(tr("C&heckerboard Select Faces"), this);
 	sm->registerAction(selectCheckerboardFacesAct, "Selection", "");
 	connect( selectCheckerboardFacesAct , SIGNAL( triggered() ), this, SLOT( select_checkerboard_faces() ) );
+	mActionListWidget->addAction(selectCheckerboardFacesAct);
 
 	selectAllAct = new QAction(tr("Select &All"), this);
 	sm->registerAction(selectAllAct, "Selection", "CTRL+A");
 	connect( selectAllAct , SIGNAL( triggered() ), this, SLOT( selectAll() ) );
+	mActionListWidget->addAction(selectAllAct);
 
 	selectInverseFacesAct = new QAction(tr("Select &Inverse Faces"), this);
 	sm->registerAction(selectInverseFacesAct, "Selection", "CTRL+I");
 	connect( selectInverseFacesAct , SIGNAL( triggered() ), this, SLOT( selectInverse() ) );
+	mActionListWidget->addAction(selectInverseFacesAct);
 
 	selectEdgeAct = new QAction(tr("Select &Edge"), this);
 	sm->registerAction(selectEdgeAct, "Selection", "SHIFT+E");
 	selectEdgeAct->setStatusTip(tr("Select one Edge"));
 	connect( selectEdgeAct , SIGNAL( triggered() ), this,SLOT( select_edge() ) );
+	mActionListWidget->addAction(selectEdgeAct);
 
 	selectEdgeLoopAct = new QAction(tr("Select Edge &Loop"), this);
 	sm->registerAction(selectEdgeLoopAct, "Selection", "SHIFT+L");
 	selectEdgeLoopAct->setStatusTip(tr("Select an Edge Loop"));
 	connect( selectEdgeLoopAct , SIGNAL( triggered() ), this,SLOT( select_edge_loop() ) );
+	mActionListWidget->addAction(selectEdgeLoopAct);
 
 	selectCornerAct = new QAction(tr("Select &Corner"), this);
 	sm->registerAction(selectCornerAct, "Selection", "SHIFT+C");
 	selectCornerAct->setStatusTip(tr("Select a Face Vertex"));
 	connect( selectCornerAct , SIGNAL( triggered() ), this, SLOT( select_corner() ) );
+	mActionListWidget->addAction(selectCornerAct);
 
 	exitSelectionModeAct = new QAction(tr("E&xit Selection Mode"), this);
 	sm->registerAction(exitSelectionModeAct, "Selection", "SHIFT+X");
 	connect( exitSelectionModeAct , SIGNAL( triggered() ), this, SLOT( exit_selection_mode() ) );
+	mActionListWidget->addAction(exitSelectionModeAct);
 
 	clearSelectedModeAct = new QAction(tr("&Clear Selected"), this);
 	sm->registerAction(clearSelectedModeAct, "Selection", "Escape");
 	connect( clearSelectedModeAct , SIGNAL( triggered() ), this, SLOT( clear_selected() ) );
+	mActionListWidget->addAction(clearSelectedModeAct);
 
 	mSelectVerticesMaskAct = new QAction(tr("Select &Vertices"), this);
 	mSelectVerticesMaskAct->setCheckable(true);
 	sm->registerAction(mSelectVerticesMaskAct, "Selection", "");
 	mSelectVerticesMaskAct->setStatusTip(tr("Select by Component type: Vertices"));
 	connect( mSelectVerticesMaskAct , SIGNAL( triggered() ), this, SLOT( selectionMaskVertices() ) );
+	mActionListWidget->addAction(mSelectVerticesMaskAct);
 
 	mSelectEdgesMaskAct = new QAction(tr("Select &Edges"), this);
 	mSelectEdgesMaskAct->setCheckable(true);
 	sm->registerAction(mSelectEdgesMaskAct, "Selection", "");
 	mSelectEdgesMaskAct->setStatusTip(tr("Select by Component type: Edges"));
 	connect( mSelectEdgesMaskAct , SIGNAL( triggered() ), this, SLOT( selectionMaskEdges() ) );
+	mActionListWidget->addAction(mSelectEdgesMaskAct);
 
 	mSelectFacesMaskAct = new QAction(tr("Select &Faces"), this);
 	mSelectFacesMaskAct->setCheckable(true);
 	sm->registerAction(mSelectFacesMaskAct, "Selection", "");
 	mSelectFacesMaskAct->setStatusTip(tr("Select by Component type: Faces"));
 	connect( mSelectFacesMaskAct , SIGNAL( triggered() ), this, SLOT( selectionMaskFaces() ) );
+	mActionListWidget->addAction(mSelectFacesMaskAct);
 
 	mSelectFaceVerticesMaskAct = new QAction(tr("Select &Face Vertex"), this);
 	mSelectFaceVerticesMaskAct->setCheckable(true);
 	sm->registerAction(mSelectFaceVerticesMaskAct, "Selection", "");
 	mSelectFaceVerticesMaskAct->setStatusTip(tr("Select by Component type: Face-Vertices"));
 	connect( mSelectFaceVerticesMaskAct , SIGNAL( triggered() ), this, SLOT( selectionMaskFaceVertices() ) );
+	mActionListWidget->addAction(mSelectFaceVerticesMaskAct);
 
 	mSelectionMaskActionGroup = new QActionGroup(this);
 	mSelectionMaskActionGroup->setExclusive(true);
@@ -663,31 +738,38 @@ void MainWindow::createActions() {
 	sm->registerAction(mPreferencesAct, "Settings", "CTRL+,");
 	mPreferencesAct->setStatusTip(tr("Open the Preferences Dialog"));
 	connect(mPreferencesAct, SIGNAL(triggered()), this, SLOT(openPreferences()));	
+	mActionListWidget->addAction(mPreferencesAct);
 
 	//LANGUAGE MENU BAR ACTIONS
 	englishAct = new QAction(tr("English"),this);
 	//sm->connect( englishAct , SIGNAL( triggered() ), SLOT  ( configure() ) );
 	sm->registerAction(englishAct, "Languages", "CTRL+F7");
+	mActionListWidget->addAction(englishAct);
 
 	spanishAct = new QAction(tr("Spanish"),this);
 	//sm->connect( spanishAct , SIGNAL( triggered() ), SLOT  ( configure() ) );
 	sm->registerAction(spanishAct, "Languages", "CTRL+F8");
+	mActionListWidget->addAction(spanishAct);
 
 	germanAct = new QAction(tr("German"),this);
 	//sm->connect( germanAct , SIGNAL( triggered() ), SLOT  ( configure() ) );
 	sm->registerAction(germanAct, "Languages", "CTRL+F9");
+	mActionListWidget->addAction(germanAct);
 
 	frenchAct = new QAction(tr("French"),this);
 	//sm->connect( frenchAct , SIGNAL( triggered() ), SLOT  ( configure() ) );
 	sm->registerAction(frenchAct, "Languages", "CTRL+F10");
+	mActionListWidget->addAction(frenchAct);
 
 	turkishAct = new QAction(tr("Turkish"),this);
 	//sm->connect( turkishAct , SIGNAL( triggered() ), SLOT  ( configure() ) );
 	sm->registerAction(turkishAct, "Languages", "CTRL+F11");
+	mActionListWidget->addAction(turkishAct);
 
 	catalanAct = new QAction(tr("Catalan"),this);
 	// sm->connect( catalanAct , SIGNAL( triggered() ), SLOT  ( configure() ) );
 	sm->registerAction(catalanAct, "Languages", "CTRL+F12");
+	mActionListWidget->addAction(catalanAct);
 
 	#ifdef WITH_VERSE
 		//verse menu actions
@@ -695,53 +777,63 @@ void MainWindow::createActions() {
 	mVerseConnectLocalhostAct->setStatusTip( tr("Connect to localhost") );
 	connect(mVerseConnectLocalhostAct, SIGNAL(triggered()), mVerseDialog, SLOT(connectLocalhost()));
 	sm->registerAction(mVerseConnectLocalhostAct, "Verse Menu", "");
+	mActionListWidget->addAction(mVerseConnectLocalhostAct);
 
 	mVerseConnectAct = new QAction(tr("Connect to host..."), this);
 	mVerseConnectAct->setStatusTip( tr("Connect to host...") );
 	connect(mVerseConnectAct, SIGNAL(triggered()), mVerseDialog, SLOT(connectHost()));
 	sm->registerAction(mVerseConnectAct, "Verse Menu", "");
+	mActionListWidget->addAction(mVerseConnectAct);
 
 	mVerseDisconnectAct = new QAction(tr("Disconnect session"), this);
 	mVerseDisconnectAct->setStatusTip( tr("Disconnect Verse Session") );
 	connect(mVerseDisconnectAct, SIGNAL(triggered()), mVerseDialog, SLOT(disconnectHost()));
 	sm->registerAction(mVerseDisconnectAct, "Verse Menu", "");
+	mActionListWidget->addAction(mVerseDisconnectAct);
 
 	mVerseDisconnectAllAct = new QAction(tr("Disconnect All Sessions"), this);
 	mVerseDisconnectAllAct->setStatusTip( tr("Disconnect All Sessions") );
 	connect(mVerseDisconnectAllAct, SIGNAL(triggered()), mVerseDialog, SLOT(disconnectAll()));
 	sm->registerAction(mVerseDisconnectAllAct, "Verse Menu", "");
+	mActionListWidget->addAction(mVerseDisconnectAllAct);
 
 	mVerseStartServerAct = new QAction(tr("Start Verse Server"), this);
 	mVerseStartServerAct->setStatusTip( tr("Disconnect All Nodes") );
 	connect(mVerseStartServerAct, SIGNAL(triggered()), mVerseDialog, SLOT(startServer()));
 	sm->registerAction(mVerseStartServerAct, "Verse Menu", "");
+	mActionListWidget->addAction(mVerseStartServerAct);
 
 	mVerseKillServerAct = new QAction(tr("Kill Verse Server"), this);
 	mVerseKillServerAct->setStatusTip( tr("Kill the Local Verse server process") );
 	connect(mVerseKillServerAct, SIGNAL(triggered()), mVerseDialog, SLOT(killServer()));
 	sm->registerAction(mVerseKillServerAct, "Verse Menu", "");
+	mActionListWidget->addAction(mVerseKillServerAct);
 	#endif
 
 	mPerformRemeshingAct = new QAction(tr("Perform Remeshing"), this);
 	mPerformRemeshingAct->setStatusTip( tr("Perform the current remeshing scheme") );
 	connect(mPerformRemeshingAct, SIGNAL(triggered()), this, SLOT(performRemeshing()));
 	sm->registerAction(mPerformRemeshingAct, "Remeshing Menu", "CTRL+R");
+	mActionListWidget->addAction(mPerformRemeshingAct);
 
 	//help menu actions
 	mHelpAct = new QAction(tr("&Help Contents"), this);
 	mHelpAct->setStatusTip( tr("View the help file") );
 	connect(mHelpAct, SIGNAL(triggered()), this, SLOT(help()));
 	sm->registerAction(mHelpAct, "Help Menu", "F1");
+	mActionListWidget->addAction(mHelpAct);
 
 	mAboutAct = new QAction(tr("&About TopMod"), this);
 	mAboutAct->setStatusTip( tr("About TopMod") );
 	connect(mAboutAct, SIGNAL(triggered()), this, SLOT(about()));
 	sm->registerAction(mAboutAct, "Help Menu", "");
+	mActionListWidget->addAction(mAboutAct);
 
 	mAboutQtAct = new QAction(tr("About &Qt"), this);
 	mAboutQtAct->setStatusTip( tr("About Qt") );
 	connect(mAboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 	sm->registerAction(mAboutQtAct, "Help Menu", "");
+	mActionListWidget->addAction(mAboutQtAct);
 
 }
 
