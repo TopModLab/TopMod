@@ -312,7 +312,8 @@ namespace DLFL {
 
   void DLFLFace::randomAssignTexCoords(void) {
     // Assumes that the face is a quad
-    int start = lrand48() % 4; // Random no 0,1,2 or 3
+    //int start = lrand48() % 4; // Random no 0,1,2 or 3
+    int start = rand() % 4; // Random no 0,1,2 or 3
 
     if ( head ) {
       DLFLFaceVertexPtr current = head; 
