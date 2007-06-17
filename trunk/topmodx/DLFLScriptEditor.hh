@@ -10,11 +10,14 @@
 #include <QWidget>
 #include <QPushButton>
 
-class QLineEdit;
+//class QLineEdit;
 class QTextEdit;
 class QProcess;
 
 #include <DLFLObject.hh>
+#include "editor.hh"
+
+#include "PythonHighlighter.hh"
 
 using namespace DLFL;
 
@@ -31,17 +34,27 @@ Q_OBJECT
 public:
   DLFLScriptEditor( QWidget *parent = 0, Qt::WindowFlags f = Qt::Tool );
   ~DLFLScriptEditor( );
+
+  QColor& outputBgColor( ) { return mOutputBgColor; };
+  QColor& inputBgColor( ) { return mInputBgColor; };
+
 signals :
   void cmdExecuted( );
+  void addToHistory( const QString& item );
 private slots :
   void executeCommand( );
 public slots :
   void loadObject( DLFLObject* obj, QString fileName );
 private :
-  QLineEdit *mLineEdit;
+  Editor *mLineEdit;
   QTextEdit *mTextEdit;
 
   QPushButton *mHideButton;
+
+  PythonHighlighter *pyhigh;
+
+  QColor mOutputBgColor;
+  QColor mInputBgColor;
 
   void PyInit();
 

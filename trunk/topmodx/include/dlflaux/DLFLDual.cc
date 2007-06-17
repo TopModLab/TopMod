@@ -106,7 +106,7 @@ namespace DLFL {
       }
       rw << endl << endl;
       rw << flush;
-      obj->readObjectAlt(rw);
+      obj->readObject(rw);
     }
   }
 

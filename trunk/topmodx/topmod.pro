@@ -5,7 +5,7 @@ CONFIG += qt debug warn_off assistant link_prl
 # exclude verse python or spacenav drivers
 # or include them with CONFIG += 
 CONFIG -=  WITH_PYTHON WITH_SPACENAV WITH_VERSE
-# CONFIG += WITH_PYTHON 
+CONFIG += WITH_PYTHON 
 DEFINES += TOPMOD_VERSION
 
 TEMPLATE = app
@@ -27,7 +27,7 @@ DEPENDPATH += \
 	   include/arcball \
 	   include/dlflcore \
 	   include/dlflaux \
-	   include/verse
+	   include/verse \
 
 INCLUDEPATH += \
 	    include \	      
@@ -138,6 +138,8 @@ HEADERS += \
 	qshortcutmanager.hh \
 	ui_shortcutdialog.h \
 	ui_stylesheeteditor.h \
+        editor.hh \
+        PythonHighlighter.hh \
 	BasicsMode.hh \
 	ExtrusionMode.hh \ 
 	RemeshingMode.hh \
@@ -179,6 +181,8 @@ SOURCES += \
 	GeometryRenderer.cc \
 	qshortcutdialog.cc \
 	qshortcutmanager.cc \
+        editor.cc \
+        PythonHighlighter.cc \
 	BasicsMode.cc	\
 	ExtrusionMode.cc \
 	RemeshingMode.cc \ 

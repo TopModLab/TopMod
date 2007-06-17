@@ -4,9 +4,9 @@ from distutils.core import setup, Extension
 
 dlfl_module = Extension( 'dlfl', 
 			 sources = ['DLFLModule.cc'],
-			 include_dirs = ['..','../vecmat','../dlflcore'],
-			 library_dirs = ['.','../../lib'],#'/Users/stuart/Documents/courses/research/topmod/topmod/lib'],
-			 libraries = ['dlflcore','vecmat'] )
+			 include_dirs = ['..','../vecmat','../dlflcore','../dlflaux'],
+			 library_dirs = ['.','../../lib'],
+			 libraries = ['dlflcore','dlflaux','vecmat'] )
 
 setup( name = 'DLFL',
        version = '1.0',

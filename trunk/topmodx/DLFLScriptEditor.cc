@@ -6,15 +6,26 @@
 
 DLFLScriptEditor::DLFLScriptEditor( QWidget *parent, Qt::WindowFlags f ) : QWidget(parent,f) {
 
-  mTextEdit = new QTextEdit;    
-  mLineEdit = new QLineEdit;
-  QObject::connect(mLineEdit, SIGNAL(returnPressed()), this, SLOT(executeCommand()));    
+  mTextEdit = new QTextEdit;
+  mLineEdit = new Editor;
+  QObject::connect(mLineEdit, SIGNAL(ctrlReturnPressed()), this, SLOT(executeCommand()));
+  QObject::connect( this, SIGNAL(addToHistory(const QString&)), mLineEdit, SLOT(appendHistory(const QString&)) );
 
-  QPalette whiteOnBlack;
+  QPalette whiteOnBlack, whiteOnGrey;
+  mInputBgColor = QColor(0,0,5,255);
   whiteOnBlack.setColor(QPalette::Active, QPalette::Text, Qt::white );
-  whiteOnBlack.setColor(QPalette::Active, QPalette::Base, Qt::black );
-  mTextEdit->setPalette( whiteOnBlack );
+  whiteOnBlack.setColor(QPalette::Active, QPalette::Base, mInputBgColor );
+
+  mOutputBgColor = QColor(20,20,25,255);
+  whiteOnGrey.setColor(QPalette::Active, QPalette::Text, Qt::white );
+  whiteOnGrey.setColor(QPalette::Active, QPalette::Base, mOutputBgColor );
+
+  mTextEdit->setPalette( whiteOnGrey );
   mLineEdit->setPalette( whiteOnBlack );
+
+  mTextEdit->setReadOnly(true);
+
+  pyhigh = new PythonHighlighter(mTextEdit);
 
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addWidget(mTextEdit);
@@ -31,7 +42,10 @@ DLFLScriptEditor::~DLFLScriptEditor( ) {
 
 
 void DLFLScriptEditor::executeCommand( ) {
-  QString command = mLineEdit->text();
+  QString command = mLineEdit->toPlainText();
+  QStringList cmdList = command.split('\n',QString::SkipEmptyParts);
+  QStringList resultList;
+
   QString result;
 
   mTextEdit->moveCursor( QTextCursor::End );
@@ -43,35 +57,52 @@ void DLFLScriptEditor::executeCommand( ) {
       PyObject* main_dict = PyModule_GetDict( main );
       PyObject* dlfl_dict = PyModule_GetDict( dlfl );
 
-      const char *cmd = command.toLocal8Bit().data();
-      PyObject *rstring = PyRun_String( cmd, Py_eval_input, main_dict, dlfl_dict );
-      if( rstring != NULL ) {
-	PyObject *resultObject = PyObject_Str( rstring );
-	if( resultObject != NULL ) {
-	  char *string = PyString_AsString( resultObject );
-	  result = QString( string );
-	  Py_DECREF( resultObject );
+      for(int i = 0; i < cmdList.size(); i++ ) {
+	//const char *cmd = command.toLocal8Bit().data();
+	if( cmdList.at(i).contains(QRegExp("\\bload\\("))) {
+	  QStringList list = cmdList.at(i).split("\"", QString::SkipEmptyParts);
+	  emit requestObject(list.at(1)); // 3 parts: load(, filename.obj, and )
+	  continue;
 	}
-	Py_DECREF( rstring );
-	emit cmdExecuted();
-      } else {
-	//PyErr_Print();
-	PyObject *object, *data, *traceback;
-	PyErr_Fetch( &object, &data, &traceback );
-	PyObject * traceStr = PyObject_Str( data );
-	char *string = PyString_AsString( traceStr );
-	result = QString( string );
-      }
-    }
-  } else {
+
+	const char *cmd = cmdList.at(i).toLocal8Bit().constData();
+	PyObject *rstring = PyRun_String( cmd, Py_eval_input, main_dict, dlfl_dict );
+
+	if( rstring != NULL ) {
+	  PyObject *resultObject = PyObject_Str( rstring );
+	  if( resultObject != NULL ) {
+	    char *string = PyString_AsString( resultObject );
+	    result = QString( string );
+	    Py_DECREF( resultObject );
+	  }
+	  Py_DECREF( rstring );
+	  emit cmdExecuted();
+	} else {
+	  //PyErr_Print();
+	  PyObject *object, *data, *traceback;
+	  PyErr_Fetch( &object, &data, &traceback );
+	  PyObject * traceStr = PyObject_Str( data );
+	  char *string = PyString_AsString( traceStr );
+	  result = QString( string );
+	}
+	resultList << result; // append result to resultList
+      } // for loop
+    } // end Py_IsInitialized
+    emit addToHistory(command);
+  } else { // command.isEmpty() == true
     command = QString("");
     result = QString("");
   }
-
-  const QByteArray cmd(command.toLatin1());
-  mTextEdit->insertPlainText( "\ndlfl> " + command );
-  if( !result.isEmpty() )
-  mTextEdit->insertPlainText( "\n"+result );
+    
+  for(int i = 0; i < cmdList.size(); i++ ) {
+    //const QByteArray cmd(cmdList.at(i).toLatin1());
+    mTextEdit->insertPlainText( "\n" + cmdList.at(i) );
+    if( i < resultList.size() ) {
+      QString res = resultList.at(i);
+      if( !res.isEmpty() && res != QString("None") )
+	mTextEdit->insertPlainText( "\n# "+ res ); // # is a comment in python
+    }
+  }
   mLineEdit->clear();
 
   QScrollBar *vBar = mTextEdit->verticalScrollBar();
@@ -101,7 +132,7 @@ void DLFLScriptEditor::PyInit( ) {
     QString qversion(version);
     mTextEdit->append("Python " + qversion + "\n" );
     if( dlfl_module != NULL )
-      mTextEdit->append("dlfl> from dlfl import *\n");
+      mTextEdit->append("from dlfl import *\n");
     else {
       mTextEdit->append("no dlfl python module found");
       mTextEdit->insertPlainText("\n");
@@ -115,7 +146,7 @@ void DLFLScriptEditor::loadObject( DLFLObject *obj, QString fileName ) {
   PyDLFL_PassObject( obj );
   // Print out the equivalent command to loading an object
   QString command = tr("load(\"")+fileName+tr("\")");
-  mTextEdit->insertPlainText( "\ndlfl> " + command );
+  mTextEdit->insertPlainText( "\n" + command );
 }
 
 #endif

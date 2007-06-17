@@ -705,4 +705,23 @@ namespace DLFL {
       }
     }
 
+ /* API
+  uint extrudeFace(DLFLObjectPtr obj, uint faceID, double d, int num, double rot, double sf ) {
+      DLFLFacePtr fp = extrudeFace( obj, obj->findFace(faceID), d, num, rot, sf );
+      return fp->getID();
+  }
+
+  uint extrudeFaceDS(DLFLObjectPtr obj, uint faceID, double d, int num, double twist, double sf ) { }
+
+  uint extrudeDualFace(DLFLObjectPtr obj, uint faceID, double d, int num, double rot, double sf, bool mesh ) { }
+
+  uint extrudeFaceDodeca(DLFLObjectPtr obj, uint faceID, double d, int num, double rot, double sf, bool hexagonalize ) { }
+
+  uint extrudeFaceIcosa(DLFLObjectPtr obj, uint faceID, double d, int num, double rot, double sf ) { }
+
+  void stellateFace(DLFLObjectPtr obj, uint faceID, double d) { }
+
+  void doubleStellateFace(DLFLObjectPtr obj, uint faceID, double d) { }
+  end API */
+
 } // end namespace DLFL
