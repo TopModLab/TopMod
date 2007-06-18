@@ -117,7 +117,9 @@ void DLFLScriptEditor::PyInit( ) {
   if( Py_IsInitialized() ) {
     // Import the DLFL Module
     PyObject *dlfl_module = PyImport_ImportModule("dlfl");
-    PyObject* dlfl_dict = PyModule_GetDict( dlfl_module );
+    PyObject* dlfl_dict;
+    if( dlfl_module != NULL )
+      dlfl_dict = PyModule_GetDict( dlfl_module );
 
     if( dlfl_module != NULL && dlfl_dict != NULL ) {
       // Setup the Python DLFL Module C API
