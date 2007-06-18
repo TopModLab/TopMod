@@ -185,7 +185,8 @@ undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimi
 	connect( this, SIGNAL(loadedObject(DLFLObject*,QString)),mScriptEditor, SLOT(loadObject(DLFLObject*,QString)) );
 	connect( mScriptEditor, SIGNAL(cmdExecuted()), this, SLOT(recomputeAll()) );
 	connect( mScriptEditor, SIGNAL(cmdExecuted()), this->getActive(), SLOT(update()) );
-		#endif
+	connect( mScriptEditor, SIGNAL(requestObject(QString)), this, SLOT(openFile(QString)) );
+#endif
 
 
 		#ifdef WITH_VERSE

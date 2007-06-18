@@ -62,6 +62,7 @@ void DLFLScriptEditor::executeCommand( ) {
 	if( cmdList.at(i).contains(QRegExp("\\bload\\("))) {
 	  QStringList list = cmdList.at(i).split("\"", QString::SkipEmptyParts);
 	  emit requestObject(list.at(1)); // 3 parts: load(, filename.obj, and )
+	  emit cmdExecuted();
 	  continue;
 	}
 

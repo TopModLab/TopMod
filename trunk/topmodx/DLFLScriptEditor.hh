@@ -41,6 +41,7 @@ public:
 signals :
   void cmdExecuted( );
   void addToHistory( const QString& item );
+  void requestObject( QString fileName );
 private slots :
   void executeCommand( );
 public slots :
