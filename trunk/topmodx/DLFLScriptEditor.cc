@@ -4,7 +4,7 @@
 
 #include <QtGui>
 
-DLFLScriptEditor::DLFLScriptEditor( QWidget *parent, Qt::WindowFlags f ) : QWidget(parent,f) {
+DLFLScriptEditor::DLFLScriptEditor( QWidget *parent, Qt::WindowFlags f ) : QWidget(parent,f), dlfl_module(NULL),dlfl_dict(NULL) {
 
   mTextEdit = new QTextEdit;
   mLineEdit = new Editor;
@@ -116,8 +116,7 @@ void DLFLScriptEditor::PyInit( ) {
 
   if( Py_IsInitialized() ) {
     // Import the DLFL Module
-    PyObject *dlfl_module = PyImport_ImportModule("dlfl");
-    PyObject* dlfl_dict;
+    dlfl_module = PyImport_ImportModule("dlfl");
     if( dlfl_module != NULL )
       dlfl_dict = PyModule_GetDict( dlfl_module );
 
@@ -147,6 +146,8 @@ void DLFLScriptEditor::PyInit( ) {
 
 // A slot to pass the GUI object pointer to the DLFLModule
 void DLFLScriptEditor::loadObject( DLFLObject *obj, QString fileName ) {
+  if( dlfl_module == NULL && dlfl_dict == NULL )
+    return;
   PyDLFL_PassObject( obj );
   // Print out the equivalent command to loading an object
   QString command = tr("load(\"")+fileName+tr("\")");

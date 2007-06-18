@@ -58,6 +58,7 @@ private :
   QColor mInputBgColor;
 
   void PyInit();
+  PyObject *dlfl_module, *dlfl_dict;
 
 };
 
