@@ -42,7 +42,6 @@ DLFLScriptEditor::~DLFLScriptEditor( ) {
 
 
 void DLFLScriptEditor::executeCommand( ) {
-  pyResultStream = new QStream(std::cout);
   QString command = mLineEdit->toPlainText();
   QStringList cmdList = command.split('\n',QString::SkipEmptyParts);
   QStringList resultList;
@@ -63,24 +62,41 @@ void DLFLScriptEditor::executeCommand( ) {
       PyRun_SimpleString( "sys.stdout = __main__.mio" );
 
       for(int i = 0; i < cmdList.size(); i++ ) {
+	QString si = cmdList.at(i);
+	if( si.endsWith(":") ) {
+	  int j = i+1;
+	  while( j < cmdList.size() && cmdList.at(j).startsWith("\t") ) {
+	    QString sj = cmdList.at(j);
+	    si += QString("\n")+sj;
+	    cmdList.removeAt(j);
+	    //j++;
+	  }
+	  cmdList.replace(i,si);
+	}
 	if( cmdList.at(i).contains(QRegExp("\\bload\\("))) {
 	  QStringList list = cmdList.at(i).split("\"", QString::SkipEmptyParts);
+	  cmdList.removeAt(i);
 	  emit requestObject(list.at(1)); // 3 parts: load(, filename.obj, and )
 	  emit cmdExecuted();
 	  continue;
 	}
 
 	const char *cmd = cmdList.at(i).toLocal8Bit().constData();
-	pyResultStream->string.clear();
 	PyObject *rstring = PyRun_String( cmd, Py_file_input, main_dict, dlfl_dict );
-	PyRun_SimpleString( "if(len(__main__.mio.s) > 0 ): __main__.__result = __main__.mio.s[0]");
+	PyRun_SimpleString( "__main__.__result = __main__.mio.s");
+	//PyRun_SimpleString( "if(len(__main__.mio.s) > 0 ): __main__.__result = __main__.mio.s[0]");
 
 	if( rstring != NULL ) {
-	  PyObject *resultObject = PyDict_GetItemString( main_dict, "__result" );
-	  if( resultObject != NULL ) {
-	    char *string = PyString_AsString( PyObject_Str(resultObject) );
-	    result = QString( string );
-	    Py_DECREF( resultObject );
+	  PyObject *resultObject1 = PyObject_Str( rstring );
+	  PyObject *resultObject2 = PyDict_GetItemString( main_dict, "__result" );
+	  if( resultObject1 != NULL && resultObject2 != NULL ) {
+	    char *string1 = PyString_AsString( resultObject1 );
+	    char *string2 = PyString_AsString( PyObject_Str(resultObject2) );
+	    result = QString( string1 );
+	    if( result.isEmpty() || result == "" || result == "None" )
+	      result = QString( string2 );
+	    Py_DECREF( resultObject1 );
+	    Py_DECREF( resultObject2 );
 	  }
 	  Py_DECREF( rstring );
 	  emit cmdExecuted();
@@ -105,8 +121,11 @@ void DLFLScriptEditor::executeCommand( ) {
     mTextEdit->insertPlainText( "\n" + cmdList.at(i) );
     if( i < resultList.size() ) {
       QString res = resultList.at(i);
-      if( !res.isEmpty() && res != QString("None") )
+      if( !res.isEmpty() && res != QString("None") ) {
+	res.replace(QRegExp("\\n"), "\n# ");
+	res.chop(2);
 	mTextEdit->insertPlainText( "\n# "+ res ); // # is a comment in python
+      }
     }
   }
   mLineEdit->clear();
@@ -114,8 +133,6 @@ void DLFLScriptEditor::executeCommand( ) {
   QScrollBar *vBar = mTextEdit->verticalScrollBar();
   vBar->triggerAction(QAbstractSlider::SliderToMaximum);
   mLineEdit->goToHistoryStart( );
-
-  delete pyResultStream;
 }
 
 void DLFLScriptEditor::PyInit( ) {
@@ -125,10 +142,10 @@ void DLFLScriptEditor::PyInit( ) {
     // Import the DLFL Module
     dlfl_module = PyImport_ImportModule("dlfl");
     PyRun_SimpleString( "import sys, __main__" );
-    PyRun_SimpleString( "def my_displayhook(o): __main__.__result=o" );
+    //PyRun_SimpleString( "def my_displayhook(o): __main__.__result=o" );
     //PyRun_SimpleString( "sys.displayhook=my_displayhook" );
 
-    PyRun_SimpleString( "class MyIO:\n\tdef __init__(self): self.s=[]\n\tdef write(self,x): self.s.append(x)" );
+    PyRun_SimpleString( "class MyIO:\n\tdef __init__(self): self.s=\"\"\n\tdef write(self,x): self.s+=x" );
 
     if( dlfl_module != NULL )
       dlfl_dict = PyModule_GetDict( dlfl_module );
