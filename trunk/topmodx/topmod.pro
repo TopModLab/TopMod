@@ -140,6 +140,7 @@ HEADERS += \
 	ui_stylesheeteditor.h \
         editor.hh \
         PythonHighlighter.hh \
+        QStream.hh \
 	BasicsMode.hh \
 	ExtrusionMode.hh \ 
 	RemeshingMode.hh \
