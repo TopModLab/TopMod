@@ -24,6 +24,7 @@ public :
 
   QStringList history() const;
   void setHistory( const QStringList& history );
+  void goToHistoryStart( );
 
   bool autoCompleteEnabled() const;
   void setAutoCompleteEnabled( bool enable );

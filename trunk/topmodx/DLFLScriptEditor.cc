@@ -108,6 +108,7 @@ void DLFLScriptEditor::executeCommand( ) {
 
   QScrollBar *vBar = mTextEdit->verticalScrollBar();
   vBar->triggerAction(QAbstractSlider::SliderToMaximum);
+  mLineEdit->goToHistoryStart( );
 }
 
 void DLFLScriptEditor::PyInit( ) {

@@ -425,6 +425,11 @@ void Editor::historyBack()
   ensureCursorVisible();
 }
 
+void Editor::goToHistoryStart( ) {
+  d->index = d->history.count()-1;
+  setPlainText( tr("") );
+}
+
 void Editor::historyForward()
 {
   if( d->history.isEmpty() )
