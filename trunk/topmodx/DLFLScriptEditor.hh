@@ -17,7 +17,6 @@ class QProcess;
 
 #include <DLFLObject.hh>
 #include "editor.hh"
-#include "QStream.hh"
 
 #include "PythonHighlighter.hh"
 

@@ -4,8 +4,6 @@
 
 #include <QtGui>
 
-static QStream *pyResultStream;
-
 DLFLScriptEditor::DLFLScriptEditor( QWidget *parent, Qt::WindowFlags f ) : QWidget(parent,f), dlfl_module(NULL),dlfl_dict(NULL) {
 
   mTextEdit = new QTextEdit;
