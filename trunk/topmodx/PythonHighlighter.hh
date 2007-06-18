@@ -10,7 +10,7 @@ class PythonHighlighter : public QSyntaxHighlighter {
 
  public :
   PythonHighlighter(QTextEdit *parent = 0);
-  ~PythonHighlighter( ) { };
+  ~PythonHighlighter();
 
  protected :
   void highlightBlock(const QString &text);

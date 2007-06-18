@@ -30,6 +30,10 @@ PythonHighlighter::PythonHighlighter(QTextEdit *parent)
   compilePattern( );
 }
 
+PythonHighlighter::~PythonHighlighter( ) {  
+	
+}
+
 void PythonHighlighter::compilePattern() {
   pythonPatterns.clear();
   QString delim("\\b");
