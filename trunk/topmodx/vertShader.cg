@@ -1,0 +1,63 @@
+struct vertin { 
+	float4 position     : POSITION;
+	float4 color        : COLOR0;
+	// float2 uv 					: TEXCOORD0;
+	float4 depthVal   	: TEXCOORD0; // value for depth comparison for shadow
+	float4 normal     	: NORMAL;
+}; 
+
+struct vertout { 
+	float4 position     : POSITION;
+	float4 color        : COLOR0;
+	// float2 uv           : TEXCOORD0;
+	// float3 outPos       : TEXCOORD0;
+	float4 depthVal 		: TEXCOORD0; // value for depth comparison for shadow
+}; 
+ 
+vertout main( vertin IN,
+						  out float4 camPos : TEXCOORD1,
+						  out float4 oPos   : TEXCOORD2,
+						  out float4 oNorm  : TEXCOORD3,
+						  out float4 lPos   : TEXCOORD4,
+						  uniform float4 eyePos,
+						  uniform float4x4 camToWorld,
+						  uniform float4x4 camToWorldIT,
+						  uniform float4x4 worldToLight ) {
+								
+	vertout OUT;
+
+	// Transform the vertex position to Eye Space
+	float4x4 modelView = glstate.matrix.modelview[0];
+	float4x4 proj = glstate.matrix.projection;
+	oPos = mul( modelView, IN.position );
+	float4 mvPos = oPos;
+
+	float4x4 modelViewIT = glstate.matrix.invtrans.modelview[0];
+	oNorm = mul( modelViewIT, float4(IN.normal.xyz,0.0) );
+	oNorm = mul( camToWorldIT, oNorm );
+
+	// Transform the vertex position to light space
+	oPos = mul( camToWorld, oPos );
+	lPos = mul( worldToLight, oPos );
+	// Transform Eye Position to World Space
+	camPos = eyePos;
+
+	OUT.depthVal = IN.depthVal;
+	OUT.color    = IN.color;
+
+	// Now transform position to clip space
+	OUT.position = mul( proj, mvPos );
+	//OUT.position = lPos;
+
+	return OUT;
+
+ //  float4x4 modelViewProj = glstate.matrix.mvp;
+ //  float4x4 modelView = glstate.matrix.modelview[0];
+ // 
+ //  OUT.position = mul( modelViewProj, IN.position); 
+ //  OUT.outPos = IN.position; //mul( modelView, IN.position );
+ //  OUT.color = IN.color; //float4(0,1,1,.5);
+ //  OUT.uv = IN.uv;
+ //  
+ // return OUT; 
+}

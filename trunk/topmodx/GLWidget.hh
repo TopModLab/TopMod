@@ -20,6 +20,12 @@
 #include "DLFLRenderer.hh"
 #include "TMPatchObject.hh"
 
+#include "DLFLLighting.hh"
+#include <Light.hh>
+#include <SpotLight.hh>
+#include <PointLight.hh>
+#include <AmbientLight.hh>
+
 #include "Camera2.hh"
 #include "CgData.hh"
 
@@ -63,6 +69,16 @@ public :
 	void setSelectedVertexThickness(double t);
 	void setSelectedEdgeThickness(double t);
 	void switchTo(VPView view);
+
+		//set lighting colors... warm and cool
+	void setWarmLightColor(QColor c);
+	void setCoolLightColor(QColor c);
+	void setLightIntensity(double i);
+
+		//compute lighting and normals functions now moved here from MainWindow
+	void recomputeNormals();
+	void recomputeLighting();
+	void recomputePatches();	
 
 	void toggleHUD() {
 		mShowHUD = !mShowHUD;
@@ -289,6 +305,9 @@ public :
 		// Each viewport will have its own renderer. But since only the pointer
 		// is stored different viewports can share the same renderer object.
 	DLFLRendererPtr renderer;
+	
+		//light is now a member of Glwidget instead of MainWindow
+	PointLight plight;
 
 		// Each viewport will have its own grid
 	// Grid grid;                                        // Display grid
@@ -342,7 +361,7 @@ public :
 	double getSilhouetteThickness();
 	double getSelectedVertexThickness();
 	double getSelectedEdgeThickness();	
-
+	
 	double getBrushSize(){ return mBrushSize;}
 	void setBrushSize(double s){ mBrushSize = max(2.0,min(200.0,s)); repaint();	}
 

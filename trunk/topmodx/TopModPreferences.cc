@@ -122,8 +122,8 @@ void TopModPreferences::readSettings(){
 	
 	((MainWindow*)mParent)->getActive()->setViewportColor(mViewportColor);
 	((MainWindow*)mParent)->getActive()->setRenderColor(mRenderColor);
-	((MainWindow*)mParent)->setCoolLightColor(mCoolLightColor);
-	((MainWindow*)mParent)->setWarmLightColor(mWarmLightColor);
+	((MainWindow*)mParent)->getActive()->setCoolLightColor(mCoolLightColor);
+	((MainWindow*)mParent)->getActive()->setWarmLightColor(mWarmLightColor);
 	((MainWindow*)mParent)->getActive()->setWireframeColor(mWireframeColor);
 	((MainWindow*)mParent)->getActive()->setSilhouetteColor(mSilhouetteColor);
 	((MainWindow*)mParent)->getActive()->setSelectedVertexColor(mSelectedVertexColor);
@@ -161,13 +161,13 @@ void TopModPreferences::loadDefaults(){
 	mRenderColorButton->setPalette(p);
 
 	mCoolLightColor.setRgb(51,51,102);
-	((MainWindow*)mParent)->setCoolLightColor(mCoolLightColor);
+	((MainWindow*)mParent)->getActive()->setCoolLightColor(mCoolLightColor);
 	p = mCoolLightColorButton->palette();
 	p.setColor(QPalette::Button, mCoolLightColor);
 	mCoolLightColorButton->setPalette(p);
 
 	mWarmLightColor.setRgb(255,255,153);
-	((MainWindow*)mParent)->setWarmLightColor(mWarmLightColor);
+	((MainWindow*)mParent)->getActive()->setWarmLightColor(mWarmLightColor);
 	p = mWarmLightColorButton->palette();
 	p.setColor(QPalette::Button, mWarmLightColor);
 	mWarmLightColorButton->setPalette(p);
@@ -445,7 +445,7 @@ void TopModPreferences::setupColors(){
 	mLightIntensitySpinBox->setDecimals(1);
 	mLightIntensitySpinBox->setMaximumSize(100,25);
 	connect(mLightIntensitySpinBox, SIGNAL(valueChanged(double)),
-          ((MainWindow*)mParent), SLOT(setLightIntensity(double)));
+          ((MainWindow*)mParent)->getActive(), SLOT(setLightIntensity(double)));
 	
 	mColorsLayout->addWidget(mLightIntensityLabel,0,2);
 	mColorsLayout->addWidget(mLightIntensitySpinBox,0,3);
@@ -557,7 +557,7 @@ void TopModPreferences::setRenderColor(){
 void TopModPreferences::setCoolLightColor(){
 	mCoolLightColor.setRgba(QColorDialog::getRgba(mCoolLightColor.rgba()));
 	if (mCoolLightColor.isValid()){
-		((MainWindow*)mParent)->setCoolLightColor(mCoolLightColor);
+		((MainWindow*)mParent)->getActive()->setCoolLightColor(mCoolLightColor);
 		QPalette p = mCoolLightColorButton->palette();
 		p.setColor(QPalette::Button, mCoolLightColor);
 		mCoolLightColorButton->setPalette(p);
@@ -567,7 +567,7 @@ void TopModPreferences::setCoolLightColor(){
 void TopModPreferences::setWarmLightColor(){
 	mWarmLightColor.setRgba(QColorDialog::getRgba(mWarmLightColor.rgba()));
 	if (mWarmLightColor.isValid()){
-		((MainWindow*)mParent)->setWarmLightColor(mWarmLightColor);
+		((MainWindow*)mParent)->getActive()->setWarmLightColor(mWarmLightColor);
 		QPalette p = mWarmLightColorButton->palette();
 		p.setColor(QPalette::Button, mWarmLightColor);
 		mWarmLightColorButton->setPalette(p);

@@ -65,8 +65,8 @@ void MainWindow::undo(void) {
 		StringStreamPtr oldobj = undoList.back();
 		object.readDLFL(*oldobj,true);
 		undoList.pop_back(); delete oldobj;
-		recomputePatches();
-		recomputeNormals();
+		active->recomputePatches();
+		active->recomputeNormals();
 		// Clear selection lists to avoid dangling pointers
 		MainWindow::clearSelected();
 		redraw();
@@ -95,8 +95,8 @@ void MainWindow::redo(void) {
 		object.readDLFL(*newobj);
 		redoList.pop_back(); delete newobj;
 
-		recomputePatches();
-		recomputeNormals();
+		active->recomputePatches();
+		active->recomputeNormals();
 		// Clear selection lists to avoid dangling pointers
 		MainWindow::clearSelected();
 		redraw();

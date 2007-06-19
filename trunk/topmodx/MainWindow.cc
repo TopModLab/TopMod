@@ -181,10 +181,10 @@ undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimi
 	setCentralWidget( active);
 
 		//initialize light color
-	plight.position.set(50,25,0);
-	plight.warmcolor.set(1,1,0.6);
-	plight.coolcolor.set(0.2,0.2,0.4);
-	plight.intensity = 2.0;
+	// plight.position.set(50,25,0);
+	// plight.warmcolor.set(1,1,0.6);
+	// plight.coolcolor.set(0.2,0.2,0.4);
+	// plight.intensity = 2.0;
 
 		#ifdef WITH_PYTHON
 			//the script editor widget will be placed into a QDockWidget
@@ -627,13 +627,13 @@ void MainWindow::createActions() {
 	computeLightingAct = new QAction(tr("Compute &Lighting"), this);
 	sm->registerAction(computeLightingAct, "Settings", "");
 	// computeLightingAct->setStatusTip(tr("Copy the current selection's contents to the "
-	connect(computeLightingAct, SIGNAL(triggered()), this, SLOT(recomputeLighting()));
+	connect(computeLightingAct, SIGNAL(triggered()), getActive(), SLOT(recomputeLighting()));
 	mActionListWidget->addAction(computeLightingAct);
 
 	computeNormalsAndLightingAct = new QAction(tr("Compute &Normals and Lighting"), this);
 	sm->registerAction(computeNormalsAndLightingAct, "Settings", "");
 	// computeNormalsAndLightingAct->setStatusTip(tr("Copy the current selection's contents to the "
-	connect(computeNormalsAndLightingAct, SIGNAL(triggered()), this, SLOT(recomputeNormals()));
+	connect(computeNormalsAndLightingAct, SIGNAL(triggered()), getActive(), SLOT(recomputeNormals()));
 	mActionListWidget->addAction(computeNormalsAndLightingAct);
 
 	assignTextureCoordinatesAct = new QAction(tr("Assign &Texture Coordinates"), this);
@@ -1243,8 +1243,8 @@ void MainWindow::readSettings() {
 			if( obj )
 				emit loadedObject(obj,fileName);
 #endif
-			recomputePatches();
-			recomputeNormals();
+			active->recomputePatches();
+			active->recomputeNormals();
 			setCurrentFile(fileName);
 			active->redraw();
 		}
@@ -1353,23 +1353,23 @@ void MainWindow::readSettings() {
 			delete patch;
 		};
 
-		void MainWindow::setWarmLightColor(QColor c){
-			plight.warmcolor.set(c.redF(),c.greenF(),c.blueF());
-			recomputeLighting();
-			redraw();
-		}
-
-		void MainWindow::setCoolLightColor(QColor c){
-			plight.coolcolor.set(c.redF(),c.greenF(),c.blueF());
-			recomputeLighting();
-			redraw();
-		}
-
-		void MainWindow::setLightIntensity(double i){
-			plight.intensity = i;
-			recomputeLighting();
-			redraw();
-		}
+		// void MainWindow::setWarmLightColor(QColor c){
+		// 	plight.warmcolor.set(c.redF(),c.greenF(),c.blueF());
+		// 	recomputeLighting();
+		// 	redraw();
+		// }
+		// 
+		// void MainWindow::setCoolLightColor(QColor c){
+		// 	plight.coolcolor.set(c.redF(),c.greenF(),c.blueF());
+		// 	recomputeLighting();
+		// 	redraw();
+		// }
+		// 
+		// void MainWindow::setLightIntensity(double i){
+		// 	plight.intensity = i;
+		// 	recomputeLighting();
+		// 	redraw();
+		// }
 
 		void MainWindow::setUndoLimit(int limit) {
 			undolimit = limit;
@@ -1963,8 +1963,8 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			GLWidget::clearSelectedFaces();
 			GLWidget::clearSelectedFaceVertices();
 			num_sel_faceverts = 0; num_sel_faces = 0;
-			recomputePatches();
-			recomputeNormals();
+			active->recomputePatches();
+			active->recomputeNormals();
 			redraw();   
 		}
 	}
@@ -1983,8 +1983,8 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			setModified(true);
 								//object.deleteEdge(septr,MainWindow::delete_edge_cleanup);
 			DLFL::deleteEdge( &object, septr, MainWindow::delete_edge_cleanup);
-			recomputePatches();
-			recomputeNormals();
+			active->recomputePatches();
+			active->recomputeNormals();
 		}
 		GLWidget::clearSelectedEdges();
 		redraw();
@@ -2000,8 +2000,8 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			setModified(true);
 								//object.subdivideEdge(num_e_subdivs,septr);
 			DLFL::subdivideEdge(&object, num_e_subdivs,septr);
-			recomputePatches();
-			recomputeNormals();
+			active->recomputePatches();
+			active->recomputeNormals();
 		}
 		GLWidget::clearSelectedEdges();
 		redraw();
@@ -2017,8 +2017,8 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			setModified(true);
 								//object.collapseEdge(septr);
 			DLFL::collapseEdge(&object,septr);
-			recomputePatches();
-			recomputeNormals();
+			active->recomputePatches();
+			active->recomputeNormals();
 		}
 		GLWidget::clearSelectedEdges();
 		redraw();
@@ -2040,8 +2040,8 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			GLWidget::clearSelectedFaces();
 			GLWidget::clearSelectedFaceVertices();
 			num_sel_faceverts = 0; num_sel_faces = 0;
-			recomputePatches();
-			recomputeNormals();
+			active->recomputePatches();
+			active->recomputeNormals();
 			redraw();   
 		}
 	}
@@ -2061,8 +2061,8 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			undoPush();
 			setModified(true);
 			DLFL::connectFaces(&object,sfptr1,sfptr2,num_segments);
-			recomputePatches();
-			recomputeNormals();
+			active->recomputePatches();
+			active->recomputeNormals();
 			GLWidget::clearSelectedFaces();
 			redraw();   
 		}
@@ -2086,8 +2086,8 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			GLWidget::clearSelectedFaces();
 			GLWidget::clearSelectedFaceVertices();
 			num_sel_faceverts = 0; num_sel_faces = 0;
-			recomputePatches();
-			recomputeNormals();
+			active->recomputePatches();
+			active->recomputeNormals();
 			redraw();   
 		}
 	}
@@ -2130,8 +2130,8 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			undoPush();
 			setModified(true);
 			DLFL::extrudeFace(&object,sfptr,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
-			recomputePatches();
-			recomputeNormals();
+			active->recomputePatches();
+			active->recomputeNormals();
 		}
 		GLWidget::clearSelectedFaces();
 		redraw();
@@ -2149,8 +2149,8 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			for(it = sfptrarr.begin(); it != sfptrarr.end(); it++) {
 				DLFL::extrudeFace(&object,*it,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
 			}
-			recomputePatches();
-			recomputeNormals();						
+			active->recomputePatches();
+			active->recomputeNormals();						
 		}
 		GLWidget::clearSelectedFaces();
 		redraw();
@@ -2166,8 +2166,8 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			setModified(true);
 			DLFL::extrudeFaceDS(&object,sfptr,extrude_dist,num_extrusions,
 				ds_ex_twist,extrude_scale);
-			recomputePatches();
-			recomputeNormals();
+			active->recomputePatches();
+			active->recomputeNormals();
 		}
 		GLWidget::clearSelectedFaces();
 		redraw();
@@ -2184,8 +2184,8 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			DLFL::extrudeDualFace(&object,sfptr,extrude_dist,num_extrusions,
 				extrude_rot,extrude_scale,
 				dual_mesh_edges_check);
-			recomputePatches();
-			recomputeNormals();
+			active->recomputePatches();
+			active->recomputeNormals();
 		}
 		GLWidget::clearSelectedFaces();
 		redraw();
@@ -2202,8 +2202,8 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			DLFL::extrudeFaceDodeca(&object,sfptr,extrude_dist,num_extrusions,
 				ds_ex_twist,extrude_scale,
 				hexagonalize_dodeca_extrude);
-			recomputePatches();
-			recomputeNormals();
+			active->recomputePatches();
+			active->recomputeNormals();
 		}
 		GLWidget::clearSelectedFaces();
 		redraw();
@@ -2219,8 +2219,8 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			setModified(true);
 			DLFL::extrudeFaceIcosa(&object,sfptr,extrude_dist,num_extrusions,
 				ds_ex_twist,extrude_scale);
-			recomputePatches();
-			recomputeNormals();
+			active->recomputePatches();
+			active->recomputeNormals();
 		}
 		GLWidget::clearSelectedFaces();
 		redraw();
@@ -2235,8 +2235,8 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			undoPush();
 			setModified(true);
 			DLFL::stellateFace(&object,sfptr,extrude_dist);
-			recomputePatches();
-			recomputeNormals();
+			active->recomputePatches();
+			active->recomputeNormals();
 		}
 		GLWidget::clearSelectedFaces();
 		redraw();
@@ -2251,8 +2251,8 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			undoPush();
 			setModified(true);
 			DLFL::doubleStellateFace(&object,sfptr,extrude_dist);
-			recomputePatches();
-			recomputeNormals();
+			active->recomputePatches();
+			active->recomputeNormals();
 		}
 		GLWidget::clearSelectedFaces();
 		redraw();
@@ -2271,12 +2271,12 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			{
 				DLFL::tagMatchingFaces(&object,sfptr);
 				DLFL::punchHoles(&object);
-				recomputePatches();
-				recomputeNormals();
+				active->recomputePatches();
+				active->recomputeNormals();
 			}
 			else
 				DLFL::cmMakeHole(&object,sfptr,crust_cleanup);
-			//                                                  recomputeNormals();
+			//                                                  active->recomputeNormals();
 		}
 		GLWidget::clearSelectedFaces();
 		redraw();
@@ -2297,8 +2297,8 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			GLWidget::clearSelectedFaces();
 			GLWidget::clearSelectedFaceVertices();
 			num_sel_faceverts = 0; num_sel_faces = 0;
-			recomputePatches();
-			recomputeNormals();
+			active->recomputePatches();
+			active->recomputeNormals();
 			redraw();   
 		}
 	}
@@ -2328,8 +2328,8 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			GLWidget::clearSelectedFaces();
 			GLWidget::clearSelectedFaceVertices();
 			num_sel_faceverts = 0; num_sel_faces = 0;
-			recomputePatches();
-			recomputeNormals();
+			active->recomputePatches();
+			active->recomputeNormals();
 			redraw();
 		}
 	}
@@ -2834,8 +2834,8 @@ void MainWindow::openFile(void) {
 		if( obj )
 			emit loadedObject(obj,fileName);
 #endif
-		recomputePatches();
-		recomputeNormals();
+		active->recomputePatches();
+		active->recomputeNormals();
 		setCurrentFile(fileName);
 		active->redraw();
 	}
@@ -2897,8 +2897,8 @@ void MainWindow::openFileOBJ(void) {
 	// 	QByteArray ba = fileName.toLatin1();
 	// 	const char *filename = ba.data();
 	// 	readObjectOBJ(filename);
-	// 	recomputePatches();
-	// 	recomputeNormals();
+	// 	active->recomputePatches();
+	// 	active->recomputeNormals();
 	// }
 }
 
@@ -2941,8 +2941,8 @@ void MainWindow::openFileDLFL(void) {
 	// 	QByteArray ba = fileName.toLatin1();
 	// 	const char *filename = ba.data();
 	// 	readObjectDLFL(filename);
-	// 	recomputePatches();
-	// 	recomputeNormals();
+	// 	active->recomputePatches();
+	// 	active->recomputeNormals();
 	// }
 }
 
@@ -2984,8 +2984,8 @@ void MainWindow::loadCube(){
 	mWasPrimitive = true;
 	setCurrentFile(tr("cube.obj"));
 	readObjectQFile(":/cube.obj");
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	active->redraw();
 }
 
@@ -2997,8 +2997,8 @@ void MainWindow::loadOctahedron(){
 	mWasPrimitive = true;
 	setCurrentFile(tr("octahedron.obj"));
 	readObjectQFile(":/octahedron.obj");
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	active->redraw();
 }
 
@@ -3010,8 +3010,8 @@ void MainWindow::loadTetrahedron(){
 	mWasPrimitive = true;
 	setCurrentFile(tr("tetrahedron.obj"));
 	readObjectQFile(":/tetrahedron.obj");
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	active->redraw();
 }
 
@@ -3023,8 +3023,8 @@ void MainWindow::loadDodecahedron(){
 	mWasPrimitive = true;
 	setCurrentFile(tr("dodecahedron.obj"));
 	readObjectQFile(":/dodecahedron.obj");
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	active->redraw();
 }
 
@@ -3036,8 +3036,8 @@ void MainWindow::loadIcosahedron(){
 	mWasPrimitive = true;
 	setCurrentFile(tr("icosahedron.obj"));
 	readObjectQFile(":/icosahedron.obj");
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	active->redraw();
 }
 
@@ -3049,8 +3049,8 @@ void MainWindow::loadSoccerball(){
 	mWasPrimitive = true;
 	setCurrentFile(tr("soccerball.obj"));
 	readObjectQFile(":/soccerball.obj");
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	active->redraw();
 }
 
@@ -3062,8 +3062,8 @@ void MainWindow::loadGeodesic(){
 	mWasPrimitive = true;
 	setCurrentFile(tr("geodesic.obj"));
 	readObjectQFile(":/geodesic.obj");
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	active->redraw();
 }
 

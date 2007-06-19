@@ -38,6 +38,7 @@
 	<file alias="geodesic.obj">objs/geodesicdome.obj</file>
 	<file>images/placeholder.png</file>
 	<file>images/insert_edge.png</file>
+	<file>images/insert_edge.gif</file>	
 	<file>images/delete_edge.png</file>
 	<file>images/connect_edges.png</file>
 	<file>images/collapse_edge.png</file>

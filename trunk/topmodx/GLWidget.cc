@@ -106,7 +106,11 @@ GLWidget::GLWidget(int w, int h, VPView v, DLFLRendererPtr rp, QColor color, QCo
 	// if( patchObject ) { delete patchObject; patchObject = 0; }
 }
 
-GLWidget::~GLWidget(){ }
+GLWidget::~GLWidget(){ 
+#ifdef GPU_OK
+	cgDestroyContext( cg.context );
+#endif
+}
 
 void GLWidget::redraw() {
 	repaint();
@@ -121,6 +125,12 @@ void GLWidget::initializeGL( ) {
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);									// Set Line Antialiasing
 	glEnable(GL_BLEND);																			// Enable Blending
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);			// Type Of Blending To Use
+	
+	//initialize light position and color
+	plight.position.set(50,25,0);
+	plight.warmcolor.set(1,1,0.6);
+	plight.coolcolor.set(0.2,0.2,0.4);
+	plight.intensity = 2.0;
 
 	mShowVertexIDs = false;
 	mShowEdgeIDs   = false;
@@ -146,9 +156,12 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	#ifdef GPU_OK
 	if (mUseGPU){
 	  cgGLBindProgram( cg.vertProgram );
-	  cgGLBindProgram( cg.fragProgram );
+	  // cgGLBindProgram( cg.fragProgram );
 	  cgGLEnableProfile( cg.vertProfile );
-	  cgGLEnableProfile( cg.fragProfile );
+	  // cgGLEnableProfile( cg.fragProfile );
+	
+		//set cg parameters here
+		
 	}
 	#endif // GPU_OK
 
@@ -268,7 +281,7 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	#ifdef GPU_OK
 	if (mUseGPU){
 	  cgGLDisableProfile( cg.vertProfile );
-	  cgGLDisableProfile( cg.fragProfile );
+	  // cgGLDisableProfile( cg.fragProfile );
 	}
 	#endif // GPU_OK
 	
@@ -1096,8 +1109,19 @@ void GLWidget::initCg( ) {
 	  delete [] programName;
 	  programName = 0;
 
-	  // cg.randRot = cgGetNamedParameter( cg.fragProgram, "randRot" );
-	  // cg.velocity = cgGetNamedParameter( cg.vertProgram, "velocity" );
+		// Bind Variables to Cg Parameters
+		cg.camToWorld = cgGetNamedParameter( cg.vertProgram, "camToWorld");
+		cg.camToWorldIT = cgGetNamedParameter( cg.vertProgram, "camToWorldIT");
+		cg.worldToLight = cgGetNamedParameter( cg.vertProgram, "worldToLight");
+		// cg.texture = cgGetNamedParameter( cg.fProgram, "texture");
+		// cg.shadowMap = cgGetNamedParameter( cg.fProgram, "shadowMap" );
+		// cg.renderToTexSize = cgGetNamedParameter( cg.fProgram, "renderToTexSize" );
+		// cg.objectID = cgGetNamedParameter( cg.fProgram, "objectID" );
+		checkCgError( cg.context, 5 );
+		// cg.attenDegrees = cgGetNamedParameter( cg.fProgram, "attenDegrees" );
+		cg.eyePos = cgGetNamedParameter( cg.vertProgram, "eyePos" );
+		// cg.velocity = cgGetNamedParameter( cg.vertProgram, "velocity" );
+		// cg.objCenter = cgGetNamedParameter( cg.vertProgram, "objCenter" );
 
 	  cgGLLoadProgram( cg.vertProgram );
 	  checkCgError( cg.context, 1 );
@@ -1486,3 +1510,39 @@ void GLWidget::switchTo(VPView view){
 }
 //for vertex locator moving...
 void erase_dlp(DLFLLocatorPtr lp)  { delete lp; } // brianb
+
+// Global operations (don't require selection)
+void GLWidget::recomputeNormals(void)     // Recompute normals and lighting
+{
+	object->computeNormals();
+	computeLighting( object, patchObject, &plight);
+}
+
+void GLWidget::recomputeLighting(void)                // Recompute lighting
+{
+	computeLighting( object, patchObject, &plight);
+}
+
+void GLWidget::recomputePatches(void) // Recompute the patches for patch rendering
+{
+  if(patchObject)
+    patchObject->updatePatches(object);
+}
+
+void GLWidget::setWarmLightColor(QColor c){
+	plight.warmcolor.set(c.redF(),c.greenF(),c.blueF());
+	recomputeLighting();
+	redraw();
+}
+
+void GLWidget::setCoolLightColor(QColor c){
+	plight.coolcolor.set(c.redF(),c.greenF(),c.blueF());
+	recomputeLighting();
+	redraw();
+}
+
+void GLWidget::setLightIntensity(double i){
+	plight.intensity = i;
+	recomputeLighting();
+	redraw();
+}

@@ -38,10 +38,6 @@
 #include "DLFLLighting.hh"
 #include <DLFLObject.hh>
 #include <DLFLConvexHull.hh>
-#include <Light.hh>
-#include <SpotLight.hh>
-#include <PointLight.hh>
-#include <AmbientLight.hh>
 
 #include "include/WireframeRenderer.hh"
 #include "include/NormalRenderer.hh"
@@ -753,10 +749,10 @@ public slots:
 				// Return pointer to the active GLWidget
 			GLWidget *getActive();
 
-				//set lighting colors... warm and cool
-			void setWarmLightColor(QColor c);
-			void setCoolLightColor(QColor c);
-			void setLightIntensity(double i);
+			// 	//set lighting colors... warm and cool
+			// void setWarmLightColor(QColor c);
+			// void setCoolLightColor(QColor c);
+			// void setLightIntensity(double i);
 
 				// Override redraw() method to mark subwindows also for redraw
 			void redraw();
@@ -789,13 +785,13 @@ public slots:
 		#ifdef WITH_PYTHON
 			// run after an operation is done via python
 			void recomputeAll() { 
-				recomputePatches();
-				recomputeNormals();
+				active->recomputePatches();
+				active->recomputeNormals();
 			};
 		#endif
-			void recomputeNormals();
-			void recomputeLighting();
-			void recomputePatches();
+			// void recomputeNormals();
+			// void recomputeLighting();
+			// void recomputePatches();
 			void subdivideAllEdges();
 			void subdivideSelectedFaces();
 			void subdivideAllFaces();

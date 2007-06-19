@@ -6,7 +6,7 @@ CONFIG += qt debug warn_off assistant link_prl
 # or include them with CONFIG += 
 CONFIG -=  WITH_PYTHON WITH_SPACENAV WITH_VERSE
 CONFIG += WITH_PYTHON 
-DEFINES += TOPMOD_VERSION
+DEFINES += TOPMOD_VERSION GPU_OK
 
 TEMPLATE = app
 
@@ -61,6 +61,11 @@ macx {
 	MACOSX_DEPLOYMENT_TARGET = 10.2
 	# compile release + universal binary 
 	CONFIG += x86
+
+	# for cg gpu shading
+	INCLUDEPATH += /Library/Frameworks/Cg.framework/Versions/1.0 
+	QMAKE_LFLAGS += -L/Library/Frameworks/Cg.framework 
+	LIBS += -framework Cg
 
 	#QMAKE_LFLAGS += -F./lib	
 	#LIBS += -framework vecmat -framework arcball -framework dlflcore -framework dlflaux
@@ -138,8 +143,8 @@ HEADERS += \
 	qshortcutmanager.hh \
 	ui_shortcutdialog.h \
 	ui_stylesheeteditor.h \
-        editor.hh \
-        PythonHighlighter.hh \
+	editor.hh \
+	PythonHighlighter.hh \
 	BasicsMode.hh \
 	ExtrusionMode.hh \ 
 	RemeshingMode.hh \
@@ -164,7 +169,9 @@ HEADERS += \
 	include/Light/AmbientLight.hh \
 	include/Light/Light.hh \
 	include/Light/PointLight.hh \
-	include/Light/SpotLight.hh
+	include/Light/SpotLight.hh \
+	CgData.hh \
+	include/Camera2.hh	
 
 FORMS += shortcutdialog.ui stylesheeteditor.ui
 
@@ -181,8 +188,8 @@ SOURCES += \
 	GeometryRenderer.cc \
 	qshortcutdialog.cc \
 	qshortcutmanager.cc \
-        editor.cc \
-        PythonHighlighter.cc \
+	editor.cc \
+	PythonHighlighter.cc \
 	BasicsMode.cc	\
 	ExtrusionMode.cc \
 	RemeshingMode.cc \ 
@@ -194,11 +201,12 @@ SOURCES += \
 	DLFLSelection.cc \
 	DLFLSculpting.cc \
 	DLFLUndo.cc \
-	# DLFLWindow.cc \
 	DLFLLocator.cc \
 	TMPatchObject.cc \
-        TMPatchFace.cc \
-	stylesheeteditor.cc
+	TMPatchFace.cc \
+	stylesheeteditor.cc \
+	CgData.cc \
+	include/Camera2.cc 
 
 CONFIG(WITH_VERSE){
 	
@@ -227,7 +235,6 @@ HEADERS += \
 	include/verse/TKE_object.h \
 	# include/verse/TIF_screen.h \
 	VerseTopMod.hh 
-
 SOURCES += \
 	include/verse/verse_session.cc \
 	include/verse/mallocn.cc \

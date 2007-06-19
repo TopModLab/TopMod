@@ -21,8 +21,8 @@ void MainWindow::load_texture() {
 		redraw();
 
 		// readObject(filename);
-		// recomputePatches();
-		// recomputeNormals();
+		// active->recomputePatches();
+		// active->recomputeNormals();
 		// //loadFile(fileName);
 		// active->redraw();
 	}
@@ -40,7 +40,7 @@ void MainWindow::useNormalRenderer() {
 }
 
 void MainWindow::useLightedRenderer() {
-	recomputeNormals();
+	active->recomputeNormals();
 	setRenderer(lit);
 	redraw();
 }
@@ -337,7 +337,7 @@ void MainWindow::performCutting() {
 	setModified(true);
 	// void performCutting( DLFLObjectPtr obj, int type,float offsetE,float offsetV,bool global,bool selected) {
 	DLFL::performCutting(&object, MainWindow::mode,MainWindow::cutOffsetE_factor,MainWindow::cutOffsetV_factor,MainWindow::global_cut,MainWindow::selected_cut);
-	// recomputeNormals();
+	// active->recomputeNormals();
 	MainWindow::clearSelected();
 	redraw();
 }
@@ -346,7 +346,7 @@ void MainWindow::createConvexHull() {
 	undoPush();
 	setModified(true);
 	DLFL::createConvexHull(&object);
-	recomputeNormals();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 	redraw();
 }
@@ -355,7 +355,7 @@ void MainWindow::createDualConvexHull() {
 	undoPush();
 	setModified(true);
 	DLFL::createDualConvexHull(&object);
-	recomputeNormals();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 	redraw();
 }
@@ -430,24 +430,24 @@ void MainWindow::freezeTransforms() {
 	redraw();
 }
 
-// Global operations (don't require selection)
-void MainWindow::recomputeNormals(void)     // Recompute normals and lighting
-{
-	object.computeNormals();
-	computeLighting( &object, patchObject, &plight);
-}
-
-void MainWindow::recomputeLighting(void)                // Recompute lighting
-{
-	computeLighting( &object, patchObject, &plight);
-}
-
-void MainWindow::recomputePatches(void) // Recompute the patches for patch rendering
-{
-  if(patchObject)
-    patchObject->updatePatches(&object);
-}
-
+// // Global operations (don't require selection)
+// void MainWindow::active->recomputeNormals(void)     // Recompute normals and lighting
+// {
+// 	object.computeNormals();
+// 	computeLighting( &object, patchObject, &plight);
+// }
+// 
+// void MainWindow::recomputeLighting(void)                // Recompute lighting
+// {
+// 	computeLighting( &object, patchObject, &plight);
+// }
+// 
+// void MainWindow::active->recomputePatches(void) // Recompute the patches for patch rendering
+// {
+//   if(patchObject)
+//     patchObject->updatePatches(&object);
+// }
+// 
 void MainWindow::subdivideAllEdges(void)              // Sub-divide all edges
 {
 	undoPush();
@@ -497,8 +497,8 @@ void MainWindow::createMultiFaceHandle(void) // Create multi-face handle between
 		default :
 		break;
 	}
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -507,8 +507,8 @@ void MainWindow::multiConnectMidpoints(void)
 	// Multi-connect midpoints after simplest-subdivision without edge deletion
 	undoPush();
 	DLFL::multiConnectMidpoints(&object);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -517,8 +517,8 @@ void MainWindow::multiConnectCrust(void)
 	// Multi-connect after creating crust
 	undoPush();
 	DLFL::multiConnectCrust(&object);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -527,8 +527,8 @@ void MainWindow::modifiedMultiConnectCrust(void)
 	// Modified multi-connect after creating crust
 	undoPush();
 	DLFL::modifiedMultiConnectCrust(&object);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -537,8 +537,8 @@ void MainWindow::createSponge(void)
 	undoPush();
 	DLFL::createSponge(&object,MainWindow::sponge_thickness,
 		MainWindow::sponge_collapse_threshold);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -546,32 +546,32 @@ void MainWindow::planarizeFaces(void)                  // Planarize all faces
 {
 	undoPush();
 	DLFL::planarize(&object);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 }
 
 void MainWindow::spheralizeObject(void)         // Spheralize object vertices
 {
 	undoPush();
 	DLFL::spheralize(&object);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 }
 
 void MainWindow::smoothMesh(void)                          // Smooth the mesh
 {
 	undoPush();
 	DLFL::meshsmooth(&object);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 }
 
 void MainWindow::subdivideCatmullClark(void)     // Catmull-Clark subdivision
 {
 	undoPush();
 	DLFL::catmullClarkSubdivide(&object);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -579,8 +579,8 @@ void MainWindow::subdivideDooSabin(void)             // Doo-Sabin subdivision
 {
 	undoPush();
 	DLFL::dooSabinSubdivide(&object,doo_sabin_check);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -588,8 +588,8 @@ void MainWindow::subdivideHoneycomb(void)            // Honeycomb subdivision
 {
 	undoPush();
 	DLFL::honeycombSubdivide(&object);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -597,8 +597,8 @@ void MainWindow::subdivideRoot4(void)                   // Root-4 subdivision
 {
 	undoPush();
 	DLFL::root4Subdivide( &object, MainWindow::weight_factor,MainWindow::twist_factor);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -606,8 +606,8 @@ void MainWindow::subdivideCornerCutting(void)   // Corner-cutting subdivision
 {
 	undoPush();
 	DLFL::cornerCuttingSubdivide(&object);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -615,8 +615,8 @@ void MainWindow::subdivideLinearVertexInsertion(void) // Bi-linear Vertex-insert
 {
 	undoPush();
 	DLFL::subdivideAllFaces(&object,true);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -624,8 +624,8 @@ void MainWindow::subdivideSimplest(void)        // Corner-cutting subdivision
 {
 	undoPush();
 	DLFL::simplestSubdivide(&object);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -633,8 +633,8 @@ void MainWindow::subdivideVertexCutting(void)   // Vertex-cutting subdivision
 {
 	undoPush();
 	DLFL::vertexCuttingSubdivide(&object,MainWindow::vertex_cutting_offset);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -642,8 +642,8 @@ void MainWindow::subdividePentagonal(void)          // Pentagonal subdivision
 {
 	undoPush();
 	DLFL::pentagonalSubdivide(&object,MainWindow::pentagonal_offset);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -654,8 +654,8 @@ void MainWindow::subdivideCubicPentagonal(void) // Cubic Pentagonal remeshing sc
 	DLFL::pentagonalSubdivide(&object,MainWindow::pentagonal_offset);
 	DLFL::createDual(&object,true); // Use accurate method
 	DLFL::createDual(&object,true); // Use accurate method
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -666,8 +666,8 @@ void MainWindow::subdivideDualPentagonal(void) // Dual-Pentagonal subdivision
 	DLFL::createDual(&object,true); // Use accurate method
 	DLFL::pentagonalSubdivide(&object,MainWindow::pentagonal_offset);
 	DLFL::createDual(&object,true); // Use accurate method
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -675,8 +675,8 @@ void MainWindow::subdividePentagonPreserving(void) // Pentagon preserving remesh
 {
 	undoPush();
 	DLFL::pentagonalSubdivide2(&object,MainWindow::pentagonal_scale);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -687,8 +687,8 @@ void MainWindow::subdivideDualPentagonPreserving(void) // Dual Pentagon preservi
 	DLFL::createDual(&object,true); // Use accurate method
 	DLFL::pentagonalSubdivide2(&object,MainWindow::pentagonal_scale);
 	DLFL::createDual(&object,true); // Use accurate method
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -699,8 +699,8 @@ void MainWindow::subdivideDualHexagonPreserving(void) // Dual Hexagon Preserving
 	DLFL::createDual(&object,true); // Use accurate method
 	DLFL::root4Subdivide(&object,MainWindow::weight_factor,MainWindow::twist_factor);
 	DLFL::createDual(&object,true); // Use accurate method
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -711,8 +711,8 @@ void MainWindow::subdivideRoot3(void)                     // Root-3 remeshing
 	DLFL::createDual(&object,true); // Use accurate method
 	DLFL::honeycombSubdivide(&object);
 	DLFL::createDual(&object,true); // Use accurate method
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -720,8 +720,8 @@ void MainWindow::subdivideLoop(void)                      // Loop subdivision
 {
 	undoPush();
 	DLFL::loopSubdivide(&object);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -732,8 +732,8 @@ void MainWindow::subdivideDualLoop(void)          // Dual of Loop subdivision
 	DLFL::createDual(&object,true); // Use accurate method
 	DLFL::loopSubdivide(&object);
 	DLFL::createDual(&object,true); // Use accurate method
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -744,8 +744,8 @@ void MainWindow::subdivide1264(void)                      // 12-6-4 remeshing
 	DLFL::createDual(&object,true); // Use accurate method
 	DLFL::dual1264Subdivide(&object,MainWindow::dual1264_scale_factor);
 	DLFL::createDual(&object,true); // Use accurate method
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -753,8 +753,8 @@ void MainWindow::subdivideDual1264(void) // Dual of 12-6-4 remeshing - Bei & Can
 {
 	undoPush();
 	DLFL::dual1264Subdivide(&object,MainWindow::dual1264_scale_factor);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -762,8 +762,8 @@ void MainWindow::subdivideCheckerBoard(void)       // Checker board remeshing
 {
 	undoPush();
 	DLFL::checkerBoardRemeshing(&object,MainWindow::checkerboard_thickness);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -775,8 +775,8 @@ void MainWindow::subdivideDualCheckerBoard(void) // Dual Checker board remeshing
 	DLFL::createDual(&object,true); // Use accurate method
 	DLFL::checkerBoardRemeshing(&object,MainWindow::checkerboard_thickness);
 	DLFL::createDual(&object,true); // Use accurate method
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -785,8 +785,8 @@ void MainWindow::subdivideStar(void)               // Star subdivision - Doug
 	undoPush();
 	setModified(true);
 	DLFL::starSubdivide(&object,MainWindow::star_offset);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -795,8 +795,8 @@ void MainWindow::subdivideSqrt3(void)           // sqrt(3) subdivision - Doug
 	undoPush();
 	setModified(true);
 	DLFL::sqrt3Subdivide(&object);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -805,8 +805,8 @@ void MainWindow::subdivideFractal(void)                     // fractal - Doug
 	undoPush();
 	setModified(true);
 	DLFL::fractalSubdivide(&object,MainWindow::fractal_offset);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -815,8 +815,8 @@ void MainWindow::subStellate1(void)            // stellate subdivision - Eric
 	undoPush();
 	setModified(true);
 	DLFL::stellateSubdivide(&object);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -825,8 +825,8 @@ void MainWindow::subStellate2(void)            // stellate subdivision - Eric
 	undoPush();
 	setModified(true);
 	DLFL::twostellateSubdivide(&object,MainWindow::substellate_height, MainWindow::substellate_curve);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -835,8 +835,8 @@ void MainWindow::subdivideDome(void)                          // Bei & Cansin
 	undoPush();
 	setModified(true);
 	DLFL::domeSubdivide(&object,MainWindow::domeLength_factor, MainWindow::domeScale_factor);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -845,8 +845,8 @@ void MainWindow::subdivideDooSabinBC(void) // Doo-Sabin(BC) subdivision - Bei & 
 	undoPush();
 	setModified(true);
 	DLFL::dooSabinSubdivideBC(&object,MainWindow::doo_sabin_check);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -856,8 +856,8 @@ void MainWindow::subdivideDooSabinBCNew(void) // Doo-Sabin(BCNew) Bei & Cansin
 	setModified(true);
 	DLFL::dooSabinSubdivideBCNew(&object,MainWindow::dooSabinBCnewScale_factor,
 		MainWindow::dooSabinBCnewLength_factor);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -866,8 +866,8 @@ void MainWindow::subdivideLoopStyle(void)     // Loop-style subdivision - Bei
 	undoPush();
 	setModified(true);
 	DLFL::loopStyleSubdivide(&object,MainWindow::loopLength_factor);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -877,8 +877,8 @@ void MainWindow::globalStellate(void)
 	undoPush();
 	setModified(true);
 	DLFL::subdivideAllFaces(&object,false);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -887,8 +887,8 @@ void MainWindow::splitValence2Vertices(void)      // Split Valence 2 vertices
 	undoPush();
 	setModified(true);
 	DLFL::splitValence2Vertices(&object,MainWindow::vertex_split_offset);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -897,8 +897,8 @@ void MainWindow::cleanupWingedVertices(void)     // Remove valence 2 vertices
 	undoPush();
 	setModified(true);
 	DLFL::cleanupWingedVertices(&object);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -907,8 +907,8 @@ void MainWindow::createDual(void)                       // Create dual object
 	undoPush();
 	setModified(true);
 	DLFL::createDual(&object,MainWindow::accurate_dual);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -920,8 +920,8 @@ void MainWindow::createCrust(bool use_scaling)        // Create a crust
 		DLFL::createCrustWithScaling(&object,MainWindow::crust_scale_factor);
 	else 
 		DLFL::createCrust(&object,MainWindow::crust_thickness);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -938,8 +938,8 @@ void MainWindow::createCrust2(bool use_scaling) {
 		DLFL::createCrustWithScaling(&object,MainWindow::crust_scale_factor);
 	else 
 		DLFL::createCrust(&object,MainWindow::crust_thickness);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	if ( GLWidget::numSelectedFaces() >= 1 ) {
 		DLFLFacePtrArray sfptrarr = GLWidget::getSelectedFaces();
 		if ( sfptrarr[0] ) {
@@ -948,8 +948,8 @@ void MainWindow::createCrust2(bool use_scaling) {
 			DLFL::punchHoles(&object);
 		}
 	}
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	GLWidget::clearSelectedFaces();
 	redraw();	
 }
@@ -959,8 +959,8 @@ void MainWindow::makeWireframe(void)                    // Create a wireframe
 	undoPush();
 	setModified(true);
 	DLFL::makeWireframe(&object,MainWindow::wireframe_thickness);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -969,8 +969,8 @@ void MainWindow::makeWireframe2() {// Create a wireframe // dave {
 	undoPush();
 	setModified(true);
 	DLFL::makeWireframe(&object,MainWindow::wireframe_thickness);
-	// recomputePatches();
-	// recomputeNormals();
+	// active->recomputePatches();
+	// active->recomputeNormals();
 	// if ( GLWidget::numSelectedFaces() >= 1 ) {
 	// 	DLFLFacePtrArray sfptrarr = GLWidget::getSelectedFaces();
 	// 	if ( sfptrarr[0] ) {
@@ -981,8 +981,8 @@ void MainWindow::makeWireframe2() {// Create a wireframe // dave {
 	// 		object.makeWireframe2(MainWindow::wireframe_thickness);
 	// 	}
 	// }
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 	redraw();
 }
@@ -992,8 +992,8 @@ void MainWindow::makeWireframeWithColumns(void) // Create a wireframe using colu
 	undoPush();
 	setModified(true);
 	DLFL::makeWireframeWithColumns(&object,MainWindow::column_thickness, MainWindow::column_segments);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 /*
@@ -1005,8 +1005,8 @@ void MainWindow::makeUnitCube(double edgelength)
 	object.reset();
 	object.splice(*unitcube);
 	delete unitcube;
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -1018,8 +1018,8 @@ void MainWindow::makeUnitTetrahedron(double edgelength)
 	object.reset();
 	object.splice(*unittetra);
 	delete unittetra;
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -1031,8 +1031,8 @@ void MainWindow::makeMengerSponge(int level)
 	object.reset();
 	object.splice(*mengersponge);
 	delete mengersponge;
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
@@ -1044,8 +1044,8 @@ void MainWindow::makeSierpinskiTetrahedron(int level)
 	object.reset();
 	object.splice(*stetra);
 	delete stetra;
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 */
@@ -1064,8 +1064,8 @@ void MainWindow::edgeCleanup(void) // Cleanup redundant edges
 	undoPush();
 	setModified(true);
 	DLFL::edgeCleanup(&object);
-	recomputePatches();
-	recomputeNormals();
+	active->recomputePatches();
+	active->recomputeNormals();
 	MainWindow::clearSelected();
 }
 
