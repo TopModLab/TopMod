@@ -16,6 +16,7 @@ void computeLighting( DLFLFacePtr fp, LightPtr lightptr ) {
       fvcolor = lightptr->illuminate(pos,normal)*Kd;
       // fvcolor *= Kd; 
       fvcolor += (1.0-Kd)*basecolor;
+			// fvco
 
       current->color = fvcolor;
 

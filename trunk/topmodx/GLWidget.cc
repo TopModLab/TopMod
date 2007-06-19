@@ -34,28 +34,90 @@ extern DLFLFaceVertexPtrArray DLFLObject::sel_fvptr_array; // List of selected D
 // exit(0); // could not create stereo context
 
 GLWidget::GLWidget(int w, int h, VPView v, DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op, TMPatchObjectPtr pop, const QGLFormat & format, QWidget * parent ) 
- : QGLWidget(format, parent, NULL), viewport(w,h,v), object(op), patchObject(pop), renderer(rp), 
-mRenderColor(color), mViewportColor(vcolor),/*grid(ZX,20.0,10),*/ showgrid(false), showaxes(false) { 
+ : 	QGLWidget(format, parent, NULL), /*viewport(w,h,v),*/ object(op), patchObject(pop), renderer(rp), 
+		mRenderColor(color), mViewportColor(vcolor),/*grid(ZX,20.0,10),*/ showgrid(false), showaxes(false), mUseGPU(true) { 
 
+	// Vector3d neweye = eye - center;
+	// double eyedist = norm(neweye);
+	// Matrix4x4 lmat = Transformation::lookat(neweye,Vector3d(0,0,0),up);
+	// transform = lmat;
+	// transform.translate(-center);
+	// camera.setEye(Vector3d(0,0,eyedist));
+	
+	
+	//take cross product of lookat and up vector - and you're given one that looks right...
+	//then cross that with the lookat and you get the real up
+	Vector3d Aim(0,0,0);
+	Vector3d Pos(10,10,10);
+	Vector3d Up(-0.40824829046,0.81649658093,-0.40824829046);
+	
+	// pos X up
+	// 	A  X B
+	// double ax = -10, ay = -10, az = -10;
+	// double bx = 0, by = 1, bz = 0;
+	// 
+	// double cx = ay*bz - az*by;
+	// double cy = az*bx - ax*bz;
+	// double cz = ax*by - ay*bx;
+	// 
+	// double dx = cy*az - cz*ay;
+	// double dy = cz*ax - cx*az;
+	// double dz = cx*ay - cy*ax;
+	// 
+	// double sqr = sqrt(dx*dx + dy*dy + dz*dz); 
+	
+	
+	// std::cout << dx/sqr << " " << dy/sqr << " " << dz/sqr << "\n\n\n";
+	// Vector3d vv(dx,dy,dz);
+	// normalize(vv);
+	// std::cout << vv << "\n";
+	// 
+	// Vector3d right = (-(normalized(Pos))) % Up;
+	// // Up = Vector3d(-0.408248,0.816497,-0.408248);//right % (-Pos);
+	// Up = normalized(right) % (-(normalized(Pos)));
+	// normalize(Up);
+	// std::cout << Up << std::endl;
+	// mCamera = new Camera2( eye, lookat, Vector3d(-0.408248,0.816497,-0.408248));
+	mCamera = new Camera2( Pos, Aim, Up);
+  // ArbitraryRotate(Vector3d(1,0,0),Vector3d(0,1,0),Vector3d(0,0,1),45.0f,45.0f,mCamera->Pos,mCamera->Aim);
+
+	// Vector3d WindowX,WindowY,WindowZ;
+	// WindowX.set(1, 0, 0);
+	// WindowY.set(0, 1, 0);
+	// 
+	// RotateX(&WindowX, 45);
+	// RotateY(&WindowX, 45);
+	// WindowX[2] = -WindowX[2];
+	// 
+	// RotateX(&WindowY, 45);
+	// RotateY(&WindowY, 45);
+	// WindowY[2] = -WindowY[2];
+	// 
+	// WindowZ = WindowX % WindowY;
+	// normalize(WindowZ);
+	// 
+	// ArbitraryRotate(WindowX, WindowY, WindowZ, 0, 0, Pos, Aim);
+	// ArbitraryRotate(Vector3d(1, 0, 0), Vector3d(0, 1, 0), Vector3d(0, 0, 1), 0, 0, Pos, Aim);
+
+	// Up = WindowY;
+	// normalize(Up);
+
+	
 	// if( patchObject ) { delete patchObject; patchObject = 0; }
 }
 
-GLWidget::~GLWidget(){
-	// UnregisterConnexionClient(fConnexionClientID); 
-	// CleanupConnexionHandlers(); 
-}
+GLWidget::~GLWidget(){ }
 
 void GLWidget::redraw() {
 	repaint();
 }
 
 void GLWidget::initializeGL( ) {
-	
-	// std::cout << "initialize gl function" << std::endl;
-	
+		
 	setAutoBufferSwap( true );
 	glClearColor(mViewportColor.redF(),mViewportColor.greenF(),mViewportColor.blueF(),mViewportColor.alphaF());
-	viewport.resize(this->size().width(),this->size().height());
+	mCamera->PerspectiveDisplay(width(),height());
+	// viewport.resize(this->size().width(),this->size().height());
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);									// Set Line Antialiasing
 	glEnable(GL_BLEND);																			// Enable Blending
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);			// Type Of Blending To Use
@@ -72,9 +134,34 @@ void GLWidget::initializeGL( ) {
 	
 	locatorPtr = new DLFLLocator(); // brianb
 	
+	#ifdef GPU_OK
+	if (mUseGPU)
+		initCg();
+	#endif
+	
 }
 
 void GLWidget::paintEvent(QPaintEvent *event){
+	
+	#ifdef GPU_OK
+	if (mUseGPU){
+	  cgGLBindProgram( cg.vertProgram );
+	  cgGLBindProgram( cg.fragProgram );
+	  cgGLEnableProfile( cg.vertProfile );
+	  cgGLEnableProfile( cg.fragProfile );
+	}
+	#endif // GPU_OK
+
+	//clear to a white background
+	//   glClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
+	// glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	//   glLoadIdentity();
+	//   glMatrixMode(GL_MODELVIEW);
+	//   glViewport(0,0, width(), height() );	
+	//   glLoadIdentity();
+	// //transform the camera
+	//   mCamera->PerspectiveDisplay(width(),height());
+
 	QPainter painter;
 	painter.begin(this);
 	painter.setRenderHint(QPainter::Antialiasing);
@@ -85,18 +172,22 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 
-	viewport.resize(width(),height());
+	// viewport.resize(width(),height());
+	// mCamera->PerspectiveDisplay(width(),height());
+
 	if( renderer )
 	  renderer->initialize();	
 	
 	glClearColor(mViewportColor.redF(),mViewportColor.greenF(),mViewportColor.blueF(),mViewportColor.alphaF());
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	setupViewport(width(), height());
+	// setupViewport(width(), height());
 	glEnable(GL_DEPTH_TEST);
 	// Multiply by the transformation matrix. dave and stuart*
 	// Matrix4x4 m4 = inverse(viewport.apply_transform().matrix());
-	viewport.apply_transform();
+	
+	// viewport.apply_transform();
+	mCamera->PerspectiveDisplay(width(),height());
 	
 	// Draw the axes if required. Use thick lines
 	if ( showaxes ) {
@@ -173,21 +264,35 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	drawIDs(&painter, &model[0][0], &proj[0][0], &view[0]); // draw vertex, edge and face ids
 	  
 	painter.end();
+	
+	#ifdef GPU_OK
+	if (mUseGPU){
+	  cgGLDisableProfile( cg.vertProfile );
+	  cgGLDisableProfile( cg.fragProfile );
+	}
+	#endif // GPU_OK
+	
 }
 
 void GLWidget::resizeGL( int width, int height ){
-	setupViewport(width,height);drawText(this->size().width(),this->size().height());	
-	viewport.resize(this->size().width(),this->size().height());
+	// setupViewport(width,height);
+	// drawText(this->size().width(),this->size().height());	
+	if (height==0)	height=1; 							//Making Height Equal One
+	glViewport( 0, 0, (GLint)width, (GLint)height );
+	
+	// viewport.resize(this->size().width(),this->size().height());
 }
 
 void GLWidget::setupViewport(int width, int height){	
-	if (height==0)	height=1; 							//Making Height Equal One
-	glViewport(0, 0, width, height);
-	// glMatrixMode(GL_PROJECTION);						// Select The Projection Matrix
-	// glLoadIdentity();												// Reset The Projection Matrix
-	// // Calculate The Aspect Ratio Of The Window
-	// gluPerspective(60.0f,(GLfloat)width/(GLfloat)height,0.1f,100.0f);
-	glMatrixMode(GL_MODELVIEW);						// Select The Modelview Matrix
+	// mScene->resize(width,height);
+  // setup viewport, projection etc.:
+
+	// glViewport(0, 0, width, height);
+	// // glMatrixMode(GL_PROJECTION);						// Select The Projection Matrix
+	// // glLoadIdentity();												// Reset The Projection Matrix
+	// // // Calculate The Aspect Ratio Of The Window
+	// // gluPerspective(60.0f,(GLfloat)width/(GLfloat)height,0.1f,100.0f);
+	// glMatrixMode(GL_MODELVIEW);						// Select The Modelview Matrix
 }
 
 void GLWidget::drawText(int width, int height ){	
@@ -218,8 +323,12 @@ void GLWidget::drawHUD(QPainter *painter){
 		 						"\nEdges: " + QString("%1").arg((uint)object->num_edges()) +
 								"\nFaces: " + QString("%1").arg((uint)object->num_faces()) +
 								"\nGenus: " + QString("%1").arg(object->genus());
-								// "\nVerse: " + QString("%1").arg(VerseConnected) + "\n";
 
+		QString s2 = "Sel. Vertices:" + QString("%1").arg(numSelectedVertices()) +
+		 						"\nSel. Edges: " + QString("%1").arg(numSelectedEdges()) +
+								"\nSel. Faces: " + QString("%1").arg(numSelectedFaces()) +
+								"\nSel. Face-Verts: " + QString("%1").arg(numSelectedFaceVertices());
+								
 		QFont font("verdana", 14);
 		QFontMetrics fm(font);
 		painter->setFont(font);
@@ -227,10 +336,12 @@ void GLWidget::drawHUD(QPainter *painter){
 		painter->setPen(Qt::NoPen);
 		QBrush brush = QBrush(QColor(0,0,0,127));
 		painter->setBrush(brush);
-		QRectF rectangle(10.0, 10.0, r.width()/2.5, r.height()*6);
-		painter->drawRoundRect(QRect(3.0,3.0,rectangle.width(),rectangle.height()),25,25);
+		QRectF rectangle(0.0, height()-r.height()*6, width(), height());
+		// painter->drawRoundRect(QRect(3.0,3.0,rectangle.width(),rectangle.height()),25,25);
+		painter->drawRect(rectangle);
 		painter->setPen(Qt::white);
-		painter->drawText(rectangle, Qt::AlignLeft, s);
+		painter->drawText(width()/5*3.5, rectangle.top()+5,150, rectangle.height(),Qt::AlignRight, s);
+		painter->drawText(width()/5*2.5, rectangle.top()+5,150,rectangle.height(),Qt::AlignRight, s2);
 	}
 }
 
@@ -239,7 +350,8 @@ void GLWidget::drawIDs( QPainter *painter, const GLdouble *model, const GLdouble
 	GLdouble win_x = 0, win_y = 0, win_z = 0;	
 	double min_dist=100000000.0, max_dist=-100000000.0, x,y,z,d;
 	int count, min_alpha = 25, max_alpha = 255;
-	Vector3d coord = viewport.camera.getPos(); //use this to find the dist from the camera
+	// Vector3d coord = viewport.camera.getPos(); //use this to find the dist from the camera
+	Vector3d coord = mCamera->getPos(); //use this to find the dist from the camera
 	QBrush brush;
 	
 	/* Draw Vertex IDs */
@@ -483,7 +595,8 @@ DLFLVertexPtr GLWidget::selectVertex(int mx, int my) {
 
 	GLint vp[4];
 	glGetIntegerv(GL_VIEWPORT, vp);
-	viewport.camera.enterSelectionMode(mx,my,30,30,vp); // Reduced sensitivity for picking points
+	// viewport.camera.enterSelectionMode(mx,my,30,30,vp); // Reduced sensitivity for picking points
+	mCamera->enterSelectionMode(mx,my,30,30,vp); // Reduced sensitivity for picking points
 
 	// Make sure earlier matrices are preserved, since multiple windows
 	// seem to be sharing the same matrix stacks
@@ -493,8 +606,11 @@ DLFLVertexPtr GLWidget::selectVertex(int mx, int my) {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 
-	viewport.reshape();
-	viewport.apply_transform();
+	// viewport.reshape();
+	// viewport.apply_transform();
+	// glViewport(0,0,width(),height());
+	mCamera->PerspectiveDisplay(width(),height());
+	// viewport.apply_transform();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	renderVerticesForSelect(object);
 	glFlush();
@@ -504,7 +620,7 @@ DLFLVertexPtr GLWidget::selectVertex(int mx, int my) {
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 
-	viewport.camera.leaveSelectionMode();
+	mCamera->leaveSelectionMode();
 
 	hits = glRenderMode(GL_RENDER);
 	if ( hits > 0 ){
@@ -538,7 +654,8 @@ DLFLLocatorPtr GLWidget::selectLocator(int mx, int my) // brianb
 
   GLint vp[4];
   glGetIntegerv(GL_VIEWPORT, vp);
-  viewport.camera.enterSelectionMode(mx,my,10,10,vp); // Reduced sensitivity for picking points
+  // viewport.camera.enterSelectionMode(mx,my,10,10,vp); // Reduced sensitivity for picking points
+  mCamera->enterSelectionMode(mx,my,10,10,vp); // Reduced sensitivity for picking points
 
   // Make sure earlier matrices are preserved, since multiple windows
   // seem to be sharing the same matrix stacks
@@ -549,8 +666,10 @@ DLFLLocatorPtr GLWidget::selectLocator(int mx, int my) // brianb
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
 
-  viewport.reshape();
-  viewport.apply_transform();
+  // viewport.reshape();
+  // viewport.apply_transform();
+	mCamera->PerspectiveDisplay(width(),height());
+  // viewport.apply_transform();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   renderLocatorsForSelect();
   glFlush();
@@ -560,7 +679,7 @@ DLFLLocatorPtr GLWidget::selectLocator(int mx, int my) // brianb
   glMatrixMode(GL_PROJECTION);
   glPopMatrix();
 
-  viewport.camera.leaveSelectionMode();
+  mCamera->leaveSelectionMode();
   hits = glRenderMode(GL_RENDER);
   if ( hits > 0 )
   {
@@ -601,7 +720,7 @@ DLFLEdgePtr GLWidget::selectEdge(int mx, int my) {
 
 	GLint vp[4];
 	glGetIntegerv(GL_VIEWPORT, vp);
-	viewport.camera.enterSelectionMode(mx,my,10,10,vp);
+	mCamera->enterSelectionMode(mx,my,10,10,vp);
 
 	// Make sure earlier matrices are preserved, since multiple windows
 	// seem to be sharing the same matrix stacks
@@ -611,8 +730,10 @@ DLFLEdgePtr GLWidget::selectEdge(int mx, int my) {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 
-	viewport.reshape();
-	viewport.apply_transform();
+	// viewport.reshape();
+	// viewport.apply_transform();
+	mCamera->PerspectiveDisplay(width(),height());
+	// viewport.apply_transform();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	renderEdgesForSelect(object);
 	glFlush();
@@ -622,7 +743,7 @@ DLFLEdgePtr GLWidget::selectEdge(int mx, int my) {
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 
-	viewport.camera.leaveSelectionMode();
+	mCamera->leaveSelectionMode();
 
 	hits = glRenderMode(GL_RENDER);
 	if ( hits > 0 ){
@@ -656,7 +777,7 @@ DLFLFacePtr GLWidget::selectFace(int mx, int my) {
 
 	GLint vp[4];
 	glGetIntegerv(GL_VIEWPORT, vp);
-	viewport.camera.enterSelectionMode(mx,my,2.5,2.5,vp);
+	mCamera->enterSelectionMode(mx,my,2.5,2.5,vp);
 
 	// Make sure earlier matrices are preserved, since multiple windows
 	// seem to be sharing the same matrix stacks
@@ -667,8 +788,10 @@ DLFLFacePtr GLWidget::selectFace(int mx, int my) {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 
-	viewport.reshape();
-	viewport.apply_transform();
+	// viewport.reshape();
+	// viewport.apply_transform();
+	mCamera->PerspectiveDisplay(width(),height());
+	// viewport.apply_transform();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	renderFacesForSelect(object);
 	glFlush();
@@ -678,7 +801,7 @@ DLFLFacePtr GLWidget::selectFace(int mx, int my) {
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 
-	viewport.camera.leaveSelectionMode();
+	mCamera->leaveSelectionMode();
 
 	hits = glRenderMode(GL_RENDER);
 	if ( hits > 0 ){
@@ -714,7 +837,7 @@ DLFLFacePtrArray GLWidget::selectFaces(int mx, int my) {
 
 	GLint vp[4];
 	glGetIntegerv(GL_VIEWPORT, vp);
-	viewport.camera.enterSelectionMode(mx,my,mBrushSize,mBrushSize,vp);
+	mCamera->enterSelectionMode(mx,my,mBrushSize,mBrushSize,vp);
 
 	// Make sure earlier matrices are preserved, since multiple windows
 	// seem to be sharing the same matrix stacks
@@ -725,8 +848,10 @@ DLFLFacePtrArray GLWidget::selectFaces(int mx, int my) {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 
-	viewport.reshape();
-	viewport.apply_transform();
+	// viewport.reshape();
+	// viewport.apply_transform();
+	mCamera->PerspectiveDisplay(width(),height());
+	// viewport.apply_transform();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	renderFacesForSelect(object);
 	glFlush();
@@ -736,7 +861,7 @@ DLFLFacePtrArray GLWidget::selectFaces(int mx, int my) {
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 
-	viewport.camera.leaveSelectionMode();
+	mCamera->leaveSelectionMode();
 
 	hits = glRenderMode(GL_RENDER);
 	if ( hits > 0 ){
@@ -778,7 +903,7 @@ DLFLFacePtrArray GLWidget::deselectFaces(int mx, int my) {
 
 	GLint vp[4];
 	glGetIntegerv(GL_VIEWPORT, vp);
-	viewport.camera.enterSelectionMode(mx,my,mBrushSize,mBrushSize,vp);
+	mCamera->enterSelectionMode(mx,my,mBrushSize,mBrushSize,vp);
 
 	// Make sure earlier matrices are preserved, since multiple windows
 	// seem to be sharing the same matrix stacks
@@ -789,8 +914,10 @@ DLFLFacePtrArray GLWidget::deselectFaces(int mx, int my) {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 
-	viewport.reshape();
-	viewport.apply_transform();
+	// viewport.reshape();
+	// viewport.apply_transform();
+	mCamera->PerspectiveDisplay(width(),height());
+	// viewport.apply_transform();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	renderFacesForSelect(object);
 	glFlush();
@@ -800,7 +927,7 @@ DLFLFacePtrArray GLWidget::deselectFaces(int mx, int my) {
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 
-	viewport.camera.leaveSelectionMode();
+	mCamera->leaveSelectionMode();
 
 	hits = glRenderMode(GL_RENDER);
 	if ( hits > 0 ){
@@ -840,7 +967,7 @@ DLFLFaceVertexPtr GLWidget::selectFaceVertex(DLFLFacePtr fp, int mx, int my) {
 
 	GLint vp[4];
 	glGetIntegerv(GL_VIEWPORT, vp);
-	viewport.camera.enterSelectionMode(mx,my,40,40,vp);
+	mCamera->enterSelectionMode(mx,my,40,40,vp);
 	// Make sure earlier matrices are preserved, since multiple windows
 	// seem to be sharing the same matrix stacks
 	glMatrixMode(GL_PROJECTION);
@@ -849,8 +976,10 @@ DLFLFaceVertexPtr GLWidget::selectFaceVertex(DLFLFacePtr fp, int mx, int my) {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 
-	viewport.reshape();
-	viewport.apply_transform();
+	// viewport.reshape();
+	// viewport.apply_transform();
+	mCamera->PerspectiveDisplay(width(),height());
+	// viewport.apply_transform();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	renderFaceVerticesForSelect(fp);
 	glFlush();
@@ -860,7 +989,7 @@ DLFLFaceVertexPtr GLWidget::selectFaceVertex(DLFLFacePtr fp, int mx, int my) {
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 
-	viewport.camera.leaveSelectionMode();
+	mCamera->leaveSelectionMode();
 
 	hits = glRenderMode(GL_RENDER);
 	if ( hits > 0 ){
@@ -944,202 +1073,260 @@ void GLWidget::drawSelected(void) {
 	}
 }
 
-void GLWidget::wheelEvent(QWheelEvent *event) {
+#ifdef GPU_OK
 
-	int x = event->x(), y = event->y();
-	int numDegrees = event->delta() / 8;
-	int numSteps = numDegrees / 15;
-	double z;
+void GLWidget::initCg( ) {
+	if (mUseGPU){
+	  // Create Context
+	  cg.context = cgCreateContext( );
+	  // Vertex Profile
+	  cg.vertProfile = cgGLGetLatestProfile( CG_GL_VERTEX );
+	  cgGLSetOptimalOptions( cg.vertProfile );
+	  // Frag Profile
+	  cg.fragProfile = cgGLGetLatestProfile( CG_GL_FRAGMENT );
+	  cgGLSetOptimalOptions( cg.fragProfile );
+	  // Vertex Program
+	  char *programName = new char[256];
+	  sprintf( programName, "%s", "vertShader.cg" );
+	  cg.vertProgram = cgCreateProgramFromFile( cg.context, CG_SOURCE, programName, cg.vertProfile, NULL, NULL );
+	  checkCgError( cg.context, 5 );
+	  // Fragment Program
+	  sprintf( programName, "%s", "fragShader.cg" );
+	  cg.fragProgram = cgCreateProgramFromFile( cg.context, CG_SOURCE, programName, cg.fragProfile, NULL, NULL );
+	  delete [] programName;
+	  programName = 0;
 
-	if ( viewport.current() == VPRotate) {
-		viewport.handle_rotate(VPRelease,x,y); // Stop rotating
-		//viewport.handle_zoom(VPPush,x,y); // Start zooming
-		//QCursor::setShape(Qt::SizeAllCursor);
-	} 
-	else  if ( 	!(QApplication::keyboardModifiers() == Qt::AltModifier) && 
-							!(QApplication::keyboardModifiers() == Qt::ShiftModifier) &&
-							!(QApplication::keyboardModifiers() == (Qt::ShiftModifier | Qt::AltModifier) ) ){
-		// QMessageBox::about(this, tr("false"),tr("numDegrees = %1").arg(numDegrees));
-		viewport.handle_zoom(VPPush,x,y); // Start zooming
-		viewport.send_to_current(VPPush,x,y);
-		// updateGL();
-		repaint();
+	  // cg.randRot = cgGetNamedParameter( cg.fragProgram, "randRot" );
+	  // cg.velocity = cgGetNamedParameter( cg.vertProgram, "velocity" );
 
-		viewport.handle_zoom(VPPush,x+numDegrees*3,y); // Start zooming
-		//QMessageBox::about(this, tr("false"),tr("z = %1").arg(z));
-		viewport.send_to_current(VPPush,x,y);		
-		viewport.handle_zoom(VPRelease,x+numDegrees,y); // Start zooming
-		viewport.send_to_current(VPRelease,x,y);		
-		//updateGL();
-		repaint();
-
-		// 	//QCursor::setShape(Qt::SizeAllCursor);
-	}
-	else  if ( QApplication::keyboardModifiers() == Qt::ShiftModifier ){
-
-		viewport.handle_pan(VPPush,x,y); 
-		viewport.send_to_current(VPPush,x,y);
-
-		viewport.handle_pan(VPPush,x+numDegrees*2,y);
-		viewport.send_to_current(VPPush,x,y);		
-
-		viewport.handle_pan(VPRelease,x+numDegrees*2,y);
-		viewport.send_to_current(VPRelease,x,y);
-
-		//updateGL();
-		repaint();
-	}
-	else  if ( QApplication::keyboardModifiers() == Qt::AltModifier ){
-
-		viewport.handle_pan(VPPush,x,y); // Start panning up and down
-		viewport.send_to_current(VPPush,x,y);
-
-		viewport.handle_pan(VPPush,x,y+numDegrees*2); // Start panning up and down		
-		viewport.send_to_current(VPPush,x,y);		
-
-		viewport.handle_pan(VPRelease,x,y+numDegrees*2); // Start panning up and down
-		viewport.send_to_current(VPRelease,x,y);
-
-		//updateGL();
-		repaint();
-	}
-	else  if ( QApplication::keyboardModifiers() == (Qt::AltModifier | Qt::ShiftModifier) ){
-
-		viewport.handle_rotate(VPPush,x,y); 
-		viewport.send_to_current(VPPush,x,y);
-
-		viewport.handle_rotate(VPPush,x+numDegrees*2,y); 
-		viewport.send_to_current(VPPush,x,y);		
-
-		viewport.handle_rotate(VPRelease,x+numDegrees*2,y); 
-		viewport.send_to_current(VPRelease,x,y);
-
-		//updateGL();
-		repaint();
-	}
-	else  if ( QApplication::keyboardModifiers() == (Qt::ShiftModifier | Qt::MetaModifier) ){
-
-		viewport.handle_rotate(VPPush,x,y); 
-		viewport.send_to_current(VPPush,x,y);
-
-		viewport.handle_rotate(VPPush,x,y+numDegrees*2); 
-		viewport.send_to_current(VPPush,x,y);		
-
-		viewport.handle_rotate(VPRelease,x,y+numDegrees*2); 
-		viewport.send_to_current(VPRelease,x,y);
-
-		//updateGL();
-		repaint();
+	  cgGLLoadProgram( cg.vertProgram );
+	  checkCgError( cg.context, 1 );
+	  cgGLLoadProgram( cg.fragProgram );
+	  checkCgError( cg.context, 2 );
 	}
 }
+
+#endif // GPU_OK
+
+void GLWidget::wheelEvent(QWheelEvent *event) {
+
+	// int x = event->x(), y = event->y();
+	// int numDegrees = event->delta() / 8;
+	// int numSteps = numDegrees / 15;
+	// double z;
+	mCamera->HandleMouseWheel(event->delta());
+	repaint();
+
+	// if ( viewport.current() == VPRotate) {
+	// 	viewport.handle_rotate(VPRelease,x,y); // Stop rotating
+	// 	//viewport.handle_zoom(VPPush,x,y); // Start zooming
+	// 	//QCursor::setShape(Qt::SizeAllCursor);
+	// } 
+	// else  if ( 	!(QApplication::keyboardModifiers() == Qt::AltModifier) && 
+	// 						!(QApplication::keyboardModifiers() == Qt::ShiftModifier) &&
+	// 						!(QApplication::keyboardModifiers() == (Qt::ShiftModifier | Qt::AltModifier) ) ){
+	// 	// QMessageBox::about(this, tr("false"),tr("numDegrees = %1").arg(numDegrees));
+	// 	viewport.handle_zoom(VPPush,x,y); // Start zooming
+	// 	viewport.send_to_current(VPPush,x,y);
+	// 	// updateGL();
+	// 	repaint();
+	// 
+	// 	viewport.handle_zoom(VPPush,x+numDegrees*3,y); // Start zooming
+	// 	//QMessageBox::about(this, tr("false"),tr("z = %1").arg(z));
+	// 	viewport.send_to_current(VPPush,x,y);		
+	// 	viewport.handle_zoom(VPRelease,x+numDegrees,y); // Start zooming
+	// 	viewport.send_to_current(VPRelease,x,y);		
+	// 	//updateGL();
+	// 	repaint();
+	// 
+	// 	// 	//QCursor::setShape(Qt::SizeAllCursor);
+	// }
+	// else  if ( QApplication::keyboardModifiers() == Qt::ShiftModifier ){
+	// 
+	// 	viewport.handle_pan(VPPush,x,y); 
+	// 	viewport.send_to_current(VPPush,x,y);
+	// 
+	// 	viewport.handle_pan(VPPush,x+numDegrees*2,y);
+	// 	viewport.send_to_current(VPPush,x,y);		
+	// 
+	// 	viewport.handle_pan(VPRelease,x+numDegrees*2,y);
+	// 	viewport.send_to_current(VPRelease,x,y);
+	// 
+	// 	//updateGL();
+	// 	repaint();
+	// }
+	// else  if ( QApplication::keyboardModifiers() == Qt::AltModifier ){
+	// 
+	// 	viewport.handle_pan(VPPush,x,y); // Start panning up and down
+	// 	viewport.send_to_current(VPPush,x,y);
+	// 
+	// 	viewport.handle_pan(VPPush,x,y+numDegrees*2); // Start panning up and down		
+	// 	viewport.send_to_current(VPPush,x,y);		
+	// 
+	// 	viewport.handle_pan(VPRelease,x,y+numDegrees*2); // Start panning up and down
+	// 	viewport.send_to_current(VPRelease,x,y);
+	// 
+	// 	//updateGL();
+	// 	repaint();
+	// }
+	// else  if ( QApplication::keyboardModifiers() == (Qt::AltModifier | Qt::ShiftModifier) ){
+	// 
+	// 	viewport.handle_rotate(VPPush,x,y); 
+	// 	viewport.send_to_current(VPPush,x,y);
+	// 
+	// 	viewport.handle_rotate(VPPush,x+numDegrees*2,y); 
+	// 	viewport.send_to_current(VPPush,x,y);		
+	// 
+	// 	viewport.handle_rotate(VPRelease,x+numDegrees*2,y); 
+	// 	viewport.send_to_current(VPRelease,x,y);
+	// 
+	// 	//updateGL();
+	// 	repaint();
+	// }
+	// else  if ( QApplication::keyboardModifiers() == (Qt::ShiftModifier | Qt::MetaModifier) ){
+	// 
+	// 	viewport.handle_rotate(VPPush,x,y); 
+	// 	viewport.send_to_current(VPPush,x,y);
+	// 
+	// 	viewport.handle_rotate(VPPush,x,y+numDegrees*2); 
+	// 	viewport.send_to_current(VPPush,x,y);		
+	// 
+	// 	viewport.handle_rotate(VPRelease,x,y+numDegrees*2); 
+	// 	viewport.send_to_current(VPRelease,x,y);
+	// 
+	// 	//updateGL();
+	// 	repaint();
+	// }
+}
 void GLWidget::mousePressEvent(QMouseEvent *event) {
-	if ( QApplication::keyboardModifiers() == Qt::AltModifier ) {
-		int x = event->x(), y = event->y();
-
-		if ( event->buttons() == Qt::LeftButton ) {
-			if ( viewport.current() == VPPan) {
-				viewport.handle_pan(VPRelease,x,y); // Stop panning
-	//viewport.handle_rotate(VPPush,x,y); // Start rotating
-				setCursor(Qt::ArrowCursor);
-			}
-			else {
-				viewport.handle_rotate(VPPush,x,y); // Start rotating
-	// 	set the qt cursor - make a custom cursor later
-				setCursor(Qt::CrossCursor);
-			}
-			// 	viewport.send_to_current(GLWidget::translateEvent(event),x,y);
-			// 	this->updateGL();
-
-		} 
-		else if ( event->buttons() == Qt::RightButton ) {
-			if ( viewport.current() == VPRotate) {
-				viewport.handle_rotate(VPRelease,x,y); // Stop rotating
-	//viewport.handle_zoom(VPPush,x,y); // Start zooming
-				setCursor(Qt::ArrowCursor);
-			} 
-			else {
-				viewport.handle_zoom(VPPush,x,y); // Start zooming
-				setCursor(Qt::SizeAllCursor);
-			}
-		}
-		else if ( event->buttons() == Qt::MidButton ) {
-			if ( viewport.current() == VPRotate ) {
-				viewport.handle_rotate(VPRelease,x,y); // Stop rotating
-	//viewport.handle_pan(VPPush,x,y);
-				setCursor(Qt::ArrowCursor);
-			} 
-			else {
-				viewport.handle_pan(VPPush,x,y); // Start panning
-				setCursor(Qt::CrossCursor);
-			}
-		}
-	}
-	else if ( (event->buttons() == Qt::LeftButton && QApplication::keyboardModifiers() == (Qt::ShiftModifier | Qt::AltModifier)) ){
-		int x = event->x(), y = event->y();
-
-		if ( viewport.current() == VPRotate ) {
-			viewport.handle_rotate(VPRelease,x,y); // Stop rotating
-			//viewport.handle_pan(VPPush,x,y);
-			setCursor(Qt::ArrowCursor);
-		} 
-		else {
-			viewport.handle_pan(VPPush,x,y); // Start panning
-			setCursor(Qt::CrossCursor);
-		}
-	}
-	else if ( event->buttons() == Qt::RightButton && QApplication::keyboardModifiers() == Qt::ShiftModifier){
-		// event->ignore();
-		if (!isBrushVisible()) showBrush();
-		mBrushStartX = event->x();
-		// mBrushStartY = event->y();
-	}
+	
+	if ( QApplication::keyboardModifiers() == Qt::AltModifier || 
+			(event->buttons() == Qt::LeftButton && QApplication::keyboardModifiers() == (Qt::ShiftModifier | Qt::AltModifier)) ){
+		mCamera->HandleMouseEvent(event->button(), event->type(), event->x(), event->y());
+		repaint();	
+	}	
 	else event->ignore();
+	
+	// if ( QApplication::keyboardModifiers() == Qt::AltModifier ) {
+	// 	int x = event->x(), y = event->y();
+	// 
+	// 	if ( event->buttons() == Qt::LeftButton ) {
+	// 		if ( viewport.current() == VPPan) {
+	// 			viewport.handle_pan(VPRelease,x,y); // Stop panning
+	// //viewport.handle_rotate(VPPush,x,y); // Start rotating
+	// 			setCursor(Qt::ArrowCursor);
+	// 		}
+	// 		else {
+	// 			viewport.handle_rotate(VPPush,x,y); // Start rotating
+	// // 	set the qt cursor - make a custom cursor later
+	// 			setCursor(Qt::CrossCursor);
+	// 		}
+	// 		// 	viewport.send_to_current(GLWidget::translateEvent(event),x,y);
+	// 		// 	this->updateGL();
+	// 
+	// 	} 
+	// 	else if ( event->buttons() == Qt::RightButton ) {
+	// 		if ( viewport.current() == VPRotate) {
+	// 			viewport.handle_rotate(VPRelease,x,y); // Stop rotating
+	// //viewport.handle_zoom(VPPush,x,y); // Start zooming
+	// 			setCursor(Qt::ArrowCursor);
+	// 		} 
+	// 		else {
+	// 			viewport.handle_zoom(VPPush,x,y); // Start zooming
+	// 			setCursor(Qt::SizeAllCursor);
+	// 		}
+	// 	}
+	// 	else if ( event->buttons() == Qt::MidButton ) {
+	// 		if ( viewport.current() == VPRotate ) {
+	// 			viewport.handle_rotate(VPRelease,x,y); // Stop rotating
+	// //viewport.handle_pan(VPPush,x,y);
+	// 			setCursor(Qt::ArrowCursor);
+	// 		} 
+	// 		else {
+	// 			viewport.handle_pan(VPPush,x,y); // Start panning
+	// 			setCursor(Qt::CrossCursor);
+	// 		}
+	// 	}
+	// }
+	// else if ( (event->buttons() == Qt::LeftButton && QApplication::keyboardModifiers() == (Qt::ShiftModifier | Qt::AltModifier)) ){
+	// 	int x = event->x(), y = event->y();
+	// 
+	// 	if ( viewport.current() == VPRotate ) {
+	// 		viewport.handle_rotate(VPRelease,x,y); // Stop rotating
+	// 		//viewport.handle_pan(VPPush,x,y);
+	// 		setCursor(Qt::ArrowCursor);
+	// 	} 
+	// 	else {
+	// 		viewport.handle_pan(VPPush,x,y); // Start panning
+	// 		setCursor(Qt::CrossCursor);
+	// 	}
+	// }
+	// else if ( event->buttons() == Qt::RightButton && QApplication::keyboardModifiers() == Qt::ShiftModifier){
+	// 	// event->ignore();
+	// 	if (!isBrushVisible()) showBrush();
+	// 	mBrushStartX = event->x();
+	// 	// mBrushStartY = event->y();
+	// }
+	// else event->ignore();
+
 }
 
 // this has been modified for the QT interface, so it handles focus automatically
 void GLWidget::mouseMoveEvent(QMouseEvent *event) {	
-	int x = event->x(), y = event->y();
-	if (isBrushVisible()) repaint();
-	
-
-	if ( QApplication::keyboardModifiers() == Qt::AltModifier ) {
-		if ( viewport.send_to_current(GLWidget::translateEvent(event),x,y) ) {
-			repaint();
-		}
-	} 
-	else if ( QApplication::keyboardModifiers() == (Qt::AltModifier | Qt::ShiftModifier) ) {
-		if ( viewport.send_to_current(GLWidget::translateEvent(event),x,y) ) {
-			repaint();
-		}
-	}
-	else if ( event->buttons() == Qt::RightButton && QApplication::keyboardModifiers() == Qt::ShiftModifier){
-		// event->ignore();
-		setBrushSize(mBrushSize+event->x()-mBrushStartX);
-	}
+	if ( QApplication::keyboardModifiers() == Qt::AltModifier || 
+			(event->buttons() == Qt::LeftButton && QApplication::keyboardModifiers() == (Qt::ShiftModifier | Qt::AltModifier)) ){
+		mCamera->HandleMouseMotion(event->x(),event->y());
+		repaint();	
+	}	
 	else event->ignore();
+	
+	// int x = event->x(), y = event->y();
+	// if (isBrushVisible()) repaint();
+	// 
+	// 
+	// if ( QApplication::keyboardModifiers() == Qt::AltModifier ) {
+	// 	if ( viewport.send_to_current(GLWidget::translateEvent(event),x,y) ) {
+	// 		repaint();
+	// 	}
+	// } 
+	// else if ( QApplication::keyboardModifiers() == (Qt::AltModifier | Qt::ShiftModifier) ) {
+	// 	if ( viewport.send_to_current(GLWidget::translateEvent(event),x,y) ) {
+	// 		repaint();
+	// 	}
+	// }
+	// else if ( event->buttons() == Qt::RightButton && QApplication::keyboardModifiers() == Qt::ShiftModifier){
+	// 	// event->ignore();
+	// 	setBrushSize(mBrushSize+event->x()-mBrushStartX);
+	// }
+	// else event->ignore();
 }
 
 void GLWidget::mouseReleaseEvent(QMouseEvent *event) {
-	setCursor(Qt::ArrowCursor);
-
-	int x = event->x(), y = event->y();
-	if ( QApplication::keyboardModifiers() == Qt::AltModifier ) {
-		if ( viewport.send_to_current(GLWidget::translateEvent(event),x,y) ) {
-			//updateGL();
-		repaint();
-		}
-	} 
-	else if ( QApplication::keyboardModifiers() == (Qt::AltModifier | Qt::ShiftModifier) ) {
-		if ( viewport.send_to_current(GLWidget::translateEvent(event),x,y) ) {
-			//updateGL();
-		repaint();
-		}
-	}
-	else if ( event->buttons() == Qt::RightButton && QApplication::keyboardModifiers() == Qt::ShiftModifier){
-		mBrushStartX = 0;
-		// mBrushStartY = 0;
-	}
+	if ( QApplication::keyboardModifiers() == Qt::AltModifier || 
+			(event->buttons() == Qt::LeftButton && QApplication::keyboardModifiers() == (Qt::ShiftModifier | Qt::AltModifier)) ){
+		mCamera->HandleMouseEvent(event->button(), event->type(), event->x(), event->y());
+		repaint();	
+	}	
 	else event->ignore();
+
+	// int x = event->x(), y = event->y();
+	// if ( QApplication::keyboardModifiers() == Qt::AltModifier ) {
+	// 	if ( viewport.send_to_current(GLWidget::translateEvent(event),x,y) ) {
+	// 		//updateGL();
+	// 	repaint();
+	// 	}
+	// } 
+	// else if ( QApplication::keyboardModifiers() == (Qt::AltModifier | Qt::ShiftModifier) ) {
+	// 	if ( viewport.send_to_current(GLWidget::translateEvent(event),x,y) ) {
+	// 		//updateGL();
+	// 	repaint();
+	// 	}
+	// }
+	// else if ( event->buttons() == Qt::RightButton && QApplication::keyboardModifiers() == Qt::ShiftModifier){
+	// 	mBrushStartX = 0;
+	// 	// mBrushStartY = 0;
+	// }
+	// else event->ignore();
 }
 
 void GLWidget::setViewportColor(QColor c){
@@ -1292,10 +1479,10 @@ QColor GLWidget::getEdgeIDBgColor(){
 }
 
 void GLWidget::switchTo(VPView view){
-	viewport.switchTo(view);
-
-	if ( view == VPPersp ) // Change camera settings to zoom in closer in perspective view
-		viewport.setPerspView(10,10,10,0,0,0,0,1,0);
+	// viewport.switchTo(view);
+	// 
+	// if ( view == VPPersp ) // Change camera settings to zoom in closer in perspective view
+	// 	viewport.setPerspView(10,10,10,0,0,0,0,1,0);
 }
 //for vertex locator moving...
 void erase_dlp(DLFLLocatorPtr lp)  { delete lp; } // brianb

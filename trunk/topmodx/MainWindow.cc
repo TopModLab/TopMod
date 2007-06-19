@@ -133,14 +133,23 @@ bool MainWindow::deselect_faceverts = false;
 // for face loop selection 
 DLFLEdgePtr MainWindow::face_loop_start_edge = NULL;
 
+/**
+ * asdflkjasdf
+ * asdflkjasd;f
+ * asdf;alsjkdf
+ * asdfl;jkas;df
+**/
+
+
 MainWindow::MainWindow(char *filename) : object(), patchObject(NULL), mode(NormalMode), undoList(), redoList(), 
-undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimitive(false) {
+undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimitive(false), mSpinBoxMode(None) {
 		//initialize the OpenGL Window GLWidget
 	QGLFormat fmt;
 		//initialize renderer
 	createRenderers();
 		//patch object initialization
 	//patchObject = new TMPatchObject( object.getID() );
+	setMouseTracking(true);
 
 	active = new GLWidget(500,600, VPPersp, lit, QColor(255,255,255,255),QColor(255,255,255,255) , &object, patchObject,fmt, this);
 	active->switchTo(VPPersp);	
@@ -152,19 +161,24 @@ undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimi
 		//status bar
 	mStatusBar = new QStatusBar(this);
 	//statusbar is not working!!! it throws off glwidget's pick coordinates.... :(
-		// setStatusBar(mStatusBar);
+	setStatusBar(mStatusBar);
 	setAttribute(Qt::WA_AcceptDrops, true);
 	setWindowFlags(Qt::Window);
 	setWindowTitle(tr("newfile[*] - TopMod"));
-	cWidget = new QWidget( );	
+	// cWidget = new QWidget( );	
+	// QWidget *shwidget = new QWidget;
+	// QVBoxLayout *vblayout = new QVBoxLayout;
+	// vblayout->addWidget(active);
+	// shwidget->setLayout(vblayout);
 		//accept file drop events
 	setAcceptDrops(true);
 		/** Setup Main Layout and add the glwidget to it **/
-	layout = new QBoxLayout( QBoxLayout::TopToBottom, 0 );
-	layout->addWidget(active);
-	layout->setMargin(0);
-	cWidget->setLayout( layout );
-	setCentralWidget( active );
+	// layout = new QBoxLayout( QBoxLayout::LeftToRight, this );
+	// layout->addWidget(active);
+	// layout->setMargin(0);
+	// vblayout->setMargin(0);
+	// cWidget->setLayout( layout );
+	setCentralWidget( active);
 
 		//initialize light color
 	plight.position.set(50,25,0);
@@ -206,7 +220,7 @@ undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimi
 
 		//instantiate toolbars
 	mBasicsMode = new BasicsMode(this, sm, mActionListWidget);
-	mExtrusionMode = new ExtrusionMode(this, sm, mActionListWidget);
+	mExtrusionMode = new ExtrusionMode(this, sm, mActionListWidget );
 	mConicalMode = new ConicalMode(this, sm);
 	mRemeshingMode = new RemeshingMode(this, sm, mActionListWidget);
 	mHighgenusMode = new HighgenusMode(this, sm, mActionListWidget);
@@ -299,7 +313,6 @@ void MainWindow::createActions() {
 	
 	//quick command quicksilver like interface
 	mQuickCommandAct = new QAction(tr("Quick Command"), this);
-	// sm->registerAction(mQuickCommandAct, "Tools Menu", "CTRL+X");
 	QShortcut *shortcut = new QShortcut(QKeySequence(Qt::Key_Space), this);
 	connect(shortcut, SIGNAL(activated()), this, SLOT(getCommand()));
 	mQuickCommandAct->setStatusTip(tr("Quick Command Access with Autocompletion"));
@@ -456,6 +469,15 @@ void MainWindow::createActions() {
 	showHUDAct->setStatusTip(tr("Show the Heads Up Display"));
 	connect(showHUDAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleHUD()));
 	mActionListWidget->addAction(showHUDAct);
+
+	mUseGPUAct = new QAction(tr("&Use GPU Shading"), this);
+	mUseGPUAct->setCheckable(true);
+	mUseGPUAct->setChecked(true);	
+	sm->registerAction(mUseGPUAct, "Display Menu", "L");
+	mUseGPUAct->setStatusTip(tr("Use GPU Shading"));
+	mUseGPUAct->setStatusTip(tr("Use GPU Shading"));
+	connect(mUseGPUAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleGPU()));
+	mActionListWidget->addAction(mUseGPUAct);
 
 	#ifdef WITH_PYTHON
 	mShowScriptEditorAct = new QAction(tr("Show Script &Editor"), this);
@@ -920,6 +942,7 @@ void MainWindow::createMenus(){
 	displayMenu->addAction(showCoordinateAxesAct);
 	displayMenu->addAction(showGridAct);
 	displayMenu->addAction(showHUDAct);
+	displayMenu->addAction(mUseGPUAct);
 	displayMenu->addAction(objectOrientationAct);
 	displayMenu->addAction(showNormalsAct);
 
@@ -959,12 +982,12 @@ void MainWindow::createMenus(){
 
 	mToolsMenu = new QMenu(tr("&Tools"));
 	mToolsMenu->setTearOffEnabled(true);
-	mToolsMenu->addAction(mQuickCommandAct);
 	mToolsMenu->addMenu(mBasicsMode->getMenu());
 	mToolsMenu->addMenu(mExtrusionMode->getMenu());
 	// mToolsMenu->addMenu(mConicalMode->getMenu());
 	mToolsMenu->addMenu(mHighgenusMode->getMenu());
 	mToolsMenu->addMenu(mTexturingMode->getMenu());
+	mToolsMenu->addAction(mQuickCommandAct);
 	menuBar->addMenu(mToolsMenu);
 
 	mRemeshingMenu = mRemeshingMode->getMenu();
@@ -1029,6 +1052,8 @@ void MainWindow::createMenus(){
 	// languageMenu->addAction(frenchAct);
 	// languageMenu->addAction(turkishAct);
 	// languageMenu->addAction(catalanAct);
+	
+	mRightClickMenu = new QMenu();
 
 }
 
@@ -1369,7 +1394,7 @@ void MainWindow::readSettings() {
 		GLint viewport[4];
 		GLint realy;
 		DLFLVertexPtr vptr;
-		Viewport* viewp;
+		// Viewport* viewp;
 
 		switch ( mode ) {
 			case EditVertex:
@@ -1388,9 +1413,9 @@ void MainWindow::readSettings() {
 				glPushMatrix();
 
 				// Apply current transformation
-				viewp = active->getViewport();
-				viewp->reshape();
-				viewp->apply_transform();
+				// viewp = active->getViewport();
+				// viewp->reshape();
+				// viewp->apply_transform();
 
 				// Get the info
 				glGetIntegerv(GL_VIEWPORT, viewport);
@@ -1501,6 +1526,7 @@ void MainWindow::readSettings() {
 			case SelectVertex:
 			case MarkVertex:
 			case CutVertex://ozgur
+			std::cout<< "selecting a vertex\n";
 			svptr = active->selectVertex(x,y);
 			GLWidget::setSelectedVertex(num_sel_verts,svptr);
 			break;
@@ -1717,7 +1743,7 @@ void MainWindow::dropEvent(QDropEvent *event) {
 void MainWindow::mousePressEvent(QMouseEvent *event) {
 
 	if ( event->buttons() == Qt::LeftButton && mode != NormalMode ){
-		doSelection(event->x(),this->size().height()-event->y());
+		doSelection(event->x(),height()-mStatusBar->height()-event->y());
 	}
 	// else if ( event->buttons() == Qt::RightButton && QApplication::keyboardModifiers() == Qt::ShiftModifier){
 	// 	// event->ignore();
@@ -1725,21 +1751,98 @@ void MainWindow::mousePressEvent(QMouseEvent *event) {
 	// 	mBrushStartX = event->x();
 	// 	// mBrushStartY = event->y();
 	// }
+	else if (event->buttons() == Qt::RightButton){
+		getRightClickMenu();
+		mRightClickMenu->popup(mapToGlobal(event->pos()));
+	}
 	else event->ignore();
+}
+
+void MainWindow::getRightClickMenu(){
+	mRightClickMenu->clear();
+	//add generic items for now to test it out
+	mRightClickMenu->addAction(selectFaceLoopAct);
+	mRightClickMenu->addAction(selectMultipleFacesAct);
+	mRightClickMenu->addAction(selectSimilarFacesAct);
+	mRightClickMenu->addAction(selectCheckerboardFacesAct);
+	mRightClickMenu->addAction(selectAllAct);
+	mRightClickMenu->addAction(selectInverseFacesAct);
+	mRightClickMenu->addAction(clearSelectedModeAct);
+	
+	mRightClickMenu->addSeparator();
+	mRightClickMenu->addMenu(mToolsMenu);
+	mRightClickMenu->addMenu(mRemeshingMenu);
 }
 
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event) {
 	// if (active->isBrushVisible()) active->redraw();
-	if ( mode != NormalMode )
+	if ( mode != NormalMode && event->buttons() == Qt::LeftButton)
 		// doSelection(event->x(),this->size().height()-event->y() );
-		doDrag(event->x(),this->size().height()-event->y() );
+		doDrag(event->x(),this->size().height()-mStatusBar->height()-event->y() );
 	// else if ( event->buttons() == Qt::RightButton && QApplication::keyboardModifiers() == Qt::ShiftModifier){
 	// 	// event->ignore();
 	// 	setBrushSize(mBrushSize+event->x()-mBrushStartX);
 	// }
+	else if (mSpinBoxMode != None){
+		double d = (event->x()-mStartDragX)/20;
+		switch(mSpinBoxMode){
+			case One: if (mSpinBoxOne!=0) mSpinBoxOne->setValue(mSpinBoxOne->value()+d);
+			break;
+			case Two: if (mSpinBoxTwo!=0) mSpinBoxTwo->setValue(mSpinBoxTwo->value()+d);
+			break;
+			case Three: if (mSpinBoxThree!=0) mSpinBoxThree->setValue(mSpinBoxThree->value()+d);
+			break;
+			case Four: if (mSpinBoxFour!=0) mSpinBoxFour->setValue(mSpinBoxFour->value()+d);
+			break;
+			case Five: if (mSpinBoxFive!=0) mSpinBoxFive->setValue(mSpinBoxFive->value()+d);
+			break;
+			case Six: if (mSpinBoxSix!=0) mSpinBoxSix->setValue(mSpinBoxSix->value()+d);
+			break;
+			default:
+			break;
+		};
+	}
+	
 	else event->ignore();
 }
+
+//if the user holds down certain keys, allow them to
+//change various properties in the scene
+void MainWindow::keyPressEvent(QKeyEvent *event){
+		
+	mStartDragX = mapFromGlobal(QCursor::pos()).x();
+	mStartDragY = mapFromGlobal(QCursor::pos()).y();
+	
+	switch (event->key()){
+		case Qt::Key_Y : mSpinBoxMode = One;
+		break;
+		case Qt::Key_U : mSpinBoxMode = Two;
+		break;
+		case Qt::Key_I : mSpinBoxMode = Three;
+		break;
+		case Qt::Key_O : mSpinBoxMode = Four;
+		break;
+		case Qt::Key_P : mSpinBoxMode = Five;
+		break;
+		default : mSpinBoxMode = None;
+		break;
+	};
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent *event){
+	mSpinBoxMode = None;
+}
+
+void MainWindow::setSpinBoxes(QDoubleSpinBox *one,QDoubleSpinBox *two,QDoubleSpinBox *three,QDoubleSpinBox *four,QDoubleSpinBox *five,QDoubleSpinBox *six ){
+	mSpinBoxOne = one;
+	mSpinBoxTwo = two;
+	mSpinBoxThree = three;
+	mSpinBoxFour = four;
+	mSpinBoxFive = five;
+	mSpinBoxSix = six;
+}
+
 void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 					// The mouse was dragged or released
 					// Send this event to the subroutine handling the current event, if any
@@ -2045,9 +2148,9 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			vector<DLFLFacePtr>::iterator it;
 			for(it = sfptrarr.begin(); it != sfptrarr.end(); it++) {
 				DLFL::extrudeFace(&object,*it,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
-				recomputePatches();
-				recomputeNormals();						
 			}
+			recomputePatches();
+			recomputeNormals();						
 		}
 		GLWidget::clearSelectedFaces();
 		redraw();
@@ -2974,7 +3077,8 @@ void MainWindow::setModified(bool isModified){
 }
 
 void MainWindow::switchPerspView(){
-	active->switchTo(VPPersp);
+	active->resetCamera();
+	// active->switchTo(VPPersp);
 	active->redraw();
 }
 

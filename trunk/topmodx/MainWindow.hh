@@ -130,6 +130,8 @@ class MainWindow : public QMainWindow {
 					HexagonPreserving=100, DualHexagonPreserving=101,
 					Fractal=110, ModifiedDoubleStellate=111, Dome=112, DooSabinBC=113, DooSabinBCNew=114
 				};
+				
+				enum SpinBoxMode { One=1, Two, Three, Four, Five, Six, None };
 
 				//-- Parameters used in various operations on the DLFL object --//
 
@@ -274,6 +276,8 @@ class MainWindow : public QMainWindow {
 					//-- Parameters used in various operations on the DLFL object --// // brianb
 				static int  drag_startx;
 				static int  drag_starty;
+				double mStartDragX;
+				double mStartDragY;
 				static bool is_editing;
 
 				public :
@@ -317,6 +321,8 @@ class MainWindow : public QMainWindow {
 			void setSelectionMask(SelectionMask m);
 			void setToolOptions(QWidget *optionsWidget);
 			void loadFile(QString fileName);
+			//this will store pointers to the current mode's spinboxes so we can do keyboard interaction with them
+			void setSpinBoxes(QDoubleSpinBox *one=0,QDoubleSpinBox *two=0,QDoubleSpinBox *three=0,QDoubleSpinBox *four=0,QDoubleSpinBox *five=0,QDoubleSpinBox *six=0 );
 
 		protected:
 			void closeEvent( QCloseEvent *event );
@@ -324,6 +330,8 @@ class MainWindow : public QMainWindow {
 		//Box Layouts for the entire window
 			QBoxLayout *layout, *subTopLayout, *subLowLayout, *leftLayout, *rightLayout;
 			QWidget * cWidget;  QHBoxLayout *modesLayout;
+
+			SpinBoxMode mSpinBoxMode;
 
 	#ifdef WITH_PYTHON
 			DLFLScriptEditor *mScriptEditor;
@@ -362,6 +370,7 @@ class MainWindow : public QMainWindow {
 			//with each action
 			QStandardItemModel *mActionModel; 
 			QWidget *mActionListWidget;
+			
 
 		private:
 		//document modified
@@ -397,6 +406,8 @@ class MainWindow : public QMainWindow {
 			QMenu *settingsMenu;
 			QMenu *languageMenu;
 			QMenu *mHelpMenu;
+			
+			QMenu *mRightClickMenu;
 
 	#ifdef WITH_VERSE
 			QMenu *mVerseMenu;
@@ -450,6 +461,7 @@ class MainWindow : public QMainWindow {
 			QAction *showGridAct;
 			QAction *showHUDAct;
 			QAction *showCoordinateAxesAct;
+			QAction *mUseGPUAct;
 
 		//Renderer Menu Actions
 			QAction *wireframeRendererAct;
@@ -563,6 +575,8 @@ class MainWindow : public QMainWindow {
 			CommandCompleter *mCommandCompleter;
 			QStringList mCommandList;
 
+			QDoubleSpinBox *mSpinBoxOne,*mSpinBoxTwo,*mSpinBoxThree,*mSpinBoxFour,*mSpinBoxFive,*mSpinBoxSix;
+			
 public slots:
 			void about(); //TODO: topmod developer credits 
 			void help(); //open the qtassistantclient help viewer
@@ -679,10 +693,15 @@ public slots:
 			void mousePressEvent(QMouseEvent * event);
 			void mouseReleaseEvent(QMouseEvent * event);
 			void mouseMoveEvent(QMouseEvent * event);
+			
+			void keyPressEvent(QKeyEvent *event);
+			void keyReleaseEvent(QKeyEvent *event);
 
 			void dragEnterEvent(QDragEnterEvent *event);
 			void dropEvent(QDropEvent *event);
 
+			void getRightClickMenu();
+			
 		#ifdef WITH_VERSE
 			void verseConnected();
 			void verseDisconnected();

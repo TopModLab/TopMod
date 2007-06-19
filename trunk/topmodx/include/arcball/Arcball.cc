@@ -12,11 +12,11 @@
 #define NSEGS (1<<LG_NSEGS)
 #define CIRCSEGS 32
 #define HALFCIRCSEGS 16
-#define RIMCOLOR()    glColor3ub(255, 255, 255)
-#define FARCOLOR()    glColor3ub(195, 127, 31)
-#define NEARCOLOR()   glColor3ub(255, 255, 63)
-#define DRAGCOLOR()   glColor3ub(127, 255, 255)
-#define RESCOLOR()    glColor3ub(195, 31, 31)
+#define RIMCOLOR()    glColor3f(255, 255, 255)
+#define FARCOLOR()    glColor3f(195, 127, 31)
+#define NEARCOLOR()   glColor3f(255, 255, 63)
+#define DRAGCOLOR()   glColor3f(127, 255, 255)
+#define RESCOLOR()    glColor3f(195, 31, 31)
 
    /*
      Establish reasonable initial values for controller.

@@ -44,6 +44,66 @@ public:
 	QBoxLayout *mStellateExtrudeLayout; 
 	QBoxLayout *mDoubleStellateExtrudeLayout;
 	
+	QWidget *mParent;
+	QMenu *mExtrusionMenu;
+
+	//doo sabin extrude
+	QLabel *dooSabinLengthLabel;
+	QDoubleSpinBox *dooSabinLengthSpinBox;
+	QLabel *dooSabinRotationLabel;
+	QDoubleSpinBox *dooSabinRotationSpinBox;
+	QLabel *dooSabinScaleLabel;
+	QDoubleSpinBox *dooSabinScaleSpinBox;
+	QLabel *dooSabinSegmentsLabel;
+	QDoubleSpinBox *dooSabinSegmentsSpinBox;
+	
+	//cubic extrude
+	QLabel *cubicalLengthLabel;
+	QDoubleSpinBox *cubicalLengthSpinBox;
+	QLabel *cubicalRotationLabel;
+	QDoubleSpinBox *cubicalRotationSpinBox;
+	QLabel *cubicalScaleLabel;
+	QDoubleSpinBox *cubicalScaleSpinBox;
+	QLabel *cubicalSegmentsLabel;
+	QDoubleSpinBox *cubicalSegmentsSpinBox;
+	
+	//dodecahedral extrude
+	QLabel *dodecahedralLengthLabel;
+	QDoubleSpinBox *dodecahedralLengthSpinBox;
+	QLabel *dodecahedralScaleLabel;
+	QDoubleSpinBox *dodecahedralScaleSpinBox;
+	QLabel *dodecahedralSegmentsLabel;
+	QDoubleSpinBox *dodecahedralSegmentsSpinBox;
+	QCheckBox *hexagonalizeCheckBox;
+		
+	//icosahedral extrude
+	QLabel *icosahedralLengthLabel;
+	QDoubleSpinBox *icosahedralLengthSpinBox;
+	QLabel *icosahedralScaleLabel;
+	QDoubleSpinBox *icosahedralScaleSpinBox;
+	QLabel *icosahedralSegmentsLabel;
+	QDoubleSpinBox *icosahedralSegmentsSpinBox;
+	
+	//octahedral extrude
+	QLabel *octahedralLengthLabel;
+	QDoubleSpinBox *octahedralLengthSpinBox;
+	QLabel *octahedralRotationLabel;
+	QDoubleSpinBox *octahedralRotationSpinBox;
+	QLabel *octahedralScaleLabel;
+	QDoubleSpinBox *octahedralScaleSpinBox;
+	QLabel *octahedralSegmentsLabel;
+	QDoubleSpinBox *octahedralSegmentsSpinBox;
+	QCheckBox *meshFlatEdgesCheckBox;
+	
+	//stellate extrude
+	QLabel *stellateLengthLabel;
+	QDoubleSpinBox *stellateLengthSpinBox;
+	
+	//double stellate
+	QLabel *doubleStellateLengthLabel;
+	QDoubleSpinBox *doubleStellateLengthSpinBox;
+	
+	
 protected:
 	void setupDooSabinExtrude();
 	void setupCubicalExtrude();
@@ -56,8 +116,8 @@ protected:
 public slots:
 
 	void setLength(double value);
-	void setRotation(int value);
-	void setSegments(int value);
+	void setRotation(double value);
+	void setSegments(double value);
 	void setScale(double value);
 	
 	void triggerDooSabinExtrude();
@@ -66,68 +126,7 @@ public slots:
 	void triggerIcosahedralExtrude();
 	void triggerOctahedralExtrude();
 	void triggerStellateExtrude();
-	void triggerDoubleStellateExtrude();
-	
-private:
-	
-	QWidget *mParent;
-	QMenu *mExtrusionMenu;
-
-	//doo sabin extrude
-	QLabel *dooSabinLengthLabel;
-	QDoubleSpinBox *dooSabinLengthSpinBox;
-	QLabel *dooSabinRotationLabel;
-	QSpinBox *dooSabinRotationSpinBox;
-	QLabel *dooSabinScaleLabel;
-	QDoubleSpinBox *dooSabinScaleSpinBox;
-	QLabel *dooSabinSegmentsLabel;
-	QSpinBox *dooSabinSegmentsSpinBox;
-	
-	//cubic extrude
-	QLabel *cubicalLengthLabel;
-	QDoubleSpinBox *cubicalLengthSpinBox;
-	QLabel *cubicalRotationLabel;
-	QSpinBox *cubicalRotationSpinBox;
-	QLabel *cubicalScaleLabel;
-	QDoubleSpinBox *cubicalScaleSpinBox;
-	QLabel *cubicalSegmentsLabel;
-	QSpinBox *cubicalSegmentsSpinBox;
-	
-	//dodecahedral extrude
-	QLabel *dodecahedralLengthLabel;
-	QDoubleSpinBox *dodecahedralLengthSpinBox;
-	QLabel *dodecahedralScaleLabel;
-	QDoubleSpinBox *dodecahedralScaleSpinBox;
-	QLabel *dodecahedralSegmentsLabel;
-	QSpinBox *dodecahedralSegmentsSpinBox;
-	QCheckBox *hexagonalizeCheckBox;
-		
-	//icosahedral extrude
-	QLabel *icosahedralLengthLabel;
-	QDoubleSpinBox *icosahedralLengthSpinBox;
-	QLabel *icosahedralScaleLabel;
-	QDoubleSpinBox *icosahedralScaleSpinBox;
-	QLabel *icosahedralSegmentsLabel;
-	QSpinBox *icosahedralSegmentsSpinBox;
-	
-	//octahedral extrude
-	QLabel *octahedralLengthLabel;
-	QDoubleSpinBox *octahedralLengthSpinBox;
-	QLabel *octahedralRotationLabel;
-	QSpinBox *octahedralRotationSpinBox;
-	QLabel *octahedralScaleLabel;
-	QDoubleSpinBox *octahedralScaleSpinBox;
-	QLabel *octahedralSegmentsLabel;
-	QSpinBox *octahedralSegmentsSpinBox;
-	QCheckBox *meshFlatEdgesCheckBox;
-	
-	//stellate extrude
-	QLabel *stellateLengthLabel;
-	QDoubleSpinBox *stellateLengthSpinBox;
-	
-	//double stellate
-	QLabel *doubleStellateLengthLabel;
-	QDoubleSpinBox *doubleStellateLengthSpinBox;
+	void triggerDoubleStellateExtrude();	
 	
 };
 

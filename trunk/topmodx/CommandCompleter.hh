@@ -43,7 +43,7 @@ public:
 		mCompleter->setCompletionMode(QCompleter::PopupCompletion);
 		//loop through the actions added to the widget *m, add the text to a word list for now
 		for (int i = 0; i < m->actions().count(); ++i)
-			mWordList << ((QAction*)(m->actions().at(i)))->text();
+			mWordList << ((QAction*)(m->actions().at(i)))->toolTip();
 
 		mModel = new QStringListModel(mWordList,mCompleter);
 		mCompleter->setModel(mModel);

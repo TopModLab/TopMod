@@ -20,6 +20,13 @@
 #include "DLFLRenderer.hh"
 #include "TMPatchObject.hh"
 
+#include "Camera2.hh"
+#include "CgData.hh"
+
+#ifdef GPU_OK
+using namespace Cg;
+#endif // GPU_OK
+
 using namespace DLFL;
 
 #ifdef WITH_VERSE
@@ -41,7 +48,7 @@ class GLWidget : public QGLWidget {
 	Q_OBJECT        // must include this if you use Qt signals/slots
 
 public :
-
+	
 	GLWidget(	int w, int h , VPView v, DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op, TMPatchObjectPtr pop, const QGLFormat & format, QWidget * parent = 0 );
 
 	~GLWidget( );
@@ -60,6 +67,11 @@ public :
 	void toggleHUD() {
 		mShowHUD = !mShowHUD;
 		this->repaint();
+	}
+
+	void toggleGPU(){
+		mUseGPU = !mUseGPU;
+		repaint();
 	}
 
 			// Toggle wireframe
@@ -237,6 +249,11 @@ public :
 
 	void setupViewport(int width, int height);
 
+	#ifdef GPU_OK
+	  CgData cg;
+	  void initCg( );
+	#endif // GPU_OK
+
 	// void showEvent(QShowEvent *event);
 
 	// void paintOverlayGL();
@@ -251,6 +268,7 @@ public :
 	bool mShowFaceVertexIDs;
 	bool mShowHUD;
 	bool mShowBrush;
+	bool mUseGPU;
 	int mBrushStartX;
 
 		// Selection lists - these are shared by all viewports
@@ -260,7 +278,8 @@ public :
   //static DLFLFacePtrArray sel_fptr_array; // List of selected DLFLFace pointers
   //static DLFLFaceVertexPtrArray sel_fvptr_array; // List of selected DLFLFaceVertex pointers
 
-	Viewport viewport;                     // Viewport for the window
+	// Viewport viewport;                     // Viewport for the window
+	Camera2 *mCamera;											//new camera originally from Don House and Chris Root, modified by Stuart and then Dave
 
 		// Each viewport will have its own object to display. But since only
 		// the pointer is stored, different viewports can share the same object.
@@ -327,10 +346,11 @@ public :
 	double getBrushSize(){ return mBrushSize;}
 	void setBrushSize(double s){ mBrushSize = max(2.0,min(200.0,s)); repaint();	}
 
-	Viewport* getViewport() // brianb
-	{
-		return &viewport;
-	}
+	inline void resetCamera(){ mCamera->Reset(); };
+	// Viewport* getViewport() // brianb
+	// {
+	// 	return &viewport;
+	// }
 
 	void renderLocatorsForSelect() // brianb
 	{
@@ -675,6 +695,9 @@ void mousePressEvent(QMouseEvent *event);
 void mouseReleaseEvent(QMouseEvent *event);
 void wheelEvent(QWheelEvent *event);
 
+// void keyPressEvent(QKeyEvent *event);
+// void keyReleaseEvent(QKeyEvent *event);
+
 private :
 friend class QGLFormat;
 QColor mRenderColor;
@@ -700,6 +723,8 @@ QColor mSelectedEdgeColor;
 double mSelectedEdgeThickness;
 
 double mBrushSize;
+double mStartDragX;
+double mStartDragY;
 
 QColor mXAxisColor;
 QColor mYAxisColor;
