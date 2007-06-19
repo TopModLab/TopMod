@@ -451,6 +451,13 @@ void Editor::historyForward()
   ensureCursorVisible();
 }
 
+void Editor::mousePressEvent ( QMouseEvent *e ) {
+  if( e->button() == Qt::RightButton ) {
+
+  }
+  QTextEdit::mousePressEvent( e );
+}
+
 void Editor::keyPressEvent( QKeyEvent* e )
 {
   if( e->key() == Qt::Key_Up )

@@ -5,6 +5,11 @@
 #include <DLFLSubdiv.hh>
 #include <DLFLDual.hh>
 
+extern DLFL::DLFLEdgePtrArray DLFL::DLFLObject::sel_eptr_array;
+extern DLFL::DLFLFacePtrArray DLFL::DLFLObject::sel_fptr_array;
+extern DLFL::DLFLVertexPtrArray DLFL::DLFLObject::sel_vptr_array;
+extern DLFL::DLFLFaceVertexPtrArray DLFL::DLFLObject::sel_fvptr_array;
+
 /// Prototypes
 
 static PyObject *dlfl_load_obj(PyObject *self, PyObject *args);
@@ -50,7 +55,7 @@ static PyMethodDef DLFLMethods[] = {
   {"faces",          dlfl_faces,          METH_VARARGS, "Grab all/selected the faces of the object"},
   {"edges",          dlfl_edges,          METH_VARARGS, "Grab all/selected the edges of the object"},
   {"verts",          dlfl_verts,          METH_VARARGS, "Grab all/selected the vertices of the object"},
-  {"faceverts"       dlfl_faceverts,      METH_VARARGS, "Grab all/selected the face-vertices of the object"},
+  {"faceverts",      dlfl_faceverts,      METH_VARARGS, "Grab all/selected the face-vertices of the object"},
   {"walk",           dlfl_boundary_walk,  METH_VARARGS, "walk(int)"},
   {"walk_vertices",  dlfl_walk_vertices,  METH_VARARGS, "walk_vertices(int)"},
   {"walk_edges",     dlfl_walk_edges,     METH_VARARGS, "walk_edges(int)"},
@@ -246,35 +251,149 @@ dlfl_faces(PyObject *self, PyObject *args)
     return Py_None;
   }
 
-  // Storage/Output
-  vector<int> faces;
-  PyObject *flist;
-  PyObject *face; // tmp for each loop
-
-  verts = currObj->get
-
-  list = PyList_New(verts.size());
-  for( int i = 0; i < verts.size(); i++) {
-    vert = Py_BuildValue("i", verts[i]);
-    PyList_SetItem(list, i, vert);
+  bool selected = false;
+  if( usingGUI ) {
+    selected = true;
+    if( !PyArg_ParseTuple(args, "|b", &selected ) )
+      return NULL;
   }
-  Py_INCREF(list);
-  return list;
+
+  PyObject *flist=0, *face=0;
+  if(selected) {
+    DLFL::DLFLFacePtrArray fpa = DLFL::DLFLObject::sel_fptr_array;
+    flist = PyList_New(fpa.size());
+    for( int i = 0; i < (int)fpa.size(); i++ ) {
+      face = Py_BuildValue("i", fpa[i]->getID());
+      PyList_SetItem(flist, i, face);
+    }
+  } else {
+    DLFL::DLFLFacePtrList fpl = currObj->getFaceList();
+    DLFL::DLFLFacePtrList::iterator it; int i;
+    flist = PyList_New(fpl.size());
+    for( i = 0, it = fpl.begin(); it != fpl.end(); i++, it++ ) {
+      face = Py_BuildValue("i", (*it)->getID());
+      PyList_SetItem(flist, i, face);
+    }
+  }
+  Py_INCREF(flist);
+  return flist;
 }
 
 static PyObject *
 dlfl_edges(PyObject *self, PyObject *args)
 {
+  if( !currObj ) {
+    Py_INCREF(Py_None);
+    return Py_None;
+  }
+
+  bool selected = false;
+  if( usingGUI ) {
+    selected = true;
+    if( !PyArg_ParseTuple(args, "|b", &selected ) )
+      return NULL;
+  }
+
+  PyObject *elist=0, *edge=0;
+  if(selected) {
+    DLFL::DLFLEdgePtrArray epa = DLFL::DLFLObject::sel_eptr_array;
+    elist = PyList_New(epa.size());
+    for( int i = 0; i < (int)epa.size(); i++ ) {
+      edge = Py_BuildValue("i", epa[i]->getID());
+      PyList_SetItem(elist, i, edge);
+    }
+  } else {
+    DLFL::DLFLEdgePtrList epl = currObj->getEdgeList();
+    DLFL::DLFLEdgePtrList::iterator it; int i;
+    elist = PyList_New(epl.size());
+    for( i = 0, it = epl.begin(); it != epl.end(); i++, it++ ) {
+      edge = Py_BuildValue("i", (*it)->getID());
+      PyList_SetItem(elist, i, edge);
+    }
+  }
+  Py_INCREF(elist);
+  return elist;
 }
 
 static PyObject *
 dlfl_verts(PyObject *self, PyObject *args)
-{ 
+{
+  if( !currObj ) {
+    Py_INCREF(Py_None);
+    return Py_None;
+  }
+
+  bool selected = false;
+  if( usingGUI ) {
+    selected = true;
+    if( !PyArg_ParseTuple(args, "|b", &selected ) )
+      return NULL;
+  }
+
+  PyObject *vlist=0, *vert=0;
+  if(selected) {
+    DLFL::DLFLVertexPtrArray vpa = DLFL::DLFLObject::sel_vptr_array;
+    vlist = PyList_New(vpa.size());
+    for( int i = 0; i < (int)vpa.size(); i++ ) {
+      vert = Py_BuildValue("i", vpa[i]->getID());
+      PyList_SetItem(vlist, i, vert);
+    }
+  } else {
+    DLFL::DLFLVertexPtrList vpl = currObj->getVertexList();
+    DLFL::DLFLVertexPtrList::iterator it; int i;
+    vlist = PyList_New(vpl.size());
+    for( i = 0, it = vpl.begin(); it != vpl.end(); i++, it++ ) {
+      vert = Py_BuildValue("i", (*it)->getID());
+      PyList_SetItem(vlist, i, vert);
+    }
+  }
+  Py_INCREF(vlist);
+  return vlist;  
 }
 
 static PyObject *
 dlfl_faceverts(PyObject *self, PyObject *args)
 {
+  if( !currObj ) {
+    Py_INCREF(Py_None);
+    return Py_None;
+  }
+
+  bool selected = false;
+  if( usingGUI ) {
+    selected = true;
+    if( !PyArg_ParseTuple(args, "|b", &selected ) )
+      return NULL;
+  }
+
+  PyObject *fvlist=0, *fvert=0;
+  if(selected) {
+    DLFL::DLFLFaceVertexPtrArray fvpa = DLFL::DLFLObject::sel_fvptr_array;
+    fvlist = PyList_New(fvpa.size());
+    for( int i = 0; i < (int)fvpa.size(); i++ ) {
+      fvert = Py_BuildValue("(ii)", fvpa[i]->getFaceID(), fvpa[i]->getVertexID() );
+      PyList_SetItem(fvlist, i, fvert);
+    }
+  } else {
+    DLFL::DLFLFaceVertexPtrArray fvpa;
+    DLFL::DLFLFacePtrList fpl = currObj->getFaceList();
+    DLFL::DLFLFacePtrList::iterator it; int i;
+    for( i = 0, it = fpl.begin(); it != fpl.end(); i++, it++ ) {
+      DLFL::DLFLFaceVertexPtr head = (*it)->front();
+      DLFL::DLFLFaceVertexPtr curr = head;
+      do {
+	fvpa.push_back(curr);
+	DLFL::advance(curr);
+      } while(curr != head);
+    }
+    fvlist = PyList_New(fvpa.size());
+    for( int i = 0; i < (int)fvpa.size(); i++ ) {
+      fvert = Py_BuildValue("(ii)", fvpa[i]->getFaceID(), fvpa[i]->getVertexID() );
+      PyList_SetItem(fvlist, i, fvert);
+    }
+  }
+  Py_INCREF(fvlist);
+  return fvlist;
 }
 
 static PyObject *

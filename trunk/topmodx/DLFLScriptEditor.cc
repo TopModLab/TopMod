@@ -25,6 +25,9 @@ DLFLScriptEditor::DLFLScriptEditor( QWidget *parent, Qt::WindowFlags f ) : QWidg
 
   mTextEdit->setReadOnly(true);
 
+  mTextEdit->setTabStopWidth(25);
+  mLineEdit->setTabStopWidth(25);
+
   pyhigh = new PythonHighlighter(mTextEdit);
 
   QVBoxLayout *mainLayout = new QVBoxLayout;

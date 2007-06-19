@@ -54,6 +54,7 @@ protected slots:
   void historyForward();
 
 protected:
+  void mousePressEvent( QMouseEvent* );
   void keyPressEvent( QKeyEvent* );
   void wheelEvent( QWheelEvent* );
 
