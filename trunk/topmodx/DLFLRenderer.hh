@@ -25,6 +25,13 @@
 #include "GeometryRenderer.hh"
 #include "TMPatchObject.hh"
 
+#include "CgData.hh"
+
+#ifdef GPU_OK
+using namespace Cg;
+#endif // GPU_OK
+
+
 using namespace DLFL;
 
 class DLFLRenderer;
@@ -41,6 +48,10 @@ private :
   double mSilhouetteThickness;
   double mVertexThickness;
 
+	#ifdef GPU_OK
+	CgData mCg;
+	#endif
+
 protected :
 
   GeometryRenderer *gr;
@@ -49,10 +60,9 @@ protected :
   // static int render_flags;
 
   /* Flag indicating if we should front or back side of object */
-  // static bool reverse_object;
-
   int render_flags;
   static bool reverse_object;
+	bool useGPU;
 
 public :
 
@@ -62,7 +72,7 @@ public :
 protected :
 
   /* Default constructor */
-  DLFLRenderer() : mWireframeThickness(1.5), mSilhouetteThickness(6.0), mVertexThickness(4.0) {
+  DLFLRenderer() : mWireframeThickness(1.5), mSilhouetteThickness(6.0), mVertexThickness(4.0), useGPU(true) {
     mWireframeColor.setRgbF(0.0,0.0,0.0,0.9);
     mSilhouetteColor.setRgbF(0.0,0.0,0.0,0.8);
     mVertexColor.setRgbF(0.5,1.0,0.0,0.9);
@@ -135,6 +145,9 @@ public :
     return render_flags;
   };
 
+	#ifdef GPU_OK
+	void setCgData(CgData cg){	mCg = cg; } 
+	#endif
   /*
     Render the DLFLObject specified by the given pointer.
     This is a virtual function which has to be implemented by derived classes.
@@ -167,11 +180,23 @@ public :
 
   /* Methods for various types of rendering */
   void drawWireframe(DLFLObjectPtr object) {
+		if (useGPU){
+			const float ke[3] = {0.0, 0.0, 0.0},
+		              ka[3]  = {0.0, 0.0, 0.0},
+		              kd[3]  = {0.0, 0.0, 0.0},
+									ks[3] = {0.0, 0.0, 0.0};
+		  cgSetParameter3fv(mCg.Ke, ke);
+		  cgSetParameter3fv(mCg.Ka, ka);
+		  cgSetParameter3fv(mCg.Kd, kd);
+		  cgSetParameter3fv(mCg.Ks, ks);
+		  cgSetParameter1f(mCg.shininess,  0);
+		}
     glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     glColor4f(mWireframeColor.redF(), mWireframeColor.greenF(), mWireframeColor.blueF(), mWireframeColor.alphaF());
     glDepthRange(0.0,1.0-0.0005);
     //object->renderEdges(mWireframeThickness);
-    gr->renderEdges( object, mWireframeThickness );
+    //test material
+		gr->renderEdges( object, mWireframeThickness );
     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
   };
 

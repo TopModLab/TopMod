@@ -1,38 +1,40 @@
-struct fragin {
-  float4 color    : COLOR;
-  float2 uv       : TEXCOORD0;
-  float4 position : TEXCOORD1;
-};
+// struct fragin {
+//   float4 color    : COLOR;
+//   float2 uv       : TEXCOORD0;
+//   float4 position : TEXCOORD1;
+// };
+// 
+// struct fragout {
+//   float4 color : COLOR;
+// };
+// 
+// float attenuation( float3 P, float3 L, float radius, float falloff ) {
+//   // Spotlight Effect
+//   float sV = length( P - L );
+//   return 1.0f-smoothstep( radius-falloff, radius, sV );
+// }
 
-struct fragout {
-  float4 color : COLOR;
-};
+float4 main(float4 c : COLOR) : COLOR { return c; }
 
-float attenuation( float3 P, float3 L, float radius, float falloff ) {
-  // Spotlight Effect
-  float sV = length( P - L );
-  return 1.0f-smoothstep( radius-falloff, radius, sV );
-}
-
-
-fragout main( fragin IN,
-	      uniform sampler2D texture  : TEXUNIT0,
-	      uniform float randRot,
-	      uniform float3 lightPos = float3(400,400,0)
-	      ) {
-  fragout OUT;
-
-  float3 P = IN.position.xyz;
-
-  float4 surfcolor = tex2D( texture, IN.uv );
-  float4 diffuse;
-  diffuse.rgb = attenuation( P, lightPos, 390.0f, 200.00f );
-  diffuse.a = 1.0f;
-  diffuse *= float4( 1.0, 1.0, 0.6, 1.0 );
-
-  float4 ambient = float4( 0.2, 0.22, 0.25, 0.0);
-  
-  OUT.color = IN.color*surfcolor*(diffuse+ambient);
-  return OUT;
-}
-
+// fragout main( COLOR IN
+// 				// fragin IN,
+// 	      // uniform sampler2D texture  : TEXUNIT0,
+// 	      // uniform float randRot,
+// 	      // uniform float3 lightPos = float3(400,400,0)
+// 	      ) {
+//   // fragout OUT;
+// 
+//   // float3 P = IN.position.xyz;
+//   // 
+//   // float4 surfcolor = tex2D( texture, IN.uv );
+//   // float4 diffuse;
+//   // diffuse.rgb = attenuation( P, lightPos, 390.0f, 200.00f );
+//   // diffuse.a = 1.0f;
+//   // diffuse *= float4( 1.0, 1.0, 0.6, 1.0 );
+//   // 
+//   // float4 ambient = float4( 0.2, 0.22, 0.25, 0.0);
+//   
+// 	// OUT.color = IN.color;//*surfcolor*(diffuse+ambient);
+//   return IN;
+// }
+// 

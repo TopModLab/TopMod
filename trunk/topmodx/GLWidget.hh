@@ -254,7 +254,7 @@ public :
 
 	void initializeGL( );
 	void paintEvent(QPaintEvent *event);
-	// void paintGL( );
+	void enableGLLights(); //gl lighting for use in cg shaders
 
 	void drawText( int width, int height );
 	void drawIDs( QPainter *painter, const GLdouble *model, const GLdouble *proj, const GLint	*view);
@@ -355,6 +355,12 @@ public :
 
 	void setEdgeIDBgColor(QColor c);
 	QColor getEdgeIDBgColor();
+
+	// inline void setLightColor(QColor c){ mLightColor = c; };
+	// inline QColor getLightColor() { return mLightColor; };
+
+	inline void setLightPosition(Vector3d p){ plight.position = p; };
+	inline Vector3d getLightPosition() { return plight.position; };
 
 	double getWireframeThickness();
 	double getVertexThickness();
@@ -719,6 +725,7 @@ void wheelEvent(QWheelEvent *event);
 
 private :
 friend class QGLFormat;
+QColor mGlobalAmbient;
 QColor mRenderColor;
 QColor mViewportColor;
 

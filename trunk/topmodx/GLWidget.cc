@@ -128,9 +128,20 @@ void GLWidget::initializeGL( ) {
 	
 	//initialize light position and color
 	plight.position.set(50,25,0);
+	// mLightPosition.set(50,25,0);
+	
 	plight.warmcolor.set(1,1,0.6);
+	// mLightColor = QColor(255,255,153);
+	
 	plight.coolcolor.set(0.2,0.2,0.4);
+	
 	plight.intensity = 2.0;
+	// mLightIntensity = 2.0;
+	
+	mGlobalAmbient = QColor(25,25,25);
+	
+	//enable gl lighting for use with cg functions
+	enableGLLights();
 
 	mShowVertexIDs = false;
 	mShowEdgeIDs   = false;
@@ -151,6 +162,31 @@ void GLWidget::initializeGL( ) {
 	
 }
 
+void GLWidget::enableGLLights(){
+	// ENABLE THE LIGHTING
+  glPushMatrix(); {
+    glMatrixMode( GL_MODELVIEW);
+    glLoadIdentity();
+    GLfloat lmodel_ambient[] = {0.1,0.1,0.2,1.0};
+    GLfloat lmodel_diffuse[] = {0.8,0.7,0.5,1.0};
+    GLfloat lmodel_specular[] = {0.5,0.5,0.5,1.0};
+    GLfloat spotDir[]=	{0.0,-1.0,0.0};
+		GLfloat light_position[] = { 2.0, 20.0, 5.0, 1.0 }; //{ -1.0, 30.0, 5.0, 1.0 };
+
+    glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spotDir);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, lmodel_ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, lmodel_diffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, lmodel_specular);
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    //GLfloat lmodel_diffuse2[] = {0.4,0.4,0.4,1.0};
+    //glLightfv(GL_LIGHT1, GL_DIFFUSE, lmodel_diffuse);
+    //glLightfv(GL_LIGHT1, GL_POSITION, light_position2);  
+  } glPopMatrix();
+  glEnable(GL_LIGHT0);
+  //glEnable(GL_LIGHT1);
+ 
+}
+
 void GLWidget::paintEvent(QPaintEvent *event){
 	
 	#ifdef GPU_OK
@@ -162,6 +198,43 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	
 		//set cg parameters here
 		
+		//global ambient light
+		cgGLSetParameter3f(cg.globalAmbient, mGlobalAmbient.redF(), mGlobalAmbient.greenF(), mGlobalAmbient.blueF() );
+		//send lighing info
+		cgGLSetParameter3f(cg.lightColor, plight.warmcolor.r, plight.warmcolor.g, plight.warmcolor.b );
+		cgGLSetParameter3f(cg.lightPosition, plight.position[0], plight.position[1], plight.position[2] );
+		
+		//test material
+		const float emissive[3] = {0.1,  0.1,  0.1},
+	              ambient[3]  = {0.33, 0.22, 0.03},
+	              diffuse[3]  = {0.78, 0.57, 0.11},
+	              specular[3] = {0.99, 0.91, 0.81},
+	              shininess = 27.8;
+
+	  cgSetParameter3fv(cg.Ke, emissive);
+	  cgSetParameter3fv(cg.Ka, ambient);
+	  cgSetParameter3fv(cg.Kd, diffuse);
+	  cgSetParameter3fv(cg.Ks, specular);
+	  cgSetParameter1f(cg.shininess,  shininess);
+	  
+	  // lookThruLight( );
+	  // glViewport(0,0,texRenderSize,texRenderSize);
+	  //     glMatrixMode(GL_PROJECTION);
+	  //     glLoadIdentity();
+	  //     // gluPerspective( spotAtten*2, 1, NEAR, FAR );
+	  //     //glOrtho( -50, 50, -50, 50, NEAR, FAR );
+	  //     glMatrixMode( GL_MODELVIEW);
+	  //     glLoadIdentity();
+	  //     gluLookAt(light_position[0],light_position[1],light_position[2],0.0f,0.0f,0.0f,0,0,1);
+    //glTranslatef(-light_position[0],-light_position[2],-light_position[1]);
+    //glRotatef(90,1,0,0);
+
+  	//set light matrix
+		//this is probably wrong dammit
+	  cgGLSetStateMatrixParameter( 	cg.worldToLight, CG_GL_MODELVIEW_PROJECTION_MATRIX, CG_GL_MATRIX_IDENTITY); 
+
+		
+	
 	}
 	#endif // GPU_OK
 
@@ -188,8 +261,9 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	// viewport.resize(width(),height());
 	// mCamera->PerspectiveDisplay(width(),height());
 
-	if( renderer )
-	  renderer->initialize();	
+	if( renderer ){
+		renderer->initialize();	
+	}
 	
 	glClearColor(mViewportColor.redF(),mViewportColor.greenF(),mViewportColor.blueF(),mViewportColor.alphaF());
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -198,10 +272,17 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	glEnable(GL_DEPTH_TEST);
 	// Multiply by the transformation matrix. dave and stuart*
 	// Matrix4x4 m4 = inverse(viewport.apply_transform().matrix());
-	
 	// viewport.apply_transform();
 	mCamera->PerspectiveDisplay(width(),height());
 	
+	#ifdef GPU_OK
+	if (mUseGPU){
+		//send camera parameters
+		cgGLSetParameter3f(cg.eyePosition, mCamera->getPos()[0], mCamera->getPos()[1], mCamera->getPos()[2] );
+	  cgGLSetStateMatrixParameter( cg.camToWorld,	CG_GL_MODELVIEW_MATRIX, CG_GL_MATRIX_INVERSE );
+	  cgGLSetStateMatrixParameter( cg.camToWorldIT,	CG_GL_MODELVIEW_MATRIX, CG_GL_MATRIX_TRANSPOSE );		
+	}
+	#endif
 	// Draw the axes if required. Use thick lines
 	if ( showaxes ) {
 		glLineWidth(3.0);
@@ -226,12 +307,10 @@ void GLWidget::paintEvent(QPaintEvent *event){
 		glEnd();
 		glLineWidth(3.0);
 	}	
-	// Draw the actual object using the renderer.
-	// Assumes that render flags have already been set for the renderer
-	// Default color is slightly bluish
-	// glDepthRange(0,1);
+	glDepthRange(0,1);
 	
 	if ( renderer ) {
+		renderer->setCgData(cg);
 	  renderer->render(object);
 	  if(patchObject)
 	    renderer->render(patchObject);
@@ -258,7 +337,7 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	glPopAttrib();
   glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glTranslated(0.0, 0.0, -50.0);	
+	// glTranslated(0.0, 0.0, -50.0);	
   glPopMatrix();
   glMatrixMode(GL_PROJECTION);
   glPopMatrix();
@@ -284,7 +363,6 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	  // cgGLDisableProfile( cg.fragProfile );
 	}
 	#endif // GPU_OK
-	
 }
 
 void GLWidget::resizeGL( int width, int height ){
@@ -1096,16 +1174,16 @@ void GLWidget::initCg( ) {
 	  cg.vertProfile = cgGLGetLatestProfile( CG_GL_VERTEX );
 	  cgGLSetOptimalOptions( cg.vertProfile );
 	  // Frag Profile
-	  cg.fragProfile = cgGLGetLatestProfile( CG_GL_FRAGMENT );
-	  cgGLSetOptimalOptions( cg.fragProfile );
+	  // cg.fragProfile = cgGLGetLatestProfile( CG_GL_FRAGMENT );
+	  // cgGLSetOptimalOptions( cg.fragProfile );
 	  // Vertex Program
 	  char *programName = new char[256];
 	  sprintf( programName, "%s", "vertShader.cg" );
 	  cg.vertProgram = cgCreateProgramFromFile( cg.context, CG_SOURCE, programName, cg.vertProfile, NULL, NULL );
 	  checkCgError( cg.context, 5 );
 	  // Fragment Program
-	  sprintf( programName, "%s", "fragShader.cg" );
-	  cg.fragProgram = cgCreateProgramFromFile( cg.context, CG_SOURCE, programName, cg.fragProfile, NULL, NULL );
+	  // sprintf( programName, "%s", "fragShader.cg" );
+	  // cg.fragProgram = cgCreateProgramFromFile( cg.context, CG_SOURCE, programName, cg.fragProfile, NULL, NULL );
 	  delete [] programName;
 	  programName = 0;
 
@@ -1119,14 +1197,24 @@ void GLWidget::initCg( ) {
 		// cg.objectID = cgGetNamedParameter( cg.fProgram, "objectID" );
 		checkCgError( cg.context, 5 );
 		// cg.attenDegrees = cgGetNamedParameter( cg.fProgram, "attenDegrees" );
-		cg.eyePos = cgGetNamedParameter( cg.vertProgram, "eyePos" );
+		cg.eyePosition = cgGetNamedParameter( cg.vertProgram, "eyePosition" );
 		// cg.velocity = cgGetNamedParameter( cg.vertProgram, "velocity" );
 		// cg.objCenter = cgGetNamedParameter( cg.vertProgram, "objCenter" );
+		
+		//from book
+		cg.globalAmbient = cgGetNamedParameter( cg.vertProgram, "globalAmbient" );
+		cg.lightColor = cgGetNamedParameter( cg.vertProgram, "lightColor" );
+		cg.lightPosition = cgGetNamedParameter( cg.vertProgram, "lightPosition" );
+		cg.Ke = cgGetNamedParameter( cg.vertProgram, "Ke" );
+		cg.Kd = cgGetNamedParameter( cg.vertProgram, "Kd" );
+		cg.Ka = cgGetNamedParameter( cg.vertProgram, "Ka" );
+		cg.Ks = cgGetNamedParameter( cg.vertProgram, "Ks" );
+		cg.shininess = cgGetNamedParameter( cg.vertProgram, "shininess" );
 
 	  cgGLLoadProgram( cg.vertProgram );
 	  checkCgError( cg.context, 1 );
-	  cgGLLoadProgram( cg.fragProgram );
-	  checkCgError( cg.context, 2 );
+	  // cgGLLoadProgram( cg.fragProgram );
+	  // checkCgError( cg.context, 2 );
 	}
 }
 

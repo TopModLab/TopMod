@@ -49,8 +49,12 @@ namespace Cg {
 	  CGparameter renderToTexSize;
 	  CGparameter objectID;
 	  CGparameter attenDegrees;
-	  CGparameter eyePos;
-
+		//from book
+		CGparameter globalAmbient;
+		CGparameter lightColor;
+		CGparameter lightPosition;
+		CGparameter eyePosition;
+		CGparameter Ke, Ka, Kd, Ks, shininess;
   };
 
   void checkCgError( CGcontext &context, int id );

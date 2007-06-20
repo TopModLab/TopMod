@@ -1,6 +1,6 @@
 #include "DLFLLighting.hh"
 
-void computeLighting( DLFLFacePtr fp, LightPtr lightptr ) {
+void computeLighting( DLFLFacePtr fp, LightPtr lightptr, bool usegpu ) {
   if ( fp->front() ) {
       double Ka = fp->material()->Ka;
       double Kd = fp->material()->Kd;
@@ -36,13 +36,13 @@ void computeLighting( DLFLFacePtr fp, LightPtr lightptr ) {
     }
 }
 
-void computeLighting(DLFLObjectPtr obj, TMPatchObjectPtr po, LightPtr lightptr) {
+void computeLighting(DLFLObjectPtr obj, TMPatchObjectPtr po, LightPtr lightptr, bool usegpu) {
   DLFLFacePtrList::iterator first, last;
   DLFLFacePtr faceptr;
   first = obj->beginFace(); last = obj->endFace();
   while ( first != last ) {
     faceptr = (*first);
-    computeLighting(faceptr,lightptr);
+    computeLighting(faceptr,lightptr, usegpu);
     ++first;
   }
 

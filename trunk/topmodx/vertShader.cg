@@ -12,19 +12,36 @@ struct vertout {
 	// float2 uv           : TEXCOORD0;
 	// float3 outPos       : TEXCOORD0;
 	float4 depthVal 		: TEXCOORD0; // value for depth comparison for shadow
-}; 
- 
+};
+
 vertout main( vertin IN,
 						  out float4 camPos : TEXCOORD1,
 						  out float4 oPos   : TEXCOORD2,
 						  out float4 oNorm  : TEXCOORD3,
 						  out float4 lPos   : TEXCOORD4,
-						  uniform float4 eyePos,
 						  uniform float4x4 camToWorld,
 						  uniform float4x4 camToWorldIT,
-						  uniform float4x4 worldToLight ) {
-								
+						  uniform float4x4 worldToLight,
+							//from book
+							// float4 position  : POSITION, //now stored in vertin
+							// float3 normal    : NORMAL,   //now stored in vertin
+							// out float4 oPosition : POSITION, //now called oPos
+							// out float4 color     : COLOR,  //now stored in vertin
+
+							uniform float3 globalAmbient,
+							uniform float3 lightColor,
+							uniform float3 lightPosition,
+							uniform float3 eyePosition,
+							uniform float3 Ke,
+							uniform float3 Ka,
+							uniform float3 Kd,
+							uniform float3 Ks,
+							uniform float  shininess) {
+	
 	vertout OUT;
+
+  // float3 P = position.xyz;
+  // float3 N = normal;
 
 	// Transform the vertex position to Eye Space
 	float4x4 modelView = glstate.matrix.modelview[0];
@@ -40,24 +57,46 @@ vertout main( vertin IN,
 	oPos = mul( camToWorld, oPos );
 	lPos = mul( worldToLight, oPos );
 	// Transform Eye Position to World Space
-	camPos = eyePos;
+	// camPos = eyePosition;
 
 	OUT.depthVal = IN.depthVal;
-	OUT.color    = IN.color;
+	
+	// Compute emissive term
+	float3 emissive = Ke;
+	// Compute ambient term
+	float3 ambient = Ka * globalAmbient;	
+	// Compute the diffuse term
+	float3 L = normalize(lPos - oPos.xyz);
+	float diffuseLight = max(dot(oNorm.xyz, L), 0);
+	float3 diffuse = Kd * lightColor * diffuseLight;
+	// Compute the specular term
+	float3 V = normalize(eyePosition - oPos.xyz);
+	float3 H = normalize(L + V);
+	float specularLight = pow(max(dot(oNorm.xyz, H), 0), shininess);
+	if (diffuseLight <= 0) specularLight = 0;
+	float3 specular = Ks * lightColor * specularLight;
+
+	// OUT.color    = IN.color;
+	OUT.color.xyz    = emissive + ambient + diffuse + specular;
+	OUT.color.w = IN.color.w;
 
 	// Now transform position to clip space
 	OUT.position = mul( proj, mvPos );
 	//OUT.position = lPos;
-
 	return OUT;
-
- //  float4x4 modelViewProj = glstate.matrix.mvp;
- //  float4x4 modelView = glstate.matrix.modelview[0];
- // 
- //  OUT.position = mul( modelViewProj, IN.position); 
- //  OUT.outPos = IN.position; //mul( modelView, IN.position );
- //  OUT.color = IN.color; //float4(0,1,1,.5);
- //  OUT.uv = IN.uv;
- //  
- // return OUT; 
 }
+
+// // Compute the diffuse term
+// float3 L = normalize(lightPosition - P);
+// float diffuseLight = max(dot(N, L), 0);
+// float3 diffuse = Kd * lightColor * diffuseLight;
+// 
+// // Compute the specular term
+// float3 V = normalize(eyePosition - P);
+// float3 H = normalize(L + V);
+// float specularLight = pow(max(dot(N, H), 0), shininess);
+// if (diffuseLight <= 0) specularLight = 0;
+// float3 specular = Ks * lightColor * specularLight;
+// 
+// color.xyz = emissive + ambient + diffuse + specular;
+// color.w = 1;
