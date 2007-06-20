@@ -962,6 +962,7 @@ void MainWindow::makeWireframe(void)                    // Create a wireframe
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	redraw();
 }
 
 void MainWindow::makeWireframe2() {// Create a wireframe // dave {

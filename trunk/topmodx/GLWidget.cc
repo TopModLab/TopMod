@@ -203,20 +203,13 @@ void GLWidget::paintEvent(QPaintEvent *event){
 		//send lighing info
 		cgGLSetParameter3f(cg.lightColor, plight.warmcolor.r, plight.warmcolor.g, plight.warmcolor.b );
 		cgGLSetParameter3f(cg.lightPosition, plight.position[0], plight.position[1], plight.position[2] );
-		
-		//test material
-		const float emissive[3] = {0.1,  0.1,  0.1},
-	              ambient[3]  = {0.33, 0.22, 0.03},
-	              diffuse[3]  = {0.78, 0.57, 0.11},
-	              specular[3] = {0.99, 0.91, 0.81},
-	              shininess = 27.8;
-
-	  cgSetParameter3fv(cg.Ke, emissive);
-	  cgSetParameter3fv(cg.Ka, ambient);
-	  cgSetParameter3fv(cg.Kd, diffuse);
-	  cgSetParameter3fv(cg.Ks, specular);
-	  cgSetParameter1f(cg.shininess,  shininess);
-	  
+		// //object material
+		// 	  cgSetParameter3f(cg.Ke, 0.0, 0.0, 0.0);
+		// 	  cgSetParameter3f(cg.Ka, mRenderColor().redF(), mRenderColor().greenF(), mRenderColor().blueF());
+		// 	  cgSetParameter3f(cg.Kd, 0.0, 0.0, 0.0);
+		// 	  cgSetParameter3f(cg.Ks, 1.0, 1.0, 1.0);
+		// 	  cgSetParameter1f(cg.shininess, 50);
+		// 	  
 	  // lookThruLight( );
 	  // glViewport(0,0,texRenderSize,texRenderSize);
 	  //     glMatrixMode(GL_PROJECTION);
@@ -231,7 +224,6 @@ void GLWidget::paintEvent(QPaintEvent *event){
 
   	//set light matrix
 		//this is probably wrong dammit
-	  cgGLSetStateMatrixParameter( 	cg.worldToLight, CG_GL_MODELVIEW_PROJECTION_MATRIX, CG_GL_MATRIX_IDENTITY); 
 
 		
 	
@@ -281,10 +273,21 @@ void GLWidget::paintEvent(QPaintEvent *event){
 		cgGLSetParameter3f(cg.eyePosition, mCamera->getPos()[0], mCamera->getPos()[1], mCamera->getPos()[2] );
 	  cgGLSetStateMatrixParameter( cg.camToWorld,	CG_GL_MODELVIEW_MATRIX, CG_GL_MATRIX_INVERSE );
 	  cgGLSetStateMatrixParameter( cg.camToWorldIT,	CG_GL_MODELVIEW_MATRIX, CG_GL_MATRIX_TRANSPOSE );		
+	  cgGLSetStateMatrixParameter( 	cg.worldToLight, CG_GL_MODELVIEW_PROJECTION_MATRIX, CG_GL_MATRIX_IDENTITY); 
 	}
 	#endif
 	// Draw the axes if required. Use thick lines
 	if ( showaxes ) {
+		#ifdef GPU_OK
+		if (mUseGPU){
+			//object material
+		  cgSetParameter3f(cg.Ke, 0.0, 0.0, 0.0);
+		  cgSetParameter3f(cg.Ka, 0.0, 0.0, 0.0);
+		  cgSetParameter3f(cg.Kd, 0.0, 0.0, 0.0);
+		  cgSetParameter3f(cg.Ks, 0.0, 0.0, 0.0);
+		  cgSetParameter1f(cg.shininess, 0);
+		}
+		#endif
 		glLineWidth(3.0);
 		glEnable(GL_LINE_STIPPLE);
 		glLineStipple(2,0xAAAA);
@@ -310,7 +313,16 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	glDepthRange(0,1);
 	
 	if ( renderer ) {
-		renderer->setCgData(cg);
+		#ifdef GPU_OK
+		if (mUseGPU){
+		  cgSetParameter3f(cg.Ke, 0.0, 0.0, 0.0);
+		  cgSetParameter3f(cg.Ka, (float)mRenderColor.redF(), mRenderColor.greenF(), mRenderColor.blueF());
+		  cgSetParameter3f(cg.Kd, 0.0, 0.0, 0.0);
+		  cgSetParameter3f(cg.Ks, 1.0, 1.0, 1.0);
+		  cgSetParameter1f(cg.shininess, 50);
+			renderer->setCgData(cg);
+		}
+		#endif
 	  renderer->render(object);
 	  if(patchObject)
 	    renderer->render(patchObject);
@@ -318,6 +330,16 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	// Show any selected items.
 	// Adjust the depthrange so selected items are shown clearly
 	glDepthRange(0,1-0.0005-0.0005);
+	#ifdef GPU_OK
+	if (mUseGPU){
+	  cgSetParameter3f(cg.Ke, 0.0, 0.0, 0.0);
+	  cgSetParameter3f(cg.Ka, 0.0, 0.0, 0.0);
+	  cgSetParameter3f(cg.Kd, 0.0, 0.0, 0.0);
+	  cgSetParameter3f(cg.Ks, 0.0, 0.0, 0.0);
+	  cgSetParameter1f(cg.shininess, 0.0);
+		renderer->setCgData(cg);		
+	}
+	#endif
 	drawSelected();
 	glDepthRange(0,1);
 	

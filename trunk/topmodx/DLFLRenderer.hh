@@ -181,14 +181,14 @@ public :
   /* Methods for various types of rendering */
   void drawWireframe(DLFLObjectPtr object) {
     if(useGPU) {
-      cgSetParameter3f(mCg.Ke, 0.0,0.0,0.0);
-      cgSetParameter3f(mCg.Ka, 0.0, 0.0, 0.0);
+      cgSetParameter3f(mCg.Ke, 0.0, 0.0, 0.0);
+      cgSetParameter3f(mCg.Ka, mWireframeColor.redF(), mWireframeColor.greenF(), mWireframeColor.blueF() );
       cgSetParameter3f(mCg.Kd, 0.0, 0.0, 0.0);
       cgSetParameter3f(mCg.Ks, 0.0, 0.0, 0.0);
       cgSetParameter1f(mCg.shininess, 0.0);
     }
     glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-    glColor4f(mWireframeColor.redF(), mWireframeColor.greenF(), mWireframeColor.blueF(), mWireframeColor.alphaF());
+    glColor4f( mWireframeColor.redF(), mWireframeColor.greenF(), mWireframeColor.blueF(), mWireframeColor.alphaF());
     glDepthRange(0.0,1.0-0.0005);
     //object->renderEdges(mWireframeThickness);
     //test material
@@ -197,6 +197,13 @@ public :
   };
 
   void drawSilhouette(DLFLObjectPtr object) {
+	  if(useGPU) {
+      cgSetParameter3f(mCg.Ke, 0.0, 0.0, 0.0);
+      cgSetParameter3f(mCg.Ka, mSilhouetteColor.redF(),mSilhouetteColor.greenF(),mSilhouetteColor.blueF());
+      cgSetParameter3f(mCg.Kd, 0.0, 0.0, 0.0);
+      cgSetParameter3f(mCg.Ks, 0.0, 0.0, 0.0);
+      cgSetParameter1f(mCg.shininess, 0.0);
+    }
     glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     glColor4f(mSilhouetteColor.redF(),mSilhouetteColor.greenF(),mSilhouetteColor.blueF(),mSilhouetteColor.alphaF());
     glDepthRange(0.1,1.0);
@@ -208,6 +215,13 @@ public :
   };
 
   void drawVertices(DLFLObjectPtr object) {
+	  if(useGPU) {
+      cgSetParameter3f(mCg.Ke, 0.0, 0.0, 0.0);
+      cgSetParameter3f(mCg.Ka, mVertexColor.redF(),mVertexColor.greenF(),mVertexColor.blueF());
+      cgSetParameter3f(mCg.Kd, 0.0, 0.0, 0.0);
+      cgSetParameter3f(mCg.Ks, 0.0, 0.0, 0.0);
+      cgSetParameter1f(mCg.shininess, 0.0);
+    }
     glColor4f(mVertexColor.redF(),mVertexColor.greenF(),mVertexColor.blueF(),mVertexColor.alphaF());
     glDepthRange(0.0,1.0-0.00075);
     //object->renderVertices(mVertexThickness);

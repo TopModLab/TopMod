@@ -77,7 +77,7 @@ vertout main( vertin IN,
 	float3 specular = Ks * lightColor * specularLight;
 
 	// OUT.color    = IN.color;
-	OUT.color.xyz    = emissive + ambient + diffuse + specular;
+	OUT.color.xyz    = IN.color + emissive + ambient + diffuse + specular;
 	OUT.color.w = IN.color.w;
 
 	// Now transform position to clip space
