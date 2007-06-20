@@ -197,6 +197,7 @@ undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimi
 	mScriptEditorDockWidget->hide();
 	mScriptEditorDockWidget->setMaximumHeight(200);
 	connect( this, SIGNAL(loadedObject(DLFLObject*,QString)),mScriptEditor, SLOT(loadObject(DLFLObject*,QString)) );
+	connect( mScriptEditor, SIGNAL(makingChange()), this, SLOT(undoPush()) );
 	connect( mScriptEditor, SIGNAL(cmdExecuted()), this, SLOT(recomputeAll()) );
 	connect( mScriptEditor, SIGNAL(cmdExecuted()), this->getActive(), SLOT(update()) );
 	connect( mScriptEditor, SIGNAL(requestObject(QString)), this, SLOT(openFile(QString)) );
@@ -1514,12 +1515,12 @@ void MainWindow::readSettings() {
 			if (slptr->getActiveVertex() != NULL)	{
 				slptr = active->selectLocator(x,y);
 				if (slptr != NULL) {
-					GLWidget::setSelectedLocator(0,slptr);
+					active->setSelectedLocator(0,slptr);
 					startDrag(x,y);
 				}
 				else {
 					active->getLocatorPtr()->setActiveVertex(NULL);
-					GLWidget::clearSelectedLocators();
+					active->clearSelectedLocators();
 				} 
 			}
 			break;
@@ -1528,12 +1529,12 @@ void MainWindow::readSettings() {
 			case CutVertex://ozgur
 			std::cout<< "selecting a vertex\n";
 			svptr = active->selectVertex(x,y);
-			GLWidget::setSelectedVertex(num_sel_verts,svptr);
+			active->setSelectedVertex(num_sel_verts,svptr);
 			break;
 			case MultiSelectVertex :
 			svptr = active->selectVertex(x,y);
-			if ( !GLWidget::isSelected(svptr) )
-				GLWidget::setSelectedVertex(num_sel_verts,svptr);
+			if ( !active->isSelected(svptr) )
+				active->setSelectedVertex(num_sel_verts,svptr);
 			break;
 			case DeleteEdge :
 			case SubdivideEdge :
@@ -1543,33 +1544,33 @@ void MainWindow::readSettings() {
 			case TruncateEdge :
 			case MarkEdge ://ozgur
 			septr = active->selectEdge(x,y);
-			GLWidget::setSelectedEdge(num_sel_edges,septr);
+			active->setSelectedEdge(num_sel_edges,septr);
 			break;
 			case CutEdgeandVertex://ozgur
 			septr = active->selectEdge(x,y);
 			svptr = active->selectVertex(x,y);
-			GLWidget::setSelectedEdge(num_sel_edges,septr);
-			GLWidget::setSelectedVertex(num_sel_verts,svptr);
+			active->setSelectedEdge(num_sel_edges,septr);
+			active->setSelectedVertex(num_sel_verts,svptr);
 			break;
 			case MultiSelectEdge :
 			septr = active->selectEdge(x,y);
-			if ( !GLWidget::isSelected(septr) )
-				GLWidget::setSelectedEdge(num_sel_edges,septr);
+			if ( !active->isSelected(septr) )
+				active->setSelectedEdge(num_sel_edges,septr);
 			break;
 			case SelectEdgeLoop:
 			if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
-				GLWidget::clearSelectedEdges();
+				active->clearSelectedEdges();
 			}
 			septr = active->selectEdge(x,y);
-			if (septr && QApplication::keyboardModifiers() == Qt::ControlModifier && GLWidget::isSelected(septr)){
+			if (septr && QApplication::keyboardModifiers() == Qt::ControlModifier && active->isSelected(septr)){
 				deselect_edges = true;
-				GLWidget::clearSelectedEdge(septr);
+				active->clearSelectedEdge(septr);
 				num_sel_edges--;
 				getEdgeLoopSelection(septr);
 				deselect_edges = false;
 			}
-			else if ( septr && !GLWidget::isSelected(septr)){
-				GLWidget::setSelectedEdge(num_sel_edges,septr);
+			else if ( septr && !active->isSelected(septr)){
+				active->setSelectedEdge(num_sel_edges,septr);
 				num_sel_edges++;
 				getEdgeLoopSelection(septr);
 			}
@@ -1587,22 +1588,22 @@ void MainWindow::readSettings() {
 			case ConnectFaces :
 			case CutFace://ozgur
 			sfptr = active->selectFace(x,y);
-			GLWidget::setSelectedFace(num_sel_faces,sfptr);
+			active->setSelectedFace(num_sel_faces,sfptr);
 			break;
 			case SelectSimilarFaces :
 		//clear selection if shift isn't down
 			if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
-				GLWidget::clearSelectedFaces();
+				active->clearSelectedFaces();
 			sfptr = active->selectFace(x,y);
 			if (sfptr){
-				GLWidget::setSelectedFace(num_sel_faces,sfptr);
+				active->setSelectedFace(num_sel_faces,sfptr);
 				num_sel_faces++;
 				DLFLFacePtrArray sfptrarray;
 				vector<DLFLFacePtr>::iterator it;
 				DLFL::selectMatchingFaces(&object, sfptr, sfptrarray);
 				for (it = sfptrarray.begin(); it != sfptrarray.end(); it++){
-					if (!GLWidget::isSelected(*it)){
-						GLWidget::setSelectedFace(num_sel_faces,*it);
+					if (!active->isSelected(*it)){
+						active->setSelectedFace(num_sel_faces,*it);
 						num_sel_faces++;
 					}
 				}
@@ -1611,10 +1612,10 @@ void MainWindow::readSettings() {
 			break;
 			case SelectFaceLoop:
 			if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
-				GLWidget::clearSelectedFaces();
+				active->clearSelectedFaces();
 			}
 			septr = active->selectEdge(x,y);
-			GLWidget::setSelectedEdge(num_sel_edges,septr);
+			active->setSelectedEdge(num_sel_edges,septr);
 			if ( septr ){
 				if (QApplication::keyboardModifiers() == Qt::ControlModifier){ // deselect
 					face_loop_start_edge = septr;
@@ -1632,19 +1633,19 @@ void MainWindow::readSettings() {
 	case SubdivideFace :
 									// No duplicates allowed
 		// sfptr = active->selectFace(x,y);
-		// if ( !GLWidget::isSelected(sfptr) ){
-		// 	GLWidget::setSelectedFace(num_sel_faces,sfptr);
+		// if ( !active->isSelected(sfptr) ){
+		// 	active->setSelectedFace(num_sel_faces,sfptr);
 		// 	num_sel_faces++;
 		// }
-		// else if ( GLWidget::isSelected(sfptr) && QApplication::keyboardModifiers() == Qt::ControlModifier) {
-		// 	GLWidget::clearSelectedFace(sfptr);
+		// else if ( active->isSelected(sfptr) && QApplication::keyboardModifiers() == Qt::ControlModifier) {
+		// 	active->clearSelectedFace(sfptr);
 		// 	num_sel_faces--;
 		// }
 	if ( QApplication::keyboardModifiers() == Qt::ControlModifier) {
 		sfptrarr = active->deselectFaces(x,y);
 		first = sfptrarr.begin(); last = sfptrarr.end();
 		while ( first != last ){
-			GLWidget::clearSelectedFace(*first);
+			active->clearSelectedFace(*first);
 			++first;
 			num_sel_faces--;
 		}
@@ -1655,7 +1656,7 @@ void MainWindow::readSettings() {
 		sfptrarr = active->selectFaces(x,y);
 		first = sfptrarr.begin(); last = sfptrarr.end();
 		while ( first != last ){
-			GLWidget::setSelectedFace(num_sel_faces,*first);
+			active->setSelectedFace(num_sel_faces,*first);
 			++first;
 			num_sel_faces++;
 		}
@@ -1665,19 +1666,19 @@ void MainWindow::readSettings() {
 	break;
 	case SelectCheckerboard :
 	if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
-		GLWidget::clearSelectedFaces();
+		active->clearSelectedFaces();
 	}
 		//get one selected face
 	sfptr = active->selectFace(x,y);
-	if (sfptr && GLWidget::isSelected(sfptr) && QApplication::keyboardModifiers() == Qt::ControlModifier){
+	if (sfptr && active->isSelected(sfptr) && QApplication::keyboardModifiers() == Qt::ControlModifier){
 		deselect_edges = true;
-		GLWidget::clearSelectedFace(sfptr);
+		active->clearSelectedFace(sfptr);
 		num_sel_faces--;
 		getCheckerboardSelection(sfptr);
 		deselect_edges = false;
 	}
-	else if (sfptr && !GLWidget::isSelected(sfptr) ){
-		GLWidget::setSelectedFace(num_sel_faces,sfptr);
+	else if (sfptr && !active->isSelected(sfptr) ){
+		active->setSelectedFace(num_sel_faces,sfptr);
 		num_sel_faces++;
 		getCheckerboardSelection(sfptr);
 	}		
@@ -1692,32 +1693,32 @@ void MainWindow::readSettings() {
 	case BezierConnectFaces :
 	case HermiteConnectFaces :
 	sfptr = active->selectFace(x,y);
-	GLWidget::setSelectedFace(num_sel_faces,sfptr);
+	active->setSelectedFace(num_sel_faces,sfptr);
 	if ( sfptr )
 	{
 		sfvptr = active->selectFaceVertex(sfptr,x,y);
-		GLWidget::setSelectedFaceVertex(num_sel_faceverts,sfvptr);
+		active->setSelectedFaceVertex(num_sel_faceverts,sfvptr);
 	}
 	break;
 
 	case MultiSelectFaceVertex :
 	sfptr = active->selectFace(x,y);
-	GLWidget::setSelectedFace(num_sel_faces,sfptr);
+	active->setSelectedFace(num_sel_faces,sfptr);
 	if ( sfptr )
 	{
 		sfvptr = active->selectFaceVertex(sfptr,x,y);
-		if ( !GLWidget::isSelected(sfvptr) )
-			GLWidget::setSelectedFaceVertex(num_sel_faceverts,sfvptr);
+		if ( !active->isSelected(sfvptr) )
+			active->setSelectedFaceVertex(num_sel_faceverts,sfvptr);
 	}
 	break;
 
 	case ConnectEdges :
 	sfptr = active->selectFace(x,y);
-	GLWidget::setSelectedFace(num_sel_faces,sfptr);
+	active->setSelectedFace(num_sel_faces,sfptr);
 	if ( sfptr )
 	{
 		septr = active->selectEdge(x,y);
-		GLWidget::setSelectedEdge(num_sel_edges,septr);
+		active->setSelectedEdge(num_sel_edges,septr);
 	}
 	break;
 };	
@@ -1854,47 +1855,47 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 		{
 			case EditVertex :       // brianb
 			is_editing = false;
-			if ( GLWidget::numSelectedVertices() >= 1 )	{
-				DLFLVertexPtr vp = GLWidget::getSelectedVertex(0);
+			if ( active->numSelectedVertices() >= 1 )	{
+				DLFLVertexPtr vp = active->getSelectedVertex(0);
 				vp->print();
-				// GLWidget::clearSelectedVertices();
+				// active->clearSelectedVertices();
 				// num_sel_verts = 0;
 				redraw();
 			}
 			break;
 			case SelectVertex :
-			if ( GLWidget::numSelectedVertices() >= 1 )
+			if ( active->numSelectedVertices() >= 1 )
 			{
-				DLFLVertexPtr vp = GLWidget::getSelectedVertex(0);
+				DLFLVertexPtr vp = active->getSelectedVertex(0);
 				vp->print();
-				GLWidget::clearSelectedVertices();
+				active->clearSelectedVertices();
 				num_sel_verts = 0;
 				redraw();
 			}
 			break;
 			case SelectEdge :
-			if ( GLWidget::numSelectedEdges() >= 1 ) {
-				DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
+			if ( active->numSelectedEdges() >= 1 ) {
+				DLFLEdgePtr septr = active->getSelectedEdge(0);
 				if (septr) {
 																						//septr->print();
 																						//num_sel_edges = 0;
 				}
-				GLWidget::clearSelectedEdges();
+				active->clearSelectedEdges();
 				redraw();
 			}
 			break;
 			case SelectEdgeLoop:
-			if ( GLWidget::numSelectedEdges() >= 1 ){
-				DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
+			if ( active->numSelectedEdges() >= 1 ){
+				DLFLEdgePtr septr = active->getSelectedEdge(0);
 				if (septr)
 					getEdgeLoopSelection(septr);
 			}
-			// GLWidget::clearSelectedEdges();
+			// active->clearSelectedEdges();
 			active->redraw();			
 			break;
 			case SelectFaceLoop:
-			if ( GLWidget::numSelectedEdges() >= 1 ){
-				DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
+			if ( active->numSelectedEdges() >= 1 ){
+				DLFLEdgePtr septr = active->getSelectedEdge(0);
 				if (septr){
 					if (QApplication::keyboardModifiers() == Qt::ControlModifier){ // deselect
 						face_loop_start_edge = septr;
@@ -1906,29 +1907,29 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			}
 		}
 	}
-	GLWidget::clearSelectedEdges();
+	active->clearSelectedEdges();
 	active->redraw();
 	break;
 	case SelectFace :
-	if ( GLWidget::numSelectedFaces() >= 1 )
+	if ( active->numSelectedFaces() >= 1 )
 	{
-		DLFLFacePtr fp = GLWidget::getSelectedFace(0);
+		DLFLFacePtr fp = active->getSelectedFace(0);
 		fp->print();
-		GLWidget::clearSelectedFaces();
+		active->clearSelectedFaces();
 		num_sel_faces = 0;
 		redraw();
 	}
 	break;
 	case SelectSimilarFaces :
-	if ( GLWidget::numSelectedFaces() >= 1 ){
-		DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);			
+	if ( active->numSelectedFaces() >= 1 ){
+		DLFLFacePtr sfptr = active->getSelectedFace(0);			
 		if (sfptr){
 			DLFLFacePtrArray sfptrarray;
 			vector<DLFLFacePtr>::iterator it;
 			DLFL::selectMatchingFaces(&object, sfptr, sfptrarray);
 			for (it = sfptrarray.begin(); it != sfptrarray.end(); it++){
-				if (!GLWidget::isSelected(*it)){
-					GLWidget::setSelectedFace(num_sel_faces,*it);
+				if (!active->isSelected(*it)){
+					active->setSelectedFace(num_sel_faces,*it);
 					num_sel_faces++;
 				}
 			}
@@ -1937,22 +1938,22 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 	}
 	break;
 	case SelectFaceVertex :
-	if ( GLWidget::numSelectedFaceVertices() >= 1 )
+	if ( active->numSelectedFaceVertices() >= 1 )
 	{
-		DLFLFaceVertexPtr fvp = GLWidget::getSelectedFaceVertex(0);
+		DLFLFaceVertexPtr fvp = active->getSelectedFaceVertex(0);
 		fvp->print();
-		GLWidget::clearSelectedFaceVertices();
-		GLWidget::clearSelectedFaces();
+		active->clearSelectedFaceVertices();
+		active->clearSelectedFaces();
 		num_sel_faceverts = 0; num_sel_faces = 0;
 		redraw();
 	}
 	break;
 	case InsertEdge :
-	if ( GLWidget::numSelectedFaceVertices() >= 2 )
+	if ( active->numSelectedFaceVertices() >= 2 )
 	{
 		DLFLFaceVertexPtr sfvptr1, sfvptr2;
-		sfvptr1 = GLWidget::getSelectedFaceVertex(0);
-		sfvptr2 = GLWidget::getSelectedFaceVertex(1);
+		sfvptr1 = active->getSelectedFaceVertex(0);
+		sfvptr2 = active->getSelectedFaceVertex(1);
 		if ( sfvptr1 && sfvptr2 )
 		{
 			DLFLMaterialPtr mptr = sfvptr1->getFacePtr()->material();
@@ -1960,23 +1961,23 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			setModified(true);
 								//object.insertEdge(sfvptr1,sfvptr2,false,mptr);
 			DLFL::insertEdge(&object,sfvptr1,sfvptr2,false,mptr);
-			GLWidget::clearSelectedFaces();
-			GLWidget::clearSelectedFaceVertices();
+			active->clearSelectedFaces();
+			active->clearSelectedFaceVertices();
 			num_sel_faceverts = 0; num_sel_faces = 0;
 			active->recomputePatches();
 			active->recomputeNormals();
 			redraw();   
 		}
 	}
-	else if ( GLWidget::numSelectedFaceVertices() == 1 )
+	else if ( active->numSelectedFaceVertices() == 1 )
 	{
 		num_sel_faceverts=1; num_sel_faces=1;
 	}
 	break;
 	case DeleteEdge :
-	if ( GLWidget::numSelectedEdges() >= 1 )
+	if ( active->numSelectedEdges() >= 1 )
 	{
-		DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
+		DLFLEdgePtr septr = active->getSelectedEdge(0);
 		if ( septr )
 		{
 			undoPush();
@@ -1986,14 +1987,14 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			active->recomputePatches();
 			active->recomputeNormals();
 		}
-		GLWidget::clearSelectedEdges();
+		active->clearSelectedEdges();
 		redraw();
 	}
 	break;
 	case SubdivideEdge :
-	if ( GLWidget::numSelectedEdges() >= 1 )
+	if ( active->numSelectedEdges() >= 1 )
 	{
-		DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
+		DLFLEdgePtr septr = active->getSelectedEdge(0);
 		if ( septr )
 		{
 			undoPush();
@@ -2003,14 +2004,14 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			active->recomputePatches();
 			active->recomputeNormals();
 		}
-		GLWidget::clearSelectedEdges();
+		active->clearSelectedEdges();
 		redraw();
 	}
 	break;
 	case CollapseEdge :
-	if ( GLWidget::numSelectedEdges() >= 1 )
+	if ( active->numSelectedEdges() >= 1 )
 	{
-		DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
+		DLFLEdgePtr septr = active->getSelectedEdge(0);
 		if ( septr )
 		{
 			undoPush();
@@ -2020,16 +2021,16 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			active->recomputePatches();
 			active->recomputeNormals();
 		}
-		GLWidget::clearSelectedEdges();
+		active->clearSelectedEdges();
 		redraw();
 	}
 	break;
 	case SpliceCorners :
-	if ( GLWidget::numSelectedFaceVertices() >= 2 )
+	if ( active->numSelectedFaceVertices() >= 2 )
 	{
 		DLFLFaceVertexPtr sfvptr1, sfvptr2;
-		sfvptr1 = GLWidget::getSelectedFaceVertex(0);
-		sfvptr2 = GLWidget::getSelectedFaceVertex(1);
+		sfvptr1 = active->getSelectedFaceVertex(0);
+		sfvptr2 = active->getSelectedFaceVertex(1);
 		if ( sfvptr1 && sfvptr2 )
 		{
 			DLFLMaterialPtr mptr = sfvptr1->getFacePtr()->material();
@@ -2037,25 +2038,25 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			setModified(true);
 								//object.spliceCorners(sfvptr1,sfvptr2);
 			DLFL::spliceCorners(&object,sfvptr1,sfvptr2);
-			GLWidget::clearSelectedFaces();
-			GLWidget::clearSelectedFaceVertices();
+			active->clearSelectedFaces();
+			active->clearSelectedFaceVertices();
 			num_sel_faceverts = 0; num_sel_faces = 0;
 			active->recomputePatches();
 			active->recomputeNormals();
 			redraw();   
 		}
 	}
-	else if ( GLWidget::numSelectedFaceVertices() == 1 )
+	else if ( active->numSelectedFaceVertices() == 1 )
 	{
 		num_sel_faceverts=1; num_sel_faces=1;
 	}
 	break;
 	case ConnectFaces :
-	if ( GLWidget::numSelectedFaces() >= 2 )
+	if ( active->numSelectedFaces() >= 2 )
 	{
 		DLFLFacePtr sfptr1, sfptr2;
-		sfptr1 = GLWidget::getSelectedFace(0);
-		sfptr2 = GLWidget::getSelectedFace(1);
+		sfptr1 = active->getSelectedFace(0);
+		sfptr2 = active->getSelectedFace(1);
 		if ( sfptr1 && sfptr2 )
 		{
 			undoPush();
@@ -2063,68 +2064,68 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			DLFL::connectFaces(&object,sfptr1,sfptr2,num_segments);
 			active->recomputePatches();
 			active->recomputeNormals();
-			GLWidget::clearSelectedFaces();
+			active->clearSelectedFaces();
 			redraw();   
 		}
 	}
-	else if ( GLWidget::numSelectedFaces() == 1 )
+	else if ( active->numSelectedFaces() == 1 )
 	{
 		num_sel_faces = 1;
 	}
 	break;
 	case ConnectFaceVertices :
-	if ( GLWidget::numSelectedFaceVertices() >= 2 )
+	if ( active->numSelectedFaceVertices() >= 2 )
 	{
 		DLFLFaceVertexPtr sfvptr1, sfvptr2;
-		sfvptr1 = GLWidget::getSelectedFaceVertex(0);
-		sfvptr2 = GLWidget::getSelectedFaceVertex(1);
+		sfvptr1 = active->getSelectedFaceVertex(0);
+		sfvptr2 = active->getSelectedFaceVertex(1);
 		if ( sfvptr1 && sfvptr2 )
 		{
 			undoPush();
 			setModified(true);
 			DLFL::connectFaces(&object,sfvptr1,sfvptr2,num_segments, max_segments);
-			GLWidget::clearSelectedFaces();
-			GLWidget::clearSelectedFaceVertices();
+			active->clearSelectedFaces();
+			active->clearSelectedFaceVertices();
 			num_sel_faceverts = 0; num_sel_faces = 0;
 			active->recomputePatches();
 			active->recomputeNormals();
 			redraw();   
 		}
 	}
-	else if ( GLWidget::numSelectedFaceVertices() == 1 )
+	else if ( active->numSelectedFaceVertices() == 1 )
 	{
 		num_sel_faceverts = 1; num_sel_faces = 1;
 	}
 	break;
 	case ConnectEdges :
-	if ( GLWidget::numSelectedEdges() >= 2 )
+	if ( active->numSelectedEdges() >= 2 )
 	{
 		DLFLEdgePtr septr1, septr2;
 		DLFLFacePtr sfptr1, sfptr2;
-		septr1 = GLWidget::getSelectedEdge(0);
-		septr2 = GLWidget::getSelectedEdge(1);
-		sfptr1 = GLWidget::getSelectedFace(0);
-		sfptr2 = GLWidget::getSelectedFace(1);
+		septr1 = active->getSelectedEdge(0);
+		septr2 = active->getSelectedEdge(1);
+		sfptr1 = active->getSelectedFace(0);
+		sfptr2 = active->getSelectedFace(1);
 		if ( septr1 && septr2 )
 		{
 			undoPush();
 			setModified(true);
 			DLFL::connectEdges(&object,septr1,sfptr1,septr2,sfptr2);
-			GLWidget::clearSelectedEdges();
-			GLWidget::clearSelectedFaces();
+			active->clearSelectedEdges();
+			active->clearSelectedFaces();
 			num_sel_edges = 0; num_sel_faces = 0;
 			redraw();   
 		}
 	}
-	else if ( GLWidget::numSelectedEdges() == 1 )
+	else if ( active->numSelectedEdges() == 1 )
 	{
 		num_sel_edges = 1; num_sel_faces = 1;
 	}
 	break;
 	case ExtrudeFace :
-	if ( GLWidget::numSelectedFaces() >= 1 )
+	if ( active->numSelectedFaces() >= 1 )
 	{
-		DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
+		DLFLFacePtr sfptr = active->getSelectedFace(0);
 		if ( sfptr )
 		{
 			undoPush();
@@ -2133,14 +2134,14 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			active->recomputePatches();
 			active->recomputeNormals();
 		}
-		GLWidget::clearSelectedFaces();
+		active->clearSelectedFaces();
 		redraw();
 	}
 	break;
 	case ExtrudeMultipleFaces :
-	if ( GLWidget::numSelectedFaces() >= 1 )
+	if ( active->numSelectedFaces() >= 1 )
 	{
-		DLFLFacePtrArray sfptrarr = GLWidget::getSelectedFaces();
+		DLFLFacePtrArray sfptrarr = active->getSelectedFaces();
 		if ( sfptrarr[0] )
 		{
 			undoPush();
@@ -2152,14 +2153,14 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			active->recomputePatches();
 			active->recomputeNormals();						
 		}
-		GLWidget::clearSelectedFaces();
+		active->clearSelectedFaces();
 		redraw();
 	}
 	break;
 	case ExtrudeFaceDS :
-	if ( GLWidget::numSelectedFaces() >= 1 )
+	if ( active->numSelectedFaces() >= 1 )
 	{
-		DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
+		DLFLFacePtr sfptr = active->getSelectedFace(0);
 		if ( sfptr )
 		{
 			undoPush();
@@ -2169,14 +2170,14 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			active->recomputePatches();
 			active->recomputeNormals();
 		}
-		GLWidget::clearSelectedFaces();
+		active->clearSelectedFaces();
 		redraw();
 	}
 	break;
 	case ExtrudeDualFace :
-	if ( GLWidget::numSelectedFaces() >= 1 )
+	if ( active->numSelectedFaces() >= 1 )
 	{
-		DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
+		DLFLFacePtr sfptr = active->getSelectedFace(0);
 		if ( sfptr )
 		{
 			undoPush();
@@ -2187,14 +2188,14 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			active->recomputePatches();
 			active->recomputeNormals();
 		}
-		GLWidget::clearSelectedFaces();
+		active->clearSelectedFaces();
 		redraw();
 	}
 	break;
 	case ExtrudeFaceDodeca :
-	if ( GLWidget::numSelectedFaces() >= 1 )
+	if ( active->numSelectedFaces() >= 1 )
 	{
-		DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
+		DLFLFacePtr sfptr = active->getSelectedFace(0);
 		if ( sfptr )
 		{
 			undoPush();
@@ -2205,14 +2206,14 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			active->recomputePatches();
 			active->recomputeNormals();
 		}
-		GLWidget::clearSelectedFaces();
+		active->clearSelectedFaces();
 		redraw();
 	}
 	break;
 	case ExtrudeFaceIcosa :
-	if ( GLWidget::numSelectedFaces() >= 1 )
+	if ( active->numSelectedFaces() >= 1 )
 	{
-		DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
+		DLFLFacePtr sfptr = active->getSelectedFace(0);
 		if ( sfptr )
 		{
 			undoPush();
@@ -2222,14 +2223,14 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			active->recomputePatches();
 			active->recomputeNormals();
 		}
-		GLWidget::clearSelectedFaces();
+		active->clearSelectedFaces();
 		redraw();
 	}
 	break;
 	case StellateFace :
-	if ( GLWidget::numSelectedFaces() >= 1 )
+	if ( active->numSelectedFaces() >= 1 )
 	{
-		DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
+		DLFLFacePtr sfptr = active->getSelectedFace(0);
 		if ( sfptr )
 		{
 			undoPush();
@@ -2238,14 +2239,14 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			active->recomputePatches();
 			active->recomputeNormals();
 		}
-		GLWidget::clearSelectedFaces();
+		active->clearSelectedFaces();
 		redraw();
 	}
 	break;
 	case DoubleStellateFace :
-	if ( GLWidget::numSelectedFaces() >= 1 )
+	if ( active->numSelectedFaces() >= 1 )
 	{
-		DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
+		DLFLFacePtr sfptr = active->getSelectedFace(0);
 		if ( sfptr )
 		{
 			undoPush();
@@ -2254,14 +2255,14 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 			active->recomputePatches();
 			active->recomputeNormals();
 		}
-		GLWidget::clearSelectedFaces();
+		active->clearSelectedFaces();
 		redraw();
 	}
 	break;
 	case CrustModeling :
-	if ( GLWidget::numSelectedFaces() >= 1 )
+	if ( active->numSelectedFaces() >= 1 )
 	{
-		DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
+		DLFLFacePtr sfptr = active->getSelectedFace(0);
 		if ( sfptr )
 		{
 																													// No undo for hole punching in crust modeling mode
@@ -2278,41 +2279,41 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 				DLFL::cmMakeHole(&object,sfptr,crust_cleanup);
 			//                                                  active->recomputeNormals();
 		}
-		GLWidget::clearSelectedFaces();
+		active->clearSelectedFaces();
 		redraw();
 	}
 	break;
 	case BezierConnectFaces :
-	if ( GLWidget::numSelectedFaceVertices() >= 2 )
+	if ( active->numSelectedFaceVertices() >= 2 )
 	{
 		DLFLFaceVertexPtr sfvptr1, sfvptr2;
-		sfvptr1 = GLWidget::getSelectedFaceVertex(0);
-		sfvptr2 = GLWidget::getSelectedFaceVertex(1);
+		sfvptr1 = active->getSelectedFaceVertex(0);
+		sfvptr2 = active->getSelectedFaceVertex(1);
 		if ( sfvptr1 && sfvptr2 )
 		{
 			undoPush();
 			setModified(true);
 			DLFL::bezierConnectFaces(&object,sfvptr1,sfvptr2,
 				num_segments,nwt1,nwt2);
-			GLWidget::clearSelectedFaces();
-			GLWidget::clearSelectedFaceVertices();
+			active->clearSelectedFaces();
+			active->clearSelectedFaceVertices();
 			num_sel_faceverts = 0; num_sel_faces = 0;
 			active->recomputePatches();
 			active->recomputeNormals();
 			redraw();   
 		}
 	}
-	else if ( GLWidget::numSelectedFaceVertices() == 1 )
+	else if ( active->numSelectedFaceVertices() == 1 )
 	{
 		num_sel_faceverts = 1; num_sel_faces = 1;
 	}
 	break;
 	case HermiteConnectFaces :
-	if ( GLWidget::numSelectedFaceVertices() >= 2 )
+	if ( active->numSelectedFaceVertices() >= 2 )
 	{
 		DLFLFaceVertexPtr sfvptr1, sfvptr2;
-		sfvptr1 = GLWidget::getSelectedFaceVertex(0);
-		sfvptr2 = GLWidget::getSelectedFaceVertex(1);
+		sfvptr1 = active->getSelectedFaceVertex(0);
+		sfvptr2 = active->getSelectedFaceVertex(1);
 		if ( sfvptr1 && sfvptr2 )
 		{
 			undoPush();
@@ -2325,23 +2326,23 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 				DLFL::hermiteConnectFaces(&object,sfvptr1,sfvptr2,
 				num_segments,nwt1,nwt2,
 				max_segments,num_extra_twists);
-			GLWidget::clearSelectedFaces();
-			GLWidget::clearSelectedFaceVertices();
+			active->clearSelectedFaces();
+			active->clearSelectedFaceVertices();
 			num_sel_faceverts = 0; num_sel_faces = 0;
 			active->recomputePatches();
 			active->recomputeNormals();
 			redraw();
 		}
 	}
-	else if ( GLWidget::numSelectedFaceVertices() == 1 )
+	else if ( active->numSelectedFaceVertices() == 1 )
 	{
 		num_sel_faceverts = 1; num_sel_faces = 1;
 	}
 	break;
 	case ReorderFace :
-	if ( GLWidget::numSelectedFaceVertices() >= 1 )
+	if ( active->numSelectedFaceVertices() >= 1 )
 	{
-		DLFLFaceVertexPtr sfvptr = GLWidget::getSelectedFaceVertex(0);
+		DLFLFaceVertexPtr sfvptr = active->getSelectedFaceVertex(0);
 		if ( sfvptr ) sfvptr->getFacePtr()->reorder(sfvptr);
 		redraw();
 	}
@@ -2352,53 +2353,53 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 	break;
 			//from ozgur
 	case CutEdge :
-	if ( GLWidget::numSelectedEdges() >= 1 )
+	if ( active->numSelectedEdges() >= 1 )
 	{
-		DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
+		DLFLEdgePtr septr = active->getSelectedEdge(0);
 		if ( septr )
 		{
 			undoPush();
 			septr->ismarked = 1- septr->ismarked;
 																					// DLFL::cutEdge( &object, septr, peelDistance_factor,pnormalBendS_factor,pnormalBendT_factor, peel_all_edges);
 		}
-		GLWidget::clearSelectedEdges();
+		active->clearSelectedEdges();
 		redraw();
 	}
 	break;
 	case TruncateEdge :
-	if ( GLWidget::numSelectedEdges() >= 1 )
+	if ( active->numSelectedEdges() >= 1 )
 	{
-		DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
+		DLFLEdgePtr septr = active->getSelectedEdge(0);
 		if ( septr )
 		{
 			undoPush();
 			septr->ismarked = 1- septr->ismarked;
 																					// DLFL::cutEdge( &object, septr, peelDistance_factor,pnormalBendS_factor,pnormalBendT_factor, peel_all_edges);
 		}
-		GLWidget::clearSelectedEdges();
+		active->clearSelectedEdges();
 		redraw();
 	}
 	break;
 	case CutVertex :
-	if ( GLWidget::numSelectedVertices() >= 1 )
+	if ( active->numSelectedVertices() >= 1 )
 	{
-		DLFLVertexPtr svptr = GLWidget::getSelectedVertex(0);
+		DLFLVertexPtr svptr = active->getSelectedVertex(0);
 		if ( svptr )
 		{
 			undoPush();
 			svptr->ismarked = 1 - svptr->ismarked;
 		}
-							// GLWidget::clearSelectedVertices();
+							// active->clearSelectedVertices();
 		redraw();
 	}
 	break;
 
 	case CutEdgeandVertex :
-	if ( GLWidget::numSelectedEdges() >= 1 )
+	if ( active->numSelectedEdges() >= 1 )
 	{	
-		if ( GLWidget::numSelectedEdges() >= 1 ) {
-			DLFLVertexPtr svptr = GLWidget::getSelectedVertex(0);
-			DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
+		if ( active->numSelectedEdges() >= 1 ) {
+			DLFLVertexPtr svptr = active->getSelectedVertex(0);
+			DLFLEdgePtr septr = active->getSelectedEdge(0);
 			if ( septr ) {
 				if (svptr) {
 					undoPush();
@@ -2406,50 +2407,50 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 									// DLFL::cutEdge( &object, septr, peelDistance_factor,pnormalBendS_factor,pnormalBendT_factor, peel_all_edges);
 				}
 			}
-			GLWidget::clearSelectedEdges();
-			GLWidget::clearSelectedVertices();
+			active->clearSelectedEdges();
+			active->clearSelectedVertices();
 			redraw();
 		}
 	}
 	break;
 	case MarkEdge:
-	if ( GLWidget::numSelectedEdges() >= 1 )
+	if ( active->numSelectedEdges() >= 1 )
 	{
-		DLFLEdgePtr septr = GLWidget::getSelectedEdge(0);
+		DLFLEdgePtr septr = active->getSelectedEdge(0);
 		if ( septr )
 		{
 			undoPush();
 			septr->ismarked = 1- septr->ismarked;
 		}
-		GLWidget::clearSelectedEdges();
+		active->clearSelectedEdges();
 		redraw();
 	}
 	break;
 
 	case MarkVertex :
-	if ( GLWidget::numSelectedVertices() >= 1 )
+	if ( active->numSelectedVertices() >= 1 )
 	{
-		DLFLVertexPtr svptr = GLWidget::getSelectedVertex(0);
+		DLFLVertexPtr svptr = active->getSelectedVertex(0);
 		if ( svptr )
 		{
 			undoPush();
 			svptr->ismarked = 1 - svptr->ismarked;
 		}
-		GLWidget::clearSelectedVertices();
+		active->clearSelectedVertices();
 		redraw();
 	}
 	break;
 
 	case CutFace :
-	if ( GLWidget::numSelectedFaces() >= 1 )
+	if ( active->numSelectedFaces() >= 1 )
 	{
-		DLFLFacePtr sfptr = GLWidget::getSelectedFace(0);
+		DLFLFacePtr sfptr = active->getSelectedFace(0);
 		if ( sfptr )
 		{
 			undoPush();
 			sfptr->ismarked = 1 - sfptr->ismarked;
 		}
-		GLWidget::clearSelectedFaces();
+		active->clearSelectedFaces();
 		redraw();
 	}
 	break;
@@ -2695,7 +2696,7 @@ void MainWindow::setMode(Mode m) {
 
 void MainWindow::setSelectionMask(SelectionMask m){
 	selectionmask = m;
-	GLWidget::clearSelected();
+	active->clearSelected();
 	active->repaint();
 	switch(selectionmask){
 		case MaskVertices :
@@ -3122,14 +3123,14 @@ void MainWindow::getCheckerboardSelection(DLFLFacePtr fptr) {
 		vector<DLFLFacePtr>::iterator it;
 		fptr->getNeighboringFaces(fparray);
 		for ( it = fparray.begin(); it != fparray.end(); it++){
-			if (fptr->sharesOneVertex((*it)) && !GLWidget::isSelected(*it)){
+			if (fptr->sharesOneVertex((*it)) && !active->isSelected(*it)){
 				numShared++;
 				if (deselect_edges){
-					GLWidget::clearSelectedFace(*it);
+					active->clearSelectedFace(*it);
 					num_sel_faces--;
 				}
 				else {
-					GLWidget::setSelectedFace(num_sel_faces,*it);
+					active->setSelectedFace(num_sel_faces,*it);
 					num_sel_faces++;					
 				}
 				getCheckerboardSelection((*it));
@@ -3155,12 +3156,12 @@ void MainWindow::getEdgeLoopSelection(DLFLEdgePtr eptr) {
 			for (it = eparray.begin(); it != eparray.end(); it++){
 				if ( !coFacial(*it,eptr) ){
 					if (deselect_edges){
-						GLWidget::clearSelectedEdge(*it);
+						active->clearSelectedEdge(*it);
 						num_sel_edges--;
 						getEdgeLoopSelection(*it);
 					}
-					else if (!GLWidget::isSelected(*it)){
-						GLWidget::setSelectedEdge(num_sel_edges,*it);
+					else if (!active->isSelected(*it)){
+						active->setSelectedEdge(num_sel_edges,*it);
 						num_sel_edges++;
 						getEdgeLoopSelection(*it);
 					}
@@ -3173,12 +3174,12 @@ void MainWindow::getEdgeLoopSelection(DLFLEdgePtr eptr) {
 			for (it = eparray.begin(); it != eparray.end(); it++){
 				if ( !coFacial(*it,eptr) ){
 					if (deselect_edges){
-						GLWidget::clearSelectedEdge(*it);
+						active->clearSelectedEdge(*it);
 						num_sel_edges--;
 						getEdgeLoopSelection(*it);
 					}
-					else if (!GLWidget::isSelected(*it)){
-						GLWidget::setSelectedEdge(num_sel_edges,*it);
+					else if (!active->isSelected(*it)){
+						active->setSelectedEdge(num_sel_edges,*it);
 						num_sel_edges++;
 						getEdgeLoopSelection(*it);
 					}
@@ -3203,13 +3204,13 @@ void MainWindow::getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr 
 	eptr->getFacePointers(fptr1,fptr2);
 	//check if the two faces are quads
 	if (fptr1 && fptr1->numFaceVertexes() == 4 && !(fptr1 == face_loop_marker) ){
-		// cout << select_face_loop << "\t" << !GLWidget::isSelected(fptr1) << std::endl;
-		if (/*select_face_loop &&*/ !GLWidget::isSelected(fptr1)){
-			GLWidget::setSelectedFace(num_sel_faces,fptr1);
+		// cout << select_face_loop << "\t" << !active->isSelected(fptr1) << std::endl;
+		if (/*select_face_loop &&*/ !active->isSelected(fptr1)){
+			active->setSelectedFace(num_sel_faces,fptr1);
 			num_sel_faces++;
 		}
-			/*else if (GLWidget::isSelected(fptr1)){
-		GLWidget::clearSelectedFace(fptr1);
+			/*else if (active->isSelected(fptr1)){
+		active->clearSelectedFace(fptr1);
 		num_sel_faces--;
 		}*/
 			fptr1->getEdges(edges);
@@ -3222,12 +3223,12 @@ void MainWindow::getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr 
 		}//end for loop
 	}
 	if (fptr2 && fptr2->numFaceVertexes() == 4 && !(fptr2 == face_loop_marker) ){
-		if (/*select_face_loop &&*/!GLWidget::isSelected(fptr2)){
-			GLWidget::setSelectedFace(num_sel_faces,fptr2);
+		if (/*select_face_loop &&*/!active->isSelected(fptr2)){
+			active->setSelectedFace(num_sel_faces,fptr2);
 			num_sel_faces++;
 		}
-			/*else if (GLWidget::isSelected(fptr2)){
-		GLWidget::clearSelectedFace(fptr2);
+			/*else if (active->isSelected(fptr2)){
+		active->clearSelectedFace(fptr2);
 		num_sel_faces--;				
 		}*/
 			fptr2->getEdges(edges);

@@ -57,11 +57,17 @@ protected :
 
 public :
 
-  static DLFLVertexPtrArray sel_vptr_array; // List of selected DLFLVertex pointers
-  static DLFLEdgePtrArray sel_eptr_array; // List of selected DLFLEdge pointers
-  static DLFLFacePtrArray sel_fptr_array; // List of selected DLFLFace pointers
-  static DLFLFaceVertexPtrArray sel_fvptr_array; // List of selected DLFLFaceVertex pointers
+  DLFLVertexPtrArray sel_vptr_array; // List of selected DLFLVertex pointers
+  DLFLEdgePtrArray sel_eptr_array; // List of selected DLFLEdge pointers
+  DLFLFacePtrArray sel_fptr_array; // List of selected DLFLFace pointers
+  DLFLFaceVertexPtrArray sel_fvptr_array; // List of selected DLFLFaceVertex pointers
 
+  void clearSelected( ) {
+    sel_vptr_array.clear();
+    sel_eptr_array.clear();
+    sel_fptr_array.clear();
+    sel_fvptr_array.clear();
+  };
 
   static DLFLVertexPtrArray vparray;                // For selection
   static DLFLEdgePtrArray   eparray;                // For selection

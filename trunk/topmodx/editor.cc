@@ -43,6 +43,7 @@ public:
 
   ~Private() { }
 
+  QString unExecuted;
   QStringList history;
   int index;
   bool autoCompleteEnabled;
@@ -411,6 +412,13 @@ void Editor::historyBack()
   if( d->history.isEmpty() )
     return;
 
+  if( d->index == d->history.count()-1 ) {
+    if( !(toPlainText().isEmpty()) )
+      d->unExecuted = toPlainText();
+    else
+      d->unExecuted = QString("");
+  }
+
   setPlainText( d->history[ d->index ] );
 
   d->index--;
@@ -427,7 +435,7 @@ void Editor::historyBack()
 
 void Editor::goToHistoryStart( ) {
   d->index = d->history.count()-1;
-  setPlainText( tr("") );
+  setPlainText( d->unExecuted ); //tr("") );
 }
 
 void Editor::historyForward()
@@ -437,9 +445,9 @@ void Editor::historyForward()
 
   d->index++;
 
-  if( d->index >= (int) d->history.count() ) {
+  if( d->index >= (int) d->history.count()-1 ) {
     d->index = d->history.count()-1;
-    setPlainText( tr("") );
+    setPlainText( d->unExecuted ); //tr("") );
   } else {
     setPlainText( d->history[ d->index ] );
   }
@@ -460,26 +468,27 @@ void Editor::mousePressEvent ( QMouseEvent *e ) {
 
 void Editor::keyPressEvent( QKeyEvent* e )
 {
-  if( e->key() == Qt::Key_Up )
+  if( e->key() == Qt::Key_PageUp )//&& e->modifiers() == Qt::CTRL )
   {
     historyBack();
-    e->accept();
+    //e->accept();
     return;
   }
 
-  if( e->key() == Qt::Key_Down )
+  if( e->key() == Qt::Key_PageDown )//&& e->modifiers() == Qt::CTRL )
   {
     historyForward();
-    e->accept();
+    //e->accept();
     return;
   }
 
   if( (e->key() == Qt::Key_Enter && e->modifiers() == Qt::CTRL) || 
       (e->key() == Qt::Key_Return && e->modifiers() == Qt::CTRL) ) {
+    d->unExecuted = QString("");
     emit ctrlReturnPressed();
     return;
   }
-
+  /*
   if( e->key() == Qt::Key_Left ||
       e->key() == Qt::Key_Right ||
       e->key() == Qt::Key_Home ||
@@ -487,7 +496,7 @@ void Editor::keyPressEvent( QKeyEvent* e )
   {
     //checkMatching();
   }
-
+  */
   QTextEdit::keyPressEvent( e );
 }
 

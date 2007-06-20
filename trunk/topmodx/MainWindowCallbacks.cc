@@ -459,9 +459,9 @@ void MainWindow::subdivideSelectedFaces(void) // Subdivide all selected faces
 {
 	undoPush();
 	DLFLFacePtrArray fparray;
-	fparray.resize(GLWidget::numSelectedFaces());
-	for (int i=0; i < GLWidget::numSelectedFaces(); ++i)	{
-		fparray[i] = GLWidget::getSelectedFace(i);
+	fparray.resize(active->numSelectedFaces());
+	for (int i=0; i < active->numSelectedFaces(); ++i)	{
+		fparray[i] = active->getSelectedFace(i);
 	}
 	DLFL::subdivideFaces(&object,fparray,use_quads);
 	MainWindow::clearSelected();
@@ -476,13 +476,13 @@ void MainWindow::subdivideAllFaces(void) // Subdivide all the faces
 
 void MainWindow::createMultiFaceHandle(void) // Create multi-face handle between selected faes
 {
-	int numsel = GLWidget::numSelectedFaces();
+	int numsel = active->numSelectedFaces();
 	if ( numsel < 3 ) return;
 	undoPush();
 	DLFLFacePtrArray sel_faces;
 	DLFLFacePtr sfptr;
 	for (int i=0; i < numsel; ++i)	{
-		sfptr = GLWidget::getSelectedFace(i);
+		sfptr = active->getSelectedFace(i);
 		if ( sfptr ) sel_faces.push_back(sfptr);
 	}
 	switch ( MainWindow::mfh_algo )	{
@@ -940,8 +940,8 @@ void MainWindow::createCrust2(bool use_scaling) {
 		DLFL::createCrust(&object,MainWindow::crust_thickness);
 	active->recomputePatches();
 	active->recomputeNormals();
-	if ( GLWidget::numSelectedFaces() >= 1 ) {
-		DLFLFacePtrArray sfptrarr = GLWidget::getSelectedFaces();
+	if ( active->numSelectedFaces() >= 1 ) {
+		DLFLFacePtrArray sfptrarr = active->getSelectedFaces();
 		if ( sfptrarr[0] ) {
 			for(it = sfptrarr.begin(); it != sfptrarr.end(); it++) 
 				(*it)->setType(FTHole);
@@ -950,7 +950,7 @@ void MainWindow::createCrust2(bool use_scaling) {
 	}
 	active->recomputePatches();
 	active->recomputeNormals();
-	GLWidget::clearSelectedFaces();
+	active->clearSelectedFaces();
 	redraw();	
 }
 
@@ -971,8 +971,8 @@ void MainWindow::makeWireframe2() {// Create a wireframe // dave {
 	DLFL::makeWireframe(&object,MainWindow::wireframe_thickness);
 	// active->recomputePatches();
 	// active->recomputeNormals();
-	// if ( GLWidget::numSelectedFaces() >= 1 ) {
-	// 	DLFLFacePtrArray sfptrarr = GLWidget::getSelectedFaces();
+	// if ( active->numSelectedFaces() >= 1 ) {
+	// 	DLFLFacePtrArray sfptrarr = active->getSelectedFaces();
 	// 	if ( sfptrarr[0] ) {
 	// 		//mark all the faces for hole punching
 	// 		for(it = sfptrarr.begin(); it != sfptrarr.end(); it++)

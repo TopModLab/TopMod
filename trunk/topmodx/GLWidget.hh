@@ -162,25 +162,25 @@ public :
 
 	void selectAllFaces(){
 		clearSelectedFaces();
-		object->getFaces(DLFLObject::sel_fptr_array);
+		object->getFaces(object->sel_fptr_array);
 		repaint();
 	}
 
 	void selectAllEdges(){
 		clearSelectedEdges();
-		object->getEdges(DLFLObject::sel_eptr_array);
+		object->getEdges(object->sel_eptr_array);
 		repaint();
 	}
 
 	void selectAllVertices(){
 		clearSelectedVertices();
-		object->getVertices(DLFLObject::sel_vptr_array);
+		object->getVertices(object->sel_vptr_array);
 		repaint();
 	}
 
 	void selectAllFaceVertices(){
 		clearSelectedFaceVertices();
-		// object->getVertices(DLFLObject::sel_vptr_array);
+		// object->getVertices(object->sel_vptr_array);
 		repaint();
 	}
 	
@@ -189,7 +189,7 @@ public :
 		vector<DLFLFacePtr>::iterator it;
 		object->getFaces(fparray);
 		for (it = fparray.begin(); it != fparray.end(); it++){
-			if (!GLWidget::isSelected(*it)){
+			if (!isSelected(*it)){
 				addToSelection(*it);
 			}
 			else clearSelectedFace(*it);
@@ -202,7 +202,7 @@ public :
 		vector<DLFLEdgePtr>::iterator it;
 		object->getEdges(eparray);
 		for (it = eparray.begin(); it != eparray.end(); it++){
-			if (!GLWidget::isSelected(*it)){
+			if (!isSelected(*it)){
 				addToSelection(*it);
 			}
 			else clearSelectedEdge(*it);
@@ -215,7 +215,7 @@ public :
 		vector<DLFLVertexPtr>::iterator it;
 		object->getVertices(vparray);
 		for (it = vparray.begin(); it != vparray.end(); it++){
-			if (!GLWidget::isSelected(*it)){
+			if (!isSelected(*it)){
 				addToSelection(*it);
 			}
 			else clearSelectedVertex(*it);
@@ -228,7 +228,7 @@ public :
 		// vector<DLFLFaceVertexPtr>::iterator it;
 		// object->getFaceVertices(fvparray);
 		// for (it = fvparray.begin(); it != fvparray.end(); it++){
-		// 	if (!GLWidget::isSelected(*it)){
+		// 	if (!isSelected(*it)){
 		// 		addToSelection(*it);
 		// 	}
 		// 	else clearSelectedFaceVertex(*it);
@@ -289,7 +289,7 @@ public :
 
 		// Selection lists - these are shared by all viewports
 	static DLFLLocatorPtrArray sel_lptr_array; // List of selected DLFLLocator pointers  // brianb  
-  //static DLFLVertexPtrArray DLFLObject::sel_vptr_array; // List of selected DLFLVertex pointers
+  //static DLFLVertexPtrArray sel_vptr_array; // List of selected DLFLVertex pointers
   //static DLFLEdgePtrArray sel_eptr_array; // List of selected DLFLEdge pointers
   //static DLFLFacePtrArray sel_fptr_array; // List of selected DLFLFace pointers
   //static DLFLFaceVertexPtrArray sel_fvptr_array; // List of selected DLFLFaceVertex pointers
@@ -384,36 +384,36 @@ public :
 	}
 
 		//--- Initialize the selection lists ---//
-	static void initializeSelectionLists(int num) {
+	void initializeSelectionLists(int num) {
 				// Reserves memory for the arrays to avoid reallocation
 				// It is not mandatory to call this function, but recommended
-		DLFLObject::sel_vptr_array.reserve(num);
-		DLFLObject::sel_eptr_array.reserve(num);
-		DLFLObject::sel_fptr_array.reserve(num);
-		DLFLObject::sel_fvptr_array.reserve(num);
+		object->sel_vptr_array.reserve(num);
+		object->sel_eptr_array.reserve(num);
+		object->sel_fptr_array.reserve(num);
+		object->sel_fvptr_array.reserve(num);
 		sel_lptr_array.reserve(num); // brianb
 	}
 
 		//--- Add items to the selection lists - check for NULL pointers ---//
-	static void addToSelection(DLFLLocatorPtr lp) // brianb
+	void addToSelection(DLFLLocatorPtr lp) // brianb
 	{
 		if ( lp ) sel_lptr_array.push_back(lp);
 	}
 
-	static void addToSelection(DLFLVertexPtr vp) {
-		if ( vp ) DLFLObject::sel_vptr_array.push_back(vp);
+	void addToSelection(DLFLVertexPtr vp) {
+		if ( vp ) object->sel_vptr_array.push_back(vp);
 	}
 
-	static void addToSelection(DLFLEdgePtr ep) {
-		if ( ep ) DLFLObject::sel_eptr_array.push_back(ep);
+	void addToSelection(DLFLEdgePtr ep) {
+		if ( ep ) object->sel_eptr_array.push_back(ep);
 	}
 
-	static void addToSelection(DLFLFacePtr fp) {
-		if ( fp ) DLFLObject::sel_fptr_array.push_back(fp);
+	void addToSelection(DLFLFacePtr fp) {
+		if ( fp ) object->sel_fptr_array.push_back(fp);
 	}
 
-	static void addToSelection(DLFLFaceVertexPtr fvp) {
-		if ( fvp ) DLFLObject::sel_fvptr_array.push_back(fvp);
+	void addToSelection(DLFLFaceVertexPtr fvp) {
+		if ( fvp ) object->sel_fvptr_array.push_back(fvp);
 	}
 
 		//--- Check if given item is there in the selection list ---//
@@ -432,12 +432,12 @@ public :
 		return found;
 	}
 
-	static bool isSelected(DLFLVertexPtr vp) {
+	bool isSelected(DLFLVertexPtr vp) {
 		bool found = false;
 		if ( vp )
 		{
-			for (uint i=0; i < DLFLObject::sel_vptr_array.size(); ++i)
-				if ( DLFLObject::sel_vptr_array[i] == vp )
+			for (uint i=0; i < object->sel_vptr_array.size(); ++i)
+				if ( object->sel_vptr_array[i] == vp )
 			{
 				found = true; break;
 			}
@@ -445,12 +445,12 @@ public :
 		return found;
 	}
 
-	static bool isSelected(DLFLEdgePtr ep) {
+	bool isSelected(DLFLEdgePtr ep) {
 		bool found = false;
 		if ( ep )
 		{
-			for (uint i=0; i < DLFLObject::sel_eptr_array.size(); ++i)
-				if ( DLFLObject::sel_eptr_array[i] == ep )
+			for (uint i=0; i < object->sel_eptr_array.size(); ++i)
+				if ( object->sel_eptr_array[i] == ep )
 			{
 				found = true; break;
 			}
@@ -458,12 +458,12 @@ public :
 		return found;
 	}
 
-	static bool isSelected(DLFLFacePtr fp) {
+	bool isSelected(DLFLFacePtr fp) {
 		bool found = false;
 		if ( fp )
 		{
-			for (uint i=0; i < DLFLObject::sel_fptr_array.size(); ++i)
-				if ( DLFLObject::sel_fptr_array[i] == fp )
+			for (uint i=0; i < object->sel_fptr_array.size(); ++i)
+				if ( object->sel_fptr_array[i] == fp )
 			{
 				found = true; break;
 			}
@@ -471,12 +471,12 @@ public :
 		return found;
 	}
 
-	static bool isSelected(DLFLFaceVertexPtr fvp) {
+	bool isSelected(DLFLFaceVertexPtr fvp) {
 		bool found = false;
 		if ( fvp )
 		{
-			for (uint i=0; i < DLFLObject::sel_fvptr_array.size(); ++i)
-				if ( DLFLObject::sel_fvptr_array[i] == fvp )
+			for (uint i=0; i < object->sel_fvptr_array.size(); ++i)
+				if ( object->sel_fvptr_array[i] == fvp )
 			{
 				found = true; break;
 			}
@@ -486,7 +486,7 @@ public :
 
 		//--- Set the selected item at given index ---//
 		//--- If size of array is smaller than index item will be added to end of array ---//
-	static void setSelectedLocator(int index, DLFLLocatorPtr vp) // brianb
+	void setSelectedLocator(int index, DLFLLocatorPtr vp) // brianb
 	{
 		if ( vp && index >= 0 )
 		{
@@ -495,35 +495,35 @@ public :
 		}
 	}
 
-	static void setSelectedVertex(int index, DLFLVertexPtr vp) {
+	void setSelectedVertex(int index, DLFLVertexPtr vp) {
 		if ( vp && index >= 0 )
 		{
-			if ( (uint) index < DLFLObject::sel_vptr_array.size() ) DLFLObject::sel_vptr_array[index] = vp;
-			else DLFLObject::sel_vptr_array.push_back(vp);
+			if ( (uint) index < object->sel_vptr_array.size() ) object->sel_vptr_array[index] = vp;
+			else object->sel_vptr_array.push_back(vp);
 		}
 	}
 
-	static void setSelectedEdge(int index, DLFLEdgePtr ep) {
+	void setSelectedEdge(int index, DLFLEdgePtr ep) {
 		if ( ep && index >= 0 )
 		{
-			if ( (uint) index < DLFLObject::sel_eptr_array.size() ) DLFLObject::sel_eptr_array[index] = ep;
-			else DLFLObject::sel_eptr_array.push_back(ep);
+			if ( (uint) index < object->sel_eptr_array.size() ) object->sel_eptr_array[index] = ep;
+			else object->sel_eptr_array.push_back(ep);
 		}
 	}
 
-	static void setSelectedFace(int index, DLFLFacePtr fp) {
+	void setSelectedFace(int index, DLFLFacePtr fp) {
 		if ( fp && index >= 0 )
 		{
-			if ( (uint) index < DLFLObject::sel_fptr_array.size() ) DLFLObject::sel_fptr_array[index] = fp;
-			else DLFLObject::sel_fptr_array.push_back(fp);
+			if ( (uint) index < object->sel_fptr_array.size() ) object->sel_fptr_array[index] = fp;
+			else object->sel_fptr_array.push_back(fp);
 		}
 	}
 
-	static void setSelectedFaceVertex(int index, DLFLFaceVertexPtr fvp) {
+	void setSelectedFaceVertex(int index, DLFLFaceVertexPtr fvp) {
 		if ( fvp && index >= 0 )
 		{
-			if ( (uint) index < DLFLObject::sel_fvptr_array.size() ) DLFLObject::sel_fvptr_array[index] = fvp;
-			else DLFLObject::sel_fvptr_array.push_back(fvp);
+			if ( (uint) index < object->sel_fvptr_array.size() ) object->sel_fvptr_array[index] = fvp;
+			else object->sel_fvptr_array.push_back(fvp);
 		}
 	}
 
@@ -539,27 +539,27 @@ public :
 		return NULL;
 	}
 
-	static DLFLVertexPtr getSelectedVertex(int index) {
-		if ( (uint) index < DLFLObject::sel_vptr_array.size() ) return DLFLObject::sel_vptr_array[index];
+	DLFLVertexPtr getSelectedVertex(int index) {
+		if ( (uint) index < object->sel_vptr_array.size() ) return object->sel_vptr_array[index];
 		return NULL;
 	}
 
-	static DLFLEdgePtr getSelectedEdge(int index) {
-		if ( (uint) index < DLFLObject::sel_eptr_array.size() ) return DLFLObject::sel_eptr_array[index];
+	DLFLEdgePtr getSelectedEdge(int index) {
+		if ( (uint) index < object->sel_eptr_array.size() ) return object->sel_eptr_array[index];
 		return NULL;
 	}
 
-	static DLFLFacePtr getSelectedFace(int index) {
-		if ( (uint) index < DLFLObject::sel_fptr_array.size() ) return DLFLObject::sel_fptr_array[index];
+	DLFLFacePtr getSelectedFace(int index) {
+		if ( (uint) index < object->sel_fptr_array.size() ) return object->sel_fptr_array[index];
 		return NULL;
 	}
 
-	static DLFLFacePtrArray getSelectedFaces() {
-		return DLFLObject::sel_fptr_array;
+	DLFLFacePtrArray getSelectedFaces() {
+		return object->sel_fptr_array;
 	}
 
-	static DLFLFaceVertexPtr getSelectedFaceVertex(int index) {
-		if ( (uint) index < DLFLObject::sel_fvptr_array.size() ) return DLFLObject::sel_fvptr_array[index];
+	DLFLFaceVertexPtr getSelectedFaceVertex(int index) {
+		if ( (uint) index < object->sel_fvptr_array.size() ) return object->sel_fvptr_array[index];
 		return NULL;
 	}
 
@@ -568,20 +568,20 @@ public :
 		return sel_lptr_array.size();
 }
 
-static int numSelectedVertices(void) {
-	return DLFLObject::sel_vptr_array.size();
+int numSelectedVertices(void) {
+	return object->sel_vptr_array.size();
 }
 
-static int numSelectedEdges(void) {
-	return DLFLObject::sel_eptr_array.size();
+int numSelectedEdges(void) {
+	return object->sel_eptr_array.size();
 }
 
-static int numSelectedFaces(void) {
-	return DLFLObject::sel_fptr_array.size();
+int numSelectedFaces(void) {
+	return object->sel_fptr_array.size();
 }
 
-static int numSelectedFaceVertices(void) {
-	return DLFLObject::sel_fvptr_array.size();
+int numSelectedFaceVertices(void) {
+	return object->sel_fvptr_array.size();
 }
 
 		//--- Clear individual selection lists ---//
@@ -589,71 +589,71 @@ static void clearSelectedLocators(void) {
 	sel_lptr_array.clear();
 }
 
-static void clearSelectedVertices(void) {
-	DLFLObject::sel_vptr_array.clear();
+void clearSelectedVertices(void) {
+	object->sel_vptr_array.clear();
 }
 
-static void clearSelectedEdges(void) {
-	DLFLObject::sel_eptr_array.clear();
+void clearSelectedEdges(void) {
+	object->sel_eptr_array.clear();
 }
 
-static void clearSelectedFaces(void) {
-	DLFLObject::sel_fptr_array.clear();
+void clearSelectedFaces(void) {
+	object->sel_fptr_array.clear();
 }
 
 
-static void clearSelectedFace(DLFLFacePtr fp){
+void clearSelectedFace(DLFLFacePtr fp){
 	vector<DLFLFacePtr>::iterator fiterator;
-	for(fiterator = DLFLObject::sel_fptr_array.begin(); fiterator != DLFLObject::sel_fptr_array.end(); fiterator++) {
+	for(fiterator = object->sel_fptr_array.begin(); fiterator != object->sel_fptr_array.end(); fiterator++) {
 		if (fp == *fiterator){
 			// delete fp;
-			DLFLObject::sel_fptr_array.erase(fiterator);
+			object->sel_fptr_array.erase(fiterator);
 			return;
 		}
 	}
 }
 
-static void clearSelectedEdge(DLFLEdgePtr ep){
+void clearSelectedEdge(DLFLEdgePtr ep){
 	vector<DLFLEdgePtr>::iterator it;
-	for(it = DLFLObject::sel_eptr_array.begin(); it != DLFLObject::sel_eptr_array.end(); it++) {
+	for(it = object->sel_eptr_array.begin(); it != object->sel_eptr_array.end(); it++) {
 		if (ep == *it){
-			DLFLObject::sel_eptr_array.erase(it);
+			object->sel_eptr_array.erase(it);
 			return;
 		}
 	}
 }
 
-static void clearSelectedVertex(DLFLVertexPtr vp){
+void clearSelectedVertex(DLFLVertexPtr vp){
 	vector<DLFLVertexPtr>::iterator it;
-	for(it = DLFLObject::sel_vptr_array.begin(); it != DLFLObject::sel_vptr_array.end(); it++) {
+	for(it = object->sel_vptr_array.begin(); it != object->sel_vptr_array.end(); it++) {
 		if (vp == *it){
-			DLFLObject::sel_vptr_array.erase(it);
+			object->sel_vptr_array.erase(it);
 			return;
 		}
 	}
 }
 
-static void clearSelectedFaceVertex(DLFLFaceVertexPtr fvp){
+void clearSelectedFaceVertex(DLFLFaceVertexPtr fvp){
 	vector<DLFLFaceVertexPtr>::iterator it;
-	for(it = DLFLObject::sel_fvptr_array.begin(); it != DLFLObject::sel_fvptr_array.end(); it++) {
+	for(it = object->sel_fvptr_array.begin(); it != object->sel_fvptr_array.end(); it++) {
 		if (fvp == *it){
-			DLFLObject::sel_fvptr_array.erase(it);
+			object->sel_fvptr_array.erase(it);
 			return;
 		}
 	}
 }
 
-static void clearSelectedFaceVertices(void) {
-	DLFLObject::sel_fvptr_array.clear();
+void clearSelectedFaceVertices(void) {
+	object->sel_fvptr_array.clear();
 }
 
 		// Reset all selection lists
-static void clearSelected(void) {
+void clearSelected(void) {
 	sel_lptr_array.clear(); // brianb
-	DLFLObject::sel_vptr_array.clear();
-	DLFLObject::sel_eptr_array.clear();
-	DLFLObject::sel_fptr_array.clear();
-	DLFLObject::sel_fvptr_array.clear();
+	object->sel_vptr_array.clear();
+	object->sel_eptr_array.clear();
+	object->sel_fptr_array.clear();
+	object->sel_fvptr_array.clear();
 }
 
 		// Draw the selected items

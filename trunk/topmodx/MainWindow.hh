@@ -286,14 +286,14 @@ class MainWindow : public QMainWindow {
 					delete active;
 				}
 
-				static void MainWindow::clearSelected()	{
-					GLWidget::clearSelected();
+				void MainWindow::clearSelected()	{
+					active->clearSelected();
 					MainWindow::clearNumSelected();
 				}
 
 				static void startDrag(int x, int y) { // brianb
-					drag_startx = x;
-				drag_starty = y;
+				  drag_startx = x;
+				  drag_starty = y;
 			}
 
 			static void MainWindow::clearNumSelected() {

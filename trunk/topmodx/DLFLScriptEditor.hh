@@ -40,6 +40,7 @@ public:
   QColor& inputBgColor( ) { return mInputBgColor; };
 
 signals :
+  void makingChange( ); // for undo push
   void cmdExecuted( );
   void addToHistory( const QString& item );
   void requestObject( QString fileName );

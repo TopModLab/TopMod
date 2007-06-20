@@ -46,6 +46,11 @@ DLFLScriptEditor::~DLFLScriptEditor( ) {
 
 void DLFLScriptEditor::executeCommand( ) {
   QString command = mLineEdit->toPlainText();
+
+  if( mLineEdit->textCursor().hasSelection() ) {
+    command = mLineEdit->textCursor().selectedText();
+  }
+  
   QStringList cmdList = command.split('\n',QString::SkipEmptyParts);
   QStringList resultList;
 
@@ -54,6 +59,8 @@ void DLFLScriptEditor::executeCommand( ) {
   mTextEdit->moveCursor( QTextCursor::End );
 
   if( !command.isEmpty() ) {
+    emit makingChange(); // for undo push
+
     if( Py_IsInitialized() ) {
       PyObject *main = PyImport_AddModule("__main__");
       PyObject *dlfl = PyImport_AddModule("dlfl");
@@ -128,14 +135,17 @@ void DLFLScriptEditor::executeCommand( ) {
 	res.replace(QRegExp("\\n"), "\n# ");
 	res.chop(2);
 	mTextEdit->insertPlainText( "\n# "+ res ); // # is a comment in python
-      }
-    }
+      } else { mTextEdit->insertPlainText("\n"); }
+    } else { mTextEdit->insertPlainText("\n"); }
   }
-  mLineEdit->clear();
+
+  if( !mLineEdit->textCursor().hasSelection() ) {
+    mLineEdit->clear();
+    mLineEdit->goToHistoryStart( );
+  }
 
   QScrollBar *vBar = mTextEdit->verticalScrollBar();
   vBar->triggerAction(QAbstractSlider::SliderToMaximum);
-  mLineEdit->goToHistoryStart( );
 }
 
 void DLFLScriptEditor::PyInit( ) {
@@ -184,7 +194,7 @@ void DLFLScriptEditor::loadObject( DLFLObject *obj, QString fileName ) {
   PyDLFL_PassObject( obj );
   // Print out the equivalent command to loading an object
   QString command = tr("load(\"")+fileName+tr("\")");
-  mTextEdit->insertPlainText( "\n" + command );
+  mTextEdit->insertPlainText( "\n" + command + "\n" );
 }
 
 #endif // WITH_PYTHON

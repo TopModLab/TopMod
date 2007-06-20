@@ -7,12 +7,12 @@ DLFLLocatorPtrArray GLWidget::sel_lptr_array;
 /*DLFLVertexPtrArray GLWidget::sel_vptr_array;
 DLFLEdgePtrArray GLWidget::sel_eptr_array;
 DLFLFacePtrArray GLWidget::sel_fptr_array;
-DLFLFaceVertexPtrArray GLWidget::sel_fvptr_array;*/
+DLFLFaceVertexPtrArray GLWidget::sel_fvptr_array;
 extern DLFLVertexPtrArray DLFLObject::sel_vptr_array; // List of selected DLFLVertex pointers
 extern DLFLEdgePtrArray DLFLObject::sel_eptr_array; // List of selected DLFLEdge pointers
 extern DLFLFacePtrArray DLFLObject::sel_fptr_array; // List of selected DLFLFace pointers
 extern DLFLFaceVertexPtrArray DLFLObject::sel_fvptr_array; // List of selected DLFLFaceVertex pointers
-
+*/
 // QGLContext *cx;
 // QGLFormat f;
 // f.setStereo( TRUE );
@@ -480,9 +480,9 @@ void GLWidget::drawSelectedIDs( QPainter *painter, const GLdouble *model, const 
 		GLdouble win_x = 0, win_y = 0, win_z = 0;
 	
 		if( !mShowVertexIDs ) {
-			if ( !DLFLObject::sel_vptr_array.empty() ){
+			if ( !object->sel_vptr_array.empty() ){
 				DLFLVertexPtrArray::iterator first, last;
-				first = DLFLObject::sel_vptr_array.begin(); last = DLFLObject::sel_vptr_array.end();
+				first = object->sel_vptr_array.begin(); last = object->sel_vptr_array.end();
 				while ( first != last ){
 					QString id = QString::number( (*first)->getID() );
 					double x,y,z;
@@ -504,9 +504,9 @@ void GLWidget::drawSelectedIDs( QPainter *painter, const GLdouble *model, const 
 		}
 	
 		if( !mShowEdgeIDs ) {
-			if ( !DLFLObject::sel_eptr_array.empty() ){
+			if ( !object->sel_eptr_array.empty() ){
 				DLFLEdgePtrArray::iterator first, last;
-				first = DLFLObject::sel_eptr_array.begin(); last = DLFLObject::sel_eptr_array.end();
+				first = object->sel_eptr_array.begin(); last = object->sel_eptr_array.end();
 				while ( first != last ){
 					QString id = QString::number( (*first)->getID() );
 					(*first)->getMidPoint().get(x,y,z);
@@ -526,9 +526,9 @@ void GLWidget::drawSelectedIDs( QPainter *painter, const GLdouble *model, const 
 		}
 
 		if( !mShowFaceIDs ) {
-			if ( !DLFLObject::sel_fptr_array.empty() ){
+			if ( !object->sel_fptr_array.empty() ){
 				DLFLFacePtrArray::iterator first, last;
-				first = DLFLObject::sel_fptr_array.begin(); last = DLFLObject::sel_fptr_array.end();
+				first = object->sel_fptr_array.begin(); last = object->sel_fptr_array.end();
 				while ( first != last )	{
 					QString id = QString::number( (*first)->getID() );
 					double x,y,z; 
@@ -550,9 +550,9 @@ void GLWidget::drawSelectedIDs( QPainter *painter, const GLdouble *model, const 
 		}
 
 		if( !mShowFaceVertexIDs ) {
-			if ( !DLFLObject::sel_fvptr_array.empty() ) {
+			if ( !object->sel_fvptr_array.empty() ) {
 				DLFLFaceVertexPtrArray::iterator first, last;
-				first = DLFLObject::sel_fvptr_array.begin(); last = DLFLObject::sel_fvptr_array.end();
+				first = object->sel_fvptr_array.begin(); last = object->sel_fvptr_array.end();
 				while ( first != last ){
 					QString id = QString::number( (*first)->vertex->getID() );
 					double x,y,z; 
@@ -1027,12 +1027,12 @@ void GLWidget::drawSelected(void) {
     sel_lptr_array[0]->render();
   }
 
-  if ( !DLFLObject::sel_vptr_array.empty() ) {
+  if ( !object->sel_vptr_array.empty() ) {
     glPointSize(mSelectedVertexThickness);
     //glBegin(GL_POINTS);
     glColor4f(mSelectedVertexColor.redF(),mSelectedVertexColor.greenF(),mSelectedVertexColor.blueF(),mSelectedVertexColor.alphaF());
     DLFLVertexPtrArray::iterator first, last;
-    first = DLFLObject::sel_vptr_array.begin(); last = DLFLObject::sel_vptr_array.end();
+    first = object->sel_vptr_array.begin(); last = object->sel_vptr_array.end();
     while ( first != last ){
       GeometryRenderer::instance()->renderVertex(*first);
       ///(*first)->render(); 
@@ -1042,11 +1042,11 @@ void GLWidget::drawSelected(void) {
     glPointSize(1.0);
   }
 
-	if ( !DLFLObject::sel_eptr_array.empty() ){
+	if ( !object->sel_eptr_array.empty() ){
 		glLineWidth(mSelectedEdgeThickness);
 		glColor4f(mSelectedEdgeColor.redF(),mSelectedEdgeColor.greenF(),mSelectedEdgeColor.blueF(),mSelectedEdgeColor.alphaF());
 		DLFLEdgePtrArray::iterator first, last;
-		first = DLFLObject::sel_eptr_array.begin(); last = DLFLObject::sel_eptr_array.end();
+		first = object->sel_eptr_array.begin(); last = object->sel_eptr_array.end();
 		while ( first != last ){
 		  glBegin(GL_LINES); {
 		    GeometryRenderer::instance()->renderEdge(*first);
@@ -1057,11 +1057,11 @@ void GLWidget::drawSelected(void) {
 		glLineWidth(3.0);
 	}
 
-	if ( !DLFLObject::sel_fptr_array.empty() ){
+	if ( !object->sel_fptr_array.empty() ){
 	  glLineWidth(mSelectedEdgeThickness);
 	  glColor4f(mSelectedFaceColor.redF(),mSelectedFaceColor.greenF(),mSelectedFaceColor.blueF(),mSelectedFaceColor.alphaF());
 	  DLFLFacePtrArray::iterator first, last;
-	  first = DLFLObject::sel_fptr_array.begin(); last = DLFLObject::sel_fptr_array.end();
+	  first = object->sel_fptr_array.begin(); last = object->sel_fptr_array.end();
 	  while ( first != last )	{
 	    GeometryRenderer::instance()->renderFace(*first,false);
 	    ///(*first)->render_FVN(); 
@@ -1070,12 +1070,12 @@ void GLWidget::drawSelected(void) {
 	  glLineWidth(3.0);
 	}
 
-	if ( !DLFLObject::sel_fvptr_array.empty() ) {
+	if ( !object->sel_fvptr_array.empty() ) {
 		glPointSize(mSelectedVertexThickness);
 		glColor4f(mSelectedVertexColor.redF(),mSelectedVertexColor.greenF(),mSelectedVertexColor.blueF(),mSelectedVertexColor.alphaF());
 		glBegin(GL_POINTS);
 		DLFLFaceVertexPtrArray::iterator first, last;
-		first = DLFLObject::sel_fvptr_array.begin(); last = DLFLObject::sel_fvptr_array.end();
+		first = object->sel_fvptr_array.begin(); last = object->sel_fvptr_array.end();
 		while ( first != last ){
 		  GeometryRenderer::instance()->renderFaceVertex(*first,false);
 		  ///(*first)->render(); 

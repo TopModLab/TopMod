@@ -5,11 +5,11 @@
 #include <DLFLSubdiv.hh>
 #include <DLFLDual.hh>
 
-extern DLFL::DLFLEdgePtrArray DLFL::DLFLObject::sel_eptr_array;
+/*extern DLFL::DLFLEdgePtrArray DLFL::DLFLObject::sel_eptr_array;
 extern DLFL::DLFLFacePtrArray DLFL::DLFLObject::sel_fptr_array;
 extern DLFL::DLFLVertexPtrArray DLFL::DLFLObject::sel_vptr_array;
 extern DLFL::DLFLFaceVertexPtrArray DLFL::DLFLObject::sel_fvptr_array;
-
+*/
 /// Prototypes
 
 static PyObject *dlfl_load_obj(PyObject *self, PyObject *args);
@@ -182,6 +182,7 @@ dlfl_insert_edge(PyObject *self, PyObject *args)
 
   if( currObj ) {
     edgeId = DLFL::insertEdge( currObj, faceId1, vertId1, faceId2, vertId2 );
+    currObj->clearSelected( );
   }
 
   return Py_BuildValue("i", edgeId );
@@ -197,7 +198,11 @@ dlfl_delete_edge(PyObject *self, PyObject *args)
   if( !currObj )
     return NULL;
 
-  DLFL::deleteEdgeID( currObj, edgeId );
+  if( currObj ) {
+    DLFL::deleteEdgeID( currObj, edgeId );
+    currObj->clearSelected( );
+  }
+
   return Py_BuildValue("i", edgeId );
 }
 
@@ -212,6 +217,8 @@ dlfl_collapse_edge(PyObject *self, PyObject *args)
     return NULL;
 
   int vertId = DLFL::collapseEdgeID( currObj, edgeId );
+  currObj->clearSelected( );
+
   return Py_BuildValue("i", vertId );
 }
 
@@ -225,6 +232,7 @@ dlfl_subdivide_edge(PyObject *self, PyObject *args)
 
   if( PyArg_ParseTuple(args, "i", &edgeId) ) {
     int vertId = DLFL::subdivideEdgeID( currObj, edgeId );
+    currObj->clearSelected( );
     return Py_BuildValue("i", vertId );
   } else if( PyArg_ParseTuple(args, "ii", &numDivs, &edgeId ) ) {
     vector<int> verts = DLFL::subdivideEdgeID( currObj, numDivs, edgeId );
@@ -234,6 +242,7 @@ dlfl_subdivide_edge(PyObject *self, PyObject *args)
       vert = Py_BuildValue("i", verts[i]);
       PyList_SetItem(list, i, vert);
     }
+    currObj->clearSelected( );
     Py_INCREF(list);
     return list;
   }
@@ -260,7 +269,7 @@ dlfl_faces(PyObject *self, PyObject *args)
 
   PyObject *flist=0, *face=0;
   if(selected) {
-    DLFL::DLFLFacePtrArray fpa = DLFL::DLFLObject::sel_fptr_array;
+    DLFL::DLFLFacePtrArray fpa = currObj->sel_fptr_array;
     flist = PyList_New(fpa.size());
     for( int i = 0; i < (int)fpa.size(); i++ ) {
       face = Py_BuildValue("i", fpa[i]->getID());
@@ -296,7 +305,7 @@ dlfl_edges(PyObject *self, PyObject *args)
 
   PyObject *elist=0, *edge=0;
   if(selected) {
-    DLFL::DLFLEdgePtrArray epa = DLFL::DLFLObject::sel_eptr_array;
+    DLFL::DLFLEdgePtrArray epa = currObj->sel_eptr_array;
     elist = PyList_New(epa.size());
     for( int i = 0; i < (int)epa.size(); i++ ) {
       edge = Py_BuildValue("i", epa[i]->getID());
@@ -332,7 +341,7 @@ dlfl_verts(PyObject *self, PyObject *args)
 
   PyObject *vlist=0, *vert=0;
   if(selected) {
-    DLFL::DLFLVertexPtrArray vpa = DLFL::DLFLObject::sel_vptr_array;
+    DLFL::DLFLVertexPtrArray vpa = currObj->sel_vptr_array;
     vlist = PyList_New(vpa.size());
     for( int i = 0; i < (int)vpa.size(); i++ ) {
       vert = Py_BuildValue("i", vpa[i]->getID());
@@ -368,7 +377,7 @@ dlfl_faceverts(PyObject *self, PyObject *args)
 
   PyObject *fvlist=0, *fvert=0;
   if(selected) {
-    DLFL::DLFLFaceVertexPtrArray fvpa = DLFL::DLFLObject::sel_fvptr_array;
+    DLFL::DLFLFaceVertexPtrArray fvpa = currObj->sel_fvptr_array;
     fvlist = PyList_New(fvpa.size());
     for( int i = 0; i < (int)fvpa.size(); i++ ) {
       fvert = Py_BuildValue("(ii)", fvpa[i]->getFaceID(), fvpa[i]->getVertexID() );
@@ -476,12 +485,12 @@ dlfl_extrude(PyObject *self, PyObject *args) {
   }
 
   const char* choices[] = { "doo-sabin",
-			   "dodeca",
-			   "icosa",
-			   "octa",
-			   "stellate",
-			   "double-stellate",
-			   "cubical" };
+			    "dodeca",
+			    "icosa",
+			    "octa",
+			    "stellate",
+			    "double-stellate",
+			    "cubical" };
 
   char* extrudeType;
   int size, faceid;
@@ -529,6 +538,8 @@ dlfl_extrude(PyObject *self, PyObject *args) {
 
     if( ofp )
       outFaceID = ofp->getID();
+
+    currObj->clearSelected( );
 
     return Py_BuildValue("i", outFaceID );
   }
@@ -681,8 +692,10 @@ dlfl_subdiv_face(PyObject *self, PyObject *args) {
   if( !PyArg_ParseTuple(args, "i|b", &fid, &usequads) )
     return NULL;
 
-  if( currObj )
+  if( currObj ) {
     DLFL::subdivideFace( currObj, currObj->findFace(fid), usequads );
+    currObj->clearSelected( );
+  }
 
   Py_INCREF(Py_None);
   return Py_None;
@@ -695,6 +708,7 @@ PyObject *dlfl_dual(PyObject *self, PyObject *args)
   PyArg_ParseTuple(args, "|b", &accurate);
   if( currObj ) {
     DLFL::createDual( currObj, accurate );
+    currObj->clearSelected( );
   }
   Py_INCREF(Py_None);
   return Py_None;
