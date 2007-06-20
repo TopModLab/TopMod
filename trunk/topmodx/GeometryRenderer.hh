@@ -32,7 +32,7 @@ public :
   bool drawFaceCentroid;
   bool drawFaceNormals;
   bool isReversed;
-	bool useGPU;
+  bool useGPU;
 
   bool drawPatchWireframe;
   bool drawPatchBoundaries;
@@ -46,9 +46,9 @@ private :
 
   static GeometryRenderer *mInstance;
   GeometryRenderer( bool gpu = true) : useMaterial(false), useColor(false), 
-			useNormal(false), useTexture(false), 
-			useOutline(false), drawFaceCentroid(false),
-			drawFaceNormals(false), isReversed(false), useGPU(gpu) { 
+				       useNormal(false), useTexture(false), 
+				       useOutline(false), drawFaceCentroid(false),
+				       drawFaceNormals(false), isReversed(false), useGPU(gpu) { 
     renderColor = new GLdouble[4];
   };
 };

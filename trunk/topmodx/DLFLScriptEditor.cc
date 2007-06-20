@@ -48,7 +48,7 @@ void DLFLScriptEditor::executeCommand( ) {
   QString command = mLineEdit->toPlainText();
 
   if( mLineEdit->textCursor().hasSelection() ) {
-    command = mLineEdit->textCursor().selectedText();
+    command = mLineEdit->textCursor().selection().toPlainText();
   }
   
   QStringList cmdList = command.split('\n',QString::SkipEmptyParts);
@@ -90,6 +90,8 @@ void DLFLScriptEditor::executeCommand( ) {
 	  emit cmdExecuted();
 	  continue;
 	}
+
+	PyRun_SimpleString( "__main__.mio.clear()" );
 
 	const char *cmd = cmdList.at(i).toLocal8Bit().constData();
 	PyObject *rstring = PyRun_String( cmd, Py_file_input, main_dict, dlfl_dict );
@@ -158,7 +160,7 @@ void DLFLScriptEditor::PyInit( ) {
     //PyRun_SimpleString( "def my_displayhook(o): __main__.__result=o" );
     //PyRun_SimpleString( "sys.displayhook=my_displayhook" );
 
-    PyRun_SimpleString( "class MyIO:\n\tdef __init__(self): self.s=\"\"\n\tdef write(self,x): self.s+=x" );
+    PyRun_SimpleString( "class MyIO:\n\tdef __init__(self): self.s=\"\"\n\tdef write(self,x): self.s+=x\n\tdef clear(self): self.s=\"\"" );
 
     if( dlfl_module != NULL )
       dlfl_dict = PyModule_GetDict( dlfl_module );

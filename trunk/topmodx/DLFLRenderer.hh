@@ -180,23 +180,19 @@ public :
 
   /* Methods for various types of rendering */
   void drawWireframe(DLFLObjectPtr object) {
-		if (useGPU){
-			const float ke[3] = {0.0, 0.0, 0.0},
-		              ka[3]  = {0.0, 0.0, 0.0},
-		              kd[3]  = {0.0, 0.0, 0.0},
-									ks[3] = {0.0, 0.0, 0.0};
-		  cgSetParameter3fv(mCg.Ke, ke);
-		  cgSetParameter3fv(mCg.Ka, ka);
-		  cgSetParameter3fv(mCg.Kd, kd);
-		  cgSetParameter3fv(mCg.Ks, ks);
-		  cgSetParameter1f(mCg.shininess,  0);
-		}
+    if(useGPU) {
+      cgSetParameter3f(mCg.Ke, 0.0,0.0,0.0);
+      cgSetParameter3f(mCg.Ka, 0.0, 0.0, 0.0);
+      cgSetParameter3f(mCg.Kd, 0.0, 0.0, 0.0);
+      cgSetParameter3f(mCg.Ks, 0.0, 0.0, 0.0);
+      cgSetParameter1f(mCg.shininess, 0.0);
+    }
     glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     glColor4f(mWireframeColor.redF(), mWireframeColor.greenF(), mWireframeColor.blueF(), mWireframeColor.alphaF());
     glDepthRange(0.0,1.0-0.0005);
     //object->renderEdges(mWireframeThickness);
     //test material
-		gr->renderEdges( object, mWireframeThickness );
+    gr->renderEdges( object, mWireframeThickness );
     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
   };
 

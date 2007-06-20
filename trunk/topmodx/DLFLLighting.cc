@@ -2,38 +2,38 @@
 
 void computeLighting( DLFLFacePtr fp, LightPtr lightptr, bool usegpu ) {
   if ( fp->front() ) {
-      double Ka = fp->material()->Ka;
-      double Kd = fp->material()->Kd;
-      double Ks = fp->material()->Ks;
-      RGBColor basecolor = fp->material()->color;
-      RGBColor fvcolor;
-      Vector3d normal, pos;
+    double Ka = fp->material()->Ka;
+    double Kd = fp->material()->Kd;
+    double Ks = fp->material()->Ks;
+    RGBColor basecolor = fp->material()->color;
+    RGBColor fvcolor;
+    Vector3d normal, pos;
 
-      DLFLFaceVertexPtr current = fp->front();
+    DLFLFaceVertexPtr current = fp->front();
+    normal = current->getNormal();
+    pos = current->getVertexCoords();
+
+    fvcolor = lightptr->illuminate(pos,normal)*Kd;
+    // fvcolor *= Kd; 
+    fvcolor += (1.0-Kd)*basecolor;
+    // fvco
+
+    current->color = fvcolor;
+
+    current = current->next();
+    while ( current != fp->front() ) {
       normal = current->getNormal();
       pos = current->getVertexCoords();
 
-      fvcolor = lightptr->illuminate(pos,normal)*Kd;
-      // fvcolor *= Kd; 
+      fvcolor = lightptr->illuminate(pos,normal);
+      fvcolor *= Kd;
       fvcolor += (1.0-Kd)*basecolor;
-			// fvco
 
       current->color = fvcolor;
 
       current = current->next();
-      while ( current != fp->front() ) {
-	  normal = current->getNormal();
-	  pos = current->getVertexCoords();
-
-	  fvcolor = lightptr->illuminate(pos,normal);
-	  fvcolor *= Kd;
-	  fvcolor += (1.0-Kd)*basecolor;
-
-	  current->color = fvcolor;
-
-	  current = current->next();
-	}
     }
+  }
 }
 
 void computeLighting(DLFLObjectPtr obj, TMPatchObjectPtr po, LightPtr lightptr, bool usegpu) {
