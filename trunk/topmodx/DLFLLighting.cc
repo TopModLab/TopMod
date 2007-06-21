@@ -37,24 +37,25 @@ void computeLighting( DLFLFacePtr fp, LightPtr lightptr, bool usegpu ) {
 }
 
 void computeLighting(DLFLObjectPtr obj, TMPatchObjectPtr po, LightPtr lightptr, bool usegpu) {
-  DLFLFacePtrList::iterator first, last;
-  DLFLFacePtr faceptr;
-  first = obj->beginFace(); last = obj->endFace();
-  while ( first != last ) {
-    faceptr = (*first);
-    computeLighting(faceptr,lightptr, usegpu);
-    ++first;
-  }
-
-  if( po ) {
-    TMPatchFacePtrList patch_list = po->list( );
-    TMPatchFacePtrList::iterator pfirst = patch_list.begin(), plast = patch_list.end();
-    TMPatchFacePtr pfp = NULL;
-    while ( pfirst != plast ) {
-      pfp = (*pfirst); ++pfirst;
-      pfp->computeLighting(lightptr);
-    }
-  }
+	// if (!usegpu){
+	  DLFLFacePtrList::iterator first, last;
+	  DLFLFacePtr faceptr;
+	  first = obj->beginFace(); last = obj->endFace();
+	  while ( first != last ) {
+	    faceptr = (*first);
+	    computeLighting(faceptr,lightptr, usegpu);
+	    ++first;
+	  }
+	  if( po ) {
+	    TMPatchFacePtrList patch_list = po->list( );
+	    TMPatchFacePtrList::iterator pfirst = patch_list.begin(), plast = patch_list.end();
+	    TMPatchFacePtr pfp = NULL;
+	    while ( pfirst != plast ) {
+	      pfp = (*pfirst); ++pfirst;
+	      pfp->computeLighting(lightptr);
+	    }
+	  }
+	// } // if !usegpu
 }
 
 

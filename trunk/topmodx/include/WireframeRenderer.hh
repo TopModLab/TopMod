@@ -18,6 +18,9 @@ public :
   /* Default constructor */
   WireframeRenderer( ) : DLFLRenderer( ) { };
 
+	WireframeRenderer(QColor wc, double wt, QColor sc, double st, QColor vc, double vt, QColor nc)
+    : DLFLRenderer(wc, wt, sc, st, vc, vt) { }
+
   /* Copy constructor */
   WireframeRenderer( const WireframeRenderer& nr ) : DLFLRenderer( nr ) { };
 
@@ -33,10 +36,15 @@ public :
   /* Implement render function */
   virtual int render( DLFLObjectPtr object ) {
     glEnable( GL_CULL_FACE );
-    glEnable( GL_LINE_SMOOTH );
-    glEnable( GL_BLEND );
-    glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-    glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
+		glEnable(GL_BLEND);																			// Enable Blending
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);			// Type Of Blending To Use
+		if (DLFLRenderer::antialiasing){
+	    glEnable( GL_LINE_SMOOTH );
+			glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);									// Set Line Antialiasing
+		}
+		else {
+			glDisable( GL_LINE_SMOOTH );
+		}
     //drawWireframe( object );
     drawOverlays( object );
     glDisable( GL_CULL_FACE );

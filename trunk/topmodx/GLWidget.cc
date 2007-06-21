@@ -35,7 +35,7 @@ extern DLFLFaceVertexPtrArray DLFLObject::sel_fvptr_array; // List of selected D
 
 GLWidget::GLWidget(int w, int h, VPView v, DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op, TMPatchObjectPtr pop, const QGLFormat & format, QWidget * parent ) 
  : 	QGLWidget(format, parent, NULL), /*viewport(w,h,v),*/ object(op), patchObject(pop), renderer(rp), 
-		mRenderColor(color), mViewportColor(vcolor),/*grid(ZX,20.0,10),*/ showgrid(false), showaxes(false), mUseGPU(true) { 
+		mRenderColor(color), mViewportColor(vcolor),/*grid(ZX,20.0,10),*/ showgrid(false), showaxes(false), mUseGPU(true), mAntialiasing(true) { 
 
 	// Vector3d neweye = eye - center;
 	// double eyedist = norm(neweye);
@@ -122,7 +122,14 @@ void GLWidget::initializeGL( ) {
 	glClearColor(mViewportColor.redF(),mViewportColor.greenF(),mViewportColor.blueF(),mViewportColor.alphaF());
 	mCamera->PerspectiveDisplay(width(),height());
 	// viewport.resize(this->size().width(),this->size().height());
-	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);									// Set Line Antialiasing
+	if (mAntialiasing){
+    glEnable( GL_LINE_SMOOTH );
+		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);									// Set Line Antialiasing
+	}
+	else {
+    glDisable( GL_LINE_SMOOTH );
+	}
+
 	glEnable(GL_BLEND);																			// Enable Blending
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);			// Type Of Blending To Use
 	
@@ -138,7 +145,7 @@ void GLWidget::initializeGL( ) {
 	plight.intensity = 2.0;
 	// mLightIntensity = 2.0;
 	
-	mGlobalAmbient = QColor(25,25,25);
+	mGlobalAmbient = QColor(0,0,0);
 	
 	//enable gl lighting for use with cg functions
 	enableGLLights();
@@ -1625,12 +1632,12 @@ void erase_dlp(DLFLLocatorPtr lp)  { delete lp; } // brianb
 void GLWidget::recomputeNormals(void)     // Recompute normals and lighting
 {
 	object->computeNormals();
-	computeLighting( object, patchObject, &plight);
+	computeLighting( object, patchObject, &plight, mUseGPU);
 }
 
 void GLWidget::recomputeLighting(void)                // Recompute lighting
 {
-	computeLighting( object, patchObject, &plight);
+	computeLighting( object, patchObject, &plight, mUseGPU);
 }
 
 void GLWidget::recomputePatches(void) // Recompute the patches for patch rendering

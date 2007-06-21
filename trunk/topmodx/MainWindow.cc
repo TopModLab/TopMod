@@ -459,6 +459,7 @@ void MainWindow::createActions() {
 
 	showGridAct = new QAction(tr("Show &Grid"), this);
 	showGridAct->setCheckable(true);
+	showGridAct->setEnabled(false);
 	sm->registerAction(showGridAct, "Display Menu", "G");
 	// showGridAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(showGridAct, SIGNAL(triggered()), getActive(), SLOT(toggleGrid()));
@@ -476,9 +477,16 @@ void MainWindow::createActions() {
 	mUseGPUAct->setChecked(true);	
 	sm->registerAction(mUseGPUAct, "Display Menu", "L");
 	mUseGPUAct->setStatusTip(tr("Use GPU Shading"));
-	mUseGPUAct->setStatusTip(tr("Use GPU Shading"));
 	connect(mUseGPUAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleGPU()));
 	mActionListWidget->addAction(mUseGPUAct);
+
+	mAntialiasingAct = new QAction(tr("Toggle &Antialiasing"), this);
+	mAntialiasingAct->setCheckable(true);
+	mAntialiasingAct->setChecked(false);	
+	sm->registerAction(mAntialiasingAct, "Display Menu", "K");
+	mAntialiasingAct->setStatusTip(tr("Toggle Antialiasing"));
+	connect(mAntialiasingAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleAntialiasing()));
+	mActionListWidget->addAction(mAntialiasingAct);
 
 	#ifdef WITH_PYTHON
 	mShowScriptEditorAct = new QAction(tr("Show Script &Editor"), this);
@@ -944,6 +952,7 @@ void MainWindow::createMenus(){
 	displayMenu->addAction(showGridAct);
 	displayMenu->addAction(showHUDAct);
 	displayMenu->addAction(mUseGPUAct);
+	displayMenu->addAction(mAntialiasingAct);
 	displayMenu->addAction(objectOrientationAct);
 	displayMenu->addAction(showNormalsAct);
 

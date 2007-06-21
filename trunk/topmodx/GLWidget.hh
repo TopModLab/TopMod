@@ -85,8 +85,20 @@ public :
 		this->repaint();
 	}
 
+	#ifdef GPU_OK
 	void toggleGPU(){
+		if (renderer)
+			renderer->toggleGPU();
 		mUseGPU = !mUseGPU;
+		repaint();
+	}
+	#endif
+
+	void toggleAntialiasing(){
+		// std::cout<< mAntialiasing << "\n";
+		mAntialiasing = !mAntialiasing;
+		// std::cout << mAntialiasing << "\n";
+		renderer->toggleAntialiasing();
 		repaint();
 	}
 
@@ -285,6 +297,7 @@ public :
 	bool mShowHUD;
 	bool mShowBrush;
 	bool mUseGPU;
+	bool mAntialiasing;
 	int mBrushStartX;
 
 		// Selection lists - these are shared by all viewports

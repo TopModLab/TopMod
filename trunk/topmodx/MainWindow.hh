@@ -458,6 +458,7 @@ class MainWindow : public QMainWindow {
 			QAction *showHUDAct;
 			QAction *showCoordinateAxesAct;
 			QAction *mUseGPUAct;
+			QAction *mAntialiasingAct;
 
 		//Renderer Menu Actions
 			QAction *wireframeRendererAct;

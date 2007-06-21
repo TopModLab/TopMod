@@ -6,4 +6,7 @@
 
 // int DLFLRenderer::render_flags = 0;
 bool DLFLRenderer::reverse_object = false;
-
+bool DLFLRenderer::antialiasing = false;
+#ifdef GPU_OK
+bool DLFLRenderer::useGPU = false;
+#endif

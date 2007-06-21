@@ -62,7 +62,8 @@ protected :
   /* Flag indicating if we should front or back side of object */
   int render_flags;
   static bool reverse_object;
-	bool useGPU;
+	static bool useGPU;
+	static bool antialiasing;
 
 public :
 
@@ -72,7 +73,9 @@ public :
 protected :
 
   /* Default constructor */
-  DLFLRenderer() : mWireframeThickness(1.5), mSilhouetteThickness(6.0), mVertexThickness(4.0), useGPU(true) {
+  DLFLRenderer() : mWireframeThickness(1.5), mSilhouetteThickness(6.0), mVertexThickness(4.0){
+		DLFLRenderer::useGPU = true; 
+		DLFLRenderer::antialiasing = false; 
     mWireframeColor.setRgbF(0.0,0.0,0.0,0.9);
     mSilhouetteColor.setRgbF(0.0,0.0,0.0,0.8);
     mVertexColor.setRgbF(0.5,1.0,0.0,0.9);
@@ -81,8 +84,10 @@ protected :
     gr = GeometryRenderer::instance( );
   };
 	
-  DLFLRenderer(QColor wc, double wt, QColor sc, double st, QColor vc, double vt)
+  DLFLRenderer(QColor wc, double wt, QColor sc, double st, QColor vc, double vt, bool gpu = true, bool aa = false)
     : mWireframeThickness(wt), mSilhouetteThickness(st), mVertexThickness(vt) {
+		DLFLRenderer::useGPU = gpu; 
+		DLFLRenderer::antialiasing = aa; 
     mWireframeColor = wc;
     mSilhouetteColor = sc;
     mVertexColor = vc;
@@ -125,6 +130,14 @@ public :
     render_flags ^= ShowNormals;
     gr->drawFaceNormals = !(gr->drawFaceNormals);
   };
+
+	void toggleGPU() {
+		DLFLRenderer::useGPU = !DLFLRenderer::useGPU; 
+	};
+
+	void toggleAntialiasing(){ 
+		DLFLRenderer::antialiasing = !DLFLRenderer::antialiasing; 
+	};
 
   void toggleObjectOrientation(void) {
     DLFLRenderer::reverse_object != DLFLRenderer::reverse_object;
@@ -180,13 +193,15 @@ public :
 
   /* Methods for various types of rendering */
   void drawWireframe(DLFLObjectPtr object) {
-    if(useGPU) {
+		#ifdef GPU_OK
+    if(DLFLRenderer::useGPU) {
       cgSetParameter3f(mCg.Ke, 0.0, 0.0, 0.0);
-      cgSetParameter3f(mCg.Ka, mWireframeColor.redF(), mWireframeColor.greenF(), mWireframeColor.blueF() );
+      cgSetParameter3f(mCg.Ka, 0.0, 0.0, 0.0);
       cgSetParameter3f(mCg.Kd, 0.0, 0.0, 0.0);
       cgSetParameter3f(mCg.Ks, 0.0, 0.0, 0.0);
       cgSetParameter1f(mCg.shininess, 0.0);
     }
+		#endif
     glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     glColor4f( mWireframeColor.redF(), mWireframeColor.greenF(), mWireframeColor.blueF(), mWireframeColor.alphaF());
     glDepthRange(0.0,1.0-0.0005);
@@ -197,13 +212,15 @@ public :
   };
 
   void drawSilhouette(DLFLObjectPtr object) {
-	  if(useGPU) {
+		#ifdef GPU_OK
+	  if(DLFLRenderer::useGPU) {
       cgSetParameter3f(mCg.Ke, 0.0, 0.0, 0.0);
-      cgSetParameter3f(mCg.Ka, mSilhouetteColor.redF(),mSilhouetteColor.greenF(),mSilhouetteColor.blueF());
+      cgSetParameter3f(mCg.Ka, 0.0, 0.0, 0.0);
       cgSetParameter3f(mCg.Kd, 0.0, 0.0, 0.0);
       cgSetParameter3f(mCg.Ks, 0.0, 0.0, 0.0);
       cgSetParameter1f(mCg.shininess, 0.0);
     }
+		#endif
     glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     glColor4f(mSilhouetteColor.redF(),mSilhouetteColor.greenF(),mSilhouetteColor.blueF(),mSilhouetteColor.alphaF());
     glDepthRange(0.1,1.0);
@@ -215,13 +232,15 @@ public :
   };
 
   void drawVertices(DLFLObjectPtr object) {
-	  if(useGPU) {
+		#ifdef GPU_OK
+	  if(DLFLRenderer::useGPU) {
       cgSetParameter3f(mCg.Ke, 0.0, 0.0, 0.0);
       cgSetParameter3f(mCg.Ka, mVertexColor.redF(),mVertexColor.greenF(),mVertexColor.blueF());
       cgSetParameter3f(mCg.Kd, 0.0, 0.0, 0.0);
       cgSetParameter3f(mCg.Ks, 0.0, 0.0, 0.0);
       cgSetParameter1f(mCg.shininess, 0.0);
     }
+		#endif 
     glColor4f(mVertexColor.redF(),mVertexColor.greenF(),mVertexColor.blueF(),mVertexColor.alphaF());
     glDepthRange(0.0,1.0-0.00075);
     //object->renderVertices(mVertexThickness);

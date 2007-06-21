@@ -39,6 +39,17 @@ public :
     glEnable(GL_CULL_FACE);
     setCulling();
     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+		glEnable(GL_BLEND);																			// Enable Blending
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);			// Type Of Blending To Use
+
+		if (DLFLRenderer::antialiasing){
+	    glEnable( GL_LINE_SMOOTH );
+			glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);									// Set Line Antialiasing
+		}
+		else {
+			glDisable( GL_LINE_SMOOTH );
+		}
+		
     //glColor4f(mNormalColor.redF(),mNormalColor.greenF(),mNormalColor.blueF(),mNormalColor.alphaF());
     //object->plainRender();
     gr->render( object );
