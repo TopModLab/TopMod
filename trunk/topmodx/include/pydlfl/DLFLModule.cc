@@ -12,7 +12,7 @@ static PyObject *dlfl_load_obj(PyObject *self, PyObject *args);
 static PyObject *dlfl_kill_obj(PyObject *self, PyObject *args);
 static PyObject *dlfl_switch_obj(PyObject *self, PyObject *args);
 static PyObject *dlfl_save_obj(PyObject *self, PyObject *args);
-static PyObject *dlfl_query_obj(PyObject *self, PyObject *args);
+//static PyObject *dlfl_query_obj(PyObject *self, PyObject *args);
 
 /* Core */
 static PyObject *dlfl_insert_edge(PyObject *self, PyObject *args);
@@ -59,7 +59,7 @@ static PyMethodDef DLFLMethods[] = {
   {"save",           dlfl_save_obj,       METH_VARARGS, "save(string)"},  
   {"kill",           dlfl_kill_obj,       METH_VARARGS, "kill(object id)"},
   {"switch",         dlfl_switch_obj,     METH_VARARGS, "switch(object id)"},
-  {"query",          dlfl_query_obj,      METH_VARARGS, "query()"},
+  //{"query",          dlfl_query_obj,      METH_VARARGS, "query()"},
 	/* Core */
   {"insertEdge",     dlfl_insert_edge,    METH_VARARGS, "insert_edge((face,vert),(face,vert))"},
   {"deleteEdge",     dlfl_delete_edge,    METH_VARARGS, "Delete an Edge."},
@@ -126,13 +126,13 @@ dlfl_load_obj(PyObject *self, PyObject *args)
 
   return Py_BuildValue("i", objId );
 }
-
+/*
 static PyObject *
 dlfl_query_obj(PyObject *self, PyObject *args)
 {
   return Py_BuildValue("i", usingGUI );
 }
-
+*/
 static PyObject *
 dlfl_kill_obj(PyObject *self, PyObject *args)
 {

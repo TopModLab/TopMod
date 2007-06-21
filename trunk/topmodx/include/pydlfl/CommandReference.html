@@ -1,0 +1,41 @@
+<link href="commands.css" rel="stylesheet" type="text/css"
+			title="Modern" media="all" />
+
+<a name="commands"><h1><span id="topmod">TopMod</span><br/>Python Command Reference</h1></a>
+
+<a name="obj"><h2>Object Management</h2></a>
+<div class="command"><a name="load"><span class="fn">load</span>(<span class="args">filename</span>)</a><p class="description">Loads a file of either Wavefront OBJ (<tt>.obj</tt>) or DLFL (<tt>.dlfl</tt>) into the scene. The file data becomes the current object. The filetype is recognized by the extension. <b>Filename is given as a string</b> (e.g., "myfile.obj"). In the TopMod interface this replaces any current object loaded. In stand-alone, this pushes any current object onto the stack.</p></div>
+<div class="command"><a name="save"><span class="fn">save</span>(<span class="args">filename</span>)</a><p class="description">Saves a file of either Wavefront OBJ (<tt>.obj</tt>) or DLFL (<tt>.dlfl</tt>) from the current object. The filetype is recognized by the extension. <b>Filename is given as a string</b> (e.g., "myfile.obj").</p></div>         
+<div class="command"><a name="kill"><span class="fn">kill</span>(<span class="args">objectid</span>)</a><p class="description">Kills or destroys the object represented by <i>objectid</i>. <b>This is disabled when using the TopMod interface!</b> It serves only when working in python standalone.</p></div>         
+<div class="command"><a name="switch"><span class="fn">switch</span>(<span class="args">objectid</span>)</a><p class="description">Switches the current object to the object represented by <i>objectid</i>. <b>This is disabled when using the TopMod interface!</b>. Since the interface currently only allows one object to be open at a time.</p></div>       
+<!--<div class="command"><a name="query"><span class="fn">query</span>(<span class="args">objectid</span>)</a><p class="description">qwerty</p></div>-->
+<a name="core"><h2>Core Operations</h2></a>
+<div class="command"><a name="insertEdge"><span class="fn">insertEdge</span>(<span class="args">(faceid,vertexid),(faceid,vertexid)</span>)</a><p class="description">qwerty</p></div>   
+<div class="command"><a name="deleteEdge"><span class="fn">deleteEdge</span>(<span class="args">edgeid</span>)</a><p class="description">qwerty</p></div>   
+<div class="command"><a name="collapseEdge"><span class="fn">collapseEdge</span>(<span class="args">edgeid</span>)</a><p class="description">qwerty</p></div> 
+<div class="command"><a name="subdivideEdge"><span class="fn">subdivideEdge</span>(<span class="args">edgeid</span>)</a><p class="description">qwerty</p></div>
+<div class="command"><a name="createVertex"><span class="fn">createVertex</span>(<span class="args">vertexid</span>)</a><p class="description">qwerty</p></div> 
+<div class="command"><a name="removeVertex"><span class="fn">removeVertex</span>(<span class="args">vertexid</span>)</a><p class="description">qwerty</p></div> 
+<a name="aux"><h2>Auxiliary Operations</h2></a>
+<div class="command"><a name="extrude"><span class="fn">extrude</span>(<span class="args">type,faceid,...</span>)</a><p class="description">qwerty</p></div>      
+<div class="command"><a name="subdivide"><span class="fn">subdivide</span>(<span class="args">type,...</span>)</a><p class="description">qwerty</p></div>    
+<div class="command"><a name="subdivFace"><span class="fn">subdivFace</span>(<span class="args">faceid</span>)</a><p class="description">qwerty</p></div>   
+<div class="command"><a name="dual"><span class="fn">dual</span>(<span class="args"></span>)</a><p class="description">qwerty</p></div>         
+<a name="ids"><h2>Finding IDs</h2></a>
+<div class="command"><a name="faces"><span class="fn">faces</span>(<span class="args">selected</span>)</a><p class="description">qwerty</p></div>        
+<div class="command"><a name="edges"><span class="fn">edges</span>(<span class="args">selected</span>)</a><p class="description">qwerty</p></div>        
+<div class="command"><a name="verts"><span class="fn">verts</span>(<span class="args">selected</span>)</a><p class="description">qwerty</p></div>        
+<div class="command"><a name="faceverts"><span class="fn">faceverts</span>(<span class="args">selected</span>)</a><p class="description">qwerty</p></div>    
+<div class="command"><a name="walk"><span class="fn">walk</span>(<span class="args">faceid</span>)</a><p class="description">qwerty</p></div>         
+<div class="command"><a name="walkVertices"><span class="fn">walkVertices</span>(<span class="args">asdf</span>)</a><p class="description">qwerty</p></div> 
+<div class="command"><a name="walkEdges"><span class="fn">walkEdges</span>(<span class="args">faceid</span>)</a><p class="description">qwerty</p></div>    
+<a name="info"><h2>Object Information</h2></a>
+<div class="command"><a name="printObject"><span class="fn">printObject</span>(<span class="args"></span>)</a><p class="description">qwerty</p></div>  
+<div class="command"><a name="vertexInfo"><span class="fn">vertexInfo</span>(<span class="args">vertexid</span>)</a><p class="description">qwerty</p></div>   
+<div class="command"><a name="edgeInfo"><span class="fn">edgeInfo</span>(<span class="args">edgeid</span>)</a><p class="description">qwerty</p></div>     
+<div class="command"><a name="faceInfo"><span class="fn">faceInfo</span>(<span class="args">asdf</span>)</a><p class="description">qwerty</p></div>     
+<div class="command"><a name="centroid"><span class="fn">centroid</span>(<span class="args">vertexids</span>)</a><p class="description">qwerty</p></div>     
+<a name="xform"><h2>Transformations</h2></a>
+<div class="command"><a name="translate"><span class="fn">translate</span>(<span class="args">x,y,z</span>)</a><p class="description">qwerty</p></div>    
+<div class="command"><a name="scale"><span class="fn">scale</span>(<span class="args">x,y,z</span>)</a><p class="description">qwerty</p></div>
+<div class="command"><a name="move"><span class="fn">move</span>(<span class="args">vertexids</span>)</a><p class="description">qwerty</p></div>          
