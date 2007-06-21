@@ -105,6 +105,16 @@ namespace DLFL {
   DLFLObject* readObjectFile( char* filename );
   bool writeObjectFile( DLFLObject *obj, char* filename = NULL );
 
+	/************************
+	 * Create/Remove Vertex *
+	 ************************/
+
+	uint* createVertex( double x, double y, double z, DLFLObjectPtr &obj, bool set_type = false );
+	DLFLFaceVertexPtr createVertex( Vector3d pos, DLFLObjectPtr &obj, bool set_type = false );
+
+	void removeVertex( const DLFLObjectPtr &obj, uint vertId );
+	void removeVertex( const DLFLObjectPtr &obj, DLFLVertexPtr vert );
+
 } // end namespace DLFL
 
 #endif // _DLFLCORE_H_

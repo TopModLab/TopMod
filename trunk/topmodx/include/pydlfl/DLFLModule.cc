@@ -5,26 +5,25 @@
 #include <DLFLSubdiv.hh>
 #include <DLFLDual.hh>
 
-/*extern DLFL::DLFLEdgePtrArray DLFL::DLFLObject::sel_eptr_array;
-extern DLFL::DLFLFacePtrArray DLFL::DLFLObject::sel_fptr_array;
-extern DLFL::DLFLVertexPtrArray DLFL::DLFLObject::sel_vptr_array;
-extern DLFL::DLFLFaceVertexPtrArray DLFL::DLFLObject::sel_fvptr_array;
-*/
 /// Prototypes
 
+/* Object Management */
 static PyObject *dlfl_load_obj(PyObject *self, PyObject *args);
 static PyObject *dlfl_kill_obj(PyObject *self, PyObject *args);
 static PyObject *dlfl_switch_obj(PyObject *self, PyObject *args);
 static PyObject *dlfl_save_obj(PyObject *self, PyObject *args);
 static PyObject *dlfl_query_obj(PyObject *self, PyObject *args);
 
+/* Core */
 static PyObject *dlfl_insert_edge(PyObject *self, PyObject *args);
 static PyObject *dlfl_delete_edge(PyObject *self, PyObject *args);
 static PyObject *dlfl_collapse_edge(PyObject *self, PyObject *args);
 static PyObject *dlfl_subdivide_edge(PyObject *self, PyObject *args);
 
-static PyObject *dlfl_print_object(PyObject *self, PyObject *args);
+static PyObject *dlfl_create_vertex(PyObject *self, PyObject *args);
+static PyObject *dlfl_remove_vertex(PyObject *self, PyObject *args);
 
+/* IDs */
 static PyObject *dlfl_faces(PyObject *self, PyObject *args);
 static PyObject *dlfl_edges(PyObject *self, PyObject *args);
 static PyObject *dlfl_verts(PyObject *self, PyObject *args);
@@ -34,37 +33,63 @@ static PyObject *dlfl_boundary_walk(PyObject *self, PyObject *args);
 static PyObject *dlfl_walk_vertices(PyObject *self, PyObject *args);
 static PyObject *dlfl_walk_edges(PyObject *self, PyObject *args);
 
+/* Info */
+static PyObject *dlfl_print_object(PyObject *self, PyObject *args);
+static PyObject *dlfl_vertexInfo(PyObject *self, PyObject *args);
+static PyObject *dlfl_edgeInfo(PyObject *self, PyObject *args);
+static PyObject *dlfl_faceInfo(PyObject *self, PyObject *args);
+static PyObject *dlfl_centroid(PyObject *self, PyObject *args);
+
 /* Auxiliary */
 static PyObject *dlfl_extrude(PyObject *self, PyObject *args);
 static PyObject *dlfl_subdivide(PyObject *self, PyObject *args);
 static PyObject *dlfl_subdiv_face(PyObject *self, PyObject *args);
 static PyObject *dlfl_dual(PyObject *self, PyObject *args);
 
+/* Transform */
+static PyObject *dlfl_translate(PyObject *self, PyObject *args);
+static PyObject *dlfl_scale(PyObject *self, PyObject *args);
+static PyObject *dlfl_move(PyObject *self, PyObject *args);
+
 PyMODINIT_FUNC initdlfl(void);
 
 static PyMethodDef DLFLMethods[] = {
+	/* Object Management */
   {"load",           dlfl_load_obj,       METH_VARARGS, "load(string)"},
   {"save",           dlfl_save_obj,       METH_VARARGS, "save(string)"},  
   {"kill",           dlfl_kill_obj,       METH_VARARGS, "kill(object id)"},
   {"switch",         dlfl_switch_obj,     METH_VARARGS, "switch(object id)"},
   {"query",          dlfl_query_obj,      METH_VARARGS, "query()"},
-  {"insert_edge",    dlfl_insert_edge,    METH_VARARGS, "insert_edge((face,vert),(face,vert))"},
-  {"delete_edge",    dlfl_delete_edge,    METH_VARARGS, "Delete an Edge."},
-  {"collapse_edge",  dlfl_collapse_edge,  METH_VARARGS, "Collapse an Edge."},
-  {"subdivide_edge", dlfl_subdivide_edge, METH_VARARGS, "Subdivide an Edge."},
+	/* Core */
+  {"insertEdge",     dlfl_insert_edge,    METH_VARARGS, "insert_edge((face,vert),(face,vert))"},
+  {"deleteEdge",     dlfl_delete_edge,    METH_VARARGS, "Delete an Edge."},
+  {"collapseEdge",   dlfl_collapse_edge,  METH_VARARGS, "Collapse an Edge."},
+  {"subdivideEdge",  dlfl_subdivide_edge, METH_VARARGS, "Subdivide an Edge."},
+	{"createVertex",   dlfl_create_vertex,  METH_VARARGS, "Create a vertex at (x,y,z)"},
+	{"removeVertex",   dlfl_remove_vertex,  METH_VARARGS, "Remove a vertex by ID"},
+	/* IDs */
   {"faces",          dlfl_faces,          METH_VARARGS, "Grab all/selected the faces of the object"},
   {"edges",          dlfl_edges,          METH_VARARGS, "Grab all/selected the edges of the object"},
   {"verts",          dlfl_verts,          METH_VARARGS, "Grab all/selected the vertices of the object"},
   {"faceverts",      dlfl_faceverts,      METH_VARARGS, "Grab all/selected the face-vertices of the object"},
   {"walk",           dlfl_boundary_walk,  METH_VARARGS, "walk(int)"},
-  {"walk_vertices",  dlfl_walk_vertices,  METH_VARARGS, "walk_vertices(int)"},
-  {"walk_edges",     dlfl_walk_edges,     METH_VARARGS, "walk_edges(int)"},
-  {"print_object",   dlfl_print_object,   METH_VARARGS, "Print object information"},
+  {"walkVertices",   dlfl_walk_vertices,  METH_VARARGS, "walk_vertices(int)"},
+  {"walkEdges",      dlfl_walk_edges,     METH_VARARGS, "walk_edges(int)"},
+	/* Info */
+  {"printObject",   dlfl_print_object,   METH_VARARGS, "Print object information"},
+  {"vertexInfo",    dlfl_vertexInfo,     METH_VARARGS, "Position,Valence,etc into dictionary"},
+  {"edgeInfo",      dlfl_edgeInfo,       METH_VARARGS, "Midpoint,Verts,etc into dictionary"},
+  {"faceInfo",      dlfl_faceInfo,       METH_VARARGS, "Centroid,Verts,etc into dictionary"},
+  {"centroid",      dlfl_centroid,       METH_VARARGS, "Get centroid of vertices"},
   /* Auxiliary Below */
   {"extrude",        dlfl_extrude,        METH_VARARGS, "Extrude a face"},
   {"subdivide",      dlfl_subdivide,      METH_VARARGS, "Subdivide a mesh"},
-  {"subdiv_face",    dlfl_subdiv_face,    METH_VARARGS, "Subdivide a Face"},
+  {"subdivFace",     dlfl_subdiv_face,    METH_VARARGS, "Subdivide a Face"},
   {"dual",           dlfl_dual,           METH_VARARGS, "Dual of mesh"},
+	/* Transform */
+  {"translate",      dlfl_translate,      METH_VARARGS, "Translate Object"},
+  {"scale",          dlfl_scale,          METH_VARARGS, "Scale Object"},
+  {"move",      dlfl_move,      METH_VARARGS, "Move Vertices"},
   {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
@@ -251,7 +276,32 @@ dlfl_subdivide_edge(PyObject *self, PyObject *args)
   return Py_None;
 }
 
+
+static PyObject *dlfl_create_vertex(PyObject *self, PyObject *args) {
+	double x, y, z;
+
+	if( !PyArg_ParseTuple(args, "(ddd)", &x, &y, &z) )
+			return NULL;
+
+	uint *fvid = DLFL::createVertex( x, y, z, currObj );
+	uint fid = fvid[0];
+	uint vid = fvid[1];
+	delete fvid; fvid = 0;
+  return Py_BuildValue("(ii)", fid, vid );
+}
+
+static PyObject *dlfl_remove_vertex(PyObject *self, PyObject *args) {
+	uint vid;
+	if( !PyArg_ParseTuple(args, "i", &vid) )
+		return NULL;
+	DLFL::removeVertex( currObj, vid );
+
+  Py_INCREF(Py_None);
+  return Py_None;
+}
+
 /* Mesh Identification Helpers (Verts,Edges,Faces, FaceVertices ) */
+
 static PyObject *
 dlfl_faces(PyObject *self, PyObject *args)
 {
@@ -476,7 +526,95 @@ dlfl_print_object(PyObject *self, PyObject *args) {
   return Py_None;
 }
 
- /* Auxiliary Below */
+static PyObject *dlfl_vertexInfo(PyObject *self, PyObject *args) {
+	if( !currObj ) {
+		Py_INCREF(Py_None);
+		return Py_None;
+	} else {
+		int id;
+		if( !PyArg_ParseTuple(args, "i", &id) )
+			return NULL;
+		DLFL::DLFLVertexPtr vp = currObj->findVertex(id);
+		const double *coords = (vp->getCoords()).getCArray();
+		int valence = vp->valence();
+		return Py_BuildValue("{s:i,s:(ddd),s:i}", 
+												 "id", id, 
+												 "coords", coords[0], coords[1], coords[2],
+												 "valence", valence);
+	}
+}
+
+static PyObject *dlfl_edgeInfo(PyObject *self, PyObject *args) { 
+	if( !currObj ) {
+		Py_INCREF(Py_None);
+		return Py_None;
+	} else {
+		int id;
+		if( !PyArg_ParseTuple(args, "i", &id) )
+			return NULL;
+		DLFL::DLFLEdgePtr ep = currObj->findEdge(id);
+		const double *midpoint = (ep->getMidPoint()).getCArray();
+		const double *normal = (ep->getNormal()).getCArray();
+
+		DLFL::DLFLFaceVertexPtr fvpa;
+		DLFL::DLFLFaceVertexPtr fvpb;
+		ep->getFaceVertexPointers( fvpa, fvpb );
+		int fa = fvpa->getFaceID();
+		int va = fvpa->getVertexID();
+		int fb = fvpb->getFaceID();
+		int vb = fvpa->getVertexID();
+
+		double length = ep->length();
+
+		return Py_BuildValue("{s:i,s:(ddd),s:(ddd),s:(ii),s:(ii),s:d}", 
+												 "id", id, 
+												 "midpoint", midpoint[0], midpoint[1], midpoint[2],
+												 "normal", normal[0], normal[1], normal[2],
+												 "fvA", fa, va,
+												 "fvB", fb, vb,
+												 "length", length );
+	}
+}
+
+static PyObject *dlfl_faceInfo(PyObject *self, PyObject *args) { 
+	if( !currObj ) {
+		Py_INCREF(Py_None);
+		return Py_None;
+	} else {
+		int id;
+		if( !PyArg_ParseTuple(args, "i", &id) )
+			return NULL;
+		DLFL::DLFLFacePtr fp = currObj->findFace(id);
+		const double *centroid = (fp->geomCentroid()).getCArray();
+		const double *normal = (fp->getNormal(true)).getCArray();
+		return Py_BuildValue("{s:i,s:(ddd),s:(ddd),s:i}", 
+												 "id", id, 
+												 "centroid", centroid[0], centroid[1], centroid[2],
+												 "normal", normal[0], normal[1], normal[2],
+												 "size", fp->size());
+	}
+}
+
+static PyObject *dlfl_centroid(PyObject *self, PyObject *args) { 
+	if( !currObj ) {
+		Py_INCREF(Py_None);
+		return Py_None;
+	} else {
+		int id;
+		if( !PyArg_ParseTuple(args, "i", &id) )
+			return NULL;
+		DLFL::DLFLVertexPtr vp = currObj->findVertex(id);
+		const double *coords = (vp->getCoords()).getCArray();
+		int valence = vp->valence();
+		return Py_BuildValue("{s:i,s:(d,d,d),s:i}", 
+												 "id", id, 
+												 "coords", coords[0], coords[1], coords[2],
+												 "valence", valence);
+	}
+}
+
+ /* Auxiliary */
+
 static PyObject *
 dlfl_extrude(PyObject *self, PyObject *args) {
   if( !currObj ) {
@@ -714,6 +852,10 @@ PyObject *dlfl_dual(PyObject *self, PyObject *args)
   return Py_None;
 }
 
+static PyObject *dlfl_translate(PyObject *self, PyObject *args) { return NULL; }
+static PyObject *dlfl_scale(PyObject *self, PyObject *args) { return NULL; }
+static PyObject *dlfl_move(PyObject *self, PyObject *args) { return NULL; }
+
 /* C API Stuff */
 //static void **PyDLFL_API;
 
@@ -737,14 +879,16 @@ PyDLFL_PassObject( DLFL::DLFLObject* obj )
 
 PyMODINIT_FUNC initdlfl(void)
 {
-    PyObject *m;
+    PyObject *dlfl;
     static void *PyDLFL_API[NUM_C_API_FUNCS];
 
-    m = Py_InitModule("dlfl", DLFLMethods);
+    dlfl = Py_InitModule("dlfl", DLFLMethods);
 
     DLFLError = PyErr_NewException("dlfl.error", NULL, NULL);
     Py_INCREF(DLFLError);
-    PyModule_AddObject(m, "error", DLFLError);
+    PyModule_AddObject(dlfl, "error", DLFLError);
+
+		PyObject *dlflDict = PyModule_GetDict(dlfl); 
 
     /* Initialize the C API pointer array */ 
     PyDLFL_API[0] = (void *)PyDLFL_UsingGUI; 
@@ -753,8 +897,7 @@ PyMODINIT_FUNC initdlfl(void)
     PyObject *c_api_object = PyCObject_FromVoidPtr((void *)PyDLFL_API, NULL); 
     if (c_api_object != NULL) { 
       /* Create a name for this object in the module’s namespace */ 
-      PyObject *d = PyModule_GetDict(m); 
-      PyDict_SetItemString(d, "_C_API", c_api_object); 
+      PyDict_SetItemString(dlflDict, "_C_API", c_api_object); 
       Py_DECREF(c_api_object); 
     }
 }

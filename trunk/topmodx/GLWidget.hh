@@ -689,7 +689,7 @@ static VPMouseEvent translateEvent(QMouseEvent *event) {
 		// Set the object which should be shown in this viewport
 void setObject(DLFLObjectPtr op) {
 	object = op;
-	if( patchObject ) { delete patchObject; patchObject = 0; }
+	//if( patchObject ) { delete patchObject; patchObject = 0; }
 	//patchObject = new TMPatchObject( object->getID() );
 }
 

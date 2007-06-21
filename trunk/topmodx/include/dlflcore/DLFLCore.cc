@@ -37,18 +37,18 @@ namespace DLFL {
     DLFLFaceVertexPtrList::const_iterator first = fvpl1.begin(), last = fvpl1.end();
     while( first != last && !found ) {
       if( (*first)->getFacePtr() == fptr1 ) {
-	fvptr1 = (*first);
-	found = true;
+				fvptr1 = (*first);
+				found = true;
       }
       ++first;
     }
-
+		
     found = false;
     first = fvpl2.begin(); last = fvpl2.end();
     while( first != last && !found ) {
       if( (*first)->getFacePtr() == fptr2 ) {
-	fvptr2 = (*first);
-	found = true;
+				fvptr2 = (*first);
+				found = true;
       }
       ++first;
     }
@@ -1041,16 +1041,71 @@ namespace DLFL {
       Vector3d origin = vp->coords;
 
       if ( offset > 0.0 ) {
-	vp->coords = origin + offset * normalized(e1vec-e2vec);
-	newvp->coords = origin + offset * normalized(e2vec-e1vec);
+				vp->coords = origin + offset * normalized(e1vec-e2vec);
+				newvp->coords = origin + offset * normalized(e2vec-e1vec);
       } else {
-	vp->coords = origin + 0.1 * e1len * normalized(e1vec-e2vec);
-	newvp->coords = origin + 0.1 * e2len * normalized(e2vec-e1vec);
+				vp->coords = origin + 0.1 * e1len * normalized(e1vec-e2vec);
+				newvp->coords = origin + 0.1 * e2len * normalized(e2vec-e1vec);
       }
 
       // Set type of vp and newvp so they don't get split again
       vp->setType(VTNewEdgePoint); newvp->setType(VTNewPoint);
     }
   }
+
+	uint* createVertex( double x, double y, double z, DLFLObjectPtr &obj, bool set_type ) {
+		Vector3d pos(x,y,z);
+		DLFLFaceVertexPtr fv = createVertex( pos, obj, set_type );
+		uint *id = new uint[2];
+		id[0] = fv->getFaceID();
+		id[1] = fv->getVertexID();
+		return id;
+	}
+
+	DLFLFaceVertexPtr createVertex( Vector3d pos, DLFLObjectPtr &obj, bool set_type ) {
+		// Create an isolated vertex
+		// Similar to Euler operator: MVFS (make vertex face shell)
+		// Consists of 1 vertex, 1 face without an edge
+
+		if( !obj ) { obj = new DLFLObject; }
+
+		DLFLVertexPtr vert = new DLFLVertex;
+		vert->coords = pos;
+
+		DLFLFacePtr face = new DLFLFace;
+
+		obj->addVertexPtr(vert);
+		obj->addFacePtr(face);
+
+		DLFLFaceVertexPtr fv1 = new DLFLFaceVertex;
+
+		fv1->setVertexPtr(vert);
+		fv1->setFacePtr(face);
+		face->addVertexPtr(fv1);
+
+		if( set_type ) {
+			vert->setType(VTNewPoint);
+			face->setType(FTNew);
+			fv1->setType(FVTNew);
+		}
+
+		vert->addToFaceVertexList(fv1);
+
+		//return vert;
+		return fv1;
+	}
+
+	void removeVertex( const DLFLObjectPtr &obj, uint vertId ) {
+		if( !obj ) return;
+
+		DLFLVertexPtr vptr1 = obj->findVertex( vertId );
+		removeVertex( obj, vptr1 );
+	}
+
+	void removeVertex( const DLFLObjectPtr &obj, DLFLVertexPtr vert ) {
+		// First check to make sure the vertex is isolated
+		// Similar to Euler operator KVFS (kill vertex face shell)
+		return;
+	}
 
 } // end namespace DLFL

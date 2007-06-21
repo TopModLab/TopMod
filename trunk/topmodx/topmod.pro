@@ -10,6 +10,8 @@ DEFINES += TOPMOD_VERSION GPU_OK
 
 TEMPLATE = app
 
+SUBDIRS = include
+
 # TopModd will be the name for the debug version, 
 # and TopMod will be the release version
 CONFIG(debug, debug|release) {

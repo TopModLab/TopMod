@@ -155,7 +155,9 @@ namespace DLFL {
       return auxnormal;
     }
      
-    Vector3d getNormal(void) const {
+    Vector3d getNormal(bool update=false) {
+			if(update)
+				updateNormal();
       return normal;
     }
 

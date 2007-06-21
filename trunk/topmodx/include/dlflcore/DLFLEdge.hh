@@ -190,11 +190,15 @@ namespace DLFL {
       return uID;
     }
 
-    Vector3d getMidPoint(void) const {
+    Vector3d getMidPoint(bool update=false) {
+			if( update )
+				updateMidPoint();
       return midpoint;
     }
 
-    Vector3d getNormal(void) const {
+    Vector3d getNormal(bool update=false) {
+			if( update )
+				updateNormal();
       return normal;
     }
 
