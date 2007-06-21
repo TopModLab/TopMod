@@ -967,23 +967,23 @@ namespace DLFL {
     if ( head ) {
       DLFLFaceVertexPtr current = head;
       if ( current->getFacePtr() != this ) {
-	cerr << "Data-structure consistency error!" << endl;
-	cerr << "Vertex : " << current->getVertexID() << endl
-	     << "Face : " << current->getFacePtr()->getID() << endl
-	     << "Edge : " << current->getEdgePtr()->getID() << endl;
-	return;
+				cerr << "Data-structure consistency error!" << endl;
+				cerr << "Vertex : " << current->getVertexID() << endl
+						 << "Face : " << current->getFacePtr()->getID() << endl
+						 << "Edge : " << current->getEdgePtr()->getID() << endl;
+				return;
       }
       cout << current->getVertexID();
       cout << '[' << current->backface << ']';
       if ( current->getEdgePtr() != NULL )
-	cout << "--(" << current->getEdgeID() << ")-->";   
+				cout << "--(" << current->getEdgeID() << ")-->";   
       current = current->next();
       while ( current != head ) {
-	cout << current->getVertexID();
-	cout << '[' << current->backface << ']';
-	if ( current->getEdgePtr() != NULL )
-	  cout << "--(" << current->getEdgeID() << ")-->";   
-	current = current->next();
+				cout << current->getVertexID();
+				cout << '[' << current->backface << ']';
+				if ( current->getEdgePtr() != NULL )
+					cout << "--(" << current->getEdgeID() << ")-->";   
+				current = current->next();
       }
       cout << current->getVertexID() << '[' << current->backface << ']' << endl;
     }

@@ -228,7 +228,8 @@ dlfl_delete_edge(PyObject *self, PyObject *args)
     currObj->clearSelected( );
   }
 
-  return Py_BuildValue("i", edgeId );
+	Py_INCREF(Py_None);
+  return Py_None;//BuildValue("i", edgeId );
 }
 
 static PyObject *
@@ -811,7 +812,9 @@ dlfl_subdivide(PyObject *self, PyObject *args) {
     case 20 : // dual-12.6.4
       DLFL::dual1264Subdivide( currObj, attrb1 ); // no defaults
       break;
-    case 21 : // linear-vertex
+		case 21 : // loop style
+			DLFL::loopStyleSubdivide( currObj, attrb1 );
+    case 22 : // linear-vertex
     default : // linear-vertex
       if( battrb1 ) DLFL::subdivideAllFaces( currObj, (bool)attrb1 );
       else DLFL::subdivideAllFaces( currObj );
