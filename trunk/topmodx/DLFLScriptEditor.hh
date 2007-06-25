@@ -33,7 +33,7 @@ class DLFLScriptEditor : public QWidget {
 Q_OBJECT
 
 public:
-  DLFLScriptEditor( QWidget *parent = 0, Qt::WindowFlags f = Qt::Tool );
+  DLFLScriptEditor( DLFLObjectPtr obj = NULL, QWidget *parent = 0, Qt::WindowFlags f = Qt::Tool );
   ~DLFLScriptEditor( );
 
   QColor& outputBgColor( ) { return mOutputBgColor; };

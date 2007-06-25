@@ -459,15 +459,16 @@ public :
     }
   };
 
-  void createFace(const Vector3dArray& verts, DLFLMaterialPtr matl = NULL, bool set_type = false);
+  DLFLFacePtrArray createFace(const Vector3dArray& verts, DLFLMaterialPtr matl = NULL, bool set_type = false);
 
   DLFLFaceVertexPtr createPointSphere(const Vector3d& v, DLFLMaterialPtr matl = NULL );
 
   // Compute the bounding box for this object
   void boundingBox(Vector3d& min, Vector3d& max) const;
   bool boundaryWalkID( uint faceId );
-  vector<int> vertWalk( uint faceId );
-  vector<int> edgeWalk( uint faceId );
+	void walk( uint faceId, vector<int> &verts, vector<int> &edges );
+  //vector<int> vertWalk( uint faceId );
+  //vector<int> edgeWalk( uint faceId );
   void boundaryWalk(uint face_index);
   void vertexTrace(uint vertex_index);
 

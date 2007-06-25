@@ -49,12 +49,12 @@ namespace DLFL {
 
     if ( head )
       {
-	DLFLFaceVertexPtr current = head; 
-	int i=0;
+				DLFLFaceVertexPtr current = head; 
+				int i=0;
 
-	o << "    " << i << " : " << current << endl; current->dump(o);
-	++i; current = current->next();
-	while ( current != head )
+				o << "    " << i << " : " << current << endl; current->dump(o);
+				++i; current = current->next();
+				while ( current != head )
           {
             o << "    " << i << " : " << current << endl; current->dump(o);
             ++i; current = current->next();
@@ -96,8 +96,8 @@ namespace DLFL {
       addVertexPtr(current->copy());
       current = current->next();
       while ( current != ptr ) {
-	addVertexPtr(current->copy());
-	current = current->next();
+				addVertexPtr(current->copy());
+				current = current->next();
       }
     }
   }
@@ -112,9 +112,9 @@ namespace DLFL {
       current = current->next();
       delete temp;
       while ( current != head ) {
-	temp = current;
-	current = current->next();
-	delete temp;
+				temp = current;
+				current = current->next();
+				delete temp;
       }
     }
     head = NULL;
@@ -206,8 +206,8 @@ namespace DLFL {
       verts.push_back(current->getVertexCoords());
       current = current->next();
       while ( current != head ) {
-	verts.push_back(current->getVertexCoords());
-	current = current->next();
+				verts.push_back(current->getVertexCoords());
+				current = current->next();
       }
     }
   }
@@ -292,8 +292,8 @@ namespace DLFL {
       current->color = col;
       current = current->next();
       while ( current != head ) {
-	current->color = col;
-	current = current->next();
+				current->color = col;
+				current = current->next();
       }
     }
   }
@@ -304,8 +304,8 @@ namespace DLFL {
       current->color.color.set(r,g,b);
       current = current->next();
       while ( current != head ) {
-	current->color.color.set(r,g,b);
-	current = current->next();
+				current->color.color.set(r,g,b);
+				current = current->next();
       }
     }
   }
@@ -321,9 +321,9 @@ namespace DLFL {
       ++start; start %= 4;
       current = current->next();
       while ( current != head ) {
-	current->texcoord = unittexcoords[start];
-	++start; start %= 4;
-	current = current->next();
+				current->texcoord = unittexcoords[start];
+				++start; start %= 4;
+				current = current->next();
       }
     }
   }
@@ -339,8 +339,8 @@ namespace DLFL {
       sumg = current->vertex->coords;
       current = current->next();
       while ( current != head ) {
-	sumg += current->vertex->coords;
-	current = current->next();
+				sumg += current->vertex->coords;
+				current = current->next();
       }
     }
     return sumg;
@@ -353,8 +353,8 @@ namespace DLFL {
       sumtc = current->texcoord;
       current = current->next();
       while ( current != head ) {
-	sumtc += current->texcoord;
-	current = current->next();
+				sumtc += current->texcoord;
+				current = current->next();
       }
     }
     return sumtc;
@@ -367,8 +367,8 @@ namespace DLFL {
       sumc = current->color;
       current = current->next();
       while ( current != head ) {
-	sumc += current->color;
-	current = current->next();
+				sumc += current->color;
+				current = current->next();
       }
     }
     return sumc;
@@ -381,8 +381,8 @@ namespace DLFL {
       sumn = current->normal;
       current = current->next();
       while ( current != head ) {
-	sumn += current->normal;
-	current = current->next();
+				sumn += current->normal;
+				current = current->next();
       }
     }
     return sumn;
@@ -398,11 +398,11 @@ namespace DLFL {
       sumn = current->normal;
       current = current->next();
       while ( current != head ) {
-	sumg += current->vertex->coords;
-	sumtc += current->texcoord;
-	sumc += current->color;
-	sumn += current->normal;
-	current = current->next();
+				sumg += current->vertex->coords;
+				sumtc += current->texcoord;
+				sumc += current->color;
+				sumn += current->normal;
+				current = current->next();
       }
     }
   }
@@ -415,8 +415,8 @@ namespace DLFL {
       centroid = current->vertex->coords; ++num;
       current = current->next();
       while ( current != head ) {
-	centroid += current->vertex->coords; ++num;
-	current = current->next();
+				centroid += current->vertex->coords; ++num;
+				current = current->next();
       }
       centroid /= num;
     }
@@ -430,8 +430,8 @@ namespace DLFL {
       centc = current->texcoord; ++num;
       current = current->next();
       while ( current != head ) {
-	centc += current->texcoord; ++num;
-	current = current->next();
+				centc += current->texcoord; ++num;
+				current = current->next();
       }
       centc /= num;
     }
@@ -447,8 +447,8 @@ namespace DLFL {
       cenc = current->color; ++num;
       current = current->next();
       while ( current != head ) {
-	cenc += current->color; ++num;
-	current = current->next();
+				cenc += current->color; ++num;
+				current = current->next();
       }
       cenc /= num;
     }
@@ -461,8 +461,8 @@ namespace DLFL {
       int num = 0;
       DLFLFaceVertexPtr current = head;
       do {
-	normal += current->computeNormal(); ++num;
-	current = current->next();
+				normal += current->computeNormal(); ++num;
+				current = current->next();
       } while ( current != head );
       normalize(normal);
     }
@@ -474,16 +474,16 @@ namespace DLFL {
       int num = 0;
       DLFLFaceVertexPtr current = head;
       do {
-	normal += current->computeNormal(); ++num;
-	current = current->next();
+				normal += current->computeNormal(); ++num;
+				current = current->next();
       }
       while ( current != head );
       normal /= num; normalize(normal);
 
       current = head;
       do {
-	current->setNormal(normal);
-	current = current->next();
+				current->setNormal(normal);
+				current = current->next();
       } while ( current != head );
     }
     return normal;
@@ -495,8 +495,8 @@ namespace DLFL {
       current->computeNormal();
       current = current->next();
       while ( current != head ) {
-	current->computeNormal();
-	current = current->next();
+				current->computeNormal();
+				current = current->next();
       }
     }
   }
@@ -512,12 +512,12 @@ namespace DLFL {
       ++num;
       current = current->next();
       while ( current != head ) {
-	ceng += current->vertex->coords;
-	centc += current->texcoord;
-	cenc += current->color;
-	cenn += current->normal;
-	++num;
-	current = current->next();
+				ceng += current->vertex->coords;
+				centc += current->texcoord;
+				cenc += current->color;
+				cenn += current->normal;
+				++num;
+				current = current->next();
       }
       ceng /= num;
       centc /= num;
@@ -532,7 +532,7 @@ namespace DLFL {
       DLFLFaceVertexPtr current = head; 
       ++num; current = current->next();
       while ( current != head ) {
-	++num; current = current->next();
+				++num; current = current->next();
       }
     }
     return num;
@@ -545,8 +545,8 @@ namespace DLFL {
       current->resetType();
       current = current->next();
       while ( current != head ) {
-	current->resetType();
-	current = current->next();
+				current->resetType();
+				current = current->next();
       }
     }
   }
@@ -557,8 +557,8 @@ namespace DLFL {
       current->setFacePtr(this);
       current = current->next();
       while ( current != head ) {
-	current->setFacePtr(this);
-	current = current->next();
+				current->setFacePtr(this);
+				current = current->next();
       }
     }
   }
@@ -569,8 +569,8 @@ namespace DLFL {
       current->setFacePtr(NULL);
       current = current->next();
       while ( current != head ) {
-	current->setFacePtr(NULL);
-	current = current->next();
+				current->setFacePtr(NULL);
+				current = current->next();
       }
     }
   }
@@ -581,8 +581,8 @@ namespace DLFL {
       current->addSelfToVertex();
       current = current->next();
       while ( current != head ) {
-	current->addSelfToVertex();
-	current = current->next();
+				current->addSelfToVertex();
+				current = current->next();
       }
     }
   }
@@ -594,8 +594,8 @@ namespace DLFL {
       current->deleteSelfFromVertex();
       current = current->next();
       while ( current != head ) {
-	current->deleteSelfFromVertex();
-	current = current->next();
+				current->deleteSelfFromVertex();
+				current = current->next();
       }
     }
   }
@@ -606,8 +606,8 @@ namespace DLFL {
       current->addSelfToEdge();
       current = current->next();
       while ( current != head ) {
-	current->addSelfToEdge();
-	current = current->next();
+				current->addSelfToEdge();
+				current = current->next();
       }
     }
   }
@@ -618,8 +618,8 @@ namespace DLFL {
       current->deleteSelfFromEdge();
       current = current->next();
       while ( current != head ) {
-	current->deleteSelfFromEdge();
-	current = current->next();
+				current->deleteSelfFromEdge();
+				current = current->next();
       }
     }
   }
@@ -631,9 +631,9 @@ namespace DLFL {
       current->addSelfToEdge();
       current = current->next();
       while ( current != head ) {
-	current->addSelfToVertex();
-	current->addSelfToEdge();
-	current = current->next();
+				current->addSelfToVertex();
+				current->addSelfToEdge();
+				current = current->next();
       }
     }
   }
@@ -645,9 +645,9 @@ namespace DLFL {
       current->deleteSelfFromEdge();
       current = current->next();
       while ( current != head ) {
-	current->deleteSelfFromVertex();
-	current->deleteSelfFromEdge();
-	current = current->next();
+				current->deleteSelfFromVertex();
+				current->deleteSelfFromEdge();
+				current = current->next();
       }
     }
   }
@@ -668,10 +668,10 @@ namespace DLFL {
       edges[0][index].setFaceVertexPtr1(current);     // First Edge
       current = current->next();
       while ( current != head ) {
-	edges[0][index].setFaceVertexPtr2(current);
-	index++;
-	edges[0][index].setFaceVertexPtr1(current);
-	current = current->next();
+				edges[0][index].setFaceVertexPtr2(current);
+				index++;
+				edges[0][index].setFaceVertexPtr1(current);
+				current = current->next();
       }
     }
     return length;
@@ -687,8 +687,8 @@ namespace DLFL {
       edges.push_back(current->getEdgePtr());
       current = current->next();
       while ( current != head ) {
-	edges.push_back(current->getEdgePtr());
-	current = current->next();
+				edges.push_back(current->getEdgePtr());
+				current = current->next();
       }
     }
   }
@@ -702,8 +702,8 @@ namespace DLFL {
       edges.push_back(current->getEdgePtr());
       current = current->next();
       while ( current != head ) {
-	edges.push_back(current->getEdgePtr());
-	current = current->next();
+				edges.push_back(current->getEdgePtr());
+				current = current->next();
       }
     }
   }
@@ -714,17 +714,29 @@ namespace DLFL {
 
     if ( head )
       {
-	DLFLFaceVertexPtr current = head;
+				DLFLFaceVertexPtr current = head;
 
-	corners.push_back(current);
-	current = current->next();
-	while ( current != head )
+				corners.push_back(current);
+				current = current->next();
+				while ( current != head )
           {
             corners.push_back(current);
             current = current->next();
           }
       }
   }
+
+	DLFLFaceVertexPtr DLFLFace::findFaceVertex( uint vertexId ) const {
+		if(head) {
+			DLFLFaceVertexPtr current = head;
+			do {
+				uint id = current->getVertexID();
+				if( vertexId == id )
+					return current;
+				current = current->next();
+			} while( current != head );
+		}
+	}
 
   // Get the corners and the coords
   void DLFLFace::getCornersAndCoords(DLFLFaceVertexPtrArray& corners, Vector3dArray& coords) {
@@ -739,9 +751,9 @@ namespace DLFL {
       coords.push_back(current->getVertexCoords());
       current = current->next();
       while ( current != head ) {
-	corners.push_back(current);
-	coords.push_back(current->getVertexCoords());
-	current = current->next();
+				corners.push_back(current);
+				coords.push_back(current->getVertexCoords());
+				current = current->next();
       }
     }
   }
@@ -753,8 +765,8 @@ namespace DLFL {
       if ( current == fvptr ) return true;
       current = current->next();
       while ( current != head ) {
-	if ( current == fvptr ) return true;
-	current = current->next();
+				if ( current == fvptr ) return true;
+				current = current->next();
       }
     }
     return false;
@@ -768,16 +780,16 @@ namespace DLFL {
       dfp->getCorners(dfvparray);
       vector<DLFLFaceVertexPtr>::iterator it;
       for ( it = dfvparray.begin(); it != dfvparray.end(); it++){
-	current = head;
-	if (current->getVertexPtr() == (*it)->getVertexPtr())
-	  numSharedVerts++;
-	current = current->next();
-	while (current != head){
-	  if (current->getVertexPtr() == (*it)->getVertexPtr())
-	    numSharedVerts++;
-	  current = current->next();
-	}
-	// cout << numSharedVerts << std::endl;
+				current = head;
+				if (current->getVertexPtr() == (*it)->getVertexPtr())
+					numSharedVerts++;
+				current = current->next();
+				while (current != head){
+					if (current->getVertexPtr() == (*it)->getVertexPtr())
+						numSharedVerts++;
+					current = current->next();
+				}
+				// cout << numSharedVerts << std::endl;
       }//end for it loop
       if (numSharedVerts == 1) return true;
       else return false;
@@ -794,14 +806,14 @@ namespace DLFL {
     current->getVertexPtr()->getFaces(fparr);
     for ( it = fparr.begin(); it != fparr.end(); it++){
       if ((*it) != this) 
-	fparray.push_back((*it));
+				fparray.push_back((*it));
     }	
     current = current->next();
     while (current != head){
       current->getVertexPtr()->getFaces(fparr);
       for ( it = fparr.begin(); it != fparr.end(); it++){
-	if ((*it) != this) 
-	  fparray.push_back((*it));
+				if ((*it) != this) 
+					fparray.push_back((*it));
       }
       current = current->next();
     }
@@ -828,11 +840,11 @@ namespace DLFL {
       closest = current;
       current = current->next();
       while ( current != head ) {
-	dist = normsqr(p - current->vertex->coords);
-	if ( dist < mindist ) {
-	  mindist = dist; closest = current;
-	}
-	current = current->next();
+				dist = normsqr(p - current->vertex->coords);
+				if ( dist < mindist ) {
+					mindist = dist; closest = current;
+				}
+				current = current->next();
       }
     }
     return closest;
@@ -855,12 +867,12 @@ namespace DLFL {
       mindist = dist = normsqr(cur1->vertex->coords - cur2->vertex->coords);
       cur1 = cur1->next();
       while ( cur1 != fp1->head ) {
-	cur2 = fp2->findClosest(cur1->vertex->coords);
-	dist = normsqr(cur1->vertex->coords - cur2->vertex->coords);
-	if ( dist < mindist ) {
-	  mindist = dist; fvp1 = cur1; fvp2 = cur2; 
-	}
-	cur1 = cur1->next();
+				cur2 = fp2->findClosest(cur1->vertex->coords);
+				dist = normsqr(cur1->vertex->coords - cur2->vertex->coords);
+				if ( dist < mindist ) {
+					mindist = dist; fvp1 = cur1; fvp2 = cur2; 
+				}
+				cur1 = cur1->next();
       }
     }
   }
@@ -906,8 +918,8 @@ namespace DLFL {
       current->reverse();
       current = current->next();
       while ( current != head ) {
-	current->reverse();
-	current = current->next();
+				current->reverse();
+				current = current->next();
       }
     }
   }
@@ -917,20 +929,20 @@ namespace DLFL {
     if ( head ) {
       DLFLFaceVertexPtr current = head;
       if ( current->getFacePtr() != this ) {
-	cerr << "Data-structure consistency error!" << endl;
-	cerr << "Vertex : " << current->getVertexID() << endl
-	     << "Face : " << current->getFacePtr()->getID() << endl
-	     << "Edge : " << current->getEdgePtr()->getID() << endl;
-	return verts;
+				cerr << "Data-structure consistency error!" << endl;
+				cerr << "Vertex : " << current->getVertexID() << endl
+						 << "Face : " << current->getFacePtr()->getID() << endl
+						 << "Edge : " << current->getEdgePtr()->getID() << endl;
+				return verts;
       }
 
       if ( current->getVertexPtr() != NULL )
-	verts.push_back( current->getVertexID() );
+				verts.push_back( current->getVertexID() );
       current = current->next();
       while ( current != head ) {
-	if ( current->getVertexPtr() != NULL )
-	  verts.push_back( current->getVertexID() );
-	current = current->next();
+				if ( current->getVertexPtr() != NULL )
+					verts.push_back( current->getVertexID() );
+				current = current->next();
       }
     }
     return verts;
@@ -941,20 +953,20 @@ namespace DLFL {
     if ( head ) {
       DLFLFaceVertexPtr current = head;
       if ( current->getFacePtr() != this ) {
-	cerr << "Data-structure consistency error!" << endl;
-	cerr << "Vertex : " << current->getVertexID() << endl
-	     << "Face : " << current->getFacePtr()->getID() << endl
-	     << "Edge : " << current->getEdgePtr()->getID() << endl;
-	return edges;
+				cerr << "Data-structure consistency error!" << endl;
+				cerr << "Vertex : " << current->getVertexID() << endl
+						 << "Face : " << current->getFacePtr()->getID() << endl
+						 << "Edge : " << current->getEdgePtr()->getID() << endl;
+				return edges;
       }
 
       if ( current->getEdgePtr() != NULL )
-	edges.push_back( current->getEdgeID() );
+				edges.push_back( current->getEdgeID() );
       current = current->next();
       while ( current != head ) {
-	if ( current->getEdgePtr() != NULL )
-	  edges.push_back( current->getEdgeID() );
-	current = current->next();
+				if ( current->getEdgePtr() != NULL )
+					edges.push_back( current->getEdgeID() );
+				current = current->next();
       }
     }
 
@@ -997,9 +1009,9 @@ namespace DLFL {
       cout << "--(" << current->getEdgePtr() << ")-->";
       current = current->next();
       while ( current != head ) {
-	cout << current;
-	cout << "--(" << current->getEdgePtr() << ")-->";
-	current = current->next();
+				cout << current;
+				cout << "--(" << current->getEdgePtr() << ")-->";
+				current = current->next();
       }
       cout << current << endl;
     }
@@ -1015,9 +1027,9 @@ namespace DLFL {
       o << ' ' << index;
       current = current->next();
       while ( current != head ) {
-	index = current->getVertexID() - min_id;
-	o << ' ' << index;
-	current = current->next();
+				index = current->getVertexID() - min_id;
+				o << ' ' << index;
+				current = current->next();
       }
       o << endl;
     }
@@ -1033,10 +1045,10 @@ namespace DLFL {
       ++normal_id_start;
       current = current->next();
       while ( current != head ) {
-	index = current->getVertexID() - min_id;
-	o << ' ' << index << "//" << normal_id_start;
-	++normal_id_start;
-	current = current->next();
+				index = current->getVertexID() - min_id;
+				o << ' ' << index << "//" << normal_id_start;
+				++normal_id_start;
+				current = current->next();
       }
       o << endl;
     }
@@ -1052,10 +1064,10 @@ namespace DLFL {
       ++tex_id_start;
       current = current->next();
       while ( current != head ) {
-	index = current->getVertexID() - min_id;
-	o << ' ' << index << '/' << tex_id_start;
-	++tex_id_start;
-	current = current->next();
+				index = current->getVertexID() - min_id;
+				o << ' ' << index << '/' << tex_id_start;
+				++tex_id_start;
+				current = current->next();
       }
       o << endl;
     }
@@ -1071,10 +1083,10 @@ namespace DLFL {
       ++tex_id_start; ++normal_id_start;
       current = current->next();
       while ( current != head ) {
-	index = current->getVertexID() - min_id;
-	o << ' ' << index << '/' << tex_id_start << '/' << normal_id_start;
-	++tex_id_start; ++normal_id_start;
-	current = current->next();
+				index = current->getVertexID() - min_id;
+				o << ' ' << index << '/' << tex_id_start << '/' << normal_id_start;
+				++tex_id_start; ++normal_id_start;
+				current = current->next();
       }
       o << endl;
     }
@@ -1089,9 +1101,9 @@ namespace DLFL {
       o << "vn " << n[0] << ' ' << n[1] << ' ' << n[2] << endl;
       current = current->next();
       while ( current != head ) {
-	n = current->getNormal();
-	o << "vn " << n[0] << ' ' << n[1] << ' ' << n[2] << endl;
-	current = current->next();
+				n = current->getNormal();
+				o << "vn " << n[0] << ' ' << n[1] << ' ' << n[2] << endl;
+				current = current->next();
       }
     }
   }
@@ -1105,9 +1117,9 @@ namespace DLFL {
       o << "vt " << t[0] << ' ' << t[1] << endl;
       current = current->next();
       while ( current != head ) {
-	t = current->getTexCoords();
-	o << "vt " << t[0] << ' ' << t[1] << endl;
-	current = current->next();
+				t = current->getTexCoords();
+				o << "vt " << t[0] << ' ' << t[1] << endl;
+				current = current->next();
       }
     }
   }
@@ -1120,8 +1132,8 @@ namespace DLFL {
       o << ' ' << current->getIndex();
       current = current->next();
       while ( current != head ) {
-	o << ' ' << current->getIndex();
-	current = current->next();
+				o << ' ' << current->getIndex();
+				current = current->next();
       }
       o << endl;
     }
@@ -1135,8 +1147,8 @@ namespace DLFL {
       o << ' ' << current->getIndex();
       current = current->prev();
       while ( current != head ) {
-	o << ' ' << current->getIndex();
-	current = current->prev();
+				o << ' ' << current->getIndex();
+				current = current->prev();
       }
       o << endl;
     }
@@ -1149,8 +1161,8 @@ namespace DLFL {
       func(current);
       current = current->next();
       while ( current != head ) {
-	func(current);
-	current = current->next();
+				func(current);
+				current = current->next();
       }
     }
   }
@@ -1162,8 +1174,8 @@ namespace DLFL {
       o << current->vertex->coords;
       current = current->next();
       while ( current != face.head ) {
-	o << ", " << current->vertex->coords;
-	current = current->next();
+				o << ", " << current->vertex->coords;
+				current = current->next();
       }
     }
     return o;

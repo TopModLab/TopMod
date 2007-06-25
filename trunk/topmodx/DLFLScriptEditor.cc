@@ -4,7 +4,7 @@
 
 #include <QtGui>
 
-DLFLScriptEditor::DLFLScriptEditor( QWidget *parent, Qt::WindowFlags f ) : QWidget(parent,f), dlfl_module(NULL),dlfl_dict(NULL) {
+DLFLScriptEditor::DLFLScriptEditor( DLFLObjectPtr obj, QWidget *parent, Qt::WindowFlags f ) : QWidget(parent,f), dlfl_module(NULL),dlfl_dict(NULL) {
 
   mTextEdit = new QTextEdit;
   mLineEdit = new Editor;
@@ -36,6 +36,7 @@ DLFLScriptEditor::DLFLScriptEditor( QWidget *parent, Qt::WindowFlags f ) : QWidg
   setLayout(mainLayout);
 
   PyInit( );
+	PyDLFL_PassObject( obj );
 }
 
 DLFLScriptEditor::~DLFLScriptEditor( ) {

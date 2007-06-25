@@ -14,9 +14,9 @@ namespace DLFL {
    ***************/
 
   uint insertEdge( DLFLObjectPtr obj, 
-		   uint faceId1, uint vertId1,
-		   uint faceId2, uint vertId2,
-		   bool set_type = false );
+									 uint &faceId1, uint vertId1,
+									 uint &faceId2, uint vertId2,
+									 bool set_type = false );
 
   /**
    * The general case insertEdge subroutine. Calls one of the insertEdge implementations, 
@@ -34,9 +34,9 @@ namespace DLFL {
 
   // If the cleanup flag is true, any point-spheres created
   // because of the edge deletion will be removed from the object
-  int  deleteEdgeID( DLFLObjectPtr obj, uint edgeId, bool cleanup = true );
+	std::vector<int>  deleteEdgeID( DLFLObjectPtr obj, uint edgeId, bool cleanup = true );
   void deleteEdge( DLFLObjectPtr obj, uint edge_index, bool cleanup = true );
-  void deleteEdge( DLFLObjectPtr obj, DLFLEdgePtr edgeptr, bool cleanup = true );
+  DLFLFacePtrArray deleteEdge( DLFLObjectPtr obj, DLFLEdgePtr edgeptr, bool cleanup = true );
   
   /*****************
    * Collapse Edge *

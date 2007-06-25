@@ -15,7 +15,7 @@ macx {
  #QMAKE_BUNDLE_EXTENSION = .framework
 #} else:unix {
  QMAKE_LFLAGS += -L../../lib
- LIBS += -lvecmat -ldlflcore
+ #LIBS += -lvecmat -ldlflcore
 }
 
 HEADERS += \

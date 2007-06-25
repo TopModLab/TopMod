@@ -292,6 +292,9 @@ namespace DLFL {
     // into the array
     void getCorners(DLFLFaceVertexPtrArray& corners);
 
+		// Helpful for python interface
+		DLFLFaceVertexPtr findFaceVertex( uint vertexId ) const;
+
     // Get the corners and the coordinates
     void getCornersAndCoords(DLFLFaceVertexPtrArray& corners, Vector3dArray& coords);
 

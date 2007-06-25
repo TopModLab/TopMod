@@ -22,7 +22,7 @@ namespace DLFL {
   public :
     static void setLastID( uint id ) {
       if( id > suLastID )
-	suLastID = id;
+				suLastID = id;
     };
 
   protected :
@@ -76,7 +76,7 @@ namespace DLFL {
       : fvpV1(fvp1), fvpV2(fvp2), etType(ETNormal), auxcoords(), auxnormal(), midpoint(), normal(), flags(0)
     {
       if ( update ) {
-	updateNormal();
+				updateNormal();
       }
       updateMidPoint();
       assignID();
@@ -85,7 +85,7 @@ namespace DLFL {
     // Copy constructor
     DLFLEdge(const DLFLEdge& e)
       : fvpV1(e.fvpV1), fvpV2(e.fvpV2), uID(e.uID), etType(e.etType), auxcoords(e.auxcoords), auxnormal(e.auxnormal),
-	midpoint(e.midpoint), normal(e.normal), flags(e.flags)
+				midpoint(e.midpoint), normal(e.normal), flags(e.flags)
     {}
 
     // Destructor
@@ -261,7 +261,7 @@ namespace DLFL {
     void setFaceVertexPtr1(DLFLFaceVertexPtr fvptr, bool update=true) {
       fvpV1 = fvptr;
       if ( update ) {
-	updateNormal();
+				updateNormal();
       }
       updateMidPoint();
     }
@@ -269,7 +269,7 @@ namespace DLFL {
     void setFaceVertexPtr2(DLFLFaceVertexPtr fvptr, bool update=true) {
       fvpV2 = fvptr;
       if ( update ) {
-	updateNormal();
+				updateNormal();
       }
       updateMidPoint();
     }
@@ -277,7 +277,7 @@ namespace DLFL {
     void setFaceVertexPointers(DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2, bool update=true) {
       fvpV1 = fvptr1; fvpV2 = fvptr2;
       if ( update ) {
-	updateNormal();
+				updateNormal();
       }
       updateMidPoint();
     }

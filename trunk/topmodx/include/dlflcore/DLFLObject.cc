@@ -145,7 +145,7 @@ namespace DLFL {
     }
   }
 
-  void DLFLObject::createFace(const Vector3dArray& verts, DLFLMaterialPtr matl, bool set_type) {
+  DLFLFacePtrArray DLFLObject::createFace(const Vector3dArray& verts, DLFLMaterialPtr matl, bool set_type) {
     // Create 2 new faces with the given vertex coordinates. The 2 faces will have the same
     // vertices and share the same edges, but will have opposite rotation orders.
     // This essentially creates a 2 manifold with 2 faces with no volume.
@@ -208,6 +208,12 @@ namespace DLFL {
       addEdgePtr(eptr);
       current1 = current1->next(); current2 = current2->prev();
     }
+
+		DLFLFacePtrArray newverts;
+		newverts.push_back( newface1 );
+		newverts.push_back( newface2 );
+
+		return newverts;
   }
 
   DLFLFaceVertexPtr DLFLObject::createPointSphere(const Vector3d& v, DLFLMaterialPtr matl) {
@@ -260,6 +266,18 @@ namespace DLFL {
     } else { return false; }
   }
 
+  void DLFLObject::walk( uint faceId, 
+														 vector<int> &verts,
+														 vector<int> &edges ) { 
+    DLFLFacePtr fp = findFace( faceId );
+    //vector<int> verts;
+    if( fp ) { 
+      verts = fp->vertexWalk();
+      edges = fp->edgeWalk();
+    }
+    //return verts;
+  }
+	/*
   vector<int> DLFLObject::vertWalk( uint faceId ) { 
     DLFLFacePtr fp = findFace( faceId );
     vector<int> verts;
@@ -277,7 +295,7 @@ namespace DLFL {
     } 
     return edges;
   }
-
+	*/
   void DLFLObject::boundaryWalk(uint face_index) {
     //Find the Face with the given face_index from the FaceList and do a boundary walk on it
     uint i = 0;

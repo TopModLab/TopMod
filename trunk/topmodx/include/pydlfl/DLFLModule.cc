@@ -4,6 +4,11 @@
 #include <DLFLExtrude.hh>
 #include <DLFLSubdiv.hh>
 #include <DLFLDual.hh>
+#include <DLFLConnect.hh>
+
+typedef DLFL::DLFLFaceVertex Corner;
+typedef DLFL::DLFLFaceVertexPtr CornerPtr;
+typedef DLFL::DLFLFaceVertexPtrArray CornerPtrArray;
 
 /// Prototypes
 
@@ -23,21 +28,31 @@ static PyObject *dlfl_subdivide_edge(PyObject *self, PyObject *args);
 static PyObject *dlfl_create_vertex(PyObject *self, PyObject *args);
 static PyObject *dlfl_remove_vertex(PyObject *self, PyObject *args);
 
+static PyObject *dlfl_create_face(PyObject *self, PyObject *args);
+
+/* Remove from then object's lists, then delete from memory */
+static PyObject *dlfl_destroy_vertex(PyObject *self, PyObject *args);
+static PyObject *dlfl_destroy_edge(PyObject *self, PyObject *args);
+static PyObject *dlfl_destroy_face(PyObject *self, PyObject *args);
+
 /* IDs */
 static PyObject *dlfl_faces(PyObject *self, PyObject *args);
 static PyObject *dlfl_edges(PyObject *self, PyObject *args);
 static PyObject *dlfl_verts(PyObject *self, PyObject *args);
-static PyObject *dlfl_faceverts(PyObject *self, PyObject *args);
+static PyObject *dlfl_corners(PyObject *self, PyObject *args);
 
-static PyObject *dlfl_boundary_walk(PyObject *self, PyObject *args);
-static PyObject *dlfl_walk_vertices(PyObject *self, PyObject *args);
-static PyObject *dlfl_walk_edges(PyObject *self, PyObject *args);
+//static PyObject *dlfl_boundary_walk(PyObject *self, PyObject *args);
+static PyObject *dlfl_walk(PyObject *self, PyObject *args);
+static PyObject *dlfl_corner_walk(PyObject *self, PyObject *args);
+//static PyObject *dlfl_walk_vertices(PyObject *self, PyObject *args);
+//static PyObject *dlfl_walk_edges(PyObject *self, PyObject *args);
 
 /* Info */
 static PyObject *dlfl_print_object(PyObject *self, PyObject *args);
 static PyObject *dlfl_vertexInfo(PyObject *self, PyObject *args);
 static PyObject *dlfl_edgeInfo(PyObject *self, PyObject *args);
 static PyObject *dlfl_faceInfo(PyObject *self, PyObject *args);
+static PyObject *dlfl_cornerInfo(PyObject *self, PyObject *args);
 static PyObject *dlfl_centroid(PyObject *self, PyObject *args);
 
 /* Auxiliary */
@@ -45,6 +60,8 @@ static PyObject *dlfl_extrude(PyObject *self, PyObject *args);
 static PyObject *dlfl_subdivide(PyObject *self, PyObject *args);
 static PyObject *dlfl_subdiv_face(PyObject *self, PyObject *args);
 static PyObject *dlfl_dual(PyObject *self, PyObject *args);
+static PyObject *dlfl_connectEdges(PyObject *self, PyObject *args);
+static PyObject *dlfl_connectFaces(PyObject *self, PyObject *args);
 
 /* Transform */
 static PyObject *dlfl_translate(PyObject *self, PyObject *args);
@@ -67,25 +84,33 @@ static PyMethodDef DLFLMethods[] = {
   {"subdivideEdge",  dlfl_subdivide_edge, METH_VARARGS, "Subdivide an Edge."},
 	{"createVertex",   dlfl_create_vertex,  METH_VARARGS, "Create a vertex at (x,y,z)"},
 	{"removeVertex",   dlfl_remove_vertex,  METH_VARARGS, "Remove a vertex by ID"},
+	{"destroyVertex",  dlfl_destroy_vertex, METH_VARARGS, "Remove a vertex from the object"},
+	{"destroyEdge",    dlfl_destroy_edge,   METH_VARARGS, "Remove a edge from the object"},
+	{"createFace",     dlfl_create_face,    METH_VARARGS, "Create a face from a list of coordinates (specified as 3-tuples)"},
+	{"destroyFace",    dlfl_destroy_face,   METH_VARARGS, "Remove a face from the object"},
 	/* IDs */
   {"faces",          dlfl_faces,          METH_VARARGS, "Grab all/selected the faces of the object"},
   {"edges",          dlfl_edges,          METH_VARARGS, "Grab all/selected the edges of the object"},
   {"verts",          dlfl_verts,          METH_VARARGS, "Grab all/selected the vertices of the object"},
-  {"faceverts",      dlfl_faceverts,      METH_VARARGS, "Grab all/selected the face-vertices of the object"},
-  {"walk",           dlfl_boundary_walk,  METH_VARARGS, "walk(int)"},
-  {"walkVertices",   dlfl_walk_vertices,  METH_VARARGS, "walk_vertices(int)"},
-  {"walkEdges",      dlfl_walk_edges,     METH_VARARGS, "walk_edges(int)"},
+  {"corners",        dlfl_corners,        METH_VARARGS, "Grab all/selected the face-vertices of the object"},
+  {"walk",           dlfl_walk,           METH_VARARGS, "Walk around a face and get all of the vertices/edges in lists"},
+  {"cornerWalk",     dlfl_corner_walk,    METH_VARARGS, "Walk around a face and get all of the corners in a list"},
+  /*{"walkVertices",   dlfl_walk_vertices,  METH_VARARGS, "walk_vertices(int)"},
+		{"walkEdges",      dlfl_walk_edges,     METH_VARARGS, "walk_edges(int)"},*/
 	/* Info */
   {"printObject",   dlfl_print_object,   METH_VARARGS, "Print object information"},
   {"vertexInfo",    dlfl_vertexInfo,     METH_VARARGS, "Position,Valence,etc into dictionary"},
   {"edgeInfo",      dlfl_edgeInfo,       METH_VARARGS, "Midpoint,Verts,etc into dictionary"},
   {"faceInfo",      dlfl_faceInfo,       METH_VARARGS, "Centroid,Verts,etc into dictionary"},
+	{"cornerInfo",    dlfl_cornerInfo,     METH_VARARGS, "Face,Vertex,Edge,etc into dictionary"},
   {"centroid",      dlfl_centroid,       METH_VARARGS, "Get centroid of vertices"},
   /* Auxiliary Below */
   {"extrude",        dlfl_extrude,        METH_VARARGS, "Extrude a face"},
   {"subdivide",      dlfl_subdivide,      METH_VARARGS, "Subdivide a mesh"},
   {"subdivFace",     dlfl_subdiv_face,    METH_VARARGS, "Subdivide a Face"},
   {"dual",           dlfl_dual,           METH_VARARGS, "Dual of mesh"},
+  {"connectEdges",   dlfl_connectEdges,   METH_VARARGS, "Connect an edge on one face with another"},
+  {"connectFaces",   dlfl_connectFaces,   METH_VARARGS, "Connect two faces"},
 	/* Transform */
   {"translate",      dlfl_translate,      METH_VARARGS, "Translate Object"},
   {"scale",          dlfl_scale,          METH_VARARGS, "Scale Object"},
@@ -120,10 +145,7 @@ dlfl_load_obj(PyObject *self, PyObject *args)
 
     if( currObj )
       objId = objArray.size()-1; //currObj->getID();
-  } else {
-    objId = -2;
   }
-
   return Py_BuildValue("i", objId );
 }
 /*
@@ -196,9 +218,9 @@ dlfl_save_obj(PyObject *self, PyObject *args)
 static PyObject *
 dlfl_insert_edge(PyObject *self, PyObject *args)
 {
-  int faceId1;
+  uint faceId1;
   int vertId1;
-  int faceId2;
+  uint faceId2;
   int vertId2;
   int edgeId = -1;
 
@@ -210,13 +232,14 @@ dlfl_insert_edge(PyObject *self, PyObject *args)
     currObj->clearSelected( );
   }
 
-  return Py_BuildValue("i", edgeId );
+  return Py_BuildValue("i,(ii)(ii)", edgeId, faceId1, vertId1, faceId2, vertId2 );
 }
 
 static PyObject *
 dlfl_delete_edge(PyObject *self, PyObject *args)
 {
-  int edgeId;
+	int edgeId;
+	std::vector<int> faceIds;
 
   if( !PyArg_ParseTuple(args, "i", &edgeId) )
     return NULL;
@@ -224,12 +247,19 @@ dlfl_delete_edge(PyObject *self, PyObject *args)
     return NULL;
 
   if( currObj ) {
-    DLFL::deleteEdgeID( currObj, edgeId );
+    faceIds = DLFL::deleteEdgeID( currObj, edgeId );
     currObj->clearSelected( );
   }
 
-	Py_INCREF(Py_None);
-  return Py_None;//BuildValue("i", edgeId );
+	PyObject *face;
+	PyObject *list = PyList_New(faceIds.size());
+	for( int i = 0; i < (int)faceIds.size(); i++ ) {
+		face = Py_BuildValue("i", faceIds[i] );
+		PyList_SetItem(list, i, face);
+	}
+
+	Py_INCREF(list);
+	return list;
 }
 
 static PyObject *
@@ -259,7 +289,7 @@ dlfl_subdivide_edge(PyObject *self, PyObject *args)
   if( PyArg_ParseTuple(args, "i", &edgeId) ) {
     int vertId = DLFL::subdivideEdgeID( currObj, edgeId );
     currObj->clearSelected( );
-    return Py_BuildValue("i", vertId );
+    return Py_BuildValue("[i]", vertId );
   } else if( PyArg_ParseTuple(args, "ii", &numDivs, &edgeId ) ) {
     vector<int> verts = DLFL::subdivideEdgeID( currObj, numDivs, edgeId );
     PyObject *vert;
@@ -284,10 +314,16 @@ static PyObject *dlfl_create_vertex(PyObject *self, PyObject *args) {
 	if( !PyArg_ParseTuple(args, "(ddd)", &x, &y, &z) )
 			return NULL;
 
-	uint *fvid = DLFL::createVertex( x, y, z, currObj );
-	uint fid = fvid[0];
-	uint vid = fvid[1];
-	delete fvid; fvid = 0;
+	if( !usingGUI ) {
+		if( currObj == NULL )
+			currObj = new DLFL::DLFLObject;
+	}
+	//uint *fvid = DLFL::createVertex( x, y, z, currObj );
+	DLFL::DLFLFaceVertexPtr fvp = currObj->createPointSphere(Vector3d(x,y,z));
+	uint fid = fvp->getFaceID();//fvid[0];
+	uint vid = fvp->getVertexID();//fvid[1];
+	//delete fvid; fvid = 0;
+	//uint oid = currObj->getID();
   return Py_BuildValue("(ii)", fid, vid );
 }
 
@@ -297,6 +333,82 @@ static PyObject *dlfl_remove_vertex(PyObject *self, PyObject *args) {
 		return NULL;
 	DLFL::removeVertex( currObj, vid );
 
+  Py_INCREF(Py_None);
+  return Py_None;
+}
+
+static PyObject *dlfl_destroy_vertex(PyObject *self, PyObject *args) {
+	uint vid;
+	if( !PyArg_ParseTuple(args, "i", &vid) )
+		return NULL;
+	DLFL::DLFLVertexPtr vp = currObj->findVertex( vid );
+	if( vp != NULL ) {
+		currObj->removeVertex( vp );
+		delete vp;
+	}
+  Py_INCREF(Py_None);
+  return Py_None;
+}
+
+static PyObject *dlfl_create_face(PyObject *self, PyObject *args) {
+	PyObject *list, *tuple, *coord;
+	bool bothNew = false;
+	if( !PyArg_ParseTuple(args, "O!|b", &PyList_Type, &list, &bothNew) )
+		return NULL;
+	int size = PyList_Size(list);
+	if( size < 0 )
+		return NULL;
+
+	Vector3d vec;
+	std::vector<Vector3d> varray;
+	for( int i = 0; i < size; i++ ) {
+		tuple = PyList_GetItem(list, i);
+		if(!PyTuple_Check(tuple)) continue;
+		if(PyTuple_Size(tuple) != 3) continue;
+		for( int j = 0; j < 3; j++ ) {
+			coord = PyTuple_GetItem(tuple, j);
+			if( !PyFloat_Check(coord) ) break;
+			vec[j] = PyFloat_AsDouble( coord );
+		}
+		varray.push_back(vec);
+	}
+
+	DLFL::DLFLFacePtrArray fpa;
+	fpa = currObj->createFace( varray, NULL, bothNew );
+	
+	if( !bothNew )
+		currObj->lastFace()->setType(DLFL::FTNew);
+
+	if( fpa.size() == 2 ) {
+		return Py_BuildValue( "ii", fpa[0]->getID(), fpa[1]->getID() );
+	}
+
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+
+static PyObject *dlfl_destroy_edge(PyObject *self, PyObject *args) {
+	uint eid;
+	if( !PyArg_ParseTuple(args, "i", &eid) )
+		return NULL;
+	DLFL::DLFLEdgePtr ep = currObj->findEdge( eid );
+	if( ep != NULL ) {
+		currObj->removeEdge( ep );
+		delete ep;
+	}
+  Py_INCREF(Py_None);
+  return Py_None;
+}
+
+static PyObject *dlfl_destroy_face(PyObject *self, PyObject *args) {
+	uint fid;
+	if( !PyArg_ParseTuple(args, "i", &fid) )
+		return NULL;
+	DLFL::DLFLFacePtr fp = currObj->findFace( fid );
+	if( fp != NULL ) {
+		currObj->removeFace( fp );
+		delete fp;
+	}
   Py_INCREF(Py_None);
   return Py_None;
 }
@@ -412,7 +524,7 @@ dlfl_verts(PyObject *self, PyObject *args)
 }
 
 static PyObject *
-dlfl_faceverts(PyObject *self, PyObject *args)
+dlfl_corners(PyObject *self, PyObject *args)
 {
   if( !currObj ) {
     Py_INCREF(Py_None);
@@ -428,19 +540,19 @@ dlfl_faceverts(PyObject *self, PyObject *args)
 
   PyObject *fvlist=0, *fvert=0;
   if(selected) {
-    DLFL::DLFLFaceVertexPtrArray fvpa = currObj->sel_fvptr_array;
+    CornerPtrArray fvpa = currObj->sel_fvptr_array;
     fvlist = PyList_New(fvpa.size());
     for( int i = 0; i < (int)fvpa.size(); i++ ) {
       fvert = Py_BuildValue("(ii)", fvpa[i]->getFaceID(), fvpa[i]->getVertexID() );
       PyList_SetItem(fvlist, i, fvert);
     }
   } else {
-    DLFL::DLFLFaceVertexPtrArray fvpa;
+    CornerPtrArray fvpa;
     DLFL::DLFLFacePtrList fpl = currObj->getFaceList();
     DLFL::DLFLFacePtrList::iterator it; int i;
     for( i = 0, it = fpl.begin(); it != fpl.end(); i++, it++ ) {
-      DLFL::DLFLFaceVertexPtr head = (*it)->front();
-      DLFL::DLFLFaceVertexPtr curr = head;
+      CornerPtr head = (*it)->front();
+      CornerPtr curr = head;
       do {
 	fvpa.push_back(curr);
 	DLFL::advance(curr);
@@ -455,7 +567,7 @@ dlfl_faceverts(PyObject *self, PyObject *args)
   Py_INCREF(fvlist);
   return fvlist;
 }
-
+/*
 static PyObject *
 dlfl_boundary_walk(PyObject *self, PyObject *args) {
   int faceId;
@@ -469,30 +581,63 @@ dlfl_boundary_walk(PyObject *self, PyObject *args) {
   Py_INCREF(Py_None);
   return Py_None;
 }
-
-static PyObject *dlfl_walk_vertices(PyObject *self, PyObject *args) {
+*/
+static PyObject *dlfl_corner_walk(PyObject *self, PyObject *args) {
   int faceId;
 
-  vector<int> verts; // output: edges walked
-  PyObject *list; // py output: edges walked
-  PyObject *vert; // for looping
+  vector<int> verts; // output: verts walked
+  vector<int> edges; // not using here, just to pass
+  PyObject *list; // py output: corners walked
+  PyObject *corner; // for looping
 
   if( !currObj )
     return NULL;
 
   if( !PyArg_ParseTuple(args, "i", &faceId) )
     return NULL;
-  verts = currObj->vertWalk( faceId );
+	currObj->walk( faceId, verts, edges );
 
   list = PyList_New(verts.size());
   for( int i = 0; i < verts.size(); i++) {
-    vert = Py_BuildValue("i", verts[i]);
-    PyList_SetItem(list, i, vert);
+    corner = Py_BuildValue("(ii)", faceId, verts[i]);
+    PyList_SetItem(list, i, corner);
   }
   Py_INCREF(list);
   return list;
 }
 
+static PyObject *dlfl_walk(PyObject *self, PyObject *args) {
+  int faceId; // input: face to walk
+
+	vector<int> verts; // output: verts walked
+  vector<int> edges; // output: edges walked
+  PyObject *vlist; // py output: verts walked
+  PyObject *elist; // py output: edges walked
+	PyObject *vert; // for looping
+  PyObject *edge; // for looping
+  
+  if( !currObj )
+    return NULL;
+
+  if( !PyArg_ParseTuple(args, "i", &faceId) )
+    return NULL;
+  currObj->walk( faceId, verts, edges );
+
+	vlist = PyList_New(verts.size());
+	for( int i = 0; i < verts.size(); i++ ) {
+		vert = Py_BuildValue("i", verts[i]);
+		PyList_SetItem(vlist, i, vert);
+	}
+  elist = PyList_New(edges.size());
+  for( int i = 0; i < edges.size(); i++) {
+    edge = Py_BuildValue("i", edges[i]);
+    PyList_SetItem(elist, i, edge);
+  }
+  //Py_INCREF(vlist);
+  //Py_INCREF(elist);
+  return Py_BuildValue("OO", vlist, elist);
+}
+/*
 static PyObject *dlfl_walk_edges(PyObject *self, PyObject *args) {
   int faceId; // input: face to walk
 
@@ -515,7 +660,7 @@ static PyObject *dlfl_walk_edges(PyObject *self, PyObject *args) {
   Py_INCREF(list);
   return list;
 }
-
+*/
 static PyObject *
 dlfl_print_object(PyObject *self, PyObject *args) {
   if( !currObj )
@@ -531,34 +676,83 @@ static PyObject *dlfl_vertexInfo(PyObject *self, PyObject *args) {
 	if( !currObj ) {
 		Py_INCREF(Py_None);
 		return Py_None;
-	} else {
-		int id;
+	}
+
+	int id;
 		if( !PyArg_ParseTuple(args, "i", &id) )
 			return NULL;
 		DLFL::DLFLVertexPtr vp = currObj->findVertex(id);
+		if( !vp ) {
+			Py_INCREF(Py_None);
+			return Py_None;
+		}
 		const double *coords = (vp->getCoords()).getCArray();
 		int valence = vp->valence();
-		return Py_BuildValue("{s:i,s:(ddd),s:i}", 
-												 "id", id, 
+		DLFL::DLFLVertexType vt = vp->getType();
+		char* type = new char[10];
+		switch( vt ) {
+		case 0:
+			strcpy(type, "normal");
+			break;
+		case 1:
+			strcpy(type, "newFace");
+			break;
+		case 2:
+			strcpy(type, "newEdge");
+			break;
+		case 3:
+			strcpy(type, "new");
+			break;
+		case 4 :
+			strcpy(type, "old");
+			break;
+		case 5:
+			strcpy(type, "newSub");
+			break;
+		case 6 :
+			strcpy(type, "wireIn");
+			break;
+		case 7 :
+			strcpy(type, "wire");
+			break;
+		case 8 :
+			strcpy(type, "wireSub");
+			break;
+		case 9 :
+			strcpy(type, "wireSubIn");
+			break;
+		default :
+			strcpy(type, "normal");
+		}
+
+		PyObject *info = Py_BuildValue("{s:i,s:s,s:(ddd),s:i}", 
+												 "id", id,
+												 "type", type,
 												 "coords", coords[0], coords[1], coords[2],
 												 "valence", valence);
-	}
+
+		delete [] type;
+		return info;
 }
 
 static PyObject *dlfl_edgeInfo(PyObject *self, PyObject *args) { 
 	if( !currObj ) {
 		Py_INCREF(Py_None);
 		return Py_None;
-	} else {
+	}
+
 		int id;
 		if( !PyArg_ParseTuple(args, "i", &id) )
 			return NULL;
 		DLFL::DLFLEdgePtr ep = currObj->findEdge(id);
+		if( !ep ) {
+			Py_INCREF(Py_None);
+			return Py_None;
+		}
 		const double *midpoint = (ep->getMidPoint()).getCArray();
 		const double *normal = (ep->getNormal()).getCArray();
 
-		DLFL::DLFLFaceVertexPtr fvpa;
-		DLFL::DLFLFaceVertexPtr fvpb;
+		CornerPtr fvpa, fvpb;
 		ep->getFaceVertexPointers( fvpa, fvpb );
 		int fa = fvpa->getFaceID();
 		int va = fvpa->getVertexID();
@@ -567,32 +761,142 @@ static PyObject *dlfl_edgeInfo(PyObject *self, PyObject *args) {
 
 		double length = ep->length();
 
-		return Py_BuildValue("{s:i,s:(ddd),s:(ddd),s:(ii),s:(ii),s:d}", 
-												 "id", id, 
+		DLFL::DLFLEdgeType et = ep->getType();
+		char* type = new char[10];
+		switch( et ) {
+		case 0:
+			strcpy(type, "normal");
+			break;
+		case 1:
+			strcpy(type, "new");
+			break;
+		case 2:
+			strcpy(type, "collapse");
+			break;
+		case 3:
+			strcpy(type, "collapseAux");
+			break;
+		case 4 :
+			strcpy(type, "original");
+			break;
+		case 5:
+			strcpy(type, "convexHull");
+			break;
+		case 6 :
+			strcpy(type, "noDelete");
+			break;
+		case 7 :
+			strcpy(type, "delete");
+			break;
+		default :
+			strcpy(type, "normal");
+		}
+
+		PyObject *info = Py_BuildValue("{s:i,s:s,s:(ddd),s:(ddd),s:(ii),s:(ii),s:d}", 
+												 "id", id,
+												 "type", type,
 												 "midpoint", midpoint[0], midpoint[1], midpoint[2],
 												 "normal", normal[0], normal[1], normal[2],
-												 "fvA", fa, va,
-												 "fvB", fb, vb,
+												 "cornerA", fa, va,
+												 "cornerB", fb, vb,
 												 "length", length );
-	}
+		delete [] type;
+		return info;
+
 }
 
 static PyObject *dlfl_faceInfo(PyObject *self, PyObject *args) { 
 	if( !currObj ) {
 		Py_INCREF(Py_None);
 		return Py_None;
-	} else {
+	}
+
 		int id;
 		if( !PyArg_ParseTuple(args, "i", &id) )
 			return NULL;
 		DLFL::DLFLFacePtr fp = currObj->findFace(id);
+		if( !fp ) {
+			Py_INCREF(Py_None);
+			return Py_None;
+		}
+		DLFL::DLFLFaceType ft = fp->getType();
 		const double *centroid = (fp->geomCentroid()).getCArray();
 		const double *normal = (fp->getNormal(true)).getCArray();
-		return Py_BuildValue("{s:i,s:(ddd),s:(ddd),s:i}", 
-												 "id", id, 
-												 "centroid", centroid[0], centroid[1], centroid[2],
-												 "normal", normal[0], normal[1], normal[2],
-												 "size", fp->size());
+
+		char* type = new char[10];
+		switch( ft ) {
+		case 0:
+			strcpy(type, "normal");
+			break;
+		case 1:
+			strcpy(type, "new");
+			break;
+		case 2:
+			strcpy(type, "hole");
+			break;
+		case 3:
+			strcpy(type, "holeIn");
+			break;
+		case 4 :
+			strcpy(type, "wire");
+			break;
+		default :
+			strcpy(type, "normal");
+		}
+
+		PyObject *info = Py_BuildValue("{s:i,s:s,s:(ddd),s:(ddd),s:i}", 
+																	"id", id,
+																	"type", type,
+																	"centroid", centroid[0], centroid[1], centroid[2],
+																	"normal", normal[0], normal[1], normal[2],
+																	"size", fp->size());
+		delete [] type;
+		return info;
+}
+
+static PyObject *dlfl_cornerInfo(PyObject *self, PyObject *args) {
+	if( !currObj ) {
+		Py_INCREF(Py_None);
+		return Py_None;
+	} else {
+		int fid, vid;
+		if( !PyArg_ParseTuple(args, "(ii)", &fid, &vid) )
+			return NULL;
+		DLFL::DLFLFacePtr fp = currObj->findFace(fid);
+		if( !fp ) {
+			Py_INCREF(Py_None);
+			return Py_None;
+		}
+		DLFL::DLFLFaceVertexPtr fvp = fp->findFaceVertex(vid);
+		if( !fvp ) {
+			Py_INCREF(Py_None);
+			return Py_None;
+		}
+		int eid = fvp->getEdgeID();
+
+		DLFL::DLFLFaceVertexType fvt = fvp->getType();
+		char* type = new char[10];
+		switch( fvt ) {
+		case 0:
+			strcpy(type, "normal");
+			break;
+		case 1:
+			strcpy(type, "new");
+			break;
+		case 2:
+			strcpy(type, "wire");
+			break;
+		default :
+			strcpy(type, "normal");
+		}
+
+		PyObject *info = Py_BuildValue("{s:i,s:i,s:i,s:s}", 
+																	 "face", fid,
+																	 "vertex", vid,
+																	 "edge", eid,
+																	 "type", type );
+		delete [] type;
+		return info;
 	}
 }
 
@@ -854,6 +1158,30 @@ PyObject *dlfl_dual(PyObject *self, PyObject *args)
   Py_INCREF(Py_None);
   return Py_None;
 }
+
+static PyObject *dlfl_connectEdges(PyObject *self, PyObject *args) { 
+	int edgeId1, edgeId2;
+	int faceId1, faceId2;
+	bool loopCheck = false;
+
+	if( !PyArg_ParseTuple(args, "(ii)(ii)|b", &edgeId1, &faceId1, &edgeId2, &faceId2, &loopCheck ) )
+		return NULL;
+
+	DLFL::DLFLEdgePtr e1 = currObj->findEdge(edgeId1);
+	DLFL::DLFLEdgePtr e2 = currObj->findEdge(edgeId2);
+	DLFL::DLFLFacePtr f1 = currObj->findFace(faceId1);
+	DLFL::DLFLFacePtr f2 = currObj->findFace(faceId2);
+
+	if( loopCheck )
+		DLFL::connectEdges( currObj, e1, f1, e2, f2 );
+	else
+		DLFL::connectEdgesWithoutLoopCheck( currObj, e1, f1, e2, f2 );
+
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+
+static PyObject *dlfl_connectFaces(PyObject *self, PyObject *args) { return NULL; }
 
 static PyObject *dlfl_translate(PyObject *self, PyObject *args) { return NULL; }
 static PyObject *dlfl_scale(PyObject *self, PyObject *args) { return NULL; }

@@ -13,9 +13,9 @@ namespace DLFL {
    ***************/
 
   uint insertEdge( DLFLObjectPtr obj, 
-		   uint faceId1, uint vertId1,
-		   uint faceId2, uint vertId2,
-		   bool set_type ) {
+									 uint &faceId1, uint vertId1,
+									 uint &faceId2, uint vertId2,
+									 bool set_type ) {
 
     if( !obj )
       return 0;
@@ -57,24 +57,27 @@ namespace DLFL {
     if( fvptr1 && fvptr2 ) {
       eptr = insertEdge( obj, fvptr1, fvptr2, set_type );
       id = eptr->getID( );
+
+			faceId1 = fvptr1->getFaceID();
+			faceId2 = fvptr2->getFaceID();
     }
     return id;
   }
 
   DLFLEdgePtr insertEdge(  DLFLObjectPtr obj, 
-			   DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2, 
-			   bool set_type, DLFLMaterialPtr matl ) {
+													 DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2, 
+													 bool set_type, DLFLMaterialPtr matl ) {
     if( coFacial(fvptr1, fvptr2) ) {
       if( fvptr1 != fvptr2 )
-	return insertEdgeCoFacial( obj, fvptr1, fvptr2, set_type );
+				return insertEdgeCoFacial( obj, fvptr1, fvptr2, set_type );
       return NULL;
     }
     return insertEdgeNonCoFacial( obj, fvptr1, fvptr2, matl );
   }
 
   DLFLEdgePtr insertEdgeCoFacial( DLFLObjectPtr obj, 
-				  DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2, 
-				  bool set_type ) {
+																	DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2, 
+																	bool set_type ) {
     //Insert an edge between 2 corners in the same face.Doesn 't check if both
     // corners are in the same face or not
     // Insertion of the Edge will split the Face into 2 faces
@@ -239,15 +242,23 @@ namespace DLFL {
    * Delete Edge *
    ***************/
 
-  int deleteEdgeID( DLFLObjectPtr obj, uint edgeId, bool cleanup ) {
+	std::vector<int> deleteEdgeID( DLFLObjectPtr obj, uint edgeId, bool cleanup ) {
+		std::vector<int> faceids;
+
     DLFLEdgePtr eptr = obj->findEdge( edgeId );
-    deleteEdge( obj, eptr, cleanup );
-    return edgeId;
+    DLFLFacePtrArray fpa = deleteEdge( obj, eptr, cleanup );
+		if( fpa.size() > 0 ) {
+			for( int i=0; i < fpa.size(); i++ )
+				faceids.push_back( fpa[i]->getID() );
+		}
+		return faceids;
   }
 
-  void deleteEdge( DLFLObjectPtr obj, DLFLEdgePtr edgeptr, bool cleanup ) {
+  DLFLFacePtrArray deleteEdge( DLFLObjectPtr obj, DLFLEdgePtr edgeptr, bool cleanup ) {
     DLFLFaceVertexPtr fvpV1, fvpV2;
     DLFLFacePtr f1, f2;
+
+		DLFLFacePtrArray rfpa;
 
     fvpV1 = NULL;
     fvpV2 = NULL;
@@ -279,10 +290,10 @@ namespace DLFL {
       DLFLFaceVertexPtr next, temp = NULL;
       temp = f2->front();
       while (temp != fvpV2) {
-	next = temp->next();
-	f2->deleteVertexPtr(temp);
-	f1->addVertexPtr(temp);
-	temp = next;
+				next = temp->next();
+				f2->deleteVertexPtr(temp);
+				f1->addVertexPtr(temp);
+				temp = next;
       }
 
       //Remove fvpV2 from f2
@@ -305,6 +316,7 @@ namespace DLFL {
       f2->destroy();
       obj->removeFace(f2);
       delete f2;
+			rfpa.push_back(f1);
     } else {
       //Two edge sides belong to same face
 
@@ -312,7 +324,9 @@ namespace DLFL {
       // Without loss of generality, f1 will be used to refer to the Face
 
       // 1 new face will be created.
-      DLFLFacePtr nfp = new DLFLFace( );//f1->material());
+      DLFLFacePtr nfp = new DLFLFace( f1->material());
+			rfpa.push_back(f1);
+			rfpa.push_back(nfp);
       DLFLFaceVertexPtr fvpTemp, temp;
 
       //Reorder the face so that face starts at vertex after fvpV2
@@ -322,32 +336,32 @@ namespace DLFL {
       // Don 't add fvpV2 unless fvpV2 is right after fvpV1, in which case we will have a point sphere
       fvpTemp = fvpV1->next();
       if (fvpTemp == fvpV2) {
-	//Add fvpV2.nfp will be a point sphere.Add a copy since fvpV2 will be deleted later on
-	// Since nfp will be a point sphere adding a copy will not affect any other pointers
-	temp = nfp->addVertex(fvpV2);
-	temp->addSelfToVertex();
-	temp->setEdgePtr(NULL);
+				//Add fvpV2.nfp will be a point sphere.Add a copy since fvpV2 will be deleted later on
+				// Since nfp will be a point sphere adding a copy will not affect any other pointers
+				temp = nfp->addVertex(fvpV2);
+				temp->addSelfToVertex();
+				temp->setEdgePtr(NULL);
       }
       //Loop will execute only if nfp is not a point sphere
       while (fvpTemp != fvpV2) {
-	temp = fvpTemp->next();
-	f1->deleteVertexPtr(fvpTemp);
-	nfp->addVertexPtr(fvpTemp);
-	fvpTemp = temp;
+				temp = fvpTemp->next();
+				f1->deleteVertexPtr(fvpTemp);
+				nfp->addVertexPtr(fvpTemp);
+				fvpTemp = temp;
       }
 
       //Remove fvpV2 from f1 and free the pointer.Remove fvpV2 from face - vertex - list of its vertex also
       f1->deleteVertexPtr(fvpV2);
       fvpV2->deleteSelfFromVertex();
       delete fvpV2;
-
+			
       //Now check if fvpV1 is the only vertex in f1.If so f1 becomes a point sphere
       // Don 't delete fvpV1 from f1. Otherwise delete fvpV1 from f1 and free the pointer
       if (fvpV1->next() != fvpV1) {
-	//Remove fvpV1 from the face - vertex - list of its vertex also
-	f1->deleteVertexPtr(fvpV1);
-	fvpV1->deleteSelfFromVertex();
-	delete fvpV1;
+				//Remove fvpV1 from the face - vertex - list of its vertex also
+				f1->deleteVertexPtr(fvpV1);
+				fvpV1->deleteSelfFromVertex();
+				delete fvpV1;
       }
       //The Edge can now be removed from the EdgeList
       // Free the pointer also, since edge_list owns the object pointed to by edgeptr
@@ -359,42 +373,47 @@ namespace DLFL {
 
       //If f1 ends up being a point sphere, reset the EdgePtr field of it 's only corner
       if (f1->size() == 1) {
-	DLFLFaceVertexPtr fvp = f1->firstVertex();
-	//DLFLVertexPtr vp = fvp->vertex;
-	//obj->removeVertex(vp); delete vp;
+				DLFLFaceVertexPtr fvp = f1->firstVertex();
+				//DLFLVertexPtr vp = fvp->vertex;
+				//obj->removeVertex(vp); delete vp;
 
-	fvp->setEdgePtr(NULL);
-	//f1 is now a PointSphere
+				fvp->setEdgePtr(NULL);
+				//f1 is now a PointSphere
       }
       //Check if we have to cleanup point - spheres
       if (cleanup) {
-	//If either f1 or nfp is a point - sphere, completely remove it from the
-	// object and also the vertex in that face
-	DLFLFaceVertexPtr fvp;
-	DLFLVertexPtr vp;
+				//If either f1 or nfp is a point - sphere, completely remove it from the
+				// object and also the vertex in that face
+				DLFLFaceVertexPtr fvp;
+				DLFLVertexPtr vp;
 
-	if (f1->size() == 1) {
-	  fvp = f1->firstVertex();
-	  vp = fvp->vertex;
-	  obj->removeVertex(vp);
-	  delete vp;
+				if (f1->size() == 1) {
+					fvp = f1->firstVertex();
+					vp = fvp->vertex;
+					obj->removeVertex(vp);
+					delete vp;
 
-	  f1->destroy();
-	  obj->removeFace(f1);
-	  delete f1;
-	}
-	if (nfp->size() == 1) {
-	  fvp = nfp->firstVertex();
-	  vp = fvp->vertex;
-	  obj->removeVertex(vp);
-	  delete vp;
+					f1->destroy();
+					obj->removeFace(f1);
+					if(!rfpa.empty())
+						rfpa.erase( rfpa.begin() );
+					delete f1;
+				}
+				if (nfp->size() == 1) {
+					fvp = nfp->firstVertex();
+					vp = fvp->vertex;
+					obj->removeVertex(vp);
+					delete vp;
 
-	  nfp->destroy();
-	  obj->removeFace(nfp);
-	  delete nfp;
-	}
+					nfp->destroy();
+					obj->removeFace(nfp);
+					if(!rfpa.empty())
+						rfpa.erase( --(rfpa.end()) );
+					delete nfp;
+				}
       }
     }
+		return rfpa;
   }
 
   void deleteEdge(DLFLObjectPtr obj, uint edge_index, bool cleanup) {
@@ -497,12 +516,12 @@ namespace DLFL {
     //Do cleanup of 2 - gons if boolean flag is true
     if (cleanup == true) {
       if (ep1next->getOtherVertexPointer(vp1) == ep1prev->getOtherVertexPointer(vp1)) {
-	//Remove ep1next
-	deleteEdge(obj, ep1next, true);
+				//Remove ep1next
+				deleteEdge(obj, ep1next, true);
       }
       if (ep2next->getOtherVertexPointer(vp1) == ep2prev->getOtherVertexPointer(vp1)) {
-	//Remove ep2prev
-	deleteEdge(obj, ep2prev, true);
+				//Remove ep2prev
+				deleteEdge(obj, ep2prev, true);
       }
     }
 
@@ -643,7 +662,7 @@ namespace DLFL {
 
     if( vpa.size() > 0 ) {
       for(int i = 0; i < (int)vpa.size(); i++ ) {
-	vIDs.push_back( vpa[i]->getID() );
+				vIDs.push_back( vpa[i]->getID() );
       }
     }
 
@@ -666,16 +685,16 @@ namespace DLFL {
       dp = (p2 - p1) / double (num_divs);
       eptr = edgeptr;
       for (int i = 1; i < num_divs; ++i) {
-	p = p1 + double (i) * dp;
-	newvptr = subdivideEdge(obj, eptr, set_type);
-	newvptr->coords = p;
-	newVerts.push_back(newvptr);
+				p = p1 + double (i) * dp;
+				newvptr = subdivideEdge(obj, eptr, set_type);
+				newvptr->coords = p;
+				newVerts.push_back(newvptr);
 	
-	//Find the last edge from the edge_list.
-	// NOTE:This is not an arbitrary choice
-	// The last edge in the list will be the edge from midpoint
-	// to the second vertex(p1) of the original edge
-	eptr = obj->lastEdge( );
+				//Find the last edge from the edge_list.
+				// NOTE:This is not an arbitrary choice
+				// The last edge in the list will be the edge from midpoint
+				// to the second vertex(p1) of the original edge
+				eptr = obj->lastEdge( );
       }
     } else {
       //Simple call the regular subdivideEdge
@@ -714,9 +733,9 @@ namespace DLFL {
       //Given number is a scale factor
       // Clamp scale factor to lie between 0.01 and 0.99
       if (num > 0.99)
-	num = 0.99;
+				num = 0.99;
       else if (num < 0.01)
-	num = 0.01;
+				num = 0.01;
 
       mid = (ep1 + ep2) * 0.5;
       mp1 = num * ep1 + (1.0 - num) * mid;
@@ -727,9 +746,9 @@ namespace DLFL {
       double maxoffset = edgeptr->length() / 2.0 - 0.01;
 
       if (num < 0.01)
-	num = 0.01;
+				num = 0.01;
       else if (num > maxoffset)
-	num = maxoffset;
+				num = maxoffset;
 
       Vector3d evec = ep2 - ep1;
 
@@ -787,7 +806,7 @@ namespace DLFL {
       ++first;
       ++num_edges;
       if (!(ep->isSelfLoop()))
-	subdivideEdge(obj,num_divs, ep, set_type);
+				subdivideEdge(obj,num_divs, ep, set_type);
     }
   }
 
@@ -871,15 +890,15 @@ namespace DLFL {
       edge->getFacePointers(fp1,fp2);
 
       if ( fp1 != fp2 ) {
-	Vector3d fp1n = fp1->computeNormal();
-	Vector3d fp2n = fp2->computeNormal();
-	if ( Abs(fp1n*fp2n-1.0) < 1.0e-5 ) {
-	  // Normals of faces on both sides of edge are same
-	  // This edge can be deleted
-	  deletion_list.push_back(edge);
-	}
+				Vector3d fp1n = fp1->computeNormal();
+				Vector3d fp2n = fp2->computeNormal();
+				if ( Abs(fp1n*fp2n-1.0) < 1.0e-5 ) {
+					// Normals of faces on both sides of edge are same
+					// This edge can be deleted
+					deletion_list.push_back(edge);
+				}
       } else
-	deletion_list.push_back(edge);
+				deletion_list.push_back(edge);
     }
 
     first = deletion_list.begin(); last = deletion_list.end();
@@ -902,15 +921,15 @@ namespace DLFL {
       edge->getFacePointers(fp1,fp2);
 
       if ( fp1 != fp2 ) {
-	Vector3d fp1n = fp1->computeNormal();
-	Vector3d fp2n = fp2->computeNormal();
-	if ( Abs(fp1n*fp2n-1.0) < 1.0e-5 ) {
-	  // Normals of faces on both sides of edge are same
-	  // This edge can be deleted
-	  deletion_list.push_back(edge);
-	}
+				Vector3d fp1n = fp1->computeNormal();
+				Vector3d fp2n = fp2->computeNormal();
+				if ( Abs(fp1n*fp2n-1.0) < 1.0e-5 ) {
+					// Normals of faces on both sides of edge are same
+					// This edge can be deleted
+					deletion_list.push_back(edge);
+				}
       } else
-	deletion_list.push_back(edge);
+				deletion_list.push_back(edge);
     }
 
     first = deletion_list.begin(); last = deletion_list.end();
@@ -932,11 +951,11 @@ namespace DLFL {
     while ( ffirst != flast ) {
       fp = (*ffirst); ++ffirst;
       if ( fp->size() == 2 ) {
-	// Face is a 2-gon.
-	// Get one of the edges in the face and delete it
-	DLFLFaceVertexPtr fvp = fp->front();
-	DLFLEdgePtr ep = fvp->getEdgePtr();
-	deleteEdge(obj,ep,true);
+				// Face is a 2-gon.
+				// Get one of the edges in the face and delete it
+				DLFLFaceVertexPtr fvp = fp->front();
+				DLFLEdgePtr ep = fvp->getEdgePtr();
+				deleteEdge(obj,ep,true);
       }
     }
   }
@@ -958,29 +977,29 @@ namespace DLFL {
       vp = (*vfirst); ++vfirst;
       // If vp is a valence 2 vertex, it will be removed, so increment the iterator now itself
       if ( vp->valence() == 2 ) {
-	vp->getFaceVertices(fvparray);
-	vp->getEdges(eparray);
+				vp->getFaceVertices(fvparray);
+				vp->getEdges(eparray);
 
-	// Pick the first face vertex in the array
-	fvp = fvparray[0];
+				// Pick the first face vertex in the array
+				fvp = fvparray[0];
 
-	// Find the previous and next corners to fvp
-	pfvp = fvp->prev(); nfvp = fvp->next();
+				// Find the previous and next corners to fvp
+				pfvp = fvp->prev(); nfvp = fvp->next();
 
-	if ( pfvp == nfvp ) {
-	  // We have a disconnected 2-gon (consisting of 2 faces, 2 vertices and 2 edges)
-	  // This component will be left as is. Deleting this component is tricky, since
-	  // we are traversing the vertex list and can't remove vertices arbitrarily
-	  // We can keep track of such cases and handle them outside the loop
-	} else {
-	  // Insert an edge between pfvp and nfvp
-	  // We know that both belong to the same face
-	  insertEdgeCoFacial(obj,pfvp,nfvp);
+				if ( pfvp == nfvp ) {
+					// We have a disconnected 2-gon (consisting of 2 faces, 2 vertices and 2 edges)
+					// This component will be left as is. Deleting this component is tricky, since
+					// we are traversing the vertex list and can't remove vertices arbitrarily
+					// We can keep track of such cases and handle them outside the loop
+				} else {
+					// Insert an edge between pfvp and nfvp
+					// We know that both belong to the same face
+					insertEdgeCoFacial(obj,pfvp,nfvp);
 
-	  // Now delete the 2 edges incident on the valence-2 vertex with cleanup
-	  deleteEdge(obj,eparray[0],true);
-	  deleteEdge(obj,eparray[1],true);
-	}
+					// Now delete the 2 edges incident on the valence-2 vertex with cleanup
+					deleteEdge(obj,eparray[0],true);
+					deleteEdge(obj,eparray[1],true);
+				}
 
       }
     }
@@ -1006,7 +1025,7 @@ namespace DLFL {
     while ( vl_first != vl_last ) {
       vp = (*vl_first); ++vl_first;
       if ( vp->valence() == 2 ) 
-	splitvp.push_back(vp);
+				splitvp.push_back(vp);
     }
 
     vl_first = splitvp.begin(); vl_last = splitvp.end();

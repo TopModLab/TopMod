@@ -189,7 +189,7 @@ undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimi
 		#ifdef WITH_PYTHON
 			//the script editor widget will be placed into a QDockWidget
 			//and will be dockable in the top and bottom sections of the main window	
-	mScriptEditor = new DLFLScriptEditor( );
+	mScriptEditor = new DLFLScriptEditor( &object );
 	mScriptEditorDockWidget = new QDockWidget(tr("Script Editor"), this);
 	mScriptEditorDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
 	mScriptEditorDockWidget->setWidget(mScriptEditor);

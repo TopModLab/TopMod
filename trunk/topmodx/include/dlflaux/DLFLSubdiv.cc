@@ -43,14 +43,14 @@ namespace DLFL {
       vp->getFaceVertices(fvparray);
       valence = fvparray.size();
       if ( valence > 0 ) {
-	p = vp->coords;
-	op.reset();
-	for (int i=0; i < valence; ++i)
-	  op += (fvparray[i]->next())->getVertexCoords();
+				p = vp->coords;
+				op.reset();
+				for (int i=0; i < valence; ++i)
+					op += (fvparray[i]->next())->getVertexCoords();
 	
-	beta = ( 0.625 - sqr( 0.375 + 0.25 * cos( 2.0*M_PI/double(valence) ) ) ) / double(valence);
+				beta = ( 0.625 - sqr( 0.375 + 0.25 * cos( 2.0*M_PI/double(valence) ) ) ) / double(valence);
 	
-	vp->coords = op * beta + (1.0 - valence*beta)*p;
+				vp->coords = op * beta + (1.0 - valence*beta)*p;
       }
     }
 
@@ -72,7 +72,7 @@ namespace DLFL {
       vp = (*vfirst); ++vfirst; ++count;
       vp->getFaceVertices(fvparray);
       for (int i=0; i < fvparray.size(); ++i)
-	insertEdge(obj,fvparray[i]->prev(),fvparray[i]->next());
+				insertEdge(obj,fvparray[i]->prev(),fvparray[i]->next());
     }
   }
 
@@ -130,15 +130,15 @@ namespace DLFL {
       vp = (*vfirst); ++vfirst; ++count;
       vp->getFaceVertices(fvparray);
       for (int i=0; i < fvparray.size(); ++i) {
-	fvp = fvparray[i];
-	insertEdgeCoFacial(obj,fvp->prev(),fvp->next());
+				fvp = fvparray[i];
+				insertEdgeCoFacial(obj,fvp->prev(),fvp->next());
       }
       vp->getEdges(eparray);
       for (int i=0; i < eparray.size(); ++i) {
-	ep = eparray[i];
-	ovp = ep->getOtherVertexPointer(vp);
-	if ( ovp->getType() != VTNewPoint ) deleteEdge(obj,ep);
-	else ovp->resetType(); // Reset the type to avoid complications in subsequent operations
+				ep = eparray[i];
+				ovp = ep->getOtherVertexPointer(vp);
+				if ( ovp->getType() != VTNewPoint ) deleteEdge(obj,ep);
+				else ovp->resetType(); // Reset the type to avoid complications in subsequent operations
       }
     }
   }
@@ -173,11 +173,11 @@ namespace DLFL {
 
       fvp_first = fvplist.begin(); fvp_last = fvplist.end();
       while ( fvp_first != fvp_last ) {
-	fvp2 = fvp1 = (*fvp_first); ++fvp_first;
+				fvp2 = fvp1 = (*fvp_first); ++fvp_first;
 
-	// Insert an edge between previous and next corners
-	fvp1 = fvp1->next(); fvp2 = fvp2->prev();
-	insertEdge(obj,fvp1,fvp2,false,matl);
+				// Insert an edge between previous and next corners
+				fvp1 = fvp1->next(); fvp2 = fvp2->prev();
+				insertEdge(obj,fvp1,fvp2,false,matl);
       }
     }
 
@@ -253,11 +253,11 @@ namespace DLFL {
       fvplist = vp->getFaceVertexList();
       fvp_first = fvplist.begin(); fvp_last = fvplist.end();
       while ( fvp_first != fvp_last ) {
-	fvp2 = fvp1 = (*fvp_first); ++fvp_first;
+				fvp2 = fvp1 = (*fvp_first); ++fvp_first;
 
-	// Insert an edge between previous and next corners
-	fvp1 = fvp1->next(); fvp2 = fvp2->prev();
-	insertEdge(obj,fvp1,fvp2,false,matl);
+				// Insert an edge between previous and next corners
+				fvp1 = fvp1->next(); fvp2 = fvp2->prev();
+				insertEdge(obj,fvp1,fvp2,false,matl);
       }
 
       // Delete the old corner edges
@@ -265,7 +265,7 @@ namespace DLFL {
       num_edges = vp->getEdges(&ep); 
 
       for ( int i=0; i < num_edges; i++ )
-	deleteEdge(obj,ep[i],true); 
+				deleteEdge(obj,ep[i],true); 
       delete [] ep;
     }
   }
@@ -304,47 +304,47 @@ namespace DLFL {
       // If a face had less than 3 sides originally we don't include it.
       face_valence = fp->size();
       if ( face_valence >= 6 ) {
-	// Start from a new vertex
-	// The head of a face will always be an old vertex since edge subdivision
-	// does not change the head pointer of any face
-	head = fp->front(); head = head->next();
+				// Start from a new vertex
+				// The head of a face will always be an old vertex since edge subdivision
+				// does not change the head pointer of any face
+				head = fp->front(); head = head->next();
 
-	// Collect coordinates of alternate vertices starting from fvp
-	// for creating the new face
-	vertex_coords.clear();
-	vertex_coords.reserve(face_valence/2);
-	fvp = head;
-	vertex_coords.push_back(fvp->getVertexCoords());
-	fvp = fvp->next(); fvp = fvp->next();
-	while ( fvp != head ) {
-	  vertex_coords.push_back(fvp->getVertexCoords());
-	  fvp = fvp->next(); fvp = fvp->next();
-	}
+				// Collect coordinates of alternate vertices starting from fvp
+				// for creating the new face
+				vertex_coords.clear();
+				vertex_coords.reserve(face_valence/2);
+				fvp = head;
+				vertex_coords.push_back(fvp->getVertexCoords());
+				fvp = fvp->next(); fvp = fvp->next();
+				while ( fvp != head ) {
+					vertex_coords.push_back(fvp->getVertexCoords());
+					fvp = fvp->next(); fvp = fvp->next();
+				}
 
-	// Scale the coordinates of the new face by given scale factor
-	scale(vertex_coords,scale_factor);
+				// Scale the coordinates of the new face by given scale factor
+				scale(vertex_coords,scale_factor);
 
-	// Create the new face from the collected and scaled midpoints
-	obj->createFace(vertex_coords);
+				// Create the new face from the collected and scaled midpoints
+				obj->createFace(vertex_coords);
             
-	// Find the inward facing face of the two newly created ones
-	ifp = obj->lastFace();
+				// Find the inward facing face of the two newly created ones
+				ifp = obj->lastFace();
 
-	// Go through original face and the newly created inward facing face
-	// and store corners in the array for making connections afterwards.
-	// Only corners which are tagged as new in the old face will be used
-	// We can reuse the 'head' variable initialized above
-	// ifp has to be traversed in the reverse direction
-	// Reset the type of fvp so it doesn't affect other algorithms later on
-	fvp = head; ifvp = ifp->front();
-	fvplist1.push_back(fvp); fvplist2.push_back(ifvp);
-	fvp->resetType();
-	fvp = fvp->next(); fvp = fvp->next(); ifvp = ifvp->prev();
-	while ( fvp != head ) {
-	  fvplist1.push_back(fvp); fvplist2.push_back(ifvp);
-	  fvp->resetType();
-	  fvp = fvp->next(); fvp = fvp->next(); ifvp = ifvp->prev();
-	}
+				// Go through original face and the newly created inward facing face
+				// and store corners in the array for making connections afterwards.
+				// Only corners which are tagged as new in the old face will be used
+				// We can reuse the 'head' variable initialized above
+				// ifp has to be traversed in the reverse direction
+				// Reset the type of fvp so it doesn't affect other algorithms later on
+				fvp = head; ifvp = ifp->front();
+				fvplist1.push_back(fvp); fvplist2.push_back(ifvp);
+				fvp->resetType();
+				fvp = fvp->next(); fvp = fvp->next(); ifvp = ifvp->prev();
+				while ( fvp != head ) {
+					fvplist1.push_back(fvp); fvplist2.push_back(ifvp);
+					fvp->resetType();
+					fvp = fvp->next(); fvp = fvp->next(); ifvp = ifvp->prev();
+				}
       }
       ++fl_first; ++num_faces;
     }
@@ -352,10 +352,10 @@ namespace DLFL {
     // Go through fvplist1 and fvplist2 and insert edges between corresponding face-vertices
     for (int i=0; i < fvplist1.size(); ++i) {
       if ( fvplist1[i] != NULL && fvplist2[i] != NULL )
-	insertEdge(obj,fvplist1[i],fvplist2[i]);
+				insertEdge(obj,fvplist1[i],fvplist2[i]);
       else
-	cout << "NULL pointers found! i = " << i << " "
-	     << fvplist1[i] << " " << fvplist2[i] << endl;
+				cout << "NULL pointers found! i = " << i << " "
+						 << fvplist1[i] << " " << fvplist2[i] << endl;
     }
   }
 
@@ -419,30 +419,30 @@ namespace DLFL {
 
       done = false;
       while ( !done ) {
-	fvp1 = lastedge->getFaceVertexPtr1();
+				fvp1 = lastedge->getFaceVertexPtr1();
 
-	// Get face in which fvp1 is there. This will always be the face
-	// in which the next edge has to be inserted because the point-sphere corner
-	// is always specified first in the insertEdge call
-	fptr1 = fvp1->getFacePtr(); numsides1 = fptr1->size();
+				// Get face in which fvp1 is there. This will always be the face
+				// in which the next edge has to be inserted because the point-sphere corner
+				// is always specified first in the insertEdge call
+				fptr1 = fvp1->getFacePtr(); numsides1 = fptr1->size();
 
-	// If the face has more than 5 sides insert another edge
-	if ( numsides1 > 5 ) {
-	  fvp2 = fvp1->next();
+				// If the face has more than 5 sides insert another edge
+				if ( numsides1 > 5 ) {
+					fvp2 = fvp1->next();
 				
-	  // Update the position of the new vertex referred to by fvp2
-	  vp = fvp2->getVertexPtr();
-	  vp->coords += ( cen - vp->coords )*offset;
+					// Update the position of the new vertex referred to by fvp2
+					vp = fvp2->getVertexPtr();
+					vp->coords += ( cen - vp->coords )*offset;
 
-	  // Skip the next two corners to get the corner for next edge insertion
-	  fvp2 = fvp2->next(); fvp2 = fvp2->next(); fvp2 = fvp2->next();
+					// Skip the next two corners to get the corner for next edge insertion
+					fvp2 = fvp2->next(); fvp2 = fvp2->next(); fvp2 = fvp2->next();
 
-	  // Make sure point-sphere corner is specified first
-	  lastedge = insertEdgeCoFacial(obj,fvp1,fvp2,false);
-	} else {
-	  // All edges in this face have been inserted.
-	  done = true;
-	}
+					// Make sure point-sphere corner is specified first
+					lastedge = insertEdgeCoFacial(obj,fvp1,fvp2,false);
+				} else {
+					// All edges in this face have been inserted.
+					done = true;
+				}
       }
     }	 
   }
@@ -494,25 +494,25 @@ namespace DLFL {
       midpoints = new Vector3d[num_verts];
       new_vertex_coords.reserve(num_verts);
       for (int i=0; i < num_verts; ++i) {
-	p1 = vertex_coords[i];
-	if ( i == num_verts-1 ) 
-	  p2 = vertex_coords[0];
-	else 
-	  p2 = vertex_coords[i+1];
-	midpoints[i] = (p1+p2)/2.0;
+				p1 = vertex_coords[i];
+				if ( i == num_verts-1 ) 
+					p2 = vertex_coords[0];
+				else 
+					p2 = vertex_coords[i+1];
+				midpoints[i] = (p1+p2)/2.0;
       }
 
       // Now using the mid-points compute new coordinates for the new polygon
       double coef, alpha;
       for (int i=0; i < num_verts; ++i) {
-	p.reset();
-	for (int j=0; j < num_verts; ++j) {
-	  alpha = M_SQRT1_2 - 0.25 + 5.0/(4.0*num_verts);
-	  if ( i == j ) coef = alpha;
-	  else coef = (1.0 - alpha) * ( 3.0 + 2.0*cos(2.0*(i-j)*M_PI/num_verts) ) / (3.0*num_verts - 5.0);
-	  p += coef*midpoints[j];
-	}
-	new_vertex_coords.push_back(p);
+				p.reset();
+				for (int j=0; j < num_verts; ++j) {
+					alpha = M_SQRT1_2 - 0.25 + 5.0/(4.0*num_verts);
+					if ( i == j ) coef = alpha;
+					else coef = (1.0 - alpha) * ( 3.0 + 2.0*cos(2.0*(i-j)*M_PI/num_verts) ) / (3.0*num_verts - 5.0);
+					p += coef*midpoints[j];
+				}
+				new_vertex_coords.push_back(p);
       }
             
       obj->createFace(new_vertex_coords);
@@ -538,10 +538,10 @@ namespace DLFL {
       fvp1 = fvp1->next(); fvp2 = fvp2->prev();
 
       while ( fvp1 != head1 && fvp2 != head2 ) {
-	ep = fvp1->getEdgePtr(); edgeindex = ep->getID() - eistart;
-	if ( fvplist1[edgeindex] == NULL ) fvplist1[edgeindex] = fvp2;
-	else fvplist2[edgeindex] = fvp2;
-	fvp1 = fvp1->next(); fvp2 = fvp2->prev();
+				ep = fvp1->getEdgePtr(); edgeindex = ep->getID() - eistart;
+				if ( fvplist1[edgeindex] == NULL ) fvplist1[edgeindex] = fvp2;
+				else fvplist2[edgeindex] = fvp2;
+				fvp1 = fvp1->next(); fvp2 = fvp2->prev();
       }
       ++fl_first; ++num_faces;
     }
@@ -572,10 +572,10 @@ namespace DLFL {
     // Go through fvplist1 and fvplist2 and insert edges between corresponding face-vertices
     for (int i=0; i < num_old_edges; ++i) {
       if ( fvplist1[i] != NULL && fvplist2[i] != NULL )
-	insertEdge(obj,fvplist1[i],fvplist2[i]);
+				insertEdge(obj,fvplist1[i],fvplist2[i]);
       else
-	cout << "NULL pointers found! i = " << i << " "
-	     << fvplist1[i] << " " << fvplist2[i] << endl;
+				cout << "NULL pointers found! i = " << i << " "
+						 << fvplist1[i] << " " << fvplist2[i] << endl;
     }
   }
 
@@ -622,13 +622,13 @@ namespace DLFL {
       // Compute new coordinates for the new polygon
       double coef;
       for (int i=0; i < num_verts; ++i) {
-	p.reset();
-	for (int j=0; j < num_verts; ++j) {
-	  if ( i == j ) coef = 0.25 + 5.0/(4.0*num_verts);
-	  else coef = ( 3.0 + 2.0*cos(2.0*(i-j)*M_PI/num_verts) ) / (4.0*num_verts);
-	  p += coef*vertex_coords[j];
-	}
-	new_vertex_coords.push_back(p);
+				p.reset();
+				for (int j=0; j < num_verts; ++j) {
+					if ( i == j ) coef = 0.25 + 5.0/(4.0*num_verts);
+					else coef = ( 3.0 + 2.0*cos(2.0*(i-j)*M_PI/num_verts) ) / (4.0*num_verts);
+					p += coef*vertex_coords[j];
+				}
+				new_vertex_coords.push_back(p);
       }
       obj->createFace(new_vertex_coords);
       new_vertex_coords.clear(); vertex_coords.clear();
@@ -650,19 +650,19 @@ namespace DLFL {
       ep = fvp1->getEdgePtr(); iep = fvp2->getEdgePtr();
       edgeindex = ep->getID() - eistart;
       if ( eplist1[edgeindex] == NULL ) 
-	eplist1[edgeindex] = iep;
+				eplist1[edgeindex] = iep;
       else                              
-	eplist2[edgeindex] = iep;
+				eplist2[edgeindex] = iep;
       fvp1 = fvp1->next(); fvp2 = fvp2->prev();
-
+			
       while ( fvp1 != head1 && fvp2 != head2 ) {
-	ep = fvp1->getEdgePtr(); iep = fvp2->getEdgePtr();
-	edgeindex = ep->getID() - eistart;
-	if ( eplist1[edgeindex] == NULL ) 
-	  eplist1[edgeindex] = iep;
-	else                              
-	  eplist2[edgeindex] = iep;
-	fvp1 = fvp1->next(); fvp2 = fvp2->prev();
+				ep = fvp1->getEdgePtr(); iep = fvp2->getEdgePtr();
+				edgeindex = ep->getID() - eistart;
+				if ( eplist1[edgeindex] == NULL ) 
+					eplist1[edgeindex] = iep;
+				else                              
+					eplist2[edgeindex] = iep;
+				fvp1 = fvp1->next(); fvp2 = fvp2->prev();
       }
       ++fl_first; ++num_faces;
     }
@@ -694,22 +694,22 @@ namespace DLFL {
     DLFLFacePtr fp1, fp2, tfp1, tfp2;
     for (int i=0; i < num_old_edges; ++i) {
       if ( eplist1[i] != NULL && eplist2[i] != NULL ) {
-	// Find the faces adjacent to the edges which are of type FTNew
-	// These will be the inner faces
-	eplist1[i]->getFacePointers(tfp1,tfp2);
-	if ( tfp1->getType() == FTNew ) fp1 = tfp1;
-	else if ( tfp2->getType() == FTNew ) fp1 = tfp2;
-	else cout << i << " : " << "Face not found for half-edge!" << endl;
+				// Find the faces adjacent to the edges which are of type FTNew
+				// These will be the inner faces
+				eplist1[i]->getFacePointers(tfp1,tfp2);
+				if ( tfp1->getType() == FTNew ) fp1 = tfp1;
+				else if ( tfp2->getType() == FTNew ) fp1 = tfp2;
+				else cout << i << " : " << "Face not found for half-edge!" << endl;
 
-	eplist2[i]->getFacePointers(tfp1,tfp2);
-	if ( tfp1->getType() == FTNew ) fp2 = tfp1;
-	else if ( tfp2->getType() == FTNew ) fp2 = tfp2;
-	else cout << i << " : " << "Face not found for half-edge!" << endl;
+				eplist2[i]->getFacePointers(tfp1,tfp2);
+				if ( tfp1->getType() == FTNew ) fp2 = tfp1;
+				else if ( tfp2->getType() == FTNew ) fp2 = tfp2;
+				else cout << i << " : " << "Face not found for half-edge!" << endl;
 
-	connectEdgesWithoutLoopCheck(obj,eplist1[i],fp1,eplist2[i],fp2,check);
+				connectEdgesWithoutLoopCheck(obj,eplist1[i],fp1,eplist2[i],fp2,check);
       } else
-	cout << "NULL pointers found! i = " << i << " "
-	     << eplist1[i] << " -- " << eplist2[i] << endl;
+				cout << "NULL pointers found! i = " << i << " "
+						 << eplist1[i] << " -- " << eplist2[i] << endl;
     }
   }
 
@@ -759,14 +759,14 @@ namespace DLFL {
       double coef, alpha;
       //alpha = 12.0/16.0;
       for (int i=0; i < num_verts; ++i) {
-	p.reset();
-	for (int j=0; j < num_verts; ++j) {
-	  alpha = 0.25 + 5.0/(4.0*num_verts);
-	  if ( i == j ) coef = alpha;
-	  else coef = (1.0 - alpha) * ( 3.0 + 2.0*cos(2.0*(i-j)*M_PI/num_verts) ) / (3.0*num_verts - 5.0);
-	  p += coef*vertex_coords[j];
-	}
-	new_vertex_coords.push_back(p);
+				p.reset();
+				for (int j=0; j < num_verts; ++j) {
+					alpha = 0.25 + 5.0/(4.0*num_verts);
+					if ( i == j ) coef = alpha;
+					else coef = (1.0 - alpha) * ( 3.0 + 2.0*cos(2.0*(i-j)*M_PI/num_verts) ) / (3.0*num_verts - 5.0);
+					p += coef*vertex_coords[j];
+				}
+				new_vertex_coords.push_back(p);
       }
       obj->createFace(new_vertex_coords);
       new_vertex_coords.clear(); vertex_coords.clear();
@@ -788,19 +788,19 @@ namespace DLFL {
       ep = fvp1->getEdgePtr(); iep = fvp2->getEdgePtr();
       edgeindex = ep->getID() - eistart;
       if ( eplist1[edgeindex] == NULL ) 
-	eplist1[edgeindex] = iep;
+				eplist1[edgeindex] = iep;
       else                              
-	eplist2[edgeindex] = iep;
+				eplist2[edgeindex] = iep;
       fvp1 = fvp1->next(); fvp2 = fvp2->prev();
 
       while ( fvp1 != head1 && fvp2 != head2 ) {
-	ep = fvp1->getEdgePtr(); iep = fvp2->getEdgePtr();
-	edgeindex = ep->getID() - eistart;
-	if ( eplist1[edgeindex] == NULL ) 
-	  eplist1[edgeindex] = iep;
-	else                              
-	  eplist2[edgeindex] = iep;
-	fvp1 = fvp1->next(); fvp2 = fvp2->prev();
+				ep = fvp1->getEdgePtr(); iep = fvp2->getEdgePtr();
+				edgeindex = ep->getID() - eistart;
+				if ( eplist1[edgeindex] == NULL ) 
+					eplist1[edgeindex] = iep;
+				else                              
+					eplist2[edgeindex] = iep;
+				fvp1 = fvp1->next(); fvp2 = fvp2->prev();
       }
       ++fl_first; ++num_faces;
     }
@@ -828,22 +828,22 @@ namespace DLFL {
     DLFLFacePtr fp1, fp2, tfp1, tfp2;
     for (int i=0; i < num_old_edges; ++i) {
       if ( eplist1[i] != NULL && eplist2[i] != NULL ) {
-	// Find the faces adjacent to the edges which are of type FTNew
-	// These will be the inner faces
-	eplist1[i]->getFacePointers(tfp1,tfp2);
-	if ( tfp1->getType() == FTNew ) fp1 = tfp1;
-	else if ( tfp2->getType() == FTNew ) fp1 = tfp2;
-	else cout << i << " : " << "Face not found for half-edge!" << endl;
+				// Find the faces adjacent to the edges which are of type FTNew
+				// These will be the inner faces
+				eplist1[i]->getFacePointers(tfp1,tfp2);
+				if ( tfp1->getType() == FTNew ) fp1 = tfp1;
+				else if ( tfp2->getType() == FTNew ) fp1 = tfp2;
+				else cout << i << " : " << "Face not found for half-edge!" << endl;
 
-	eplist2[i]->getFacePointers(tfp1,tfp2);
-	if ( tfp1->getType() == FTNew ) fp2 = tfp1;
-	else if ( tfp2->getType() == FTNew ) fp2 = tfp2;
-	else cout << i << " : " << "Face not found for half-edge!" << endl;
+				eplist2[i]->getFacePointers(tfp1,tfp2);
+				if ( tfp1->getType() == FTNew ) fp2 = tfp1;
+				else if ( tfp2->getType() == FTNew ) fp2 = tfp2;
+				else cout << i << " : " << "Face not found for half-edge!" << endl;
 
-	connectEdges(obj,eplist1[i],fp1,eplist2[i],fp2);
+				connectEdges(obj,eplist1[i],fp1,eplist2[i],fp2);
       } else
-	cout << "NULL pointers found! i = " << i << " "
-	     << eplist1[i] << " -- " << eplist2[i] << endl;
+				cout << "NULL pointers found! i = " << i << " "
+						 << eplist1[i] << " -- " << eplist2[i] << endl;
     }
   }
 
@@ -897,32 +897,32 @@ namespace DLFL {
       //double coef, alpha;
       //alpha = 12.0/16.0;
       for (int i=0; i < num_verts; ++i) {
-	t = thickness/2.0;
-	v0 = vertex_coords[i];
-	if ( i > 0 ) 
-	  v1 = vertex_coords[i-1];
-	else 
-	  v1 = vertex_coords[num_verts-1];
-	if 
-	  ( i < num_verts-1 ) v2 = vertex_coords[i+1];
-	else 
-	  v2 = vertex_coords[0];
-	if ( norm(v1-v2) < 0.001 ) {
-	  if ( i < num_verts-2 ) 
-	    v2 = vertex_coords[i+2]; 
-	  else if ( i == num_verts-1 ) 
-	    v2 = vertex_coords[0]; 
-	  else 
-	    v2 = vertex_coords[1];
-	}
-	n1 = normalized(v1-v0);
-	n2 = normalized(v2-v0);
-	n1n2 = n1*n2;
-	x = sqrt(t*t/(1.0-n1n2*n1n2));
-	v0hat = x*(n1+n2) + v0;
-	p = v0hat;
+				t = thickness/2.0;
+				v0 = vertex_coords[i];
+				if ( i > 0 ) 
+					v1 = vertex_coords[i-1];
+				else 
+					v1 = vertex_coords[num_verts-1];
+				if 
+					( i < num_verts-1 ) v2 = vertex_coords[i+1];
+				else 
+					v2 = vertex_coords[0];
+				if ( norm(v1-v2) < 0.001 ) {
+					if ( i < num_verts-2 ) 
+						v2 = vertex_coords[i+2]; 
+					else if ( i == num_verts-1 ) 
+						v2 = vertex_coords[0]; 
+					else 
+						v2 = vertex_coords[1];
+				}
+				n1 = normalized(v1-v0);
+				n2 = normalized(v2-v0);
+				n1n2 = n1*n2;
+				x = sqrt(t*t/(1.0-n1n2*n1n2));
+				v0hat = x*(n1+n2) + v0;
+				p = v0hat;
 
-	new_vertex_coords.push_back(p);
+				new_vertex_coords.push_back(p);
       }
 
       obj->createFace(new_vertex_coords);
@@ -952,19 +952,19 @@ namespace DLFL {
       ep = fvp1->getEdgePtr(); iep = fvp2->getEdgePtr();
       edgeindex = ep->getID() - eistart;
       if ( eplist1[edgeindex] == NULL ) 
-	eplist1[edgeindex] = iep;
+				eplist1[edgeindex] = iep;
       else
-	eplist2[edgeindex] = iep;
+				eplist2[edgeindex] = iep;
       fvp1 = fvp1->next(); fvp2 = fvp2->prev();
 
       while ( fvp1 != head1 && fvp2 != head2 ) {
-	ep = fvp1->getEdgePtr(); iep = fvp2->getEdgePtr();
-	edgeindex = ep->getID() - eistart;
-	if ( eplist1[edgeindex] == NULL ) 
-	  eplist1[edgeindex] = iep;
-	else
-	  eplist2[edgeindex] = iep;
-	fvp1 = fvp1->next(); fvp2 = fvp2->prev();
+				ep = fvp1->getEdgePtr(); iep = fvp2->getEdgePtr();
+				edgeindex = ep->getID() - eistart;
+				if ( eplist1[edgeindex] == NULL ) 
+					eplist1[edgeindex] = iep;
+				else
+					eplist2[edgeindex] = iep;
+				fvp1 = fvp1->next(); fvp2 = fvp2->prev();
       }
       ++fl_first; ++num_faces;
     }
@@ -992,22 +992,22 @@ namespace DLFL {
     DLFLFacePtr fp1, fp2, tfp1, tfp2;
     for (int i=0; i < num_old_edges; ++i) {
       if ( eplist1[i] != NULL && eplist2[i] != NULL ) {
-	// Find the faces adjacent to the edges which are of type FTNew
-	// These will be the inner faces
-	eplist1[i]->getFacePointers(tfp1,tfp2);
-	if ( tfp1->getType() == FTNew ) fp1 = tfp1;
-	else if ( tfp2->getType() == FTNew ) fp1 = tfp2;
-	else cout << i << " : " << "Face not found for half-edge!" << endl;
+				// Find the faces adjacent to the edges which are of type FTNew
+				// These will be the inner faces
+				eplist1[i]->getFacePointers(tfp1,tfp2);
+				if ( tfp1->getType() == FTNew ) fp1 = tfp1;
+				else if ( tfp2->getType() == FTNew ) fp1 = tfp2;
+				else cout << i << " : " << "Face not found for half-edge!" << endl;
 
-	eplist2[i]->getFacePointers(tfp1,tfp2);
-	if ( tfp1->getType() == FTNew ) fp2 = tfp1;
-	else if ( tfp2->getType() == FTNew ) fp2 = tfp2;
-	else cout << i << " : " << "Face not found for half-edge!" << endl;
+				eplist2[i]->getFacePointers(tfp1,tfp2);
+				if ( tfp1->getType() == FTNew ) fp2 = tfp1;
+				else if ( tfp2->getType() == FTNew ) fp2 = tfp2;
+				else cout << i << " : " << "Face not found for half-edge!" << endl;
 
-	connectEdges(obj,eplist1[i],fp1,eplist2[i],fp2);
+				connectEdges(obj,eplist1[i],fp1,eplist2[i],fp2);
       } else
-	cout << "NULL pointers found! i = " << i << " "
-	     << eplist1[i] << " -- " << eplist2[i] << endl;
+				cout << "NULL pointers found! i = " << i << " "
+						 << eplist1[i] << " -- " << eplist2[i] << endl;
     }
   }
 
@@ -1038,23 +1038,23 @@ namespace DLFL {
       midpoints = new Vector3d[num_verts];
       new_vertex_coords.reserve(num_verts);
       for (int i=0; i < num_verts; ++i) {
-	p1 = vertex_coords[i];
-	if ( i == num_verts-1 ) p2 = vertex_coords[0];
-	else p2 = vertex_coords[i+1];
-	midpoints[i] = (1.0-twist)*p1 + twist*p2;
+				p1 = vertex_coords[i];
+				if ( i == num_verts-1 ) p2 = vertex_coords[0];
+				else p2 = vertex_coords[i+1];
+				midpoints[i] = (1.0-twist)*p1 + twist*p2;
       }
 
       // Now using the mid-points compute new coordinates for the new polygon
       double coef, alpha;
       for (int i=0; i < num_verts; ++i) {
-	p.reset();
-	for (int j=0; j < num_verts; ++j) {
-	  alpha = M_SQRT1_2 - 0.25 + 5.0/(4.0*num_verts);
-	  if ( i == j ) coef = alpha;
-	  else coef = (1.0 - alpha) * ( 3.0 + 2.0*cos(2.0*(i-j)*M_PI/num_verts) ) / (3.0*num_verts - 5.0);
-	  p += coef*midpoints[j];
-	}
-	new_vertex_coords.push_back(p);
+				p.reset();
+				for (int j=0; j < num_verts; ++j) {
+					alpha = M_SQRT1_2 - 0.25 + 5.0/(4.0*num_verts);
+					if ( i == j ) coef = alpha;
+					else coef = (1.0 - alpha) * ( 3.0 + 2.0*cos(2.0*(i-j)*M_PI/num_verts) ) / (3.0*num_verts - 5.0);
+					p += coef*midpoints[j];
+				}
+				new_vertex_coords.push_back(p);
       }
             
       obj->createFace(new_vertex_coords);
@@ -1118,9 +1118,9 @@ namespace DLFL {
 
       psum.reset();
       for (int j=0; j < numiedges; ++j) {
-	iedge = iedges[j];
-	mp = iedge->getMidPoint();
-	psum += mp;
+				iedge = iedges[j];
+				mp = iedge->getMidPoint();
+				psum += mp;
       }
       psum *= 2.0;
       psum -= numiedges*p;
@@ -1178,7 +1178,7 @@ namespace DLFL {
       current = head = fp->front();
       current->vertex->addToAuxCoords(cen); current = current->next();
       while ( current != head ) {
-	current->vertex->addToAuxCoords(cen); current = current->next();
+				current->vertex->addToAuxCoords(cen); current = current->next();
       }
     }
 
@@ -1257,10 +1257,10 @@ namespace DLFL {
       vp->getFaceVertices(fvparray);
 
       for (int i=0; i < fvparray.size(); ++i) {
-	fvp = fvparray[i];
-	faceindex = (fvp->getFacePtr())->getID() - fistart;
-	fvplist[connindex] = fvp; vplist[connindex] = psarray[faceindex];
-	++connindex;
+				fvp = fvparray[i];
+				faceindex = (fvp->getFacePtr())->getID() - fistart;
+				fvplist[connindex] = fvp; vplist[connindex] = psarray[faceindex];
+				++connindex;
       }
       fvparray.clear();
     }
@@ -1433,7 +1433,7 @@ namespace DLFL {
       fvpTest = fvp2;
 
       for (i=0; i < (numsidesALL/2); i++) {
-	fvpTest = fvpTest->next();
+				fvpTest = fvpTest->next();
       }
 
       //fvp2 and fvpTest should now be on opposites side of the face
@@ -1456,27 +1456,27 @@ namespace DLFL {
       done = false;
       while ( !done ) {
 
-	fvp1 = lastedge->getFaceVertexPtr1();
+				fvp1 = lastedge->getFaceVertexPtr1();
 
-	// Get face in which fvp1 is there. This will always be the face
-	// in which the next edge has to be inserted because the point-sphere corner
-	// is always specified first in the insertEdge call
-	fptr1 = fvp1->getFacePtr(); numsides1 = fptr1->size();
+				// Get face in which fvp1 is there. This will always be the face
+				// in which the next edge has to be inserted because the point-sphere corner
+				// is always specified first in the insertEdge call
+				fptr1 = fvp1->getFacePtr(); numsides1 = fptr1->size();
 
-	// If the face fptr1 has more than 3 sides insert another edge 
-	if ( numsides1 > 3 ) {
+				// If the face fptr1 has more than 3 sides insert another edge 
+				if ( numsides1 > 3 ) {
 
-	  // Skip the next corner to get the corner for next edge insertion
-	  fvp2 = fvp1->next(); fvp2 = fvp2->next();
-	  fvp3 = fvp2->next(); fvp3 = fvp3->next();
+					// Skip the next corner to get the corner for next edge insertion
+					fvp2 = fvp1->next(); fvp2 = fvp2->next();
+					fvp3 = fvp2->next(); fvp3 = fvp3->next();
 
-	  // Make sure point-sphere corner is specified first
-	  insertEdgeCoFacial(obj,fvp2,fvp3,false);
-	  lastedge = insertEdgeCoFacial(obj,fvp1,fvp2,false);
-	} else {
-	  // All edges have been inserted.
-	  done = true;
-	}
+					// Make sure point-sphere corner is specified first
+					insertEdgeCoFacial(obj,fvp2,fvp3,false);
+					lastedge = insertEdgeCoFacial(obj,fvp1,fvp2,false);
+				} else {
+					// All edges have been inserted.
+					done = true;
+				}
       }
     }
   }
@@ -1584,7 +1584,7 @@ namespace DLFL {
     first = obj->beginVertex();
     while ( num_vertex < num_old_vertex ) {
       if ((*first)->getType() != VTOld)
-	(*first)->setType(VTNewSub);
+				(*first)->setType(VTNewSub);
       num_vertex++;
       first++;
     }	
@@ -1668,56 +1668,56 @@ namespace DLFL {
       // First compute the coordinates of the vertices of the new points and store them in an array
       head = fp->front();
       if ( head ) {
-	current = head;
+				current = head;
 			
-	vert1 = current->getVertexCoords();
-	vert2 = current->next()->getVertexCoords();
-	new_vertex_coords.push_back(vert1 * 2/3 + vert2 * 1/3);
-	new_vertex_coords.push_back(vert1 * 1/3 + vert2 * 2/3);
+				vert1 = current->getVertexCoords();
+				vert2 = current->next()->getVertexCoords();
+				new_vertex_coords.push_back(vert1 * 2/3 + vert2 * 1/3);
+				new_vertex_coords.push_back(vert1 * 1/3 + vert2 * 2/3);
 
-	current = current->next();
-	while ( current != head ) {
-	  vert1 = current->getVertexCoords();
-	  vert2 = current->next()->getVertexCoords();
-	  new_vertex_coords.push_back(vert1 * 2/3 + vert2 * 1/3);
-	  new_vertex_coords.push_back(vert1 * 1/3 + vert2 * 2/3);
+				current = current->next();
+				while ( current != head ) {
+					vert1 = current->getVertexCoords();
+					vert2 = current->next()->getVertexCoords();
+					new_vertex_coords.push_back(vert1 * 2/3 + vert2 * 1/3);
+					new_vertex_coords.push_back(vert1 * 1/3 + vert2 * 2/3);
 
-	  current = current->next();
-	}
+					current = current->next();
+				}
 
-	// Scale the new vertices about their centroid if scale factor is not 1.0 or 0.0
-	sf = Abs(sf);
-	if ( isNonZero(sf) && ( Abs(sf-1.0) > ZERO ) ) 
-	  scale(new_vertex_coords, sf);
+				// Scale the new vertices about their centroid if scale factor is not 1.0 or 0.0
+				sf = Abs(sf);
+				if ( isNonZero(sf) && ( Abs(sf-1.0) > ZERO ) ) 
+					scale(new_vertex_coords, sf);
 
-	obj->createFace(new_vertex_coords,fp->material());
+				obj->createFace(new_vertex_coords,fp->material());
 
-	new_vertex_coords.clear();
-	ifp = obj->lastFace();
-	ifp->setType(FTNew);
+				new_vertex_coords.clear();
+				ifp = obj->lastFace();
+				ifp->setType(FTNew);
 
-	fvp1 = head1 = fp->front(); fvp2 = head2 = ifp->back();
+				fvp1 = head1 = fp->front(); fvp2 = head2 = ifp->back();
             
-	ep = fvp1->getEdgePtr(); iep = fvp2->getEdgePtr();
-	edgeindex = ep->getID() - eistart;
-	if ( eplist1[edgeindex] == NULL )
-	  eplist1[edgeindex] = iep;
-	else
-	  eplist2[edgeindex] = iep;
-	fvp2 = fvp2->prev();
+				ep = fvp1->getEdgePtr(); iep = fvp2->getEdgePtr();
+				edgeindex = ep->getID() - eistart;
+				if ( eplist1[edgeindex] == NULL )
+					eplist1[edgeindex] = iep;
+				else
+					eplist2[edgeindex] = iep;
+				fvp2 = fvp2->prev();
 
-	fvp1 = fvp1->next(); fvp2 = fvp2->prev();
-	while ( fvp1 != head1 && fvp2 != head2 ) {
-	  ep = fvp1->getEdgePtr(); iep = fvp2->getEdgePtr();
-	  edgeindex = ep->getID() - eistart;
-	  if ( eplist1[edgeindex] == NULL )
-	    eplist1[edgeindex] = iep;
-	  else
-	    eplist2[edgeindex] = iep;
-	  fvp2 = fvp2->prev();
+				fvp1 = fvp1->next(); fvp2 = fvp2->prev();
+				while ( fvp1 != head1 && fvp2 != head2 ) {
+					ep = fvp1->getEdgePtr(); iep = fvp2->getEdgePtr();
+					edgeindex = ep->getID() - eistart;
+					if ( eplist1[edgeindex] == NULL )
+						eplist1[edgeindex] = iep;
+					else
+						eplist2[edgeindex] = iep;
+					fvp2 = fvp2->prev();
 
-	  fvp1 = fvp1->next(); fvp2 = fvp2->prev();
-	}
+					fvp1 = fvp1->next(); fvp2 = fvp2->prev();
+				}
       }
     }
 
@@ -1744,24 +1744,24 @@ namespace DLFL {
     DLFLFacePtr fp1, fp2, tfp1, tfp2;
     for (int i=0; i < num_old_edges; ++i) {
       if ( eplist1[i] != NULL && eplist2[i] != NULL ) {
-	eplist1[i]->getFacePointers(tfp1,tfp2);
-	if ( tfp1->getType() == FTNew ) fp1 = tfp1;
-	else if ( tfp2->getType() == FTNew )
-	  fp1 = tfp2;
-	else
-	  cout << i << " : " << "Face not found for half-edge!" << endl;
+				eplist1[i]->getFacePointers(tfp1,tfp2);
+				if ( tfp1->getType() == FTNew ) fp1 = tfp1;
+				else if ( tfp2->getType() == FTNew )
+					fp1 = tfp2;
+				else
+					cout << i << " : " << "Face not found for half-edge!" << endl;
 
-	eplist2[i]->getFacePointers(tfp1,tfp2);
-	if ( tfp1->getType() == FTNew )
-	  fp2 = tfp1;
-	else if ( tfp2->getType() == FTNew )
-	  fp2 = tfp2;
-	else
-	  cout << i << " : " << "Face not found for half-edge!" << endl;
+				eplist2[i]->getFacePointers(tfp1,tfp2);
+				if ( tfp1->getType() == FTNew )
+					fp2 = tfp1;
+				else if ( tfp2->getType() == FTNew )
+					fp2 = tfp2;
+				else
+					cout << i << " : " << "Face not found for half-edge!" << endl;
 
-	connectEdgesWithoutLoopCheck(obj,eplist1[i],fp1,eplist2[i],fp2);
+				connectEdgesWithoutLoopCheck(obj,eplist1[i],fp1,eplist2[i],fp2);
       } else
-	cout << "NULL pointers found! i = " << i << " " << eplist1[i] << " -- " << eplist2[i] << endl;
+				cout << "NULL pointers found! i = " << i << " " << eplist1[i] << " -- " << eplist2[i] << endl;
     }	
   }
 
@@ -1793,14 +1793,14 @@ namespace DLFL {
 		
       fvp1 = fp->front();		
       if ( (fvp1->getVertexType() != VTNewSub) )
-	fvp1 = fvp1->next();
+				fvp1 = fvp1->next();
       vp = fvp1->getVertexPtr();
 
       fvp2 = fvp1->prev()->prev();		
       while( fvp2->getVertexPtr() != vp ) {
-	insertEdge(obj,fvp1, fvp2);
-	fvp1 = fvp2;
-	fvp2 = fvp1->prev()->prev();
+				insertEdge(obj,fvp1, fvp2);
+				fvp1 = fvp2;
+				fvp2 = fvp1->prev()->prev();
       }
       insertEdge(obj,fvp1, fvp2);
     }
@@ -1810,12 +1810,12 @@ namespace DLFL {
     while (vl_first != vl_last && num_vertice < num_old_vertice) {
       vp = (* vl_first); ++ vl_first; ++ num_vertice;
       if (vp->getType() != VTOld)
-	continue;
+				continue;
       vp->getFaceVertices(fvparray);
       num_faceVertice = fvparray.size();
       newpos.reset();
       for (int i = 0; i < num_faceVertice; i++)
-	newpos += fvparray[i]->next()->getVertexCoords();
+				newpos += fvparray[i]->next()->getVertexCoords();
       newpos = newpos/num_faceVertice;
       oldpos = vp->getCoords();
       newpos = length* oldpos + (1-length)* newpos;
@@ -1874,18 +1874,18 @@ namespace DLFL {
       fvp2 = ep->getFaceVertexPtr2();
 
       if ((fvp1->getVertexType() == VTNewSub)) {
-	fvp = fvp1;
-	fvp1 = fvp->prev(); ep1 = fvp1->getEdgePtr();
-	fvp2 = fvp->next(); ep2 = fvp->getEdgePtr();
-	insertEdge(obj,fvp1, fvp2);
-	deleteEdge(obj,ep1); deleteEdge(obj,ep2);
+				fvp = fvp1;
+				fvp1 = fvp->prev(); ep1 = fvp1->getEdgePtr();
+				fvp2 = fvp->next(); ep2 = fvp->getEdgePtr();
+				insertEdge(obj,fvp1, fvp2);
+				deleteEdge(obj,ep1); deleteEdge(obj,ep2);
       } else if ((fvp2->getVertexType() == VTNewSub)) {
-	fvp = fvp2;
-	fvp1 = fvp->prev();  ep1 = fvp1->getEdgePtr();
-	fvp2 = fvp->next();  ep2 = fvp->getEdgePtr();
-	insertEdge(obj, fvp1, fvp2);
-	deleteEdge(obj, ep1); 
-	deleteEdge(obj, ep2);
+				fvp = fvp2;
+				fvp1 = fvp->prev();  ep1 = fvp1->getEdgePtr();
+				fvp2 = fvp->next();  ep2 = fvp->getEdgePtr();
+				insertEdge(obj, fvp1, fvp2);
+				deleteEdge(obj, ep1); 
+				deleteEdge(obj, ep2);
       }
     }
 
@@ -1896,19 +1896,19 @@ namespace DLFL {
     while (vl_first != vl_last && num_vertice < num_old_vertice) {
       vp = (* vl_first); ++ vl_first; ++ num_vertice;
       if (vp->getType() != VTOld)
-	continue;
+				continue;
       vp->getFaceVertices(fvparray);
       num_faceVertice = fvparray.size();
       newpos.reset();
       for (int i = 0; i < num_faceVertice; i++)
-	newpos += fvparray[i]->next()->getVertexCoords();
+				newpos += fvparray[i]->next()->getVertexCoords();
       newpos = newpos/num_faceVertice;
       oldpos = vp->getCoords();
       newpos = length* oldpos + (1-length)* newpos;
-
+			
       vp->setCoords(newpos);
     }
-
+		
     // change the type of all the verteices back to VTNormal
     setNormalVertexType(obj);
   }
@@ -1939,8 +1939,8 @@ namespace DLFL {
       faceptr->getEdges(edges);
       endpoints.resize(edges.size(),NULL);
       for (int i=0; i < edges.size(); ++i) {
-	vp = subdivideEdge(obj,edges[i]);
-	endpoints[i] = vp->getFaceVertexInFace(faceptr);
+				vp = subdivideEdge(obj,edges[i]);
+				endpoints[i] = vp->getFaceVertexInFace(faceptr);
       }
     } else {
       // Use existing corners in face as end points of the new edges
@@ -1993,61 +1993,61 @@ namespace DLFL {
       DLFLEdgePtrList eptypereset; // List of edges whose type has to be reset
       DLFLFaceVertexPtrList fvptypereset; // List of corners whose type has to be reset
       for (int i=0; i < fparray.size(); ++i) {
-	faceptr = fparray[i];
+				faceptr = fparray[i];
 
-	// Subdivide all edges in this face, set type of new vertex when subdividing.
-	// If an edge is a new edge, then we will not subdivide that edge
-	// since it was created as a result of a previous edge subdivision
-	faceptr->getEdges(edges);
-	for (int i=0; i < edges.size(); ++i) {
-	  if ( edges[i]->getType() != ETNew ) {
-	    vp = subdivideEdge(obj,edges[i],true);
-	    // Find the edges and the corners associated with this vertex
-	    // Add them to the list for resetting type later
-	    // We can make use of the fact that there will only 2 edges
-	    // and 2 corners associated with this vertex
-	    vp->getEdges(vedges); vp->getFaceVertices(vcorners);
-	    eptypereset.push_back(vedges[0]); eptypereset.push_back(vedges[1]); 
-	    fvptypereset.push_back(vcorners[0]); fvptypereset.push_back(vcorners[1]); 
-	  }
-	}
+				// Subdivide all edges in this face, set type of new vertex when subdividing.
+				// If an edge is a new edge, then we will not subdivide that edge
+				// since it was created as a result of a previous edge subdivision
+				faceptr->getEdges(edges);
+				for (int i=0; i < edges.size(); ++i) {
+					if ( edges[i]->getType() != ETNew ) {
+						vp = subdivideEdge(obj,edges[i],true);
+						// Find the edges and the corners associated with this vertex
+						// Add them to the list for resetting type later
+						// We can make use of the fact that there will only 2 edges
+						// and 2 corners associated with this vertex
+						vp->getEdges(vedges); vp->getFaceVertices(vcorners);
+						eptypereset.push_back(vedges[0]); eptypereset.push_back(vedges[1]); 
+						fvptypereset.push_back(vcorners[0]); fvptypereset.push_back(vcorners[1]); 
+					}
+				}
 
-	// Create point-sphere at centroid and set properties of face-vertex to
-	// that of centroid of face.
-	faceptr->getCentroids(geomcen,texcen,colorcen,normalcen);
-	cenfvp = obj->createPointSphere(geomcen,faceptr->material());
-	cenfvp->normal = normalcen; cenfvp->color = colorcen; cenfvp->texcoord = texcen;
+				// Create point-sphere at centroid and set properties of face-vertex to
+				// that of centroid of face.
+				faceptr->getCentroids(geomcen,texcen,colorcen,normalcen);
+				cenfvp = obj->createPointSphere(geomcen,faceptr->material());
+				cenfvp->normal = normalcen; cenfvp->color = colorcen; cenfvp->texcoord = texcen;
 
-	// Insert edges between corner in centroid and the new corners in face
-	// NOTE: Make sure centroid corner is specified first in the insertEdge call
-	faceptr->getCorners(corners);
-	for (int i=0; i < corners.size(); ++i) {
-	  if ( corners[i]->getType() == FVTNew ) {
-	    // Reset the type of the corner as well as the vertex
-	    // Get both edges related to this corner and add them
-	    // to the list for resetting type later.
-	    corners[i]->resetType();
-	    corners[i]->getVertexPtr()->resetType();
-	    insertEdge(obj,cenfvp,corners[i]);
-	  }
-	}
+				// Insert edges between corner in centroid and the new corners in face
+				// NOTE: Make sure centroid corner is specified first in the insertEdge call
+				faceptr->getCorners(corners);
+				for (int i=0; i < corners.size(); ++i) {
+					if ( corners[i]->getType() == FVTNew ) {
+						// Reset the type of the corner as well as the vertex
+						// Get both edges related to this corner and add them
+						// to the list for resetting type later.
+						corners[i]->resetType();
+						corners[i]->getVertexPtr()->resetType();
+						insertEdge(obj,cenfvp,corners[i]);
+					}
+				}
       }
 
       // Reset type of edges which were created by subdivision
       DLFLEdgePtrList::iterator epfirst = eptypereset.begin(), eplast = eptypereset.end();
       while ( epfirst != eplast ) {
-	(*epfirst)->resetType(); ++epfirst;
+				(*epfirst)->resetType(); ++epfirst;
       }
 
       // Reset type of corners which were created by subdivision
       DLFLFaceVertexPtrList::iterator fvpfirst = fvptypereset.begin(), fvplast = fvptypereset.end();
       while ( fvpfirst != fvplast ) {
-	(*fvpfirst)->resetType(); ++fvpfirst;
+				(*fvpfirst)->resetType(); ++fvpfirst;
       }
     } else {
       // Go through list and subdivide each face
       for (int i=0; i < fparray.size(); ++i) {
-	subdivideFace(obj, fparray[i],false);
+				subdivideFace(obj, fparray[i],false);
       }
     }
   }
@@ -2082,64 +2082,64 @@ namespace DLFL {
       DLFLFacePtrList::iterator fpfirst, fplast;
       fpfirst = fplist.begin(); fplast = fplist.end();
       while ( fpfirst != fplast ) {
-	faceptr = (*fpfirst); ++fpfirst;
+				faceptr = (*fpfirst); ++fpfirst;
 
-	// Subdivide all edges in this face, set type of new vertex when subdividing.
-	// If an edge is a new edge, then we will not subdivide that edge
-	// since it was created as a result of a previous edge subdivision
-	faceptr->getEdges(edges);
-	for (int i=0; i < edges.size(); ++i) {
-	  if ( edges[i]->getType() != ETNew ) {
-	    vp = subdivideEdge(obj,edges[i],true);
-	    // Find the edges and the corners associated with this vertex
-	    // Add them to the list for resetting type later
-	    // We can make use of the fact that there will only 2 edges
-	    // and 2 corners associated with this vertex
-	    vp->getEdges(vedges); vp->getFaceVertices(vcorners);
-	    eptypereset.push_back(vedges[0]); eptypereset.push_back(vedges[1]); 
-	    fvptypereset.push_back(vcorners[0]); fvptypereset.push_back(vcorners[1]); 
-	  }
-	}
+				// Subdivide all edges in this face, set type of new vertex when subdividing.
+				// If an edge is a new edge, then we will not subdivide that edge
+				// since it was created as a result of a previous edge subdivision
+				faceptr->getEdges(edges);
+				for (int i=0; i < edges.size(); ++i) {
+					if ( edges[i]->getType() != ETNew ) {
+						vp = subdivideEdge(obj,edges[i],true);
+						// Find the edges and the corners associated with this vertex
+						// Add them to the list for resetting type later
+						// We can make use of the fact that there will only 2 edges
+						// and 2 corners associated with this vertex
+						vp->getEdges(vedges); vp->getFaceVertices(vcorners);
+						eptypereset.push_back(vedges[0]); eptypereset.push_back(vedges[1]); 
+						fvptypereset.push_back(vcorners[0]); fvptypereset.push_back(vcorners[1]); 
+					}
+				}
 
-	// Create point-sphere at centroid and set properties of face-vertex to
-	// that of centroid of face.
-	faceptr->getCentroids(geomcen,texcen,colorcen,normalcen);
-	cenfvp = obj->createPointSphere(geomcen,faceptr->material());
-	cenfvp->normal = normalcen; cenfvp->color = colorcen; cenfvp->texcoord = texcen;
+				// Create point-sphere at centroid and set properties of face-vertex to
+				// that of centroid of face.
+				faceptr->getCentroids(geomcen,texcen,colorcen,normalcen);
+				cenfvp = obj->createPointSphere(geomcen,faceptr->material());
+				cenfvp->normal = normalcen; cenfvp->color = colorcen; cenfvp->texcoord = texcen;
 
-	// Insert edges between corner in centroid and the new corners in face
-	// NOTE: Make sure centroid corner is specified first in the insertEdge call
-	faceptr->getCorners(corners);
-	for (int i=0; i < corners.size(); ++i) {
-	  if ( corners[i]->getType() == FVTNew ) {
-	    DLFLFaceVertexType vt = corners[i]->getType();
-	    // Reset the type of the corner as well as the vertex
-	    // Get both edges related to this corner and add them
-	    // to the list for resetting type later.
-	    corners[i]->resetType();
-	    corners[i]->getVertexPtr()->resetType();
-	    insertEdge(obj,cenfvp,corners[i]);
-	  }
-	}
+				// Insert edges between corner in centroid and the new corners in face
+				// NOTE: Make sure centroid corner is specified first in the insertEdge call
+				faceptr->getCorners(corners);
+				for (int i=0; i < corners.size(); ++i) {
+					if ( corners[i]->getType() == FVTNew ) {
+						DLFLFaceVertexType vt = corners[i]->getType();
+						// Reset the type of the corner as well as the vertex
+						// Get both edges related to this corner and add them
+						// to the list for resetting type later.
+						corners[i]->resetType();
+						corners[i]->getVertexPtr()->resetType();
+						insertEdge(obj,cenfvp,corners[i]);
+					}
+				}
       }
 
       // Reset type of edges which were created by subdivision
       DLFLEdgePtrList::iterator epfirst = eptypereset.begin(), eplast = eptypereset.end();
       while ( epfirst != eplast ) {
-	(*epfirst)->resetType(); ++epfirst;
+				(*epfirst)->resetType(); ++epfirst;
       }
 
       // Reset type of corners which were created by subdivision
       DLFLFaceVertexPtrList::iterator fvpfirst = fvptypereset.begin(), fvplast = fvptypereset.end();
       while ( fvpfirst != fvplast ) {
-	(*fvpfirst)->resetType(); ++fvpfirst;
+				(*fvpfirst)->resetType(); ++fvpfirst;
       }
     } else {
       // Go through list and subdivide each face
       DLFLFacePtrList::iterator fpfirst, fplast;
       fpfirst = fplist.begin(); fplast = fplist.end();
       while ( fpfirst != fplast ) {
-	subdivideFace(obj, *fpfirst,false); ++fpfirst;
+				subdivideFace(obj, *fpfirst,false); ++fpfirst;
       }
     }
   }
