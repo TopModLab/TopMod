@@ -257,7 +257,7 @@ void Editor::appendHistory( const QString& text )
   if( text == lastText ) return;
 
   d->history.append( text );
-  d->index = d->history.count()-1;
+  d->index = d->history.count();
 }
 
 void Editor::clearHistory()
@@ -412,19 +412,19 @@ void Editor::historyBack()
   if( d->history.isEmpty() )
     return;
 
-  if( d->index == d->history.count()-1 ) {
+  d->index--;
+  if( d->index < 0 )
+    d->index = 0;
+
+  if( d->index >= d->history.count()-1 ) {
     if( !(toPlainText().isEmpty()) )
       d->unExecuted = toPlainText();
     else
       d->unExecuted = QString("");
   }
 
-  setPlainText( d->history[ d->index ] );
-
-  d->index--;
-
-  if( d->index < 0 )
-    d->index = 0;
+	if( d->index >= 0 && d->index < d->history.count() )
+		setPlainText( d->history[ d->index ] );
 
   QTextCursor cursor = textCursor();
   cursor.movePosition( QTextCursor::End );
@@ -434,7 +434,7 @@ void Editor::historyBack()
 }
 
 void Editor::goToHistoryStart( ) {
-  d->index = d->history.count()-1;
+  d->index = d->history.count();
   setPlainText( d->unExecuted ); //tr("") );
 }
 
@@ -443,10 +443,11 @@ void Editor::historyForward()
   if( d->history.isEmpty() )
     return;
 
-  d->index++;
+	if( d->index < d->history.count() )
+		d->index++;
 
-  if( d->index >= (int) d->history.count()-1 ) {
-    d->index = d->history.count()-1;
+  if( d->index >= d->history.count() ) {
+    d->index = d->history.count();
     setPlainText( d->unExecuted ); //tr("") );
   } else {
     setPlainText( d->history[ d->index ] );

@@ -46,6 +46,7 @@ signals :
   void requestObject( QString fileName );
 private slots :
   void executeCommand( );
+	void echoCommand( QString cmd );
 public slots :
   void loadObject( DLFLObject* obj, QString fileName );
 private :
@@ -61,6 +62,8 @@ private :
 
   void PyInit();
   PyObject *dlfl_module, *dlfl_dict;
+
+	bool mEchoing;
 
 };
 

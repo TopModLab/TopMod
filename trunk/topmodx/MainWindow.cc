@@ -1,13 +1,17 @@
 /****************************************************************************
-**
-	**
-	****************************************************************************/
+ **
+ **
+ ****************************************************************************/
 
 #include <QtGui>
 #include <QtOpenGL>
 #include "MainWindow.hh"
 
-	WireframeRendererPtr MainWindow::wired;              // Wireframe Renderer
+#ifdef WITH_PYTHON
+#include <Python.h>
+#endif
+
+WireframeRendererPtr MainWindow::wired;              // Wireframe Renderer
 NormalRendererPtr MainWindow::normal;                // NormalRenderer
 LitRendererPtr MainWindow::lit;                        // LitRenderer
 TexturedRendererPtr MainWindow::textured;          // TexturedRenderer
@@ -21,10 +25,10 @@ int MainWindow::drag_startx = 0;
 int MainWindow::drag_starty = 0;
 bool MainWindow::is_editing = false;
 
-				// Edge deletion
+// Edge deletion
 bool MainWindow::delete_edge_cleanup = true;
 
-				// Handles
+// Handles
 int MainWindow::num_segments = 4;
 int MainWindow::max_segments = -1;
 bool MainWindow::symmetric_weights = true;
@@ -32,7 +36,7 @@ double MainWindow::nwt1 = 5.0;
 double MainWindow::nwt2 = 5.0;
 int MainWindow::num_extra_twists = 0;
 
-				// Extrusions
+// Extrusions
 double MainWindow::extrude_dist = 2.0;
 double MainWindow::extrude_rot = 0.0;
 double MainWindow::extrude_scale = 1.0;
@@ -43,25 +47,25 @@ bool MainWindow::hexagonalize_dodeca_extrude = false;
 double MainWindow::extrude_bendT = 0;
 double MainWindow::extrude_bendB = 0;
 
-				// Edge subdivision
+// Edge subdivision
 int MainWindow::num_e_subdivs = 2;
 
-				// Split valence 2 vertices
+// Split valence 2 vertices
 double MainWindow::vertex_split_offset=-0.1;
 
-				// Crust modeling
+// Crust modeling
 double MainWindow::crust_thickness = 0.5;
 double MainWindow::crust_scale_factor = 0.9;
 bool MainWindow::crust_cleanup = true;
 
-				// Wireframe modeling
+// Wireframe modeling
 double MainWindow::wireframe_thickness = 0.25;
 
-				// Column modeling
+// Column modeling
 double MainWindow::column_thickness = 0.25;
 int MainWindow::column_segments = 4;
 
-				// Subdivision
+// Subdivision
 double MainWindow::twist_factor = 0.0;
 double MainWindow::weight_factor = 0.0;
 bool MainWindow::doo_sabin_check = true;
@@ -71,33 +75,33 @@ double MainWindow::pentagonal_scale = 0.75;
 bool MainWindow::accurate_dual = true;
 double MainWindow::checkerboard_thickness = 0.33;
 
-			// Added by Doug
+// Added by Doug
 double MainWindow::star_offset = 0.0;
 double MainWindow::fractal_offset = 1.0;
 
-			// Added by Eric
+// Added by Eric
 double MainWindow::substellate_height = 0.0;
 double MainWindow::substellate_curve = 0.0;
 
-			// Added by bei&cansin dec 09
+// Added by bei&cansin dec 09
 double MainWindow::domeLength_factor = 1.0 ;
 double MainWindow::domeScale_factor = 1.0  ;
 double MainWindow::dual1264_scale_factor = 0.7 ;
 
-			// Added by bei dec 11
+// Added by bei dec 11
 double MainWindow::dooSabinBCnewScale_factor = 1.0;
 double MainWindow::dooSabinBCnewLength_factor = 1.0;
 
-			// Added by bei 12-11-03
+// Added by bei 12-11-03
 double MainWindow::loopLength_factor = 1.0;
 
-			// Face subdivision
+// Face subdivision
 bool MainWindow::use_quads = true;
 
-				// Tile texturing
+// Tile texturing
 int MainWindow::tile_tex_n = 2;
 
-				// Multi-face handles
+// Multi-face handles
 MainWindow::MFHAlgo MainWindow::mfh_algo = MainWindow::ConvexHull;
 double MainWindow::mfh_scale_factor = 1.0;
 double MainWindow::mfh_extrude_dist = 0.5;
@@ -105,12 +109,12 @@ bool MainWindow::mfh_use_max_offsets = false;
 double MainWindow::mfh_min_adj_factor = 0.01;
 bool MainWindow::mfh_make_connections = true;
 
-				// Menger Sponge creation
+// Menger Sponge creation
 double MainWindow::sponge_thickness = 0.67; // Thickness for Menger Sponge
 double MainWindow::sponge_collapse_threshold = 0.0; // Threshold factor for edge collapse
 bool MainWindow::sponge_fractional_thickness = false; // Thickness is fractional
 
-				//conical sculpting initialization from ozgur
+//conical sculpting initialization from ozgur
 double MainWindow::cutOffsetE_factor = 0.25;
 double MainWindow::cutOffsetV_factor = 0.25;
 double MainWindow::pnormalBendS_factor = 0;
@@ -138,16 +142,16 @@ DLFLEdgePtr MainWindow::face_loop_start_edge = NULL;
  * asdflkjasd;f
  * asdf;alsjkdf
  * asdfl;jkas;df
-**/
+ **/
 
 
 MainWindow::MainWindow(char *filename) : object(), patchObject(NULL), mode(NormalMode), undoList(), redoList(), 
-undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimitive(false), mSpinBoxMode(None) {
-		//initialize the OpenGL Window GLWidget
+																				 undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimitive(false), mSpinBoxMode(None) {
+	//initialize the OpenGL Window GLWidget
 	QGLFormat fmt;
-		//initialize renderer
+	//initialize renderer
 	createRenderers();
-		//patch object initialization
+	//patch object initialization
 	//patchObject = new TMPatchObject( object.getID() );
 	setMouseTracking(true);
 
@@ -158,7 +162,7 @@ undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimi
 	active->setMinimumSize(400,400);
 	active->setFocusPolicy(Qt::StrongFocus);
 	// active->setResizeEnabled(true);
-		//status bar
+	//status bar
 	mStatusBar = new QStatusBar(this);
 	//statusbar is not working!!! it throws off glwidget's pick coordinates.... :(
 	setStatusBar(mStatusBar);
@@ -170,9 +174,9 @@ undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimi
 	// QVBoxLayout *vblayout = new QVBoxLayout;
 	// vblayout->addWidget(active);
 	// shwidget->setLayout(vblayout);
-		//accept file drop events
+	//accept file drop events
 	setAcceptDrops(true);
-		/** Setup Main Layout and add the glwidget to it **/
+	/** Setup Main Layout and add the glwidget to it **/
 	// layout = new QBoxLayout( QBoxLayout::LeftToRight, this );
 	// layout->addWidget(active);
 	// layout->setMargin(0);
@@ -180,15 +184,15 @@ undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimi
 	// cWidget->setLayout( layout );
 	setCentralWidget( active);
 
-		//initialize light color
+	//initialize light color
 	// plight.position.set(50,25,0);
 	// plight.warmcolor.set(1,1,0.6);
 	// plight.coolcolor.set(0.2,0.2,0.4);
 	// plight.intensity = 2.0;
 
-		#ifdef WITH_PYTHON
-			//the script editor widget will be placed into a QDockWidget
-			//and will be dockable in the top and bottom sections of the main window	
+#ifdef WITH_PYTHON
+	//the script editor widget will be placed into a QDockWidget
+	//and will be dockable in the top and bottom sections of the main window	
 	mScriptEditor = new DLFLScriptEditor( &object );
 	mScriptEditorDockWidget = new QDockWidget(tr("Script Editor"), this);
 	mScriptEditorDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
@@ -197,14 +201,18 @@ undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimi
 	mScriptEditorDockWidget->hide();
 	mScriptEditorDockWidget->setMaximumHeight(200);
 	connect( this, SIGNAL(loadedObject(DLFLObject*,QString)),mScriptEditor, SLOT(loadObject(DLFLObject*,QString)) );
+	connect( this, SIGNAL(echoCommand(QString)),mScriptEditor, SLOT(echoCommand(QString)) );
 	connect( mScriptEditor, SIGNAL(makingChange()), this, SLOT(undoPush()) );
 	connect( mScriptEditor, SIGNAL(cmdExecuted()), this, SLOT(recomputeAll()) );
 	connect( mScriptEditor, SIGNAL(cmdExecuted()), this->getActive(), SLOT(update()) );
 	connect( mScriptEditor, SIGNAL(requestObject(QString)), this, SLOT(openFile(QString)) );
+
+	if( !Py_IsInitialized() )
+		Py_Initialize( );
 #endif
 
 
-		#ifdef WITH_VERSE
+#ifdef WITH_VERSE
 	mVerseDialog = VerseTopMod::Instance(this);
 	mVerseDialogDockWidget = new QDockWidget(tr("Verse-TopMod"), this);
 	mVerseDialogDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
@@ -212,14 +220,14 @@ undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimi
 	addDockWidget(Qt::BottomDockWidgetArea, mVerseDialogDockWidget);
 	mVerseDialogDockWidget->hide();
 	mVerseDialogDockWidget->setMaximumHeight(200);
-		#endif
+#endif
 
 	//make a new instance of QShortcutManager
 	sm = new QShortcutManager();
 	mActionModel = new QStandardItemModel();
 	mActionListWidget = new QWidget;
 
-		//instantiate toolbars
+	//instantiate toolbars
 	mBasicsMode = new BasicsMode(this, sm, mActionListWidget);
 	mExtrusionMode = new ExtrusionMode(this, sm, mActionListWidget );
 	mConicalMode = new ConicalMode(this, sm);
@@ -233,11 +241,11 @@ undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimi
 	mCommandCompleter = new CommandCompleter(mActionListWidget, this);
 	createToolBars();
 	createMenus();
-		//initialize the help file...
+	//initialize the help file...
 	initializeHelp();
-		//style sheet editor
+	//style sheet editor
 	mStyleSheetEditor = new StyleSheetEditor;
-		//preference dialog
+	//preference dialog
 	mSettings = new QSettings("TopMod", "Topological Mesh Modeler");
 	readSettings();
 	mPreferencesDialog = new TopModPreferences(mSettings, mStyleSheetEditor, sm, this);	
@@ -488,25 +496,25 @@ void MainWindow::createActions() {
 	connect(mAntialiasingAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleAntialiasing()));
 	mActionListWidget->addAction(mAntialiasingAct);
 
-	#ifdef WITH_PYTHON
+#ifdef WITH_PYTHON
 	mShowScriptEditorAct = new QAction(tr("Show Script &Editor"), this);
 	mShowScriptEditorAct->setCheckable(true);
 	mShowScriptEditorAct->setStatusTip( tr("Show the script editor to execute DLFL commands") );
 	connect(mShowScriptEditorAct, SIGNAL(triggered()), this, SLOT(showHideScriptEditor()));
 	sm->registerAction(mShowScriptEditorAct, "Display Menu", "SHIFT+CTRL+E");
 	mActionListWidget->addAction(mShowScriptEditorAct);
-	#endif
+#endif
 
-	#ifdef WITH_VERSE
+#ifdef WITH_VERSE
 	mShowVerseDialogAct = new QAction(tr("Show Verse &Dialog"), this);
 	mShowVerseDialogAct->setCheckable(true);
 	mShowVerseDialogAct->setStatusTip( tr("Show the verse dialog to view verse server connection status") );
 	connect(mShowVerseDialogAct, SIGNAL(triggered()), this, SLOT(showHideVerseDialog()));
 	sm->registerAction(mShowVerseDialogAct, "Display Menu", "SHIFT+CTRL+V");
 	mActionListWidget->addAction(mShowVerseDialogAct);
-	#endif	
+#endif	
 
-		//Renderer Menu Actions
+	//Renderer Menu Actions
 	wireframeRendererAct = new QAction(tr("&Wireframe Renderer"), this);
 	wireframeRendererAct->setCheckable(true);
 	sm->registerAction(wireframeRendererAct, "Renderer Menu", "1");
@@ -803,8 +811,8 @@ void MainWindow::createActions() {
 	sm->registerAction(catalanAct, "Languages", "CTRL+F12");
 	mActionListWidget->addAction(catalanAct);
 
-	#ifdef WITH_VERSE
-		//verse menu actions
+#ifdef WITH_VERSE
+	//verse menu actions
 	mVerseConnectLocalhostAct = new QAction(tr("Connect to localhost..."), this);
 	mVerseConnectLocalhostAct->setStatusTip( tr("Connect to localhost") );
 	connect(mVerseConnectLocalhostAct, SIGNAL(triggered()), mVerseDialog, SLOT(connectLocalhost()));
@@ -840,7 +848,7 @@ void MainWindow::createActions() {
 	connect(mVerseKillServerAct, SIGNAL(triggered()), mVerseDialog, SLOT(killServer()));
 	sm->registerAction(mVerseKillServerAct, "Verse Menu", "");
 	mActionListWidget->addAction(mVerseKillServerAct);
-	#endif
+#endif
 
 	mPerformRemeshingAct = new QAction(tr("Perform Remeshing"), this);
 	mPerformRemeshingAct->setStatusTip( tr("Perform the current remeshing scheme") );
@@ -870,14 +878,14 @@ void MainWindow::createActions() {
 }
 
 void MainWindow::createMenus(){
-	#ifdef __APPLE__
+#ifdef __APPLE__
 	menuBar = new QMenuBar(0);
 	setMenuBar(menuBar);
-		// setUnifiedTitleAndToolBarOnMac(true);
-	#else
+	// setUnifiedTitleAndToolBarOnMac(true);
+#else
 	menuBar = new QMenuBar(this);
 	setMenuBar(menuBar);
-	#endif
+#endif
 
 	fileMenu = new QMenu(tr("&File"));
 	menuBar->addMenu(fileMenu);
@@ -888,20 +896,20 @@ void MainWindow::createMenus(){
 	fileMenu->addAction(mSaveAsAct);
 	fileMenu->addAction(mSavePatchesAct);
 
-	#ifdef WITH_VERSE
+#ifdef WITH_VERSE
 	fileMenu->addSeparator();
 	mVerseMenu = new QMenu(tr("&Verse"));
 	fileMenu->addMenu(mVerseMenu);
 	mVerseMenu->addAction(mVerseStartServerAct);
-		// mVerseMenu->addAction(mVerseKillServerAct);
+	// mVerseMenu->addAction(mVerseKillServerAct);
 	mVerseMenu->addSeparator();
 	mVerseMenu->addAction(mVerseConnectLocalhostAct);
 	mVerseMenu->addAction(mVerseConnectAct);
-		// mVerseMenu->removeAction(mVerseConnectAct);
+	// mVerseMenu->removeAction(mVerseConnectAct);
 	mVerseMenu->addSeparator();
-		// mVerseMenu->addAction(mVerseDisconnectAct);
-		// mVerseMenu->addAction(mVerseDisconnectAllAct);
-	#endif
+	// mVerseMenu->addAction(mVerseDisconnectAct);
+	// mVerseMenu->addAction(mVerseDisconnectAllAct);
+#endif
 
 	fileMenu->addSeparator();
 	fileMenu->addAction(loadTextureAct);
@@ -956,13 +964,13 @@ void MainWindow::createMenus(){
 	displayMenu->addAction(objectOrientationAct);
 	displayMenu->addAction(showNormalsAct);
 
-	#ifdef WITH_PYTHON
+#ifdef WITH_PYTHON
 	displayMenu->addAction(mShowScriptEditorAct);
-	#endif
+#endif
 
-	#ifdef WITH_VERSE
+#ifdef WITH_VERSE
 	displayMenu->addAction(mShowVerseDialogAct);
-	#endif
+#endif
 
 	displayMenu->addAction(mFullscreenAct);
 
@@ -1183,232 +1191,232 @@ void MainWindow::readSettings() {
 	resize(size.width(),size.height());
 	move(pos);}
 
-	void MainWindow::writeSettings() {
+void MainWindow::writeSettings() {
 
-		mSettings->beginGroup("MainWindow");
-		mSettings->setValue("pos", pos());
-		mSettings->setValue("size", size());
-		mSettings->endGroup();
+	mSettings->beginGroup("MainWindow");
+	mSettings->setValue("pos", pos());
+	mSettings->setValue("size", size());
+	mSettings->endGroup();
 
-		mSettings->beginGroup("ViewPortColors");
+	mSettings->beginGroup("ViewPortColors");
 
-		mSettings->endGroup();
+	mSettings->endGroup();
+}
+
+bool MainWindow::maybeSave() {
+	if (this->isModified()) {
+		int ret = QMessageBox::warning(this, tr("TopMod"),
+																	 tr("The document has been modified.\n"
+																			"Do you want to save your changes?"),
+																	 QMessageBox::Yes | QMessageBox::Default,
+																	 QMessageBox::No,
+																	 QMessageBox::Cancel | QMessageBox::Escape);
+		if (ret == QMessageBox::Yes)
+			return this->saveFile();
+		else if (ret == QMessageBox::Cancel)
+			return false;
 	}
+	return true;
+}
 
-	bool MainWindow::maybeSave() {
-		if (this->isModified()) {
-			int ret = QMessageBox::warning(this, tr("TopMod"),
-				tr("The document has been modified.\n"
-				"Do you want to save your changes?"),
-				QMessageBox::Yes | QMessageBox::Default,
-				QMessageBox::No,
-				QMessageBox::Cancel | QMessageBox::Escape);
-			if (ret == QMessageBox::Yes)
-				return this->saveFile();
-			else if (ret == QMessageBox::Cancel)
-				return false;
-		}
-		return true;
-	}
+void MainWindow::loadFile(QString fileName) {
+	openFile(fileName);
+	this->setCurrentFile(fileName);
+	statusBar()->showMessage(tr("File loaded"), 2000);
+}
 
-	void MainWindow::loadFile(QString fileName) {
-		openFile(fileName);
-		this->setCurrentFile(fileName);
-		statusBar()->showMessage(tr("File loaded"), 2000);
-	}
+bool MainWindow::saveFile(QString fileName) {
+	this->setCurrentFile(fileName);
+	statusBar()->showMessage(tr("File saved"), 2000);
+	return true;
+}
 
-	bool MainWindow::saveFile(QString fileName) {
-		this->setCurrentFile(fileName);
-		statusBar()->showMessage(tr("File saved"), 2000);
-		return true;
-	}
-
-	void MainWindow::closeEvent(QCloseEvent *event) {
+void MainWindow::closeEvent(QCloseEvent *event) {
 	//close the help file if it's open... not sure this is necessary
-		if (mAssistantClient)
-			mAssistantClient->closeAssistant();
+	if (mAssistantClient)
+		mAssistantClient->closeAssistant();
 
-		if (maybeSave()) {
-			writeSettings();
-			event->accept();
-			} else event->ignore();
-		}
+	if (maybeSave()) {
+		writeSettings();
+		event->accept();
+	} else event->ignore();
+}
 
-		void MainWindow::openFile(QString fileName){
-			QFile file(fileName);
-			file.open(QIODevice::ReadOnly);
-			QFileInfo info(file);
-			QByteArray ba = info.absoluteFilePath().toLatin1();
-			const char *filename = ba.data();
-			mWasPrimitive = false;
-			mIsPrimitive = false;
-			if (!curFile.isEmpty()){
-				undoPush();
-				setModified(false);
-			}
+void MainWindow::openFile(QString fileName){
+	QFile file(fileName);
+	file.open(QIODevice::ReadOnly);
+	QFileInfo info(file);
+	QByteArray ba = info.absoluteFilePath().toLatin1();
+	const char *filename = ba.data();
+	mWasPrimitive = false;
+	mIsPrimitive = false;
+	if (!curFile.isEmpty()){
+		undoPush();
+		setModified(false);
+	}
 
-			readObject(filename);
+	readObject(filename);
 #ifdef WITH_PYTHON
-			DLFLObjectPtr obj = &object;
-			if( obj )
-				emit loadedObject(obj,fileName);
+	DLFLObjectPtr obj = &object;
+	if( obj )
+		emit loadedObject(obj,fileName);
 #endif
-			active->recomputePatches();
-			active->recomputeNormals();
-			setCurrentFile(fileName);
-			active->redraw();
-		}
+	active->recomputePatches();
+	active->recomputeNormals();
+	setCurrentFile(fileName);
+	active->redraw();
+}
 
-		void MainWindow::about() {
-			QMessageBox::about(this, tr("About TopMod"),
-				tr("The About page for TopMod is still in the works \n stay tuned... \n"));
-		}
+void MainWindow::about() {
+	QMessageBox::about(this, tr("About TopMod"),
+										 tr("The About page for TopMod is still in the works \n stay tuned... \n"));
+}
 
-		void MainWindow::initializeHelp(){
-			mAssistantClient = new QAssistantClient(QLibraryInfo::location(QLibraryInfo::BinariesPath), this);
-// QStringList arguments;
-// arguments << "-profile" << QString("documentation") + QDir::separator() + QString("simpletextviewer.adp");
-// mAssistantClient->setArguments(arguments);
-		}
+void MainWindow::initializeHelp(){
+	mAssistantClient = new QAssistantClient(QLibraryInfo::location(QLibraryInfo::BinariesPath), this);
+	// QStringList arguments;
+	// arguments << "-profile" << QString("documentation") + QDir::separator() + QString("simpletextviewer.adp");
+	// mAssistantClient->setArguments(arguments);
+}
 
-		void MainWindow::help() {
-			mAssistantClient->showPage("");
-		}
+void MainWindow::help() {
+	mAssistantClient->showPage("");
+}
 
-		void MainWindow::documentWasModified() {
-			setWindowModified(this->isModified());
-		}
+void MainWindow::documentWasModified() {
+	setWindowModified(this->isModified());
+}
 
-		void MainWindow::on_editStyleAction_triggered() {
-			mStyleSheetEditor->show();
-			mStyleSheetEditor->activateWindow();
-		}
+void MainWindow::on_editStyleAction_triggered() {
+	mStyleSheetEditor->show();
+	mStyleSheetEditor->activateWindow();
+}
 
-		void MainWindow::openPreferences() {
-			mPreferencesDialog->display();
-		}
+void MainWindow::openPreferences() {
+	mPreferencesDialog->display();
+}
 
-		void MainWindow::showHideScriptEditor(){
+void MainWindow::showHideScriptEditor(){
 
 #ifdef WITH_PYTHON
-			if( mScriptEditorDockWidget->isVisible( ) )
-				mScriptEditorDockWidget->hide( );
-			else {
-				mScriptEditorDockWidget->show( );
-				mScriptEditorDockWidget->setFocus();
-			}
+	if( mScriptEditorDockWidget->isVisible( ) )
+		mScriptEditorDockWidget->hide( );
+	else {
+		mScriptEditorDockWidget->show( );
+		mScriptEditorDockWidget->setFocus();
+	}
 #endif
-		}
+}
 
-		void MainWindow::showHideVerseDialog(){
+void MainWindow::showHideVerseDialog(){
 #ifdef WITH_VERSE
-			if( mVerseDialogDockWidget->isVisible( ) )
-				mVerseDialogDockWidget->hide( );
-			else {
-				mVerseDialogDockWidget->show( );
-				mVerseDialogDockWidget->setFocus();
-			}
+	if( mVerseDialogDockWidget->isVisible( ) )
+		mVerseDialogDockWidget->hide( );
+	else {
+		mVerseDialogDockWidget->show( );
+		mVerseDialogDockWidget->setFocus();
+	}
 #endif
-		}
+}
 
 #ifdef WITH_VERSE
-		void MainWindow::verseConnected(){
-			mVerseMenu->insertAction(mVerseConnectLocalhostAct, mVerseDisconnectAct);
-			mVerseMenu->removeAction(mVerseConnectLocalhostAct);
-			mVerseMenu->removeAction(mVerseConnectAct);
-		}
+void MainWindow::verseConnected(){
+	mVerseMenu->insertAction(mVerseConnectLocalhostAct, mVerseDisconnectAct);
+	mVerseMenu->removeAction(mVerseConnectLocalhostAct);
+	mVerseMenu->removeAction(mVerseConnectAct);
+}
 
-		void MainWindow::verseDisconnected(){
-			mVerseMenu->insertAction(mVerseDisconnectAct,mVerseConnectLocalhostAct);
-			mVerseMenu->insertAction(mVerseDisconnectAct,mVerseConnectAct);
-			mVerseMenu->removeAction(mVerseDisconnectAct);
-		}
-		void MainWindow::verseStarted(){
-			mVerseMenu->insertAction(mVerseStartServerAct, mVerseKillServerAct);
-			mVerseMenu->removeAction(mVerseStartServerAct);	
-		}
+void MainWindow::verseDisconnected(){
+	mVerseMenu->insertAction(mVerseDisconnectAct,mVerseConnectLocalhostAct);
+	mVerseMenu->insertAction(mVerseDisconnectAct,mVerseConnectAct);
+	mVerseMenu->removeAction(mVerseDisconnectAct);
+}
+void MainWindow::verseStarted(){
+	mVerseMenu->insertAction(mVerseStartServerAct, mVerseKillServerAct);
+	mVerseMenu->removeAction(mVerseStartServerAct);	
+}
 
-		void MainWindow::verseKilled(){
-			mVerseMenu->insertAction(mVerseKillServerAct, mVerseStartServerAct);
-			mVerseMenu->removeAction(mVerseKillServerAct);		
-		}
+void MainWindow::verseKilled(){
+	mVerseMenu->insertAction(mVerseKillServerAct, mVerseStartServerAct);
+	mVerseMenu->removeAction(mVerseKillServerAct);		
+}
 #endif
 
-		void MainWindow::createRenderers(){
-			wired = new WireframeRenderer();
-			wired->setRenderFlags(DLFLRenderer::ShowWireframe);
+void MainWindow::createRenderers(){
+	wired = new WireframeRenderer();
+	wired->setRenderFlags(DLFLRenderer::ShowWireframe);
 
-			normal = new NormalRenderer();
-			normal->setRenderFlags(DLFLRenderer::ShowWireframe);
+	normal = new NormalRenderer();
+	normal->setRenderFlags(DLFLRenderer::ShowWireframe);
 
-			lit = new LitRenderer();
-			lit->setRenderFlags(DLFLRenderer::ShowWireframe);
+	lit = new LitRenderer();
+	lit->setRenderFlags(DLFLRenderer::ShowWireframe);
 
-			textured = new TexturedRenderer();
-			textured->setRenderFlags(DLFLRenderer::ShowWireframe);
+	textured = new TexturedRenderer();
+	textured->setRenderFlags(DLFLRenderer::ShowWireframe);
 
-			texturedlit = new TexturedLitRenderer();
-			texturedlit->setRenderFlags(DLFLRenderer::ShowWireframe);
+	texturedlit = new TexturedLitRenderer();
+	texturedlit->setRenderFlags(DLFLRenderer::ShowWireframe);
 
-			patch = new PatchRenderer();
-			patch->setRenderFlags(DLFLRenderer::ShowWireframe);
-		}
+	patch = new PatchRenderer();
+	patch->setRenderFlags(DLFLRenderer::ShowWireframe);
+}
 
-		void MainWindow::destroyRenderers(){
-			delete wired;
-			delete normal;
-			delete lit;
-			delete textured;
-			delete texturedlit;
-			delete patch;
-		};
+void MainWindow::destroyRenderers(){
+	delete wired;
+	delete normal;
+	delete lit;
+	delete textured;
+	delete texturedlit;
+	delete patch;
+};
 
-		// void MainWindow::setWarmLightColor(QColor c){
-		// 	plight.warmcolor.set(c.redF(),c.greenF(),c.blueF());
-		// 	recomputeLighting();
-		// 	redraw();
-		// }
-		// 
-		// void MainWindow::setCoolLightColor(QColor c){
-		// 	plight.coolcolor.set(c.redF(),c.greenF(),c.blueF());
-		// 	recomputeLighting();
-		// 	redraw();
-		// }
-		// 
-		// void MainWindow::setLightIntensity(double i){
-		// 	plight.intensity = i;
-		// 	recomputeLighting();
-		// 	redraw();
-		// }
+// void MainWindow::setWarmLightColor(QColor c){
+// 	plight.warmcolor.set(c.redF(),c.greenF(),c.blueF());
+// 	recomputeLighting();
+// 	redraw();
+// }
+// 
+// void MainWindow::setCoolLightColor(QColor c){
+// 	plight.coolcolor.set(c.redF(),c.greenF(),c.blueF());
+// 	recomputeLighting();
+// 	redraw();
+// }
+// 
+// void MainWindow::setLightIntensity(double i){
+// 	plight.intensity = i;
+// 	recomputeLighting();
+// 	redraw();
+// }
 
-		void MainWindow::setUndoLimit(int limit) {
-			undolimit = limit;
-		}
+void MainWindow::setUndoLimit(int limit) {
+	undolimit = limit;
+}
 
-		void MainWindow::toggleUndo(void) {
-			if ( useUndo ) useUndo = false;
-			else useUndo = true;
-		}
+void MainWindow::toggleUndo(void) {
+	if ( useUndo ) useUndo = false;
+	else useUndo = true;
+}
 
-		void MainWindow::doDrag(int x, int y) { // brianb
-			int drag_endx = x;
-		int drag_endy = y;
+void MainWindow::doDrag(int x, int y) { // brianb
+	int drag_endx = x;
+	int drag_endy = y;
 
-		GLdouble obj_world[3],  // Object world coordinates
-			obj_window[3], // Object window coordinates 
-			ms_window[3],  // Mouse start drag window
-			ms_world[3],   // Mouse start drag world
-			me_window[3],  // Mouse end drag window
-			me_world[3];   // Mouse end drag world
-		GLdouble modelMatrix[16], projMatrix[16];
-		GLint viewport[4];
-		GLint realy;
-		DLFLVertexPtr vptr;
-		// Viewport* viewp;
+	GLdouble obj_world[3],  // Object world coordinates
+		obj_window[3], // Object window coordinates 
+		ms_window[3],  // Mouse start drag window
+		ms_world[3],   // Mouse start drag world
+		me_window[3],  // Mouse end drag window
+		me_world[3];   // Mouse end drag world
+	GLdouble modelMatrix[16], projMatrix[16];
+	GLint viewport[4];
+	GLint realy;
+	DLFLVertexPtr vptr;
+	// Viewport* viewp;
 
-		switch ( mode ) {
-			case EditVertex:
-			if (GLWidget::numSelectedLocators() > 0)
+	switch ( mode ) {
+	case EditVertex:
+		if (GLWidget::numSelectedLocators() > 0)
 			{
 				if (!is_editing) {
 					undoPush();
@@ -1438,8 +1446,8 @@ void MainWindow::readSettings() {
 
 				// Project object coordinates to window coordinates (to get accurate window depth)
 				gluProject(obj_world[0],obj_world[1],obj_world[2],
-					modelMatrix,projMatrix,viewport,
-					&obj_window[0],&obj_window[1],&obj_window[2]);
+									 modelMatrix,projMatrix,viewport,
+									 &obj_window[0],&obj_window[1],&obj_window[2]);
 
 				// Set start and end window coordinates using depth coordinate found above
 				ms_window[0] = drag_startx;  ms_window[1] = drag_starty;  ms_window[2] = obj_window[2];
@@ -1447,36 +1455,36 @@ void MainWindow::readSettings() {
 
 				// Unproject start drag window coordinates to world coordinates
 				gluUnProject(ms_window[0],ms_window[1],ms_window[2],
-					modelMatrix, projMatrix, viewport,
-					&ms_world[0],&ms_world[1],&ms_world[2]);
+										 modelMatrix, projMatrix, viewport,
+										 &ms_world[0],&ms_world[1],&ms_world[2]);
 
 				// Unproject end drag window coordinates to world coordinates
 				gluUnProject(me_window[0],me_window[1],me_window[2],
-					modelMatrix, projMatrix, viewport,
-					&me_world[0],&me_world[1],&me_world[2]);
+										 modelMatrix, projMatrix, viewport,
+										 &me_world[0],&me_world[1],&me_world[2]);
 
 				// Switch on locked axis and update object world position
 				switch (active->getLocatorPtr()->getSelectedAxis())
-				{
+					{
 					case 0: // X-axis
-					obj_world[0] = obj_world[0] + me_world[0] - ms_world[0];     
-					break;
+						obj_world[0] = obj_world[0] + me_world[0] - ms_world[0];     
+						break;
 
 					case 1: // Y-axis
-					obj_world[1] = obj_world[1] + me_world[1] - ms_world[1];                     
-					break;
+						obj_world[1] = obj_world[1] + me_world[1] - ms_world[1];                     
+						break;
 
 					case 2: // Z-axis
-					obj_world[2] = obj_world[2] + me_world[2] - ms_world[2];                 
-					break;
+						obj_world[2] = obj_world[2] + me_world[2] - ms_world[2];                 
+						break;
 
 					case 3:  // User can drag freely along viewing place
 					default: 
-					obj_world[0] = obj_world[0] + me_world[0] - ms_world[0];             
-					obj_world[1] = obj_world[1] + me_world[1] - ms_world[1];
-					obj_world[2] = obj_world[2] + me_world[2] - ms_world[2];
-					break;
-				}
+						obj_world[0] = obj_world[0] + me_world[0] - ms_world[0];             
+						obj_world[1] = obj_world[1] + me_world[1] - ms_world[1];
+						obj_world[2] = obj_world[2] + me_world[2] - ms_world[2];
+						break;
+					}
 
 				vptr->setCoords(Vector3d(obj_world[0],obj_world[1],obj_world[2]));
 
@@ -1490,157 +1498,157 @@ void MainWindow::readSettings() {
 
 				redraw();
 			}
-			break;
+		break;
 
-			default:
-			doSelection(x,y);
-			break;
+	default:
+		doSelection(x,y);
+		break;
+	}
+}// brianb
+
+// Do selection of various entities depending on current mode
+void MainWindow::doSelection(int x, int y) {
+	DLFLVertexPtr svptr = NULL;
+	DLFLEdgePtr septr = NULL;
+	DLFLFacePtr sfptr = NULL;
+	DLFLFaceVertexPtr sfvptr = NULL;
+	DLFLLocatorPtr slptr = NULL; // brianb
+
+	DLFLEdgePtrArray septrarr;
+	DLFLEdgePtrArray::iterator eit;
+	DLFLFacePtrArray sfptrarr;
+	DLFLFacePtrArray::iterator first, last;
+
+	switch ( mode ) {
+
+	case EditVertex:     // brianb
+		slptr = active->getLocatorPtr();
+		svptr = active->getLocatorPtr()->getActiveVertex();
+		if (svptr == NULL) {
+			svptr = active->selectVertex(x,y);
+			slptr->setActiveVertex(svptr);
 		}
-	}// brianb
-
-	// Do selection of various entities depending on current mode
-	void MainWindow::doSelection(int x, int y) {
-		DLFLVertexPtr svptr = NULL;
-		DLFLEdgePtr septr = NULL;
-		DLFLFacePtr sfptr = NULL;
-		DLFLFaceVertexPtr sfvptr = NULL;
-		DLFLLocatorPtr slptr = NULL; // brianb
-
-		DLFLEdgePtrArray septrarr;
-		DLFLEdgePtrArray::iterator eit;
-		DLFLFacePtrArray sfptrarr;
-		DLFLFacePtrArray::iterator first, last;
-
-		switch ( mode ) {
-
-			case EditVertex:     // brianb
-			slptr = active->getLocatorPtr();
-			svptr = active->getLocatorPtr()->getActiveVertex();
-			if (svptr == NULL) {
-				svptr = active->selectVertex(x,y);
-				slptr->setActiveVertex(svptr);
+		// Test for locator selection
+		if (slptr->getActiveVertex() != NULL)	{
+			slptr = active->selectLocator(x,y);
+			if (slptr != NULL) {
+				active->setSelectedLocator(0,slptr);
+				startDrag(x,y);
 			}
-								// Test for locator selection
-			if (slptr->getActiveVertex() != NULL)	{
-				slptr = active->selectLocator(x,y);
-				if (slptr != NULL) {
-					active->setSelectedLocator(0,slptr);
-					startDrag(x,y);
-				}
-				else {
-					active->getLocatorPtr()->setActiveVertex(NULL);
-					active->clearSelectedLocators();
-				} 
-			}
-			break;
-			case SelectVertex:
-			case MarkVertex:
-			case CutVertex://ozgur
-			std::cout<< "selecting a vertex\n";
-			svptr = active->selectVertex(x,y);
+			else {
+				active->getLocatorPtr()->setActiveVertex(NULL);
+				active->clearSelectedLocators();
+			} 
+		}
+		break;
+	case SelectVertex:
+	case MarkVertex:
+	case CutVertex://ozgur
+		std::cout<< "selecting a vertex\n";
+		svptr = active->selectVertex(x,y);
+		active->setSelectedVertex(num_sel_verts,svptr);
+		break;
+	case MultiSelectVertex :
+		svptr = active->selectVertex(x,y);
+		if ( !active->isSelected(svptr) )
 			active->setSelectedVertex(num_sel_verts,svptr);
-			break;
-			case MultiSelectVertex :
-			svptr = active->selectVertex(x,y);
-			if ( !active->isSelected(svptr) )
-				active->setSelectedVertex(num_sel_verts,svptr);
-			break;
-			case DeleteEdge :
-			case SubdivideEdge :
-			case CollapseEdge :
-			case SelectEdge :
-			case CutEdge :
-			case TruncateEdge :
-			case MarkEdge ://ozgur
-			septr = active->selectEdge(x,y);
+		break;
+	case DeleteEdge :
+	case SubdivideEdge :
+	case CollapseEdge :
+	case SelectEdge :
+	case CutEdge :
+	case TruncateEdge :
+	case MarkEdge ://ozgur
+		septr = active->selectEdge(x,y);
+		active->setSelectedEdge(num_sel_edges,septr);
+		break;
+	case CutEdgeandVertex://ozgur
+		septr = active->selectEdge(x,y);
+		svptr = active->selectVertex(x,y);
+		active->setSelectedEdge(num_sel_edges,septr);
+		active->setSelectedVertex(num_sel_verts,svptr);
+		break;
+	case MultiSelectEdge :
+		septr = active->selectEdge(x,y);
+		if ( !active->isSelected(septr) )
 			active->setSelectedEdge(num_sel_edges,septr);
-			break;
-			case CutEdgeandVertex://ozgur
-			septr = active->selectEdge(x,y);
-			svptr = active->selectVertex(x,y);
+		break;
+	case SelectEdgeLoop:
+		if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
+			active->clearSelectedEdges();
+		}
+		septr = active->selectEdge(x,y);
+		if (septr && QApplication::keyboardModifiers() == Qt::ControlModifier && active->isSelected(septr)){
+			deselect_edges = true;
+			active->clearSelectedEdge(septr);
+			num_sel_edges--;
+			getEdgeLoopSelection(septr);
+			deselect_edges = false;
+		}
+		else if ( septr && !active->isSelected(septr)){
 			active->setSelectedEdge(num_sel_edges,septr);
-			active->setSelectedVertex(num_sel_verts,svptr);
-			break;
-			case MultiSelectEdge :
-			septr = active->selectEdge(x,y);
-			if ( !active->isSelected(septr) )
-				active->setSelectedEdge(num_sel_edges,septr);
-			break;
-			case SelectEdgeLoop:
-			if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
-				active->clearSelectedEdges();
-			}
-			septr = active->selectEdge(x,y);
-			if (septr && QApplication::keyboardModifiers() == Qt::ControlModifier && active->isSelected(septr)){
-				deselect_edges = true;
-				active->clearSelectedEdge(septr);
-				num_sel_edges--;
-				getEdgeLoopSelection(septr);
-				deselect_edges = false;
-			}
-			else if ( septr && !active->isSelected(septr)){
-				active->setSelectedEdge(num_sel_edges,septr);
-				num_sel_edges++;
-				getEdgeLoopSelection(septr);
-			}
-			active->redraw();
-			break;
-			case SelectFace :
-			case ExtrudeFace :
-			case ExtrudeFaceDS :
-			case ExtrudeDualFace :
-			case ExtrudeFaceDodeca :
-			case ExtrudeFaceIcosa :
-			case StellateFace :
-			case DoubleStellateFace :
-			case CrustModeling :
-			case ConnectFaces :
-			case CutFace://ozgur
-			sfptr = active->selectFace(x,y);
-			active->setSelectedFace(num_sel_faces,sfptr);
-			break;
-			case SelectSimilarFaces :
+			num_sel_edges++;
+			getEdgeLoopSelection(septr);
+		}
+		active->redraw();
+		break;
+	case SelectFace :
+	case ExtrudeFace :
+	case ExtrudeFaceDS :
+	case ExtrudeDualFace :
+	case ExtrudeFaceDodeca :
+	case ExtrudeFaceIcosa :
+	case StellateFace :
+	case DoubleStellateFace :
+	case CrustModeling :
+	case ConnectFaces :
+	case CutFace://ozgur
+		sfptr = active->selectFace(x,y);
+		active->setSelectedFace(num_sel_faces,sfptr);
+		break;
+	case SelectSimilarFaces :
 		//clear selection if shift isn't down
-			if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
-				active->clearSelectedFaces();
-			sfptr = active->selectFace(x,y);
-			if (sfptr){
-				active->setSelectedFace(num_sel_faces,sfptr);
-				num_sel_faces++;
-				DLFLFacePtrArray sfptrarray;
-				vector<DLFLFacePtr>::iterator it;
-				DLFL::selectMatchingFaces(&object, sfptr, sfptrarray);
-				for (it = sfptrarray.begin(); it != sfptrarray.end(); it++){
-					if (!active->isSelected(*it)){
-						active->setSelectedFace(num_sel_faces,*it);
-						num_sel_faces++;
-					}
+		if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
+			active->clearSelectedFaces();
+		sfptr = active->selectFace(x,y);
+		if (sfptr){
+			active->setSelectedFace(num_sel_faces,sfptr);
+			num_sel_faces++;
+			DLFLFacePtrArray sfptrarray;
+			vector<DLFLFacePtr>::iterator it;
+			DLFL::selectMatchingFaces(&object, sfptr, sfptrarray);
+			for (it = sfptrarray.begin(); it != sfptrarray.end(); it++){
+				if (!active->isSelected(*it)){
+					active->setSelectedFace(num_sel_faces,*it);
+					num_sel_faces++;
 				}
 			}
-			active->redraw();
-			break;
-			case SelectFaceLoop:
-			if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
-				active->clearSelectedFaces();
-			}
-			septr = active->selectEdge(x,y);
-			active->setSelectedEdge(num_sel_edges,septr);
-			if ( septr ){
-				if (QApplication::keyboardModifiers() == Qt::ControlModifier){ // deselect
-					face_loop_start_edge = septr;
+		}
+		active->redraw();
+		break;
+	case SelectFaceLoop:
+		if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
+			active->clearSelectedFaces();
+		}
+		septr = active->selectEdge(x,y);
+		active->setSelectedEdge(num_sel_edges,septr);
+		if ( septr ){
+			if (QApplication::keyboardModifiers() == Qt::ControlModifier){ // deselect
+				face_loop_start_edge = septr;
 				getFaceLoopSelection(septr, true, NULL, false);
 			}
 			else { //select
 				face_loop_start_edge = septr;
-			getFaceLoopSelection(septr, true, NULL, true);
+				getFaceLoopSelection(septr, true, NULL, true);
+			}
 		}
-	}
-	active->redraw();
-	break;
+		active->redraw();
+		break;
 	case ExtrudeMultipleFaces :
 	case MultiSelectFace :
 	case SubdivideFace :
-									// No duplicates allowed
+		// No duplicates allowed
 		// sfptr = active->selectFace(x,y);
 		// if ( !active->isSelected(sfptr) ){
 		// 	active->setSelectedFace(num_sel_faces,sfptr);
@@ -1650,50 +1658,50 @@ void MainWindow::readSettings() {
 		// 	active->clearSelectedFace(sfptr);
 		// 	num_sel_faces--;
 		// }
-	if ( QApplication::keyboardModifiers() == Qt::ControlModifier) {
-		sfptrarr = active->deselectFaces(x,y);
-		first = sfptrarr.begin(); last = sfptrarr.end();
-		while ( first != last ){
-			active->clearSelectedFace(*first);
-			++first;
-			num_sel_faces--;
+		if ( QApplication::keyboardModifiers() == Qt::ControlModifier) {
+			sfptrarr = active->deselectFaces(x,y);
+			first = sfptrarr.begin(); last = sfptrarr.end();
+			while ( first != last ){
+				active->clearSelectedFace(*first);
+				++first;
+				num_sel_faces--;
+			}
+			active->redraw();
+			sfptrarr.clear();
 		}
-		active->redraw();
-		sfptrarr.clear();
-	}
-	else {
-		sfptrarr = active->selectFaces(x,y);
-		first = sfptrarr.begin(); last = sfptrarr.end();
-		while ( first != last ){
-			active->setSelectedFace(num_sel_faces,*first);
-			++first;
-			num_sel_faces++;
+		else {
+			sfptrarr = active->selectFaces(x,y);
+			first = sfptrarr.begin(); last = sfptrarr.end();
+			while ( first != last ){
+				active->setSelectedFace(num_sel_faces,*first);
+				++first;
+				num_sel_faces++;
+			}
+			active->redraw();
+			sfptrarr.clear();
 		}
-		active->redraw();
-		sfptrarr.clear();
-	}
-	break;
+		break;
 	case SelectCheckerboard :
-	if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
-		active->clearSelectedFaces();
-	}
+		if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
+			active->clearSelectedFaces();
+		}
 		//get one selected face
-	sfptr = active->selectFace(x,y);
-	if (sfptr && active->isSelected(sfptr) && QApplication::keyboardModifiers() == Qt::ControlModifier){
-		deselect_edges = true;
-		active->clearSelectedFace(sfptr);
-		num_sel_faces--;
-		getCheckerboardSelection(sfptr);
-		deselect_edges = false;
-	}
-	else if (sfptr && !active->isSelected(sfptr) ){
-		active->setSelectedFace(num_sel_faces,sfptr);
-		num_sel_faces++;
-		getCheckerboardSelection(sfptr);
-	}		
-	active->redraw();
-	sfptrarr.clear();
-	break;
+		sfptr = active->selectFace(x,y);
+		if (sfptr && active->isSelected(sfptr) && QApplication::keyboardModifiers() == Qt::ControlModifier){
+			deselect_edges = true;
+			active->clearSelectedFace(sfptr);
+			num_sel_faces--;
+			getCheckerboardSelection(sfptr);
+			deselect_edges = false;
+		}
+		else if (sfptr && !active->isSelected(sfptr) ){
+			active->setSelectedFace(num_sel_faces,sfptr);
+			num_sel_faces++;
+			getCheckerboardSelection(sfptr);
+		}		
+		active->redraw();
+		sfptrarr.clear();
+		break;
 	case SelectFaceVertex :
 	case ReorderFace :
 	case InsertEdge :
@@ -1701,37 +1709,37 @@ void MainWindow::readSettings() {
 	case ConnectFaceVertices :
 	case BezierConnectFaces :
 	case HermiteConnectFaces :
-	sfptr = active->selectFace(x,y);
-	active->setSelectedFace(num_sel_faces,sfptr);
-	if ( sfptr )
-	{
-		sfvptr = active->selectFaceVertex(sfptr,x,y);
-		active->setSelectedFaceVertex(num_sel_faceverts,sfvptr);
-	}
-	break;
+		sfptr = active->selectFace(x,y);
+		active->setSelectedFace(num_sel_faces,sfptr);
+		if ( sfptr )
+			{
+				sfvptr = active->selectFaceVertex(sfptr,x,y);
+				active->setSelectedFaceVertex(num_sel_faceverts,sfvptr);
+			}
+		break;
 
 	case MultiSelectFaceVertex :
-	sfptr = active->selectFace(x,y);
-	active->setSelectedFace(num_sel_faces,sfptr);
-	if ( sfptr )
-	{
-		sfvptr = active->selectFaceVertex(sfptr,x,y);
-		if ( !active->isSelected(sfvptr) )
-			active->setSelectedFaceVertex(num_sel_faceverts,sfvptr);
-	}
-	break;
+		sfptr = active->selectFace(x,y);
+		active->setSelectedFace(num_sel_faces,sfptr);
+		if ( sfptr )
+			{
+				sfvptr = active->selectFaceVertex(sfptr,x,y);
+				if ( !active->isSelected(sfvptr) )
+					active->setSelectedFaceVertex(num_sel_faceverts,sfvptr);
+			}
+		break;
 
 	case ConnectEdges :
-	sfptr = active->selectFace(x,y);
-	active->setSelectedFace(num_sel_faces,sfptr);
-	if ( sfptr )
-	{
-		septr = active->selectEdge(x,y);
-		active->setSelectedEdge(num_sel_edges,septr);
-	}
-	break;
-};	
-if ( svptr != NULL || septr != NULL || sfptr != NULL ) redraw();
+		sfptr = active->selectFace(x,y);
+		active->setSelectedFace(num_sel_faces,sfptr);
+		if ( sfptr )
+			{
+				septr = active->selectEdge(x,y);
+				active->setSelectedEdge(num_sel_edges,septr);
+			}
+		break;
+	};	
+	if ( svptr != NULL || septr != NULL || sfptr != NULL ) redraw();
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
@@ -1749,7 +1757,7 @@ void MainWindow::dropEvent(QDropEvent *event) {
 	// event->acceptProposedAction();
 }
 
-	// Handle keyboard and mouse events
+// Handle keyboard and mouse events
 void MainWindow::mousePressEvent(QMouseEvent *event) {
 
 	if ( event->buttons() == Qt::LeftButton && mode != NormalMode ){
@@ -1797,19 +1805,19 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event) {
 	else if (mSpinBoxMode != None){
 		double d = (event->x()-mStartDragX)/20;
 		switch(mSpinBoxMode){
-			case One: if (mSpinBoxOne!=0) mSpinBoxOne->setValue(mSpinBoxOne->value()+d);
+		case One: if (mSpinBoxOne!=0) mSpinBoxOne->setValue(mSpinBoxOne->value()+d);
 			break;
-			case Two: if (mSpinBoxTwo!=0) mSpinBoxTwo->setValue(mSpinBoxTwo->value()+d);
+		case Two: if (mSpinBoxTwo!=0) mSpinBoxTwo->setValue(mSpinBoxTwo->value()+d);
 			break;
-			case Three: if (mSpinBoxThree!=0) mSpinBoxThree->setValue(mSpinBoxThree->value()+d);
+		case Three: if (mSpinBoxThree!=0) mSpinBoxThree->setValue(mSpinBoxThree->value()+d);
 			break;
-			case Four: if (mSpinBoxFour!=0) mSpinBoxFour->setValue(mSpinBoxFour->value()+d);
+		case Four: if (mSpinBoxFour!=0) mSpinBoxFour->setValue(mSpinBoxFour->value()+d);
 			break;
-			case Five: if (mSpinBoxFive!=0) mSpinBoxFive->setValue(mSpinBoxFive->value()+d);
+		case Five: if (mSpinBoxFive!=0) mSpinBoxFive->setValue(mSpinBoxFive->value()+d);
 			break;
-			case Six: if (mSpinBoxSix!=0) mSpinBoxSix->setValue(mSpinBoxSix->value()+d);
+		case Six: if (mSpinBoxSix!=0) mSpinBoxSix->setValue(mSpinBoxSix->value()+d);
 			break;
-			default:
+		default:
 			break;
 		};
 	}
@@ -1825,17 +1833,17 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
 	mStartDragY = mapFromGlobal(QCursor::pos()).y();
 	
 	switch (event->key()){
-		case Qt::Key_Y : mSpinBoxMode = One;
+	case Qt::Key_Y : mSpinBoxMode = One;
 		break;
-		case Qt::Key_U : mSpinBoxMode = Two;
+	case Qt::Key_U : mSpinBoxMode = Two;
 		break;
-		case Qt::Key_I : mSpinBoxMode = Three;
+	case Qt::Key_I : mSpinBoxMode = Three;
 		break;
-		case Qt::Key_O : mSpinBoxMode = Four;
+	case Qt::Key_O : mSpinBoxMode = Four;
 		break;
-		case Qt::Key_P : mSpinBoxMode = Five;
+	case Qt::Key_P : mSpinBoxMode = Five;
 		break;
-		default : mSpinBoxMode = None;
+	default : mSpinBoxMode = None;
 		break;
 	};
 }
@@ -1854,629 +1862,654 @@ void MainWindow::setSpinBoxes(QDoubleSpinBox *one,QDoubleSpinBox *two,QDoubleSpi
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
-					// The mouse was dragged or released
-					// Send this event to the subroutine handling the current event, if any
-					// If we are not currently doing anything, nothing will happen
-					// If ALT key is pressed we are mainpulating the view which is handled by the viewport
+	QString cmd;
+	// The mouse was dragged or released
+	// Send this event to the subroutine handling the current event, if any
+	// If we are not currently doing anything, nothing will happen
+	// If ALT key is pressed we are mainpulating the view which is handled by the viewport
 	if ( mode != NormalMode )
-	{
-		switch ( mode )
 		{
-			case EditVertex :       // brianb
-			is_editing = false;
-			if ( active->numSelectedVertices() >= 1 )	{
-				DLFLVertexPtr vp = active->getSelectedVertex(0);
-				vp->print();
-				// active->clearSelectedVertices();
-				// num_sel_verts = 0;
-				redraw();
-			}
-			break;
-			case SelectVertex :
-			if ( active->numSelectedVertices() >= 1 )
-			{
-				DLFLVertexPtr vp = active->getSelectedVertex(0);
-				vp->print();
-				active->clearSelectedVertices();
-				num_sel_verts = 0;
-				redraw();
-			}
-			break;
-			case SelectEdge :
-			if ( active->numSelectedEdges() >= 1 ) {
-				DLFLEdgePtr septr = active->getSelectedEdge(0);
-				if (septr) {
-																						//septr->print();
-																						//num_sel_edges = 0;
-				}
-				active->clearSelectedEdges();
-				redraw();
-			}
-			break;
-			case SelectEdgeLoop:
-			if ( active->numSelectedEdges() >= 1 ){
-				DLFLEdgePtr septr = active->getSelectedEdge(0);
-				if (septr)
-					getEdgeLoopSelection(septr);
-			}
-			// active->clearSelectedEdges();
-			active->redraw();			
-			break;
-			case SelectFaceLoop:
-			if ( active->numSelectedEdges() >= 1 ){
-				DLFLEdgePtr septr = active->getSelectedEdge(0);
-				if (septr){
-					if (QApplication::keyboardModifiers() == Qt::ControlModifier){ // deselect
-						face_loop_start_edge = septr;
-					getFaceLoopSelection(septr, true, NULL, false);
-				}
-				else { //select
-					face_loop_start_edge = septr;
-				getFaceLoopSelection(septr, true, NULL, true);
-			}
-		}
-	}
-	active->clearSelectedEdges();
-	active->redraw();
-	break;
-	case SelectFace :
-	if ( active->numSelectedFaces() >= 1 )
-	{
-		DLFLFacePtr fp = active->getSelectedFace(0);
-		fp->print();
-		active->clearSelectedFaces();
-		num_sel_faces = 0;
-		redraw();
-	}
-	break;
-	case SelectSimilarFaces :
-	if ( active->numSelectedFaces() >= 1 ){
-		DLFLFacePtr sfptr = active->getSelectedFace(0);			
-		if (sfptr){
-			DLFLFacePtrArray sfptrarray;
-			vector<DLFLFacePtr>::iterator it;
-			DLFL::selectMatchingFaces(&object, sfptr, sfptrarray);
-			for (it = sfptrarray.begin(); it != sfptrarray.end(); it++){
-				if (!active->isSelected(*it)){
-					active->setSelectedFace(num_sel_faces,*it);
-					num_sel_faces++;
-				}
-			}
-			redraw();
-		}
-	}
-	break;
-	case SelectFaceVertex :
-	if ( active->numSelectedFaceVertices() >= 1 )
-	{
-		DLFLFaceVertexPtr fvp = active->getSelectedFaceVertex(0);
-		fvp->print();
-		active->clearSelectedFaceVertices();
-		active->clearSelectedFaces();
-		num_sel_faceverts = 0; num_sel_faces = 0;
-		redraw();
-	}
-	break;
-	case InsertEdge :
-	if ( active->numSelectedFaceVertices() >= 2 )
-	{
-		DLFLFaceVertexPtr sfvptr1, sfvptr2;
-		sfvptr1 = active->getSelectedFaceVertex(0);
-		sfvptr2 = active->getSelectedFaceVertex(1);
-		if ( sfvptr1 && sfvptr2 )
-		{
-			DLFLMaterialPtr mptr = sfvptr1->getFacePtr()->material();
-			undoPush();
-			setModified(true);
-								//object.insertEdge(sfvptr1,sfvptr2,false,mptr);
-			DLFL::insertEdge(&object,sfvptr1,sfvptr2,false,mptr);
-			active->clearSelectedFaces();
-			active->clearSelectedFaceVertices();
-			num_sel_faceverts = 0; num_sel_faces = 0;
-			active->recomputePatches();
-			active->recomputeNormals();
-			redraw();   
-		}
-	}
-	else if ( active->numSelectedFaceVertices() == 1 )
-	{
-		num_sel_faceverts=1; num_sel_faces=1;
-	}
-	break;
-	case DeleteEdge :
-	if ( active->numSelectedEdges() >= 1 )
-	{
-		DLFLEdgePtr septr = active->getSelectedEdge(0);
-		if ( septr )
-		{
-			undoPush();
-			setModified(true);
-								//object.deleteEdge(septr,MainWindow::delete_edge_cleanup);
-			DLFL::deleteEdge( &object, septr, MainWindow::delete_edge_cleanup);
-			active->recomputePatches();
-			active->recomputeNormals();
-		}
-		active->clearSelectedEdges();
-		redraw();
-	}
-	break;
-	case SubdivideEdge :
-	if ( active->numSelectedEdges() >= 1 )
-	{
-		DLFLEdgePtr septr = active->getSelectedEdge(0);
-		if ( septr )
-		{
-			undoPush();
-			setModified(true);
-								//object.subdivideEdge(num_e_subdivs,septr);
-			DLFL::subdivideEdge(&object, num_e_subdivs,septr);
-			active->recomputePatches();
-			active->recomputeNormals();
-		}
-		active->clearSelectedEdges();
-		redraw();
-	}
-	break;
-	case CollapseEdge :
-	if ( active->numSelectedEdges() >= 1 )
-	{
-		DLFLEdgePtr septr = active->getSelectedEdge(0);
-		if ( septr )
-		{
-			undoPush();
-			setModified(true);
-								//object.collapseEdge(septr);
-			DLFL::collapseEdge(&object,septr);
-			active->recomputePatches();
-			active->recomputeNormals();
-		}
-		active->clearSelectedEdges();
-		redraw();
-	}
-	break;
-	case SpliceCorners :
-	if ( active->numSelectedFaceVertices() >= 2 )
-	{
-		DLFLFaceVertexPtr sfvptr1, sfvptr2;
-		sfvptr1 = active->getSelectedFaceVertex(0);
-		sfvptr2 = active->getSelectedFaceVertex(1);
-		if ( sfvptr1 && sfvptr2 )
-		{
-			DLFLMaterialPtr mptr = sfvptr1->getFacePtr()->material();
-			undoPush();
-			setModified(true);
-								//object.spliceCorners(sfvptr1,sfvptr2);
-			DLFL::spliceCorners(&object,sfvptr1,sfvptr2);
-			active->clearSelectedFaces();
-			active->clearSelectedFaceVertices();
-			num_sel_faceverts = 0; num_sel_faces = 0;
-			active->recomputePatches();
-			active->recomputeNormals();
-			redraw();   
-		}
-	}
-	else if ( active->numSelectedFaceVertices() == 1 )
-	{
-		num_sel_faceverts=1; num_sel_faces=1;
-	}
-	break;
-	case ConnectFaces :
-	if ( active->numSelectedFaces() >= 2 )
-	{
-		DLFLFacePtr sfptr1, sfptr2;
-		sfptr1 = active->getSelectedFace(0);
-		sfptr2 = active->getSelectedFace(1);
-		if ( sfptr1 && sfptr2 )
-		{
-			undoPush();
-			setModified(true);
-			DLFL::connectFaces(&object,sfptr1,sfptr2,num_segments);
-			active->recomputePatches();
-			active->recomputeNormals();
-			active->clearSelectedFaces();
-			redraw();   
-		}
-	}
-	else if ( active->numSelectedFaces() == 1 )
-	{
-		num_sel_faces = 1;
-	}
-	break;
-	case ConnectFaceVertices :
-	if ( active->numSelectedFaceVertices() >= 2 )
-	{
-		DLFLFaceVertexPtr sfvptr1, sfvptr2;
-		sfvptr1 = active->getSelectedFaceVertex(0);
-		sfvptr2 = active->getSelectedFaceVertex(1);
-		if ( sfvptr1 && sfvptr2 )
-		{
-			undoPush();
-			setModified(true);
-			DLFL::connectFaces(&object,sfvptr1,sfvptr2,num_segments, max_segments);
-			active->clearSelectedFaces();
-			active->clearSelectedFaceVertices();
-			num_sel_faceverts = 0; num_sel_faces = 0;
-			active->recomputePatches();
-			active->recomputeNormals();
-			redraw();   
-		}
-	}
-	else if ( active->numSelectedFaceVertices() == 1 )
-	{
-		num_sel_faceverts = 1; num_sel_faces = 1;
-	}
-	break;
-	case ConnectEdges :
-	if ( active->numSelectedEdges() >= 2 )
-	{
-		DLFLEdgePtr septr1, septr2;
-		DLFLFacePtr sfptr1, sfptr2;
-		septr1 = active->getSelectedEdge(0);
-		septr2 = active->getSelectedEdge(1);
-		sfptr1 = active->getSelectedFace(0);
-		sfptr2 = active->getSelectedFace(1);
-		if ( septr1 && septr2 )
-		{
-			undoPush();
-			setModified(true);
-			DLFL::connectEdges(&object,septr1,sfptr1,septr2,sfptr2);
-			active->clearSelectedEdges();
-			active->clearSelectedFaces();
-			num_sel_edges = 0; num_sel_faces = 0;
-			redraw();   
-		}
-	}
-	else if ( active->numSelectedEdges() == 1 )
-	{
-		num_sel_edges = 1; num_sel_faces = 1;
-	}
-	break;
-	case ExtrudeFace :
-	if ( active->numSelectedFaces() >= 1 )
-	{
-		DLFLFacePtr sfptr = active->getSelectedFace(0);
-		if ( sfptr )
-		{
-			undoPush();
-			setModified(true);
-			DLFL::extrudeFace(&object,sfptr,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
-			active->recomputePatches();
-			active->recomputeNormals();
-		}
-		active->clearSelectedFaces();
-		redraw();
-	}
-	break;
-	case ExtrudeMultipleFaces :
-	if ( active->numSelectedFaces() >= 1 )
-	{
-		DLFLFacePtrArray sfptrarr = active->getSelectedFaces();
-		if ( sfptrarr[0] )
-		{
-			undoPush();
-			setModified(true);
-			vector<DLFLFacePtr>::iterator it;
-			for(it = sfptrarr.begin(); it != sfptrarr.end(); it++) {
-				DLFL::extrudeFace(&object,*it,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
-			}
-			active->recomputePatches();
-			active->recomputeNormals();						
-		}
-		active->clearSelectedFaces();
-		redraw();
-	}
-	break;
-	case ExtrudeFaceDS :
-	if ( active->numSelectedFaces() >= 1 )
-	{
-		DLFLFacePtr sfptr = active->getSelectedFace(0);
-		if ( sfptr )
-		{
-			undoPush();
-			setModified(true);
-			DLFL::extrudeFaceDS(&object,sfptr,extrude_dist,num_extrusions,
-				ds_ex_twist,extrude_scale);
-			active->recomputePatches();
-			active->recomputeNormals();
-		}
-		active->clearSelectedFaces();
-		redraw();
-	}
-	break;
-	case ExtrudeDualFace :
-	if ( active->numSelectedFaces() >= 1 )
-	{
-		DLFLFacePtr sfptr = active->getSelectedFace(0);
-		if ( sfptr )
-		{
-			undoPush();
-			setModified(true);
-			DLFL::extrudeDualFace(&object,sfptr,extrude_dist,num_extrusions,
-				extrude_rot,extrude_scale,
-				dual_mesh_edges_check);
-			active->recomputePatches();
-			active->recomputeNormals();
-		}
-		active->clearSelectedFaces();
-		redraw();
-	}
-	break;
-	case ExtrudeFaceDodeca :
-	if ( active->numSelectedFaces() >= 1 )
-	{
-		DLFLFacePtr sfptr = active->getSelectedFace(0);
-		if ( sfptr )
-		{
-			undoPush();
-			setModified(true);
-			DLFL::extrudeFaceDodeca(&object,sfptr,extrude_dist,num_extrusions,
-				ds_ex_twist,extrude_scale,
-				hexagonalize_dodeca_extrude);
-			active->recomputePatches();
-			active->recomputeNormals();
-		}
-		active->clearSelectedFaces();
-		redraw();
-	}
-	break;
-	case ExtrudeFaceIcosa :
-	if ( active->numSelectedFaces() >= 1 )
-	{
-		DLFLFacePtr sfptr = active->getSelectedFace(0);
-		if ( sfptr )
-		{
-			undoPush();
-			setModified(true);
-			DLFL::extrudeFaceIcosa(&object,sfptr,extrude_dist,num_extrusions,
-				ds_ex_twist,extrude_scale);
-			active->recomputePatches();
-			active->recomputeNormals();
-		}
-		active->clearSelectedFaces();
-		redraw();
-	}
-	break;
-	case StellateFace :
-	if ( active->numSelectedFaces() >= 1 )
-	{
-		DLFLFacePtr sfptr = active->getSelectedFace(0);
-		if ( sfptr )
-		{
-			undoPush();
-			setModified(true);
-			DLFL::stellateFace(&object,sfptr,extrude_dist);
-			active->recomputePatches();
-			active->recomputeNormals();
-		}
-		active->clearSelectedFaces();
-		redraw();
-	}
-	break;
-	case DoubleStellateFace :
-	if ( active->numSelectedFaces() >= 1 )
-	{
-		DLFLFacePtr sfptr = active->getSelectedFace(0);
-		if ( sfptr )
-		{
-			undoPush();
-			setModified(true);
-			DLFL::doubleStellateFace(&object,sfptr,extrude_dist);
-			active->recomputePatches();
-			active->recomputeNormals();
-		}
-		active->clearSelectedFaces();
-		redraw();
-	}
-	break;
-	case CrustModeling :
-	if ( active->numSelectedFaces() >= 1 )
-	{
-		DLFLFacePtr sfptr = active->getSelectedFace(0);
-		if ( sfptr )
-		{
-																													// No undo for hole punching in crust modeling mode
-																													// because the ids in the recreated object
-																													// will be different
-			if ( QApplication::keyboardModifiers() == Qt::ShiftModifier )
-			{
-				DLFL::tagMatchingFaces(&object,sfptr);
-				DLFL::punchHoles(&object);
-				active->recomputePatches();
-				active->recomputeNormals();
-			}
-			else
-				DLFL::cmMakeHole(&object,sfptr,crust_cleanup);
-			//                                                  active->recomputeNormals();
-		}
-		active->clearSelectedFaces();
-		redraw();
-	}
-	break;
-	case BezierConnectFaces :
-	if ( active->numSelectedFaceVertices() >= 2 )
-	{
-		DLFLFaceVertexPtr sfvptr1, sfvptr2;
-		sfvptr1 = active->getSelectedFaceVertex(0);
-		sfvptr2 = active->getSelectedFaceVertex(1);
-		if ( sfvptr1 && sfvptr2 )
-		{
-			undoPush();
-			setModified(true);
-			DLFL::bezierConnectFaces(&object,sfvptr1,sfvptr2,
-				num_segments,nwt1,nwt2);
-			active->clearSelectedFaces();
-			active->clearSelectedFaceVertices();
-			num_sel_faceverts = 0; num_sel_faces = 0;
-			active->recomputePatches();
-			active->recomputeNormals();
-			redraw();   
-		}
-	}
-	else if ( active->numSelectedFaceVertices() == 1 )
-	{
-		num_sel_faceverts = 1; num_sel_faces = 1;
-	}
-	break;
-	case HermiteConnectFaces :
-	if ( active->numSelectedFaceVertices() >= 2 )
-	{
-		DLFLFaceVertexPtr sfvptr1, sfvptr2;
-		sfvptr1 = active->getSelectedFaceVertex(0);
-		sfvptr2 = active->getSelectedFaceVertex(1);
-		if ( sfvptr1 && sfvptr2 )
-		{
-			undoPush();
-			setModified(true);
-			if ( symmetric_weights )
-				DLFL::hermiteConnectFaces(&object,sfvptr1,sfvptr2,
-				num_segments,nwt1,nwt1,
-				max_segments,num_extra_twists);
-			else
-				DLFL::hermiteConnectFaces(&object,sfvptr1,sfvptr2,
-				num_segments,nwt1,nwt2,
-				max_segments,num_extra_twists);
-			active->clearSelectedFaces();
-			active->clearSelectedFaceVertices();
-			num_sel_faceverts = 0; num_sel_faces = 0;
-			active->recomputePatches();
-			active->recomputeNormals();
-			redraw();
-		}
-	}
-	else if ( active->numSelectedFaceVertices() == 1 )
-	{
-		num_sel_faceverts = 1; num_sel_faces = 1;
-	}
-	break;
-	case ReorderFace :
-	if ( active->numSelectedFaceVertices() >= 1 )
-	{
-		DLFLFaceVertexPtr sfvptr = active->getSelectedFaceVertex(0);
-		if ( sfvptr ) sfvptr->getFacePtr()->reorder(sfvptr);
-		redraw();
-	}
-	break;
-	case SubdivideFace :
-	case MultiSelectFace :
-						// num_sel_faces++;
-	break;
-			//from ozgur
-	case CutEdge :
-	if ( active->numSelectedEdges() >= 1 )
-	{
-		DLFLEdgePtr septr = active->getSelectedEdge(0);
-		if ( septr )
-		{
-			undoPush();
-			septr->ismarked = 1- septr->ismarked;
-																					// DLFL::cutEdge( &object, septr, peelDistance_factor,pnormalBendS_factor,pnormalBendT_factor, peel_all_edges);
-		}
-		active->clearSelectedEdges();
-		redraw();
-	}
-	break;
-	case TruncateEdge :
-	if ( active->numSelectedEdges() >= 1 )
-	{
-		DLFLEdgePtr septr = active->getSelectedEdge(0);
-		if ( septr )
-		{
-			undoPush();
-			septr->ismarked = 1- septr->ismarked;
-																					// DLFL::cutEdge( &object, septr, peelDistance_factor,pnormalBendS_factor,pnormalBendT_factor, peel_all_edges);
-		}
-		active->clearSelectedEdges();
-		redraw();
-	}
-	break;
-	case CutVertex :
-	if ( active->numSelectedVertices() >= 1 )
-	{
-		DLFLVertexPtr svptr = active->getSelectedVertex(0);
-		if ( svptr )
-		{
-			undoPush();
-			svptr->ismarked = 1 - svptr->ismarked;
-		}
-							// active->clearSelectedVertices();
-		redraw();
-	}
-	break;
-
-	case CutEdgeandVertex :
-	if ( active->numSelectedEdges() >= 1 )
-	{	
-		if ( active->numSelectedEdges() >= 1 ) {
-			DLFLVertexPtr svptr = active->getSelectedVertex(0);
-			DLFLEdgePtr septr = active->getSelectedEdge(0);
-			if ( septr ) {
-				if (svptr) {
-					undoPush();
-					septr->ismarked = 1- septr->ismarked;
+			switch ( mode )
+				{
+				case EditVertex :       // brianb
+					is_editing = false;
+					if ( active->numSelectedVertices() >= 1 )	{
+						DLFLVertexPtr vp = active->getSelectedVertex(0);
+						vp->print();
+						// active->clearSelectedVertices();
+						// num_sel_verts = 0;
+						redraw();
+					}
+					break;
+				case SelectVertex :
+					if ( active->numSelectedVertices() >= 1 )
+						{
+							DLFLVertexPtr vp = active->getSelectedVertex(0);
+							vp->print();
+							active->clearSelectedVertices();
+							num_sel_verts = 0;
+							redraw();
+						}
+					break;
+				case SelectEdge :
+					if ( active->numSelectedEdges() >= 1 ) {
+						DLFLEdgePtr septr = active->getSelectedEdge(0);
+						if (septr) {
+							//septr->print();
+							//num_sel_edges = 0;
+						}
+						active->clearSelectedEdges();
+						redraw();
+					}
+					break;
+				case SelectEdgeLoop:
+					if ( active->numSelectedEdges() >= 1 ){
+						DLFLEdgePtr septr = active->getSelectedEdge(0);
+						if (septr)
+							getEdgeLoopSelection(septr);
+					}
+					// active->clearSelectedEdges();
+					active->redraw();			
+					break;
+				case SelectFaceLoop:
+					if ( active->numSelectedEdges() >= 1 ){
+						DLFLEdgePtr septr = active->getSelectedEdge(0);
+						if (septr){
+							if (QApplication::keyboardModifiers() == Qt::ControlModifier){ // deselect
+								face_loop_start_edge = septr;
+								getFaceLoopSelection(septr, true, NULL, false);
+							}
+							else { //select
+								face_loop_start_edge = septr;
+								getFaceLoopSelection(septr, true, NULL, true);
+							}
+						}
+					}
+					active->clearSelectedEdges();
+					active->redraw();
+					break;
+				case SelectFace :
+					if ( active->numSelectedFaces() >= 1 )
+						{
+							DLFLFacePtr fp = active->getSelectedFace(0);
+							fp->print();
+							active->clearSelectedFaces();
+							num_sel_faces = 0;
+							redraw();
+						}
+					break;
+				case SelectSimilarFaces :
+					if ( active->numSelectedFaces() >= 1 ){
+						DLFLFacePtr sfptr = active->getSelectedFace(0);			
+						if (sfptr){
+							DLFLFacePtrArray sfptrarray;
+							vector<DLFLFacePtr>::iterator it;
+							DLFL::selectMatchingFaces(&object, sfptr, sfptrarray);
+							for (it = sfptrarray.begin(); it != sfptrarray.end(); it++){
+								if (!active->isSelected(*it)){
+									active->setSelectedFace(num_sel_faces,*it);
+									num_sel_faces++;
+								}
+							}
+							redraw();
+						}
+					}
+					break;
+				case SelectFaceVertex :
+					if ( active->numSelectedFaceVertices() >= 1 )
+						{
+							DLFLFaceVertexPtr fvp = active->getSelectedFaceVertex(0);
+							fvp->print();
+							active->clearSelectedFaceVertices();
+							active->clearSelectedFaces();
+							num_sel_faceverts = 0; num_sel_faces = 0;
+							redraw();
+						}
+					break;
+				case InsertEdge :
+					if ( active->numSelectedFaceVertices() >= 2 )
+						{
+							DLFLFaceVertexPtr sfvptr1, sfvptr2;
+							sfvptr1 = active->getSelectedFaceVertex(0);
+							sfvptr2 = active->getSelectedFaceVertex(1);
+							if ( sfvptr1 && sfvptr2 )
+								{
+									DLFLMaterialPtr mptr = sfvptr1->getFacePtr()->material();
+									undoPush();
+									setModified(true);
+#if WITH_PYTHON
+									cmd = QString( "insertEdge((" );
+									cmd += QString().setNum(sfvptr1->getFaceID()) + QString(",");
+									cmd += QString().setNum(sfvptr1->getVertexID()) + QString("),(");
+									cmd += QString().setNum(sfvptr2->getFaceID()) + QString(",");
+									cmd += QString().setNum(sfvptr2->getVertexID()) + QString("))");
+									emit echoCommand(cmd);
+									if( Py_IsInitialized() ) {
+										PyRun_SimpleString( "from dlfl import *");
+										PyRun_SimpleString( cmd.toLocal8Bit().constData() );
+									}
+#else
+									DLFL::insertEdge(&object,sfvptr1,sfvptr2,false,mptr);
+#endif
+									active->clearSelectedFaces();
+									active->clearSelectedFaceVertices();
+									num_sel_faceverts = 0; num_sel_faces = 0;
+									active->recomputePatches();
+									active->recomputeNormals();
+									redraw();   
+								}
+						}
+					else if ( active->numSelectedFaceVertices() == 1 )
+						{
+							num_sel_faceverts=1; num_sel_faces=1;
+						}
+					break;
+				case DeleteEdge :
+					if ( active->numSelectedEdges() >= 1 )
+						{
+							DLFLEdgePtr septr = active->getSelectedEdge(0);
+							if ( septr )
+								{
+									undoPush();
+									setModified(true);
+#if WITH_PYTHON
+									cmd = QString( "deleteEdge(" );
+									cmd += QString().setNum(septr->getID()) + QString(")");
+									emit echoCommand(cmd);
+#endif
+									DLFL::deleteEdge( &object, septr, MainWindow::delete_edge_cleanup);
+									active->recomputePatches();
+									active->recomputeNormals();
+								}
+							active->clearSelectedEdges();
+							redraw();
+						}
+					break;
+				case SubdivideEdge :
+					if ( active->numSelectedEdges() >= 1 )
+						{
+							DLFLEdgePtr septr = active->getSelectedEdge(0);
+							if ( septr )
+								{
+									undoPush();
+									setModified(true);
+#if WITH_PYTHON
+									cmd = QString( "subdivideEdge(" );
+									cmd += QString().setNum(septr->getID()) + QString(")");
+									emit echoCommand(cmd);
+#endif
+									DLFL::subdivideEdge(&object, num_e_subdivs,septr);
+									active->recomputePatches();
+									active->recomputeNormals();
+								}
+							active->clearSelectedEdges();
+							redraw();
+						}
+					break;
+				case CollapseEdge :
+					if ( active->numSelectedEdges() >= 1 )
+						{
+							DLFLEdgePtr septr = active->getSelectedEdge(0);
+							if ( septr )
+								{
+									undoPush();
+									setModified(true);
+#if WITH_PYTHON
+									cmd = QString( "collapseEdge(" );
+									cmd += QString().setNum(septr->getID()) + QString(")");
+									emit echoCommand(cmd);
+#endif
+									DLFL::collapseEdge(&object,septr);
+									active->recomputePatches();
+									active->recomputeNormals();
+								}
+							active->clearSelectedEdges();
+							redraw();
+						}
+					break;
+				case SpliceCorners :
+					if ( active->numSelectedFaceVertices() >= 2 )
+						{
+							DLFLFaceVertexPtr sfvptr1, sfvptr2;
+							sfvptr1 = active->getSelectedFaceVertex(0);
+							sfvptr2 = active->getSelectedFaceVertex(1);
+							if ( sfvptr1 && sfvptr2 )
+								{
+									DLFLMaterialPtr mptr = sfvptr1->getFacePtr()->material();
+									undoPush();
+									setModified(true);
+									//object.spliceCorners(sfvptr1,sfvptr2);
+									DLFL::spliceCorners(&object,sfvptr1,sfvptr2);
+									active->clearSelectedFaces();
+									active->clearSelectedFaceVertices();
+									num_sel_faceverts = 0; num_sel_faces = 0;
+									active->recomputePatches();
+									active->recomputeNormals();
+									redraw();   
+								}
+						}
+					else if ( active->numSelectedFaceVertices() == 1 )
+						{
+							num_sel_faceverts=1; num_sel_faces=1;
+						}
+					break;
+				case ConnectFaces :
+					if ( active->numSelectedFaces() >= 2 )
+						{
+							DLFLFacePtr sfptr1, sfptr2;
+							sfptr1 = active->getSelectedFace(0);
+							sfptr2 = active->getSelectedFace(1);
+							if ( sfptr1 && sfptr2 )
+								{
+									undoPush();
+									setModified(true);
+									DLFL::connectFaces(&object,sfptr1,sfptr2,num_segments);
+									active->recomputePatches();
+									active->recomputeNormals();
+									active->clearSelectedFaces();
+									redraw();   
+								}
+						}
+					else if ( active->numSelectedFaces() == 1 )
+						{
+							num_sel_faces = 1;
+						}
+					break;
+				case ConnectFaceVertices :
+					if ( active->numSelectedFaceVertices() >= 2 )
+						{
+							DLFLFaceVertexPtr sfvptr1, sfvptr2;
+							sfvptr1 = active->getSelectedFaceVertex(0);
+							sfvptr2 = active->getSelectedFaceVertex(1);
+							if ( sfvptr1 && sfvptr2 )
+								{
+									undoPush();
+									setModified(true);
+									DLFL::connectFaces(&object,sfvptr1,sfvptr2,num_segments, max_segments);
+									active->clearSelectedFaces();
+									active->clearSelectedFaceVertices();
+									num_sel_faceverts = 0; num_sel_faces = 0;
+									active->recomputePatches();
+									active->recomputeNormals();
+									redraw();   
+								}
+						}
+					else if ( active->numSelectedFaceVertices() == 1 )
+						{
+							num_sel_faceverts = 1; num_sel_faces = 1;
+						}
+					break;
+				case ConnectEdges :
+					if ( active->numSelectedEdges() >= 2 )
+						{
+							DLFLEdgePtr septr1, septr2;
+							DLFLFacePtr sfptr1, sfptr2;
+							septr1 = active->getSelectedEdge(0);
+							septr2 = active->getSelectedEdge(1);
+							sfptr1 = active->getSelectedFace(0);
+							sfptr2 = active->getSelectedFace(1);
+							if ( septr1 && septr2 )
+								{
+									undoPush();
+									setModified(true);
+									DLFL::connectEdges(&object,septr1,sfptr1,septr2,sfptr2);
+									active->clearSelectedEdges();
+									active->clearSelectedFaces();
+									num_sel_edges = 0; num_sel_faces = 0;
+									redraw();   
+								}
+						}
+					else if ( active->numSelectedEdges() == 1 )
+						{
+							num_sel_edges = 1; num_sel_faces = 1;
+						}
+					break;
+				case ExtrudeFace :
+					if ( active->numSelectedFaces() >= 1 )
+						{
+							DLFLFacePtr sfptr = active->getSelectedFace(0);
+							if ( sfptr )
+								{
+									undoPush();
+									setModified(true);
+									DLFL::extrudeFace(&object,sfptr,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
+									active->recomputePatches();
+									active->recomputeNormals();
+								}
+							active->clearSelectedFaces();
+							redraw();
+						}
+					break;
+				case ExtrudeMultipleFaces :
+					if ( active->numSelectedFaces() >= 1 )
+						{
+							DLFLFacePtrArray sfptrarr = active->getSelectedFaces();
+							if ( sfptrarr[0] )
+								{
+									undoPush();
+									setModified(true);
+									vector<DLFLFacePtr>::iterator it;
+									for(it = sfptrarr.begin(); it != sfptrarr.end(); it++) {
+										DLFL::extrudeFace(&object,*it,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
+									}
+									active->recomputePatches();
+									active->recomputeNormals();						
+								}
+							active->clearSelectedFaces();
+							redraw();
+						}
+					break;
+				case ExtrudeFaceDS :
+					if ( active->numSelectedFaces() >= 1 )
+						{
+							DLFLFacePtr sfptr = active->getSelectedFace(0);
+							if ( sfptr )
+								{
+									undoPush();
+									setModified(true);
+									DLFL::extrudeFaceDS(&object,sfptr,extrude_dist,num_extrusions,
+																			ds_ex_twist,extrude_scale);
+									active->recomputePatches();
+									active->recomputeNormals();
+								}
+							active->clearSelectedFaces();
+							redraw();
+						}
+					break;
+				case ExtrudeDualFace :
+					if ( active->numSelectedFaces() >= 1 )
+						{
+							DLFLFacePtr sfptr = active->getSelectedFace(0);
+							if ( sfptr )
+								{
+									undoPush();
+									setModified(true);
+									DLFL::extrudeDualFace(&object,sfptr,extrude_dist,num_extrusions,
+																				extrude_rot,extrude_scale,
+																				dual_mesh_edges_check);
+									active->recomputePatches();
+									active->recomputeNormals();
+								}
+							active->clearSelectedFaces();
+							redraw();
+						}
+					break;
+				case ExtrudeFaceDodeca :
+					if ( active->numSelectedFaces() >= 1 )
+						{
+							DLFLFacePtr sfptr = active->getSelectedFace(0);
+							if ( sfptr )
+								{
+									undoPush();
+									setModified(true);
+									DLFL::extrudeFaceDodeca(&object,sfptr,extrude_dist,num_extrusions,
+																					ds_ex_twist,extrude_scale,
+																					hexagonalize_dodeca_extrude);
+									active->recomputePatches();
+									active->recomputeNormals();
+								}
+							active->clearSelectedFaces();
+							redraw();
+						}
+					break;
+				case ExtrudeFaceIcosa :
+					if ( active->numSelectedFaces() >= 1 )
+						{
+							DLFLFacePtr sfptr = active->getSelectedFace(0);
+							if ( sfptr )
+								{
+									undoPush();
+									setModified(true);
+									DLFL::extrudeFaceIcosa(&object,sfptr,extrude_dist,num_extrusions,
+																				 ds_ex_twist,extrude_scale);
+									active->recomputePatches();
+									active->recomputeNormals();
+								}
+							active->clearSelectedFaces();
+							redraw();
+						}
+					break;
+				case StellateFace :
+					if ( active->numSelectedFaces() >= 1 )
+						{
+							DLFLFacePtr sfptr = active->getSelectedFace(0);
+							if ( sfptr )
+								{
+									undoPush();
+									setModified(true);
+									DLFL::stellateFace(&object,sfptr,extrude_dist);
+									active->recomputePatches();
+									active->recomputeNormals();
+								}
+							active->clearSelectedFaces();
+							redraw();
+						}
+					break;
+				case DoubleStellateFace :
+					if ( active->numSelectedFaces() >= 1 )
+						{
+							DLFLFacePtr sfptr = active->getSelectedFace(0);
+							if ( sfptr )
+								{
+									undoPush();
+									setModified(true);
+									DLFL::doubleStellateFace(&object,sfptr,extrude_dist);
+									active->recomputePatches();
+									active->recomputeNormals();
+								}
+							active->clearSelectedFaces();
+							redraw();
+						}
+					break;
+				case CrustModeling :
+					if ( active->numSelectedFaces() >= 1 )
+						{
+							DLFLFacePtr sfptr = active->getSelectedFace(0);
+							if ( sfptr )
+								{
+									// No undo for hole punching in crust modeling mode
+									// because the ids in the recreated object
+									// will be different
+									if ( QApplication::keyboardModifiers() == Qt::ShiftModifier )
+										{
+											DLFL::tagMatchingFaces(&object,sfptr);
+											DLFL::punchHoles(&object);
+											active->recomputePatches();
+											active->recomputeNormals();
+										}
+									else
+										DLFL::cmMakeHole(&object,sfptr,crust_cleanup);
+									//                                                  active->recomputeNormals();
+								}
+							active->clearSelectedFaces();
+							redraw();
+						}
+					break;
+				case BezierConnectFaces :
+					if ( active->numSelectedFaceVertices() >= 2 )
+						{
+							DLFLFaceVertexPtr sfvptr1, sfvptr2;
+							sfvptr1 = active->getSelectedFaceVertex(0);
+							sfvptr2 = active->getSelectedFaceVertex(1);
+							if ( sfvptr1 && sfvptr2 )
+								{
+									undoPush();
+									setModified(true);
+									DLFL::bezierConnectFaces(&object,sfvptr1,sfvptr2,
+																					 num_segments,nwt1,nwt2);
+									active->clearSelectedFaces();
+									active->clearSelectedFaceVertices();
+									num_sel_faceverts = 0; num_sel_faces = 0;
+									active->recomputePatches();
+									active->recomputeNormals();
+									redraw();   
+								}
+						}
+					else if ( active->numSelectedFaceVertices() == 1 )
+						{
+							num_sel_faceverts = 1; num_sel_faces = 1;
+						}
+					break;
+				case HermiteConnectFaces :
+					if ( active->numSelectedFaceVertices() >= 2 )
+						{
+							DLFLFaceVertexPtr sfvptr1, sfvptr2;
+							sfvptr1 = active->getSelectedFaceVertex(0);
+							sfvptr2 = active->getSelectedFaceVertex(1);
+							if ( sfvptr1 && sfvptr2 )
+								{
+									undoPush();
+									setModified(true);
+									if ( symmetric_weights )
+										DLFL::hermiteConnectFaces(&object,sfvptr1,sfvptr2,
+																							num_segments,nwt1,nwt1,
+																							max_segments,num_extra_twists);
+									else
+										DLFL::hermiteConnectFaces(&object,sfvptr1,sfvptr2,
+																							num_segments,nwt1,nwt2,
+																							max_segments,num_extra_twists);
+									active->clearSelectedFaces();
+									active->clearSelectedFaceVertices();
+									num_sel_faceverts = 0; num_sel_faces = 0;
+									active->recomputePatches();
+									active->recomputeNormals();
+									redraw();
+								}
+						}
+					else if ( active->numSelectedFaceVertices() == 1 )
+						{
+							num_sel_faceverts = 1; num_sel_faces = 1;
+						}
+					break;
+				case ReorderFace :
+					if ( active->numSelectedFaceVertices() >= 1 )
+						{
+							DLFLFaceVertexPtr sfvptr = active->getSelectedFaceVertex(0);
+							if ( sfvptr ) sfvptr->getFacePtr()->reorder(sfvptr);
+							redraw();
+						}
+					break;
+				case SubdivideFace :
+				case MultiSelectFace :
+					// num_sel_faces++;
+					break;
+					//from ozgur
+				case CutEdge :
+					if ( active->numSelectedEdges() >= 1 )
+						{
+							DLFLEdgePtr septr = active->getSelectedEdge(0);
+							if ( septr )
+								{
+									undoPush();
+									septr->ismarked = 1- septr->ismarked;
 									// DLFL::cutEdge( &object, septr, peelDistance_factor,pnormalBendS_factor,pnormalBendT_factor, peel_all_edges);
-				}
-			}
-			active->clearSelectedEdges();
-			active->clearSelectedVertices();
-			redraw();
-		}
-	}
-	break;
-	case MarkEdge:
-	if ( active->numSelectedEdges() >= 1 )
-	{
-		DLFLEdgePtr septr = active->getSelectedEdge(0);
-		if ( septr )
-		{
-			undoPush();
-			septr->ismarked = 1- septr->ismarked;
-		}
-		active->clearSelectedEdges();
-		redraw();
-	}
-	break;
+								}
+							active->clearSelectedEdges();
+							redraw();
+						}
+					break;
+				case TruncateEdge :
+					if ( active->numSelectedEdges() >= 1 )
+						{
+							DLFLEdgePtr septr = active->getSelectedEdge(0);
+							if ( septr )
+								{
+									undoPush();
+									septr->ismarked = 1- septr->ismarked;
+									// DLFL::cutEdge( &object, septr, peelDistance_factor,pnormalBendS_factor,pnormalBendT_factor, peel_all_edges);
+								}
+							active->clearSelectedEdges();
+							redraw();
+						}
+					break;
+				case CutVertex :
+					if ( active->numSelectedVertices() >= 1 )
+						{
+							DLFLVertexPtr svptr = active->getSelectedVertex(0);
+							if ( svptr )
+								{
+									undoPush();
+									svptr->ismarked = 1 - svptr->ismarked;
+								}
+							// active->clearSelectedVertices();
+							redraw();
+						}
+					break;
 
-	case MarkVertex :
-	if ( active->numSelectedVertices() >= 1 )
-	{
-		DLFLVertexPtr svptr = active->getSelectedVertex(0);
-		if ( svptr )
-		{
-			undoPush();
-			svptr->ismarked = 1 - svptr->ismarked;
-		}
-		active->clearSelectedVertices();
-		redraw();
-	}
-	break;
+				case CutEdgeandVertex :
+					if ( active->numSelectedEdges() >= 1 )
+						{	
+							if ( active->numSelectedEdges() >= 1 ) {
+								DLFLVertexPtr svptr = active->getSelectedVertex(0);
+								DLFLEdgePtr septr = active->getSelectedEdge(0);
+								if ( septr ) {
+									if (svptr) {
+										undoPush();
+										septr->ismarked = 1- septr->ismarked;
+										// DLFL::cutEdge( &object, septr, peelDistance_factor,pnormalBendS_factor,pnormalBendT_factor, peel_all_edges);
+									}
+								}
+								active->clearSelectedEdges();
+								active->clearSelectedVertices();
+								redraw();
+							}
+						}
+					break;
+				case MarkEdge:
+					if ( active->numSelectedEdges() >= 1 )
+						{
+							DLFLEdgePtr septr = active->getSelectedEdge(0);
+							if ( septr )
+								{
+									undoPush();
+									septr->ismarked = 1- septr->ismarked;
+								}
+							active->clearSelectedEdges();
+							redraw();
+						}
+					break;
 
-	case CutFace :
-	if ( active->numSelectedFaces() >= 1 )
-	{
-		DLFLFacePtr sfptr = active->getSelectedFace(0);
-		if ( sfptr )
-		{
-			undoPush();
-			sfptr->ismarked = 1 - sfptr->ismarked;
-		}
-		active->clearSelectedFaces();
-		redraw();
-	}
-	break;
-}//end switch (mode)
+				case MarkVertex :
+					if ( active->numSelectedVertices() >= 1 )
+						{
+							DLFLVertexPtr svptr = active->getSelectedVertex(0);
+							if ( svptr )
+								{
+									undoPush();
+									svptr->ismarked = 1 - svptr->ismarked;
+								}
+							active->clearSelectedVertices();
+							redraw();
+						}
+					break;
 
-}//end if (mode != NormalMode)
-				// else if ( event->buttons() == Qt::RightButton && QApplication::keyboardModifiers() == Qt::ShiftModifier){
-				// 	// event->ignore();
-				// 	mBrushStartX = 0;
-				// 	// mBrushStartY = 0;
-				// }
-else event->ignore();
+				case CutFace :
+					if ( active->numSelectedFaces() >= 1 )
+						{
+							DLFLFacePtr sfptr = active->getSelectedFace(0);
+							if ( sfptr )
+								{
+									undoPush();
+									sfptr->ismarked = 1 - sfptr->ismarked;
+								}
+							active->clearSelectedFaces();
+							redraw();
+						}
+					break;
+				}//end switch (mode)
+
+		}//end if (mode != NormalMode)
+	// else if ( event->buttons() == Qt::RightButton && QApplication::keyboardModifiers() == Qt::ShiftModifier){
+	// 	// event->ignore();
+	// 	mBrushStartX = 0;
+	// 	// mBrushStartY = 0;
+	// }
+	else event->ignore();
 }//end function mousereleaseevent
 
 
 void MainWindow::testConvexHull(void) {
-		// For testing convex hull subroutine
+	// For testing convex hull subroutine
 	Vector3dArray vertices;
 	vertices.resize(8);
 	vertices[0].set(0,0,0);
@@ -2498,118 +2531,118 @@ void MainWindow::testConvexHull(void) {
 
 void MainWindow::performRemeshing(void) {
 	switch ( remeshingscheme )
-	{
+		{
 		case Dual :
-		createDual();
-		break;
+			createDual();
+			break;
 		case Root3 :
-		subdivideRoot3();
-		break;
+			subdivideRoot3();
+			break;
 		case DualVertexTrunc :
-		subdivideSqrt3();
-		break;
+			subdivideSqrt3();
+			break;
 		case GlobalStellate :
-		globalStellate();
-		break;
+			globalStellate();
+			break;
 		case Star :
-		subdivideStar();
-		break;
+			subdivideStar();
+			break;
 		case Generic1264 :
-		subdivide1264();
-		break;
+			subdivide1264();
+			break;
 		case Honeycomb :
-		subdivideHoneycomb();
-		break;
+			subdivideHoneycomb();
+			break;
 		case VertexTrunc :
-		subdivideVertexCutting();
-		break;
+			subdivideVertexCutting();
+			break;
 		case DualGeneric1264 :
-		subdivideDual1264();
-		break;
+			subdivideDual1264();
+			break;
 		case LinearVertexInsertion :
-		subdivideLinearVertexInsertion();
-		break;
+			subdivideLinearVertexInsertion();
+			break;
 		case CatmullClark :
-		subdivideCatmullClark();
-		break;
+			subdivideCatmullClark();
+			break;
 		case ModifiedStellate :
-		subStellate1();
-		break;
+			subStellate1();
+			break;
 		case DooSabin :
-		subdivideDooSabin();
-		break;
+			subdivideDooSabin();
+			break;
 		case CornerCutting :
-		subdivideCornerCutting();
-		break;
+			subdivideCornerCutting();
+			break;
 		case Simplest :
-		subdivideSimplest();
-		break;
+			subdivideSimplest();
+			break;
 		case Pentagonal :
-		subdividePentagonal();
-		break;
+			subdividePentagonal();
+			break;
 		case CubicPentagonal :
-		subdivideCubicPentagonal();
-		break;
+			subdivideCubicPentagonal();
+			break;
 		case DualPentagonal :
-		subdivideDualPentagonal();
-		break;
+			subdivideDualPentagonal();
+			break;
 		case LoopStyle :
-		subdivideLoopStyle();
-		break;
+			subdivideLoopStyle();
+			break;
 		case Loop :
-		subdivideLoop();
-		break;
+			subdivideLoop();
+			break;
 		case Root4 :
-		subdivideRoot4();
-		break;
+			subdivideRoot4();
+			break;
 		case DualLoop :
-		subdivideDualLoop();
-		break;
+			subdivideDualLoop();
+			break;
 		case GlobalCubicExtrude :
-		cout << "NOT YET IMPLEMENTED!!!" << endl;
-		break;
+			cout << "NOT YET IMPLEMENTED!!!" << endl;
+			break;
 		case CheckerBoard :
-		subdivideCheckerBoard();
-		break;
+			subdivideCheckerBoard();
+			break;
 		case DualGlobalCubicExtrude :
-		cout << "NOT YET IMPLEMENTED!!!" << endl;
-		break;
+			cout << "NOT YET IMPLEMENTED!!!" << endl;
+			break;
 		case DualCheckerBoard :
-		subdivideDualCheckerBoard();
-		break;
+			subdivideDualCheckerBoard();
+			break;
 		case PentagonPreserving :
-		subdividePentagonPreserving();
-		break;
+			subdividePentagonPreserving();
+			break;
 		case DualPentagonPreserving :
-		subdivideDualPentagonPreserving();
-		break;
+			subdivideDualPentagonPreserving();
+			break;
 		case HexagonPreserving :
-		subdivideRoot4();
-		break;
+			subdivideRoot4();
+			break;
 		case DualHexagonPreserving :
-		subdivideDualHexagonPreserving();
-		break;
+			subdivideDualHexagonPreserving();
+			break;
 		case Fractal :
-		subdivideFractal();
-		break;
+			subdivideFractal();
+			break;
 		case ModifiedDoubleStellate :
-		subStellate2();
-		break;
+			subStellate2();
+			break;
 		case Dome :
-		subdivideDome();
-		break;
+			subdivideDome();
+			break;
 		case DooSabinBC :
-		subdivideDooSabinBC();
-		break;
+			subdivideDooSabinBC();
+			break;
 		case DooSabinBCNew :
-		subdivideDooSabinBCNew();
-		break;
-	}
+			subdivideDooSabinBCNew();
+			break;
+		}
 	setMode(mode);
 	redraw();
 }
 
-			// Change the renderer for all viewports
+// Change the renderer for all viewports
 void MainWindow::setRenderer(DLFLRendererPtr rp) {
 	active->setRenderer(rp);
 }
@@ -2638,62 +2671,62 @@ void MainWindow::setMode(Mode m) {
 		// case BezierMode: // brianb
 		//       object.bezierDefaults();
 		//       break;
-		case EditVertex :    // brianb
-		case SelectVertex :
-		case MultiSelectVertex :
-		case CutVertex :
-		case MarkVertex :
+	case EditVertex :    // brianb
+	case SelectVertex :
+	case MultiSelectVertex :
+	case CutVertex :
+	case MarkVertex :
 		setSelectionMask(MainWindow::MaskVertices);
 		MainWindow::num_sel_verts = 0;
 		break;
-		case SelectEdge :
-		case SelectEdgeLoop :
-		case MultiSelectEdge :
-		case DeleteEdge :
-		case SubdivideEdge :
-		case CollapseEdge :
-		case ConnectEdges :
-		case CutEdge :
-		case TruncateEdge :
-		case MarkEdge :
+	case SelectEdge :
+	case SelectEdgeLoop :
+	case MultiSelectEdge :
+	case DeleteEdge :
+	case SubdivideEdge :
+	case CollapseEdge :
+	case ConnectEdges :
+	case CutEdge :
+	case TruncateEdge :
+	case MarkEdge :
 		setSelectionMask(MainWindow::MaskEdges);
 		MainWindow::num_sel_edges = 0;
 		break;
-		case SelectFace :
-		case SelectFaceLoop :
-		case MultiSelectFace :
-		case SelectCheckerboard :
-		case ExtrudeFace :
-		case ExtrudeFaceDS :
-		case ExtrudeDualFace :
-		case ExtrudeFaceDodeca :
-		case ExtrudeFaceIcosa :
-		case ExtrudeMultipleFaces :
-		case StellateFace :
-		case DoubleStellateFace :
-		case ConnectFaces :
-		case BezierConnectFaces :
-		case HermiteConnectFaces :
-		case ReorderFace :
-		case SubdivideFace :
-		case CrustModeling :
-		case CutFace :
-		case SelectSimilarFaces :
+	case SelectFace :
+	case SelectFaceLoop :
+	case MultiSelectFace :
+	case SelectCheckerboard :
+	case ExtrudeFace :
+	case ExtrudeFaceDS :
+	case ExtrudeDualFace :
+	case ExtrudeFaceDodeca :
+	case ExtrudeFaceIcosa :
+	case ExtrudeMultipleFaces :
+	case StellateFace :
+	case DoubleStellateFace :
+	case ConnectFaces :
+	case BezierConnectFaces :
+	case HermiteConnectFaces :
+	case ReorderFace :
+	case SubdivideFace :
+	case CrustModeling :
+	case CutFace :
+	case SelectSimilarFaces :
 		setSelectionMask(MainWindow::MaskFaces);
 		MainWindow::num_sel_faces = 0;
 		break;
-		case SelectFaceVertex :
-		case MultiSelectFaceVertex :
-		case InsertEdge :
-		case SpliceCorners :
-		case ConnectFaceVertices :
+	case SelectFaceVertex :
+	case MultiSelectFaceVertex :
+	case InsertEdge :
+	case SpliceCorners :
+	case ConnectFaceVertices :
 		setSelectionMask(MainWindow::MaskFaceVertices);
 		MainWindow::num_sel_faceverts = 0;
 		break;
-		case NormalMode:
+	case NormalMode:
 		setSelectionMask(MainWindow::MaskObject);
-		default :
-									// Nothing to be done for other modes except clearing selection lists
+	default :
+		// Nothing to be done for other modes except clearing selection lists
 		setSelectionMask(MainWindow::MaskObject);									
 		MainWindow::clearSelected();
 		break;
@@ -2708,15 +2741,15 @@ void MainWindow::setSelectionMask(SelectionMask m){
 	active->clearSelected();
 	active->repaint();
 	switch(selectionmask){
-		case MaskVertices :
+	case MaskVertices :
 		break;
-		case MaskEdges :
+	case MaskEdges :
 		break;
-		case MaskFaces :
+	case MaskFaces :
 		break;
-		case MaskFaceVertices :
+	case MaskFaceVertices :
 		break;
-		default:
+	default:
 		break;
 	}
 }
@@ -2726,7 +2759,7 @@ void MainWindow::setRemeshingScheme(RemeshingScheme scheme) {
 }
 
 
-	// Read the DLFL object from a file
+// Read the DLFL object from a file
 void MainWindow::readObject(const char * filename) {
 	active->clearSelected();
 	ifstream file;
@@ -2738,7 +2771,7 @@ void MainWindow::readObject(const char * filename) {
 	file.close();
 }
 
-	// Read the DLFL object from a file
+// Read the DLFL object from a file
 void MainWindow::readObjectQFile(QString filename) {
 	active->clearSelected();
 	QFile file(filename);
@@ -2762,7 +2795,7 @@ void MainWindow::readObjectQFile(QString filename) {
 #endif
 }
 
-	// Read the DLFL object from a file - use alternate OBJ reader for OBJ files
+// Read the DLFL object from a file - use alternate OBJ reader for OBJ files
 void MainWindow::readObjectAlt(const char * filename) {
 	active->clearSelected();
 	ifstream file;
@@ -2790,7 +2823,7 @@ void MainWindow::readObjectDLFL(const char * filename) {
 	file.close();
 }
 
-	// Write the DLFL object to a file
+// Write the DLFL object to a file
 void MainWindow::writeObject(const char * filename, bool with_normals, bool with_tex_coords) {
 	ofstream file;
 	file.open(filename);
@@ -2825,9 +2858,9 @@ void MainWindow::writeObjectDLFL(const char * filename) {
 // File handling
 void MainWindow::openFile(void) {
 	QString fileName = QFileDialog::getOpenFileName(this,
-		tr("Open File..."),
-		"$HOME",
-		tr("All Supported Files (*.obj *.dlfl);;Wavefront Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"));
+																									tr("Open File..."),
+																									"$HOME",
+																									tr("All Supported Files (*.obj *.dlfl);;Wavefront Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"));
 	if (!fileName.isEmpty()){
 		if (!curFile.isEmpty()){
 			undoPush();
@@ -2861,9 +2894,9 @@ bool MainWindow::saveFile(bool with_normals, bool with_tex_coords) {
 	}
 	else {
 		QString fileName = QFileDialog::getSaveFileName(this,
-			tr("Save File As..."),
-			curFile,
-			tr("All Supported Files (*.obj *.dlfl);;Wavefront Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"));
+																										tr("Save File As..."),
+																										curFile,
+																										tr("All Supported Files (*.obj *.dlfl);;Wavefront Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"));
 		if (!fileName.isEmpty()){
 			if (!fileName.indexOf(".obj") || !fileName.indexOf(".dlfl") || !fileName.indexOf(".OBJ") || !fileName.indexOf(".DLFL"))
 				fileName.append(".dlfl");
@@ -2879,9 +2912,9 @@ bool MainWindow::saveFile(bool with_normals, bool with_tex_coords) {
 
 bool MainWindow::saveFileAs(bool with_normals, bool with_tex_coords) {
 	QString fileName = QFileDialog::getSaveFileName(this,
-		tr("Save File As..."),
-		curFile,
-		tr("All Supported Files (*.obj *.dlfl);;Wavefront Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"));
+																									tr("Save File As..."),
+																									curFile,
+																									tr("All Supported Files (*.obj *.dlfl);;Wavefront Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"));
 	if (!fileName.isEmpty()){
 		if (!fileName.indexOf(".obj") || !fileName.indexOf(".dlfl") || !fileName.indexOf(".OBJ") || !fileName.indexOf(".DLFL"))
 			fileName.append(".dlfl");
@@ -2927,9 +2960,9 @@ void MainWindow::saveFileOBJ(bool with_normals, bool with_tex_coords) {
 /* stuart - bezier export */
 bool MainWindow::saveFileBezierOBJ( ) {
 	QString fileName = QFileDialog::getSaveFileName(this,
-		tr("Save Bezier Patch (OBJ)..."),
-		curFile,
-		tr("Wavefront Files (*.obj);;All Files (*)"));
+																									tr("Save Bezier Patch (OBJ)..."),
+																									curFile,
+																									tr("Wavefront Files (*.obj);;All Files (*)"));
 	if (!fileName.isEmpty()){
 		QByteArray ba = fileName.toLatin1();
 		const char *filename = ba.data();
@@ -3218,11 +3251,11 @@ void MainWindow::getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr 
 			active->setSelectedFace(num_sel_faces,fptr1);
 			num_sel_faces++;
 		}
-			/*else if (active->isSelected(fptr1)){
-		active->clearSelectedFace(fptr1);
-		num_sel_faces--;
-		}*/
-			fptr1->getEdges(edges);
+		/*else if (active->isSelected(fptr1)){
+			active->clearSelectedFace(fptr1);
+			num_sel_faces--;
+			}*/
+		fptr1->getEdges(edges);
 		idx =0;
 		for (it = edges.begin(); it != edges.end(); it++){
 			if (*it == eptr){
@@ -3236,16 +3269,16 @@ void MainWindow::getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr 
 			active->setSelectedFace(num_sel_faces,fptr2);
 			num_sel_faces++;
 		}
-			/*else if (active->isSelected(fptr2)){
-		active->clearSelectedFace(fptr2);
-		num_sel_faces--;				
-		}*/
-			fptr2->getEdges(edges);
+		/*else if (active->isSelected(fptr2)){
+			active->clearSelectedFace(fptr2);
+			num_sel_faces--;				
+			}*/
+		fptr2->getEdges(edges);
 		idx =0;
 		for (it = edges.begin(); it != edges.end(); it++){
 			if (*it == eptr){
 				getFaceLoopSelection(edges[(idx+2)%4], false, fptr2, select_face_loop);
-					// return;
+				// return;
 			}
 			idx++;
 		}//end for loop

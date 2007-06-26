@@ -4,7 +4,8 @@
 
 #include <QtGui>
 
-DLFLScriptEditor::DLFLScriptEditor( DLFLObjectPtr obj, QWidget *parent, Qt::WindowFlags f ) : QWidget(parent,f), dlfl_module(NULL),dlfl_dict(NULL) {
+DLFLScriptEditor::DLFLScriptEditor( DLFLObjectPtr obj, QWidget *parent, Qt::WindowFlags f ) 
+	: QWidget(parent,f), dlfl_module(NULL),dlfl_dict(NULL),mEchoing(true) {
 
   mTextEdit = new QTextEdit;
   mLineEdit = new Editor;
@@ -44,7 +45,6 @@ DLFLScriptEditor::~DLFLScriptEditor( ) {
     Py_Finalize( );
 }
 
-
 void DLFLScriptEditor::executeCommand( ) {
   QString command = mLineEdit->toPlainText();
 
@@ -73,55 +73,55 @@ void DLFLScriptEditor::executeCommand( ) {
       PyRun_SimpleString( "sys.stdout = __main__.mio" );
 
       for(int i = 0; i < cmdList.size(); i++ ) {
-	QString si = cmdList.at(i);
-	if( si.endsWith(":") ) {
-	  int j = i+1;
-	  while( j < cmdList.size() && cmdList.at(j).startsWith("\t") ) {
-	    QString sj = cmdList.at(j);
-	    si += QString("\n")+sj;
-	    cmdList.removeAt(j);
-	    //j++;
-	  }
-	  cmdList.replace(i,si);
-	}
-	if( cmdList.at(i).contains(QRegExp("\\bload\\("))) {
-	  QStringList list = cmdList.at(i).split("\"", QString::SkipEmptyParts);
-	  cmdList.removeAt(i);
-	  emit requestObject(list.at(1)); // 3 parts: load(, filename.obj, and )
-	  emit cmdExecuted();
-	  continue;
-	}
+				QString si = cmdList.at(i);
+				if( si.endsWith(":") ) {
+					int j = i+1;
+					while( j < cmdList.size() && cmdList.at(j).startsWith("\t") ) {
+						QString sj = cmdList.at(j);
+						si += QString("\n")+sj;
+						cmdList.removeAt(j);
+						//j++;
+					}
+					cmdList.replace(i,si);
+				}
+				if( cmdList.at(i).contains(QRegExp("\\bload\\("))) {
+					QStringList list = cmdList.at(i).split("\"", QString::SkipEmptyParts);
+					cmdList.removeAt(i);
+					emit requestObject(list.at(1)); // 3 parts: load(, filename.obj, and )
+					emit cmdExecuted();
+					continue;
+				}
 
-	PyRun_SimpleString( "__main__.mio.clear()" );
+				PyRun_SimpleString( "__main__.mio.clear()" );
 
-	const char *cmd = cmdList.at(i).toLocal8Bit().constData();
-	PyObject *rstring = PyRun_String( cmd, Py_file_input, main_dict, dlfl_dict );
-	PyRun_SimpleString( "__main__.__result = __main__.mio.s");
-	//PyRun_SimpleString( "if(len(__main__.mio.s) > 0 ): __main__.__result = __main__.mio.s[0]");
+				const char *cmd = cmdList.at(i).toLocal8Bit().constData();
+				PyObject *rstring = PyRun_String( cmd, Py_file_input, main_dict, dlfl_dict );
+				PyRun_SimpleString( "__main__.__result = __main__.mio.s");
+				//PyRun_SimpleString( "if(len(__main__.mio.s) > 0 ): __main__.__result = __main__.mio.s[0]");
 
-	if( rstring != NULL ) {
-	  PyObject *resultObject1 = PyObject_Str( rstring );
-	  PyObject *resultObject2 = PyDict_GetItemString( main_dict, "__result" );
-	  if( resultObject1 != NULL && resultObject2 != NULL ) {
-	    char *string1 = PyString_AsString( resultObject1 );
-	    char *string2 = PyString_AsString( PyObject_Str(resultObject2) );
-	    result = QString( string1 );
-	    if( result.isEmpty() || result == "" || result == "None" )
-	      result = QString( string2 );
-	    Py_DECREF( resultObject1 );
-	    Py_DECREF( resultObject2 );
-	  }
-	  Py_DECREF( rstring );
-	  emit cmdExecuted();
-	} else {
-	  //PyErr_Print();
-	  PyObject *object, *data, *traceback;
-	  PyErr_Fetch( &object, &data, &traceback );
-	  PyObject * traceStr = PyObject_Str( data );
-	  char *string = PyString_AsString( traceStr );
-	  result = QString( string );
-	}
-	resultList << result; // append result to resultList
+				if( rstring != NULL ) {
+					PyObject *resultObject1 = PyObject_Str( rstring );
+					PyObject *resultObject2 = PyDict_GetItemString( main_dict, "__result" );
+					if( resultObject1 != NULL && resultObject2 != NULL ) {
+						char *string1 = PyString_AsString( resultObject1 );
+						char *string2 = PyString_AsString( PyObject_Str(resultObject2) );
+						result = QString( string1 );
+						if( result.isEmpty() || result == "" || result == "None" )
+							result = QString( string2 );
+						Py_DECREF( resultObject1 );
+						Py_DECREF( resultObject2 );
+					}
+					Py_DECREF( rstring );
+					emit cmdExecuted();
+				} else {
+					//PyErr_Print();
+					PyObject *object, *data, *traceback;
+					PyErr_Fetch( &object, &data, &traceback );
+					PyObject * traceStr = PyObject_Str( data );
+					char *string = PyString_AsString( traceStr );
+					result = QString( string );
+				}
+				resultList << result; // append result to resultList
       } // for loop
     } // end Py_IsInitialized
     emit addToHistory(command);
@@ -135,9 +135,9 @@ void DLFLScriptEditor::executeCommand( ) {
     if( i < resultList.size() ) {
       QString res = resultList.at(i);
       if( !res.isEmpty() && res != QString("None") ) {
-	res.replace(QRegExp("\\n"), "\n# ");
-	res.chop(2);
-	mTextEdit->insertPlainText( "\n# "+ res ); // # is a comment in python
+				res.replace(QRegExp("\\n"), "\n# ");
+				res.chop(2);
+				mTextEdit->insertPlainText( "\n# "+ res ); // # is a comment in python
       } else { mTextEdit->insertPlainText("\n"); }
     } else { mTextEdit->insertPlainText("\n"); }
   }
@@ -149,6 +149,15 @@ void DLFLScriptEditor::executeCommand( ) {
 
   QScrollBar *vBar = mTextEdit->verticalScrollBar();
   vBar->triggerAction(QAbstractSlider::SliderToMaximum);
+}
+
+void DLFLScriptEditor::echoCommand( QString cmd ) {
+	if( mEchoing ) {
+		mTextEdit->insertPlainText( "\n" + cmd + "\n" );
+    emit addToHistory(cmd);
+		QScrollBar *vBar = mTextEdit->verticalScrollBar();
+		vBar->triggerAction(QAbstractSlider::SliderToMaximum);
+	}
 }
 
 void DLFLScriptEditor::PyInit( ) {
@@ -170,7 +179,7 @@ void DLFLScriptEditor::PyInit( ) {
       // Setup the Python DLFL Module C API
       PyObject *c_api_object = PyDict_GetItemString( dlfl_dict, "_C_API" );
       if (PyCObject_Check(c_api_object)) {
-	PyDLFL_API = (void **)PyCObject_AsVoidPtr(c_api_object);
+				PyDLFL_API = (void **)PyCObject_AsVoidPtr(c_api_object);
       }
       // Tell the module we're working inside the GUI
       PyDLFL_UsingGUI(true);
