@@ -1,7 +1,7 @@
 #ifndef _GL_WIDGET_H
 #define _GL_WIDGET_H
 
-#include "Viewport.hh"
+// #include "Viewport.hh"
 //#include "include/Graphics/Grid.hh"
 #include <QtOpenGL>
 #include <QGLContext>
@@ -26,7 +26,7 @@
 #include <PointLight.hh>
 #include <AmbientLight.hh>
 
-#include "Camera2.hh"
+#include "Camera3.hh"
 #include "CgData.hh"
 
 #ifdef GPU_OK
@@ -55,26 +55,49 @@ class GLWidget : public QGLWidget {
 
 public :
 	
-	GLWidget(	int w, int h , VPView v, DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op, TMPatchObjectPtr pop, const QGLFormat & format, QWidget * parent = 0 );
+	GLWidget(	int w, int h , DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op, TMPatchObjectPtr pop, const QGLFormat & format, QWidget * parent = 0 );
 
 	~GLWidget( );
 
 	public slots :
 
 	void toggleFullScreen( );
-	void setSilhouetteThickness(double t);
-	void setWireframeThickness(double t);
-	void setVertexThickness(double t);
 	void update() { repaint(); };
-	void setSelectedVertexThickness(double t);
-	void setSelectedEdgeThickness(double t);
-	void switchTo(VPView view);
+	// void switchTo(VPView view);
 
 		//set lighting colors... warm and cool
 	void setWarmLightColor(QColor c);
 	void setCoolLightColor(QColor c);
 	void setLightIntensity(double i);
 
+	//setters for properties inside DLFLRenderer
+	void setRenderColor(QColor c);
+	
+	void setViewportColor(QColor c){ mViewportColor = c; redraw(); };
+	void setWireframeColor(QColor c){ if(renderer) renderer->setWireframeColor(c); redraw(); };
+	void setSilhouetteColor(QColor c){ if( renderer ) renderer->setSilhouetteColor(c); redraw(); };
+	void setWireframeThickness(double t){	if( renderer ) renderer->setWireframeThickness(t); redraw(); };
+	void setVertexThickness(double t){ if( renderer ) renderer->setVertexThickness(t); redraw(); };
+	void setSilhouetteThickness(double t){ if( renderer ) renderer->setSilhouetteThickness(t); redraw(); };
+	void setNormalColor(QColor c){ if( renderer ) renderer->setNormalColor(c); redraw(); };
+	void setFaceCentroidColor(QColor c){ if( renderer ) renderer->setFaceCentroidColor(c); redraw(); };
+	void setFaceCentroidThickness(double t){ if( renderer ) renderer->setFaceCentroidThickness(t); redraw(); };
+	void setNormalThickness(double t){ if( renderer ) renderer->setNormalThickness(t); redraw(); };
+	void setNormalLength(double l){ if( renderer ) renderer->setNormalLength(l); redraw(); };
+
+	//setters for properties in glwidget... always call redraw()
+	void setSelectedVertexThickness(double t){ mSelectedVertexThickness = t; redraw(); };
+	void setSelectedEdgeThickness(double t){ mSelectedEdgeThickness = t; redraw(); };
+	void setSelectedEdgeColor(QColor c){ mSelectedEdgeColor = c; redraw(); };
+	void setSelectedFaceColor(QColor c){ mSelectedFaceColor = c; redraw(); };
+	void setSelectedVertexColor(QColor c){ mSelectedVertexColor = c; redraw(); };
+	void setVertexIDBgColor(QColor c){ mVertexIDBgColor = c; redraw(); };
+	void setFaceIDBgColor(QColor c){ mFaceIDBgColor = c; redraw(); };
+	void setEdgeIDBgColor(QColor c){ mEdgeIDBgColor = c; redraw(); };	
+
+	inline void setLightPosition(Vector3d p){ plight.position = p; };
+
+	
 		//compute lighting and normals functions now moved here from MainWindow
 	void recomputeNormals();
 	void recomputeLighting();
@@ -90,6 +113,7 @@ public :
 		if (renderer)
 			renderer->toggleGPU();
 		mUseGPU = !mUseGPU;
+		recomputeLighting();
 		repaint();
 	}
 	#endif
@@ -168,7 +192,12 @@ public :
 	}
 
 	void toggleNormals(void) {
-		if ( renderer ) renderer->toggleNormals();
+		if ( renderer ) renderer->toggleFaceNormals();
+		this->repaint();
+	}
+
+	void toggleFaceCentroids(void) {
+		if ( renderer ) renderer->toggleFaceCentroids();
 		this->repaint();
 	}
 
@@ -266,7 +295,6 @@ public :
 
 	void initializeGL( );
 	void paintEvent(QPaintEvent *event);
-	void enableGLLights(); //gl lighting for use in cg shaders
 
 	void drawText( int width, int height );
 	void drawIDs( QPainter *painter, const GLdouble *model, const GLdouble *proj, const GLint	*view);
@@ -278,7 +306,8 @@ public :
 	void setupViewport(int width, int height);
 
 	#ifdef GPU_OK
-	  CgData cg;
+		void enableGLLights(); //gl lighting for use in cg shaders
+	  CgData *cg;
 	  void initCg( );
 	#endif // GPU_OK
 
@@ -308,7 +337,7 @@ public :
   //static DLFLFaceVertexPtrArray sel_fvptr_array; // List of selected DLFLFaceVertex pointers
 
 	// Viewport viewport;                     // Viewport for the window
-	Camera2 *mCamera;											//new camera originally from Don House and Chris Root, modified by Stuart and then Dave
+	PerspCamera *mCamera;											//new camera originally from Don House and Chris Root, modified by Stuart and then Dave
 
 		// Each viewport will have its own object to display. But since only
 		// the pointer is stored, different viewports can share the same object.
@@ -338,48 +367,6 @@ public :
 
 	QCursor *cursor;
 	void redraw();
-
-	void setViewportColor(QColor c);
-	QColor getViewportColor();
-
-	void setRenderColor(QColor c);
-	QColor getRenderColor();
-
-	void setWireframeColor(QColor c);
-	QColor getWireframeColor();
-
-	void setSilhouetteColor(QColor c);
-	QColor getSilhouetteColor();
-
-	void setSelectedVertexColor(QColor c);
-	QColor getSelectedVertexColor();
-
-	void setSelectedEdgeColor(QColor c);
-	QColor getSelectedEdgeColor();
-
-	void setSelectedFaceColor(QColor c);
-	QColor getSelectedFaceColor();
-
-	void setVertexIDBgColor(QColor c);
-	QColor getVertexIDBgColor();
-
-	void setFaceIDBgColor(QColor c);
-	QColor getFaceIDBgColor();
-
-	void setEdgeIDBgColor(QColor c);
-	QColor getEdgeIDBgColor();
-
-	// inline void setLightColor(QColor c){ mLightColor = c; };
-	// inline QColor getLightColor() { return mLightColor; };
-
-	inline void setLightPosition(Vector3d p){ plight.position = p; };
-	inline Vector3d getLightPosition() { return plight.position; };
-
-	double getWireframeThickness();
-	double getVertexThickness();
-	double getSilhouetteThickness();
-	double getSelectedVertexThickness();
-	double getSelectedEdgeThickness();	
 	
 	double getBrushSize(){ return mBrushSize;}
 	void setBrushSize(double s){ mBrushSize = max(2.0,min(200.0,s)); repaint();	}
@@ -389,6 +376,10 @@ public :
 	// {
 	// 	return &viewport;
 	// }
+	
+	void setMode(QString s){
+		mode = s;
+	}
 
 	void renderLocatorsForSelect() // brianb
 	{
@@ -679,12 +670,12 @@ void clearSelected(void) {
 void drawSelected(void);
 
 		// Subroutine to translate FLTK events to Viewport events
-static VPMouseEvent translateEvent(QMouseEvent *event) {
-			// QMessageBox::about(NULL, tr("About TopMod"),tr("%1").arg(event->type()));
-	return ( (event->type() == 2/*QEvent::mouseButtonPress*/) ? VPPush :
-	( (event->type() == 3/*QEvent::mouseButtonRelease*/) ? VPRelease :
-	( (event->type() == 5/*QEvent::mouseMove*/) ? VPDrag : VPUnknown ) ) );
-}
+// static VPMouseEvent translateEvent(QMouseEvent *event) {
+// 			// QMessageBox::about(NULL, tr("About TopMod"),tr("%1").arg(event->type()));
+// 	return ( (event->type() == 2/*QEvent::mouseButtonPress*/) ? VPPush :
+// 	( (event->type() == 3/*QEvent::mouseButtonRelease*/) ? VPRelease :
+// 	( (event->type() == 5/*QEvent::mouseMove*/) ? VPDrag : VPUnknown ) ) );
+// }
 
 		// Set the object which should be shown in this viewport
 void setObject(DLFLObjectPtr op) {
@@ -768,6 +759,9 @@ double mStartDragY;
 QColor mXAxisColor;
 QColor mYAxisColor;
 QColor mZAxisColor;
+
+QWidget *mParent;
+QString mode;
 
 };
 

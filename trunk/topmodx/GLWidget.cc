@@ -1,7 +1,17 @@
 #include "GLWidget.hh"
 #include "DLFLSelection.hh"
 
-//-- Define static members --//
+/*!
+	\ingroup gui
+	@{
+	
+	\class GLWidget
+	\brief The OpenGL viewport.
+	
+	\note also handles selection 
+	
+	\see GLWidget
+*/
 
 DLFLLocatorPtrArray GLWidget::sel_lptr_array;
 /*DLFLVertexPtrArray GLWidget::sel_vptr_array;
@@ -33,10 +43,10 @@ extern DLFLFaceVertexPtrArray DLFLObject::sel_fvptr_array; // List of selected D
 // if (!cx->format().stereo())
 // exit(0); // could not create stereo context
 
-GLWidget::GLWidget(int w, int h, VPView v, DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op, TMPatchObjectPtr pop, const QGLFormat & format, QWidget * parent ) 
+GLWidget::GLWidget(int w, int h, DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op, TMPatchObjectPtr pop, const QGLFormat & format, QWidget * parent ) 
  : 	QGLWidget(format, parent, NULL), /*viewport(w,h,v),*/ object(op), patchObject(pop), renderer(rp), 
 		mRenderColor(color), mViewportColor(vcolor),/*grid(ZX,20.0,10),*/ showgrid(false), showaxes(false), mUseGPU(true), mAntialiasing(true) { 
-
+		mParent = parent;
 	// Vector3d neweye = eye - center;
 	// double eyedist = norm(neweye);
 	// Matrix4x4 lmat = Transformation::lookat(neweye,Vector3d(0,0,0),up);
@@ -78,7 +88,10 @@ GLWidget::GLWidget(int w, int h, VPView v, DLFLRendererPtr rp, QColor color, QCo
 	// normalize(Up);
 	// std::cout << Up << std::endl;
 	// mCamera = new Camera2( eye, lookat, Vector3d(-0.408248,0.816497,-0.408248));
-	mCamera = new Camera2( Pos, Aim, Up);
+
+	// mCamera = new Camera2( Pos, Aim, Up);
+	mCamera = new PerspCamera( Pos, Aim, Up);
+
   // ArbitraryRotate(Vector3d(1,0,0),Vector3d(0,1,0),Vector3d(0,0,1),45.0f,45.0f,mCamera->Pos,mCamera->Aim);
 
 	// Vector3d WindowX,WindowY,WindowZ;
@@ -108,7 +121,9 @@ GLWidget::GLWidget(int w, int h, VPView v, DLFLRendererPtr rp, QColor color, QCo
 
 GLWidget::~GLWidget(){ 
 #ifdef GPU_OK
-	cgDestroyContext( cg.context );
+  cgDestroyProgram(cg->vertProgram);
+  cgDestroyProgram(cg->fragProgram);
+	cgDestroyContext(cg->context );
 #endif
 }
 
@@ -118,9 +133,10 @@ void GLWidget::redraw() {
 
 void GLWidget::initializeGL( ) {
 		
+	
 	setAutoBufferSwap( true );
 	glClearColor(mViewportColor.redF(),mViewportColor.greenF(),mViewportColor.blueF(),mViewportColor.alphaF());
-	mCamera->PerspectiveDisplay(width(),height());
+	mCamera->SetProjection(width(),height());
 	// viewport.resize(this->size().width(),this->size().height());
 	if (mAntialiasing){
     glEnable( GL_LINE_SMOOTH );
@@ -130,20 +146,15 @@ void GLWidget::initializeGL( ) {
     glDisable( GL_LINE_SMOOTH );
 	}
 
+	glShadeModel(GL_SMOOTH);
 	glEnable(GL_BLEND);																			// Enable Blending
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);			// Type Of Blending To Use
 	
 	//initialize light position and color
 	plight.position.set(50,25,0);
-	// mLightPosition.set(50,25,0);
-	
 	plight.warmcolor.set(1,1,0.6);
-	// mLightColor = QColor(255,255,153);
-	
 	plight.coolcolor.set(0.2,0.2,0.4);
-	
 	plight.intensity = 2.0;
-	// mLightIntensity = 2.0;
 	
 	mGlobalAmbient = QColor(0,0,0);
 	
@@ -169,74 +180,105 @@ void GLWidget::initializeGL( ) {
 	
 }
 
+#ifdef GPU_OK
 void GLWidget::enableGLLights(){
+	// plight.warmcolor.r, plight.warmcolor.g, plight.warmcolor.b 
+	
 	// ENABLE THE LIGHTING
-  glPushMatrix(); {
-    glMatrixMode( GL_MODELVIEW);
-    glLoadIdentity();
-    GLfloat lmodel_ambient[] = {0.1,0.1,0.2,1.0};
-    GLfloat lmodel_diffuse[] = {0.8,0.7,0.5,1.0};
-    GLfloat lmodel_specular[] = {0.5,0.5,0.5,1.0};
-    GLfloat spotDir[]=	{0.0,-1.0,0.0};
-		GLfloat light_position[] = { 2.0, 20.0, 5.0, 1.0 }; //{ -1.0, 30.0, 5.0, 1.0 };
-
-    glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spotDir);
-    glLightfv(GL_LIGHT0, GL_AMBIENT, lmodel_ambient);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, lmodel_diffuse);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, lmodel_specular);
-    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-    //GLfloat lmodel_diffuse2[] = {0.4,0.4,0.4,1.0};
-    //glLightfv(GL_LIGHT1, GL_DIFFUSE, lmodel_diffuse);
-    //glLightfv(GL_LIGHT1, GL_POSITION, light_position2);  
-  } glPopMatrix();
-  glEnable(GL_LIGHT0);
+	// glPushMatrix(); {
+	//     glMatrixMode( GL_MODELVIEW);
+	//     glLoadIdentity();
+	//     GLfloat lmodel_ambient[] = {0.8,0.8,0.8,1.0};
+	//     GLfloat lmodel_diffuse[] = {0.8,0.7,0.5,1.0};
+	//     GLfloat lmodel_specular[] = {0.0,0.0,0.0,1.0};
+	//     GLfloat spotDir[]=	{0.0,-1.0,0.0};
+	// 	GLfloat light_position[] = { plight.position[0], plight.position[1], plight.position[1], 1.0 }; //{ -1.0, 30.0, 5.0, 1.0 };
+	// 
+	//     glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spotDir);
+	//     glLightfv(GL_LIGHT0, GL_AMBIENT, lmodel_ambient);
+	//     glLightfv(GL_LIGHT0, GL_DIFFUSE, lmodel_diffuse);
+	//     glLightfv(GL_LIGHT0, GL_SPECULAR, lmodel_specular);
+	//     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	//     //GLfloat lmodel_diffuse2[] = {0.4,0.4,0.4,1.0};
+	//     //glLightfv(GL_LIGHT1, GL_DIFFUSE, lmodel_diffuse);
+	//     //glLightfv(GL_LIGHT1, GL_POSITION, light_position2);  
+	//   } glPopMatrix();
+	//   glEnable(GL_LIGHT0);
   //glEnable(GL_LIGHT1);
  
 }
+#endif
+
+#ifdef GPU_OK
+
+void GLWidget::initCg( ) {
+	if (mUseGPU){
+		cg = CgData::instance();
+	  // Create Context
+	  cg->context = cgCreateContext( );
+	  checkForCgError("creating context");
+	  // Vertex Profile
+	  cg->vertProfile = cgGLGetLatestProfile( CG_GL_VERTEX );
+	  cgGLSetOptimalOptions( cg->vertProfile );
+	  checkForCgError("selecting vertex profile");
+	  // Frag Profile
+	  cg->fragProfile = cgGLGetLatestProfile( CG_GL_FRAGMENT );
+	  cgGLSetOptimalOptions( cg->fragProfile );	
+	  checkForCgError("selecting fragment profile");
+	  // Vertex Program
+	  char *programName = new char[256];
+	  sprintf( programName, "%s", "vertShader.cg" );
+	  cg->vertProgram = cgCreateProgramFromFile( cg->context, CG_SOURCE, programName, cg->vertProfile, NULL, NULL );
+	  checkForCgError("creating vertex program from file");
+	  // Fragment Program
+	  sprintf( programName, "%s", "fragShader.cg" );
+	  cg->fragProgram = cgCreateProgramFromFile( cg->context, CG_SOURCE, programName, cg->fragProfile, NULL, NULL );
+	  checkForCgError("creating fragment program from file");
+	  delete [] programName;
+	  programName = 0;
+
+		// Bind Variables to Cg Parameters
+		cg->camToWorld = cgGetNamedParameter( cg->vertProgram, "camToWorld");
+		cg->camToWorldIT = cgGetNamedParameter( cg->vertProgram, "camToWorldIT");
+		cg->worldToLight = cgGetNamedParameter( cg->vertProgram, "worldToLight");
+		// cg->texture = cgGetNamedParameter( cg->fProgram, "texture");
+		// cg->shadowMap = cgGetNamedParameter( cg->fProgram, "shadowMap" );
+		// cg->renderToTexSize = cgGetNamedParameter( cg->fProgram, "renderToTexSize" );
+		// cg->objectID = cgGetNamedParameter( cg->fProgram, "objectID" );
+		// checkCgError( cg->context, 5 );
+
+		cg->attenDegrees = cgGetNamedParameter( cg->fragProgram, "attenDegrees" );
+		cg->eyePosition = cgGetNamedParameter( cg->vertProgram, "eyePosition" );
+
+		// cg->velocity = cgGetNamedParameter( cg->vertProgram, "velocity" );
+		// cg->objCenter = cgGetNamedParameter( cg->vertProgram, "objCenter" );
+		
+		//from book
+		cg->globalAmbient = cgGetNamedParameter( cg->vertProgram, "globalAmbient" );
+		
+		//lighting
+		cg->lightWarmColor = cgGetNamedParameter( cg->vertProgram, "lightWarmColor" );
+		cg->lightCoolColor = cgGetNamedParameter( cg->vertProgram, "lightCoolColor" );
+		cg->lightIntensity = cgGetNamedParameter( cg->vertProgram, "lightIntensity" );
+		cg->lightPosition  = cgGetNamedParameter( cg->vertProgram, "lightPosition" );
+		//object material
+		cg->Kd = cgGetNamedParameter( cg->vertProgram, "Kd" );
+		cg->Ka = cgGetNamedParameter( cg->vertProgram, "Ka" );
+		cg->Ks = cgGetNamedParameter( cg->vertProgram, "Ks" );
+		cg->basecolor = cgGetNamedParameter( cg->vertProgram, "basecolor" );
+		cg->shininess = cgGetNamedParameter( cg->vertProgram, "shininess" );
+
+	  cgGLLoadProgram( cg->vertProgram );
+	  checkForCgError("loading vertex program");
+	  cgGLLoadProgram( cg->fragProgram );
+	  checkForCgError("loading fragment program");
+	}
+}
+
+#endif // GPU_OK
 
 void GLWidget::paintEvent(QPaintEvent *event){
 	
-	#ifdef GPU_OK
-	if (mUseGPU){
-	  cgGLBindProgram( cg.vertProgram );
-	  // cgGLBindProgram( cg.fragProgram );
-	  cgGLEnableProfile( cg.vertProfile );
-	  // cgGLEnableProfile( cg.fragProfile );
-	
-		//set cg parameters here
-		
-		//global ambient light
-		cgGLSetParameter3f(cg.globalAmbient, mGlobalAmbient.redF(), mGlobalAmbient.greenF(), mGlobalAmbient.blueF() );
-		//send lighing info
-		cgGLSetParameter3f(cg.lightColor, plight.warmcolor.r, plight.warmcolor.g, plight.warmcolor.b );
-		cgGLSetParameter3f(cg.lightPosition, plight.position[0], plight.position[1], plight.position[2] );
-		// //object material
-		// 	  cgSetParameter3f(cg.Ke, 0.0, 0.0, 0.0);
-		// 	  cgSetParameter3f(cg.Ka, mRenderColor().redF(), mRenderColor().greenF(), mRenderColor().blueF());
-		// 	  cgSetParameter3f(cg.Kd, 0.0, 0.0, 0.0);
-		// 	  cgSetParameter3f(cg.Ks, 1.0, 1.0, 1.0);
-		// 	  cgSetParameter1f(cg.shininess, 50);
-		// 	  
-	  // lookThruLight( );
-	  // glViewport(0,0,texRenderSize,texRenderSize);
-	  //     glMatrixMode(GL_PROJECTION);
-	  //     glLoadIdentity();
-	  //     // gluPerspective( spotAtten*2, 1, NEAR, FAR );
-	  //     //glOrtho( -50, 50, -50, 50, NEAR, FAR );
-	  //     glMatrixMode( GL_MODELVIEW);
-	  //     glLoadIdentity();
-	  //     gluLookAt(light_position[0],light_position[1],light_position[2],0.0f,0.0f,0.0f,0,0,1);
-    //glTranslatef(-light_position[0],-light_position[2],-light_position[1]);
-    //glRotatef(90,1,0,0);
-
-  	//set light matrix
-		//this is probably wrong dammit
-
-		
-	
-	}
-	#endif // GPU_OK
-
 	//clear to a white background
 	//   glClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
 	// glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -245,7 +287,7 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	//   glViewport(0,0, width(), height() );	
 	//   glLoadIdentity();
 	// //transform the camera
-	//   mCamera->PerspectiveDisplay(width(),height());
+	//   mCamera->SetProjection(width(),height());
 
 	QPainter painter;
 	painter.begin(this);
@@ -258,7 +300,7 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	glPushMatrix();
 
 	// viewport.resize(width(),height());
-	// mCamera->PerspectiveDisplay(width(),height());
+	// mCamera->SetProjection(width(),height());
 
 	if( renderer ){
 		renderer->initialize();	
@@ -272,29 +314,10 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	// Multiply by the transformation matrix. dave and stuart*
 	// Matrix4x4 m4 = inverse(viewport.apply_transform().matrix());
 	// viewport.apply_transform();
-	mCamera->PerspectiveDisplay(width(),height());
-	
-	#ifdef GPU_OK
-	if (mUseGPU){
-		//send camera parameters
-		cgGLSetParameter3f(cg.eyePosition, mCamera->getPos()[0], mCamera->getPos()[1], mCamera->getPos()[2] );
-	  cgGLSetStateMatrixParameter( cg.camToWorld,	CG_GL_MODELVIEW_MATRIX, CG_GL_MATRIX_INVERSE );
-	  cgGLSetStateMatrixParameter( cg.camToWorldIT,	CG_GL_MODELVIEW_MATRIX, CG_GL_MATRIX_TRANSPOSE );		
-	  cgGLSetStateMatrixParameter( 	cg.worldToLight, CG_GL_MODELVIEW_PROJECTION_MATRIX, CG_GL_MATRIX_IDENTITY); 
-	}
-	#endif
+	mCamera->SetProjection(width(),height());
+
 	// Draw the axes if required. Use thick lines
 	if ( showaxes ) {
-		#ifdef GPU_OK
-		if (mUseGPU){
-			//object material
-		  cgSetParameter3f(cg.Ke, 0.0, 0.0, 0.0);
-		  cgSetParameter3f(cg.Ka, 0.0, 0.0, 0.0);
-		  cgSetParameter3f(cg.Kd, 0.0, 0.0, 0.0);
-		  cgSetParameter3f(cg.Ks, 0.0, 0.0, 0.0);
-		  cgSetParameter1f(cg.shininess, 0);
-		}
-		#endif
 		glLineWidth(3.0);
 		glEnable(GL_LINE_STIPPLE);
 		glLineStipple(2,0xAAAA);
@@ -322,31 +345,63 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	if ( renderer ) {
 		#ifdef GPU_OK
 		if (mUseGPU){
-		  cgSetParameter3f(cg.Ke, 0.0, 0.0, 0.0);
-		  cgSetParameter3f(cg.Ka, (float)mRenderColor.redF(), mRenderColor.greenF(), mRenderColor.blueF());
-		  cgSetParameter3f(cg.Kd, 0.0, 0.0, 0.0);
-		  cgSetParameter3f(cg.Ks, 1.0, 1.0, 1.0);
-		  cgSetParameter1f(cg.shininess, 50);
-			renderer->setCgData(cg);
+		  cgGLBindProgram( cg->vertProgram );
+		  checkForCgError("binding vertex program");
+		  cgGLBindProgram( cg->fragProgram );
+		  checkForCgError("binding fragment program");
+	
+		  cgGLEnableProfile( cg->vertProfile );
+		  checkForCgError("enabling vertex profile");
+		  cgGLEnableProfile( cg->fragProfile );
+		  checkForCgError("enabling fragment profile");
+	
+			//set cg parameters here
+		
+			//global ambient light
+			cgGLSetParameter3f(cg->globalAmbient, mGlobalAmbient.redF(), mGlobalAmbient.greenF(), mGlobalAmbient.blueF() );
+			//send lighing info
+			cgGLSetParameter3f(cg->lightWarmColor, plight.warmcolor.r, plight.warmcolor.g, plight.warmcolor.b );
+			cgGLSetParameter3f(cg->lightCoolColor, plight.coolcolor.r, plight.coolcolor.g, plight.coolcolor.b );
+			cgGLSetParameter1f(cg->lightIntensity, plight.intensity);
+			cgGLSetParameter3f(cg->lightPosition, plight.position[0], plight.position[1], plight.position[2] );
+			//object material
+		  cgSetParameter3f(cg->basecolor, 0.0, 0.0, 0.0);		
+		  cgSetParameter3f(cg->Ka, mRenderColor.redF(), mRenderColor.greenF(), mRenderColor.blueF());
+		  cgSetParameter3f(cg->Kd, 0.0, 0.0, 0.0);
+		  cgSetParameter3f(cg->Ks, 1.0, 1.0, 1.0);
+		  cgSetParameter1f(cg->shininess, 50);
+			  
+		  // lookThruLight( );
+		  // glViewport(0,0,texRenderSize,texRenderSize);
+		  //     glMatrixMode(GL_PROJECTION);
+		  //     glLoadIdentity();
+		  //     // gluPerspective( spotAtten*2, 1, NEAR, FAR );
+		  //     //glOrtho( -50, 50, -50, 50, NEAR, FAR );
+		  //     glMatrixMode( GL_MODELVIEW);
+		  //     glLoadIdentity();
+		  //     gluLookAt(light_position[0],light_position[1],light_position[2],0.0f,0.0f,0.0f,0,0,1);
+	    //glTranslatef(-light_position[0],-light_position[2],-light_position[1]);
+	    //glRotatef(90,1,0,0);
+
+	  	//set light matrix
+			//this is probably wrong dammit
+
+		
+	
 		}
-		#endif
+		#endif // GPU_OK
 	  renderer->render(object);
 	  if(patchObject)
 	    renderer->render(patchObject);
+		#ifdef GPU_OK
+		if (mUseGPU){
+		  cgGLDisableProfile( cg->vertProfile );
+		  cgGLDisableProfile( cg->fragProfile );
+		}
+		#endif // GPU_OK
 	}
-	// Show any selected items.
 	// Adjust the depthrange so selected items are shown clearly
 	glDepthRange(0,1-0.0005-0.0005);
-	#ifdef GPU_OK
-	if (mUseGPU){
-	  cgSetParameter3f(cg.Ke, 0.0, 0.0, 0.0);
-	  cgSetParameter3f(cg.Ka, 0.0, 0.0, 0.0);
-	  cgSetParameter3f(cg.Kd, 0.0, 0.0, 0.0);
-	  cgSetParameter3f(cg.Ks, 0.0, 0.0, 0.0);
-	  cgSetParameter1f(cg.shininess, 0.0);
-		renderer->setCgData(cg);		
-	}
-	#endif
 	drawSelected();
 	glDepthRange(0,1);
 	
@@ -385,13 +440,6 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	drawIDs(&painter, &model[0][0], &proj[0][0], &view[0]); // draw vertex, edge and face ids
 	  
 	painter.end();
-	
-	#ifdef GPU_OK
-	if (mUseGPU){
-	  cgGLDisableProfile( cg.vertProfile );
-	  // cgGLDisableProfile( cg.fragProfile );
-	}
-	#endif // GPU_OK
 }
 
 void GLWidget::resizeGL( int width, int height ){
@@ -448,7 +496,8 @@ void GLWidget::drawHUD(QPainter *painter){
 		 						"\nSel. Edges: " + QString("%1").arg(numSelectedEdges()) +
 								"\nSel. Faces: " + QString("%1").arg(numSelectedFaces()) +
 								"\nSel. Face-Verts: " + QString("%1").arg(numSelectedFaceVertices());
-								
+
+		QString s3 = "Mode: " + mode;
 		QFont font("verdana", 14);
 		QFontMetrics fm(font);
 		painter->setFont(font);
@@ -462,6 +511,7 @@ void GLWidget::drawHUD(QPainter *painter){
 		painter->setPen(Qt::white);
 		painter->drawText(width()/5*3.5, rectangle.top()+5,150, rectangle.height(),Qt::AlignRight, s);
 		painter->drawText(width()/5*2.5, rectangle.top()+5,150,rectangle.height(),Qt::AlignRight, s2);
+		painter->drawText(rectangle.left()+5, rectangle.top()+5,150,rectangle.height(),Qt::AlignLeft, s3);
 	}
 }
 
@@ -471,7 +521,7 @@ void GLWidget::drawIDs( QPainter *painter, const GLdouble *model, const GLdouble
 	double min_dist=100000000.0, max_dist=-100000000.0, x,y,z,d;
 	int count, min_alpha = 25, max_alpha = 255;
 	// Vector3d coord = viewport.camera.getPos(); //use this to find the dist from the camera
-	Vector3d coord = mCamera->getPos(); //use this to find the dist from the camera
+	Vector3d coord = mCamera->getEye(); //use this to find the dist from the camera
 	QBrush brush;
 	
 	/* Draw Vertex IDs */
@@ -729,7 +779,7 @@ DLFLVertexPtr GLWidget::selectVertex(int mx, int my) {
 	// viewport.reshape();
 	// viewport.apply_transform();
 	// glViewport(0,0,width(),height());
-	mCamera->PerspectiveDisplay(width(),height());
+	mCamera->SetProjection(width(),height());
 	// viewport.apply_transform();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	renderVerticesForSelect(object);
@@ -788,7 +838,7 @@ DLFLLocatorPtr GLWidget::selectLocator(int mx, int my) // brianb
 
   // viewport.reshape();
   // viewport.apply_transform();
-	mCamera->PerspectiveDisplay(width(),height());
+	mCamera->SetProjection(width(),height());
   // viewport.apply_transform();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   renderLocatorsForSelect();
@@ -852,7 +902,7 @@ DLFLEdgePtr GLWidget::selectEdge(int mx, int my) {
 
 	// viewport.reshape();
 	// viewport.apply_transform();
-	mCamera->PerspectiveDisplay(width(),height());
+	mCamera->SetProjection(width(),height());
 	// viewport.apply_transform();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	renderEdgesForSelect(object);
@@ -910,7 +960,7 @@ DLFLFacePtr GLWidget::selectFace(int mx, int my) {
 
 	// viewport.reshape();
 	// viewport.apply_transform();
-	mCamera->PerspectiveDisplay(width(),height());
+	mCamera->SetProjection(width(),height());
 	// viewport.apply_transform();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	renderFacesForSelect(object);
@@ -970,7 +1020,7 @@ DLFLFacePtrArray GLWidget::selectFaces(int mx, int my) {
 
 	// viewport.reshape();
 	// viewport.apply_transform();
-	mCamera->PerspectiveDisplay(width(),height());
+	mCamera->SetProjection(width(),height());
 	// viewport.apply_transform();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	renderFacesForSelect(object);
@@ -1036,7 +1086,7 @@ DLFLFacePtrArray GLWidget::deselectFaces(int mx, int my) {
 
 	// viewport.reshape();
 	// viewport.apply_transform();
-	mCamera->PerspectiveDisplay(width(),height());
+	mCamera->SetProjection(width(),height());
 	// viewport.apply_transform();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	renderFacesForSelect(object);
@@ -1098,7 +1148,7 @@ DLFLFaceVertexPtr GLWidget::selectFaceVertex(DLFLFacePtr fp, int mx, int my) {
 
 	// viewport.reshape();
 	// viewport.apply_transform();
-	mCamera->PerspectiveDisplay(width(),height());
+	mCamera->SetProjection(width(),height());
 	// viewport.apply_transform();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	renderFaceVerticesForSelect(fp);
@@ -1193,69 +1243,13 @@ void GLWidget::drawSelected(void) {
 	}
 }
 
-#ifdef GPU_OK
-
-void GLWidget::initCg( ) {
-	if (mUseGPU){
-	  // Create Context
-	  cg.context = cgCreateContext( );
-	  // Vertex Profile
-	  cg.vertProfile = cgGLGetLatestProfile( CG_GL_VERTEX );
-	  cgGLSetOptimalOptions( cg.vertProfile );
-	  // Frag Profile
-	  // cg.fragProfile = cgGLGetLatestProfile( CG_GL_FRAGMENT );
-	  // cgGLSetOptimalOptions( cg.fragProfile );
-	  // Vertex Program
-	  char *programName = new char[256];
-	  sprintf( programName, "%s", "vertShader.cg" );
-	  cg.vertProgram = cgCreateProgramFromFile( cg.context, CG_SOURCE, programName, cg.vertProfile, NULL, NULL );
-	  checkCgError( cg.context, 5 );
-	  // Fragment Program
-	  // sprintf( programName, "%s", "fragShader.cg" );
-	  // cg.fragProgram = cgCreateProgramFromFile( cg.context, CG_SOURCE, programName, cg.fragProfile, NULL, NULL );
-	  delete [] programName;
-	  programName = 0;
-
-		// Bind Variables to Cg Parameters
-		cg.camToWorld = cgGetNamedParameter( cg.vertProgram, "camToWorld");
-		cg.camToWorldIT = cgGetNamedParameter( cg.vertProgram, "camToWorldIT");
-		cg.worldToLight = cgGetNamedParameter( cg.vertProgram, "worldToLight");
-		// cg.texture = cgGetNamedParameter( cg.fProgram, "texture");
-		// cg.shadowMap = cgGetNamedParameter( cg.fProgram, "shadowMap" );
-		// cg.renderToTexSize = cgGetNamedParameter( cg.fProgram, "renderToTexSize" );
-		// cg.objectID = cgGetNamedParameter( cg.fProgram, "objectID" );
-		checkCgError( cg.context, 5 );
-		// cg.attenDegrees = cgGetNamedParameter( cg.fProgram, "attenDegrees" );
-		cg.eyePosition = cgGetNamedParameter( cg.vertProgram, "eyePosition" );
-		// cg.velocity = cgGetNamedParameter( cg.vertProgram, "velocity" );
-		// cg.objCenter = cgGetNamedParameter( cg.vertProgram, "objCenter" );
-		
-		//from book
-		cg.globalAmbient = cgGetNamedParameter( cg.vertProgram, "globalAmbient" );
-		cg.lightColor = cgGetNamedParameter( cg.vertProgram, "lightColor" );
-		cg.lightPosition = cgGetNamedParameter( cg.vertProgram, "lightPosition" );
-		cg.Ke = cgGetNamedParameter( cg.vertProgram, "Ke" );
-		cg.Kd = cgGetNamedParameter( cg.vertProgram, "Kd" );
-		cg.Ka = cgGetNamedParameter( cg.vertProgram, "Ka" );
-		cg.Ks = cgGetNamedParameter( cg.vertProgram, "Ks" );
-		cg.shininess = cgGetNamedParameter( cg.vertProgram, "shininess" );
-
-	  cgGLLoadProgram( cg.vertProgram );
-	  checkCgError( cg.context, 1 );
-	  // cgGLLoadProgram( cg.fragProgram );
-	  // checkCgError( cg.context, 2 );
-	}
-}
-
-#endif // GPU_OK
-
 void GLWidget::wheelEvent(QWheelEvent *event) {
 
 	// int x = event->x(), y = event->y();
 	// int numDegrees = event->delta() / 8;
 	// int numSteps = numDegrees / 15;
 	// double z;
-	mCamera->HandleMouseWheel(event->delta());
+	mCamera->HandleMouseWheel(event->delta(), width(),height());
 	repaint();
 
 	// if ( viewport.current() == VPRotate) {
@@ -1416,7 +1410,7 @@ void GLWidget::mousePressEvent(QMouseEvent *event) {
 void GLWidget::mouseMoveEvent(QMouseEvent *event) {	
 	if ( QApplication::keyboardModifiers() == Qt::AltModifier || 
 			(event->buttons() == Qt::LeftButton && QApplication::keyboardModifiers() == (Qt::ShiftModifier | Qt::AltModifier)) ){
-		mCamera->HandleMouseMotion(event->x(),event->y());
+		mCamera->HandleMouseMotion(event->x(),event->y(), width(), height() );
 		repaint();	
 	}	
 	else event->ignore();
@@ -1470,161 +1464,12 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *event) {
 	// else event->ignore();
 }
 
-void GLWidget::setViewportColor(QColor c){
-	mViewportColor = c;
-	redraw();
-}
-
-QColor GLWidget::getViewportColor(){
-	return mViewportColor;
-}
-
-void GLWidget::setRenderColor(QColor c){
-	mRenderColor = c;
-	GeometryRenderer *gr = GeometryRenderer::instance();
-	gr->renderColor[0] = c.redF();
-	gr->renderColor[1] = c.greenF();
-	gr->renderColor[2] = c.blueF();
-	gr->renderColor[3] = c.alphaF();
-	redraw();
-}
-
-QColor GLWidget::getRenderColor(){
-	return mRenderColor;
-}
-
-void GLWidget::setWireframeColor(QColor c){
-	mWireframeColor = c;
-	if(renderer)
-	  renderer->setWireframeColor(mWireframeColor);
-	redraw();
-}
-
-QColor GLWidget::getWireframeColor(){
-	return mWireframeColor;
-}
-
-void GLWidget::setSilhouetteColor(QColor c){
-	mSilhouetteColor = c;
-	if( renderer )
-	  renderer->setSilhouetteColor(mSilhouetteColor);
-	redraw();
-}
-
-QColor GLWidget::getSilhouetteColor(){
-	return mSilhouetteColor;
-}
-
-void GLWidget::setWireframeThickness(double t){
-	mWireframeThickness = t;
-	if( renderer )
-	  renderer->setWireframeThickness(t);
-	redraw();
-}
-
-double GLWidget::getWireframeThickness(){
-	return mWireframeThickness;
-}
-
-void GLWidget::setVertexThickness(double t){
-	mVertexThickness = t;
-	if( renderer )
-	  renderer->setVertexThickness(t);
-	redraw();
-}
-double GLWidget::getVertexThickness(){
-	return mVertexThickness;
-}
-
-void GLWidget::setSilhouetteThickness(double t){
-	mSilhouetteThickness = t;
-	if( renderer )
-	  renderer->setSilhouetteThickness(t);
-	redraw();
-}
-
-double GLWidget::getSilhouetteThickness(){
-	return mSilhouetteThickness;
-}
-
-void GLWidget::setSelectedVertexThickness(double t){
-	mSelectedVertexThickness = t;
-	redraw();
-}
-
-double GLWidget::getSelectedVertexThickness(){
-	return mSelectedVertexThickness;
-}
-
-void GLWidget::setSelectedEdgeThickness(double t){
-	mSelectedEdgeThickness = t;
-	redraw();
-}
-
-double GLWidget::getSelectedEdgeThickness(){
-	return mSelectedEdgeThickness;
-}
-
-void GLWidget::setSelectedEdgeColor(QColor c){
-	mSelectedEdgeColor = c;
-	redraw();
-}
-
-QColor GLWidget::getSelectedEdgeColor(){
-	return mSelectedEdgeColor;
-}
-
-void GLWidget::setSelectedFaceColor(QColor c){
-	mSelectedFaceColor = c;
-	redraw();
-}
-
-QColor GLWidget::getSelectedFaceColor(){
-	return mSelectedFaceColor;
-}
-
-void GLWidget::setSelectedVertexColor(QColor c){
-	mSelectedVertexColor = c;
-	redraw();
-}
-
-QColor GLWidget::getSelectedVertexColor(){
-	return mSelectedVertexColor;
-}
-
-void GLWidget::setVertexIDBgColor(QColor c){
-	mVertexIDBgColor = c;
-	redraw();	
-}
-
-QColor GLWidget::getVertexIDBgColor(){
-	return mVertexIDBgColor;
-}
-
-void GLWidget::setFaceIDBgColor(QColor c){
-	mFaceIDBgColor = c;
-	redraw();	
-}
-
-QColor GLWidget::getFaceIDBgColor(){
-	return mFaceIDBgColor;
-}
-
-void GLWidget::setEdgeIDBgColor(QColor c){
-	mEdgeIDBgColor = c;
-	redraw();	
-}
-
-QColor GLWidget::getEdgeIDBgColor(){
-	return mEdgeIDBgColor;
-}
-
-void GLWidget::switchTo(VPView view){
+// void GLWidget::switchTo(VPView view){
 	// viewport.switchTo(view);
 	// 
 	// if ( view == VPPersp ) // Change camera settings to zoom in closer in perspective view
 	// 	viewport.setPerspView(10,10,10,0,0,0,0,1,0);
-}
+// }
 //for vertex locator moving...
 void erase_dlp(DLFLLocatorPtr lp)  { delete lp; } // brianb
 
@@ -1661,5 +1506,15 @@ void GLWidget::setCoolLightColor(QColor c){
 void GLWidget::setLightIntensity(double i){
 	plight.intensity = i;
 	recomputeLighting();
+	redraw();
+}
+
+void GLWidget::setRenderColor(QColor c){
+	mRenderColor = c;
+	GeometryRenderer *gr = GeometryRenderer::instance();
+	gr->renderColor[0] = c.redF();
+	gr->renderColor[1] = c.greenF();
+	gr->renderColor[2] = c.blueF();
+	gr->renderColor[3] = c.alphaF();
 	redraw();
 }

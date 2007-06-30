@@ -5,19 +5,32 @@ void computeLighting( DLFLFacePtr fp, LightPtr lightptr, bool usegpu ) {
     double Ka = fp->material()->Ka;
     double Kd = fp->material()->Kd;
     double Ks = fp->material()->Ks;
-    RGBColor basecolor = fp->material()->color;
-    RGBColor fvcolor;
-    Vector3d normal, pos;
+
+		RGBColor basecolor = fp->material()->color;
+		RGBColor fvcolor;
+		Vector3d normal, pos;
 
     DLFLFaceVertexPtr current = fp->front();
     normal = current->getNormal();
     pos = current->getVertexCoords();
 
-    fvcolor = lightptr->illuminate(pos,normal)*Kd;
+		if (usegpu){
+		  // cgSetParameter3f(CgData::instance()->Ka, Ka, Ka, Ka);
+		  // cgSetParameter3f(CgData::instance()->Kd, Kd, Kd, Kd);
+		  // cgSetParameter3f(CgData::instance()->Ks, Ks, Ks, Ks);
+		  // cgSetParameter1f(CgData::instance()->shininess, 50);
+			fvcolor = RGBColor(0,0,0);
+		}
+		else {
+			// cgSetParameter3f(CgData::instance()->Ka, 0.0, 0.0, 0.0);
+			// 		  cgSetParameter3f(CgData::instance()->Kd, 0.0, 0.0, 0.0);
+			// 		  cgSetParameter3f(CgData::instance()->Ks, 0.0, 0.0, 0.0);
+			// 		  cgSetParameter1f(CgData::instance()->shininess, 0);
+		  
+    	fvcolor = lightptr->illuminate(pos,normal)*Kd;
+	    fvcolor += (1.0-Kd)*basecolor;
+		}
     // fvcolor *= Kd; 
-    fvcolor += (1.0-Kd)*basecolor;
-    // fvco
-
     current->color = fvcolor;
 
     current = current->next();
@@ -25,19 +38,30 @@ void computeLighting( DLFLFacePtr fp, LightPtr lightptr, bool usegpu ) {
       normal = current->getNormal();
       pos = current->getVertexCoords();
 
-      fvcolor = lightptr->illuminate(pos,normal);
-      fvcolor *= Kd;
-      fvcolor += (1.0-Kd)*basecolor;
+      if (usegpu){
+				// cgSetParameter3f(CgData::instance()->Kd, basecolor.r, basecolor.g, basecolor.b);
+				fvcolor = RGBColor(0,0,0);
+				// fvcolor = basecolor;
+			}
+			else {
+	    	fvcolor = lightptr->illuminate(pos,normal)*Kd;
+	    	// fvcolor *= Kd;
+		    fvcolor += (1.0-Kd)*basecolor;
+			}
+    	current->color = fvcolor;
 
-      current->color = fvcolor;
-
+			// current->color = RGBColor(((double)rand() / ((double)(RAND_MAX)+(double)(1)) ),
+			// 													((double)rand() / ((double)(RAND_MAX)+(double)(1)) ),
+			// 													((double)rand() / ((double)(RAND_MAX)+(double)(1)) )
+			// 													);
       current = current->next();
     }
   }
 }
 
 void computeLighting(DLFLObjectPtr obj, TMPatchObjectPtr po, LightPtr lightptr, bool usegpu) {
-	// if (!usegpu){
+		// std::cout<< "usegpu = " << usegpu << "\n";
+		
 	  DLFLFacePtrList::iterator first, last;
 	  DLFLFacePtr faceptr;
 	  first = obj->beginFace(); last = obj->endFace();
@@ -55,7 +79,6 @@ void computeLighting(DLFLObjectPtr obj, TMPatchObjectPtr po, LightPtr lightptr, 
 	      pfp->computeLighting(lightptr);
 	    }
 	  }
-	// } // if !usegpu
 }
 
 

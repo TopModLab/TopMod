@@ -47,7 +47,7 @@ public :
   }
 
   virtual void setState( ) { 
-    gr->useColor = false;
+    gr->useLighting = false;
     gr->useMaterial = true;
     gr->useTexture = false;
     gr->useOutline = false;

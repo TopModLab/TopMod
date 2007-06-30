@@ -6,6 +6,26 @@
 
 #include "TexturingMode.hh"
 
+/*!
+	\ingroup gui
+	@{
+	
+	\class TexturingMode
+	\brief Texturing Operations GUI elements.
+	
+	\note 
+	
+	\see TexturingMode
+*/
+
+/*!
+* \brief Constructor
+* 
+* @param parent the MainWindow widget
+* @param sm the shortcut manager class for adding a custom shortcut to each menu action or icon
+* @param actionList the master list of actions for use with the CommandCompleter class
+* 
+*/
 TexturingMode::TexturingMode(QWidget *parent, QShortcutManager *sm, QWidget *actionList)
 		: QWidget(parent)
 {		
@@ -51,32 +71,37 @@ void TexturingMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 	
 }
 
+QDoubleSpinBox *TexturingMode::createDoubleSpinBox(QGridLayout *layout, QLabel *label, QString s, double low, double high, double step, double value, double decimals, int row, int col){
+	label = new QLabel(s);
+	QDoubleSpinBox *spinbox = new QDoubleSpinBox;
+	spinbox->setRange(low, high);
+	spinbox->setSingleStep(step);
+	spinbox->setValue(value);
+	spinbox->setDecimals(decimals);
+	spinbox->setMaximumSize(75,25);
+	layout->addWidget(label,row,col);
+  layout->addWidget(spinbox,row,col+1);
+
+	return spinbox;
+}
+
 void TexturingMode::setupTileTexturing(){
-	
-	mTileTexturingLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	mTileTexturingLayout->setMargin(0);
-	//number of segments
-	QLabel *tileTexturingNumTilesLabel = new QLabel(tr("Tiling Number:"));
-	QSpinBox *tileTexturingNumTilesSpinBox = new QSpinBox;
-	tileTexturingNumTilesSpinBox->setRange(2, 8);
-	tileTexturingNumTilesSpinBox->setSingleStep(1);
-	tileTexturingNumTilesSpinBox->setValue(2);
-	tileTexturingNumTilesSpinBox->setMaximumSize(60,25);
-	
-	connect(tileTexturingNumTilesSpinBox, SIGNAL(valueChanged(int)),
-          ((MainWindow*)mParent), SLOT(changeTileTexNum(int)));
 
-	mTileTexturingLayout->addWidget(tileTexturingNumTilesLabel);
-  mTileTexturingLayout->addWidget(tileTexturingNumTilesSpinBox);
-	//create column button
-	QPushButton *tileTexturingAssignButton = new QPushButton(tr("Assign Texture Coordinates"), this);
+	mTileTexturingLayout = new QGridLayout;
+	mTileTexturingLayout->setVerticalSpacing(1);
+	mTileTexturingLayout->setHorizontalSpacing(1);
+	// mTileTexturingLayout->setMargin(0);
 	
-	connect(tileTexturingAssignButton, SIGNAL(clicked()),
-          ((MainWindow*)mParent), SLOT(assignTileTexCoords()));
+	tileTexturingNumTilesSpinBox = createDoubleSpinBox(mTileTexturingLayout, tileTexturingNumTilesLabel, tr("Tiling Number"), 2, 8, 1, 2, 0, 0,0);
+	connect(tileTexturingNumTilesSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeTileTexNum(double)));
 
-	mTileTexturingLayout->addWidget(tileTexturingAssignButton);
-	mTileTexturingLayout->addStretch(1);
-	mTileTexturingWidget->setWindowTitle("Tile Texturing");
-	mTileTexturingWidget->setLayout(mTileTexturingLayout);	
+	QPushButton *tileTexturingAssignButton = new QPushButton(tr("Assign Texture\nCoordinates"), this);
+	connect(tileTexturingAssignButton, SIGNAL(clicked()), ((MainWindow*)mParent), SLOT(assignTileTexCoords()));
+	mTileTexturingLayout->addWidget(tileTexturingAssignButton,1,0,1,2);
+
+	mTileTexturingLayout->setRowStretch(2,1);
+	mTileTexturingLayout->setColumnStretch(2,1);
+	mTileTexturingWidget->setWindowTitle(tr("Tile Texturing"));
+	mTileTexturingWidget->setLayout(mTileTexturingLayout);
 	
 }

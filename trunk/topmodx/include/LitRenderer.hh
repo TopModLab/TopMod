@@ -19,8 +19,8 @@ public :
   /* Default constructor */
   LitRenderer() : DLFLRenderer() { }
 	
-  LitRenderer(QColor wc, double wt, QColor sc, double st, QColor vc, double vt)
-    : DLFLRenderer(wc, wt, sc, st, vc, vt) { }
+  LitRenderer(QColor wc, double wt, QColor sc, double st, QColor vc, double vt, QColor fc, double ft, QColor nc, double nt)
+    : DLFLRenderer(wc, wt, sc, st, vc, vt, fc, ft, nc, nt) { }
 
   /* Copy constructor */
   LitRenderer(const LitRenderer& lr) : DLFLRenderer(lr) {}
@@ -36,6 +36,10 @@ public :
 
   /* Implement render function */
   virtual int render(DLFLObjectPtr object) {  
+    glEnable(GL_CULL_FACE);
+    setCulling();
+    glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+
 		glEnable(GL_BLEND);																			// Enable Blending
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);			// Type Of Blending To Use
 
@@ -46,9 +50,6 @@ public :
 		else {
 	    glDisable( GL_LINE_SMOOTH );
 		}
-    glEnable(GL_CULL_FACE);
-    setCulling();
-    glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
     //object->renderFaces();
     gr->render( object );
     drawOverlays( object );
@@ -57,7 +58,7 @@ public :
   }
 
   virtual void setState( ) {
-    gr->useColor = true;
+    gr->useLighting = true;
     gr->useMaterial = true;
     gr->useTexture = false;
     gr->useOutline = false;

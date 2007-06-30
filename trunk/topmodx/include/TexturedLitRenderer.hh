@@ -29,8 +29,8 @@ public :
   TexturedLitRenderer(const char * filename)
     : TexturedRenderer(filename) { }
 	
-  TexturedLitRenderer(QColor wc, double wt, QColor sc, double st, QColor vc, double vt)
-    : TexturedRenderer(wc, wt, sc, st, vc, vt) { }
+  TexturedLitRenderer(QColor wc, double wt, QColor sc, double st, QColor vc, double vt, QColor fc, double ft, QColor nc, double nt)
+    : TexturedRenderer(wc, wt, sc, st, vc, vt, fc, ft, nc, nt) { }
 
   /* Assignment operator */
   TexturedLitRenderer& operator = (const TexturedLitRenderer& tlr) {
@@ -58,7 +58,7 @@ public :
   }
 
   virtual void setState( ) {
-    gr->useColor = true;
+    gr->useLighting = true;
     gr->useTexture = true;
     gr->useMaterial = false;
     gr->useOutline = false;

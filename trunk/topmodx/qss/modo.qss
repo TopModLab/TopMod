@@ -27,7 +27,7 @@ QComboBox {
 	background: rgb(127,135,144);
 }
 
-QSpinBox {
+QDoubleSpinBox {
 	background: black;
 }
 

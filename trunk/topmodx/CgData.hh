@@ -36,30 +36,80 @@
 #include <Cg/cgGL.h>
 #include <cstdio>
 
+/*!
+*	\file CgData.hh
+*	\brief singleton class for Cg GPU Shading
+* 
+*/
+
 namespace Cg {
 
-  struct CgData {
-    CGcontext context;
-    CGprogram vertProgram, fragProgram;
-    CGprofile vertProfile, fragProfile;
+class CgData {
+public :
+  /** Singleton Methods **/
+  static CgData* instance( );
+  ~CgData( ) { };
 
-	  CGparameter camToWorld, worldToLight, camToWorldIT;
+	CGcontext context;
+	CGprogram vertProgram, fragProgram;
+	CGprofile vertProfile, fragProfile;
 
-	  CGparameter texture, shadowMap;
-	  CGparameter renderToTexSize;
-	  CGparameter objectID;
-	  CGparameter attenDegrees;
-		//from book
-		CGparameter globalAmbient;
-		CGparameter lightColor;
-		CGparameter lightPosition;
-		CGparameter eyePosition;
-		CGparameter Ke, Ka, Kd, Ks, shininess;
-  };
+	CGparameter camToWorld, worldToLight, camToWorldIT;
+
+	// CGparameter texture, shadowMap;
+	// CGparameter renderToTexSize;
+	// CGparameter objectID;
+	CGparameter attenDegrees;
+	
+	//from book
+	CGparameter globalAmbient;
+	
+	//lighting
+	CGparameter lightWarmColor;
+	CGparameter lightCoolColor;
+	CGparameter lightIntensity;
+	CGparameter lightPosition;
+	
+	CGparameter eyePosition;
+	CGparameter Ka, Kd, Ks, shininess, basecolor;
+
+private:
+	static CgData *mInstance;
+	CgData();
+  
+};
 
   void checkCgError( CGcontext &context, int id );
+	void checkForCgError(const char *situation);
 
 } // end namespace Cg
+
+
+//old implementation as a struct
+// namespace Cg {
+// 
+//   struct CgData {
+//     CGcontext context;
+//     CGprogram vertProgram, fragProgram;
+//     CGprofile vertProfile, fragProfile;
+// 
+// 	  CGparameter camToWorld, worldToLight, camToWorldIT;
+// 
+// 	  CGparameter texture, shadowMap;
+// 	  CGparameter renderToTexSize;
+// 	  CGparameter objectID;
+// 	  CGparameter attenDegrees;
+// 		//from book
+// 		CGparameter globalAmbient;
+// 		CGparameter lightColor;
+// 		CGparameter lightPosition;
+// 		CGparameter eyePosition;
+// 		CGparameter Ke, Ka, Kd, Ks, shininess;
+//   };
+// 
+//   void checkCgError( CGcontext &context, int id );
+// 
+// } // end namespace Cg
 
 #endif // GPU_OK
 #endif // _CG_DATA_H

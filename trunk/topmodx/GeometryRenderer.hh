@@ -2,8 +2,21 @@
 #define _GEOMETRY_RENDERER_H_
 
 #include <DLFLObject.hh>
+#include "CgData.hh"
+
+
+#ifdef GPU_OK
+using namespace Cg;
+#endif // GPU_OK
 
 using namespace DLFL;
+
+/*!
+	\file GeometryRenderer.hh
+	\brief Definition of the GeometryRenderer class
+	
+	\see GeometryRenderer
+*/
 
 class GeometryRenderer {
 public :
@@ -23,16 +36,23 @@ public :
 
   void renderVertices( DLFLObjectPtr obj, double size = 5.0 ) const;
   void renderEdges( DLFLObjectPtr obj, double width = 1.0 ) const;
+	void renderFaceNormals( DLFLObjectPtr obj, double width, double length ) const;
+	void renderFaceCentroids( DLFLObjectPtr obj, double size ) const;
+
 
   bool useMaterial;
-  bool useColor;
+  bool useLighting;
   bool useNormal;
   bool useTexture;
   bool useOutline;
-  bool drawFaceCentroid;
+	bool drawWireframe;
+	bool drawSilhouette;
+	bool drawVertices;
+  bool drawFaceCentroids;
   bool drawFaceNormals;
   bool isReversed;
   bool useGPU;
+	bool antialiasing;
 
   bool drawPatchWireframe;
   bool drawPatchBoundaries;
@@ -45,9 +65,10 @@ private :
   //DLFLObjectPtr mObj;
 
   static GeometryRenderer *mInstance;
-  GeometryRenderer( bool gpu = true) : useMaterial(false), useColor(false), 
+  GeometryRenderer( bool gpu = true) : useMaterial(false), useLighting(false), 
 				       useNormal(false), useTexture(false), 
-				       useOutline(false), drawFaceCentroid(false),
+							useOutline(false), drawFaceCentroids(false), drawVertices(false),
+							drawSilhouette(false),drawWireframe(true),
 				       drawFaceNormals(false), isReversed(false), useGPU(gpu) {
     renderColor = new GLdouble[4];
   };

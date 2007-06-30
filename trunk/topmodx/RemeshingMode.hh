@@ -8,18 +8,18 @@
 
 #include <QWidget>
 #include <QPushButton>
-#include <QBoxLayout>
+#include <QGridLayout>
 
 #include "MainWindow.hh"
 
 class MainWindow;
 
-class QComboBox;
-class QPushButton;
-class QGroupBox;
-class QBoxLayout;
-class QCheckBox;
-class QLabel;
+/*!
+	\file RemeshingMode.hh
+	\brief Definition of the RemeshingMode class
+	
+	\see RemeshingMode
+*/
 
 class RemeshingMode : public QWidget {
 	Q_OBJECT
@@ -30,7 +30,7 @@ public:
 	QMenu *getMenu();
 
 		//dual
-	QBoxLayout *mDualLayout;
+	QGridLayout *mDualLayout;
 	QWidget *mDualWidget;
 	QAction *mDualAction;
 	
@@ -44,14 +44,14 @@ public:
 	QWidget *mVertexTruncationWidget;
 	QWidget *mDualTwelveSixFourWidget;
 	
-	QBoxLayout *mRootThreeLayout;
-	QBoxLayout *mDualVertexTruncationLayout;
-	QBoxLayout *mStellationLayout;
-	QBoxLayout *mDoubleStellationLayout;
-	QBoxLayout *mTwelveSixFourLayout;
-	QBoxLayout *mHoneycombLayout;
-	QBoxLayout *mVertexTruncationLayout;
-	QBoxLayout *mDualTwelveSixFourLayout;
+	QGridLayout *mRootThreeLayout;
+	QGridLayout *mDualVertexTruncationLayout;
+	QGridLayout *mStellationLayout;
+	QGridLayout *mDoubleStellationLayout;
+	QGridLayout *mTwelveSixFourLayout;
+	QGridLayout *mHoneycombLayout;
+	QGridLayout *mVertexTruncationLayout;
+	QGridLayout *mDualTwelveSixFourLayout;
 	
 	QAction *mRootThreeAction;
 	QAction *mDualVertexTruncationAction;
@@ -70,12 +70,12 @@ public:
 	QWidget *mCornerCuttingWidget;
 	QWidget *mSimplestWidget;
 	
-	QBoxLayout *mLinearVertexLayout;
-	QBoxLayout *mCatmullClarkLayout;
-	QBoxLayout *mStellateEdgeRemovalLayout;
-	QBoxLayout *mDooSabinLayout;
-	QBoxLayout *mCornerCuttingLayout;
-	QBoxLayout *mSimplestLayout;
+	QGridLayout *mLinearVertexLayout;
+	QGridLayout *mCatmullClarkLayout;
+	QGridLayout *mStellateEdgeRemovalLayout;
+	QGridLayout *mDooSabinLayout;
+	QGridLayout *mCornerCuttingLayout;
+	QGridLayout *mSimplestLayout;
 
 	QAction *mLinearVertexAction;
 	QAction *mCatmullClarkAction;
@@ -90,9 +90,9 @@ public:
   QWidget *mCubicPentagonalizationWidget;
   QWidget *mDualPentagonalizationWidget;
 	
-	QBoxLayout *mPentagonalizationLayout;
-  QBoxLayout *mCubicPentagonalizationLayout;
-  QBoxLayout *mDualPentagonalizationLayout;
+	QGridLayout *mPentagonalizationLayout;
+  QGridLayout *mCubicPentagonalizationLayout;
+  QGridLayout *mDualPentagonalizationLayout;
 
 	QAction *mPentagonalizationAction;
   QAction *mCubicPentagonalizationAction;
@@ -104,10 +104,10 @@ public:
   QWidget *mDualLoopStyleRemeshingWidget;
   QWidget *mDualLoopSubdivisionWidget;
 
-	QBoxLayout *mLoopStyleRemeshingLayout;
-  QBoxLayout *mLoopSubdivisionLayout;
-  QBoxLayout *mDualLoopStyleRemeshingLayout;
-  QBoxLayout *mDualLoopSubdivisionLayout;
+	QGridLayout *mLoopStyleRemeshingLayout;
+  QGridLayout *mLoopSubdivisionLayout;
+  QGridLayout *mDualLoopStyleRemeshingLayout;
+  QGridLayout *mDualLoopSubdivisionLayout;
 
 	QAction *mLoopStyleRemeshingAction;
   QAction *mLoopSubdivisionAction;
@@ -120,10 +120,10 @@ public:
   QWidget *mDualGlobalExtrudeWidget;
   QWidget *mDualCheckerboardWidget;
 
-  QBoxLayout *mGlobalExtrudeLayout;
-  QBoxLayout *mCheckerboardLayout;
-  QBoxLayout *mDualGlobalExtrudeLayout;
-  QBoxLayout *mDualCheckerboardLayout;
+  QGridLayout *mGlobalExtrudeLayout;
+  QGridLayout *mCheckerboardLayout;
+  QGridLayout *mDualGlobalExtrudeLayout;
+  QGridLayout *mDualCheckerboardLayout;
 
   QAction *mGlobalExtrudeAction;
   QAction *mCheckerboardAction;
@@ -134,8 +134,8 @@ public:
 	QWidget *mPentagonPreservingWidget;
   QWidget *mDualPentagonPreservingWidget;
 	
-	QBoxLayout *mPentagonPreservingLayout;
-  QBoxLayout *mDualPentagonPreservingLayout;
+	QGridLayout *mPentagonPreservingLayout;
+  QGridLayout *mDualPentagonPreservingLayout;
 
 	QAction *mPentagonPreservingAction;
   QAction *mDualPentagonPreservingAction;
@@ -144,8 +144,8 @@ public:
 	QWidget *mDualLoopStyleRemeshingSixWidget;
   QWidget *mLoopStyleRemeshingSixWidget;
 
-	QBoxLayout *mDualLoopStyleRemeshingSixLayout;
-  QBoxLayout *mLoopStyleRemeshingSixLayout;
+	QGridLayout *mDualLoopStyleRemeshingSixLayout;
+  QGridLayout *mLoopStyleRemeshingSixLayout;
 
 	QAction *mDualLoopStyleRemeshingSixAction;
   QAction *mLoopStyleRemeshingSixAction;	
@@ -158,12 +158,12 @@ public:
   QWidget *mDomeWidget;
   QWidget *mSubdivideFaceWidget;
 	
-	QBoxLayout *mFractalLayout;
-  QBoxLayout *mDoubleStellateMiscLayout;
-  QBoxLayout *mDooSabinBCLayout;
-  QBoxLayout *mDooSabinBCNewLayout;
-  QBoxLayout *mDomeLayout;
-  QBoxLayout *mSubdivideFaceLayout;
+	QGridLayout *mFractalLayout;
+  QGridLayout *mDoubleStellateMiscLayout;
+  QGridLayout *mDooSabinBCLayout;
+  QGridLayout *mDooSabinBCNewLayout;
+  QGridLayout *mDomeLayout;
+  QGridLayout *mSubdivideFaceLayout;
 	
 	QAction *mFractalAction;
   QAction *mDoubleStellateMiscAction;
@@ -182,6 +182,8 @@ protected:
 	void setupFivePreservation();
 	void setupSixPreservation();
 	void setupMiscellaneous();	
+
+	QDoubleSpinBox *createDoubleSpinBox(QGridLayout *layout, QLabel *label, QString s, double low, double high, double step, double value, double decimals, int row, int col);
 
 public slots:
 
@@ -243,6 +245,48 @@ private:
 	QMenu *mFivePreservationMenu;
 	QMenu *mSixPreservationMenu;
 	QMenu *mMiscellaneousMenu;
+	
+	QDoubleSpinBox *starSpinBox;
+	QDoubleSpinBox *twelveSixFourSpinBox;
+	QDoubleSpinBox *vertexTruncationSpinBox;
+	QDoubleSpinBox *dualTwelveSixFourSpinBox;
+	QDoubleSpinBox *pentagonalizationSpinBox;
+	QDoubleSpinBox *cubicPentagonalizationSpinBox;
+	QDoubleSpinBox *loopStyleRemeshingSpinBox;
+	QDoubleSpinBox *dualLoopStyleRemeshingTwistSpinBox;
+	QDoubleSpinBox *dualLoopStyleRemeshingWeightSpinBox;
+	QDoubleSpinBox *pentagonPreservingSpinBox;
+	QDoubleSpinBox *dualLoopStyleRemeshingSixTwistSpinBox;
+	QDoubleSpinBox *dualLoopStyleRemeshingSixWeightSpinBox;
+	QDoubleSpinBox *loopStyleRemeshingSixSpinBox;
+	QDoubleSpinBox *fractalMultiplierSpinBox;
+	QDoubleSpinBox *doubleStellateMiscHeightSpinBox;
+	QDoubleSpinBox *doubleStellateMiscCurveSpinBox;
+	QDoubleSpinBox *dooSabinBCNewScaleSpinBox;
+	QDoubleSpinBox *dooSabinBCNewLengthSpinBox;
+	QDoubleSpinBox *domeHeightSpinBox;
+	QDoubleSpinBox *domeScaleSpinBox;
+
+	QLabel *starLabel;
+	QLabel *twelveSixFourLabel;
+	QLabel *vertexTruncationLabel;
+	QLabel *dualTwelveSixFourLabel;
+	QLabel *pentagonalizationLabel;
+	QLabel *cubicPentagonalizationLabel;
+	QLabel *loopStyleRemeshingLabel;
+	QLabel *dualLoopStyleRemeshingTwistLabel;
+	QLabel *dualLoopStyleRemeshingWeightLabel;
+	QLabel *pentagonPreservingLabel;
+	QLabel *dualLoopStyleRemeshingSixTwistLabel;
+	QLabel *dualLoopStyleRemeshingSixWeightLabel;
+	QLabel *loopStyleRemeshingSixLabel;
+	QLabel *fractalMultiplierLabel;
+	QLabel *doubleStellateMiscHeightLabel;
+	QLabel *doubleStellateMiscCurveLabel;
+	QLabel *dooSabinBCNewLengthLabel;
+	QLabel *dooSabinBCNewScaleLabel;
+	QLabel *domeHeightLabel;
+	QLabel *domeScaleLabel;
 	
 };
 

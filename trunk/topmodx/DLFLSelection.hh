@@ -5,15 +5,16 @@
 
 using namespace DLFL;
 
-// Code for selection of vertices, edges and faces
+/*!
+	\file DLFLSelection.hh
+	\brief Code for selection of vertices, edges and faces
+	
+	\see MainWindow
+*/
 
-// Render the vertices for selection
-void renderVerticesForSelect( DLFLObjectPtr obj );
-// Render the edges for selection
-void renderEdgesForSelect( DLFLObjectPtr obj );
-// Render the faces for selection
-void renderFacesForSelect( DLFLObjectPtr obj );
-// Render the face vertices of a face for selection
-void renderFaceVerticesForSelect( DLFLFacePtr fp );
+void renderVerticesForSelect( DLFLObjectPtr obj ); 		//!< Render the vertices for selection
+void renderEdgesForSelect( DLFLObjectPtr obj );				//!< Render the edges for selection
+void renderFacesForSelect( DLFLObjectPtr obj );				//!< Render the faces for selection
+void renderFaceVerticesForSelect( DLFLFacePtr fp );		//!< Render the face vertices of a face for selection
 
 #endif // _DLFLSELECTION_H_

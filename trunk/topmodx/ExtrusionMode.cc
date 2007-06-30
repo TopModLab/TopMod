@@ -1,11 +1,27 @@
-/****************************************************************************
- **
- **
- ****************************************************************************/
 #include <QtGui>
 
 #include "ExtrusionMode.hh"
 
+/*!
+	\ingroup gui
+	@{
+	
+	\class ExtrusionMode
+	\brief Extrusion Operations GUI elements.
+	
+	\note 
+	
+	\see ExtrusionMode
+*/
+
+/*!
+* \brief Constructor
+* 
+* @param parent the MainWindow widget
+* @param sm the shortcut manager class for adding a custom shortcut to each menu action or icon
+* @param actionList the master list of actions for use with the CommandCompleter class
+* 
+*/
 ExtrusionMode::ExtrusionMode(QWidget *parent, QShortcutManager *sm, QWidget *actionList)
 		: QWidget(parent)
 {		
@@ -104,7 +120,6 @@ QMenu* ExtrusionMode::getMenu(){
 	mExtrusionMenu->addAction(mDoubleStellateExtrudeAction);	
 	
 	return mExtrusionMenu;	
-	
 }
 
 void ExtrusionMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget){
@@ -223,407 +238,171 @@ void ExtrusionMode::setScale(double value){
 	((MainWindow*)mParent)->changeExtrudeScale(value);
 }
 
-void ExtrusionMode::setupDooSabinExtrude(){
-	
-	mDooSabinExtrudeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	mDooSabinExtrudeLayout->setMargin(0);
-	
-	//length
-	dooSabinLengthLabel = new QLabel(tr("Length"));
-	dooSabinLengthSpinBox = new QDoubleSpinBox;
-	dooSabinLengthSpinBox->setRange(-100.0, 100.0);
-	dooSabinLengthSpinBox->setSingleStep(0.1);
-	dooSabinLengthSpinBox->setValue(2.0);
-	dooSabinLengthSpinBox->setDecimals(1);
-	dooSabinLengthSpinBox->setMaximumSize(75,25);
-	connect(dooSabinLengthSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(setLength(double)));
+QDoubleSpinBox *ExtrusionMode::createDoubleSpinBox(QGridLayout *layout, QLabel *label, QString s, double low, double high, double step, double value, double decimals, int row, int col){
+	label = new QLabel(s);
+	QDoubleSpinBox *spinbox = new QDoubleSpinBox;
+	spinbox->setRange(low, high);
+	spinbox->setSingleStep(step);
+	spinbox->setValue(value);
+	spinbox->setDecimals(decimals);
+	spinbox->setMaximumSize(75,25);
+	layout->addWidget(label,row,col);
+  layout->addWidget(spinbox,row,col+1);
 
-	mDooSabinExtrudeLayout->addWidget(dooSabinLengthLabel);
-  mDooSabinExtrudeLayout->addWidget(dooSabinLengthSpinBox);
-
-	//rotation
-	dooSabinRotationLabel = new QLabel(tr("Rotation"));
-	dooSabinRotationSpinBox = new QDoubleSpinBox;
-	dooSabinRotationSpinBox->setRange(0, 360);
-	dooSabinRotationSpinBox->setSingleStep(1);
-	dooSabinRotationSpinBox->setDecimals(0);
-	dooSabinRotationSpinBox->setValue(0.0);
-	dooSabinRotationSpinBox->setMaximumSize(75,25);
-	connect(dooSabinRotationSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(setRotation(double)));
-	
-	mDooSabinExtrudeLayout->addWidget(dooSabinRotationLabel);
-  mDooSabinExtrudeLayout->addWidget(dooSabinRotationSpinBox);
-
-	//scale
-	dooSabinScaleLabel = new QLabel(tr("Scale"));
-	dooSabinScaleSpinBox = new QDoubleSpinBox;
-	dooSabinScaleSpinBox->setRange(0.0, 10.0);
-	dooSabinScaleSpinBox->setSingleStep(0.01);
-	dooSabinScaleSpinBox->setValue(1.0);
-	dooSabinScaleSpinBox->setDecimals(2);
-	dooSabinScaleSpinBox->setMaximumSize(75,25);
-	connect(dooSabinScaleSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(setScale(double)));
-	
-	mDooSabinExtrudeLayout->addWidget(dooSabinScaleLabel);
-  mDooSabinExtrudeLayout->addWidget(dooSabinScaleSpinBox);
-
-	//segments
-	dooSabinSegmentsLabel = new QLabel(tr("Segments"));
-	dooSabinSegmentsSpinBox = new QDoubleSpinBox;
-	dooSabinSegmentsSpinBox->setRange(1, 50);
-	dooSabinSegmentsSpinBox->setSingleStep(1);
-	dooSabinSegmentsSpinBox->setValue(1);
-	dooSabinSegmentsSpinBox->setDecimals(0);
-	dooSabinSegmentsSpinBox->setMaximumSize(75,25);
-	connect(dooSabinSegmentsSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(setSegments(double)));	
-	
-	mDooSabinExtrudeLayout->addWidget(dooSabinSegmentsLabel);
-  mDooSabinExtrudeLayout->addWidget(dooSabinSegmentsSpinBox);
-
-	// //bendT
-	// QLabel *dooSabinBendTLabel = new QLabel(tr("Bend T"));
-	// QDoubleSpinBox *dooSabinBendTSpinBox = new QDoubleSpinBox;
-	// dooSabinBendTSpinBox->setRange(-100.0, 100.0);
-	// dooSabinBendTSpinBox->setSingleStep(0.1);
-	// dooSabinBendTSpinBox->setValue(0.0);
-	// dooSabinBendTSpinBox->setDecimals(1);
-	// dooSabinBendTSpinBox->setMaximumSize(75,25);
-	// mDooSabinExtrudeLayout->addWidget(dooSabinBendTLabel);
-	//   mDooSabinExtrudeLayout->addWidget(dooSabinBendTSpinBox);
-
-	// //bendB
-	// QLabel *dooSabinBendBLabel = new QLabel(tr("Bend B"));
-	// QDoubleSpinBox *dooSabinBendBSpinBox = new QDoubleSpinBox;
-	// dooSabinBendBSpinBox->setRange(-100.0, 100.0);
-	// dooSabinBendBSpinBox->setSingleStep(0.1);
-	// dooSabinBendBSpinBox->setValue(0.0);
-	// dooSabinBendBSpinBox->setDecimals(1);
-	// dooSabinBendBSpinBox->setMaximumSize(75,25);
-	// mDooSabinExtrudeLayout->addWidget(dooSabinBendBLabel);
-	//   mDooSabinExtrudeLayout->addWidget(dooSabinBendBSpinBox);
- 	
-	mDooSabinExtrudeLayout->addStretch(1);
-	mDooSabinExtrudeWidget->setWindowTitle(tr("Doo Sabin Extrusion"));
-	mDooSabinExtrudeWidget->setLayout(mDooSabinExtrudeLayout);	
-	
+	return spinbox;
 }
 
-void ExtrusionMode::setupCubicalExtrude(){
+void ExtrusionMode::setupDooSabinExtrude(){
 	
-	mCubicalExtrudeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	mCubicalExtrudeLayout->setMargin(0);
-	
+	mDooSabinExtrudeLayout = new QGridLayout;
+	mDooSabinExtrudeLayout->setVerticalSpacing(1);
+	mDooSabinExtrudeLayout->setHorizontalSpacing(1);
+	// mDooSabinExtrudeLayout->setMargin(0);
 	//length
-	cubicalLengthLabel = new QLabel(tr("Length"));
-	cubicalLengthSpinBox = new QDoubleSpinBox;
-	cubicalLengthSpinBox->setRange(-100.0, 100.0);
-	cubicalLengthSpinBox->setSingleStep(0.1);
-	cubicalLengthSpinBox->setValue(2.0);
-	cubicalLengthSpinBox->setDecimals(1);
-	cubicalLengthSpinBox->setMaximumSize(75,25);
-	connect(cubicalLengthSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(setLength(double)));
-
-	mCubicalExtrudeLayout->addWidget(cubicalLengthLabel);
-  mCubicalExtrudeLayout->addWidget(cubicalLengthSpinBox);
-
+	dooSabinLengthSpinBox = createDoubleSpinBox(mDooSabinExtrudeLayout, dooSabinLengthLabel, tr("Length"), -100.0, 100.0, 0.1, 2.0, 1, 0,0);
+	connect(dooSabinLengthSpinBox, SIGNAL(valueChanged(double)),this, SLOT(setLength(double)));
 	//rotation
-	cubicalRotationLabel = new QLabel(tr("Rotation"));
-	cubicalRotationSpinBox = new QDoubleSpinBox;
-	cubicalRotationSpinBox->setRange(0, 360);
-	cubicalRotationSpinBox->setSingleStep(1);
-	cubicalRotationSpinBox->setValue(0.0);
-	cubicalRotationSpinBox->setDecimals(0);
-	cubicalRotationSpinBox->setMaximumSize(75,25);
-	connect(cubicalRotationSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(setRotation(double)));
-
-	mCubicalExtrudeLayout->addWidget(cubicalRotationLabel);
-  mCubicalExtrudeLayout->addWidget(cubicalRotationSpinBox);
-
+	dooSabinRotationSpinBox = createDoubleSpinBox(mDooSabinExtrudeLayout, dooSabinRotationLabel, tr("Rotation"), 0, 360, 1, 0.0, 1, 1,0);
+	connect(dooSabinRotationSpinBox, SIGNAL(valueChanged(double)),this, SLOT(setRotation(double)));
 	//scale
-	cubicalScaleLabel = new QLabel(tr("Scale"));
-	cubicalScaleSpinBox = new QDoubleSpinBox;
-	cubicalScaleSpinBox->setRange(0.0, 10.0);
-	cubicalScaleSpinBox->setSingleStep(0.01);
-	cubicalScaleSpinBox->setValue(1.0);
-	cubicalScaleSpinBox->setDecimals(2);
-	cubicalScaleSpinBox->setMaximumSize(75,25);
-	connect(cubicalScaleSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(setScale(double)));
-	
-	mCubicalExtrudeLayout->addWidget(cubicalScaleLabel);
-  mCubicalExtrudeLayout->addWidget(cubicalScaleSpinBox);
-
+	dooSabinScaleSpinBox = createDoubleSpinBox(mDooSabinExtrudeLayout, dooSabinScaleLabel, tr("Scale"), 0.0, 10.0, 0.01, 1.0, 2, 2,0);
+	connect(dooSabinScaleSpinBox, SIGNAL(valueChanged(double)),this, SLOT(setScale(double)));
 	//segments
-	cubicalSegmentsLabel = new QLabel(tr("Segments"));
-	cubicalSegmentsSpinBox = new QDoubleSpinBox;
-	cubicalSegmentsSpinBox->setRange(1, 50);
-	cubicalSegmentsSpinBox->setSingleStep(1);
-	cubicalSegmentsSpinBox->setValue(1);
-	cubicalSegmentsSpinBox->setMaximumSize(75,25);
-	cubicalSegmentsSpinBox->setDecimals(0);
-	connect(cubicalSegmentsSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(setSegments(double)));
+	dooSabinSegmentsSpinBox = createDoubleSpinBox(mDooSabinExtrudeLayout, dooSabinSegmentsLabel, tr("Segments"), 1, 50, 1, 1, 0, 3,0);
+	connect(dooSabinSegmentsSpinBox, SIGNAL(valueChanged(double)),this, SLOT(setSegments(double)));
 
-	mCubicalExtrudeLayout->addWidget(cubicalSegmentsLabel);
-  mCubicalExtrudeLayout->addWidget(cubicalSegmentsSpinBox);
+	mDooSabinExtrudeLayout->setRowStretch(4,1);
+	mDooSabinExtrudeLayout->setColumnStretch(2,1);
+	mDooSabinExtrudeWidget->setWindowTitle(tr("Doo Sabin Extrusion"));
+	mDooSabinExtrudeWidget->setLayout(mDooSabinExtrudeLayout);	
+}
 
-	// //bendT
-	// QLabel *cubicalBendTLabel = new QLabel(tr("Bend T"));
-	// QDoubleSpinBox *cubicalBendTSpinBox = new QDoubleSpinBox;
-	// cubicalBendTSpinBox->setRange(-100.0, 100.0);
-	// cubicalBendTSpinBox->setSingleStep(0.1);
-	// cubicalBendTSpinBox->setValue(0.0);
-	// cubicalBendTSpinBox->setDecimals(1);
-	// cubicalBendTSpinBox->setMaximumSize(75,25);
-	// mCubicalExtrudeLayout->addWidget(cubicalBendTLabel);
-	//   mCubicalExtrudeLayout->addWidget(cubicalBendTSpinBox);
-	// 
-	// //bendB
-	// QLabel *cubicalBendBLabel = new QLabel(tr("Bend B"));
-	// QDoubleSpinBox *cubicalBendBSpinBox = new QDoubleSpinBox;
-	// cubicalBendBSpinBox->setRange(-100.0, 100.0);
-	// cubicalBendBSpinBox->setSingleStep(0.1);
-	// cubicalBendBSpinBox->setValue(0.0);
-	// cubicalBendBSpinBox->setDecimals(1);
-	// cubicalBendBSpinBox->setMaximumSize(75,25);
-// /	mCubicalExtrudeLayout->addWidget(cubicalBendBLabel);
-	//   mCubicalExtrudeLayout->addWidget(cubicalBendBSpinBox);
-	
-	mCubicalExtrudeLayout->addStretch(1);
+void ExtrusionMode::setupCubicalExtrude(){	
+	mCubicalExtrudeLayout = new QGridLayout;
+	mCubicalExtrudeLayout->setVerticalSpacing(1);
+	mCubicalExtrudeLayout->setHorizontalSpacing(1);
+	// mCubicalExtrudeLayout->setMargin(0);
+	//length
+	cubicalLengthSpinBox = createDoubleSpinBox(mCubicalExtrudeLayout, cubicalLengthLabel, tr("Length"), -100.0, 100.0, 0.1, 2.0, 1, 0,0);
+	connect(cubicalLengthSpinBox, SIGNAL(valueChanged(double)),this, SLOT(setLength(double)));
+	//rotation
+	cubicalRotationSpinBox = createDoubleSpinBox(mCubicalExtrudeLayout, cubicalRotationLabel, tr("Rotation"), 0, 360, 1, 0.0, 1, 1,0);
+	connect(cubicalRotationSpinBox, SIGNAL(valueChanged(double)),this, SLOT(setRotation(double)));
+	//scale
+	cubicalScaleSpinBox = createDoubleSpinBox(mCubicalExtrudeLayout, cubicalScaleLabel, tr("Scale"), 0.0, 10.0, 0.01, 1.0, 2, 2,0);
+	connect(cubicalScaleSpinBox, SIGNAL(valueChanged(double)),this, SLOT(setScale(double)));
+	//segments
+	cubicalSegmentsSpinBox = createDoubleSpinBox(mCubicalExtrudeLayout, cubicalSegmentsLabel, tr("Segments"), 1, 50, 1, 1, 0, 3,0);
+	connect(cubicalSegmentsSpinBox, SIGNAL(valueChanged(double)),this, SLOT(setSegments(double)));
+
+	mCubicalExtrudeLayout->setRowStretch(4,1);
+	mCubicalExtrudeLayout->setColumnStretch(2,1);
 	mCubicalExtrudeWidget->setWindowTitle(tr("Cubical Extrusion"));
-	mCubicalExtrudeWidget->setLayout(mCubicalExtrudeLayout);
+	mCubicalExtrudeWidget->setLayout(mCubicalExtrudeLayout);	
 }
 
 void ExtrusionMode::setupDodecahedralExtrude(){
-	
-	mDodecahedralExtrudeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	mDodecahedralExtrudeLayout->setMargin(0);
-
+	mDodecahedralExtrudeLayout = new QGridLayout;
+	mDodecahedralExtrudeLayout->setVerticalSpacing(1);
+	mDodecahedralExtrudeLayout->setHorizontalSpacing(1);
+	// mDodecahedralExtrudeLayout->setMargin(0);
 	//length
-	dodecahedralLengthLabel = new QLabel(tr("Length:"));
-	dodecahedralLengthSpinBox = new QDoubleSpinBox;
-	dodecahedralLengthSpinBox->setRange(-100, 100);
-	dodecahedralLengthSpinBox->setSingleStep(0.1);
-	dodecahedralLengthSpinBox->setValue(2.0);
-	dodecahedralLengthSpinBox->setDecimals(1);
-	dodecahedralLengthSpinBox->setMaximumSize(75,25);
-	connect(dodecahedralLengthSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(setLength(double)));
-	
-	mDodecahedralExtrudeLayout->addWidget(dodecahedralLengthLabel);
-  mDodecahedralExtrudeLayout->addWidget(dodecahedralLengthSpinBox);
-
+	dodecahedralLengthSpinBox = createDoubleSpinBox(mDodecahedralExtrudeLayout, dodecahedralLengthLabel, tr("Length"), -100.0, 100.0, 0.1, 2.0, 1, 0,0);
+	connect(dodecahedralLengthSpinBox, SIGNAL(valueChanged(double)),this, SLOT(setLength(double)));
 	//scale
-	dodecahedralScaleLabel = new QLabel(tr("Scale:"));
-	dodecahedralScaleSpinBox = new QDoubleSpinBox;
-	dodecahedralScaleSpinBox->setRange(0, 10);
-	dodecahedralScaleSpinBox->setSingleStep(.01);
-	dodecahedralScaleSpinBox->setValue(1);
-	dodecahedralScaleSpinBox->setMaximumSize(75,25);
-	connect(dodecahedralScaleSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(setScale(double)));
-
-	mDodecahedralExtrudeLayout->addWidget(dodecahedralScaleLabel);
-  mDodecahedralExtrudeLayout->addWidget(dodecahedralScaleSpinBox);
-
+	dodecahedralScaleSpinBox = createDoubleSpinBox(mDodecahedralExtrudeLayout, dodecahedralScaleLabel, tr("Scale"), 0.0, 10.0, 0.01, 1.0, 2, 1,0);
+	connect(dodecahedralScaleSpinBox, SIGNAL(valueChanged(double)),this, SLOT(setScale(double)));
 	//segments
-	dodecahedralSegmentsLabel = new QLabel(tr("Segments:"));
-	dodecahedralSegmentsSpinBox = new QDoubleSpinBox;
-	dodecahedralSegmentsSpinBox->setRange(1, 50);
-	dodecahedralSegmentsSpinBox->setSingleStep(1);
-	dodecahedralSegmentsSpinBox->setValue(1);
-	dodecahedralSegmentsSpinBox->setMaximumSize(75,25);
-	dodecahedralSegmentsSpinBox->setDecimals(0);
-	connect(dodecahedralSegmentsSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(setSegments(double)));
-
-	mDodecahedralExtrudeLayout->addWidget(dodecahedralSegmentsLabel);
-  mDodecahedralExtrudeLayout->addWidget(dodecahedralSegmentsSpinBox);
-	
+	dodecahedralSegmentsSpinBox = createDoubleSpinBox(mDodecahedralExtrudeLayout, dodecahedralSegmentsLabel, tr("Segments"), 1, 50, 1, 1, 0, 2,0);
+	connect(dodecahedralSegmentsSpinBox, SIGNAL(valueChanged(double)),this, SLOT(setSegments(double)));	
 	//mesh flat edges checkbox
 	hexagonalizeCheckBox = new QCheckBox(tr("Hexagonalize"),this);
-	connect(hexagonalizeCheckBox, SIGNAL(stateChanged(int)),
-          ((MainWindow*)mParent), SLOT(toggleHexagonalizeDodecaExtrudeFlag(int)));
+	connect(hexagonalizeCheckBox, SIGNAL(stateChanged(int)),((MainWindow*)mParent), SLOT(toggleHexagonalizeDodecaExtrudeFlag(int)));
 	
-	mDodecahedralExtrudeLayout->addWidget(hexagonalizeCheckBox);
+	mDodecahedralExtrudeLayout->addWidget(hexagonalizeCheckBox,3,1);
 
-	mDodecahedralExtrudeLayout->addStretch(1);
+	mDodecahedralExtrudeLayout->setRowStretch(4,1);
+	mDodecahedralExtrudeLayout->setColumnStretch(2,1);
 	mDodecahedralExtrudeWidget->setWindowTitle(tr("Dodecahedral Extrusion"));
 	mDodecahedralExtrudeWidget->setLayout(mDodecahedralExtrudeLayout);	
 }
 
 void ExtrusionMode::setupIcosahedralExtrude(){
-	
-	mIcosahedralExtrudeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	mIcosahedralExtrudeLayout->setMargin(0);
-	
+	mIcosahedralExtrudeLayout = new QGridLayout;
+	mIcosahedralExtrudeLayout->setVerticalSpacing(1);
+	mIcosahedralExtrudeLayout->setHorizontalSpacing(1);
+	// mIcosahedralExtrudeLayout->setMargin(0);
 	//length
-	icosahedralLengthLabel = new QLabel(tr("Length:"));
-	icosahedralLengthSpinBox = new QDoubleSpinBox;
-	icosahedralLengthSpinBox->setRange(-100, 100);
-	icosahedralLengthSpinBox->setSingleStep(0.1);
-	icosahedralLengthSpinBox->setValue(1.0);
-	icosahedralLengthSpinBox->setDecimals(1);
-	icosahedralLengthSpinBox->setMaximumSize(75,25);
-	connect(icosahedralLengthSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(setLength(double)));
-	
-	mIcosahedralExtrudeLayout->addWidget(icosahedralLengthLabel);
-  mIcosahedralExtrudeLayout->addWidget(icosahedralLengthSpinBox);
-
+	icosahedralLengthSpinBox = createDoubleSpinBox(mIcosahedralExtrudeLayout, icosahedralLengthLabel, tr("Length"), -100.0, 100.0, 0.1, 2.0, 1, 0,0);
+	connect(icosahedralLengthSpinBox, SIGNAL(valueChanged(double)),this, SLOT(setLength(double)));
 	//scale
-	icosahedralScaleLabel = new QLabel(tr("Scale:"));
-	icosahedralScaleSpinBox = new QDoubleSpinBox;
-	icosahedralScaleSpinBox->setRange(0, 10);
-	icosahedralScaleSpinBox->setSingleStep(.01);
-	icosahedralScaleSpinBox->setValue(1);
-	icosahedralScaleSpinBox->setMaximumSize(75,25);
-	connect(icosahedralScaleSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(setScale(double)));
-
-	mIcosahedralExtrudeLayout->addWidget(icosahedralScaleLabel);
-  mIcosahedralExtrudeLayout->addWidget(icosahedralScaleSpinBox);
-
+	icosahedralScaleSpinBox = createDoubleSpinBox(mIcosahedralExtrudeLayout, icosahedralScaleLabel, tr("Scale"), 0.0, 10.0, 0.01, 1.0, 2, 1,0);
+	connect(icosahedralScaleSpinBox, SIGNAL(valueChanged(double)),this, SLOT(setScale(double)));
 	//segments
-	icosahedralSegmentsLabel = new QLabel(tr("Segments:"));
-	icosahedralSegmentsSpinBox = new QDoubleSpinBox;
-	icosahedralSegmentsSpinBox->setRange(1, 50);
-	icosahedralSegmentsSpinBox->setSingleStep(1);
-	icosahedralSegmentsSpinBox->setValue(1);
-	icosahedralSegmentsSpinBox->setMaximumSize(75,25);
-	icosahedralSegmentsSpinBox->setDecimals(0);
-	connect(icosahedralSegmentsSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(setSegments(double)));
+	icosahedralSegmentsSpinBox = createDoubleSpinBox(mIcosahedralExtrudeLayout, icosahedralSegmentsLabel, tr("Segments"), 1, 50, 1, 1, 0, 2,0);
+	connect(icosahedralSegmentsSpinBox, SIGNAL(valueChanged(double)),this, SLOT(setSegments(double)));	
 
-	mIcosahedralExtrudeLayout->addWidget(icosahedralSegmentsLabel);
-  mIcosahedralExtrudeLayout->addWidget(icosahedralSegmentsSpinBox);
-	mIcosahedralExtrudeLayout->addStretch(1);
+	mIcosahedralExtrudeLayout->setRowStretch(3,1);
+	mIcosahedralExtrudeLayout->setColumnStretch(2,1);
 	mIcosahedralExtrudeWidget->setWindowTitle(tr("Icosahedral Extrusion"));
-	mIcosahedralExtrudeWidget->setLayout(mIcosahedralExtrudeLayout);	
+	mIcosahedralExtrudeWidget->setLayout(mIcosahedralExtrudeLayout);
 }
 
 void ExtrusionMode::setupOctahedralExtrude(){
-	
-	mOctahedralExtrudeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	mOctahedralExtrudeLayout->setMargin(0);
-
+	mOctahedralExtrudeLayout = new QGridLayout;
+	mOctahedralExtrudeLayout->setVerticalSpacing(1);
+	mOctahedralExtrudeLayout->setHorizontalSpacing(1);
+	// mOctahedralExtrudeLayout->setMargin(0);
 	//length
-	octahedralLengthLabel = new QLabel(tr("Length"));
-	octahedralLengthSpinBox = new QDoubleSpinBox;
-	octahedralLengthSpinBox->setRange(-100.0, 100.0);
-	octahedralLengthSpinBox->setSingleStep(0.1);
-	octahedralLengthSpinBox->setValue(1.0);
-	octahedralLengthSpinBox->setDecimals(1);
-	octahedralLengthSpinBox->setMaximumSize(75,25);
-	connect(octahedralLengthSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(setLength(double)));
-
-	mOctahedralExtrudeLayout->addWidget(octahedralLengthLabel);
-  mOctahedralExtrudeLayout->addWidget(octahedralLengthSpinBox);
-
+	octahedralLengthSpinBox = createDoubleSpinBox(mOctahedralExtrudeLayout, octahedralLengthLabel, tr("Length"), -100.0, 100.0, 0.1, 2.0, 1, 0,0);
+	connect(octahedralLengthSpinBox, SIGNAL(valueChanged(double)),this, SLOT(setLength(double)));
 	//rotation
-	octahedralRotationLabel = new QLabel(tr("Rotation"));
-	octahedralRotationSpinBox = new QDoubleSpinBox;
-	octahedralRotationSpinBox->setRange(0, 360);
-	octahedralRotationSpinBox->setSingleStep(1);
-	octahedralRotationSpinBox->setValue(0.0);
-	octahedralRotationSpinBox->setMaximumSize(75,25);
-	octahedralRotationSpinBox->setDecimals(0);
-	connect(octahedralRotationSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(setRotation(double)));
-
-	mOctahedralExtrudeLayout->addWidget(octahedralRotationLabel);
-  mOctahedralExtrudeLayout->addWidget(octahedralRotationSpinBox);
-
+	octahedralRotationSpinBox = createDoubleSpinBox(mOctahedralExtrudeLayout, octahedralRotationLabel, tr("Rotation"), 0, 360, 1, 0.0, 1, 1,0);
+	connect(octahedralRotationSpinBox, SIGNAL(valueChanged(double)),this, SLOT(setRotation(double)));
 	//scale
-	octahedralScaleLabel = new QLabel(tr("Scale"));
-	octahedralScaleSpinBox = new QDoubleSpinBox;
-	octahedralScaleSpinBox->setRange(0.0, 10.0);
-	octahedralScaleSpinBox->setSingleStep(0.01);
-	octahedralScaleSpinBox->setValue(1.0);
-	octahedralScaleSpinBox->setDecimals(2);
-	octahedralScaleSpinBox->setMaximumSize(75,25);
-	connect(octahedralScaleSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(setScale(double)));
-
-	mOctahedralExtrudeLayout->addWidget(octahedralScaleLabel);
-  mOctahedralExtrudeLayout->addWidget(octahedralScaleSpinBox);
-
+	octahedralScaleSpinBox = createDoubleSpinBox(mOctahedralExtrudeLayout, octahedralScaleLabel, tr("Scale"), 0.0, 10.0, 0.01, 1.0, 2, 2,0);
+	connect(octahedralScaleSpinBox, SIGNAL(valueChanged(double)),this, SLOT(setScale(double)));
 	//segments
-	octahedralSegmentsLabel = new QLabel(tr("Segments"));
-	octahedralSegmentsSpinBox = new QDoubleSpinBox;
-	octahedralSegmentsSpinBox->setRange(1, 50);
-	octahedralSegmentsSpinBox->setSingleStep(1);
-	octahedralSegmentsSpinBox->setValue(1);
-	octahedralSegmentsSpinBox->setMaximumSize(75,25);
-	octahedralSegmentsSpinBox->setDecimals(0);
-	connect(octahedralSegmentsSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(setSegments(double)));
-
-	mOctahedralExtrudeLayout->addWidget(octahedralSegmentsLabel);
-  mOctahedralExtrudeLayout->addWidget(octahedralSegmentsSpinBox);
-	
+	octahedralSegmentsSpinBox = createDoubleSpinBox(mOctahedralExtrudeLayout, octahedralSegmentsLabel, tr("Segments"), 1, 50, 1, 1, 0, 3,0);
+	connect(octahedralSegmentsSpinBox, SIGNAL(valueChanged(double)),this, SLOT(setSegments(double)));
 	//mesh flat edges checkbox
 	meshFlatEdgesCheckBox = new QCheckBox(tr("Mesh Flat Edges"),this);
-	connect(meshFlatEdgesCheckBox, SIGNAL(stateChanged(int)),
-          ((MainWindow*)mParent), SLOT(toggleDualMeshEdgesFlag(int)));
+	connect(meshFlatEdgesCheckBox, SIGNAL(stateChanged(int)), ((MainWindow*)mParent), SLOT(toggleDualMeshEdgesFlag(int)));
 
-	mOctahedralExtrudeLayout->addWidget(meshFlatEdgesCheckBox);
-
-	mOctahedralExtrudeLayout->addStretch(1);
+	mOctahedralExtrudeLayout->addWidget(meshFlatEdgesCheckBox,4,1);
+	
+	mOctahedralExtrudeLayout->setRowStretch(5,1);
+	mOctahedralExtrudeLayout->setColumnStretch(2,1);
 	mOctahedralExtrudeWidget->setWindowTitle(tr("Octahedral Extrusion"));
-	mOctahedralExtrudeWidget->setLayout(mOctahedralExtrudeLayout);	
+	mOctahedralExtrudeWidget->setLayout(mOctahedralExtrudeLayout);
 }
 
 void ExtrusionMode::setupStellateExtrude(){
-	
-	mStellateExtrudeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	mStellateExtrudeLayout->setMargin(0);
-	
+	mStellateExtrudeLayout = new QGridLayout;
+	mStellateExtrudeLayout->setVerticalSpacing(1);
+	mStellateExtrudeLayout->setHorizontalSpacing(1);
+	// mStellateExtrudeLayout->setMargin(0);
 	//length
-	stellateLengthLabel = new QLabel(tr("Length"));
-	stellateLengthSpinBox = new QDoubleSpinBox;
-	stellateLengthSpinBox->setRange(-100.0, 100.0);
-	stellateLengthSpinBox->setSingleStep(0.1);
-	stellateLengthSpinBox->setValue(1.0);
-	stellateLengthSpinBox->setDecimals(1);
-	stellateLengthSpinBox->setMaximumSize(75,25);
+	stellateLengthSpinBox = createDoubleSpinBox(mStellateExtrudeLayout, stellateLengthLabel, tr("Length"), -100.0, 100.0, 0.1, 2.0, 1, 0,0);
+	connect(stellateLengthSpinBox, SIGNAL(valueChanged(double)),this, SLOT(setLength(double)));
 	
-	connect(stellateLengthSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(setLength(double)));
-
-	mStellateExtrudeLayout->addWidget(stellateLengthLabel);
-	mStellateExtrudeLayout->addWidget(stellateLengthSpinBox);
-	mStellateExtrudeLayout->addStretch(1);	
+	mStellateExtrudeLayout->setRowStretch(1,1);
+	mStellateExtrudeLayout->setColumnStretch(2,1);
 	mStellateExtrudeWidget->setWindowTitle(tr("Stellate Extrusion"));
-	mStellateExtrudeWidget->setLayout(mStellateExtrudeLayout);
+	mStellateExtrudeWidget->setLayout(mStellateExtrudeLayout);	
 }
 
 void ExtrusionMode::setupDoubleStellateExtrude(){
-	
-	mDoubleStellateExtrudeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	mDoubleStellateExtrudeLayout->setMargin(0);
+	mDoubleStellateExtrudeLayout = new QGridLayout;
+	mDoubleStellateExtrudeLayout->setVerticalSpacing(1);
+	mDoubleStellateExtrudeLayout->setHorizontalSpacing(1);
+	// mDoubleStellateExtrudeLayout->setMargin(0);
 	//length
-	doubleStellateLengthLabel = new QLabel(tr("Length"));
-	doubleStellateLengthSpinBox = new QDoubleSpinBox;
-	doubleStellateLengthSpinBox->setRange(-100.0, 100.0);
-	doubleStellateLengthSpinBox->setSingleStep(0.1);
-	doubleStellateLengthSpinBox->setValue(1.0);
-	doubleStellateLengthSpinBox->setDecimals(1);
-	doubleStellateLengthSpinBox->setMaximumSize(75,25);
+	doubleStellateLengthSpinBox = createDoubleSpinBox(mDoubleStellateExtrudeLayout, doubleStellateLengthLabel, tr("Length"), -100.0, 100.0, 0.1, 2.0, 1, 0,0);
+	connect(doubleStellateLengthSpinBox, SIGNAL(valueChanged(double)),this, SLOT(setLength(double)));
 	
-	connect(doubleStellateLengthSpinBox, SIGNAL(valueChanged(double)),
-          this, SLOT(setLength(double)));
-	
-	mDoubleStellateExtrudeLayout->addWidget(doubleStellateLengthLabel);
-	mDoubleStellateExtrudeLayout->addWidget(doubleStellateLengthSpinBox);
-	mDoubleStellateExtrudeLayout->addStretch(1);
+	mDoubleStellateExtrudeLayout->setRowStretch(1,1);
+	mDoubleStellateExtrudeLayout->setColumnStretch(2,1);
 	mDoubleStellateExtrudeWidget->setWindowTitle(tr("Double Stellate Extrusion"));
 	mDoubleStellateExtrudeWidget->setLayout(mDoubleStellateExtrudeLayout);	
 }

@@ -419,6 +419,13 @@ namespace DLFL {
       (*first)->updateNormal();
       ++first;
     }
+    DLFLFacePtrList::iterator ffirst, flast;
+
+    ffirst = face_list.begin(); flast = face_list.end();
+    while ( ffirst != flast ) {
+      (*ffirst)->updateNormal();
+      ++ffirst;
+    }
   }
   /*
   void DLFLObject::deleteVertex(uint vertex_index) {

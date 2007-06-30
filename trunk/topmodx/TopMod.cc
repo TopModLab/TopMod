@@ -22,6 +22,10 @@ TopMod::TopMod(int & argc, char ** argv, bool GUIenabled )
 	mainWindow->show();
 }
 
+MainWindow *TopMod::getMainWindow(){
+	return mainWindow;
+}
+
 bool TopMod::event(QEvent *event){
 
 	switch (event->type()) {

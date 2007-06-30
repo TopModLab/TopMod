@@ -1,40 +1,66 @@
-// struct fragin {
-//   float4 color    : COLOR;
-//   float2 uv       : TEXCOORD0;
-//   float4 position : TEXCOORD1;
-// };
-// 
-// struct fragout {
-//   float4 color : COLOR;
-// };
-// 
-// float attenuation( float3 P, float3 L, float radius, float falloff ) {
-//   // Spotlight Effect
-//   float sV = length( P - L );
-//   return 1.0f-smoothstep( radius-falloff, radius, sV );
+// float4 main(float4 c : COLOR) : COLOR { return c; }
+
+struct fragin {
+  float4 color    : COLOR0;
+  float2 uv       : TEXCOORD0;
+	float4 position : POSITION;
+	// float3 normal 	: NORMAL;
+};
+
+struct fragout {
+  float4 color : COLOR;
+};
+
+// fragout main(float4 color : COLOR)
+// {
+//   fragout OUT;
+//   OUT.color = color;
+//   return OUT;
 // }
 
-float4 main(float4 c : COLOR) : COLOR { return c; }
+float attenuation( float3 P, float3 L, float radius, float falloff ) {
+  // Spotlight Effect
+  float3 V = normalize( P - L );
+  float3 D = normalize( -L ); // origin is lookat
+  return 1.0f-smoothstep( cos(radians(radius-falloff)), cos(radians(radius)), dot( V, D ) );
+}
 
-// fragout main( COLOR IN
-// 				// fragin IN,
-// 	      // uniform sampler2D texture  : TEXUNIT0,
-// 	      // uniform float randRot,
-// 	      // uniform float3 lightPos = float3(400,400,0)
-// 	      ) {
-//   // fragout OUT;
+fragout main(
+							fragin IN,
+				      in float3 camPos : TEXCOORD1,
+				      in float3 oPos   : TEXCOORD2,
+				      in float4 oNorm  : TEXCOORD3,
+				      in float4 lPos   : TEXCOORD4,
+				      uniform float attenDegrees) {
+
+	fragout OUT;
+
+  // oPosition = mul(modelViewProj, IN.position);
+  // objectPos = position.xyz;
+  // oNormal = normal;
+	// float4 surfColor, ambient, diffuse, specular;
+	
+	// surfColor = IN.color;
+	// diffuse = attenuation( oPos.xyz, lPos.xyz, 15, 90.0f );
+	// ambient = float4(0.5,0.5,0.5,1.0);// glstate.light[0].ambient;
+	// diffuse.a = ambient.a = surfColor.a = 1;
+	// OUT.color = surfColor * (diffuse + ambient);
+	OUT.color = IN.color;
+	
+	return OUT;
+}
+
+// // Compute the diffuse term
+// float3 L = normalize(lightPosition - P);
+// float diffuseLight = max(dot(N, L), 0);
+// float3 diffuse = Kd * lightColor * diffuseLight;
 // 
-//   // float3 P = IN.position.xyz;
-//   // 
-//   // float4 surfcolor = tex2D( texture, IN.uv );
-//   // float4 diffuse;
-//   // diffuse.rgb = attenuation( P, lightPos, 390.0f, 200.00f );
-//   // diffuse.a = 1.0f;
-//   // diffuse *= float4( 1.0, 1.0, 0.6, 1.0 );
-//   // 
-//   // float4 ambient = float4( 0.2, 0.22, 0.25, 0.0);
-//   
-// 	// OUT.color = IN.color;//*surfcolor*(diffuse+ambient);
-//   return IN;
-// }
+// // Compute the specular term
+// float3 V = normalize(eyePosition - P);
+// float3 H = normalize(L + V);
+// float specularLight = pow(max(dot(N, H), 0), shininess);
+// if (diffuseLight <= 0) specularLight = 0;
+// float3 specular = Ks * lightColor * specularLight;
 // 
+// color.xyz = emissive + ambient + diffuse + specular;
+// color.w = 1;

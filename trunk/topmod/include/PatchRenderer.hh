@@ -47,18 +47,18 @@ public :
 	virtual void drawOverlays(DLFLObjectPtr object) {
 		if ( render_flags & ShowWireframe ) {
 			glColor3f(0.0,0.0,0.0);
-			glLineWidth(.8);
+			glLineWidth(4);
 			glDepthRange(0.0,1.0-0.0005);
 			object->renderWireframePatches();
 		}
 		if ( render_flags & ShowSilhouette ) {
-			glColor3f(0.4,0.6,0.4);
-			glLineWidth(3.0);
+			glColor3f(0.0,1.0,0.0);
+			glLineWidth(6.0);
 			glDepthRange(0.0,1.0-0.00055);
 			object->renderPatchBoundaries();
 
-			glColor3f(0.2,0.2,0.3);
-			glLineWidth(3.0);
+			glColor3f(1.0,0.0,0.0);
+			glLineWidth(8.0);
 			glDepthRange(0.0,1.0-0.0006);
 			object->renderPatchFaceBoundaries();
 		}

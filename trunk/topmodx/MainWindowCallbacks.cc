@@ -174,12 +174,12 @@ void MainWindow::toggleDeleteEdgeCleanupFlag(int state) {
 	MainWindow::delete_edge_cleanup = bool(state);
 }
 
-void MainWindow::changeNumSubDivs(int value) {
-	MainWindow::num_e_subdivs = value;
+void MainWindow::changeNumSubDivs(double value) {
+	MainWindow::num_e_subdivs = (int)value;
 }
 
-void MainWindow::changeTileTexNum(int value) {
-	MainWindow::tile_tex_n = value;
+void MainWindow::changeTileTexNum(double value) {
+	MainWindow::tile_tex_n = (int)value;
 }
 
 // Extrusions.
@@ -187,16 +187,16 @@ void MainWindow::changeExtrudeLength(double value) {
 	MainWindow::extrude_dist = value;
 }
 
-void MainWindow::changeExtrudeRotation(int value) {
-	MainWindow::extrude_rot = value;
+void MainWindow::changeExtrudeRotation(double value) {
+	MainWindow::extrude_rot = (int)value;
 }
 
 void MainWindow::changeExtrudeScale(double value) {
 	MainWindow::extrude_scale = value;
 }
 
-void MainWindow::changeNumExtrusions(int value) {
-	MainWindow::num_extrusions = value;
+void MainWindow::changeNumExtrusions(double value) {
+	MainWindow::num_extrusions = (int)value;
 }
 
 void MainWindow::toggleDualMeshEdgesFlag(int state) {
@@ -213,19 +213,19 @@ void MainWindow::changeStellateLength(double value) {
 }
 
 // Holes and Handles.
-void MainWindow::changeMaxSegments(int value) {
-	MainWindow::max_segments = value;
+void MainWindow::changeMaxSegments(double value) {
+	MainWindow::max_segments = (int)value;
 }
 
-void MainWindow::changeNumSegments(int value) {
-	MainWindow::num_segments = value;
+void MainWindow::changeNumSegments(double value) {
+	MainWindow::num_segments = (int)value;
 }
 
-void MainWindow::changeNumSegments2(int value){
+void MainWindow::changeNumSegments2(double value){
 
 }
 
-void MainWindow::changeMaxSegments2(int value){
+void MainWindow::changeMaxSegments2(double value){
 
 }
 
@@ -241,8 +241,8 @@ void MainWindow::changeWeight2(double value) {
 	MainWindow::nwt2 = value;
 }
 
-void MainWindow::changeExtraTwists(int value) {
-	MainWindow::num_extra_twists = value;
+void MainWindow::changeExtraTwists(double value) {
+	MainWindow::num_extra_twists = (int)value;
 }
 
 // Crust Modeling.
@@ -291,8 +291,8 @@ void MainWindow::changeColumnThickness(double value) {
 	MainWindow::column_thickness = value;
 }
 
-void MainWindow::changeColumnSegments(int value) {
-	MainWindow::column_segments = value;
+void MainWindow::changeColumnSegments(double value) {
+	MainWindow::column_segments = (int)value;
 }
 
 // Multi-face handle
@@ -1102,5 +1102,49 @@ void MainWindow::getCommand(){
 		mActionListWidget->actions().at(i)->activate(QAction::Trigger);
 		
 }
-//probably delete this soon...
-void MainWindow::createCommandList(){ }
+
+void MainWindow::initializeAnimatedHelp(){
+	
+	mAnimatedHelpWidget = new QWidget(this);
+	// QSplashScreen *w = new QSplashScreen(this);
+	mAnimatedHelpLayout = new QVBoxLayout;
+	
+	mAnimatedHelpMovie = new QMovie(this);
+	mAnimatedHelpMovie->setCacheMode(QMovie::CacheAll);
+	mAnimatedHelpMovie->setBackgroundColor(QColor(255,255,255,255));
+
+	mAnimatedHelpLabel = new QLabel(tr("No movie loaded"));
+	mAnimatedHelpLabel->setAlignment(Qt::AlignCenter);
+	// mAnimatedHelpLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+	// mAnimatedHelpLabel->setBackgroundRole(QPalette::Dark);
+	// mAnimatedHelpLabel->setAutoFillBackground(true);
+	
+	mAnimatedHelpLayout->addWidget(mAnimatedHelpLabel);
+	mAnimatedHelpLayout->addStretch(1);
+	mAnimatedHelpLayout->setMargin(0);
+	mAnimatedHelpWidget->setLayout(mAnimatedHelpLayout);
+	
+	mAnimatedHelpMovie->stop();
+  mAnimatedHelpLabel->setMovie(mAnimatedHelpMovie);
+  // mAnimatedHelp->setFileName("images/insert_edge.mng");
+	// w->move(QCursor::pos());
+	// w->show();
+	
+	// create the dockwidget, set it to the right side
+	mAnimatedHelpDockWidget = new QDockWidget(tr("TopMod Animated Help"), this);
+	mAnimatedHelpDockWidget->setAllowedAreas(Qt::NoDockWidgetArea);
+	mAnimatedHelpDockWidget->setWidget(mAnimatedHelpWidget);
+	// addDockWidget(Qt::RightDockWidgetArea, mAnimatedHelpDockWidget);
+	mAnimatedHelpDockWidget->hide();	
+	mAnimatedHelpDockWidget->setFloating(true);
+	mAnimatedHelpDockWidget->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetFloatable);
+	// mAnimatedHelpDockWidget->setResizeEnabled(false);
+	//sizing
+	mAnimatedHelpDockWidget->setMinimumSize(200,200);
+	mAnimatedHelpDockWidget->setMaximumSize(200,200);
+}
+
+void MainWindow::setAnimatedHelpImage(){
+  mAnimatedHelpMovie->setFileName("images/insert_edge.mng");
+  mAnimatedHelpMovie->start();
+}

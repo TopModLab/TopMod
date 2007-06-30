@@ -6,6 +6,18 @@
 
 #include "ConicalMode.hh"
 
+/*!
+	\ingroup gui
+	@{
+	
+	\class ConicalMode
+	\brief Conical Operations GUI elements.
+	
+	\note 
+	
+	\see ConicalMode
+*/
+
 ConicalMode::ConicalMode(QWidget *parent, QShortcutManager *sm)
 		: QWidget(parent)
 {		

@@ -8,6 +8,13 @@
 
 #include <QWidget>
 
+/*!
+	\file ExtrusionMode.hh
+	\brief Definition of the ExtrusionMode class
+	
+	\see ExtrusionMode
+*/
+
 #include "MainWindow.hh"
 
 class MainWindow;
@@ -36,13 +43,13 @@ public:
 	QWidget *mStellateExtrudeWidget;
 	QWidget *mDoubleStellateExtrudeWidget;
 	
-	QBoxLayout *mDooSabinExtrudeLayout;
-	QBoxLayout *mCubicalExtrudeLayout;
-	QBoxLayout *mDodecahedralExtrudeLayout;
-	QBoxLayout *mIcosahedralExtrudeLayout;
-	QBoxLayout *mOctahedralExtrudeLayout;
-	QBoxLayout *mStellateExtrudeLayout; 
-	QBoxLayout *mDoubleStellateExtrudeLayout;
+	QGridLayout *mDooSabinExtrudeLayout;
+	QGridLayout *mCubicalExtrudeLayout;
+	QGridLayout *mDodecahedralExtrudeLayout;
+	QGridLayout *mIcosahedralExtrudeLayout;
+	QGridLayout *mOctahedralExtrudeLayout;
+	QGridLayout *mStellateExtrudeLayout; 
+	QGridLayout *mDoubleStellateExtrudeLayout;
 	
 	QWidget *mParent;
 	QMenu *mExtrusionMenu;
@@ -96,10 +103,12 @@ public:
 	QCheckBox *meshFlatEdgesCheckBox;
 	
 	//stellate extrude
+	QHBoxLayout *stellateLengthLayout;
 	QLabel *stellateLengthLabel;
 	QDoubleSpinBox *stellateLengthSpinBox;
 	
 	//double stellate
+	QHBoxLayout *doubleStellateLengthLayout;
 	QLabel *doubleStellateLengthLabel;
 	QDoubleSpinBox *doubleStellateLengthSpinBox;
 	
@@ -112,6 +121,8 @@ protected:
 	void setupOctahedralExtrude();
 	void setupStellateExtrude();
 	void setupDoubleStellateExtrude();
+	QDoubleSpinBox *createDoubleSpinBox(QGridLayout *layout, QLabel *label, QString s, double low, double high, double step, double value, double decimals, int row, int col);
+	
 	
 public slots:
 

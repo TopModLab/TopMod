@@ -5,7 +5,7 @@ CONFIG += qt debug warn_off assistant link_prl
 # exclude verse python or spacenav drivers
 # or include them with CONFIG += 
 CONFIG -=  WITH_PYTHON WITH_SPACENAV WITH_VERSE
-CONFIG += WITH_PYTHON 
+# CONFIG += WITH_PYTHON 
 DEFINES += TOPMOD_VERSION GPU_OK
 
 TEMPLATE = app
@@ -173,7 +173,8 @@ HEADERS += \
 	include/Light/PointLight.hh \
 	include/Light/SpotLight.hh \
 	CgData.hh \
-	include/Camera2.hh	
+	include/Camera2.hh \
+	include/Camera3.hh
 
 FORMS += shortcutdialog.ui stylesheeteditor.ui
 
@@ -208,10 +209,22 @@ SOURCES += \
 	TMPatchFace.cc \
 	stylesheeteditor.cc \
 	CgData.cc \
-	include/Camera2.cc 
+	include/Camera2.cc \
+	include/Camera3.cc
+
+RESOURCES += application.qrc
+
+TRANSLATIONS += \
+	     lang/topmod_ca.ts \
+	     lang/topmod_de.ts \
+	     lang/topmod_en.ts \
+	     lang/topmod_en_us.ts \
+	     lang/topmod_es.ts \
+	     lang/topmod_fr.ts \
+	     lang/topmod_tr.ts
 
 CONFIG(WITH_VERSE){
-	
+
 HEADERS += \
 	include/verse/TKE_verse.h \
 	include/verse/TIF_verse.h \
@@ -235,7 +248,6 @@ HEADERS += \
 	include/verse/TKE_mesh.h \
 	include/verse/TLI_editVert.h \
 	include/verse/TKE_object.h \
-	# include/verse/TIF_screen.h \
 	VerseTopMod.hh 
 SOURCES += \
 	include/verse/verse_session.cc \
@@ -249,14 +261,3 @@ SOURCES += \
 	include/verse/verse_object_node.cc \
 	VerseTopMod.cc
 }
-
-RESOURCES += application.qrc
-
-TRANSLATIONS += \
-	     lang/topmod_ca.ts \
-	     lang/topmod_de.ts \
-	     lang/topmod_en.ts \
-	     lang/topmod_en_us.ts \
-	     lang/topmod_es.ts \
-	     lang/topmod_fr.ts \
-	     lang/topmod_tr.ts

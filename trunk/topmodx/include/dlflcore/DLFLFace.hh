@@ -27,26 +27,26 @@ namespace DLFL {
     };
   protected :
 
-    static uint suLastID;                             // Distinct ID for each instance
+    static uint suLastID;                             //!< Distinct ID for each instance
 
-    static uint newID(void) {                           // Generate a new unique ID
+    static uint newID(void) {                           //!< Generate a new unique ID
       uint temp = suLastID;
       suLastID++;
       return temp;
     }
      
-    uint uID;                                         // ID for this Face
-    DLFLFaceVertexPtr     head;                       // Head of list of face-vertex pointers
-    DLFLMaterialPtr       matl_ptr;                   // Pointer to material for this face
-    DLFLFaceType          ftType;                     // For use in subdivision surfaces
-    Vector3d              auxcoords;                  // Coords for use during subdivs, etc.
-    Vector3d              auxnormal;                  // Extra storage for normal
+    uint uID;                                         //!< ID for this Face
+    DLFLFaceVertexPtr     head;                       //!< Head of list of face-vertex pointers
+    DLFLMaterialPtr       matl_ptr;                   //!< Pointer to material for this face
+    DLFLFaceType          ftType;                     //!< For use in subdivision surfaces
+    Vector3d              auxcoords;                  //!< Coords for use during subdivs, etc.
+    Vector3d              auxnormal;                  //!< Extra storage for normal
 
   public :
      
-    Vector3d              centroid;                   // Centroid of this face (not always current)
-    Vector3d              normal;                     // Normal to this face. Not always correct/current
-    unsigned long         flags;                      // Variable for general use to store flags, etc.
+    Vector3d              centroid;                   //!< Centroid of this face (not always current)
+    Vector3d              normal;                     //!< Normal to this face. Not always correct/current
+    unsigned long         flags;                      //!< Variable for general use to store flags, etc.
     uint ismarked;
 
   protected :

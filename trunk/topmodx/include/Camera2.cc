@@ -1,5 +1,14 @@
 #include "Camera2.hh"
 
+/*!
+* 
+* \class Camera2
+*	\brief Camera class from Chris Root used as an alternative to the original TopMod camera class
+* 
+* has an error when the aim and position vectors are not at the same y-value. TODO: fix the camera2 class up vector problem
+* 
+*/
+
 float DeltaAzim;
 float DeltaElev;
 float LocalDeltaAzim;
@@ -20,6 +29,14 @@ int CameraMode = INACTIVE;
 
 Vector3d PrevMousePos;
 
+/*!
+* 
+* \brief rotate a vector around the X-axis
+* 
+* @param v the vector to rotate
+* @param degree amount of degrees to rotate about the Y-axis
+* 
+*/
 void RotateX(Vector3d *v, float degree){
 	float c=cos(3.1415926*degree/180);
 	float s=sin(3.1415926*degree/180);
@@ -28,6 +45,14 @@ void RotateX(Vector3d *v, float degree){
 	(*v)[1]=v1; (*v)[2]=v2;
 }
 
+/*!
+* 
+* \brief rotate a vector around the Y-axis
+* 
+* @param v the vector to rotate
+* @param degree amount of degrees to rotate about the Y-axis
+* 
+*/
 void RotateY(Vector3d *v, float degree){
 	float c=cos(3.1415926*degree/180);
 	float s=sin(3.1415926*degree/180);
@@ -36,9 +61,17 @@ void RotateY(Vector3d *v, float degree){
 	(*v)[0]=v0; (*v)[2]=v2;
 }
 
-/* 
+/*!
+* 
 * ArbitraryRotate() - rotate around an arbitrary coordinate system specified by
-	*                     U, V, & W
+* 
+* @param U the up vector
+* @param V not sure
+* @param W not sure
+* @param degreeX amount of degrees to rotate about the Y-axis
+* @param degreeY amount of degrees to rotate about the Y-axis
+* @param point the new position of the camera passed by reference
+* @param aim the camera aim vector
 */
 void ArbitraryRotate(Vector3d U, Vector3d V, Vector3d W, float degreeX, float degreeY, Vector3d& point, Vector3d aim) {
 	float cx=cos(M_PI*degreeX/180);
@@ -91,10 +124,10 @@ void ArbitraryRotate(Vector3d U, Vector3d V, Vector3d W, float degreeX, float de
 
 
 
-/* constructors */
 
-// default constructor... sets position to 0, 0, 5, aimed at the origin
-// with the up vector set to the y axis
+/*!
+* \brief default constructor... sets position to 0, 0, 5, aimed at the origin with the up vector set to the y axis
+*/
 Camera2::Camera2() 
 : mousex(0), mousey(0), pickw(0), pickh(0), viewport(NULL), pickmode(false) {
 
@@ -110,11 +143,13 @@ Camera2::Camera2()
 	Initialize();
 }
 
-/* 
-* constructor to set a camera to a desired orientation
-	* P is position in 3D
-	* A is the aim coordinate
-	* U is the up vector 
+/*!
+* \brief constructor to set a camera to a desired orientation
+* 
+* @param P position in 3D
+* @param A the aim coordinate
+* @param U the up vector 
+* 
 */
 Camera2::Camera2(Vector3d P, Vector3d A, Vector3d U)
 : mousex(0), mousey(0), pickw(0), pickh(0), viewport(NULL), pickmode(false) {
@@ -146,8 +181,16 @@ Camera2::Camera2(Vector3d P, Vector3d A, Vector3d U)
 	Initialize();
 }
 
-/*
-* Constructor setting up all values
+/*!
+* \brief Constructor setting up camera orientation and view volume
+* 
+* @param P is position in 3D
+* @param A is aim coordinate in 3D 
+* @param U is up vector
+* @param Near is near clipping plane
+* @param Far is far clipping plane
+* @param ViewAngle is field of view angle in degrees
+* 
 */
 Camera2::Camera2( Vector3d P, Vector3d A, Vector3d U, float Near, float Far, float ViewAngle) 
 	: mousex(0), mousey(0), pickw(0), pickh(0), viewport(NULL), pickmode(false) {
@@ -174,7 +217,9 @@ Camera2::Camera2( Vector3d P, Vector3d A, Vector3d U, float Near, float Far, flo
 }
 
 
-// Initialize routine setting up defaults
+/*!
+* \brief Initialize routine setting up defaults
+*/
 void Camera2::Initialize() {
 	Vector3d tmp, tmp1, tmp2;
 	Vector3d axisOrigin, updatePos;
@@ -213,40 +258,62 @@ void Camera2::Initialize() {
 
 }
 
-// set functions for the Pos, Aim, and Up vectors....
-// be careful with these because if you set either of them which causes the
-// orientation of the camera to be un-orthogonal, then you'll see problems...
-
-// just remember that (Aim - Pos).normalize() % Up == 0, or you'll see problems
+/*!
+* \brief set functions for Pos vector
+* 
+* \note be careful with these because if you set either of them which causes the 
+* orientation of the camera to be un-orthogonal, then you'll see problems.just 
+* remember that (Aim - Pos).normalize() % Up == 0, or you'll see problems
+* 
+*/
 void Camera2::SetPos(Vector3d P) {
 	Pos = P;
 }
 
+/*!
+* \brief set functions for Aim vector
+* 
+* \note be careful with these because if you set either of them which causes the 
+* orientation of the camera to be un-orthogonal, then you'll see problems.just 
+* remember that (Aim - Pos).normalize() % Up == 0, or you'll see problems
+* 
+*/
 void Camera2::SetAim(Vector3d A) {
 	Aim = A;
 }
 
+/*!
+* \brief set functions for Up vector
+* 
+* \note be careful with these because if you set either of them which causes the 
+* orientation of the camera to be un-orthogonal, then you'll see problems.just 
+* remember that (Aim - Pos).normalize() % Up == 0, or you'll see problems
+* 
+*/
 void Camera2::SetUp(Vector3d U) {
 	Up = U;
 }
 
-/*
-* sets the near and far clipping planes for the camera view
+/*!
+* \brief sets the near and far clipping planes for the camera view
 */
 void Camera2::SetClippingPlanes(float Near, float Far) {
 	NearPlane = Near;
 	FarPlane = Far;
 }
 
-/*
-* sets the field of view of the camera, ViewAngle is in degrees
+/*!
+* \brief sets the field of view of the camera, 
+* 
+* @param ViewAngle is in degrees
+* 
 */
 void Camera2::SetFOV(float ViewAngle) {
 	Fov = ViewAngle;
 }
 
-/*
-* resets the camera to its original orientation
+/*!
+* \brief resets the camera to its original orientation
 */
 void Camera2::Reset() {
 	Pos = DefaultPos;
@@ -257,8 +324,8 @@ void Camera2::Reset() {
 	CurrentAzim = DefaultAzim;
 }
 
-/*
-* sets the camera's aim to be the given vector v
+/*!
+* \brief sets the camera's aim to be the given vector NewAim
 */
 void Camera2::SetCenterOfFocus(Vector3d NewAim) {
 	Vector3d dif = NewAim - Aim;
@@ -267,23 +334,36 @@ void Camera2::SetCenterOfFocus(Vector3d NewAim) {
 	Pos = Pos + dif;
 }
 
-//--- Enter selection mode and set the pick region for doing selection ---//
+/*!
+* \brief Enter selection mode and set the pick region for doing selection
+* 
+* @param x x-coordinate of mouse
+* @param y y-coordinate of mouse
+* @param w width of the selection region
+* @param h height of the selection region
+* @param vp the viewport to select from
+* 
+*/
 void Camera2::enterSelectionMode(double x, double y, double w, double h, GLint * vp) {
 	mousex = x; mousey = y; pickw = w; pickh = h; viewport = vp;
 	pickmode = true;
 }
 
+/*!
+* \brief no longer in selection (or picking) mode
+*/
 void Camera2::leaveSelectionMode(void) {
 	pickmode = false; viewport = NULL;
 }
 
-/*
-* draws an opengl window with the camera orientation
-	* W and H are the width and height of the window respectively
+/*!
+* \brief function to use the camera as the opengl camera
+* 
+* @param W width of the viewport window
+* @param H height of the viewport window
+* 
 */
 void Camera2::PerspectiveDisplay(int W, int H) {
-	// std::cout << "perspectiveDisplay Function\n";
-	// std::cout << Pos << std::endl;
 	// set up the projection matrix
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -296,9 +376,15 @@ void Camera2::PerspectiveDisplay(int W, int H) {
 	gluLookAt(Pos[0], Pos[1], Pos[2], Aim[0], Aim[1], Aim[2], Up[0], Up[1], Up[2]);
 }
 
-/*
-* mouse event handler function... should be called in the 
-	* mouse event handler function of your own code
+/*!
+* \brief function that handles mouse events
+* 
+* @param button which button was pressed or released
+* @param state was the mouse pressed, released or dragged?
+* @param x the global x position of the mouse event
+* @param y the global y position of the mouse event
+* @param delta the amount the scroll wheel was moved if any
+* 
 */
 void Camera2::HandleMouseEvent(Qt::MouseButton button, QEvent::Type state, int x, int y, int delta) {
 	float realy;
@@ -404,8 +490,11 @@ else if (state == QEvent::MouseButtonPress && QApplication::keyboardModifiers() 
 }
 }
 
-/* 
-* new routine to handle mouse wheel
+/*! 
+* \brief function that handles mouse scroll wheel events
+*	
+* @param delta the amount the scroll wheel moved in degrees. i think.
+* 
 */
 void Camera2::HandleMouseWheel(int delta){
 		// mouse wheel scrolled, sent delta in 1/8ths of a degree
@@ -423,9 +512,12 @@ void Camera2::HandleMouseWheel(int delta){
 	Pos = Pos + z*dir;	
 }
 
-/*
-* Mouse Motion handler function... should be called in the 
-	* mouse motion function of your own code
+/*! 
+* \brief function that handles mouse movements
+*	
+* @param x the global x position of the mouse event
+* @param y the global y position of the mouse event
+* 
 */
 void Camera2::HandleMouseMotion(int x, int y ) {
 	int mouse_dx, mouse_dy, d;
@@ -530,7 +622,9 @@ void Camera2::HandleMouseMotion(int x, int y ) {
 	}
 }
 
-// equals operator
+/*!
+* \brief equals operator
+*/
 const Camera2& Camera2::operator=(const Camera2& Cam) {
 	Aim = Cam.Aim;
 	Pos = Cam.Pos;

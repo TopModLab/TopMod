@@ -16,6 +16,7 @@ private:
 public:
 	TopMod( int & argc, char ** argv, bool GUIenabled );
 	~TopMod();
+	MainWindow *getMainWindow();
 	
 protected:
 	bool event(QEvent *event);

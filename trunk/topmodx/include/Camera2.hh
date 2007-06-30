@@ -11,8 +11,6 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #endif
-// #include <gmtl/gmtl.h>
-// #include <gmtl/VecOps.h>
 #include <Vector3d.hh>
 #include <Matrix4x4.hh>
 #include <math.h>
@@ -27,81 +25,58 @@ void ArbitraryRotate(Vector3d U, Vector3d V, Vector3d W, float degreeX, float de
 
 class Camera2 {
 private:
-  // all variables starting with 'Default' hold the initial camera values
-  // these values are used if the camera is reset to its initial state
-  Vector3d DefaultPos;
-  Vector3d DefaultAim;
-  Vector3d DefaultUp;
+  Vector3d DefaultPos;															//!< used if the camera is reset to its initial Position
+  Vector3d DefaultAim;															//!< used if the camera is reset to its initial Aim
+  Vector3d DefaultUp;																//!< used if the camera is reset to its initial Up vector
 
-  float DefaultAzim;
-  float DefaultElev;
+  float DefaultAzim;																//!< used if the camera is reset to its initial azimuth
+  float DefaultElev;																//!< used if the camera is reset to its initial elevation
 
-  float CurrentAzim;
-  float CurrentElev;
+  float CurrentAzim;																//!< the current Azimuth
+  float CurrentElev;																//!< current elevation
 
   void Initialize();
 
 		// For GL selection mode
-	double     mousex, mousey, pickw, pickh;          // Selection region for gluPickMatrix
-	GLint *    viewport;                              // The viewport
-	bool       pickmode;                              // Are we in selection mode?
+	double     mousex, mousey, pickw, pickh;          //!< Selection region for gluPickMatrix
+	GLint *    viewport;                              //!< The viewport
+	bool       pickmode;                              //!< Are we in selection mode?
 
-  char* m_name;
+  char* m_name;																			//!< does the camera have a name?
 public:
-  Vector3d Pos;
-  Vector3d Aim; 
-  Vector3d Up;
+  Vector3d Pos;																			//!< the camera's position in world space
+  Vector3d Aim;																			//!< the camera's aim vector, almost always 0,0,0
+  Vector3d Up;																			//!< up vector must be perpendicular to position-aim
 
-  float NearPlane;
-  float FarPlane;
-  float Fov;
+  float NearPlane;																	//!< does the camera have a name?
+  float FarPlane;																		//!< does the camera have a name?
+  float Fov;																				//!< does the camera have a name?
 
-  // constructors
+  Camera2();																				//!< default constructor
 
-  // default constructor
-  Camera2();
+  Camera2(Vector3d P, Vector3d A, Vector3d U); 			//!< constructor setting up camera orientation
 
-  // constructor setting up camera orientation
-  // P is position in 3D, A is the aim coordinate in 3D, U is the up vector
-  Camera2(Vector3d P, Vector3d A, Vector3d U);
+  Camera2(Vector3d P, Vector3d A, Vector3d U, float Near, float Far, float ViewAngle); //!< Constructor setting up camera orientation and view volume
 
-  // constructor setting up camera orientation and view volume
-  // P is position in 3D, A is aim coordinate in 3D, U is up vector
-  // Near is near clipping plane, Far is far clipping plane, 
-  // ViewAngle is field of view angle in degrees
-  Camera2(Vector3d P, Vector3d A, Vector3d U, float Near, float Far, float ViewAngle);
+  void SetClippingPlanes(float Near, float Far);	//!< sets the clipping planes of the view volume
 
-  // sets the clipping planes of the view volume
-  void SetClippingPlanes(float Near, float Far);
+  void SetFOV(float ViewAngle);										//!< sets the FOV, ViewAngle should be in degrees
 
-  // sets the FOV, ViewAngle should be in degrees
-  void SetFOV(float ViewAngle);	
+  void SetPos(Vector3d P);											  //!< set routine for Position Vector
+  void SetAim(Vector3d A);											  //!< set routine for the Aim Vector								
+  void SetUp(Vector3d U);											  	//!< set routine for the Up Vector
+	inline Vector3d getPos() { return Pos; };				//!< get routine for Position Vector
+	inline Vector3d getAim(){ return Aim; };				//!< get routine for the Aim Vector		
+	inline Vector3d getUp(){ return Up; };          //!< get routine for the Up Vector
 
-  // set routines for Pos, Aim, and Up vector
-  void SetPos(Vector3d P);
-  void SetAim(Vector3d A);
-  void SetUp(Vector3d U);
-	inline Vector3d getPos() { return Pos; };
-	inline Vector3d getAim(){ return Aim; };
-	inline Vector3d getUp(){ return Up; };
+  void Reset();																		//!< reset the camera to its initial position
 
-  // reset the camera to its initial position
-  void Reset();
+  void SetCenterOfFocus(Vector3d NewAim);				  //!< focus camera to some input aim position
 
-  // focus camera to some input aim position
-  void SetCenterOfFocus(Vector3d NewAim);
-
-  // function to use the camera as the opengl camera
-  // W and H are the width and height of the window
   void PerspectiveDisplay(int W, int H);
 
-  // function that handles mouse events
   void HandleMouseEvent(Qt::MouseButton button, QEvent::Type state, int x, int y, int delta = 0);
-
-	// function that handles mouse scroll wheel events
 	void HandleMouseWheel(int delta);
-
-  // function that handles mouse movements
   void HandleMouseMotion(int x, int y );
 	
   const Camera2& operator=(const Camera2& cam);
@@ -109,11 +84,9 @@ public:
   inline void setName( char* name ) { m_name = name; };
   inline char* getName( ) { return m_name; };
 
-	//for OpenGL selection
-	void enterSelectionMode(double x, double y, double w, double h, GLint * vp);
-	void leaveSelectionMode(void);
-
+	void enterSelectionMode(double x, double y, double w, double h, GLint * vp); //!< \brief for OpenGL selection
+	void leaveSelectionMode(void);																								//!< \brief for OpenGL selection
 
 };
 
-#endif // _CAMERA_H
+#endif //!< _CAMERA_H

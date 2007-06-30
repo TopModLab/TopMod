@@ -1,6 +1,15 @@
 #include "DLFLSelection.hh"
 #include "GeometryRenderer.hh"
 
+/**!
+*
+* \brief functions for rendering edges, faces, vertices of DLFL Objects
+* 	
+*	\note 
+* 
+* \see DLFLSelection
+*/
+
 extern DLFLEdgePtrArray DLFLObject::eparray;
 extern DLFLFacePtrArray DLFLObject::fparray;
 extern DLFLVertexPtrArray DLFLObject::vparray;

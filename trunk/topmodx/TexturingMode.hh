@@ -12,8 +12,14 @@
 #include <QStackedWidget>
 #include <QComboBox>
 
-#include "MainWindow.hh"
+/*!
+	\file TexturingMode.hh
+	\brief Definition of the TexturingMode class
+	
+	\see TexturingMode
+*/
 
+#include "MainWindow.hh"
 class MainWindow;
 
 class TexturingMode : public QWidget {
@@ -29,6 +35,8 @@ public:
 
 protected:
 	void setupTileTexturing();
+	QDoubleSpinBox *createDoubleSpinBox(QGridLayout *layout, QLabel *label, QString s, double low, double high, double step, double value, double decimals, int row, int col);
+	
 	
 public slots:
 	void triggerTileTexturing();
@@ -37,8 +45,10 @@ private:
 
 	QWidget *mParent;
 	QMenu *mTexturingMenu;
+	QDoubleSpinBox *tileTexturingNumTilesSpinBox;
+	QLabel *tileTexturingNumTilesLabel;
 	
-	QBoxLayout *mTileTexturingLayout;	
+	QGridLayout *mTileTexturingLayout;	
 	
 };
 

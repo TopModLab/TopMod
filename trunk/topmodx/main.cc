@@ -12,6 +12,7 @@
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QFileOpenEvent>
+// #include <QWaitCondition>
 
 #include "MainWindow.hh"
 #include "TopMod.hh"
@@ -122,7 +123,18 @@ int TdxComputeEventZero()
 int main( int argc, char **argv ) {
 	TopMod app( argc, argv, true );
 
-	#ifdef WITH_SPACENAV
+	//this is a preliminary version of a splash screen functionality.
+	//the app opens so quickly it is hardly shown, so i will consider adding a delay
+	QPixmap pixmap(":/images/splash.png");
+  QSplashScreen *splash = new QSplashScreen(pixmap, Qt::WindowStaysOnTopHint);
+  splash->show();
+	splash->showMessage("doin stuff...");
+  app.processEvents();
+	//artificial delay for now to debug, and to give mad props to the developers
+	// splash->finish(app.getMainWindow());
+  QTimer::singleShot(1000, splash, SLOT(hide()));
+
+ 	#ifdef WITH_SPACENAV
 		#ifdef __APPLE__
 			//3d connexion stuff ... isn't working right now
 			// OSStatus err;

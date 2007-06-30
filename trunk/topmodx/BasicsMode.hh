@@ -8,7 +8,14 @@
 
 #include <QWidget>
 #include <QPushButton>
-#include <QBoxLayout>
+#include <QGridLayout>
+
+/*!
+	\file BasicsMode.hh
+	\brief Definition of the BasicsMode class
+	
+	\see BasicsMode
+*/
 
 #include "MainWindow.hh"
 
@@ -17,7 +24,6 @@ class MainWindow;
 class QComboBox;
 class QPushButton;
 class QGroupBox;
-class QBoxLayout;
 class QCheckBox;
 class QLabel;
 
@@ -45,13 +51,13 @@ public:
 	QWidget *mSpliceCornersWidget; 
 	QWidget *mTransformsWidget;	
 	
-	QBoxLayout *mInsertEdgeLayout;
-	QBoxLayout *mDeleteEdgeLayout;
-	QBoxLayout *mCollapseEdgeLayout;
-	QBoxLayout *mSubdivideEdgeLayout; 
-	QBoxLayout *mConnectEdgesLayout;
-	QBoxLayout *mSpliceCornersLayout; 
-	QBoxLayout *mTransformsLayout;
+	QGridLayout *mInsertEdgeLayout;
+	QGridLayout *mDeleteEdgeLayout;
+	QGridLayout *mCollapseEdgeLayout;
+	QGridLayout *mSubdivideEdgeLayout; 
+	QGridLayout *mConnectEdgesLayout;
+	QGridLayout *mSpliceCornersLayout; 
+	QGridLayout *mTransformsLayout;
 
 protected:
 	void setupInsertEdge();
@@ -61,11 +67,24 @@ protected:
 	void setupConnectEdges();
 	void setupSpliceCorners();
 	void setupTransforms();
+	QDoubleSpinBox *createDoubleSpinBox(QGridLayout *layout, QLabel *label, QString s, double low, double high, double step, double value, double decimals, int row, int col);
+	
 
 private:
 	
 	QWidget *mParent;
 	QMenu *mBasicsMenu;	
+	
+	QLabel *numSubdivsLabel;
+	QDoubleSpinBox *numSubdivsSpinBox;
+	QLabel *transformLabel;
+	QLabel *xPosLabel;
+	QLabel *yPosLabel;
+	QLabel *zPosLabel;	
+	QLabel *scaleLabel;
+	QLabel *xScaleLabel;
+	QLabel *yScaleLabel;
+	QLabel *zScaleLabel;
 	
 	//transform spinboxes
 	QDoubleSpinBox *xScaleSpinBox;

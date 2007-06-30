@@ -6,6 +6,26 @@
 
 #include "BasicsMode.hh"
 
+/*!
+	\ingroup gui
+	@{
+	
+	\class BasicsMode
+	\brief Basics Operations including insert-edge and delete-edge.
+	
+	\note 
+	
+	\see BasicsMode
+*/
+
+/*!
+* \brief Constructor
+* 
+* @param parent the MainWindow widget
+* @param sm the shortcut manager class for adding a custom shortcut to each menu action or icon
+* @param actionList the master list of actions for use with the CommandCompleter class
+* 
+*/
 BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm, QWidget *actionList)
 		: QWidget(parent) {
 		
@@ -41,6 +61,7 @@ BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm, QWidget *actionLis
 	mInsertEdgeAction->setStatusTip(tr("Enter Insert Edge Mode"));
 	mInsertEdgeAction->setToolTip(tr("Insert Edge Mode"));
 	connect(mInsertEdgeAction, SIGNAL(triggered()), this, SLOT(triggerInsertEdge()));
+	connect(mInsertEdgeAction, SIGNAL(hovered()), ((MainWindow*)mParent), SLOT(setAnimatedHelpImage()));
 	actionList->addAction(mInsertEdgeAction);	
 
 	mDeleteEdgeAction = new QAction(tr("Delete Edge"),this);
@@ -183,55 +204,69 @@ void BasicsMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStack
 
 }
 
+QDoubleSpinBox *BasicsMode::createDoubleSpinBox(QGridLayout *layout, QLabel *label, QString s, double low, double high, double step, double value, double decimals, int row, int col){
+	label = new QLabel(s);
+	QDoubleSpinBox *spinbox = new QDoubleSpinBox;
+	spinbox->setRange(low, high);
+	spinbox->setSingleStep(step);
+	spinbox->setValue(value);
+	spinbox->setDecimals(decimals);
+	spinbox->setMaximumSize(75,25);
+	layout->addWidget(label,row,col);
+  layout->addWidget(spinbox,row,col+1);
+
+	return spinbox;
+}
+
 void BasicsMode::setupInsertEdge() {
 	
-	mInsertEdgeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	mInsertEdgeLayout->setMargin(0);
+	mInsertEdgeLayout = new QGridLayout;
+	// mInsertEdgeLayout->setMargin(0);
+	mInsertEdgeLayout->setRowStretch(4,1);
+	mInsertEdgeLayout->setColumnStretch(2,1);
 	mInsertEdgeWidget->setWindowTitle(tr(""));
 	mInsertEdgeWidget->setLayout(mInsertEdgeLayout);	
 }
 
 void BasicsMode::setupDeleteEdge() {
 	
-	mDeleteEdgeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	mDeleteEdgeLayout->setMargin(0);
+	mDeleteEdgeLayout = new QGridLayout;
+	// mDeleteEdgeLayout->setMargin(0);
+	
 	//cleanup checkbox
 	QCheckBox *cleanupCheckBox = new QCheckBox(tr("Cleanup"),this);
 	connect(cleanupCheckBox, SIGNAL(stateChanged(int)),
           ((MainWindow*)mParent), SLOT(toggleDeleteEdgeCleanupFlag(int)));
-	mDeleteEdgeLayout->addWidget(cleanupCheckBox);	
-	mDeleteEdgeLayout->addStretch(1);
+	mDeleteEdgeLayout->addWidget(cleanupCheckBox,0,0);	
+	
+	mDeleteEdgeLayout->setRowStretch(1,1);
+	mDeleteEdgeLayout->setColumnStretch(2,1);
 	mDeleteEdgeWidget->setWindowTitle(tr("Delete Edge Mode"));
 	mDeleteEdgeWidget->setLayout(mDeleteEdgeLayout);	
 }
 
 void BasicsMode::setupCollapseEdge() {
 	
-	mCollapseEdgeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	mCollapseEdgeLayout->setMargin(0);
+	mCollapseEdgeLayout = new QGridLayout;
+	// mCollapseEdgeLayout->setMargin(0);
+	mCollapseEdgeLayout->setRowStretch(4,1);
+	mCollapseEdgeLayout->setColumnStretch(2,1);
 	mCollapseEdgeWidget->setWindowTitle(tr(""));
 	mCollapseEdgeWidget->setLayout(mCollapseEdgeLayout);	
 }
 
 void BasicsMode::setupSubdivideEdge() {
 	
-	mSubdivideEdgeLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	mSubdivideEdgeLayout->setMargin(0);
+	mSubdivideEdgeLayout = new QGridLayout;
+	// mSubdivideEdgeLayout->setMargin(0);
 	
 	//number of subdivisions spinbox
-	QLabel *numSubdivsLabel = new QLabel(tr("# Subdivisions"));
-	// numSubdivsLabel->setAlignment(Qt::AlignRight);
-	QSpinBox *numSubdivsSpinBox = new QSpinBox;
-	numSubdivsSpinBox->setRange(1, 10);
-	numSubdivsSpinBox->setSingleStep(1);
-	numSubdivsSpinBox->setValue(0);
-	numSubdivsSpinBox->setMaximumSize(50,25);
-	connect(numSubdivsSpinBox, SIGNAL(valueChanged(int)),
-          ((MainWindow*)mParent), SLOT(changeNumSubDivs(int)));
-	
-	mSubdivideEdgeLayout->addWidget(numSubdivsLabel);
-	mSubdivideEdgeLayout->addWidget(numSubdivsSpinBox);
-	mSubdivideEdgeLayout->addStretch(1);
+	numSubdivsSpinBox = createDoubleSpinBox(mSubdivideEdgeLayout, numSubdivsLabel, tr("# Subdivisions"), 1, 10, 1, 1, 0, 0,0);
+	connect(numSubdivsSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeNumSubDivs(double)));
+
+	// mSubdivideEdgeLayout->addStretch(1);
+	mSubdivideEdgeLayout->setRowStretch(1,1);
+	mSubdivideEdgeLayout->setColumnStretch(2,1);
 	mSubdivideEdgeWidget->setWindowTitle(tr("Subdivide Edge Mode"));
 	mSubdivideEdgeWidget->setLayout(mSubdivideEdgeLayout);	
 	
@@ -239,8 +274,10 @@ void BasicsMode::setupSubdivideEdge() {
 
 void BasicsMode::setupConnectEdges(){
 	
-	mConnectEdgesLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	mConnectEdgesLayout->setMargin(0);
+	mConnectEdgesLayout = new QGridLayout;
+	// mConnectEdgesLayout->setMargin(0);
+	mConnectEdgesLayout->setRowStretch(0,1);
+	mConnectEdgesLayout->setColumnStretch(2,1);
 	mConnectEdgesWidget->setWindowTitle(tr(""));
 	mConnectEdgesWidget->setLayout(mConnectEdgesLayout);	
 	
@@ -248,8 +285,10 @@ void BasicsMode::setupConnectEdges(){
 
 void BasicsMode::setupSpliceCorners(){
 	
-	mSpliceCornersLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	mSpliceCornersLayout->setMargin(0);
+	mSpliceCornersLayout = new QGridLayout;
+	// mSpliceCornersLayout->setMargin(0);
+	mSpliceCornersLayout->setRowStretch(4,1);
+	mSpliceCornersLayout->setColumnStretch(2,1);
 	mSpliceCornersWidget->setWindowTitle(tr(""));
 	mSpliceCornersWidget->setLayout(mSpliceCornersLayout);
 	
@@ -257,103 +296,42 @@ void BasicsMode::setupSpliceCorners(){
 
 void BasicsMode::setupTransforms(){
 	
-	mTransformsLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	mTransformsLayout->setMargin(0);
-	QLabel *transformLabel = new QLabel(tr("Translate:"));
-	mTransformsLayout->addWidget(transformLabel);
+	mTransformsLayout = new QGridLayout;
+	mTransformsLayout->setVerticalSpacing(1);
+	mTransformsLayout->setHorizontalSpacing(1);
+	// mTransformsLayout->setMargin(0);
 	
-	//x transform
-	QLabel *xPosLabel = new QLabel(tr("X"));
-	xPosSpinBox = new QDoubleSpinBox;
-	xPosSpinBox->setRange(-100.0, 100.0);
-	xPosSpinBox->setSingleStep(0.5);
-	xPosSpinBox->setValue(0.0);
-	xPosSpinBox->setDecimals(1);
-	xPosSpinBox->setMaximumSize(50,25);
-	connect(xPosSpinBox, SIGNAL(valueChanged(double)),
-          ((MainWindow*)mParent), SLOT(translatex(double)));
-
-	mTransformsLayout->addWidget(xPosLabel);
-  mTransformsLayout->addWidget(xPosSpinBox);
-
-	//y transform
-	QLabel *yPosLabel = new QLabel(tr("Y"));
-	yPosSpinBox = new QDoubleSpinBox;
-	yPosSpinBox->setRange(-100.0, 100.0);
-	yPosSpinBox->setSingleStep(0.5);
-	yPosSpinBox->setValue(0.0);
-	yPosSpinBox->setDecimals(1);
-	yPosSpinBox->setMaximumSize(50,25);
-	connect(yPosSpinBox, SIGNAL(valueChanged(double)),
-          ((MainWindow*)mParent), SLOT(translatey(double)));
-
-	mTransformsLayout->addWidget(yPosLabel);
-  mTransformsLayout->addWidget(yPosSpinBox);
-
-	//z transform
-	QLabel *zPosLabel = new QLabel(tr("Z"));
-	zPosSpinBox = new QDoubleSpinBox;
-	zPosSpinBox->setRange(-100.0, 100.0);
-	zPosSpinBox->setSingleStep(0.5);
-	zPosSpinBox->setValue(0.0);
-	zPosSpinBox->setDecimals(1);
-	zPosSpinBox->setMaximumSize(50,25);
-	connect(zPosSpinBox, SIGNAL(valueChanged(double)),
-          ((MainWindow*)mParent), SLOT(translatez(double)));
-
-	mTransformsLayout->addWidget(zPosLabel);
-  mTransformsLayout->addWidget(zPosSpinBox);
+	// transformLabel = new QLabel(tr("Translate:"));
+	// mTransformsLayout->addWidget(transformLabel,0,0,1,2);
 	
-	QLabel *scaleLabel = new QLabel(tr("Scale:"));
-	mTransformsLayout->addWidget(scaleLabel);
+	xPosSpinBox = createDoubleSpinBox(mTransformsLayout, xPosLabel, tr("X-translate"), -100.0, 100.0, 0.5, 0.0, 1, 1,0);
+	connect(xPosSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(translatex(double)));
+	
+	yPosSpinBox = createDoubleSpinBox(mTransformsLayout, yPosLabel, tr("Y-translate"), -100.0, 100.0, 0.5, 0.0, 1, 2,0);
+	connect(yPosSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(translatey(double)));
+	
+	zPosSpinBox = createDoubleSpinBox(mTransformsLayout, zPosLabel, tr("Z-translate"), -100.0, 100.0, 0.5, 0.0, 1, 3,0);
+	connect(zPosSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(translatez(double)));
+	
+	// scaleLabel = new QLabel(tr("Scale:"));
+	// mTransformsLayout->addWidget(scaleLabel,4,0,1,2);
 	
 	//x scale
-	QLabel *xScaleLabel = new QLabel(tr("X"));
-	xScaleSpinBox = new QDoubleSpinBox;
-	xScaleSpinBox->setRange(0.1, 10.0);
-	xScaleSpinBox->setSingleStep(0.1);
-	xScaleSpinBox->setValue(1.0);
-	xScaleSpinBox->setDecimals(1);	
-	xScaleSpinBox->setMaximumSize(50,25);
-	connect(xScaleSpinBox, SIGNAL(valueChanged(double)),
-          ((MainWindow*)mParent), SLOT(scalex(double)));
+	xScaleSpinBox = createDoubleSpinBox(mTransformsLayout, xScaleLabel, tr("X-scale"), 0.1, 10.0, 0.1, 1.0, 1, 5,0);
+	connect(xScaleSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(scalex(double)));
 
-	mTransformsLayout->addWidget(xScaleLabel);
-  mTransformsLayout->addWidget(xScaleSpinBox);
+	yScaleSpinBox = createDoubleSpinBox(mTransformsLayout, yScaleLabel, tr("Y-scale"), 0.1, 10.0, 0.1, 1.0, 1, 6,0);
+	connect(yScaleSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(scaley(double)));
+
+	zScaleSpinBox = createDoubleSpinBox(mTransformsLayout, zScaleLabel, tr("Z-scale"), 0.1, 10.0, 0.1, 1.0, 1, 7,0);
+	connect(zScaleSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(scalez(double)));
 	
-	//y scale
-	QLabel *yScaleLabel = new QLabel(tr("Y"));
-	yScaleSpinBox = new QDoubleSpinBox;
-	yScaleSpinBox->setRange(0.1, 10.0);
-	yScaleSpinBox->setSingleStep(0.1);
-	yScaleSpinBox->setValue(1.0);
-	yScaleSpinBox->setDecimals(1);
-	yScaleSpinBox->setMaximumSize(50,25);
-	connect(yScaleSpinBox, SIGNAL(valueChanged(double)),
-          ((MainWindow*)mParent), SLOT(scaley(double)));
-
-	mTransformsLayout->addWidget(yScaleLabel);
-  mTransformsLayout->addWidget(yScaleSpinBox);
-
-	//z scale
-	QLabel *zScaleLabel = new QLabel(tr("Z"));
-	zScaleSpinBox = new QDoubleSpinBox;
-	zScaleSpinBox->setRange(0.1, 10.0);
-	zScaleSpinBox->setSingleStep(0.1);
-	zScaleSpinBox->setValue(1.0);
-	zScaleSpinBox->setDecimals(1);
-	zScaleSpinBox->setMaximumSize(50,25);
-	connect(zScaleSpinBox, SIGNAL(valueChanged(double)),
-          ((MainWindow*)mParent), SLOT(scalez(double)));
-	mTransformsLayout->addWidget(zScaleLabel);
-  mTransformsLayout->addWidget(zScaleSpinBox);
-
 	QPushButton *freezeTransformsButton = new QPushButton(tr("&Freeze Transforms"));
-	connect(freezeTransformsButton, SIGNAL(clicked()),
-          this, SLOT(freezeTransforms()));
-	
-	mTransformsLayout->addWidget(freezeTransformsButton);	
-	mTransformsLayout->addStretch(1);
+	connect(freezeTransformsButton, SIGNAL(clicked()), this, SLOT(freezeTransforms()));
+	mTransformsLayout->addWidget(freezeTransformsButton,8,0,1,2);
+
+	mTransformsLayout->setRowStretch(9,1);
+	mTransformsLayout->setColumnStretch(2,1);
 	mTransformsWidget->setWindowTitle(tr("Transforms Mode"));
 	mTransformsWidget->setLayout(mTransformsLayout);	
 }

@@ -18,8 +18,8 @@ public :
   NormalRenderer() : DLFLRenderer() {
   }
 	
-  NormalRenderer(QColor wc, double wt, QColor sc, double st, QColor vc, double vt, QColor nc)
-    : DLFLRenderer(wc, wt, sc, st, vc, vt) {
+  NormalRenderer(QColor wc, double wt, QColor sc, double st, QColor vc, double vt, QColor fc, double ft, QColor nc, double nt)
+    : DLFLRenderer(wc, wt, sc, st, vc, vt, fc, ft, nc, nt) {
   }
 
   /* Copy constructor */
@@ -49,7 +49,6 @@ public :
 		else {
 			glDisable( GL_LINE_SMOOTH );
 		}
-		
     //glColor4f(mNormalColor.redF(),mNormalColor.greenF(),mNormalColor.blueF(),mNormalColor.alphaF());
     //object->plainRender();
     gr->render( object );
@@ -59,7 +58,7 @@ public :
   }
 	
   virtual void setState( ) {
-    gr->useColor = false;
+    gr->useLighting = false;
     gr->useMaterial = true;
     gr->useTexture = false;
     gr->useOutline = false;

@@ -19,8 +19,8 @@ public :
   /* Default constructor */
   PatchRenderer() : DLFLRenderer() {}
 	
-  PatchRenderer(QColor wc, double wt, QColor sc, double st, QColor vc, double vt)
-    : DLFLRenderer(wc, wt, sc, st, vc, vt) { }
+  PatchRenderer(QColor wc, double wt, QColor sc, double st, QColor vc, double vt, QColor fc, double ft, QColor nc, double nt)
+    : DLFLRenderer(wc, wt, sc, st, vc, vt, fc, ft, nc, nt) { }
 
   /* Copy constructor */
   PatchRenderer(const PatchRenderer& nr)
@@ -38,14 +38,14 @@ public :
 
   /* Draw the overlays - different from regular renderers */
   virtual void drawOverlays( TMPatchObjectPtr patch_object ) {//DLFLObjectPtr object ) {    
-    if ( render_flags & ShowWireframe ) {
+    if ( gr->drawWireframe ) {
       glColor3d(0.0,0.0,0.0);
       glLineWidth(.8);
       glDepthRange(0.0,1.0-0.0005);
       patch_object->renderWireframePatches();
     }
 
-    if ( render_flags & ShowSilhouette ) {
+    if ( gr->drawSilhouette ) {
       glColor3d(0.4,0.6,0.4);
       glLineWidth(3.0);
       glDepthRange(0.0,1.0-0.00055);
@@ -57,7 +57,7 @@ public :
       patch_object->renderPatchFaceBoundaries();
       }
 
-    if ( render_flags & ShowVertices ){
+    if ( gr->drawVertices ){
       glColor3d(0.2,0.2,0.3);
       glLineWidth(3.0);
       glDepthRange(0.0,1.0-0.0006);
@@ -69,7 +69,7 @@ public :
       patch_object->renderPointPatches();
     }
 
-    if ( render_flags & ShowNormals )	{
+    if ( gr->drawFaceNormals )	{
       glColor3d(0.2,0.8,0.2);
       glLineWidth(1.0);
       patch_object->renderPatchNormals();
@@ -118,7 +118,7 @@ public :
   }
 
   virtual void setState( ) {
-    gr->useColor = false;
+    gr->useLighting = false;
     gr->useOutline = true;
   }
 
