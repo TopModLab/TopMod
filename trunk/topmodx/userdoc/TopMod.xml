@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+               "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY chapter1 SYSTEM "chapter1.xml">
+<!ENTITY chapter2 SYSTEM "chapter2.xml">
+<!ENTITY chapter3 SYSTEM "chapter3.xml">
+] >
+<book>
+  <title>TopMod</title>
+  
+&chapter1;
+&chapter2;
+&chapter3;
+</book>
