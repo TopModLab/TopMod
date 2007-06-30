@@ -90,7 +90,9 @@ GLWidget::GLWidget(int w, int h, DLFLRendererPtr rp, QColor color, QColor vcolor
 	// mCamera = new Camera2( eye, lookat, Vector3d(-0.408248,0.816497,-0.408248));
 
 	// mCamera = new Camera2( Pos, Aim, Up);
-	mCamera = new PerspCamera( Pos, Aim, Up);
+
+	// mCamera = new PerspCamera( Pos, Aim, Up);
+	mCamera = new PerspCamera( Vector3d(10,10,10), Vector3d(0,0,0), Vector3d(0,1,0));
 
   // ArbitraryRotate(Vector3d(1,0,0),Vector3d(0,1,0),Vector3d(0,0,1),45.0f,45.0f,mCamera->Pos,mCamera->Aim);
 

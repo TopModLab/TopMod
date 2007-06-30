@@ -7,16 +7,28 @@
 #include <QtOpenGL>
 #include "MainWindow.hh"
 
+/*!
+	\ingroup gui
+	@{
+	
+	\class MainWindow
+	\brief The Main Window of the application.
+	
+	\note 
+	
+	\see MainWindow
+*/
+
 #ifdef WITH_PYTHON
 #include <Python.h>
 #endif
 
-WireframeRendererPtr MainWindow::wired;              // Wireframe Renderer
-NormalRendererPtr MainWindow::normal;                // NormalRenderer
-LitRendererPtr MainWindow::lit;                        // LitRenderer
-TexturedRendererPtr MainWindow::textured;          // TexturedRenderer
-TexturedLitRendererPtr MainWindow::texturedlit; // TexturedLitRenderer
-PatchRendererPtr MainWindow::patch;		       // PatchRenderer
+WireframeRendererPtr MainWindow::wired;              	//!< WireframeRenderer Pointer
+NormalRendererPtr MainWindow::normal;                	//!< NormalRenderer Pointer
+LitRendererPtr MainWindow::lit;                       //!< LitRenderer Pointer
+TexturedRendererPtr MainWindow::textured;          		//!< TexturedRenderer Pointer
+TexturedLitRendererPtr MainWindow::texturedlit; 			//!< TexturedLitRenderer Pointer
+PatchRendererPtr MainWindow::patch;		       					//!< PatchRenderer Pointer
 
 //-- Parameters used in various operations on the DLFL object --//
 //-- See header file for explanations --//
@@ -29,7 +41,7 @@ bool MainWindow::is_editing = false;
 bool MainWindow::delete_edge_cleanup = true;
 
 // Handles
-int MainWindow::num_segments = 4;
+int MainWindow::num_segments = 10;
 int MainWindow::max_segments = -1;
 bool MainWindow::symmetric_weights = true;
 double MainWindow::nwt1 = 5.0;
@@ -143,8 +155,6 @@ DLFLEdgePtr MainWindow::face_loop_start_edge = NULL;
  * asdf;alsjkdf
  * asdfl;jkas;df
  **/
-
-
 MainWindow::MainWindow(char *filename) : object(), patchObject(NULL), mode(NormalMode), undoList(), redoList(), 
 																				 undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimitive(false), mSpinBoxMode(None) {
 	//initialize the OpenGL Window GLWidget
@@ -155,8 +165,8 @@ MainWindow::MainWindow(char *filename) : object(), patchObject(NULL), mode(Norma
 	//patchObject = new TMPatchObject( object.getID() );
 	setMouseTracking(true);
 
-	active = new GLWidget(500,600, VPPersp, lit, QColor(255,255,255,255),QColor(255,255,255,255) , &object, patchObject,fmt, this);
-	active->switchTo(VPPersp);	
+	active = new GLWidget(500,600, lit, QColor(255,255,255,255),QColor(255,255,255,255) , &object, patchObject,fmt, this);
+	// active->switchTo(VPPersp);	
 	setRenderer(lit);
 	active->redraw();
 	active->setMinimumSize(400,400);
@@ -183,12 +193,6 @@ MainWindow::MainWindow(char *filename) : object(), patchObject(NULL), mode(Norma
 	// vblayout->setMargin(0);
 	// cWidget->setLayout( layout );
 	setCentralWidget( active);
-
-	//initialize light color
-	// plight.position.set(50,25,0);
-	// plight.warmcolor.set(1,1,0.6);
-	// plight.coolcolor.set(0.2,0.2,0.4);
-	// plight.intensity = 2.0;
 
 #ifdef WITH_PYTHON
 	//the script editor widget will be placed into a QDockWidget
@@ -222,6 +226,28 @@ MainWindow::MainWindow(char *filename) : object(), patchObject(NULL), mode(Norma
 	mVerseDialogDockWidget->setMaximumHeight(200);
 #endif
 
+	//Tool options dockwidget must be initialized before setting up the actions
+	//the main tool options DockWidget
+	mToolOptionsDockWidget = new QDockWidget(tr("Tool Options"),this);
+	// mToolOptionsDockWidget->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable /* | QDockWidget::DockWidgetClosable*/);
+	mToolOptionsDockWidget->setAllowedAreas(Qt::NoDockWidgetArea);
+	mToolOptionsStackedWidget = new QStackedWidget();
+	// mToolOptionsDockWidget->hide();
+	mToolOptionsDockWidget->setWidget(mToolOptionsStackedWidget);
+	mToolOptionsDockWidget->setFloating(true);
+	// mToolOptionsTitleBarLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+	// mToolOptionsTitleBarWidget = new QWidget;
+	// mToolOptionsTitleBarWidget->setLayout(mToolOptionsTitleBarLayout);
+	// mToolOptionsDockWidget->setTitleBarWidget(mToolOptionsTitleBarWidget);
+	// mToolOptionsDockWidget->titleBarWidget()->setContentsMargins(0,0,0,0);
+	// mToolOptionsDockWidget->move(0,22);
+	// mToolOptionsDockWidget->setWindowTitle("Insert Edge Mode");
+	// addDockWidget(Qt::TopDockWidgetArea, mToolOptionsDockWidget);
+	
+	
+	//animated help dockwidget
+	initializeAnimatedHelp();
+	
 	//make a new instance of QShortcutManager
 	sm = new QShortcutManager();
 	mActionModel = new QStandardItemModel();
@@ -230,14 +256,12 @@ MainWindow::MainWindow(char *filename) : object(), patchObject(NULL), mode(Norma
 	//instantiate toolbars
 	mBasicsMode = new BasicsMode(this, sm, mActionListWidget);
 	mExtrusionMode = new ExtrusionMode(this, sm, mActionListWidget );
-	mConicalMode = new ConicalMode(this, sm);
+	// mConicalMode = new ConicalMode(this, sm);
 	mRemeshingMode = new RemeshingMode(this, sm, mActionListWidget);
 	mHighgenusMode = new HighgenusMode(this, sm, mActionListWidget);
 	mTexturingMode = new TexturingMode(this, sm, mActionListWidget);
 
-
 	createActions();
-	createCommandList(); // create the main list of all topmod commands that a user may want to access through the auto completer interface
 	mCommandCompleter = new CommandCompleter(mActionListWidget, this);
 	createToolBars();
 	createMenus();
@@ -247,7 +271,6 @@ MainWindow::MainWindow(char *filename) : object(), patchObject(NULL), mode(Norma
 	mStyleSheetEditor = new StyleSheetEditor;
 	//preference dialog
 	mSettings = new QSettings("TopMod", "Topological Mesh Modeler");
-	readSettings();
 	mPreferencesDialog = new TopModPreferences(mSettings, mStyleSheetEditor, sm, this);	
 }
 
@@ -458,12 +481,19 @@ void MainWindow::createActions() {
 	connect(objectOrientationAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleObjectOrientation()));
 	mActionListWidget->addAction(objectOrientationAct);
 
-	showNormalsAct = new QAction(tr("Show Normals"), this);
-	showNormalsAct->setCheckable(true);
-	sm->registerAction(showNormalsAct, "Display Menu", "N");
+	mShowNormalsAct = new QAction(tr("Show &Normals"), this);
+	mShowNormalsAct->setCheckable(true);
+	sm->registerAction(mShowNormalsAct, "Display Menu", "N");
 	// objectOrienationAct->setStatusTip(tr("Copy the current selection's contents to the "
-	connect(showNormalsAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleNormals()));
-	mActionListWidget->addAction(showNormalsAct);
+	connect(mShowNormalsAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleNormals()));
+	mActionListWidget->addAction(mShowNormalsAct);
+
+	mShowFaceCentroidsAct = new QAction(tr("Show &Face Centroids"), this);
+	mShowFaceCentroidsAct->setCheckable(true);
+	sm->registerAction(mShowFaceCentroidsAct, "Display Menu", "C");
+	// objectOrienationAct->setStatusTip(tr("Copy the current selection's contents to the "
+	connect(mShowFaceCentroidsAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleFaceCentroids()));
+	mActionListWidget->addAction(mShowFaceCentroidsAct);
 
 	showGridAct = new QAction(tr("Show &Grid"), this);
 	showGridAct->setCheckable(true);
@@ -480,6 +510,7 @@ void MainWindow::createActions() {
 	connect(showHUDAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleHUD()));
 	mActionListWidget->addAction(showHUDAct);
 
+	#ifdef GPU_OK
 	mUseGPUAct = new QAction(tr("&Use GPU Shading"), this);
 	mUseGPUAct->setCheckable(true);
 	mUseGPUAct->setChecked(true);	
@@ -487,7 +518,8 @@ void MainWindow::createActions() {
 	mUseGPUAct->setStatusTip(tr("Use GPU Shading"));
 	connect(mUseGPUAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleGPU()));
 	mActionListWidget->addAction(mUseGPUAct);
-
+	#endif
+	
 	mAntialiasingAct = new QAction(tr("Toggle &Antialiasing"), this);
 	mAntialiasingAct->setCheckable(true);
 	mAntialiasingAct->setChecked(false);	
@@ -497,24 +529,34 @@ void MainWindow::createActions() {
 	mActionListWidget->addAction(mAntialiasingAct);
 
 #ifdef WITH_PYTHON
-	mShowScriptEditorAct = new QAction(tr("Show Script &Editor"), this);
-	mShowScriptEditorAct->setCheckable(true);
+	mShowScriptEditorAct = mScriptEditorDockWidget->toggleViewAction();//new QAction(tr("Show Script &Editor"), this);
 	mShowScriptEditorAct->setStatusTip( tr("Show the script editor to execute DLFL commands") );
-	connect(mShowScriptEditorAct, SIGNAL(triggered()), this, SLOT(showHideScriptEditor()));
-	sm->registerAction(mShowScriptEditorAct, "Display Menu", "SHIFT+CTRL+E");
+	sm->registerAction(mShowScriptEditorAct, "Window Menu", "SHIFT+CTRL+E");
 	mActionListWidget->addAction(mShowScriptEditorAct);
 #endif
 
 #ifdef WITH_VERSE
-	mShowVerseDialogAct = new QAction(tr("Show Verse &Dialog"), this);
-	mShowVerseDialogAct->setCheckable(true);
+	mShowVerseDialogAct = mVerseDialogDockWidget->toggleViewAction();//new QAction(tr("Show Verse &Dialog"), this);
+	// mShowVerseDialogAct->setText(// true);
 	mShowVerseDialogAct->setStatusTip( tr("Show the verse dialog to view verse server connection status") );
-	connect(mShowVerseDialogAct, SIGNAL(triggered()), this, SLOT(showHideVerseDialog()));
-	sm->registerAction(mShowVerseDialogAct, "Display Menu", "SHIFT+CTRL+V");
+	// connect(mShowVerseDialogAct, SIGNAL(triggered()), this, SLOT(showHideVerseDialog()));
+	sm->registerAction(mShowVerseDialogAct, "Window Menu", "SHIFT+CTRL+V");
 	mActionListWidget->addAction(mShowVerseDialogAct);
 #endif	
 
-	//Renderer Menu Actions
+	mShowToolOptionsAct = mToolOptionsDockWidget->toggleViewAction();
+	mShowToolOptionsAct->setStatusTip( tr("Show the tool options window") );
+	sm->registerAction(mShowToolOptionsAct, "Window Menu", "O");
+	mActionListWidget->addAction(mShowToolOptionsAct);
+	
+	mShowAnimatedHelpAct = mAnimatedHelpDockWidget->toggleViewAction();// new QAction(tr("Show Animated Hel&p"), this);
+	// mShowAnimatedHelpAct->setCheckable(true);
+	mShowAnimatedHelpAct->setStatusTip( tr("Show/Hide the animated help window") );
+	// connect(mShowAnimatedHelpAct, SIGNAL(triggered()), this, SLOT(showHideAnimatedHelp()));
+	sm->registerAction(mShowAnimatedHelpAct, "Window Menu", "SHIFT+H");
+	mActionListWidget->addAction(mShowAnimatedHelpAct);
+
+		//Renderer Menu Actions
 	wireframeRendererAct = new QAction(tr("&Wireframe Renderer"), this);
 	wireframeRendererAct->setCheckable(true);
 	sm->registerAction(wireframeRendererAct, "Renderer Menu", "1");
@@ -887,19 +929,18 @@ void MainWindow::createMenus(){
 	setMenuBar(menuBar);
 #endif
 
-	fileMenu = new QMenu(tr("&File"));
-	menuBar->addMenu(fileMenu);
-	fileMenu->setTearOffEnabled(true);
+	mFileMenu = new QMenu(tr("&File"));
+	menuBar->addMenu(mFileMenu);
+	mFileMenu->setTearOffEnabled(true);
 
-	fileMenu->addAction(mOpenAct);
-	fileMenu->addAction(mSaveAct);
-	fileMenu->addAction(mSaveAsAct);
-	fileMenu->addAction(mSavePatchesAct);
-
+	mFileMenu->addAction(mOpenAct);
+	mFileMenu->addAction(mSaveAct);
+	mFileMenu->addAction(mSaveAsAct);
+	mFileMenu->addAction(mSavePatchesAct);
 #ifdef WITH_VERSE
-	fileMenu->addSeparator();
+	mFileMenu->addSeparator();
 	mVerseMenu = new QMenu(tr("&Verse"));
-	fileMenu->addMenu(mVerseMenu);
+	mFileMenu->addMenu(mVerseMenu);
 	mVerseMenu->addAction(mVerseStartServerAct);
 	// mVerseMenu->addAction(mVerseKillServerAct);
 	mVerseMenu->addSeparator();
@@ -910,31 +951,30 @@ void MainWindow::createMenus(){
 	// mVerseMenu->addAction(mVerseDisconnectAct);
 	// mVerseMenu->addAction(mVerseDisconnectAllAct);
 #endif
+	mFileMenu->addSeparator();
+	mFileMenu->addAction(loadTextureAct);
+	mFileMenu->addAction(printInfoAct);
+	mFileMenu->addAction(printFaceListAct);
+	mFileMenu->addAction(printVertexListAct);
+	mFileMenu->addAction(printEdgeListAct);
+	mFileMenu->addAction(mPrintCVListAct);
+	mFileMenu->addSeparator();
+	mFileMenu->addAction(mExitAct);
 
-	fileMenu->addSeparator();
-	fileMenu->addAction(loadTextureAct);
-	fileMenu->addAction(printInfoAct);
-	fileMenu->addAction(printFaceListAct);
-	fileMenu->addAction(printVertexListAct);
-	fileMenu->addAction(printEdgeListAct);
-	fileMenu->addAction(mPrintCVListAct);
-	fileMenu->addSeparator();
-	fileMenu->addAction(mExitAct);
+	mEditMenu = new QMenu(tr("&Edit"));
+	menuBar->addMenu(mEditMenu);
+	mEditMenu->addAction(mUndoAct);
+	mEditMenu->addAction(mRedoAct);
+	mEditMenu->setTearOffEnabled(true);
+	mEditMenu->addSeparator();
+	mEditMenu->addAction(mClearUndoListAct);
+	mEditMenu->addSeparator();
+	mEditMenu->addAction(mPreferencesAct);
 
-	editMenu = new QMenu(tr("&Edit"));
-	menuBar->addMenu(editMenu);
-	editMenu->addAction(mUndoAct);
-	editMenu->addAction(mRedoAct);
-	editMenu->setTearOffEnabled(true);
-	editMenu->addSeparator();
-	editMenu->addAction(mClearUndoListAct);
-	editMenu->addSeparator();
-	editMenu->addAction(mPreferencesAct);
-
-	mViewMenu = new QMenu(tr("&View"));
-	mViewMenu->setTearOffEnabled(true);
-	menuBar->addMenu(mViewMenu);
-	mViewMenu->addAction(mPerspViewAct);
+	// mViewMenu = new QMenu(tr("&View"));
+	// mViewMenu->setTearOffEnabled(true);
+	// menuBar->addMenu(mViewMenu);
+	// mViewMenu->addAction(mPerspViewAct);
 	// mViewMenu->addAction(mTopViewAct);
 	// mViewMenu->addAction(mBottomViewAct);
 	// mViewMenu->addAction(mLeftViewAct);
@@ -942,61 +982,76 @@ void MainWindow::createMenus(){
 	// mViewMenu->addAction(mFrontViewAct);
 	// mViewMenu->addAction(mBackViewAct);
 
-	displayMenu = new QMenu(tr("&Display"));
-	displayMenu->setTearOffEnabled(true);
-	menuBar->addMenu(displayMenu);
-	displayMenu->addAction(showVerticesAct);
-
+	mDisplayMenu = new QMenu(tr("&Display"));
+	mDisplayMenu->setTearOffEnabled(true);
+	menuBar->addMenu(mDisplayMenu);
+	//this is now a submenu of Display to make everything on the menu bar more compact
+	mRendererMenu = new QMenu(tr("&Renderer"));
+	mRendererMenu->setTearOffEnabled(true);
+	// menuBar->addMenu(rendererMenu);
+	mDisplayMenu->addMenu(mRendererMenu);
+	mRendererMenu->addAction(wireframeRendererAct);
+	mRendererMenu->addAction(normalRendererAct);
+	mRendererMenu->addAction(lightedRendererAct);
+	mRendererMenu->addAction(texturedRendererAct);
+	// texturedRendererAct->setEnabled(false);
+	mRendererMenu->addAction(texturedLightedAct);
+	// texturedLightedAct->setEnabled(false);
+	mRendererMenu->addSeparator()->setText(tr("Special Mode??"));
+	mRendererMenu->addAction(patchRendererAct);
+	
+	mDisplayMenu->addAction(mPerspViewAct);
+	mDisplayMenu->addAction(showVerticesAct);
+	//ID display submenu
 	mShowIDsMenu = new QMenu(tr("&Show IDs"));
-	displayMenu->addMenu(mShowIDsMenu);
+	mDisplayMenu->addMenu(mShowIDsMenu);
 	mShowIDsMenu->setTearOffEnabled(true);
 	mShowIDsMenu->addAction(mShowFaceIDsAct);
 	mShowIDsMenu->addAction(mShowEdgeIDsAct);
 	mShowIDsMenu->addAction(mShowVertexIDsAct);
 	mShowIDsMenu->addAction(mShowSelectedIDsAct);
-	displayMenu->addAction(showSilhouetteAct);
-	displayMenu->addAction(showWireframeAct);
-	displayMenu->addAction(showCoordinateAxesAct);
-	displayMenu->addAction(showGridAct);
-	displayMenu->addAction(showHUDAct);
-	displayMenu->addAction(mUseGPUAct);
-	displayMenu->addAction(mAntialiasingAct);
-	displayMenu->addAction(objectOrientationAct);
-	displayMenu->addAction(showNormalsAct);
+	//more view options
+	mDisplayMenu->addAction(showSilhouetteAct);
+	mDisplayMenu->addAction(showWireframeAct);
+	mDisplayMenu->addAction(showCoordinateAxesAct);
+	// mDisplayMenu->addAction(showGridAct); //removed for now 
+	mDisplayMenu->addAction(showHUDAct);
+	#ifdef GPU_OK
+	mDisplayMenu->addAction(mUseGPUAct);
+	#endif
+	mDisplayMenu->addAction(mAntialiasingAct);
+	mDisplayMenu->addAction(objectOrientationAct);
+	mDisplayMenu->addAction(mShowNormalsAct);
+	mDisplayMenu->addAction(mShowFaceCentroidsAct);
+	mDisplayMenu->addAction(mFullscreenAct);
 
-#ifdef WITH_PYTHON
-	displayMenu->addAction(mShowScriptEditorAct);
-#endif
+	mPrimitivesMenu = new QMenu(tr("&Primitives"));
+	mPrimitivesMenu->setTearOffEnabled(true);
+	menuBar->addMenu(mPrimitivesMenu);
+	mPrimitivesMenu->addAction(pCubeAct);
+	mPrimitivesMenu->addAction(pOctahedronAct);
+	mPrimitivesMenu->addAction(pTetrahedronAct);
+	mPrimitivesMenu->addAction(pDodecahedronAct);
+	mPrimitivesMenu->addAction(pIcosahedronAct);
+	mPrimitivesMenu->addAction(pSoccerBallAct);
+	mPrimitivesMenu->addAction(pGeodesicAct);
 
-#ifdef WITH_VERSE
-	displayMenu->addAction(mShowVerseDialogAct);
-#endif
-
-	displayMenu->addAction(mFullscreenAct);
-
-	rendererMenu = new QMenu(tr("&Renderer"));
-	rendererMenu->setTearOffEnabled(true);
-	menuBar->addMenu(rendererMenu);
-	rendererMenu->addAction(wireframeRendererAct);
-	rendererMenu->addAction(normalRendererAct);
-	rendererMenu->addAction(lightedRendererAct);
-	rendererMenu->addAction(texturedRendererAct);
-	// texturedRendererAct->setEnabled(false);
-	rendererMenu->addAction(texturedLightedAct);
-	// texturedLightedAct->setEnabled(false);
-	rendererMenu->addSeparator()->setText(tr("Special Mode??"));
-	rendererMenu->addAction(patchRendererAct);
-
-	primitivesMenu = new QMenu(tr("&Primitives"));
-	primitivesMenu->setTearOffEnabled(true);
-	menuBar->addMenu(primitivesMenu);
-	primitivesMenu->addAction(pCubeAct);
-	primitivesMenu->addAction(pOctahedronAct);
-	primitivesMenu->addAction(pTetrahedronAct);
-	primitivesMenu->addAction(pDodecahedronAct);
-	primitivesMenu->addAction(pIcosahedronAct);
-	primitivesMenu->addAction(pSoccerBallAct);
-	primitivesMenu->addAction(pGeodesicAct);
+	mSelectionMenu = new QMenu(tr("&Selection"));
+	menuBar->addMenu(mSelectionMenu);
+	mSelectionMenu->addAction(selectVertexAct);
+	mSelectionMenu->addAction(editVertexAct);
+	mSelectionMenu->addAction(selectFaceAct);
+	mSelectionMenu->addAction(selectFaceLoopAct);
+	mSelectionMenu->addAction(selectMultipleFacesAct);
+	mSelectionMenu->addAction(selectSimilarFacesAct);
+	mSelectionMenu->addAction(selectCheckerboardFacesAct);
+	mSelectionMenu->addAction(selectAllAct);
+	mSelectionMenu->addAction(selectInverseFacesAct);
+	mSelectionMenu->addAction(selectEdgeAct);
+	mSelectionMenu->addAction(selectEdgeLoopAct);
+	mSelectionMenu->addAction(selectCornerAct);
+	mSelectionMenu->addAction(exitSelectionModeAct);
+	mSelectionMenu->addAction(clearSelectedModeAct);
 
 	mToolsMenu = new QMenu(tr("&Tools"));
 	mToolsMenu->setTearOffEnabled(true);
@@ -1013,42 +1068,36 @@ void MainWindow::createMenus(){
 	mRemeshingMenu->setTearOffEnabled(true);
 	menuBar->addMenu(mRemeshingMenu);		
 
-	objectMenu = new QMenu(tr("&Object"));
-	objectMenu->setTearOffEnabled(true);
-	menuBar->addMenu(objectMenu);
-	objectMenu->addAction(subdivideAllEdgesAct);
-	objectMenu->addAction(planarizeAllFacesAct);
-	objectMenu->addAction(makeObjectSphericalAct);
-	objectMenu->addAction(makeObjectSmoothAct);
-	objectMenu->addAction(createCrustAct);
-	objectMenu->addAction(computeLightingAct);
-	objectMenu->addAction(computeNormalsAndLightingAct);
-	objectMenu->addAction(assignTextureCoordinatesAct);
-
-	selectionMenu = new QMenu(tr("&Selection"));
-	menuBar->addMenu(selectionMenu);
-	selectionMenu->addAction(selectVertexAct);
-	selectionMenu->addAction(editVertexAct);
-	selectionMenu->addAction(selectFaceAct);
-	selectionMenu->addAction(selectFaceLoopAct);
-	selectionMenu->addAction(selectMultipleFacesAct);
-	selectionMenu->addAction(selectSimilarFacesAct);
-	selectionMenu->addAction(selectCheckerboardFacesAct);
-	selectionMenu->addAction(selectAllAct);
-	selectionMenu->addAction(selectInverseFacesAct);
-	selectionMenu->addAction(selectEdgeAct);
-	selectionMenu->addAction(selectEdgeLoopAct);
-	selectionMenu->addAction(selectCornerAct);
-	selectionMenu->addAction(exitSelectionModeAct);
-	selectionMenu->addAction(clearSelectedModeAct);
+	mObjectMenu = new QMenu(tr("&Object"));
+	mObjectMenu->setTearOffEnabled(true);
+	mToolsMenu->addMenu(mObjectMenu);
+	mObjectMenu->addAction(subdivideAllEdgesAct);
+	mObjectMenu->addAction(planarizeAllFacesAct);
+	mObjectMenu->addAction(makeObjectSphericalAct);
+	mObjectMenu->addAction(makeObjectSmoothAct);
+	mObjectMenu->addAction(createCrustAct);
+	mObjectMenu->addAction(computeLightingAct);
+	mObjectMenu->addAction(computeNormalsAndLightingAct);
+	mObjectMenu->addAction(assignTextureCoordinatesAct);
 
 	//selection Masks (vertices / edges / faces / face-vertices)
 	mSelectionMaskMenu = new QMenu(tr("Selection &Masks"));
-	selectionMenu->addMenu(mSelectionMaskMenu);
+	mSelectionMenu->addMenu(mSelectionMaskMenu);
 	mSelectionMaskMenu->addAction(mSelectVerticesMaskAct);
 	mSelectionMaskMenu->addAction(mSelectFacesMaskAct);
 	mSelectionMaskMenu->addAction(mSelectEdgesMaskAct);
 	mSelectionMaskMenu->addAction(mSelectFaceVerticesMaskAct);
+
+	mWindowMenu = new QMenu(tr("&Window"));
+	menuBar->addMenu(mWindowMenu);
+	mWindowMenu->addAction(mShowToolOptionsAct);
+	#ifdef WITH_PYTHON
+	mWindowMenu->addAction(mShowScriptEditorAct);
+	#endif
+	mWindowMenu->addAction(mShowAnimatedHelpAct);
+	#ifdef WITH_VERSE
+	mWindowMenu->addAction(mShowVerseDialogAct);
+	#endif
 
 	mHelpMenu = new QMenu(tr("&Help"));
 	menuBar->addMenu(mHelpMenu);
@@ -1056,45 +1105,21 @@ void MainWindow::createMenus(){
 	mHelpMenu->addAction(mAboutAct);
 	mHelpMenu->addAction(mAboutQtAct);
 
-	// settingsMenu = new QMenu(tr("Se&ttings"));
-	// settingsMenu->setTearOffEnabled(true);
-	// menuBar->addMenu(settingsMenu);
-	// settingsMenu->addAction(manageShortcutsAct);
-	// settingsMenu->addAction(mEditStyleSheetAct);
-	// languageMenu = new QMenu(tr("&Language"));
-	// languageMenu->setTearOffEnabled(true);
-	// settingsMenu->addMenu(languageMenu);
-	// languageMenu->addAction(englishAct);
-	// languageMenu->addAction(spanishAct);
-	// languageMenu->addAction(germanAct);
-	// languageMenu->addAction(frenchAct);
-	// languageMenu->addAction(turkishAct);
-	// languageMenu->addAction(catalanAct);
+	// mLanguageMenu = new QMenu(tr("&Language"));
+	// mLanguageMenu->setTearOffEnabled(true);
+	// settingsMenu->addMenu(mLanguageMenu);
+	// mLanguageMenu->addAction(englishAct);
+	// mLanguageMenu->addAction(spanishAct);
+	// mLanguageMenu->addAction(germanAct);
+	// mLanguageMenu->addAction(frenchAct);
+	// mLanguageMenu->addAction(turkishAct);
+	// mLanguageMenu->addAction(catalanAct);
 	
 	mRightClickMenu = new QMenu();
 
 }
 
 void MainWindow::createToolBars() {
-
-	//the main tool options DockWidget
-	mToolOptionsDockWidget = new QDockWidget(tr("Tool Options"),this);
-	mToolOptionsDockWidget->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable /* | QDockWidget::DockWidgetClosable*/);
-	mToolOptionsDockWidget->setAllowedAreas(Qt::TopDockWidgetArea);
-	mToolOptionsStackedWidget = new QStackedWidget();
-	// mToolOptionsDockWidget->setFloating(true);
-	mToolOptionsDockWidget->hide();
-	mToolOptionsDockWidget->setWidget(mToolOptionsStackedWidget);
-
-	mToolOptionsDockWidget->setFloating(false);
-	// mToolOptionsTitleBarLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-	// mToolOptionsTitleBarWidget = new QWidget;
-	// mToolOptionsTitleBarWidget->setLayout(mToolOptionsTitleBarLayout);
-	// mToolOptionsDockWidget->setTitleBarWidget(mToolOptionsTitleBarWidget);
-	// mToolOptionsDockWidget->titleBarWidget()->setContentsMargins(0,0,0,0);
-	// mToolOptionsDockWidget->move(0,22);
-	// mToolOptionsDockWidget->setWindowTitle("Insert Edge Mode");
-	addDockWidget(Qt::TopDockWidgetArea, mToolOptionsDockWidget);
 
 	mEditToolBar = new QToolBar(tr("Edit"));
 	addToolBar(Qt::TopToolBarArea,mEditToolBar);
@@ -1158,7 +1183,7 @@ void MainWindow::createToolBars() {
 
 	mBasicsMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);	
 	mExtrusionMode->addActions(mToolsActionGroup, mExtrusionToolBar, mToolOptionsStackedWidget);
-	mConicalMode->addActions(mToolsActionGroup, mConicalToolBar, mToolOptionsStackedWidget);
+	// mConicalMode->addActions(mToolsActionGroup, mConicalToolBar, mToolOptionsStackedWidget);
 
 	mRemeshingActionGroup = new QActionGroup(this);
 	mRemeshingMode->addActions(mToolsActionGroup, mRemeshingToolBar, mToolOptionsStackedWidget);
@@ -1172,35 +1197,27 @@ void MainWindow::setToolOptions(QWidget *optionsWidget) {
 	mToolOptionsDockWidget->setWindowTitle(optionsWidget->windowTitle());
 	mToolOptionsStackedWidget->setCurrentWidget(optionsWidget);
 	// show or hide the dockwidget options
-	if (optionsWidget->windowTitle() != "" && mToolOptionsDockWidget->isHidden())
-		mToolOptionsDockWidget->show();
-	else if (!mToolOptionsDockWidget->isHidden() && optionsWidget->windowTitle() == "")
-		mToolOptionsDockWidget->hide();
+	// if (optionsWidget->windowTitle() != "" && mToolOptionsDockWidget->isHidden())
+		// mToolOptionsDockWidget->show();
+	// else if (!mToolOptionsDockWidget->isHidden() && optionsWidget->windowTitle() == "")
+		// mToolOptionsDockWidget->hide();
 }
 
 void MainWindow::createStatusBar() {
 	statusBar()->showMessage(tr("Welcome to TopMod"));
 }
 
-void MainWindow::readSettings() {
-	mSettings->beginGroup("MainWindow");
-	QPoint pos = mSettings->value("pos", QPoint(100, 100)).toPoint();
-	QSize size = mSettings->value("size", QSize(800, 600)).toSize();
-	mSettings->endGroup();
+void MainWindow::closeEvent(QCloseEvent *event) {
+//close the help file if it's open... not sure this is necessary
+	if (mAssistantClient)
+		mAssistantClient->closeAssistant();
 
-	resize(size.width(),size.height());
-	move(pos);}
-
-void MainWindow::writeSettings() {
-
-	mSettings->beginGroup("MainWindow");
-	mSettings->setValue("pos", pos());
-	mSettings->setValue("size", size());
-	mSettings->endGroup();
-
-	mSettings->beginGroup("ViewPortColors");
-
-	mSettings->endGroup();
+	mPreferencesDialog->saveSettings();
+	
+	if (maybeSave()) {	
+		event->accept();
+	} 
+	else event->ignore();
 }
 
 bool MainWindow::maybeSave() {
@@ -1229,17 +1246,6 @@ bool MainWindow::saveFile(QString fileName) {
 	this->setCurrentFile(fileName);
 	statusBar()->showMessage(tr("File saved"), 2000);
 	return true;
-}
-
-void MainWindow::closeEvent(QCloseEvent *event) {
-	//close the help file if it's open... not sure this is necessary
-	if (mAssistantClient)
-		mAssistantClient->closeAssistant();
-
-	if (maybeSave()) {
-		writeSettings();
-		event->accept();
-	} else event->ignore();
 }
 
 void MainWindow::openFile(QString fileName){
@@ -1296,29 +1302,6 @@ void MainWindow::openPreferences() {
 	mPreferencesDialog->display();
 }
 
-void MainWindow::showHideScriptEditor(){
-
-#ifdef WITH_PYTHON
-	if( mScriptEditorDockWidget->isVisible( ) )
-		mScriptEditorDockWidget->hide( );
-	else {
-		mScriptEditorDockWidget->show( );
-		mScriptEditorDockWidget->setFocus();
-	}
-#endif
-}
-
-void MainWindow::showHideVerseDialog(){
-#ifdef WITH_VERSE
-	if( mVerseDialogDockWidget->isVisible( ) )
-		mVerseDialogDockWidget->hide( );
-	else {
-		mVerseDialogDockWidget->show( );
-		mVerseDialogDockWidget->setFocus();
-	}
-#endif
-}
-
 #ifdef WITH_VERSE
 void MainWindow::verseConnected(){
 	mVerseMenu->insertAction(mVerseConnectLocalhostAct, mVerseDisconnectAct);
@@ -1335,7 +1318,6 @@ void MainWindow::verseStarted(){
 	mVerseMenu->insertAction(mVerseStartServerAct, mVerseKillServerAct);
 	mVerseMenu->removeAction(mVerseStartServerAct);	
 }
-
 void MainWindow::verseKilled(){
 	mVerseMenu->insertAction(mVerseKillServerAct, mVerseStartServerAct);
 	mVerseMenu->removeAction(mVerseKillServerAct);		
@@ -1344,24 +1326,23 @@ void MainWindow::verseKilled(){
 
 void MainWindow::createRenderers(){
 	wired = new WireframeRenderer();
-	wired->setRenderFlags(DLFLRenderer::ShowWireframe);
+	// wired->setRenderFlags(DLFLRenderer::ShowWireframe);
 
 	normal = new NormalRenderer();
-	normal->setRenderFlags(DLFLRenderer::ShowWireframe);
+	// normal->setRenderFlags(DLFLRenderer::ShowWireframe);
 
 	lit = new LitRenderer();
-	lit->setRenderFlags(DLFLRenderer::ShowWireframe);
+	// lit->setRenderFlags(DLFLRenderer::ShowWireframe);
 
 	textured = new TexturedRenderer();
-	textured->setRenderFlags(DLFLRenderer::ShowWireframe);
+	// textured->setRenderFlags(DLFLRenderer::ShowWireframe);
 
 	texturedlit = new TexturedLitRenderer();
-	texturedlit->setRenderFlags(DLFLRenderer::ShowWireframe);
+	// texturedlit->setRenderFlags(DLFLRenderer::ShowWireframe);
 
 	patch = new PatchRenderer();
-	patch->setRenderFlags(DLFLRenderer::ShowWireframe);
+	// patch->setRenderFlags(DLFLRenderer::ShowWireframe);
 }
-
 void MainWindow::destroyRenderers(){
 	delete wired;
 	delete normal;
@@ -1370,24 +1351,6 @@ void MainWindow::destroyRenderers(){
 	delete texturedlit;
 	delete patch;
 };
-
-// void MainWindow::setWarmLightColor(QColor c){
-// 	plight.warmcolor.set(c.redF(),c.greenF(),c.blueF());
-// 	recomputeLighting();
-// 	redraw();
-// }
-// 
-// void MainWindow::setCoolLightColor(QColor c){
-// 	plight.coolcolor.set(c.redF(),c.greenF(),c.blueF());
-// 	recomputeLighting();
-// 	redraw();
-// }
-// 
-// void MainWindow::setLightIntensity(double i){
-// 	plight.intensity = i;
-// 	recomputeLighting();
-// 	redraw();
-// }
 
 void MainWindow::setUndoLimit(int limit) {
 	undolimit = limit;
@@ -1779,6 +1742,8 @@ void MainWindow::mousePressEvent(QMouseEvent *event) {
 void MainWindow::getRightClickMenu(){
 	mRightClickMenu->clear();
 	//add generic items for now to test it out
+	
+	//face stuff
 	mRightClickMenu->addAction(selectFaceLoopAct);
 	mRightClickMenu->addAction(selectMultipleFacesAct);
 	mRightClickMenu->addAction(selectSimilarFacesAct);
@@ -2647,11 +2612,6 @@ void MainWindow::setRenderer(DLFLRendererPtr rp) {
 	active->setRenderer(rp);
 }
 
-// // Override show() method to show subwindows also
-// void MainWindow::show(void) {
-// 	active->show();
-// }
-
 // Return pointer to the active GLWidget
 GLWidget *MainWindow::getActive() {
 	return active;
@@ -2667,6 +2627,8 @@ void MainWindow::redraw() {
 // Switch to specified operating mode
 void MainWindow::setMode(Mode m) {
 	mode = m;
+	active->setMode("Testing testing...");
+	
 	switch ( mode )	{
 		// case BezierMode: // brianb
 		//       object.bezierDefaults();
@@ -3126,32 +3088,32 @@ void MainWindow::switchPerspView(){
 }
 
 void MainWindow::switchTopView(){
-	active->switchTo(VPTop);
+	// active->switchTo(VPTop);
 	active->redraw();
 }
 
 void MainWindow::switchBottomView(){
-	active->switchTo(VPBottom);
+	// active->switchTo(VPBottom);
 	active->redraw();
 }
 
 void MainWindow::switchRightView(){
-	active->switchTo(VPRight);
+	// active->switchTo(VPRight);
 	active->redraw();
 }
 
 void MainWindow::switchLeftView(){
-	active->switchTo(VPLeft);
+	// active->switchTo(VPLeft);
 	active->redraw();
 }
 
 void MainWindow::switchFrontView(){
-	active->switchTo(VPFront);
+	// active->switchTo(VPFront);
 	active->redraw();
 }
 
 void MainWindow::switchBackView(){
-	active->switchTo(VPBack);
+	// active->switchTo(VPBack);
 	active->redraw();
 }
 
