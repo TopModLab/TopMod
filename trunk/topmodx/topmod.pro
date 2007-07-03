@@ -5,7 +5,7 @@ CONFIG += qt debug warn_off assistant link_prl
 # exclude verse python or spacenav drivers
 # or include them with CONFIG += 
 CONFIG -=  WITH_PYTHON WITH_SPACENAV WITH_VERSE
-# CONFIG += WITH_PYTHON 
+CONFIG += WITH_PYTHON 
 DEFINES += TOPMOD_VERSION GPU_OK
 
 TEMPLATE = app
@@ -72,7 +72,7 @@ macx {
 	#QMAKE_LFLAGS += -F./lib	
 	#LIBS += -framework vecmat -framework arcball -framework dlflcore -framework dlflaux
 	QMAKE_LFLAGS += -L./lib
-	LIBS += -lvecmat -larcball -ldlflcore -ldlflaux
+	LIBS += -lvecmat -larcball -ldlflcore -ldlflaux -framework CoreFoundation
 
 	#PRIVATE_FRAMEWORKS.files = ./lib/vecmat.framework ./lib/arcball.framework ./lib/dlflcore.framework ./lib/dlflaux.framework
 	#PRIVATE_FRAMEWORKS.path = Contents/Frameworks

@@ -312,7 +312,9 @@ class Viewport {
 			case VPNone :
 			default : break;
 		}
-		transform.apply();
+		///	transform.apply();
+		transform.fillArrayColumnMajor(mat);
+		glMultMatrixd(mat);
 		// transform.invert();
 		// transform.apply();
 		camera.setPos(inverse(transform.matrix())*camera.getEye());

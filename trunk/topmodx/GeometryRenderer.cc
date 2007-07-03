@@ -13,12 +13,18 @@
 		\see GeometryRenderer
 */
 
+static void transform( DLFLObjectPtr obj ) {
+	double mat[16];
+	obj->tr.fillArrayColumnMajor(mat);
+	glMultMatrixd(mat);
+}
+
 void GeometryRenderer::render( DLFLObjectPtr obj ) const {
 	// std::cout << "usegpu  = " << useGPU << "\n";
 	DLFLMaterialPtrList::iterator mp_it;
 	DLFLFacePtrList::iterator fp_it;
 	glPushMatrix( ); {
-		obj->transform( );
+		transform( obj );
 		for( mp_it = obj->beginMaterial(); mp_it != obj->endMaterial(); mp_it++ ) {
 			DLFLMaterialPtr mat = *mp_it;
 			for( fp_it = mat->faces.begin(); fp_it != mat->faces.end(); fp_it++ ) {
@@ -102,7 +108,7 @@ void GeometryRenderer::renderVertices( DLFLObjectPtr obj, double size ) const {
 	DLFLEdgePtrList::iterator it;
 // Just render all the vertices with specified point size
 	glPushMatrix(); {
-		obj->transform();
+		transform( obj );
 		glPointSize( size );
 		glBegin(GL_POINTS);
 		for( it = obj->beginEdge(); it != obj->endEdge(); it++ ) {
@@ -117,7 +123,7 @@ void GeometryRenderer::renderEdges( DLFLObjectPtr obj, double width ) const {
 	DLFLEdgePtrList::iterator it;
 // Just render all the edges with specified line width
 	glPushMatrix(); {
-		obj->transform();
+		transform( obj );
 		glLineWidth( width );
 		glBegin(GL_LINES);
 		for( it = obj->beginEdge(); it != obj->endEdge(); it++ ) {
@@ -149,7 +155,7 @@ void GeometryRenderer::renderEdges( DLFLObjectPtr obj, double width ) const {
 void GeometryRenderer::renderFaceCentroids( DLFLObjectPtr obj, double size ) const {
 	DLFLFacePtrList::iterator it;
 	glPushMatrix(); {
-		obj->transform();
+		transform( obj );
 		glPointSize( size );
 		glBegin(GL_POINTS);
 		for( it = obj->beginFace(); it != obj->endFace(); it++ ) {
@@ -165,7 +171,7 @@ void GeometryRenderer::renderFaceCentroids( DLFLObjectPtr obj, double size ) con
 void GeometryRenderer::renderFaceNormals( DLFLObjectPtr obj, double width, double length ) const {
 	DLFLFacePtrList::iterator it;
 	glPushMatrix(); {
-		obj->transform();
+		transform( obj );
 		glLineWidth( width );
 		glBegin(GL_LINES);
 		for( it = obj->beginFace(); it != obj->endFace(); it++ ) {

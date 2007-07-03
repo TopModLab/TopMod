@@ -110,10 +110,7 @@ namespace DLFL {
 	 ************************/
 
 	uint* createVertex( double x, double y, double z, DLFLObjectPtr &obj, bool set_type = false );
-	DLFLFaceVertexPtr createVertex( Vector3d pos, DLFLObjectPtr &obj, bool set_type = false );
-
-	void removeVertex( const DLFLObjectPtr &obj, uint vertId );
-	void removeVertex( const DLFLObjectPtr &obj, DLFLVertexPtr vert );
+	void removeVertex( const DLFLObjectPtr &obj, uint vertId, uint faceId );
 
 } // end namespace DLFL
 

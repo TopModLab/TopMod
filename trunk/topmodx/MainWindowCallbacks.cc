@@ -573,6 +573,8 @@ void MainWindow::subdivideCatmullClark(void)     // Catmull-Clark subdivision
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	QString cmd( "subdivide(\"catmull-clark\")");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subdivideDooSabin(void)             // Doo-Sabin subdivision
@@ -582,6 +584,12 @@ void MainWindow::subdivideDooSabin(void)             // Doo-Sabin subdivision
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	QString cmd( "subdivide(\"doo-sabin\",");
+	QString check("False");
+	if( doo_sabin_check )
+		check = QString("True");
+	cmd += check + QString(")");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subdivideHoneycomb(void)            // Honeycomb subdivision
@@ -591,6 +599,9 @@ void MainWindow::subdivideHoneycomb(void)            // Honeycomb subdivision
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+
+	QString cmd("subdivide(\"honeycomb\")");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subdivideRoot4(void)                   // Root-4 subdivision
@@ -600,6 +611,10 @@ void MainWindow::subdivideRoot4(void)                   // Root-4 subdivision
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	QString cmd( "subdivide(\"root4\",");
+	cmd += QString().setNum(MainWindow::weight_factor) + QString(",");
+	cmd += QString().setNum(MainWindow::twist_factor) + QString(")");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subdivideCornerCutting(void)   // Corner-cutting subdivision
@@ -609,6 +624,8 @@ void MainWindow::subdivideCornerCutting(void)   // Corner-cutting subdivision
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	QString cmd("subdivide(\"corner-cut\")");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subdivideLinearVertexInsertion(void) // Bi-linear Vertex-insertion remeshing
@@ -618,6 +635,8 @@ void MainWindow::subdivideLinearVertexInsertion(void) // Bi-linear Vertex-insert
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	QString cmd("subdivide(\"linear-vertex\",True)");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subdivideSimplest(void)        // Corner-cutting subdivision
@@ -627,6 +646,8 @@ void MainWindow::subdivideSimplest(void)        // Corner-cutting subdivision
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	QString cmd("subdivide(\"simplest\")");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subdivideVertexCutting(void)   // Vertex-cutting subdivision
@@ -636,6 +657,11 @@ void MainWindow::subdivideVertexCutting(void)   // Vertex-cutting subdivision
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+
+	QString cmd = QString("subdivide(\"vertex-cut\"," )
+		+ QString().setNum(MainWindow::vertex_cutting_offset)
+		+ QString(")");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subdividePentagonal(void)          // Pentagonal subdivision
@@ -645,6 +671,9 @@ void MainWindow::subdividePentagonal(void)          // Pentagonal subdivision
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	QString cmd( "subdivide(\"pentagon\",");
+	cmd += QString().setNum(MainWindow::pentagonal_offset) + QString(")");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subdivideCubicPentagonal(void) // Cubic Pentagonal remeshing scheme
@@ -657,6 +686,10 @@ void MainWindow::subdivideCubicPentagonal(void) // Cubic Pentagonal remeshing sc
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	QString cmd( "subdivide(\"pentagon\",");
+	cmd += QString().setNum(MainWindow::pentagonal_offset) + QString(")");
+	cmd += QString("\ndual()\ndual()");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subdivideDualPentagonal(void) // Dual-Pentagonal subdivision
@@ -669,6 +702,10 @@ void MainWindow::subdivideDualPentagonal(void) // Dual-Pentagonal subdivision
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	QString cmd( "dual()\nsubdivide(\"pentagon\",");
+	cmd += QString().setNum(MainWindow::pentagonal_offset) + QString(")");
+	cmd += QString("\ndual()");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subdividePentagonPreserving(void) // Pentagon preserving remeshing
@@ -678,6 +715,9 @@ void MainWindow::subdividePentagonPreserving(void) // Pentagon preserving remesh
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	QString cmd( "subdivide(\"pentagon-preserve\",");
+	cmd += QString().setNum(MainWindow::pentagonal_scale) + QString(")");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subdivideDualPentagonPreserving(void) // Dual Pentagon preserving remeshing
@@ -690,6 +730,10 @@ void MainWindow::subdivideDualPentagonPreserving(void) // Dual Pentagon preservi
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	QString cmd( "dual()\nsubdivide(\"pentagon-preserve\",");
+	cmd += QString().setNum(MainWindow::pentagonal_scale) + QString(")");
+	cmd += QString("\ndual()");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subdivideDualHexagonPreserving(void) // Dual Hexagon Preserving remeshing
@@ -702,6 +746,11 @@ void MainWindow::subdivideDualHexagonPreserving(void) // Dual Hexagon Preserving
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	QString cmd( "dual()\nsubdivide(\"root4\",");
+	cmd += QString().setNum(MainWindow::weight_factor) + QString(",");
+	cmd += QString().setNum(MainWindow::twist_factor) + QString(")");
+	cmd += QString("\ndual()");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subdivideRoot3(void)                     // Root-3 remeshing
@@ -714,6 +763,11 @@ void MainWindow::subdivideRoot3(void)                     // Root-3 remeshing
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+
+	QString cmd = QString("dual()\n");
+	cmd += QString("subdivide(\"honeycomb\")\n");
+	cmd += QString("dual()");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subdivideLoop(void)                      // Loop subdivision
@@ -723,6 +777,9 @@ void MainWindow::subdivideLoop(void)                      // Loop subdivision
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+
+	QString cmd("subdivide(\"loop\")\n");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subdivideDualLoop(void)          // Dual of Loop subdivision
@@ -735,6 +792,11 @@ void MainWindow::subdivideDualLoop(void)          // Dual of Loop subdivision
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+
+	QString cmd = QString("dual()\n");
+	cmd += QString("subdivide(\"loop\")\n");
+	cmd += QString("dual()");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subdivide1264(void)                      // 12-6-4 remeshing
@@ -747,6 +809,13 @@ void MainWindow::subdivide1264(void)                      // 12-6-4 remeshing
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+
+	QString cmd = QString("dual()\ndual()\n");
+	cmd += QString("subdivide(\"dual-12.6.4\",")
+		+ QString().setNum(MainWindow::dual1264_scale_factor) 
+		+ QString(")\n");
+	cmd += QString("dual()");
+	emit echoCommand(cmd);
 }
 
 void MainWindow::subdivideDual1264(void) // Dual of 12-6-4 remeshing - Bei & Cansin
@@ -756,6 +825,11 @@ void MainWindow::subdivideDual1264(void) // Dual of 12-6-4 remeshing - Bei & Can
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+
+	QString cmd("subdivide(\"dual-12.6.4\",");
+	cmd += QString().setNum(MainWindow::dual1264_scale_factor);
+	cmd += QString(")");
+	emit echoCommand(cmd);
 }
 
 void MainWindow::subdivideCheckerBoard(void)       // Checker board remeshing
@@ -765,6 +839,10 @@ void MainWindow::subdivideCheckerBoard(void)       // Checker board remeshing
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	QString cmd("subdivide(\"checker\",");
+	cmd += QString().setNum(MainWindow::checkerboard_thickness);
+	cmd += QString(")");
+	emit echoCommand(cmd);
 }
 
 void MainWindow::subdivideDualCheckerBoard(void) // Dual Checker board remeshing
@@ -778,6 +856,10 @@ void MainWindow::subdivideDualCheckerBoard(void) // Dual Checker board remeshing
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	QString cmd("dual()\nsubdivide(\"checker\",");
+	cmd += QString().setNum(MainWindow::checkerboard_thickness);
+	cmd += QString(")\ndual()");
+	emit echoCommand(cmd);
 }
 
 void MainWindow::subdivideStar(void)               // Star subdivision - Doug
@@ -788,6 +870,9 @@ void MainWindow::subdivideStar(void)               // Star subdivision - Doug
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+
+	QString cmd = QString("subdivide(\"star\")");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subdivideSqrt3(void)           // sqrt(3) subdivision - Doug
@@ -798,6 +883,9 @@ void MainWindow::subdivideSqrt3(void)           // sqrt(3) subdivision - Doug
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+
+	QString cmd = QString("subdivide(\"sqrt3\")");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subdivideFractal(void)                     // fractal - Doug
@@ -808,6 +896,11 @@ void MainWindow::subdivideFractal(void)                     // fractal - Doug
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+
+	QString cmd("subdivide(\"fractal\",");
+	cmd += QString().setNum(MainWindow::fractal_offset);
+	cmd += QString(")");
+	emit echoCommand(cmd);
 }
 
 void MainWindow::subStellate1(void)            // stellate subdivision - Eric
@@ -818,6 +911,9 @@ void MainWindow::subStellate1(void)            // stellate subdivision - Eric
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+
+	QString cmd = QString("subdivide(\"stellate\")");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subStellate2(void)            // stellate subdivision - Eric
@@ -828,6 +924,11 @@ void MainWindow::subStellate2(void)            // stellate subdivision - Eric
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+
+	QString cmd = QString("subdivide(\"double-stellate\",");
+	cmd += QString().setNum(MainWindow::substellate_height) + QString(",");
+	cmd += QString().setNum(MainWindow::substellate_curve) + QString(")");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subdivideDome(void)                          // Bei & Cansin
@@ -838,6 +939,11 @@ void MainWindow::subdivideDome(void)                          // Bei & Cansin
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+
+	QString cmd = QString("subdivide(\"dome\",");
+	cmd += QString().setNum(MainWindow::substellate_height) + QString(",");
+	cmd += QString().setNum(MainWindow::substellate_curve) + QString(")");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subdivideDooSabinBC(void) // Doo-Sabin(BC) subdivision - Bei & Cansin
@@ -848,6 +954,12 @@ void MainWindow::subdivideDooSabinBC(void) // Doo-Sabin(BC) subdivision - Bei & 
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	QString check("False");
+	if(MainWindow::doo_sabin_check)
+		check = QString("True");
+	QString cmd = QString("subdivide(\"doo-sabin-bc\",");
+	cmd += check + QString(")");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subdivideDooSabinBCNew(void) // Doo-Sabin(BCNew) Bei & Cansin
@@ -859,6 +971,10 @@ void MainWindow::subdivideDooSabinBCNew(void) // Doo-Sabin(BCNew) Bei & Cansin
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	QString cmd = QString("subdivide(\"doo-sabin-bc-new\",");
+	cmd += QString().setNum(MainWindow::dooSabinBCnewScale_factor) + QString(",");
+	cmd += QString().setNum(MainWindow::dooSabinBCnewLength_factor) + QString(")");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::subdivideLoopStyle(void)     // Loop-style subdivision - Bei
@@ -869,6 +985,9 @@ void MainWindow::subdivideLoopStyle(void)     // Loop-style subdivision - Bei
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	QString cmd = QString("subdivide(\"loop-style\",");
+	cmd += QString().setNum(MainWindow::loopLength_factor) + QString(")");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::globalStellate(void)
@@ -880,6 +999,9 @@ void MainWindow::globalStellate(void)
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+
+	QString cmd = QString("subdivide(\"globalStellate\",False)");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::splitValence2Vertices(void)      // Split Valence 2 vertices
@@ -910,6 +1032,9 @@ void MainWindow::createDual(void)                       // Create dual object
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+
+	QString cmd = QString("dual()");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::createCrust(bool use_scaling)        // Create a crust

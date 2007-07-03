@@ -53,11 +53,12 @@ protected :
     return temp;
   };
 
-  static Transformation tr;                         // For doing GL transformations
-
 public :
+ 
+	static Transformation tr;                         // For doing GL transformations
 
   DLFLVertexPtrArray sel_vptr_array; // List of selected DLFLVertex pointers
+
   DLFLEdgePtrArray sel_eptr_array; // List of selected DLFLEdge pointers
   DLFLFacePtrArray sel_fptr_array; // List of selected DLFLFace pointers
   DLFLFaceVertexPtrArray sel_fvptr_array; // List of selected DLFLFaceVertex pointers
@@ -462,6 +463,7 @@ public :
   DLFLFacePtrArray createFace(const Vector3dArray& verts, DLFLMaterialPtr matl = NULL, bool set_type = false);
 
   DLFLFaceVertexPtr createPointSphere(const Vector3d& v, DLFLMaterialPtr matl = NULL );
+	void removePointSphere( DLFLFaceVertexPtr fvp );
 
   // Compute the bounding box for this object
   void boundingBox(Vector3d& min, Vector3d& max) const;

@@ -5,6 +5,7 @@
 #include <DLFLSubdiv.hh>
 #include <DLFLDual.hh>
 #include <DLFLConnect.hh>
+#include <DLFLCrust.hh>
 
 typedef DLFL::DLFLFaceVertex Corner;
 typedef DLFL::DLFLFaceVertexPtr CornerPtr;
@@ -61,14 +62,15 @@ static PyObject *dlfl_subdivide(PyObject *self, PyObject *args);
 static PyObject *dlfl_subdiv_face(PyObject *self, PyObject *args);
 static PyObject *dlfl_dual(PyObject *self, PyObject *args);
 static PyObject *dlfl_connectEdges(PyObject *self, PyObject *args);
-//static PyObject *dlfl_connectFaces(PyObject *self, PyObject *args);
-static PyObject *dlfl_addhandle(PyObject *self, PyObject *args);
+static PyObject *dlfl_connectCorners(PyObject *self, PyObject *args);
+static PyObject *dlfl_connectFaces(PyObject *self, PyObject *args);
+static PyObject *dlfl_addHandle(PyObject *self, PyObject *args);
 static PyObject *dlfl_rindmodel(PyObject *self, PyObject *args);
 static PyObject *dlfl_wireframe(PyObject *self, PyObject *args);
 static PyObject *dlfl_column(PyObject *self, PyObject *args);
-static PyObject *dlfl_sierpinsky(PyObject *self, PyObject *args);
-static PyObject *dlfl_multiface(PyObject *self, PyObject *args);
-static PyObject *dlfl_menger(PyObject *self, PyObject *args);
+//static PyObject *dlfl_sierpinsky(PyObject *self, PyObject *args);
+//static PyObject *dlfl_multiface(PyObject *self, PyObject *args);
+//static PyObject *dlfl_menger(PyObject *self, PyObject *args);
 
 /* Transform */
 static PyObject *dlfl_translate(PyObject *self, PyObject *args);
@@ -118,14 +120,15 @@ static PyMethodDef DLFLMethods[] = {
   {"subdivFace",     dlfl_subdiv_face,    METH_VARARGS, "Subdivide a Face"},
   {"dual",           dlfl_dual,           METH_VARARGS, "Dual of mesh"},
   {"connectEdges",   dlfl_connectEdges,   METH_VARARGS, "Connect an edge on one face with another"},
-  /*{"connectFaces",   dlfl_connectFaces,   METH_VARARGS, "Connect two faces"},*/
-	{"addHandle",      dlfl_addhandle,      METH_VARARGS, "Make a handle between two corners"},
+  {"connectCorners", dlfl_connectCorners, METH_VARARGS, "Connect two corners (i.e. Add Hole/Handle)"},
+  {"connectFaces",   dlfl_connectFaces,   METH_VARARGS, "Connect two faces (i.e. Add Hole/Handle Closest Vertex)"},
+  {"addHandle",      dlfl_addHandle,      METH_VARARGS, "Connect two faces (i.e. Add Hole/Handle Shape Interpolation). Choose either \"hermite\" or \"bezier\""},
 	{"rind",           dlfl_rindmodel,      METH_VARARGS, "Rind modeling. Given a set of faces, create a crust"},
-	{"wireframe",      dlfl_wireframe,      METH_VARARGS, ""},
-	{"column",         dlfl_column,         METH_VARARGS, ""},
-	{"sierpinsky",     dlfl_sierpinsky,     METH_VARARGS, ""},
+	{"wireframe",      dlfl_wireframe,      METH_VARARGS, "Creates a wireframe of the mesh"},
+	{"column",         dlfl_column,         METH_VARARGS, "Creates a wireframe of the mesh via column modeling"},
+	/*	{"sierpinsky",     dlfl_sierpinsky,     METH_VARARGS, ""},
 	{"multiface",      dlfl_multiface,      METH_VARARGS, ""},
-	{"menger",         dlfl_menger,         METH_VARARGS, ""},
+	{"menger",         dlfl_menger,         METH_VARARGS, ""},*/
 	/* Transform */
   {"translate",      dlfl_translate,      METH_VARARGS, "Translate Object"},
   {"scale",          dlfl_scale,          METH_VARARGS, "Scale Object"},
@@ -344,10 +347,10 @@ static PyObject *dlfl_create_vertex(PyObject *self, PyObject *args) {
 }
 
 static PyObject *dlfl_remove_vertex(PyObject *self, PyObject *args) {
-	uint vid;
-	if( !PyArg_ParseTuple(args, "i", &vid) )
+	uint vid, fid;
+	if( !PyArg_ParseTuple(args, "(ii)", &vid, &fid) )
 		return NULL;
-	DLFL::removeVertex( currObj, vid );
+	DLFL::removeVertex( currObj, vid, fid );
 
   Py_INCREF(Py_None);
   return Py_None;
@@ -1016,33 +1019,34 @@ dlfl_subdivide(PyObject *self, PyObject *args) {
 
   int choiceSize = 22;
   const char* choices[] = { "loop",
-			    "checker",
-			    "simplest",
-			    "vertex-cut",
-			    "pentagon",
-			    "dual-pentagon",
-			    "honeycomb",
-			    "doo-sabin",
-			    "doo-sabin-bc",
-			    "doo-sabin-bc-new",
-			    "corner-cut",
-			    "modified-corner-cut",
-			    "root4",
-			    "catmull-clark",
-			    "star",
-			    "sqrt3",
-			    "fractal",
-			    "stellate",
-			    "double-stellate",
-			    "dome",
-			    "dual-12.6.4",
-			    "linear-vertex"};
+														"checker",
+														"simplest",
+														"vertex-cut",
+														"pentagon",
+														"pentagon-preserve",
+														"honeycomb",
+														"doo-sabin",
+														"doo-sabin-bc",
+														"doo-sabin-bc-new",
+														"corner-cut",
+														"modified-corner-cut",
+														"root4",
+														"catmull-clark",
+														"star",
+														"sqrt3",
+														"fractal",
+														"stellate",
+														"double-stellate",
+														"dome",
+														"dual-12.6.4",
+														"loop-style",
+														"linear-vertex"};
 
   char* subdivType;
   int size;
   double attrb1 = 0, attrb2 = 0; 
   bool battrb1 = false, battrb2 = false; 
-  int argc = PyArg_ParseTuple(args, "s#|dd", &subdivType, &size, &attrb1, &attrb2 );
+  int argc = PyArg_ParseTuple(args, "s#|ddbb", &subdivType, &size, &attrb1, &attrb2 );
   if( !argc )
     return NULL;
   if( argc >= 3 )
@@ -1197,85 +1201,155 @@ static PyObject *dlfl_connectEdges(PyObject *self, PyObject *args) {
 	return Py_None;
 }
 
-static PyObject *dlfl_addhandle(PyObject *self, PyObject *args) {
-	char *type;
-	int size;
-	if( !PyArg_ParseTuple( args, "s#", type, &size ) )
+static PyObject *dlfl_connectCorners(PyObject *self, PyObject *args) {
+	int v1, v2;
+	int f1, f2;
+	int numsegs = 1;
+	int maxconn = -1;
+
+	DLFL::DLFLFacePtr fp1, fp2;
+	DLFL::DLFLFaceVertexPtr fvp1, fvp2;
+	char* dual = 0; int size;
+
+	if( !PyArg_ParseTuple( args, "(ii)(ii)|iis#", &f1, &v1, &f2, &v2, &numsegs, &maxconn, dual, &size) )
 		return NULL;
 
-	int choice=-1;
-	char* opts [] = { "normal" , "cv", "hermite", "bezier" };
-	for( int i = 0; i < 4; i++ ) {
-		if( strncmp( type, opts[i], size) == 0 ) {
-			choice = i;
-			break;
+	if( currObj ) {
+		fp1 = currObj->findFace(f1);
+		fvp1 = fp1->findFaceVertex(v1);
+		fp2 = currObj->findFace(f2);
+		fvp2 = fp2->findFaceVertex(v2);
+
+		if( dual && strncmp( dual, "dual", size) == 0 ) {
+			DLFL::dualConnectFaces( currObj, fvp1, fvp2 );
+		} else {
+			DLFL::connectFaces( currObj, fvp1, fvp2, numsegs, maxconn);
 		}
 	}
 
-	if( choice == -1 ) choice = 0;
+	Py_INCREF( Py_None );
+	return Py_None;
+}
 
-	int v1, v2;
+static PyObject *dlfl_connectFaces(PyObject *self, PyObject *args) {
 	int f1, f2;
-	int numsegs, maxconn, numtwists;
-	double wt1, wt2;
+	int numsegs = 1;
+
+	DLFL::DLFLFacePtr fp1, fp2;
+
+	if( !PyArg_ParseTuple( args, "sii|i", &f1, &f2, &numsegs ) )
+		return NULL;
+
+	if( currObj ) {
+		fp1 = currObj->findFace(f1);
+		fp2 = currObj->findFace(f2);
+		DLFL::connectFaces( currObj, fp1, fp2, numsegs );
+	}
+
+	Py_INCREF( Py_None );
+	return Py_None;
+}
+
+static PyObject *dlfl_addHandle(PyObject *self, PyObject *args) {
+	char *type;
+	int size;
+	int f1, f2, v1, v2;
+	int numsegs, maxconn=-1, numtwists=0;
+	double wt1, wt2; // weights
 
 	DLFL::DLFLFacePtr fp1, fp2;
 	DLFL::DLFLFaceVertexPtr fvp1, fvp2;
 
-	switch( choice ) {
-	case 0:
-		if( !PyArg_ParseTuple( args, "s(ii)ii", &f1, &v1, &f2, &v2, &numsegs, &maxconn) )
-			return NULL;
-		fp1 = currObj->findFace(f1);
-		fvp1 = fp1->findFaceVertex(v1);
-		fp2 = currObj->findFace(f2);
-		fvp2 = fp2->findFaceVertex(v2);
-		connectFaces( currObj, fvp1, fvp2, numsegs, maxconn);
-		break;
-	case 1:
-		if( !PyArg_ParseTuple( args, "siii", &f1, &f2, &numsegs ) )
-			return NULL;
-		fp1 = currObj->findFace(f1);
-		fp2 = currObj->findFace(f2);
-		connectFaces( currObj, fp1, fp2, numsegs );
-		break;
-	case 2:
-		if( !PyArg_ParseTuple( args, "s(ii)(ii)iddii", &f1, &v1, &f2, &v2, &numsegs, &wt1, &wt2, &maxconn, &numtwists ) )
-			return NULL;
-		fp1 = currObj->findFace(f1);
-		fvp1 = fp1->findFaceVertex(v1);
-		fp2 = currObj->findFace(f2);
-		fvp2 = fp2->findFaceVertex(v2);
-		hermiteConnectFaces( currObj, fvp1, fvp2, numsegs, wt1, wt2, maxconn, numtwists );
-		break;
-	case 3:
-		if( !PyArg_ParseTuple( args, "s(ii)(ii)idd", &f1, &v1, &f2, &v2, &numsegs, &wt1, &wt2, &maxconn, &numtwists ) )
-			return NULL;
-		fp1 = currObj->findFace(f1);
-		fvp1 = fp1->findFaceVertex(v1);
-		fp2 = currObj->findFace(f2);
-		fvp2 = fp2->findFaceVertex(v2);		
-		bezierConnectFaces( currObj, fvp1, fvp2, numsegs, wt1, wt2 );
-		break;
+	if( !PyArg_ParseTuple( args, "s#(ii)(ii)i|ddii", type, &size, &f1, &v1, &f2, &v2, &numsegs, &wt1, &wt2, &maxconn, &numtwists ) )
+		return NULL;
+
+	fp1 = currObj->findFace(f1);
+	fvp1 = fp1->findFaceVertex(v1);
+	fp2 = currObj->findFace(f2);
+	fvp2 = fp2->findFaceVertex(v2);
+	
+	if( strncmp( type, "hermite", size) == 0 ) {
+		DLFL::hermiteConnectFaces( currObj, fvp1, fvp2, numsegs, wt1, wt2, maxconn, numtwists );
+	} else if( strncmp( type, "bezier", size) == 0 ) {
+		DLFL::bezierConnectFaces( currObj, fvp1, fvp2, numsegs, wt1, wt2 );
 	}
-	return NULL; 
+
+	Py_INCREF( Py_None );
+	return Py_None;
 }
 
 static PyObject *dlfl_rindmodel(PyObject *self, PyObject *args) { 
-	if( !PyArg_ParseTuple( args, "s(ii)(ii)iddii", &f1, &v1, &f2, &v2, &numsegs, &wt1, &wt2, &maxconn, &numtwists ) )
-		return NULL;	
-	return NULL;
+	bool useScaling;
+	double thickScale; // thickness if useScaling is false, else scaleFactor
+	bool uniform = true;
+
+	DLFL::DLFLFacePtrArray faces;
+	DLFL::DLFLFacePtrArray::iterator it;
+
+	PyObject *list, *faceid;
+
+	if( !PyArg_ParseTuple( args, "O!bd|d", &PyList_Type, &list, &useScaling, &thickScale, &uniform ) )
+		return NULL;
+
+	int size = PyList_Size(list);
+
+	if( currObj && size > 0 ) {
+
+		for( int i = 0; i < size; i++ ) {
+			faceid = PyList_GetItem(list,i);
+			if( !PyInt_Check(faceid) ) break;
+			uint id = (uint) PyInt_AsLong(faceid);
+			DLFL::DLFLFacePtr fp = currObj->findFace( id );
+			if(fp) { faces.push_back(fp); }
+		}
+
+		if( useScaling ) {
+			DLFL::createCrustWithScaling( currObj, thickScale );
+		} else {
+			DLFL::createCrust( currObj, thickScale, uniform );
+		}
+
+		for( it = faces.begin(); it != faces.end(); it++ )
+			(*it)->setType(DLFL::FTHole);
+		DLFL::punchHoles(currObj);
+	}
+
+	Py_INCREF(Py_None);
+  return Py_None;
 }
 
-static PyObject *dlfl_wireframe(PyObject *self, PyObject *args) { return NULL; }
+static PyObject *dlfl_wireframe(PyObject *self, PyObject *args) {
+	int thickness = 0.1;
+	bool split = true;
 
-static PyObject *dlfl_column(PyObject *self, PyObject *args) { return NULL; }
+	if( !PyArg_ParseTuple(args, "|db", &thickness, &split) )
+		return NULL;
 
-static PyObject *dlfl_sierpinsky(PyObject *self, PyObject *args) { return NULL; }
+	if( currObj )
+		DLFL::makeWireframe( currObj, thickness, split);
 
-static PyObject *dlfl_multiface(PyObject *self, PyObject *args) { return NULL; }
+	Py_INCREF( Py_None );
+	return Py_None;
+}
 
-static PyObject *dlfl_menger(PyObject *self, PyObject *args) { return NULL; }
+static PyObject *dlfl_column(PyObject *self, PyObject *args) { 
+	int thickness, segments;
+
+	if( !PyArg_ParseTuple(args, "dd", &thickness, &segments) )
+		return NULL;
+
+	if( currObj )
+		DLFL::makeWireframeWithColumns( currObj, thickness, segments );
+
+	Py_INCREF( Py_None );
+	return Py_None;
+}
+
+//static PyObject *dlfl_sierpinsky(PyObject *self, PyObject *args) { return NULL; }
+
+//static PyObject *dlfl_multiface(PyObject *self, PyObject *args) { return NULL; }
+
+//static PyObject *dlfl_menger(PyObject *self, PyObject *args) { return NULL; }
 
 static PyObject *dlfl_translate(PyObject *self, PyObject *args) { 
 	double x,y,z;
@@ -1373,26 +1447,26 @@ PyDLFL_PassObject( DLFL::DLFLObject* obj )
 
 PyMODINIT_FUNC initdlfl(void)
 {
-    PyObject *dlfl;
-    static void *PyDLFL_API[NUM_C_API_FUNCS];
+	PyObject *dlfl;
+	static void *PyDLFL_API[NUM_C_API_FUNCS];
 
-    dlfl = Py_InitModule("dlfl", DLFLMethods);
+	dlfl = Py_InitModule("dlfl", DLFLMethods);
 
-    DLFLError = PyErr_NewException("dlfl.error", NULL, NULL);
-    Py_INCREF(DLFLError);
-    PyModule_AddObject(dlfl, "error", DLFLError);
+	DLFLError = PyErr_NewException("dlfl.error", NULL, NULL);
+	Py_INCREF(DLFLError);
+	PyModule_AddObject(dlfl, "error", DLFLError);
 
-		PyObject *dlflDict = PyModule_GetDict(dlfl); 
+	PyObject *dlflDict = PyModule_GetDict(dlfl); 
 
-    /* Initialize the C API pointer array */ 
-    PyDLFL_API[0] = (void *)PyDLFL_UsingGUI; 
-    PyDLFL_API[1] = (void *)PyDLFL_PassObject;
-    /* Create a CObject containing the API pointer array's address */ 
-    PyObject *c_api_object = PyCObject_FromVoidPtr((void *)PyDLFL_API, NULL); 
-    if (c_api_object != NULL) { 
-      /* Create a name for this object in the module’s namespace */ 
-      PyDict_SetItemString(dlflDict, "_C_API", c_api_object); 
-      Py_DECREF(c_api_object); 
-    }
+	/* Initialize the C API pointer array */ 
+	PyDLFL_API[0] = (void *)PyDLFL_UsingGUI; 
+	PyDLFL_API[1] = (void *)PyDLFL_PassObject;
+	/* Create a CObject containing the API pointer array's address */ 
+	PyObject *c_api_object = PyCObject_FromVoidPtr((void *)PyDLFL_API, NULL); 
+	if (c_api_object != NULL) { 
+		/* Create a name for this object in the module’s namespace */ 
+		PyDict_SetItemString(dlflDict, "_C_API", c_api_object); 
+		Py_DECREF(c_api_object); 
+	}
 }
 

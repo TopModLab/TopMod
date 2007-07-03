@@ -988,8 +988,8 @@ public slots:
 signals:
 #ifdef WITH_PYTHON
 	void loadedObject( DLFLObject *obj, QString fileName ); // echo command for loading object
-	void echoCommand( QString cmd ); // all other commands
 #endif
+	void echoCommand( QString cmd ); // all other commands
 
 
 };

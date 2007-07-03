@@ -3,10 +3,10 @@
 PythonHighlighter::PythonHighlighter(QTextEdit *parent) 
   : QSyntaxHighlighter(parent) {
   pythonKeywords << "and" << "assert" << "break" << "class" << "continue" << "def"
-		 << "del" << "elif" << "else" << "except" << "exec" << "finally"
-		 << "for" << "from" << "global" << "if" << "import" << "in"
-		 << "is" << "lambda" << "not" << "or" << "pass" << "print" << "raise"
-		 << "return" << "try" << "while" << "yield";
+								 << "del" << "elif" << "else" << "except" << "exec" << "finally"
+								 << "for" << "from" << "global" << "if" << "import" << "in"
+								 << "is" << "lambda" << "not" << "or" << "pass" << "print" << "raise"
+								 << "return" << "try" << "while" << "yield" << "True" << "False";
 
   //dlflKeywords << "insert_edge" << "delete_edge" << "collapse_edge" << "subdivide_edge";
 
@@ -45,7 +45,7 @@ void PythonHighlighter::compilePattern() {
   stringPattern  = QRegExp("\".*\"");
   commentPattern = QRegExp("#.*");
   functionPattern = QRegExp("\\b[A-Za-z0-9_]+(?=\\()");
-  tuplePattern = QRegExp("\\((\\d+,)+\\d+\\)");
+  tuplePattern = QRegExp("(\\((\\d+,)+\\d+\\))|(\\[\\d+(,\\d+)*\\])");
   promptPattern = QRegExp("dlfl>");
 }
 

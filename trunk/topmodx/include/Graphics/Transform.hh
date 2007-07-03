@@ -10,7 +10,7 @@
 #include "../vecmat/Matrix4x4.hh"
 #include "../vecmat/Quaternion.hh"
 #include <cmath>
-
+/*
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
@@ -18,7 +18,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #endif
-
+*/
 class Transformation;
 typedef Transformation * TransformationPtr;
 
@@ -279,15 +279,19 @@ class Transformation
 		transform *= Transformation :: scaling(sx,sy,sz);
 	}
 
-				// Apply the transformation in OpenGL. Calls only glMultMatrix
+	// Apply the transformation in OpenGL. Calls only glMultMatrix
 	void apply(void) const
 	{
 		double mat[16];
 		transform.fillArrayColumnMajor(mat);
-		glMultMatrixd(mat);
+		//glMultMatrixd(mat);
 	}
 
-				// Get the transformation matrix
+	void fillArrayColumnMajor( double mat[] ) {
+		transform.fillArrayColumnMajor(mat);
+	}
+
+	// Get the transformation matrix
 	Matrix4x4 matrix(void)
 	{
 		return transform;

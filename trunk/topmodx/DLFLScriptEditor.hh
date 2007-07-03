@@ -49,6 +49,7 @@ private slots :
 	void echoCommand( QString cmd );
 public slots :
   void loadObject( DLFLObject* obj, QString fileName );
+	void loadDLFLModule( QString newPath );
 private :
   Editor *mLineEdit;
   QTextEdit *mTextEdit;
@@ -65,6 +66,10 @@ private :
 
 	bool mEchoing;
 
+	QString pathPython;
+
+public :
+	QString addToPath;
 };
 
 #endif

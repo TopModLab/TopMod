@@ -2495,6 +2495,7 @@ void MainWindow::testConvexHull(void) {
 }
 
 void MainWindow::performRemeshing(void) {
+
 	switch ( remeshingscheme )
 		{
 		case Dual :

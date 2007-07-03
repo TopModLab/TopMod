@@ -226,13 +226,27 @@ namespace DLFL {
     DLFLFaceVertexPtr fvp = new DLFLFaceVertex(vp,NULL);
     fvp->addSelfToVertex();
     newface->addVertexPtr(fvp);
-    //newface->setMaterial(matl);
+    newface->setMaterial(matl);
 
     addVertexPtr(vp);
     addFacePtr(newface);
 
     return fvp;
   }
+
+	void DLFLObject::removePointSphere( DLFLFaceVertexPtr fvp ) {
+		if( fvp->getEdgePtr() == NULL ) {
+			DLFLVertexPtr vp = fvp->getVertexPtr( );
+			DLFLFacePtr fp = fvp->getFacePtr( );
+
+			removeVertex( vp );
+			delete vp;
+			removeFace( fp );
+			delete fp;
+
+			delete fvp;
+		}
+	}
 
   void DLFLObject::boundingBox(Vector3d& min, Vector3d& max) const {
     DLFLVertexPtrList::const_iterator vf,vl;

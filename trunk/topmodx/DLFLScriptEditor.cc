@@ -4,8 +4,12 @@
 
 #include <QtGui>
 
+#ifdef Q_WS_MAC
+#include <CoreFoundation/CFBundle.h>
+#endif // Q_WS_MAC
+
 DLFLScriptEditor::DLFLScriptEditor( DLFLObjectPtr obj, QWidget *parent, Qt::WindowFlags f ) 
-	: QWidget(parent,f), dlfl_module(NULL),dlfl_dict(NULL),mEchoing(true) {
+	: QWidget(parent,f), dlfl_module(NULL),dlfl_dict(NULL),mEchoing(true),pathPython(""),addToPath(".") {
 
   mTextEdit = new QTextEdit;
   mLineEdit = new Editor;
@@ -36,8 +40,21 @@ DLFLScriptEditor::DLFLScriptEditor( DLFLObjectPtr obj, QWidget *parent, Qt::Wind
   mainLayout->addWidget(mLineEdit);
   setLayout(mainLayout);
 
+#ifdef Q_WS_MAC
+	// Get path of bundle
+	CFURLRef appUrlRef = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+	CFStringRef macPath = CFURLCopyFileSystemPath(appUrlRef,
+																								kCFURLPOSIXPathStyle);
+	const char *pathPtr = CFStringGetCStringPtr(macPath,
+																							CFStringGetSystemEncoding());
+	addToPath = QString(pathPtr);
+	CFRelease(appUrlRef);
+	CFRelease(macPath);
+#endif
+
   PyInit( );
-	PyDLFL_PassObject( obj );
+	if( dlfl_module )
+		PyDLFL_PassObject( obj );
 }
 
 DLFLScriptEditor::~DLFLScriptEditor( ) {
@@ -138,10 +155,11 @@ void DLFLScriptEditor::executeCommand( ) {
 				res.replace(QRegExp("\\n"), "\n# ");
 				res.chop(2);
 				mTextEdit->insertPlainText( "\n# "+ res ); // # is a comment in python
-      } else { mTextEdit->insertPlainText("\n"); }
-    } else { mTextEdit->insertPlainText("\n"); }
+      } //else { mTextEdit->insertPlainText("\n"); }
+    } //else { mTextEdit->insertPlainText("\n"); }
   }
-
+	mTextEdit->insertPlainText("\n");
+	
   if( !mLineEdit->textCursor().hasSelection() ) {
     mLineEdit->clear();
     mLineEdit->goToHistoryStart( );
@@ -164,9 +182,9 @@ void DLFLScriptEditor::PyInit( ) {
   Py_Initialize( );
 
   if( Py_IsInitialized() ) {
-    // Import the DLFL Module
-    dlfl_module = PyImport_ImportModule("dlfl");
     PyRun_SimpleString( "import sys, __main__" );
+		loadDLFLModule( addToPath );
+
     //PyRun_SimpleString( "def my_displayhook(o): __main__.__result=o" );
     //PyRun_SimpleString( "sys.displayhook=my_displayhook" );
 
@@ -203,10 +221,37 @@ void DLFLScriptEditor::PyInit( ) {
 void DLFLScriptEditor::loadObject( DLFLObject *obj, QString fileName ) {
   if( dlfl_module == NULL && dlfl_dict == NULL )
     return;
-  PyDLFL_PassObject( obj );
+	if( dlfl_module )
+		PyDLFL_PassObject( obj );
   // Print out the equivalent command to loading an object
   QString command = tr("load(\"")+fileName+tr("\")");
   mTextEdit->insertPlainText( "\n" + command + "\n" );
+}
+
+static bool syspath_append( const char *dirname ) {
+	PyObject *mod_sys, *dict, *path, *dir;
+	PyErr_Clear(  );
+	dir = Py_BuildValue( "s", dirname );
+	mod_sys = PyImport_ImportModule( "sys" );	/* new ref */
+	dict = PyModule_GetDict( mod_sys );	/* borrowed ref */
+	path = PyDict_GetItemString( dict, "path" );	/* borrowed ref */
+	if( !PyList_Check( path ) )
+		return false;
+	PyList_Append( path, dir );
+	if( PyErr_Occurred(  ) ) {
+		Py_FatalError( "could not build sys.path" );
+		return false;
+	}
+	Py_DECREF( mod_sys );
+	return true;
+}
+
+void DLFLScriptEditor::loadDLFLModule( QString newPath ) {
+	if( !syspath_append( newPath.toLocal8Bit().constData() ) )
+		return;
+	if( dlfl_module == NULL && Py_IsInitialized() ) {
+		dlfl_module = PyImport_ImportModule("dlfl");
+	}
 }
 
 #endif // WITH_PYTHON

@@ -18,7 +18,6 @@ def deleteData(faces,edges,verts):
 		destroyEdge(e)
 	for v in verts:
 		destroyVertex(v)
-
 		
 def doosabin():
 	"""Doo-Sabin Remeshing Algorithm"""
@@ -100,7 +99,7 @@ def doosabin():
 
 
 # Perform...
-load("cube.obj")
-doosabin()
-doosabin()
-save("dscube.obj")
+#load("/Users/stuart/topmod/topmodx/dodecahedron.obj")
+#doosabin()
+#doosabin()
+#save("/Users/stuart/topmod/topmodx/ds_dodeh.obj")
