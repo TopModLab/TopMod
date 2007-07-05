@@ -9,7 +9,7 @@
 namespace DLFL {
 
   void connectEdges( DLFLObjectPtr obj, DLFLEdgePtr eptr1, DLFLFacePtr fptr1,
-		     DLFLEdgePtr eptr2, DLFLFacePtr fptr2, bool check) {
+										 DLFLEdgePtr eptr2, DLFLFacePtr fptr2, bool check) {
     // Connect 2 half-edges
 
     // If given edge is not adjacent to corresponding face, returns without doing anything
@@ -26,14 +26,14 @@ namespace DLFL {
       // First check if there is already an edge between the 2 corners
       // This can be done by checking if the 2 corners are adjacent
       if ( (e1fvp1->next() == e2fvp2) || (e1fvp1->prev() == e2fvp2) ) {
-	// Edge already exists. Don't insert a new edge
+				// Edge already exists. Don't insert a new edge
       } else
-	insertEdge(obj,e1fvp1,e2fvp2);
+				insertEdge(obj,e1fvp1,e2fvp2);
 
       if ( (e1fvp2->next() == e2fvp1) || (e1fvp2->prev() == e2fvp1) ) {
-	// Edge already exists. Don't insert a new edge
+				// Edge already exists. Don't insert a new edge
       } else
-	insertEdge(obj,e1fvp2,e2fvp1);
+				insertEdge(obj,e1fvp2,e2fvp1);
     } else {
       insertEdge(obj,e1fvp1,e2fvp2);
       insertEdge(obj,e1fvp2,e2fvp1);
@@ -41,7 +41,7 @@ namespace DLFL {
   }
 
   void connectEdgesWithoutLoopCheck( DLFLObjectPtr obj, DLFLEdgePtr eptr1, DLFLFacePtr fptr1,
-				     DLFLEdgePtr eptr2, DLFLFacePtr fptr2, bool check) {
+																		 DLFLEdgePtr eptr2, DLFLFacePtr fptr2, bool check) {
     // Connect 2 half-edges
 
     // If given edge is not adjacent to corresponding face, returns without doing anything
@@ -58,14 +58,14 @@ namespace DLFL {
       // First check if there is already an edge between the 2 corners
       // This can be done by checking if the 2 corners are adjacent
       if ( (e1fvp1->next() == e2fvp2) || (e1fvp1->prev() == e2fvp2) ) {
-	// Edge already exists. Don't insert a new edge
+				// Edge already exists. Don't insert a new edge
       } else {
-	insertEdgeWithoutCheck(obj,e1fvp1,e2fvp2); // Use version which doesn't check for self loops
+				insertEdgeWithoutCheck(obj,e1fvp1,e2fvp2); // Use version which doesn't check for self loops
       }
       if ( (e1fvp2->next() == e2fvp1) || (e1fvp2->prev() == e2fvp1) ) {
-	// Edge already exists. Don't insert a new edge
+				// Edge already exists. Don't insert a new edge
       } else {
-	insertEdgeWithoutCheck(obj,e1fvp2,e2fvp1); // Use version which doesn't check for self loops
+				insertEdgeWithoutCheck(obj,e1fvp2,e2fvp1); // Use version which doesn't check for self loops
       }
     } else {
       // Use versions which doesn't check for self loops
@@ -96,20 +96,20 @@ namespace DLFL {
 
       // Find the face which has more than 4 sides
       if ( numsides1 > 4 ) {
-	// fptr1 has more than 4 sides. Next edge has to be inserted in this face
-	fvp2 = fvp1->next();
-	fvp2 = fvp2->next();
-	fvp1 = fvp1->prev();
-	lastedge = insertEdgeCoFacial(obj,fvp1,fvp2,false);
+				// fptr1 has more than 4 sides. Next edge has to be inserted in this face
+				fvp2 = fvp1->next();
+				fvp2 = fvp2->next();
+				fvp1 = fvp1->prev();
+				lastedge = insertEdgeCoFacial(obj,fvp1,fvp2,false);
       } else if ( numsides2 > 4 ) {
-	// fptr2 has more than 4 sides. Next edge has to be inserted in this face
-	fvp1 = fvp2->next();
-	fvp1 = fvp1->next();
-	fvp2 = fvp2->prev();
-	lastedge = insertEdgeCoFacial(obj,fvp2,fvp1,false);
+				// fptr2 has more than 4 sides. Next edge has to be inserted in this face
+				fvp1 = fvp2->next();
+				fvp1 = fvp1->next();
+				fvp2 = fvp2->prev();
+				lastedge = insertEdgeCoFacial(obj,fvp2,fvp1,false);
       } else {
-	// Both faces have <= 4 sides. So we are done
-	done = true;
+				// Both faces have <= 4 sides. So we are done
+				done = true;
       }
     }
   }
@@ -141,34 +141,34 @@ namespace DLFL {
       // and insert the next edge in that face. Corners are chosen
       // depending on the parity flag
       if ( numsides1 > 3 ) {
-	// fptr1 has more than 3 sides. Next edge has to be inserted in this face
-	if ( parity ) {
-	  fvp2 = fvp1->next(); fvp2 = fvp2->next();
-	} else {
-	  fvp2 = fvp1->next(); fvp1 = fvp1->prev();
-	}
-	parity = !parity;
+				// fptr1 has more than 3 sides. Next edge has to be inserted in this face
+				if ( parity ) {
+					fvp2 = fvp1->next(); fvp2 = fvp2->next();
+				} else {
+					fvp2 = fvp1->next(); fvp1 = fvp1->prev();
+				}
+				parity = !parity;
 			
-	lastedge = insertEdgeCoFacial(obj,fvp1,fvp2,false);
+				lastedge = insertEdgeCoFacial(obj,fvp1,fvp2,false);
       } else if ( numsides2 > 3 ) {
-	// fptr2 has more than 3 sides. Next edge has to be inserted in this face
-	if ( parity ) {
-	  fvp1 = fvp2->next(); fvp1 = fvp1->next();
-	} else {
-	  fvp2 = fvp2->prev(); fvp1 = fvp2->next();
-	}
-	parity = !parity;
+				// fptr2 has more than 3 sides. Next edge has to be inserted in this face
+				if ( parity ) {
+					fvp1 = fvp2->next(); fvp1 = fvp1->next();
+				} else {
+					fvp2 = fvp2->prev(); fvp1 = fvp2->next();
+				}
+				parity = !parity;
 
-	lastedge = insertEdgeCoFacial(obj,fvp2,fvp1,false);
+				lastedge = insertEdgeCoFacial(obj,fvp2,fvp1,false);
       } else {
-	// Both faces have <= 3 sides. So we are done
-	done = true;
+				// Both faces have <= 3 sides. So we are done
+				done = true;
       }
     }
   }
 
   void connectFaces( DLFLObjectPtr obj, DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2,
-		     int numsegs, int maxconn) {
+										 int numsegs, int maxconn) {
     // Connect 2 faces with multiple segments. Intermediate points are calculated
     // by linear interpolation between end points using number of segments
 
@@ -224,8 +224,8 @@ namespace DLFL {
 
       // Connect nf1 and nf2
       if ( numconnected < maxconn ) {
-	++numconnected;
-	connectFaces(obj,nfvp1,nfvp2);
+				++numconnected;
+				connectFaces(obj,nfvp1,nfvp2);
       }
        
       // Make nf3 be the new nf1
@@ -246,8 +246,8 @@ namespace DLFL {
   }
 
   void hermiteConnectFaces( DLFLObjectPtr obj, DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2,
-			    int numsegs, double wt1, double wt2,
-			    int maxconn, int numtwists) {
+														int numsegs, double wt1, double wt2,
+														int maxconn, int numtwists) {
     if ( numsegs == 1 ) {
       connectFaces(obj,fvptr1,fvptr2);
       return;
@@ -326,13 +326,13 @@ namespace DLFL {
     // to avoid more than 1 twist
     if ( (angle2[0] - angle1[0]) > M_PI ) {
       for (int i=0; i < angle2.size(); ++i)
-	angle2[i] -= 2.0*M_PI;
+				angle2[i] -= 2.0*M_PI;
     }
 
     // If we want any extra twists, add multiples of 2pi to second polygon angles
     if ( numtwists > 0 ) {
       for (int i=0; i < angle2.size(); ++i)
-	angle2[i] += 2.0*M_PI*numtwists;
+				angle2[i] += 2.0*M_PI*numtwists;
     }
        
     // Now use the resolution parameters to find intermediate polygons
@@ -395,8 +395,8 @@ namespace DLFL {
 
       // Connect nf1 and nf2
       if ( numconnected < maxconn ) {
-	++numconnected;
-	connectFaces(obj,nfvp1,nfvp2);
+				++numconnected;
+				connectFaces(obj,nfvp1,nfvp2);
       }
        
       // Make nf3 be the new nf1
@@ -409,7 +409,7 @@ namespace DLFL {
 
 
   void bezierConnectFaces( DLFLObjectPtr obj, DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2,
-			   int numsegs, double wt1, double wt2) {
+													 int numsegs, double wt1, double wt2) {
     // Do hermite interpolated handle. All vertices are interpolated using hermite interpolation
 
     // Reorder both faces so that they start at the selected corners
@@ -447,7 +447,7 @@ namespace DLFL {
     for (int i=1; i < numsegs; ++i) {
       t = i*dt;
       for (int j=0; j < numverts; ++j)
-	hermiteInterpolate(verts1[j],n1,verts2[j],n2,verts[j],v,dvdt,t);
+				hermiteInterpolate(verts1[j],n1,verts2[j],n2,verts[j],v,dvdt,t);
 
       obj->createFace(verts,f1->material());
 

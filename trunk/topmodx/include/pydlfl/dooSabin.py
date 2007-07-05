@@ -22,9 +22,9 @@ def deleteData(faces,edges,verts):
 def doosabin():
 	"""Doo-Sabin Remeshing Algorithm"""
 	# Store old info to delete later
-	oldfaces = faces()
-	oldedges = edges()
-	oldverts = verts()
+	oldfaces = faces(0)
+	oldedges = edges(0)
+	oldverts = verts(0)
 	edgestart = oldedges[0] # edge start for offset
 	firstface = oldfaces[0]
 	# Initialize to all -1's to size of oldedges

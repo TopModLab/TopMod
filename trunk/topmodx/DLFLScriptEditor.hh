@@ -8,6 +8,8 @@
 #define slots
 
 #include <QWidget>
+#include <QMenuBar>
+#include <QToolBar>
 #include <QPushButton>
 #include <iostream>
 
@@ -50,11 +52,21 @@ private slots :
 public slots :
   void loadObject( DLFLObject* obj, QString fileName );
 	void loadDLFLModule( QString newPath );
+	void execFile( );
+	void clearHistory( );
+	void clearInput( );
 private :
-  Editor *mLineEdit;
-  QTextEdit *mTextEdit;
-
-  QPushButton *mHideButton;
+	// The place where the user types the commands (multiline)
+  Editor *mCommandEdit;
+	// The place where executed commands are executed
+  QTextEdit *mHistoryBox;
+	// The menubar with some options
+	QMenuBar *mMenuBar;
+	QMenu *scriptMenu;
+	QAction *mExecFile;
+	QAction *mClearHistory;
+	QAction *mClearInput;
+	
 
   PythonHighlighter *pyhigh;
 
@@ -63,6 +75,7 @@ private :
 
   void PyInit();
   PyObject *dlfl_module, *dlfl_dict;
+  PyObject *main_module, *main_dict;
 
 	bool mEchoing;
 

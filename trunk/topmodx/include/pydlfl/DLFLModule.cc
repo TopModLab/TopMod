@@ -1234,16 +1234,17 @@ static PyObject *dlfl_connectCorners(PyObject *self, PyObject *args) {
 static PyObject *dlfl_connectFaces(PyObject *self, PyObject *args) {
 	int f1, f2;
 	int numsegs = 1;
+	int maxconn = -1;
 
 	DLFL::DLFLFacePtr fp1, fp2;
 
-	if( !PyArg_ParseTuple( args, "sii|i", &f1, &f2, &numsegs ) )
+	if( !PyArg_ParseTuple( args, "sii|ii", &f1, &f2, &numsegs, &maxconn ) )
 		return NULL;
 
 	if( currObj ) {
 		fp1 = currObj->findFace(f1);
 		fp2 = currObj->findFace(f2);
-		DLFL::connectFaces( currObj, fp1, fp2, numsegs );
+		DLFL::connectFaces( currObj, fp1, fp2, numsegs, maxconn );
 	}
 
 	Py_INCREF( Py_None );

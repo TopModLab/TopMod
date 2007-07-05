@@ -203,7 +203,12 @@ MainWindow::MainWindow(char *filename) : object(), patchObject(NULL), mode(Norma
 	mScriptEditorDockWidget->setWidget(mScriptEditor);
 	addDockWidget(Qt::BottomDockWidgetArea, mScriptEditorDockWidget);
 	mScriptEditorDockWidget->hide();
-	mScriptEditorDockWidget->setMaximumHeight(200);
+	mScriptEditorDockWidget->setFloating(true);
+	QWidget *d = QApplication::desktop();
+	int w=d->width();  // returns screen width
+  int h=d->height(); // returns screen height
+	mScriptEditorDockWidget->setGeometry(20,h-320,500,300);
+	//mScriptEditorDockWidget->setMaximumHeight(200);
 	connect( this, SIGNAL(loadedObject(DLFLObject*,QString)),mScriptEditor, SLOT(loadObject(DLFLObject*,QString)) );
 	connect( this, SIGNAL(echoCommand(QString)),mScriptEditor, SLOT(echoCommand(QString)) );
 	connect( mScriptEditor, SIGNAL(makingChange()), this, SLOT(undoPush()) );
@@ -214,7 +219,6 @@ MainWindow::MainWindow(char *filename) : object(), patchObject(NULL), mode(Norma
 	if( !Py_IsInitialized() )
 		Py_Initialize( );
 #endif
-
 
 #ifdef WITH_VERSE
 	mVerseDialog = VerseTopMod::Instance(this);

@@ -13,6 +13,8 @@
     <file>images/mode_extrusion.png</file>
     <file>images/mode_texturing.png</file>
     <file>images/hide_scripteditor.png</file>
+    <file>images/clear_scriptinput.png</file>
+    <file>images/clear_scriptoutput.png</file>
 	<file>lang/topmod_ca.ts</file>
 	<file>lang/topmod_en.ts</file>
 	<file>lang/topmod_en_us.ts</file>
