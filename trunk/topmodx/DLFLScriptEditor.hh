@@ -53,6 +53,8 @@ public slots :
   void loadObject( DLFLObject* obj, QString fileName );
 	void loadDLFLModule( QString newPath );
 	void execFile( );
+	void openFile( );
+	void saveFile( );
 	void clearHistory( );
 	void clearInput( );
 private :
@@ -63,7 +65,7 @@ private :
 	// The menubar with some options
 	QMenuBar *mMenuBar;
 	QMenu *scriptMenu;
-	QAction *mExecFile;
+	QAction *mExecFile, *mOpenFile, *mSaveFile;
 	QAction *mClearHistory;
 	QAction *mClearInput;
 	

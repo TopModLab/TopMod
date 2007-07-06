@@ -20,6 +20,10 @@ namespace DLFL {
     if ( e1fvp1 == NULL || e2fvp1 == NULL ) return;
 
     e1fvp2 = e1fvp1->next(); e2fvp2 = e2fvp1->next();
+		int fid12 = e1fvp2->getFaceID();
+		int vid12 = e1fvp2->getVertexID();
+		int fid21 = e2fvp1->getFaceID();
+		int vid21 = e1fvp2->getVertexID();
 
     // Connect e1fvp1 and e2fvp2, e1fvp2 and e2fvp1
     if ( check ) {
@@ -45,32 +49,32 @@ namespace DLFL {
     // Connect 2 half-edges
 
     // If given edge is not adjacent to corresponding face, returns without doing anything
-    DLFLFaceVertexPtr e1fvp1, e1fvp2, e2fvp1, e2fvp2;
+    DLFLFaceVertexPtr c1, c1n, c2, c2n;
 
-    e1fvp1 = eptr1->getFaceVertexPtr(fptr1);
-    e2fvp1 = eptr2->getFaceVertexPtr(fptr2);
-    if ( e1fvp1 == NULL || e2fvp1 == NULL ) return;
+    c1 = eptr1->getFaceVertexPtr(fptr1);
+    c2 = eptr2->getFaceVertexPtr(fptr2);
+    if ( c1 == NULL || c2 == NULL ) return;
 
-    e1fvp2 = e1fvp1->next(); e2fvp2 = e2fvp1->next();
+    c1n = c1->next(); c2n = c2->next();
 
-    // Connect e1fvp1 and e2fvp2, e1fvp2 and e2fvp1
+    // Connect c1 and c2n, c1n and c2
     if ( check ) {
       // First check if there is already an edge between the 2 corners
       // This can be done by checking if the 2 corners are adjacent
-      if ( (e1fvp1->next() == e2fvp2) || (e1fvp1->prev() == e2fvp2) ) {
+      if ( (c1->next() == c2n) || (c1->prev() == c2n) ) {
 				// Edge already exists. Don't insert a new edge
       } else {
-				insertEdgeWithoutCheck(obj,e1fvp1,e2fvp2); // Use version which doesn't check for self loops
+				insertEdgeWithoutCheck(obj,c1,c2n); // Use version which doesn't check for self loops
       }
-      if ( (e1fvp2->next() == e2fvp1) || (e1fvp2->prev() == e2fvp1) ) {
+      if ( (c1n->next() == c2) || (c1n->prev() == c2) ) {
 				// Edge already exists. Don't insert a new edge
       } else {
-				insertEdgeWithoutCheck(obj,e1fvp2,e2fvp1); // Use version which doesn't check for self loops
+				insertEdgeWithoutCheck(obj,c1n,c2); // Use version which doesn't check for self loops
       }
     } else {
       // Use versions which doesn't check for self loops
-      insertEdgeWithoutCheck(obj,e1fvp1,e2fvp2);
-      insertEdgeWithoutCheck(obj,e1fvp2,e2fvp1);
+      insertEdgeWithoutCheck(obj,c1,c2n);
+      insertEdgeWithoutCheck(obj,c1n,c2);
     }
   }
 

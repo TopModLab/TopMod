@@ -197,8 +197,8 @@ MainWindow::MainWindow(char *filename) : object(), patchObject(NULL), mode(Norma
 #ifdef WITH_PYTHON
 	//the script editor widget will be placed into a QDockWidget
 	//and will be dockable in the top and bottom sections of the main window	
-	mScriptEditor = new DLFLScriptEditor( &object );
 	mScriptEditorDockWidget = new QDockWidget(tr("Script Editor"), this);
+	mScriptEditor = new DLFLScriptEditor( &object, mScriptEditorDockWidget );
 	mScriptEditorDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
 	mScriptEditorDockWidget->setWidget(mScriptEditor);
 	addDockWidget(Qt::BottomDockWidgetArea, mScriptEditorDockWidget);

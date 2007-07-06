@@ -13,10 +13,11 @@ namespace DLFL {
    * Insert Edge *
    ***************/
 
-  uint insertEdge( DLFLObjectPtr obj, 
-									 uint &faceId1, uint vertId1,
-									 uint &faceId2, uint vertId2,
-									 bool set_type = false );
+  int insertEdge( DLFLObjectPtr obj, 
+									uint &faceId1, uint vertId1,
+									uint &faceId2, uint vertId2,
+									bool check,
+									bool set_type = false );
 
   /**
    * The general case insertEdge subroutine. Calls one of the insertEdge implementations, 

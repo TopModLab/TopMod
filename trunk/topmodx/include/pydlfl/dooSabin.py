@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 from dlfl import *
 import math
 
@@ -18,7 +20,36 @@ def deleteData(faces,edges,verts):
 		destroyEdge(e)
 	for v in verts:
 		destroyVertex(v)
+
+
+def connEdges(e1,f1,e2,f2):
+	c1 = getCorner(e1,f1)
+	c2 = getCorner(e2,f2)
+	if( c1 < 0 or c2 < 0 ):
+		return
+	c1n = next(c1)
+	c2n = next(c2)
+	if( next(c1) != c2n and prev(c1) != c2n ):
+		print 'ie1',c1,c2n
+		e,c1,c2n = insertEdge(c1,c2n,False)
+	#c1n = next(c1)
+	c2 = next(next(next(c2n)))
+	#c2n = next(c2)
+	if( next(c1n) != c2 and prev(c1n) != c2 ):
+		print 'ie2',c1n,c2
+		e,c1n,c2 = insertEdge(c1n,c2,False)
 		
+
+
+def test():
+	"""docstring for test"""
+	deleteEdge(30)
+	deleteEdge(29)
+	deleteEdge(32)
+	deleteEdge(34)
+	connEdges(24,12,28,7)
+
+
 def doosabin():
 	"""Doo-Sabin Remeshing Algorithm"""
 	# Store old info to delete later
@@ -56,13 +87,12 @@ def doosabin():
 		# create a new face with the new coordinates
 		nf1,nf2 = createFace(newvertexcoords) # will mark nf1,nf2 as "new"
 		# create an array of corners from which connections can be made
-		cc = cornerWalk(f)
-		cc2 = cornerWalk(nf2)
-		while len(cc) > 0 and len(cc2) > 0:
-			e1 = cornerInfo(cc.pop(0))['edge'] # pop first item
-			e2 = cornerInfo(cc2.pop())['edge'] # pop last item
+		vw,ew = walk(f)
+		vw2,ew2 = walk(nf2)
+		while len(ew) > 0 and len(ew2) > 0:
+			e1 = ew.pop(0)
+			e2 = ew2.pop()
 			eindex = e1 - edgestart
-			# print e1, edgestart, eindex
 			if elist1[eindex] == -1:
 				elist1[eindex] = e2
 			else:
@@ -71,13 +101,12 @@ def doosabin():
 	deleteData(oldfaces,oldedges,oldverts)
 	# Go through and connect half-edges
 	i = 0
-	while i < len(elist1):
+	while i < len(oldedges):
 		if elist1[i] != -1 and elist2[i] != -1 :
 			# Check Edge List 1
 			einfo1 = edgeInfo(elist1[i])
 			ca1 = einfo1['cornerA']
 			cb1 = einfo1['cornerB']
-			# print ca1,faceInfo(ca1[0])['type'],";",cb1,faceInfo(cb1[0])['type']
 			if faceInfo(ca1[0])['type'] == "new":
 				f1 = ca1[0]
 			elif faceInfo(cb1[0])['type'] == "new":
@@ -90,16 +119,18 @@ def doosabin():
 				f2 = ca2[0]
 			elif faceInfo(cb2[0])['type'] == "new":
 				f2 = cb2[0]
-			# print 'connect:', elist1[i], f1, elist2[i]
 			connectEdges((elist1[i], f1), (elist2[i], f2), False)
+			#connEdges(elist1[i], f1, elist2[i], f2)
+			#return
 		else :
-			return "Null pointers found"
+			return "NULL pointers found"
 		i = i + 1
 	# Done with Doo-Sabin remeshing algorithm
 
 
 # Perform...
-#load("/Users/stuart/topmod/topmodx/dodecahedron.obj")
+#load("/Users/stuart/topmod/topmodx/cube.obj")
+#test()
 #doosabin()
 #doosabin()
-#save("/Users/stuart/topmod/topmodx/ds_dodeh.obj")
+#save("/Users/stuart/Desktop/test.obj")

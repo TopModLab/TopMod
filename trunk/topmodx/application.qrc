@@ -15,6 +15,7 @@
     <file>images/hide_scripteditor.png</file>
     <file>images/clear_scriptinput.png</file>
     <file>images/clear_scriptoutput.png</file>
+    <file>images/run_script.png</file>
 	<file>lang/topmod_ca.ts</file>
 	<file>lang/topmod_en.ts</file>
 	<file>lang/topmod_en_us.ts</file>

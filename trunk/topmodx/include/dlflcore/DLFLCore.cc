@@ -12,24 +12,29 @@ namespace DLFL {
    * Insert Edge *
    ***************/
 
-  uint insertEdge( DLFLObjectPtr obj, 
+  int insertEdge( DLFLObjectPtr obj, 
 									 uint &faceId1, uint vertId1,
 									 uint &faceId2, uint vertId2,
+									 bool check,
 									 bool set_type ) {
 
     if( !obj )
-      return 0;
-    DLFLVertexPtr vptr1, vptr2;
+      return -1;
+    //DLFLVertexPtr vptr1, vptr2;
     DLFLFacePtr fptr1, fptr2;
     DLFLFaceVertexPtr fvptr1 = NULL, fvptr2 = NULL;
-    DLFLFaceVertexPtrList fvpl1, fvpl2;
+    //DLFLFaceVertexPtrList fvpl1, fvpl2;
 
     DLFLEdgePtr eptr;
 
-    vptr1 = obj->findVertex( vertId1 );
-    vptr2 = obj->findVertex( vertId2 );
     fptr1 = obj->findFace( faceId1 );
     fptr2 = obj->findFace( faceId2 );
+		fvptr1 = fptr1->findFaceVertex( vertId1 );
+		fvptr2 = fptr2->findFaceVertex( vertId2 );
+
+		/*    vptr1 = obj->findVertex( vertId1 );
+    vptr2 = obj->findVertex( vertId2 );
+
     fvpl1 = vptr1->getFaceVertexList( );
     fvpl2 = vptr2->getFaceVertexList( );
 
@@ -51,11 +56,14 @@ namespace DLFL {
 				found = true;
       }
       ++first;
-    }
+			}*/
 
-    uint id = 0;
+    int id = -1;
     if( fvptr1 && fvptr2 ) {
-      eptr = insertEdge( obj, fvptr1, fvptr2, set_type );
+			if( check )
+				eptr = insertEdge( obj, fvptr1, fvptr2, set_type );
+			else
+				eptr = insertEdgeWithoutCheck( obj, fvptr1, fvptr2, set_type );
       id = eptr->getID( );
 
 			faceId1 = fvptr1->getFaceID();

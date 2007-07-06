@@ -45,6 +45,9 @@ static PyObject *dlfl_corners(PyObject *self, PyObject *args);
 //static PyObject *dlfl_boundary_walk(PyObject *self, PyObject *args);
 static PyObject *dlfl_walk(PyObject *self, PyObject *args);
 static PyObject *dlfl_corner_walk(PyObject *self, PyObject *args);
+static PyObject *dlfl_next(PyObject *self, PyObject *args);
+static PyObject *dlfl_prev(PyObject *self, PyObject *args);
+static PyObject *dlfl_cornerFromEdgeFace(PyObject *self, PyObject *args);
 //static PyObject *dlfl_walk_vertices(PyObject *self, PyObject *args);
 //static PyObject *dlfl_walk_edges(PyObject *self, PyObject *args);
 
@@ -105,6 +108,9 @@ static PyMethodDef DLFLMethods[] = {
   {"corners",        dlfl_corners,        METH_VARARGS, "Grab all/selected the face-vertices of the object"},
   {"walk",           dlfl_walk,           METH_VARARGS, "Walk around a face and get all of the vertices/edges in lists"},
   {"cornerWalk",     dlfl_corner_walk,    METH_VARARGS, "Walk around a face and get all of the corners in a list"},
+  {"next",           dlfl_next,           METH_VARARGS, "Walk to next corner in Linked List"},
+  {"prev",           dlfl_prev,           METH_VARARGS, "Walk to previous corner in Linked List"},
+  {"getCorner",  dlfl_cornerFromEdgeFace, METH_VARARGS, "Get a corner given an edge and a face pointer"},
   /*{"walkVertices",   dlfl_walk_vertices,  METH_VARARGS, "walk_vertices(int)"},
 		{"walkEdges",      dlfl_walk_edges,     METH_VARARGS, "walk_edges(int)"},*/
 	/* Info */
@@ -242,12 +248,13 @@ dlfl_insert_edge(PyObject *self, PyObject *args)
   uint faceId2;
   int vertId2;
   int edgeId = -1;
+	bool check = true;
 
-  if( !PyArg_ParseTuple(args, "(ii)(ii)", &faceId1, &vertId1, &faceId2, &vertId2) )
+  if( !PyArg_ParseTuple(args, "(ii)(ii)|b", &faceId1, &vertId1, &faceId2, &vertId2, &check) )
     return NULL;
 
   if( currObj ) {
-    edgeId = DLFL::insertEdge( currObj, faceId1, vertId1, faceId2, vertId2 );
+    edgeId = DLFL::insertEdge( currObj, faceId1, vertId1, faceId2, vertId2, check, false );
     currObj->clearSelected( );
   }
 
@@ -656,6 +663,49 @@ static PyObject *dlfl_walk(PyObject *self, PyObject *args) {
   //Py_INCREF(elist);
   return Py_BuildValue("OO", vlist, elist);
 }
+
+static PyObject *dlfl_next(PyObject *self, PyObject *args) {
+	int faceId, vertId;
+	if( !PyArg_ParseTuple(args, "(ii)", &faceId, &vertId) )
+    return NULL;
+	if( !currObj )
+		return NULL;
+	DLFL::DLFLFacePtr fp1 = currObj->findFace(faceId);
+	DLFL::DLFLFaceVertexPtr fvp1 = fp1->findFaceVertex(vertId);
+	DLFL::DLFLFaceVertexPtr fvp2 = fvp1->next();
+	faceId = fvp2->getFaceID();
+	vertId = fvp2->getVertexID();
+  return Py_BuildValue("(ii)", faceId, vertId );
+}
+
+static PyObject *dlfl_prev(PyObject *self, PyObject *args) {
+	int faceId, vertId;
+	if( !PyArg_ParseTuple(args, "(ii)", &faceId, &vertId) )
+    return NULL;
+	if( !currObj )
+		return NULL;
+	DLFL::DLFLFacePtr fp1 = currObj->findFace(faceId);
+	DLFL::DLFLFaceVertexPtr fvp1 = fp1->findFaceVertex(vertId);
+	DLFL::DLFLFaceVertexPtr fvp2 = fvp1->prev();
+	faceId = fvp2->getFaceID();
+	vertId = fvp2->getVertexID();
+  return Py_BuildValue("(ii)", faceId, vertId );
+}
+
+static PyObject *dlfl_cornerFromEdgeFace(PyObject *self, PyObject *args) {
+	int faceId, edgeId, vertId;
+	if( !PyArg_ParseTuple(args, "ii", &edgeId, &faceId) )
+    return NULL;
+	if( !currObj )
+		return NULL;
+	DLFL::DLFLEdgePtr ep = currObj->findEdge(edgeId);
+	DLFL::DLFLFacePtr fp = currObj->findFace(faceId);
+	DLFL::DLFLFaceVertexPtr fvp = ep->getFaceVertexPtr(fp);
+	faceId = fvp->getFaceID();
+	vertId = fvp->getVertexID();
+  return Py_BuildValue("(ii)", faceId, vertId );
+}
+
 /*
 static PyObject *dlfl_walk_edges(PyObject *self, PyObject *args) {
   int faceId; // input: face to walk
@@ -1244,7 +1294,7 @@ static PyObject *dlfl_connectFaces(PyObject *self, PyObject *args) {
 	if( currObj ) {
 		fp1 = currObj->findFace(f1);
 		fp2 = currObj->findFace(f2);
-		DLFL::connectFaces( currObj, fp1, fp2, numsegs, maxconn );
+		DLFL::connectFaces( currObj, fp1, fp2, numsegs );//, maxconn );
 	}
 
 	Py_INCREF( Py_None );
