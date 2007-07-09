@@ -151,7 +151,7 @@ class MainWindow : public QMainWindow {
 				MaskVertices,
 				MaskEdges,
 				MaskFaces,
-				MaskFaceVertices 
+				MaskCorners 
 			};
 
 				// Enumerations for various multi-face-handle algorithms
@@ -509,39 +509,39 @@ private:
 	QAction *mPerformRemeshingAct;
 	QAction *mQuickCommandAct;
 
-		//Edit Menu Actions
-			QAction *mUndoAct;											//!< pop the previous model state off the undo stack
-			QAction *mRedoAct;											//!< push the model back onto the undo stack
-			QAction *mClearUndoListAct;							//!< clear the undo list to free up memory
+	//Edit Menu Actions
+	QAction *mUndoAct;											//!< pop the previous model state off the undo stack
+	QAction *mRedoAct;											//!< push the model back onto the undo stack
+	QAction *mClearUndoListAct;							//!< clear the undo list to free up memory
 
-			//view switching actions
-			QAction *mTopViewAct;										//!< switch to top view
-			QAction *mBottomViewAct;								//!< switch to bottom view
-			QAction *mLeftViewAct;									//!< switch to left view
-			QAction *mRightViewAct;									//!< switch to right view
-			QAction *mFrontViewAct;									//!< switch to front view
-			QAction *mBackViewAct;									//!< switch to back view
-			QAction *mPerspViewAct;									//!< switch to perspective view or reset the current one
+	//view switching actions
+	QAction *mTopViewAct;										//!< switch to top view
+	QAction *mBottomViewAct;								//!< switch to bottom view
+	QAction *mLeftViewAct;									//!< switch to left view
+	QAction *mRightViewAct;									//!< switch to right view
+	QAction *mFrontViewAct;									//!< switch to front view
+	QAction *mBackViewAct;									//!< switch to back view
+	QAction *mPerspViewAct;									//!< switch to perspective view or reset the current one
 
-		//Display Menu Actions
-			QAction *showVerticesAct;								
-			QAction *mShowFaceIDsAct;
-			QAction *mShowEdgeIDsAct;
-			QAction *mShowVertexIDsAct;
-			QAction *mShowSelectedIDsAct;
-			QAction *showSilhouetteAct;
-			QAction *showWireframeAct;
-			QAction *objectOrientationAct;
-			QAction *mShowNormalsAct;
-			QAction *showGridAct;
-			QAction *showHUDAct;
-			QAction *showCoordinateAxesAct;
-			#ifdef GPU_OK
-			QAction *mUseGPUAct;
-			#endif
-			QAction *mAntialiasingAct;
+	//Display Menu Actions
+	QAction *showVerticesAct;								
+	QAction *mShowFaceIDsAct;
+	QAction *mShowEdgeIDsAct;
+	QAction *mShowVertexIDsAct;
+	QAction *mShowSelectedIDsAct;
+	QAction *showSilhouetteAct;
+	QAction *showWireframeAct;
+	QAction *objectOrientationAct;
+	QAction *mShowNormalsAct;
+	QAction *showGridAct;
+	QAction *showHUDAct;
+	QAction *showCoordinateAxesAct;
+	#ifdef GPU_OK
+	QAction *mUseGPUAct;
+	#endif
+	QAction *mAntialiasingAct;
 
-			QAction *mShowFaceCentroidsAct;
+	QAction *mShowFaceCentroidsAct;
 
 	//Renderer Menu Actions
 	QAction *wireframeRendererAct;
@@ -573,14 +573,14 @@ private:
 
 	//Selection Menu Actions
 	QAction *selectVertexAct;
-	QAction *editVertexAct;
+	QAction *mEditVertexAct;
 	QAction *selectFaceAct;
 	QAction *selectFaceLoopAct;
 	QAction *selectMultipleFacesAct;
 	QAction *selectSimilarFacesAct;
 	QAction *selectCheckerboardFacesAct;
 	QAction *selectAllAct;
-	QAction *selectInverseFacesAct;
+	QAction *selectInverseAct;
 	QAction *selectEdgeAct;
 	QAction *selectEdgeLoopAct;
 	QAction *selectCornerAct;
@@ -618,6 +618,19 @@ private:
 	QAction *mVerseKillServerAct;
 #endif
 
+	//Window Menu - toolbar display
+	QAction *mEditToolBarAct;
+	QAction *mSelectionMaskToolBarAct;
+	QAction *mPrimitivesToolBarAct;
+	QAction *mToolsToolBarAct;
+	QAction *mExtrusionToolBarAct;
+	QAction *mConicalToolBarAct;
+	QAction *mHighgenusToolBarAct;
+	QAction *mTexturingToolBarAct;
+	QAction *mRemeshingToolBarAct;
+	QAction *mHideToolBarsAct;
+	QAction *mShowToolBarsAct;
+
 	QWidget *mToolOptionsTitleBarWidget;
 	QBoxLayout *mToolOptionsTitleBarLayout;
 
@@ -649,7 +662,7 @@ private:
 	QAction *mShowVerseDialogAct;
 #endif
 			
-			QAction *mShowToolOptionsAct;
+	QAction *mShowToolOptionsAct;
 			
 	StyleSheetEditor *mStyleSheetEditor;
 	QAction *mEditStyleSheetAct;
@@ -659,33 +672,31 @@ private:
 	CommandCompleter *mCommandCompleter;
 	QStringList mCommandList;
 			
-			//popup helper animations
-			QMovie *mAnimatedHelpMovie;
-			QLabel *mAnimatedHelpLabel;
-			QWidget *mAnimatedHelpWidget;
-			QVBoxLayout *mAnimatedHelpLayout;
-			QDockWidget *mAnimatedHelpDockWidget;
-			QAction *mShowAnimatedHelpAct;
+	//popup helper animations
+	QMovie *mAnimatedHelpMovie;
+	QLabel *mAnimatedHelpLabel;
+	QWidget *mAnimatedHelpWidget;
+	QVBoxLayout *mAnimatedHelpLayout;
+	QDockWidget *mAnimatedHelpDockWidget;
+	QAction *mShowAnimatedHelpAct;
 			
 	QDoubleSpinBox *mSpinBoxOne,*mSpinBoxTwo,*mSpinBoxThree,*mSpinBoxFour,*mSpinBoxFive,*mSpinBoxSix;
 			
 public slots:
-			void about(); 												//!< \todo  topmod developer credits 
-			void help(); 													//!< open the qtassistantclient help viewer
-			void checkForUpdates(); 							//!< check for updates on the topMod home page
-			void topModWeb(); 										//!< open the TopMod web page in the default browser
-			void documentWasModified();
 
-			void getCommand(); 										//!< this will open up the quicksilver like interface and accept a value from the user
-			
-			// void showHideScriptEditor();
-			// void showHideVerseDialog();
-			
-			// void showAnimatedHelp();
-			// void showHideAnimatedHelp();
-			void setAnimatedHelpImage();
-			
+	void about(); 												//!< \todo  topmod developer credits 
+	void help(); 													//!< open the qtassistantclient help viewer
+	void checkForUpdates(); 							//!< check for updates on the topMod home page
+	void topModWeb(); 										//!< open the TopMod web page in the default browser
+	void documentWasModified();
 
+	void getCommand(); 										//!< this will open up the quicksilver like interface and accept a value from the user
+
+	void setAnimatedHelpImage();
+
+	void showAllToolBars();
+	void hideAllToolBars();
+	
 	void load_texture();
 	//renderers
 	void useWireframeRenderer();
@@ -710,34 +721,34 @@ public slots:
 	void selectionMaskVertices();
 	void selectionMaskFaces();
 	void selectionMaskEdges();
-	void selectionMaskFaceVertices();
+	void selectionMaskCorners();
 	void selectAll();
 	void selectInverse();
 
 	//Basics Widget
-			void toggleDeleteEdgeCleanupFlag(int state);
-			void changeNumSubDivs(double value);
+	void toggleDeleteEdgeCleanupFlag(int state);
+	void changeNumSubDivs(double value);
 
-			void changeTileTexNum(double value);
-			void toggleUseQuadsFlag(int state);
+	void changeTileTexNum(double value);
+	void toggleUseQuadsFlag(int state);
 
 	// Extrusion
-			void changeExtrudeLength(double value);
-			void changeExtrudeRotation(double value);
-			void changeExtrudeScale(double value);
-			void changeNumExtrusions(double value);
-			void changeStellateLength(double value);
-			void toggleDualMeshEdgesFlag(int state);
-			void toggleHexagonalizeDodecaExtrudeFlag(int state);
+	void changeExtrudeLength(double value);
+	void changeExtrudeRotation(double value);
+	void changeExtrudeScale(double value);
+	void changeNumExtrusions(double value);
+	void changeStellateLength(double value);
+	void toggleDualMeshEdgesFlag(int state);
+	void toggleHexagonalizeDodecaExtrudeFlag(int state);
 
-			void changeNumSegments(double value);
-			void changeMaxSegments(double value);
-			void changeNumSegments2(double value);
-			void changeMaxSegments2(double value);
-			void changeWeight1(double value);
-			void toggleSymmetricWeightsFlag(int state);
-			void changeWeight2(double value);
-			void changeExtraTwists(double value);
+	void changeNumSegments(double value);
+	void changeMaxSegments(double value);
+	void changeNumSegments2(double value);
+	void changeMaxSegments2(double value);
+	void changeWeight1(double value);
+	void toggleSymmetricWeightsFlag(int state);
+	void changeWeight2(double value);
+	void changeExtraTwists(double value);
 
 	void changeCrustScaleFactor(double value);
 	void changeCrustThickness(double value);
@@ -846,33 +857,10 @@ public slots:
 	void doSelection(int x, int y);
 	void doDrag(int x, int y);
 
-	// Override show() method to show subwindows also
-	// void show();
 	// Return pointer to the active GLWidget
 	GLWidget *getActive();
 
-	// 	//set lighting colors... warm and cool
-	// void setWarmLightColor(QColor c);
-	// void setCoolLightColor(QColor c);
-	// void setLightIntensity(double i);
-
-	// Override redraw() method to mark subwindows also for redraw
-	void redraw();
-	// Override resize() method to properly resize subwindows
-	// void resize(int x, int y, int w, int h);
-
-	//--- Methods to perform various operations ---//
-
-	// Display overlays
-	// void toggleWireframe();
-	// void toggleSilhouette();
-	// void toggleVertices();
-	// void toggleFaceIDs( );
-	// void toggleVertexIDs( );
-	// void toggleEdgeIDs( );
-	// void turnOffOverlays();
-	// void toggleObjectOrientation();
-	// void toggleNormals();
+	void redraw();				//!< Override redraw() method to mark subwindows also for redraw
 
 	// Geometric transformations
 	void translatex(double x);
@@ -884,6 +872,7 @@ public slots:
 	void freezeTransforms();
 
 	// Global operations (don't require selection)
+
 #ifdef WITH_PYTHON
 	// run after an operation is done via python
 	void recomputeAll() { 
@@ -891,6 +880,7 @@ public slots:
 		active->recomputeNormals();
 	};
 #endif
+
 	// void recomputeNormals();
 	// void recomputeLighting();
 	// void recomputePatches();
@@ -965,6 +955,7 @@ public slots:
 			
 	void mfh_use_closest_edge_algo();
 	void mfh_use_convex_hull_algo();
+	
 	//conical functions from ozgur
 	void performCutting();
 	void createConvexHull();
@@ -993,6 +984,7 @@ public slots:
 	void loadIcosahedron();
 	void loadSoccerball();
 	void loadGeodesic();
+	
 signals:
 #ifdef WITH_PYTHON
 	void loadedObject( DLFLObject *obj, QString fileName ); // echo command for loading object

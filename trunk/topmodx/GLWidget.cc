@@ -735,21 +735,20 @@ void GLWidget::drawSelectedIDs( QPainter *painter, const GLdouble *model, const 
 				}
 			}
 		}
-	
 		glEnable(GL_DEPTH_TEST);
 	}
 }
 
 void GLWidget::toggleFullScreen( ) {
 	if( !mIsFullScreen ) {    
-		move(0,0);
+		move(0,20);
 		resize( QApplication::desktop()->size() );
-		resizeGL( QApplication::desktop()->size().width(), QApplication::desktop()->size().height() );
-		//setFocusPolicy( Qt::StrongFocus );
-		//setWindowFlags( Qt::FramelessWindowHint );
-		show();
+		// resizeGL( QApplication::desktop()->size().width(), QApplication::desktop()->size().height() );
+		// setFocusPolicy( Qt::StrongFocus );
+		// setWindowFlags( Qt::FramelessWindowHint );
+		// show();
 	} else {
-		//setWindowFlags( Qt::Widget );
+		// setWindowFlags( Qt::Widget );
 		resize( 700, 800 );
 		show();
 	}

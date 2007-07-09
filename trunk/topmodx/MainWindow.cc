@@ -421,9 +421,9 @@ void MainWindow::createActions() {
 	//Display Menu Actions
 	mFullscreenAct = new QAction(tr("&Full Screen"), this);
 	mFullscreenAct->setCheckable(true);
-	sm->registerAction( mFullscreenAct, "Display Menu", "");
+	sm->registerAction( mFullscreenAct, "Display Menu", "M");
 	mFullscreenAct->setStatusTip(tr("Toggle Full Screen"));
-	//  connect(mFullscreenAct, SIGNAL(triggered()), glWidget, SLOT(toggleFullScreen()) );
+	connect(mFullscreenAct, SIGNAL(triggered()), active, SLOT(toggleFullScreen()) );
 	mActionListWidget->addAction(mFullscreenAct);
 
 	showVerticesAct = new QAction(tr("Show &Vertices"), this);
@@ -713,11 +713,11 @@ void MainWindow::createActions() {
 	connect(selectVertexAct, SIGNAL(triggered()), this, SLOT(select_vertex()));
 	mActionListWidget->addAction(selectVertexAct);
 
-	editVertexAct = new QAction(tr("Edit Verte&x"), this);
-	sm->registerAction(editVertexAct, "Selection", "SHIFT+V");
-	editVertexAct->setStatusTip(tr("Select and Move Vertices One at a time."));
-	connect(editVertexAct, SIGNAL(triggered()), this, SLOT(edit_vertex()));
-	mActionListWidget->addAction(editVertexAct);
+	mEditVertexAct = new QAction(tr("Edit Verte&x"), this);
+	sm->registerAction(mEditVertexAct, "Selection", "SHIFT+V");
+	mEditVertexAct->setStatusTip(tr("Select and Move Vertices One at a time."));
+	connect(mEditVertexAct, SIGNAL(triggered()), this, SLOT(edit_vertex()));
+	mActionListWidget->addAction(mEditVertexAct);
 
 	selectFaceAct = new QAction(tr("Select &Face"), this);
 	sm->registerAction(selectFaceAct, "Selection", "SHIFT+F");
@@ -751,10 +751,10 @@ void MainWindow::createActions() {
 	connect( selectAllAct , SIGNAL( triggered() ), this, SLOT( selectAll() ) );
 	mActionListWidget->addAction(selectAllAct);
 
-	selectInverseFacesAct = new QAction(tr("Select &Inverse Faces"), this);
-	sm->registerAction(selectInverseFacesAct, "Selection", "CTRL+I");
-	connect( selectInverseFacesAct , SIGNAL( triggered() ), this, SLOT( selectInverse() ) );
-	mActionListWidget->addAction(selectInverseFacesAct);
+	selectInverseAct = new QAction(tr("Select &Inverse"), this);
+	sm->registerAction(selectInverseAct, "Selection", "CTRL+I");
+	connect( selectInverseAct , SIGNAL( triggered() ), this, SLOT( selectInverse() ) );
+	mActionListWidget->addAction(selectInverseAct);
 
 	selectEdgeAct = new QAction(tr("Select &Edge"), this);
 	sm->registerAction(selectEdgeAct, "Selection", "SHIFT+E");
@@ -809,7 +809,7 @@ void MainWindow::createActions() {
 	mSelectFaceVerticesMaskAct->setCheckable(true);
 	sm->registerAction(mSelectFaceVerticesMaskAct, "Selection", "");
 	mSelectFaceVerticesMaskAct->setStatusTip(tr("Select by Component type: Face-Vertices"));
-	connect( mSelectFaceVerticesMaskAct , SIGNAL( triggered() ), this, SLOT( selectionMaskFaceVertices() ) );
+	connect( mSelectFaceVerticesMaskAct , SIGNAL( triggered() ), this, SLOT( selectionMaskCorners() ) );
 	mActionListWidget->addAction(mSelectFaceVerticesMaskAct);
 
 	mSelectionMaskActionGroup = new QActionGroup(this);
@@ -933,7 +933,19 @@ void MainWindow::createActions() {
 	connect(mAboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 	sm->registerAction(mAboutQtAct, "Help Menu", "");
 	mActionListWidget->addAction(mAboutQtAct);
+	
+	mHideToolBarsAct = new QAction(tr("Hide All ToolBars"), this);
+	mHideToolBarsAct->setStatusTip( tr("Hide All ToolBars") );
+	connect(mHideToolBarsAct, SIGNAL(triggered()), this, SLOT(hideAllToolBars()));
+	sm->registerAction(mHideToolBarsAct, "Window Menu", "T");
+	mActionListWidget->addAction(mHideToolBarsAct);
 
+	mShowToolBarsAct = new QAction(tr("Show All ToolBars"), this);
+	mShowToolBarsAct->setStatusTip( tr("Show All ToolBars") );
+	connect(mShowToolBarsAct, SIGNAL(triggered()), this, SLOT(showAllToolBars()));
+	sm->registerAction(mShowToolBarsAct, "Window Menu", "SHIFT+T");
+	mActionListWidget->addAction(mShowToolBarsAct);
+	
 }
 
 void MainWindow::createMenus(){
@@ -1055,21 +1067,25 @@ void MainWindow::createMenus(){
 
 	mSelectionMenu = new QMenu(tr("&Selection"));
 	menuBar->addMenu(mSelectionMenu);
+	mSelectionMenu->addAction(selectAllAct);
+	mSelectionMenu->addAction(selectInverseAct);
+	mSelectionMenu->addAction(exitSelectionModeAct);
+	mSelectionMenu->addAction(clearSelectedModeAct);
+	mSelectionMenu->addSeparator();
+	mSelectionMenu->addAction(selectEdgeAct);
+	mSelectionMenu->addAction(selectEdgeLoopAct);
+	mSelectionMenu->addSeparator();
 	mSelectionMenu->addAction(selectVertexAct);
-	mSelectionMenu->addAction(editVertexAct);
+	mSelectionMenu->addAction(mEditVertexAct);
+	mSelectionMenu->addAction(selectCornerAct);
+	mSelectionMenu->addSeparator();
 	mSelectionMenu->addAction(selectFaceAct);
 	mSelectionMenu->addAction(selectFaceLoopAct);
 	mSelectionMenu->addAction(selectMultipleFacesAct);
 	mSelectionMenu->addAction(selectSimilarFacesAct);
 	mSelectionMenu->addAction(selectCheckerboardFacesAct);
-	mSelectionMenu->addAction(selectAllAct);
-	mSelectionMenu->addAction(selectInverseFacesAct);
-	mSelectionMenu->addAction(selectEdgeAct);
-	mSelectionMenu->addAction(selectEdgeLoopAct);
-	mSelectionMenu->addAction(selectCornerAct);
-	mSelectionMenu->addAction(exitSelectionModeAct);
-	mSelectionMenu->addAction(clearSelectedModeAct);
-
+	// mSelectionMenu->addSeparator();
+	
 	mToolsMenu = new QMenu(tr("&Tools"));
 	mToolsMenu->setTearOffEnabled(true);
 	mToolsMenu->addMenu(mBasicsMode->getMenu());
@@ -1115,6 +1131,18 @@ void MainWindow::createMenus(){
 	#ifdef WITH_VERSE
 	mWindowMenu->addAction(mShowVerseDialogAct);
 	#endif
+	// mWindowMenu->addAction(mShowToolBarsAct);
+	// mWindowMenu->addAction(mHideToolBarsAct);
+	mWindowMenu->addSeparator();
+	mWindowMenu->addAction(mEditToolBarAct);
+	// mWindowMenu->addAction(mSelectionMaskToolBarAct);
+	mWindowMenu->addAction(mPrimitivesToolBarAct);
+	mWindowMenu->addAction(mToolsToolBarAct);
+	mWindowMenu->addAction(mExtrusionToolBarAct);
+	// mWindowMenu->addAction(mConicalToolBarAct);
+	mWindowMenu->addAction(mHighgenusToolBarAct);
+	mWindowMenu->addAction(mTexturingToolBarAct);
+	mWindowMenu->addAction(mRemeshingToolBarAct);
 
 	mHelpMenu = new QMenu(tr("&Help"));
 	menuBar->addMenu(mHelpMenu);
@@ -1141,8 +1169,10 @@ void MainWindow::createMenus(){
 
 void MainWindow::createToolBars() {
 
-	mEditToolBar = new QToolBar(tr("Edit"));
+	mEditToolBar = new QToolBar(tr("Edit"),this);
+	mEditToolBar->setFloatable(true);
 	addToolBar(Qt::TopToolBarArea,mEditToolBar);
+	mEditToolBar->setFloatable(true);
 	mEditToolBar->addAction(mOpenAct);
 	mEditToolBar->addAction(mSaveAsAct);
 	mEditToolBar->addAction(mUndoAct);
@@ -1151,15 +1181,17 @@ void MainWindow::createToolBars() {
 
 	//selection masks toolbar
 	mSelectionMaskToolBar = new QToolBar(tr("Selection Masks"));
+	mSelectionMaskToolBar->hide();
+	mSelectionMaskToolBar->setFloatable(true);
 	//addToolBar(Qt::TopToolBarArea,mSelectionMaskToolBar);
 	mSelectionMaskToolBar->addAction(mSelectVerticesMaskAct);
 	mSelectionMaskToolBar->addAction(mSelectFacesMaskAct);
 	mSelectionMaskToolBar->addAction(mSelectEdgesMaskAct);
 	mSelectionMaskToolBar->addAction(mSelectFaceVerticesMaskAct);
+	mSelectionMaskToolBar->setOrientation(Qt::Vertical);
 
-
-	mPrimitivesToolBar = new QToolBar(tr("Primitives"));
-	// mPrimitivesToolBar->setFloatable(true);
+	mPrimitivesToolBar = new QToolBar(tr("Primitives"),this);
+	mPrimitivesToolBar->setFloatable(true);
 	addToolBar(Qt::TopToolBarArea,mPrimitivesToolBar);
 	mPrimitivesToolBar->setIconSize(QSize(32,32));
 	mPrimitivesToolBar->addAction(pCubeAct);
@@ -1171,31 +1203,41 @@ void MainWindow::createToolBars() {
 	mPrimitivesToolBar->addAction(pGeodesicAct);
 
 	//basic tools - six buttons
-	mToolsToolBar = new QToolBar(tr("Tools"));
+	mToolsToolBar = new QToolBar(tr("Tools"),this);
+	mToolsToolBar->setFloatable(true);
 	addToolBar(Qt::TopToolBarArea,mToolsToolBar);
 	mToolsToolBar->setIconSize(QSize(32,32));
 
 	addToolBarBreak();
 
-	mExtrusionToolBar = new QToolBar(tr("Extrusion Tools"));
+	mExtrusionToolBar = new QToolBar(tr("Extrusion Tools"),this);
+	mExtrusionToolBar->setFloatable(true);
 	addToolBar(Qt::TopToolBarArea,mExtrusionToolBar);
 	mExtrusionToolBar->setIconSize(QSize(32,32));
 
-	mConicalToolBar = new QToolBar(tr("Conical Tools"));
+	// mConicalToolBar = new QToolBar(tr("Conical Tools"),this);
 	// addToolBar(Qt::TopToolBarArea,mConicalToolBar);
-	mConicalToolBar->setIconSize(QSize(32,32));
+	// mConicalToolBar->setIconSize(QSize(32,32));
 
-	mHighgenusToolBar = new QToolBar(tr("High Genus Tools"));
+	mHighgenusToolBar = new QToolBar(tr("High Genus Tools"),this);
+	mHighgenusToolBar->setFloatable(true);
 	addToolBar(Qt::TopToolBarArea,mHighgenusToolBar);
 	mHighgenusToolBar->setIconSize(QSize(32,32));
 
-	mTexturingToolBar = new QToolBar(tr("Texturing Tools"));
+	mTexturingToolBar = new QToolBar(tr("Texturing Tools"),this);
+	mTexturingToolBar->setFloatable(true);
 	addToolBar(Qt::TopToolBarArea,mTexturingToolBar);
 	mTexturingToolBar->setIconSize(QSize(32,32));
 
-	mRemeshingToolBar = new QToolBar(tr("Remeshing"));
-	// addToolBar(Qt::TopToolBarArea,mRemeshingToolBar);
-	mRemeshingToolBar->setIconSize(QSize(32,32));
+	mRemeshingToolBar = new QToolBar(tr("Remeshing Tools"),this);
+	mRemeshingToolBar->setAllowedAreas(Qt::RightToolBarArea);
+	mRemeshingToolBar->setOrientation(Qt::Vertical);
+	mRemeshingToolBar->setToolButtonStyle(Qt::ToolButtonTextOnly);
+	mRemeshingToolBar->setFloatable(false);
+	// mRemeshingToolBar->setFloating(true);
+	addToolBar(Qt::RightToolBarArea,mRemeshingToolBar);
+	// mRemeshingToolBar->setIconSize(QSize(16,16));
+	mRemeshingToolBar->hide();
 
 	//tools ction group initialization
 	mToolsActionGroup = new QActionGroup(this);
@@ -1211,6 +1253,43 @@ void MainWindow::createToolBars() {
 	mHighgenusMode->addActions(mToolsActionGroup, mHighgenusToolBar, mToolOptionsStackedWidget);
 	mTexturingMode->addActions(mToolsActionGroup, mTexturingToolBar, mToolOptionsStackedWidget);
 
+	//window menu toolbar display actions
+	mEditToolBarAct 					= mEditToolBar->toggleViewAction();         
+	// mSelectionMaskToolBarAct 	= mSelectionMaskToolBar->toggleViewAction();
+	mPrimitivesToolBarAct     = mPrimitivesToolBar->toggleViewAction();
+	mToolsToolBarAct				 	= mToolsToolBar->toggleViewAction();
+	mExtrusionToolBarAct 			= mExtrusionToolBar->toggleViewAction();
+	// mConicalToolBarAct				= mConicalToolBar->toggleViewAction();
+	mHighgenusToolBarAct    	= mHighgenusToolBar->toggleViewAction();
+	mTexturingToolBarAct  	  = mTexturingToolBar->toggleViewAction();
+	mRemeshingToolBarAct	    = mRemeshingToolBar->toggleViewAction();
+
+}
+
+void MainWindow::showAllToolBars(){
+	mEditToolBar->show();
+	mSelectionMaskToolBar->show();
+	mPrimitivesToolBar->show();
+	mToolsToolBar->show();
+	mExtrusionToolBar->show();
+	mConicalToolBar->show();
+	mHighgenusToolBar->show();
+	mTexturingToolBar->show();
+	mRemeshingToolBar->show();
+	
+}
+
+void MainWindow::hideAllToolBars(){
+	mEditToolBar->hide();
+	mSelectionMaskToolBar->hide();
+	mPrimitivesToolBar->hide();
+	mToolsToolBar->hide();
+	mExtrusionToolBar->hide();
+	mConicalToolBar->hide();
+	mHighgenusToolBar->hide();
+	mTexturingToolBar->hide();
+	mRemeshingToolBar->hide();
+	
 }
 
 void MainWindow::setToolOptions(QWidget *optionsWidget) {
@@ -1876,15 +1955,32 @@ void MainWindow::getRightClickMenu(){
 		default:
 		break;
 	};
-	//face stuff
-	mRightClickMenu->addAction(selectFaceLoopAct);
-	mRightClickMenu->addAction(selectMultipleFacesAct);
-	mRightClickMenu->addAction(selectSimilarFacesAct);
-	mRightClickMenu->addAction(selectCheckerboardFacesAct);
-	mRightClickMenu->addAction(selectAllAct);
-	mRightClickMenu->addAction(selectInverseFacesAct);
-	mRightClickMenu->addAction(clearSelectedModeAct);
 	
+	switch (selectionmask){
+		case MaskVertices:
+		break;
+		case MaskEdges: 
+			// mRightClickMenu->addAction(selectEdgeAct);
+			mRightClickMenu->addAction(selectEdgeLoopAct);
+			
+		break;
+		case MaskFaces://face stuff
+			mRightClickMenu->addAction(selectFaceLoopAct);
+			mRightClickMenu->addAction(selectMultipleFacesAct);
+			mRightClickMenu->addAction(selectSimilarFacesAct);
+			mRightClickMenu->addAction(selectCheckerboardFacesAct);
+		break;
+		case MaskCorners:
+		break;
+		default:
+		break;
+	};
+	
+	mRightClickMenu->addAction(selectAllAct);
+	mRightClickMenu->addAction(selectInverseAct);
+	mRightClickMenu->addAction(clearSelectedModeAct);		
+	mRightClickMenu->addSeparator();
+	mRightClickMenu->addAction(mEditVertexAct);
 	mRightClickMenu->addSeparator();
 	mRightClickMenu->addMenu(mToolsMenu);
 	mRightClickMenu->addMenu(mRemeshingMenu);
@@ -2815,7 +2911,7 @@ void MainWindow::setMode(Mode m) {
 	case InsertEdge :
 	case SpliceCorners :
 	case ConnectFaceVertices :
-		setSelectionMask(MainWindow::MaskFaceVertices);
+		setSelectionMask(MainWindow::MaskCorners);
 		MainWindow::num_sel_faceverts = 0;
 		break;
 	case NormalMode:
@@ -2935,7 +3031,7 @@ void MainWindow::setSelectionMask(SelectionMask m){
 	break;
 	case MaskFaces :	active->setSelectionMaskString(tr("Faces"));
 	break;
-	case MaskFaceVertices :	active->setSelectionMaskString(tr("Face-Vertices"));
+	case MaskCorners :	active->setSelectionMaskString(tr("Face-Vertices"));
 	break;
 	default:
 	break;
