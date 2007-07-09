@@ -114,8 +114,8 @@ void MainWindow::selectionMaskEdges() {
 	setSelectionMask(MainWindow::MaskEdges);
 }
 
-void MainWindow::selectionMaskFaceVertices() {
-	setSelectionMask(MainWindow::MaskFaceVertices);
+void MainWindow::selectionMaskCorners() {
+	setSelectionMask(MainWindow::MaskCorners);
 }
 
 void MainWindow::selectAll(){
@@ -129,7 +129,7 @@ void MainWindow::selectAll(){
 		case MaskFaces:
 		active->selectAllFaces();
 		break;
-		case MaskFaceVertices:
+		case MaskCorners:
 		active->selectAllFaceVertices();
 		case MaskObject:
 		break;
@@ -150,7 +150,7 @@ void MainWindow::selectInverse(){
 		case MaskFaces:
 		active->selectInverseFaces();
 		break;
-		case MaskFaceVertices:
+		case MaskCorners:
 		active->selectInverseFaceVertices();
 		case MaskObject:
 		break;
@@ -453,6 +453,8 @@ void MainWindow::subdivideAllEdges(void)              // Sub-divide all edges
 	undoPush();
 	DLFL::subdivideAllEdges(&object,MainWindow::num_e_subdivs);
 	MainWindow::clearSelected();
+	active->recomputePatches();
+	active->recomputeNormals();
 }
 
 void MainWindow::subdivideSelectedFaces(void) // Subdivide all selected faces
@@ -465,6 +467,8 @@ void MainWindow::subdivideSelectedFaces(void) // Subdivide all selected faces
 	}
 	DLFL::subdivideFaces(&object,fparray,use_quads);
 	MainWindow::clearSelected();
+	active->recomputePatches();
+	active->recomputeNormals();
 }
 
 void MainWindow::subdivideAllFaces(void) // Subdivide all the faces
@@ -472,6 +476,8 @@ void MainWindow::subdivideAllFaces(void) // Subdivide all the faces
 	undoPush();
 	DLFL::subdivideAllFaces(&object,use_quads);
 	MainWindow::clearSelected();
+	active->recomputePatches();
+	active->recomputeNormals();
 }
 
 void MainWindow::createMultiFaceHandle(void) // Create multi-face handle between selected faes

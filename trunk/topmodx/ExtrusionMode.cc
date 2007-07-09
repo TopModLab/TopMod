@@ -160,7 +160,7 @@ void ExtrusionMode::triggerDooSabinExtrude(){
 void ExtrusionMode::triggerCubicalExtrude(){
 
 	((MainWindow*)mParent)->setToolOptions(mCubicalExtrudeWidget);
-	((MainWindow*)mParent)->setMode(MainWindow::ExtrudeMultipleFaces);	
+	((MainWindow*)mParent)->setMode(MainWindow::ExtrudeFace);	
 	((MainWindow*)mParent)->setSpinBoxes(cubicalLengthSpinBox,cubicalRotationSpinBox,cubicalScaleSpinBox,cubicalSegmentsSpinBox);
 }
 
