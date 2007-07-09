@@ -17,58 +17,32 @@ namespace DLFL {
 									 uint &faceId2, uint vertId2,
 									 bool check,
 									 bool set_type ) {
+		int id = -1;
 
     if( !obj )
       return -1;
-    //DLFLVertexPtr vptr1, vptr2;
     DLFLFacePtr fptr1, fptr2;
     DLFLFaceVertexPtr fvptr1 = NULL, fvptr2 = NULL;
-    //DLFLFaceVertexPtrList fvpl1, fvpl2;
 
     DLFLEdgePtr eptr;
 
     fptr1 = obj->findFace( faceId1 );
     fptr2 = obj->findFace( faceId2 );
-		fvptr1 = fptr1->findFaceVertex( vertId1 );
-		fvptr2 = fptr2->findFaceVertex( vertId2 );
+		if( fptr1 && fptr2 ) {
+			fvptr1 = fptr1->findFaceVertex( vertId1 );
+			fvptr2 = fptr2->findFaceVertex( vertId2 );
 
-		/*    vptr1 = obj->findVertex( vertId1 );
-    vptr2 = obj->findVertex( vertId2 );
+			if( fvptr1 && fvptr2 ) {
+				if( check )
+					eptr = insertEdge( obj, fvptr1, fvptr2, set_type );
+				else
+					eptr = insertEdgeWithoutCheck( obj, fvptr1, fvptr2, set_type );
+				id = eptr->getID( );
 
-    fvpl1 = vptr1->getFaceVertexList( );
-    fvpl2 = vptr2->getFaceVertexList( );
-
-    bool found = false;
-    DLFLFaceVertexPtrList::const_iterator first = fvpl1.begin(), last = fvpl1.end();
-    while( first != last && !found ) {
-      if( (*first)->getFacePtr() == fptr1 ) {
-				fvptr1 = (*first);
-				found = true;
-      }
-      ++first;
-    }
-		
-    found = false;
-    first = fvpl2.begin(); last = fvpl2.end();
-    while( first != last && !found ) {
-      if( (*first)->getFacePtr() == fptr2 ) {
-				fvptr2 = (*first);
-				found = true;
-      }
-      ++first;
-			}*/
-
-    int id = -1;
-    if( fvptr1 && fvptr2 ) {
-			if( check )
-				eptr = insertEdge( obj, fvptr1, fvptr2, set_type );
-			else
-				eptr = insertEdgeWithoutCheck( obj, fvptr1, fvptr2, set_type );
-      id = eptr->getID( );
-
-			faceId1 = fvptr1->getFaceID();
-			faceId2 = fvptr2->getFaceID();
-    }
+				faceId1 = fvptr1->getFaceID();
+				faceId2 = fvptr2->getFaceID();
+			}
+		}
     return id;
   }
 
@@ -254,6 +228,11 @@ namespace DLFL {
 		std::vector<int> faceids;
 
     DLFLEdgePtr eptr = obj->findEdge( edgeId );
+		if( eptr == NULL ) {
+			faceids.push_back(-1);
+			return faceids;
+		}
+
     DLFLFacePtrArray fpa = deleteEdge( obj, eptr, cleanup );
 		if( fpa.size() > 0 ) {
 			for( int i=0; i < fpa.size(); i++ )
@@ -440,6 +419,8 @@ namespace DLFL {
 
   int collapseEdgeID( DLFLObjectPtr obj, const uint edgeId, bool cleanup ) {
     DLFLEdgePtr ep = obj->findEdge( edgeId );
+
+		if( ep == NULL ) return -1;
     
     DLFLVertexPtr vp;
     vp = collapseEdge( obj, ep, cleanup );
@@ -552,6 +533,8 @@ namespace DLFL {
 
   int subdivideEdgeID( DLFLObjectPtr obj, uint edgeId, bool set_type ) {
     DLFLEdgePtr ep = obj->findEdge( edgeId );
+
+		if( ep == NULL ) return -1;
     
     DLFLVertexPtr vp;
     vp = subdivideEdge( obj, ep, set_type );

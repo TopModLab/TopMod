@@ -121,15 +121,15 @@ namespace DLFL {
       (*first)->getCorners(corners);
 
       for (int i=0; i < corners.size(); ++i) {
-	flag[i] = int(corners[i]->texcoord[0]);
+				flag[i] = int(corners[i]->texcoord[0]);
       }
       for (int i=0; i < corners.size(); ++i) {
-	u = (float)( n*flag[0] + flag[1]  + (int)( ((i+1)%4) / 2 ) ) / (n*n);
+				u = (float)( n*flag[0] + flag[1]  + (int)( ((i+1)%4) / 2 ) ) / (n*n);
 
-	// Subtract from 1.0 since image origin is at top-left, instead of bottom-left
-	v = 1.0 - (float)( n*flag[2] + flag[3]  + (int)(i/2) ) / (n*n); 
+				// Subtract from 1.0 since image origin is at top-left, instead of bottom-left
+				v = 1.0 - (float)( n*flag[2] + flag[3]  + (int)(i/2) ) / (n*n); 
 		   
-	corners[i]->texcoord.set(u,v);
+				corners[i]->texcoord.set(u,v);
       }
       ++first;
     }
@@ -239,6 +239,9 @@ namespace DLFL {
 			DLFLVertexPtr vp = fvp->getVertexPtr( );
 			DLFLFacePtr fp = fvp->getFacePtr( );
 
+			if( vp->numEdges() > 0 )
+				return;
+
 			removeVertex( vp );
 			delete vp;
 			removeFace( fp );
@@ -281,8 +284,8 @@ namespace DLFL {
   }
 
   void DLFLObject::walk( uint faceId, 
-														 vector<int> &verts,
-														 vector<int> &edges ) { 
+												 vector<int> &verts,
+												 vector<int> &edges ) { 
     DLFLFacePtr fp = findFace( faceId );
     //vector<int> verts;
     if( fp ) { 
@@ -292,23 +295,23 @@ namespace DLFL {
     //return verts;
   }
 	/*
-  vector<int> DLFLObject::vertWalk( uint faceId ) { 
+		vector<int> DLFLObject::vertWalk( uint faceId ) { 
     DLFLFacePtr fp = findFace( faceId );
     vector<int> verts;
     if( fp ) { 
-      verts = fp->vertexWalk();
+		verts = fp->vertexWalk();
     }
     return verts;
-  }
+		}
 
-  vector<int> DLFLObject::edgeWalk( uint faceId ) {
+		vector<int> DLFLObject::edgeWalk( uint faceId ) {
     DLFLFacePtr fp = findFace( faceId );
     vector<int> edges;
     if( fp ) { 
-      edges = fp->edgeWalk();
+		edges = fp->edgeWalk();
     } 
     return edges;
-  }
+		}
 	*/
   void DLFLObject::boundaryWalk(uint face_index) {
     //Find the Face with the given face_index from the FaceList and do a boundary walk on it
@@ -321,8 +324,8 @@ namespace DLFL {
       return;
     while (first != last) {
       if (i == face_index) {
-	faceptr = (*first);
-	break;
+				faceptr = (*first);
+				break;
       }
       ++first;
 
@@ -342,8 +345,8 @@ namespace DLFL {
       return;
     while (first != last) {
       if (i == vertex_index) {
-	vertexptr = (*first);
-	break;
+				vertexptr = (*first);
+				break;
       }
       ++first;
 
@@ -358,39 +361,56 @@ namespace DLFL {
     DLFLVertexPtr sel = NULL;
     while ( first != last )
       {
-	if ( (*first)->getID() == vid )
+				if ( (*first)->getID() == vid )
           {
             sel = (*first); break;
           }
-	++first;
+				++first;
       }
     return sel;
   }
 
   DLFLEdgePtr DLFLObject::findEdge(const uint eid) {
     // Find an edge with the given edge id. Return NULL if none exists
-    DLFLEdgePtrList::iterator first = edge_list.begin(), last = edge_list.end();
+    //DLFLEdgePtrList::iterator first = edge_list.begin(), last = edge_list.end();
     DLFLEdgePtr sel = NULL;
-    while ( first != last ) {
+    /*while ( first != last ) {
       if( (*first)->getID() == eid ) {
-	sel = (*first); 
-	break;
+				sel = (*first); 
+				break;
       }
       ++first;
-    }
+			}*/
+		sel = (DLFLEdgePtr) edgeMap[eid];
     return sel;
   }
   
   DLFLFacePtr DLFLObject::findFace(const uint fid) {
     // Find a face with the given face id. Return NULL if none exists
-    DLFLFacePtrList::iterator first = face_list.begin(), last = face_list.end();
+    //DLFLFacePtrList::iterator first = face_list.begin(), last = face_list.end();
     DLFLFacePtr sel = NULL;
+    /*while ( first != last ) {
+			if ( (*first)->getID() == fid ) {
+				sel = (*first); 
+				break;
+			}
+			++first;
+			}*/
+		sel = (DLFLFacePtr) faceMap[fid];
+    return sel;
+  }
+
+  DLFLFaceVertexPtr DLFLObject::findFaceVertex(const uint fvid) {
+    // Find a face vertex with the given face vertex id. Return NULL if none exists
+    DLFLFacePtrList::iterator first = face_list.begin(), last = face_list.end();
+    DLFLFaceVertexPtr sel,tmp = NULL;
     while ( first != last ) {
-	if ( (*first)->getID() == fid ) {
-	  sel = (*first); 
-	  break;
-	}
-	++first;
+			tmp = (*first)->findFaceVertexByID(fvid);
+			if( tmp != NULL ) {
+				sel = tmp; 
+				//break;
+			}
+			++first;
     }
     return sel;
   }
@@ -442,14 +462,14 @@ namespace DLFL {
     }
   }
   /*
-  void DLFLObject::deleteVertex(uint vertex_index) {
+		void DLFLObject::deleteVertex(uint vertex_index) {
     // Find the VertexPtr for the given vertex_index from the VertexList and delete it
     if ( vertex_index > vertex_list.size() ) return;
 
     DLFLVertexPtrList::iterator i = vertex_list.begin();
     advance(i,vertex_index);
     deleteVertex(*i);
-  }
+		}
   */
 
 } // end namespace

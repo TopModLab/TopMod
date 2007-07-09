@@ -24,12 +24,12 @@ void TMPatchObject::updateForPatches( DLFLObjectPtr obj ) {
       // Compute Doo-Sabin coordinates - Level 1
       DLFL::computeDooSabinCoords(coords);
       for (int i=0; i < valence; ++i) 
-	corners[i]->setAuxCoords(coords[i]);
+				corners[i]->setAuxCoords(coords[i]);
 
       // Compute Doo-Sabin coordinates - Level 2
       DLFL::computeDooSabinCoords(coords);
       for (int i=0; i < valence; ++i) 
-	corners[i]->setDS2Coord2(coords[i]);
+				corners[i]->setDS2Coord2(coords[i]);
 
       // Compute the patch point and patch normal
       Vector3d pp, pn;
@@ -89,88 +89,94 @@ void TMPatchObject::for_each(void (TMPatchFace::*func)(void)) {
   }
 }
 
-  // Free the memory allocated for the patches
+// Free the memory allocated for the patches
 void TMPatchObject::destroyPatches() {
-    TMPatchFacePtrList::iterator first = patch_list.begin(), last = patch_list.end();
-    TMPatchFacePtr pfp = NULL;
-    while ( first != last ) {
-      pfp = (*first); ++first;
-      delete pfp;
-    }
-    patch_list.clear();
+	TMPatchFacePtrList::iterator first = patch_list.begin(), last = patch_list.end();
+	TMPatchFacePtr pfp = NULL;
+	while ( first != last ) {
+		pfp = (*first); ++first;
+		delete pfp;
+	}
+	patch_list.clear();
 }
 
-  // Build the list of patch faces
+// Build the list of patch faces
 void TMPatchObject::createPatches( DLFLObjectPtr obj ) {
   destroyPatches();
+	destroyPatchMap( patchMap );
   DLFLFacePtrList face_list = obj->getFaceList( );
-    DLFLFacePtrList::iterator ffirst = face_list.begin(), flast = face_list.end();
-    DLFLFacePtr fp = NULL;
-    TMPatchFacePtr pfp = NULL;
+	DLFLFacePtrList::iterator ffirst = face_list.begin(), flast = face_list.end();
+	DLFLFacePtr fp = NULL;
+	TMPatchFacePtr pfp = NULL;
 
-    while ( ffirst != flast ) {
-      fp = (*ffirst); ++ffirst;
-      pfp = new TMPatchFace(patchsize);
-      pfp->setDLFLFace(fp); 
-      pfp->createPatches();
-      patch_list.push_back(pfp);
-    }
-
-    // Adjust the edge points for all patches
-    DLFLEdgePtrList edge_list = obj->getEdgeList();
-    DLFLEdgePtrList::iterator efirst = edge_list.begin(), elast = edge_list.end();
-    DLFLEdgePtr ep = NULL;
-    DLFLFaceVertexPtr fvp1,fvp2;
-    TMPatchPtr pp1, pp2;
-    Vector3d p00,p01,p10,p11,ip;
-    while ( efirst != elast ) {
-      ep = (*efirst); ++efirst;
-      ep->getCorners(fvp1,fvp2);
-      pp1 = getPatchPtr(fvp1); pp2 = getPatchPtr(fvp2);
-
-      p00 = pp1->getControlPoint(2,0); p01 = pp2->getControlPoint(2,0);
-      p10 = pp1->getControlPoint(3,1); p11 = pp2->getControlPoint(3,1);
-      ip = intersectCoplanarLines(p00,p01,p10,p11);
-
-      pp1->setControlPoint(3,0,ip); pp2->setControlPoint(3,0,ip);
-      pp1->updateGLPointArray(); pp2->updateGLPointArray();
-
-      pp1 = getPatchPtr(fvp1->next()); pp2 = getPatchPtr(fvp2->next());
-      pp1->setControlPoint(0,3,ip); pp2->setControlPoint(0,3,ip);
-      pp1->updateGLPointArray(); pp2->updateGLPointArray();
-    }
-
-    // Adjust the vertex points for 4-valence vertices
-    DLFLVertexPtrList vertex_list = obj->getVertexList( );
-    DLFLVertexPtrList::iterator vfirst = vertex_list.begin(), vlast = vertex_list.end();
-    DLFLVertexPtr vp = NULL;
-    while ( vfirst != vlast ) {
-      vp = (*vfirst); ++vfirst;
-      if ( vp->valence() == 4 ) {
-	DLFLFaceVertexPtrArray vcorners;
-	vp->getOrderedCorners(vcorners);
-	pp1 = getPatchPtr(vcorners[0]); pp2 = getPatchPtr(vcorners[2]);
-
-	p00 = pp1->getControlPoint(1,0); p01 = pp2->getControlPoint(1,0);
-	p10 = pp1->getControlPoint(0,1); p11 = pp2->getControlPoint(0,1);
-	ip = intersectCoplanarLines(p00,p01,p10,p11);
-
-	for( int i = 0; i < 4; ++i ) {
-	  pp1 = getPatchPtr(vcorners[i]);
-	  pp1->setControlPoint(0,0,ip);
-	  pp1->updateGLPointArray();
+	while ( ffirst != flast ) {
+		fp = (*ffirst); ++ffirst;
+		pfp = new TMPatchFace(patchsize);
+		pfp->setDLFLFace(fp); 
+		pfp->createPatches(patchMap);
+		patch_list.push_back(pfp);
 	}
-      }
-    }
+
+	// Adjust the edge points for all patches
+	DLFLEdgePtrList edge_list = obj->getEdgeList();
+	DLFLEdgePtrList::iterator efirst = edge_list.begin(), elast = edge_list.end();
+	DLFLEdgePtr ep = NULL;
+	DLFLFaceVertexPtr fvp1,fvp2;
+	TMPatchPtr pp1, pp2;
+	Vector3d p00,p01,p10,p11,ip;
+	while ( efirst != elast ) {
+		ep = (*efirst); ++efirst;
+		ep->getCorners(fvp1,fvp2);
+		pp1 = getPatchPtr(patchMap,fvp1); pp2 = getPatchPtr(patchMap,fvp2);
+
+		if( pp1 == NULL || pp2 == NULL )
+			return;
+
+		p00 = pp1->getControlPoint(2,0); 
+		p01 = pp2->getControlPoint(2,0);
+		p10 = pp1->getControlPoint(3,1); 
+		p11 = pp2->getControlPoint(3,1);
+		ip = intersectCoplanarLines(p00,p01,p10,p11);
+
+		pp1->setControlPoint(3,0,ip); pp2->setControlPoint(3,0,ip);
+		pp1->updateGLPointArray(); pp2->updateGLPointArray();
+
+		pp1 = getPatchPtr(patchMap,fvp1->next()); pp2 = getPatchPtr(patchMap,fvp2->next());
+		pp1->setControlPoint(0,3,ip); pp2->setControlPoint(0,3,ip);
+		pp1->updateGLPointArray(); pp2->updateGLPointArray();
+	}
+
+	// Adjust the vertex points for 4-valence vertices
+	DLFLVertexPtrList vertex_list = obj->getVertexList( );
+	DLFLVertexPtrList::iterator vfirst = vertex_list.begin(), vlast = vertex_list.end();
+	DLFLVertexPtr vp = NULL;
+	while ( vfirst != vlast ) {
+		vp = (*vfirst); ++vfirst;
+		if ( vp->valence() == 4 ) {
+			DLFLFaceVertexPtrArray vcorners;
+			vp->getOrderedCorners(vcorners);
+			pp1 = getPatchPtr(patchMap,vcorners[0]); pp2 = getPatchPtr(patchMap,vcorners[2]);
+
+			p00 = pp1->getControlPoint(1,0); p01 = pp2->getControlPoint(1,0);
+			p10 = pp1->getControlPoint(0,1); p11 = pp2->getControlPoint(0,1);
+			ip = intersectCoplanarLines(p00,p01,p10,p11);
+				
+			for( int i = 0; i < 4; ++i ) {
+				pp1 = getPatchPtr(patchMap,vcorners[i]);
+				pp1->setControlPoint(0,0,ip);
+				pp1->updateGLPointArray();
+			}
+		}
+	}
                  
-    /*
-      TMPatchFacePtrList::iterator pfirst = patch_list.begin(), plast = patch_list.end();
-      while ( pfirst != plast ) {
-      pfp = (*pfirst); ++pfirst;
-      pfp->adjustEdgePoints();
-      }
-    */
-  }
+	/*
+		TMPatchFacePtrList::iterator pfirst = patch_list.begin(), plast = patch_list.end();
+		while ( pfirst != plast ) {
+		pfp = (*pfirst); ++pfirst;
+		pfp->adjustEdgePoints(patchMap);
+		}
+	*/
+}
 
 void TMPatchObject::setPatchSize( int size, DLFLObjectPtr obj ){
   if ( size != patchsize && size > 0 ) {
@@ -178,5 +184,33 @@ void TMPatchObject::setPatchSize( int size, DLFLObjectPtr obj ){
     if( !obj ) { obj = mObj; }
     if( !obj ) { return; }
     createPatches( obj );
+  }
+}
+
+/* stuart - bezier export */
+void TMPatchObject::objPatchWrite( ostream& o ) {
+  o << "g patches" << std::endl
+    << "mg 1 0.5"  << std::endl << std::endl;
+  TMPatchFacePtrList::const_iterator first = patch_list.begin(), last = patch_list.end();
+  int i = 0;
+  int v = 0;
+  while( first != last ) {
+    o << "# Face " << i+1 << std::endl;
+    int npatches = (*first)->print(o);
+    int j = 0;
+    while( j < npatches ) {
+      o << "# Patch" << i+j+1 << std::endl;
+      o << "cstype bezier" << std::endl
+	<< "deg 3 3" << std::endl
+	<< "surf 0.000000 1.000000 0.000000 1.000000 " 
+	<< 1+v << " " << 2+v << " " << 3+v << " " << 4+v << " " << 5+v << " " << 6+v << " " << 7+v << " " << 8+v << " " << 9+v << " " << 10+v << " " << 11+v << " " << 12+v << " " << 13+v << " " << 14+v << " " << 15+v << " " << 16+v << std::endl
+	<< "parm u 0.000000 1.000000" << std::endl
+	<< "parm v 0.000000 1.000000" << std::endl
+	<< "end" << std::endl << std::endl;
+      j++;
+      v += 16;
+    }
+    ++first;
+    i++;
   }
 }

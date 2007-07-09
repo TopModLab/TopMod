@@ -9,7 +9,7 @@
 
 #include <vector>
 #include <list>
-//#include <ext/hash_map>
+#include <ext/hash_map>
 #include <algorithm>
 #include <iterator>
 #include <Vector2d.hh>
@@ -209,8 +209,8 @@ namespace DLFL {
     }
   };
 
-  //typedef __gnu_cxx::hash<const char*> Hash;
-  //typedef __gnu_cxx::hash_map<int, int, Hash, eqstr> HashMap;
+  typedef __gnu_cxx::hash<unsigned int> Hash;
+  typedef __gnu_cxx::hash_map<unsigned int, unsigned int, Hash, eqstr> HashMap;
 
 } // end namespace
 

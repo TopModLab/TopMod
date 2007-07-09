@@ -45,6 +45,14 @@ namespace DLFL {
     return (*this);
   }
 
+	bool DLFLFaceVertex::operator==(const DLFLFaceVertex &other) const {
+		if( getVertexID() == other.getVertexID() &&
+				getFaceID() == other.getFaceID() &&
+				uID == other.uID ) { return true; }
+		else
+			return false;
+  }
+
   DLFLFaceVertexPtr DLFLFaceVertex::copy( ) const {
     DLFLFaceVertexPtr fvptr = new DLFLFaceVertex(*this);
     return fvptr;

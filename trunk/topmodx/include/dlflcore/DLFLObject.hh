@@ -70,6 +70,9 @@ public :
     sel_fvptr_array.clear();
   };
 
+	HashMap faceMap;
+	HashMap edgeMap;
+
   static DLFLVertexPtrArray vparray;                // For selection
   static DLFLEdgePtrArray   eparray;                // For selection
   static DLFLFacePtrArray   fparray;                // For selection
@@ -80,8 +83,8 @@ public :
   Quaternion         rotation;                      // Rotation of object
 
   inline void removeVertex( DLFLVertexPtr vp ) { vertex_list.remove(vp); };
-  inline void removeEdge( DLFLEdgePtr ep ) { edge_list.remove(ep); };
-  inline void removeFace( DLFLFacePtr fp ) { face_list.remove(fp); };
+  inline void removeEdge( DLFLEdgePtr ep ) { edgeMap.erase(ep->getID()); edge_list.remove(ep); };
+  inline void removeFace( DLFLFacePtr fp ) { faceMap.erase(fp->getID()); face_list.remove(fp); };
 
   void computeNormals( );
 
@@ -118,6 +121,8 @@ protected :
     clear(face_list);
     clear(matl_list);
     //destroyPatches();
+		edgeMap.clear();
+		faceMap.clear();
   };
 
 private :
@@ -146,6 +151,9 @@ private :
     //patch_list = dlfl.patch_list;
     //patchsize = dlfl.patchsize;
 	 
+		edgeMap = dlfl.edgeMap;
+		faceMap = dlfl.faceMap;
+
     uID = dlfl.uID;
     return (*this);
   };
@@ -193,6 +201,7 @@ public :
   DLFLVertexPtr findVertex(const uint vid);
   DLFLEdgePtr findEdge(const uint eid);
   DLFLFacePtr findFace(const uint fid);
+	DLFLFaceVertexPtr findFaceVertex(const uint fvid );
 
   DLFLVertexPtrList::iterator beginVertex( ) { return vertex_list.begin(); }
   DLFLVertexPtrList::iterator endVertex( ) { return vertex_list.end(); }
@@ -307,7 +316,9 @@ public :
     // Make edges unique
     DLFLEdgePtrList::iterator efirst=edge_list.begin(), elast=edge_list.end();
     while ( efirst != elast ) {
+			edgeMap.erase((*efirst)->getID());
       (*efirst)->makeUnique();
+			edgeMap[(*efirst)->getID()] = (unsigned int)(*efirst);
       ++efirst;
     }
   }
@@ -316,7 +327,9 @@ public :
     // Make faces unique
     DLFLFacePtrList::iterator ffirst=face_list.begin(), flast=face_list.end();
     while ( ffirst != flast ) {
+			faceMap.erase((*ffirst)->getID());
       (*ffirst)->makeUnique();
+			faceMap[(*ffirst)->getID()] = (unsigned int)(*ffirst);
       ++ffirst;
     }
   };
@@ -360,6 +373,7 @@ public :
     // Insert the pointer.
     // **** WARNING!!! **** Pointer will be freed when list is deleted
     edge_list.push_back(edgeptr);
+		edgeMap[edgeptr->getID()] = (unsigned int)edgeptr;
   };
 
   void addFace(const DLFLFace& face);               // Insert a copy
@@ -371,6 +385,7 @@ public :
       // If Face doesn't have a material assigned to it, assign the default material
     faceptr->setMaterial(matl_list.front());
     face_list.push_back(faceptr);
+		faceMap[faceptr->getID()] = (unsigned int)faceptr;
   };
 
   DLFLVertexPtr getVertexPtr(uint index) const {

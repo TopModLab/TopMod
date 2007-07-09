@@ -4,8 +4,11 @@
 void TMPatchFace::resizePatchArray(void) {
   if ( dlflface != NULL ) {
     patcharray.resize(dlflface->size());
-    for (uint i=0; i < patcharray.size(); ++i)
+    for (uint i=0; i < patcharray.size(); ++i) {
+			//if( patcharray[i] == NULL )
+			//patcharray[i] = new TMPatch;
       patcharray[i].resizePatch(patchsize);
+		}
   }
 }
 
@@ -13,13 +16,14 @@ void TMPatchFace::resizePatchArray(void) {
 void TMPatchFace::resizePatches(int psize) {
   if ( psize != patchsize ) {
     patchsize = psize;
-    for (uint i=0; i < patcharray.size(); ++i)
+    for (uint i=0; i < patcharray.size(); ++i) {
       patcharray[i].resizePatch(patchsize);
+		}
   }
 }
      
 // Create the patches using face information
-void TMPatchFace::createPatches(void) {
+void TMPatchFace::createPatches(TMPatchMap &patchMap) {
   if ( dlflface == NULL ) return;
 
   // patcharray will be resized here
@@ -148,15 +152,17 @@ void TMPatchFace::createPatches(void) {
     cn[2][2] = normalized(6*cn[3][3]+cn[0][3]+cn[3][0]);
               
     patcharray[i].calculatePatchPoints(cp,cn);
-    //corners[i]->setPatchPtr(&patcharray[i]);
-    setPatchPtr( &patcharray[i], corners[i] );
+		setPatchPtr(patchMap, &(patcharray[i]), corners[i] );
   }
 
   // Make adjustment to face point for quadrilaterals
   if ( size == 4 ) {
     TMPatchPtr pptr1, pptr2;
-    pptr1 = getPatchPtr(corners[0]);
-    pptr2 = getPatchPtr(corners[2]);
+    pptr1 = getPatchPtr(patchMap,corners[0]);
+    pptr2 = getPatchPtr(patchMap,corners[2]);
+
+		if( pptr1 == NULL || pptr2 == NULL )
+			return;
 
     Vector3d p00,p01,p10,p11,ip;
     p00 = pptr1->getControlPoint(3,2); p01 = pptr2->getControlPoint(3,2);
@@ -164,7 +170,7 @@ void TMPatchFace::createPatches(void) {
     ip = intersectCoplanarLines(p00,p01,p10,p11);
 
     for (int i=0; i < size; ++i) {
-      pptr1 = getPatchPtr(corners[i]);
+      pptr1 = getPatchPtr(patchMap,corners[i]);
       pptr1->setControlPoint(3,3,ip);
       pptr1->updateGLPointArray();
     }
@@ -172,16 +178,16 @@ void TMPatchFace::createPatches(void) {
 }
 
 // Adjust the edge points for each patch in the face
-void TMPatchFace::adjustEdgePoints(void) {
+void TMPatchFace::adjustEdgePoints(TMPatchMap &patchMap) {
   if ( dlflface == NULL ) return;
   DLFLFaceVertexPtrArray corners; dlflface->getCorners(corners);
   DLFLFaceVertexPtr fvp, nfvp, pfvp;
   TMPatchPtr pptr, npptr, ppptr;
   Vector3d p00,p01,p10,p11,ip;
   for (uint i=0; i < corners.size(); ++i) {
-    fvp = corners[i]; pptr = getPatchPtr(fvp);
-    nfvp = corners[i]->getOppositeCorner(); npptr = getPatchPtr(nfvp);
-    pfvp = corners[i]->prev()->vnext(); ppptr = getPatchPtr(pfvp);
+    fvp = corners[i]; pptr = getPatchPtr(patchMap,fvp);
+    nfvp = corners[i]->getOppositeCorner(); npptr = getPatchPtr(patchMap,nfvp);
+    pfvp = corners[i]->prev()->vnext(); ppptr = getPatchPtr(patchMap,pfvp);
 
     p00 = pptr->getControlPoint(2,0); p01 = npptr->getControlPoint(2,0);
     p10 = pptr->getControlPoint(3,1); p11 = npptr->getControlPoint(3,1);

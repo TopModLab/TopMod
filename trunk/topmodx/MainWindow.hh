@@ -330,7 +330,7 @@ protected :
 	GLWidget *active;															     	//!< Active viewport to handle events
 
 	DLFLObject object;                            //!< The DLFL object
-	TMPatchObject *patchObject;										//!< the patch object
+	//TMPatchObject *patchObject;										//!< the patch object
 	Mode mode;																		//!< Current operating mode
 	SelectionMask selectionmask;            			//!< Current selection mask
 	RemeshingScheme remeshingscheme;							//!< Current selected remeshing scheme
@@ -998,7 +998,6 @@ signals:
 	void loadedObject( DLFLObject *obj, QString fileName ); // echo command for loading object
 #endif
 	void echoCommand( QString cmd ); // all other commands
-
 
 };
 

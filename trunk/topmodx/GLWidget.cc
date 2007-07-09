@@ -43,8 +43,8 @@ extern DLFLFaceVertexPtrArray DLFLObject::sel_fvptr_array; // List of selected D
 // if (!cx->format().stereo())
 // exit(0); // could not create stereo context
 
-GLWidget::GLWidget(int w, int h, DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op, TMPatchObjectPtr pop, const QGLFormat & format, QWidget * parent ) 
- : 	QGLWidget(format, parent, NULL), /*viewport(w,h,v),*/ object(op), patchObject(pop), renderer(rp), 
+GLWidget::GLWidget(int w, int h, DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op, const QGLFormat & format, QWidget * parent ) 
+ : 	QGLWidget(format, parent, NULL), /*viewport(w,h,v),*/ object(op), patchObject(NULL), renderer(rp), 
 		mRenderColor(color), mViewportColor(vcolor),/*grid(ZX,20.0,10),*/ showgrid(false), showaxes(false), mUseGPU(false), mAntialiasing(true) { 
 		mParent = parent;
 	// Vector3d neweye = eye - center;
@@ -117,8 +117,6 @@ GLWidget::GLWidget(int w, int h, DLFLRendererPtr rp, QColor color, QColor vcolor
 	// Up = WindowY;
 	// normalize(Up);
 
-	
-	// if( patchObject ) { delete patchObject; patchObject = 0; }
 }
 
 GLWidget::~GLWidget(){ 
@@ -394,9 +392,9 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	
 		}
 		#endif // GPU_OK
-	  renderer->render(object);
 	  if(patchObject)
 	    renderer->render(patchObject);
+	  renderer->render(object);
 		#ifdef GPU_OK
 		if (mUseGPU){
 		  cgGLDisableProfile( cg->vertProfile );

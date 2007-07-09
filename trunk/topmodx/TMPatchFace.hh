@@ -53,10 +53,10 @@ public :
   }
      
   // Create the patches using face information
-  void createPatches(void);
+  void createPatches(TMPatchMap &patchMap);
 
   // Adjust the edge points for each patch in the face
-  void adjustEdgePoints(void);
+  void adjustEdgePoints(TMPatchMap &patchMap);
               
   // Compute lighting for the patches in this face
   void computeLighting(LightPtr lightptr) {

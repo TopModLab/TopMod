@@ -21,34 +21,25 @@ def deleteData(faces,edges,verts):
 	for v in verts:
 		destroyVertex(v)
 
-
 def connEdges(e1,f1,e2,f2):
 	c1 = getCorner(e1,f1)
 	c2 = getCorner(e2,f2)
+	c1p = saveCorner(c1)
+	c2p = saveCorner(c2)
 	if( c1 < 0 or c2 < 0 ):
 		return
 	c1n = next(c1)
 	c2n = next(c2)
+	c1np = saveCorner(c1n)
+	c2np = saveCorner(c2n)
 	if( next(c1) != c2n and prev(c1) != c2n ):
-		print 'ie1',c1,c2n
 		e,c1,c2n = insertEdge(c1,c2n,False)
-	#c1n = next(c1)
-	c2 = next(next(next(c2n)))
-	#c2n = next(c2)
+	c1  = restoreCorner(c1p)
+	c2  = restoreCorner(c2p)
+	c1n = restoreCorner(c1np)
+	c2n = restoreCorner(c2np)
 	if( next(c1n) != c2 and prev(c1n) != c2 ):
-		print 'ie2',c1n,c2
 		e,c1n,c2 = insertEdge(c1n,c2,False)
-		
-
-
-def test():
-	"""docstring for test"""
-	deleteEdge(30)
-	deleteEdge(29)
-	deleteEdge(32)
-	deleteEdge(34)
-	connEdges(24,12,28,7)
-
 
 def doosabin():
 	"""Doo-Sabin Remeshing Algorithm"""
@@ -119,8 +110,8 @@ def doosabin():
 				f2 = ca2[0]
 			elif faceInfo(cb2[0])['type'] == "new":
 				f2 = cb2[0]
-			connectEdges((elist1[i], f1), (elist2[i], f2), False)
-			#connEdges(elist1[i], f1, elist2[i], f2)
+			#connectEdges((elist1[i], f1), (elist2[i], f2), False)
+			connEdges(elist1[i], f1, elist2[i], f2)
 			#return
 		else :
 			return "NULL pointers found"

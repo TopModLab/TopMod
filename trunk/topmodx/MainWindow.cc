@@ -155,17 +155,15 @@ DLFLEdgePtr MainWindow::face_loop_start_edge = NULL;
  * asdf;alsjkdf
  * asdfl;jkas;df
  **/
-MainWindow::MainWindow(char *filename) : object(), patchObject(NULL), mode(NormalMode), undoList(), redoList(), 
+MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(), redoList(), 
 																				 undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimitive(false), mSpinBoxMode(None) {
 	//initialize the OpenGL Window GLWidget
 	QGLFormat fmt;
 	//initialize renderer
 	createRenderers();
-	//patch object initialization
-	//patchObject = new TMPatchObject( object.getID() );
 	setMouseTracking(true);
 
-	active = new GLWidget(500,600, lit, QColor(255,255,255,255),QColor(255,255,255,255) , &object, patchObject,fmt, this);
+	active = new GLWidget(500,600, lit, QColor(255,255,255,255),QColor(255,255,255,255) , &object, fmt, this);
 	// active->switchTo(VPPersp);	
 	setRenderer(lit);
 	active->redraw();
@@ -1289,6 +1287,7 @@ void MainWindow::openFile(QString fileName){
 	if( obj )
 		emit loadedObject(obj,fileName);
 #endif
+	active->createPatchObject( );
 	active->recomputePatches();
 	active->recomputeNormals();
 	setCurrentFile(fileName);
@@ -3059,6 +3058,7 @@ void MainWindow::readObjectQFile(QString filename) {
 	if( obj )
 		emit loadedObject(obj,filename);
 #endif
+	active->createPatchObject( );
 }
 
 // Read the DLFL object from a file - use alternate OBJ reader for OBJ files
@@ -3109,9 +3109,11 @@ void MainWindow::writeObjectOBJ(const char * filename, bool with_normals, bool w
 
 /* stuart - bezier export */
 void MainWindow::writePatchOBJ( const char *filename ) {
-	ofstream file;
-	file.open(filename);
-	// object.objPatchWrite(file);
+	if( active->patchobject() != NULL ) {
+		ofstream file;
+		file.open(filename);
+		active->patchobject()->objPatchWrite(file);
+	}
 }
 
 void MainWindow::writeObjectDLFL(const char * filename) {
@@ -3293,7 +3295,7 @@ void MainWindow::loadCube(){
 	mWasPrimitive = true;
 	setCurrentFile(tr("cube.obj"));
 	readObjectQFile(":/cube.obj");
-	active->recomputePatches();
+	//active->recomputePatches();
 	active->recomputeNormals();
 	active->redraw();
 }
@@ -3306,7 +3308,7 @@ void MainWindow::loadOctahedron(){
 	mWasPrimitive = true;
 	setCurrentFile(tr("octahedron.obj"));
 	readObjectQFile(":/octahedron.obj");
-	active->recomputePatches();
+	//active->recomputePatches();
 	active->recomputeNormals();
 	active->redraw();
 }
@@ -3319,7 +3321,7 @@ void MainWindow::loadTetrahedron(){
 	mWasPrimitive = true;
 	setCurrentFile(tr("tetrahedron.obj"));
 	readObjectQFile(":/tetrahedron.obj");
-	active->recomputePatches();
+	//active->recomputePatches();
 	active->recomputeNormals();
 	active->redraw();
 }
@@ -3332,7 +3334,7 @@ void MainWindow::loadDodecahedron(){
 	mWasPrimitive = true;
 	setCurrentFile(tr("dodecahedron.obj"));
 	readObjectQFile(":/dodecahedron.obj");
-	active->recomputePatches();
+	//active->recomputePatches();
 	active->recomputeNormals();
 	active->redraw();
 }
@@ -3345,7 +3347,7 @@ void MainWindow::loadIcosahedron(){
 	mWasPrimitive = true;
 	setCurrentFile(tr("icosahedron.obj"));
 	readObjectQFile(":/icosahedron.obj");
-	active->recomputePatches();
+	//active->recomputePatches();
 	active->recomputeNormals();
 	active->redraw();
 }
@@ -3358,7 +3360,7 @@ void MainWindow::loadSoccerball(){
 	mWasPrimitive = true;
 	setCurrentFile(tr("soccerball.obj"));
 	readObjectQFile(":/soccerball.obj");
-	active->recomputePatches();
+	//active->recomputePatches();
 	active->recomputeNormals();
 	active->redraw();
 }
@@ -3371,7 +3373,7 @@ void MainWindow::loadGeodesic(){
 	mWasPrimitive = true;
 	setCurrentFile(tr("geodesic.obj"));
 	readObjectQFile(":/geodesic.obj");
-	active->recomputePatches();
+	//active->recomputePatches();
 	active->recomputeNormals();
 	active->redraw();
 }
@@ -3550,4 +3552,4 @@ void MainWindow::getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr 
 		}//end for loop
 		// }//end if fptr2	
 	}
-} 
+}

@@ -32,7 +32,6 @@
 <option value="0"></option>
 <option value="obj">Object Management</option>
 <option value="core">Core Operations</option>
-<option value="destroy">Destroy Data</option>
 <option value="aux">Auxiliary Operations</option>
 <option value="ids">Finding IDs</option>
 <option value="info">Object Information</option>
@@ -63,9 +62,6 @@
 <option value="20">wireframe</option>
 <option value="21">column</option>
 <option value="22">createFace</option>
-<option value="23">destroyVertex</option>
-<option value="24">destroyEdge</option>
-<option value="25">destroyFace</option>
 <option value="34">faces</option>
 <option value="35">edges</option>
 <option value="36">verts</option>
@@ -97,10 +93,10 @@
 <div class="command"><a name="deleteEdge"><span class="fn">deleteEdge</span>(<span class="args">edgeid</span>)</a><p class="description">Deletes the edge represented by <i>edgeid</i>. When the edge is deleted then one face remains. If the deleted edge's sides belonged to two separate faces then the second one is deleted. A list (of size 1) with remaining face's ID is returned. Otherwise, if the deleted edge's sides belonged to the same face, then one new face is created. A list (of size 2) with the 2 face IDs is returned.</p><div class="result">Result:</div><div class="resultdesc">[faceid,...]</div></div>   
 <div class="command"><a name="collapseEdge"><span class="fn">collapseEdge</span>(<span class="args">edgeid</span>)</a><p class="description">Collapses the edge represented by <i>edgeid</i>.</p><div class="result">Result:</div><div class="resultdesc">vertexid</div></div> 
 <div class="command"><a name="subdivideEdge"><span class="fn">subdivideEdge</span>(<span class="args">[divisions,]edgeid</span>)</a><p class="description">Subdivides the edge represented by <i>edgeid</i>. By default it just subdivides it in half, but when given the optional argument <i>divisions</i> it subdivides the edge by that number. Then it returns a list of all the newly created vertices.</p><div class="result">Result:</div><div class="resultdesc">[vertexid,...]</div></div>
-<a name="destroy"><h2>Destroy Data</h2></a>
+<!--<a name="destroy"><h2>Destroy Data</h2></a>
 <div class="command"><a name="destroyVertex"><span class="fn">destroyVertex</span>(<span class="args">vertexid</span>)</a><p class="description">Destroys the vertex by removing it from the objects vertex list. This is useful for cleaning up for instance when doing a remeshing scheme and all old vertices should be deleted.</p><div class="result">Result:</div><div class="resultdesc">None</div></div>
 <div class="command"><a name="destroyEdge"><span class="fn">destroyEdge</span>(<span class="args">edgeid</span>)</a><p class="description">Destroys the edge by removing it from the objects edge list. This is useful for cleaning up for instance when doing a remeshing scheme and all old edges should be deleted.</p><div class="result">Result:</div><div class="resultdesc">None</div></div>
-<div class="command"><a name="destroyFace"><span class="fn">destroyFace</span>(<span class="args">faceid</span>)</a><p class="description">Destroys the face by removing it from the objects face list. This is useful for cleaning up for instance when doing a remeshing scheme and all old faces should be deleted.</p><div class="result">Result:</div><div class="resultdesc">None</div></div>
+<div class="command"><a name="destroyFace"><span class="fn">destroyFace</span>(<span class="args">faceid</span>)</a><p class="description">Destroys the face by removing it from the objects face list. This is useful for cleaning up for instance when doing a remeshing scheme and all old faces should be deleted.</p><div class="result">Result:</div><div class="resultdesc">None</div></div>-->
 <a name="aux"><h2>Auxiliary Operations</h2></a>
 <div class="command"><a name="extrude"><span class="fn">extrude</span>(<span class="args">type,faceid[,...]</span>)</a><p class="description">Extrudes a face with the type of extrusions specified by a string. Valid types include: <ul><li>"doo-sabin" <i class="opts">options: [distance, segments, rotation, scale]</i></li>
 			    <li>"dodeca" <i class="opts">options: [distance, segments, twist, scale, hexagonalize]</i></li>

@@ -736,6 +736,20 @@ namespace DLFL {
 				current = current->next();
 			} while( current != head );
 		}
+		return NULL;
+	}
+
+	DLFLFaceVertexPtr DLFLFace::findFaceVertexByID( uint faceVertexId ) const {
+		if(head) {
+			DLFLFaceVertexPtr current = head;
+			do {
+				uint id = current->getID();
+				if( faceVertexId == id )
+					return current;
+				current = current->next();
+			} while( current != head );
+		}
+		return NULL;
 	}
 
   // Get the corners and the coords

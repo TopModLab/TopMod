@@ -28,7 +28,7 @@ namespace DLFL {
   public:
     static void setLastID( uint id ) {
       if( id > suLastID )
-	suLastID = id;
+				suLastID = id;
     };
   protected:
     static uint suLastID;
@@ -64,7 +64,10 @@ namespace DLFL {
     //TMPatchPtr         tmpp;                          // Pointer to the TMPatch corresponding to this corner
 
     void assignID( ) {
-      uID = DLFLFaceVertex::newID();
+      //uID = DLFLFaceVertex::newID();
+			//std::cout << this;
+			uID = (unsigned int) this;
+			//std::cout << "->" << uID << std::endl;
     };
 
   public :
@@ -79,6 +82,7 @@ namespace DLFL {
 
     // Assignment operator
     DLFLFaceVertex& operator=(const DLFLFaceVertex& dfv);
+		bool operator==(const DLFLFaceVertex &other) const; 
 
     DLFLFaceVertexPtr copy( ) const;
 
@@ -93,7 +97,7 @@ namespace DLFL {
 
     // Query Functions
     uint getIndex( ) const { return index; };
-    uint getID( ) const { return uID; };
+    uint getID( ) { assignID(); return uID; };
     DLFLFaceVertexType getType( ) const { return fvtType; };
     DLFLVertexType getVertexType( ) const { return vertex->getType(); };
     DLFLVertexPtr getVertexPtr( ) const { return vertex; };

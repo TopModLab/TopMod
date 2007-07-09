@@ -23,7 +23,7 @@ namespace DLFL {
   public :
     static void setLastID( uint id ) {
       if( id > suLastID )
-	suLastID = id;
+				suLastID = id;
     };
   protected :
 
@@ -294,6 +294,7 @@ namespace DLFL {
 
 		// Helpful for python interface
 		DLFLFaceVertexPtr findFaceVertex( uint vertexId ) const;
+		DLFLFaceVertexPtr findFaceVertexByID( uint faceVertexId ) const;
 
     // Get the corners and the coordinates
     void getCornersAndCoords(DLFLFaceVertexPtrArray& corners, Vector3dArray& coords);

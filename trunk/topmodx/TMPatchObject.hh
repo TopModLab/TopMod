@@ -17,12 +17,15 @@ protected :
 public :
 
   // Default constructor
-  TMPatchObject( uint id ) : uid(id), patch_list(), patchsize(0) { }
+  TMPatchObject( uint id ) : uid(id), patch_list(), patchsize(4) { }
 
   uint id( ) { return uid; };
   int size( ) { return patchsize; };
   const TMPatchFacePtrList& list( ) { return patch_list; };
   void for_each( void (TMPatchFace::*func)(void));
+
+	/* stuart - bezier export */
+	void objPatchWrite( ostream& o );
 
 private :
      
@@ -35,10 +38,12 @@ private :
        
 public :     
   // Destructor
-  ~TMPatchObject() { destroyPatches(); }
+  ~TMPatchObject() { destroyPatches(); destroyPatchMap(patchMap); }
 
 protected :
   DLFLObjectPtr mObj; // the last obj created from
+
+	TMPatchMap patchMap;
 
   // Free the memory allocated for the patches
   void destroyPatches();

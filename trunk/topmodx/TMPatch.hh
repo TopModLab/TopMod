@@ -13,29 +13,30 @@ using namespace DLFL;
 class TMPatch;
 typedef vector<TMPatch> TMPatchArray;
 typedef TMPatch* TMPatchPtr;
+typedef vector<TMPatchPtr> TMPatchPtrArray;
 
 // This stuff is to map the patches to the face vertices by index
 struct compare { 
-  bool operator()( uint a, uint b ) const { return (a < b); } 
+  bool operator()( DLFLFaceVertexPtr a, DLFLFaceVertexPtr b ) const { 
+		return ( a->getID() < b->getID() );
+	}
 };
-
-static std::map<uint, TMPatchPtr, compare> patchMap;
   
-static void setPatchPtr( TMPatchPtr p, DLFLFaceVertexPtr fvp ) {
-  uint id = fvp->getID( );
-  patchMap[id] = p;
+typedef	std::map<DLFLFaceVertexPtr, TMPatchPtr, compare> TMPatchMap;
+
+static void setPatchPtr( TMPatchMap &map, TMPatchPtr p, DLFLFaceVertexPtr fvp ) {
+  map[fvp] = p;
 };
 
-static TMPatchPtr getPatchPtr( DLFLFaceVertexPtr fvp )  {
-  uint id = fvp->getID ( );
-  std::map<uint, TMPatchPtr, compare>::iterator it;
-  it = patchMap.find(id);
+static TMPatchPtr getPatchPtr( TMPatchMap &map, DLFLFaceVertexPtr fvp )  {
+  std::map<DLFLFaceVertexPtr, TMPatchPtr, compare>::iterator it;
+  it = map.find(fvp);
   return (*it).second;
 };
 
-static bool destroyPatchMap( ) { 
- patchMap.clear(); 
- return patchMap.empty();
+static bool destroyPatchMap( TMPatchMap &map ) { 
+ map.clear(); 
+ return map.empty();
 };
 
 class TMPatch {
@@ -48,18 +49,16 @@ protected :
   GLdouble * glctrlpts;		  // Control points for OpenGL
   GLdouble * glctrlptcolors;     // Control point colors for OpenGL
 
-  void allocateGLArray()
-  {
+  void allocateGLArray() {
     // Allocate memory for the GLdouble array to be sent to OpenGL
     // Uses patchsize to determine size of grid
     // Releases existing memory
     delete [] glctrlpts; glctrlpts = NULL;
     delete [] glctrlptcolors; glctrlptcolors = NULL;
-    if ( patchsize > 0 )
-      {
-	glctrlpts = new GLdouble[patchsize*patchsize*3];
-	glctrlptcolors = new GLdouble[patchsize*patchsize*4];
-      }
+    if ( patchsize > 0 ) {
+			glctrlpts = new GLdouble[patchsize*patchsize*3];
+			glctrlptcolors = new GLdouble[patchsize*patchsize*4];
+		}
   }
 
   void populateGLArray()
@@ -67,25 +66,23 @@ protected :
     // Copy values from the Vector3dGrid to the GLdouble array
     // Assumes that the GLdouble array has enough space
     // Assumes that the Vector3dGrid is a square grid of size patchsize
-    if ( glctrlpts != NULL )
-      {
-	// The order of traversal may have to be changed
-	int index, colorindex;
-	for (int i=0; i < patchsize; ++i)
-	  for (int j=0; j < patchsize; ++j)
-	    {
-	      index = (i*patchsize+j)*3;
-	      glctrlpts[index+0] = ctrlpts[j][i][0]; 
-	      glctrlpts[index+1] = ctrlpts[j][i][1]; 
-	      glctrlpts[index+2] = ctrlpts[j][i][2]; 
-
-	      colorindex = (i*patchsize+j)*4;
-	      glctrlptcolors[colorindex+0] = ctrlptcolors[j][i][0];
-	      glctrlptcolors[colorindex+1] = ctrlptcolors[j][i][1];
-	      glctrlptcolors[colorindex+2] = ctrlptcolors[j][i][2];
-	      glctrlptcolors[colorindex+3] = ctrlptcolors[j][i][3];
-	    }
-      }
+    if ( glctrlpts != NULL ) {
+			// The order of traversal may have to be changed
+			int index, colorindex;
+			for (int i=0; i < patchsize; ++i)
+				for (int j=0; j < patchsize; ++j) {
+					index = (i*patchsize+j)*3;
+					glctrlpts[index+0] = ctrlpts[j][i][0]; 
+					glctrlpts[index+1] = ctrlpts[j][i][1]; 
+					glctrlpts[index+2] = ctrlpts[j][i][2]; 
+					
+					colorindex = (i*patchsize+j)*4;
+					glctrlptcolors[colorindex+0] = ctrlptcolors[j][i][0];
+					glctrlptcolors[colorindex+1] = ctrlptcolors[j][i][1];
+					glctrlptcolors[colorindex+2] = ctrlptcolors[j][i][2];
+					glctrlptcolors[colorindex+3] = ctrlptcolors[j][i][3];
+				}
+		}
   }
      
 public :
@@ -127,20 +124,17 @@ public :
 public :
 
   // Resize the patch of control points
-  void resizePatch(int size)
-  {
-    if ( size != patchsize )
-      {
-	patchsize = size;
-	ctrlpts.resize(patchsize); ctrlptnormals.resize(patchsize); ctrlptcolors.resize(patchsize);
-	for (int i=0; i < ctrlpts.size(); ++i)
-	  {
-	    ctrlpts[i].resize(patchsize);
-	    ctrlptnormals[i].resize(patchsize);
-	    ctrlptcolors[i].resize(patchsize);
-	  }
-	allocateGLArray(); // Has to be reallocated if size changes
-      }
+  void resizePatch(int size) {
+    if ( size != patchsize ) {
+			patchsize = size;
+			ctrlpts.resize(patchsize); ctrlptnormals.resize(patchsize); ctrlptcolors.resize(patchsize);
+			for (int i=0; i < ctrlpts.size(); ++i) {
+					ctrlpts[i].resize(patchsize);
+					ctrlptnormals[i].resize(patchsize);
+					ctrlptcolors[i].resize(patchsize);
+			}
+			allocateGLArray(); // Has to be reallocated if size changes
+		}
   }
 
   const Vector3d& getControlPoint(int i, int j) const
@@ -182,15 +176,16 @@ public :
 
   void updateGLPointArray(void)
   {
+		if( glctrlpts == NULL )
+			return;
     int index;
     for (int i=0; i < patchsize; ++i)
-      for (int j=0; j < patchsize; ++j)
-	{
-	  index = (i*patchsize+j)*3;
-	  glctrlpts[index+0] = ctrlpts[j][i][0]; 
-	  glctrlpts[index+1] = ctrlpts[j][i][1]; 
-	  glctrlpts[index+2] = ctrlpts[j][i][2]; 
-	}
+      for (int j=0; j < patchsize; ++j) {
+				index = (i*patchsize+j)*3;
+				glctrlpts[index+0] = ctrlpts[j][i][0]; 
+				glctrlpts[index+1] = ctrlpts[j][i][1]; 
+				glctrlpts[index+2] = ctrlpts[j][i][2]; 
+			}
   }
      
   void computeLighting(const RGBColor& basecolor, double Ka, double Kd, double Ks, LightPtr lightptr)

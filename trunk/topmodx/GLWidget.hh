@@ -55,7 +55,7 @@ class GLWidget : public QGLWidget {
 
 public :
 	
-	GLWidget(	int w, int h , DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op, TMPatchObjectPtr pop, const QGLFormat & format, QWidget * parent = 0 );
+	GLWidget(	int w, int h , DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op, const QGLFormat & format, QWidget * parent = 0 );
 
 	~GLWidget( );
 
@@ -364,6 +364,8 @@ public :
 	QImage image;
 
 	public :
+
+	inline TMPatchObjectPtr patchobject( ) { return patchObject; };
 
 	QCursor *cursor;
 	void redraw();
@@ -686,11 +688,15 @@ void drawSelected(void);
 // }
 
 		// Set the object which should be shown in this viewport
-void setObject(DLFLObjectPtr op) {
-	object = op;
-	//if( patchObject ) { delete patchObject; patchObject = 0; }
-	//patchObject = new TMPatchObject( object->getID() );
-}
+	void createPatchObject( ) {//TMPatchObject* po ) {
+		//patchObject = po;
+		if( patchObject != NULL ) { 
+			delete patchObject; patchObject = 0; 
+		}
+		patchObject = new TMPatchObject( object->getID() );
+		if( patchObject )
+			patchObject->updatePatches( object );
+	};
 
 		// Set the renderer for this viewport
 void setRenderer(DLFLRendererPtr rp) {
