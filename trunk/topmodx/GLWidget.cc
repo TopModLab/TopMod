@@ -734,7 +734,7 @@ void GLWidget::drawSelectedIDs( QPainter *painter, const GLdouble *model, const 
 					++first;
 				}
 			}
-		}
+		} 
 		glEnable(GL_DEPTH_TEST);
 	}
 }
