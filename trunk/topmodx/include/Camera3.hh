@@ -1,5 +1,5 @@
-#ifndef Camera_H
-#define Camera_H
+#ifndef Camera3_H
+#define Camera3_H
 
 #include <QApplication>
 #include <QEvent>
@@ -46,13 +46,13 @@ class Camera
 public:
 	Camera();
 	Camera(Vector3d eye,Vector3d center,Vector3d up);
-	~Camera(){}
-	void setEye(Vector3d eye){EYE=eye; HOMEEYE=eye;}
-	void setCenter(Vector3d center){CENTER=center; HOMECENTER=center;}
-	void setUp(Vector3d up){UP=up; HOMEUP=up;}
-	Vector3d getEye(){ return EYE; }
-	Vector3d getCenter(){ return CENTER; }
-	Vector3d getUp(){ return UP; }
+	~Camera(){};
+	void setEye(Vector3d eye){EYE=eye; HOMEEYE=eye;};
+	void setCenter(Vector3d center){CENTER=center; HOMECENTER=center;};
+	void setUp(Vector3d up){UP=up; HOMEUP=up;};
+	Vector3d getEye(){ return EYE; };
+	Vector3d getCenter(){ return CENTER; };
+	Vector3d getUp(){ return UP; };
 	void Reset();
 	void HandleMouseEvent(Qt::MouseButton button, QEvent::Type state, int x, int y);
 	void SetCamera();
@@ -92,14 +92,14 @@ class OrthoCamera : public Camera
 
 public:
 	
-	OrthoCamera():zoom(5), Camera(){}
+	OrthoCamera():zoom(5), Camera(){};
 	OrthoCamera(unsigned char axis);
-	OrthoCamera(Vector3d eye, Vector3d center, Vector3d up):zoom(5),Camera(eye,center,up){}
-	OrthoCamera(Vector3d eye, Vector3d center, Vector3d up, float z):zoom(z),Camera(eye,center,up){}
-	~OrthoCamera(){}
-	
-	void SetZoom(float z){zoom=z;}
-	float GetZoom(){return zoom;}
+	OrthoCamera(Vector3d eye, Vector3d center, Vector3d up):zoom(5),Camera(eye,center,up){};
+	OrthoCamera(Vector3d eye, Vector3d center, Vector3d up, float z):zoom(z),Camera(eye,center,up){};
+	~OrthoCamera(){};
+
+	void SetZoom(float z){zoom=z;};
+	float GetZoom(){return zoom;};
 	
 	virtual void DrawGrid(int size=500, int spacing=1);
 	virtual void SetProjection(int WinX, int WinY);
@@ -117,10 +117,10 @@ class PerspCamera : public Camera
 {
 
 public:
-	PerspCamera():FOV(60),near(1.0),far(1000),Camera(){}
-	PerspCamera(Vector3d eye, Vector3d center, Vector3d up):FOV(60),near(1.0),far(1000),Camera(eye,center,up){}
-	PerspCamera(Vector3d eye, Vector3d center, Vector3d up, float fov, float n, float f):FOV(fov),near(n),far(f),Camera(eye,center,up){}
-	~PerspCamera(){}
+	PerspCamera():FOV(60),nearplane(1.0),farplane(1000),Camera(){};
+	PerspCamera(Vector3d eye, Vector3d center, Vector3d up):FOV(60),nearplane(1.0),farplane(1000),Camera(eye,center,up){};
+	PerspCamera(Vector3d eye, Vector3d center, Vector3d up, float fov, float n, float f):FOV(fov),nearplane(n),farplane(f),Camera(eye,center,up){};
+	~PerspCamera(){};
 	
 	virtual void DrawGrid(int size=10, int spacing=1);
 	virtual void SetProjection(int WinX, int WinY);
@@ -131,7 +131,8 @@ public:
 	
 protected:
   float FOV;
-	float near,far;
+  float nearplane;
+  float farplane;
 };
 
 #endif

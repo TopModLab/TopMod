@@ -1,10 +1,11 @@
 TEMPLATE = subdirs
 
-CONFIG += ordered
+
+CONFIG += ordered release
 
 SUBDIRS = \
 	vecmat \
-	arcball \
+#	arcball \
 	dlflcore \
 	dlflaux
   

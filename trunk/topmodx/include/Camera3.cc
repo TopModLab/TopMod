@@ -1,6 +1,5 @@
 #include "Camera3.hh"
 
-
 /* ***************** CAMERA *********************/
 Camera::Camera()
  : mousex(0), mousey(0), pickw(0), pickh(0), viewport(NULL), pickmode(false) {
@@ -217,7 +216,7 @@ void PerspCamera::SetProjection(int WinX, int WinY) {
   if ( pickmode ){
 		gluPickMatrix(mousex, mousey, pickw, pickh, viewport);
 	}
-	gluPerspective(FOV, WinX/(float)WinY, near, far);
+	gluPerspective(FOV, WinX/(float)WinY, nearplane, farplane);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity( );
 	SetCamera();
