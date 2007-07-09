@@ -45,7 +45,7 @@ extern DLFLFaceVertexPtrArray DLFLObject::sel_fvptr_array; // List of selected D
 
 GLWidget::GLWidget(int w, int h, DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op, TMPatchObjectPtr pop, const QGLFormat & format, QWidget * parent ) 
  : 	QGLWidget(format, parent, NULL), /*viewport(w,h,v),*/ object(op), patchObject(pop), renderer(rp), 
-		mRenderColor(color), mViewportColor(vcolor),/*grid(ZX,20.0,10),*/ showgrid(false), showaxes(false), mUseGPU(true), mAntialiasing(true) { 
+		mRenderColor(color), mViewportColor(vcolor),/*grid(ZX,20.0,10),*/ showgrid(false), showaxes(false), mUseGPU(false), mAntialiasing(true) { 
 		mParent = parent;
 	// Vector3d neweye = eye - center;
 	// double eyedist = norm(neweye);
@@ -161,7 +161,9 @@ void GLWidget::initializeGL( ) {
 	mGlobalAmbient = QColor(0,0,0);
 	
 	//enable gl lighting for use with cg functions
+	#ifdef GPU_OK
 	enableGLLights();
+	#endif
 
 	mShowVertexIDs = false;
 	mShowEdgeIDs   = false;
@@ -489,7 +491,7 @@ void GLWidget::drawBrush(QPainter *painter){
 //other data that could be shown will be added later
 void GLWidget::drawHUD(QPainter *painter){	
 	if (mShowHUD){
-		QString s = "Vertices: " + QString("%1").arg((uint)object->num_vertices()) +
+		QString s1 = "Vertices: " + QString("%1").arg((uint)object->num_vertices()) +
 		 						"\nEdges: " + QString("%1").arg((uint)object->num_edges()) +
 								"\nFaces: " + QString("%1").arg((uint)object->num_faces()) +
 								"\nGenus: " + QString("%1").arg(object->genus());
@@ -499,21 +501,25 @@ void GLWidget::drawHUD(QPainter *painter){
 								"\nSel. Faces: " + QString("%1").arg(numSelectedFaces()) +
 								"\nSel. Face-Verts: " + QString("%1").arg(numSelectedFaceVertices());
 
-		QString s3 = "Mode: " + mode;
+		QString s3 = "Mode: " + mModeString + "\nRemeshing Mode: " + mRemeshingSchemeString + "\nSelection Mask: " + mSelectionMaskString;
 		QFont font("verdana", 14);
 		QFontMetrics fm(font);
 		painter->setFont(font);
-		QRect r(fm.boundingRect(s));
+
+		QRect r1(fm.boundingRect(s1));
+		QRect r2(fm.boundingRect(s2));
+		QRect r3(fm.boundingRect(s3));
+
 		painter->setPen(Qt::NoPen);
 		QBrush brush = QBrush(QColor(0,0,0,127));
 		painter->setBrush(brush);
-		QRectF rectangle(0.0, height()-r.height()*6, width(), height());
+		QRectF rectangle(0.0, height()-r1.height()*6, width(), height());
 		// painter->drawRoundRect(QRect(3.0,3.0,rectangle.width(),rectangle.height()),25,25);
 		painter->drawRect(rectangle);
 		painter->setPen(Qt::white);
-		painter->drawText(width()/5*3.5, rectangle.top()+5,150, rectangle.height(),Qt::AlignRight, s);
-		painter->drawText(width()/5*2.5, rectangle.top()+5,150,rectangle.height(),Qt::AlignRight, s2);
-		painter->drawText(rectangle.left()+5, rectangle.top()+5,150,rectangle.height(),Qt::AlignLeft, s3);
+		painter->drawText(r3.width(), 										rectangle.top()+5, 	r1.width(), rectangle.height(),Qt::AlignLeft, s1);
+		painter->drawText(r3.width()+r1.width(), 			rectangle.top()+5, 	r2.width(),	rectangle.height(),Qt::AlignLeft, s2);
+		painter->drawText(rectangle.left()+5, 							rectangle.top()+5,	r3.width(),	rectangle.height(),Qt::AlignLeft, s3);
 	}
 }
 

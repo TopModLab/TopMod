@@ -13,24 +13,19 @@ void computeLighting( DLFLFacePtr fp, LightPtr lightptr, bool usegpu ) {
     DLFLFaceVertexPtr current = fp->front();
     normal = current->getNormal();
     pos = current->getVertexCoords();
-
+		
+		#ifdef GPU_OK
 		if (usegpu){
-		  // cgSetParameter3f(CgData::instance()->Ka, Ka, Ka, Ka);
-		  // cgSetParameter3f(CgData::instance()->Kd, Kd, Kd, Kd);
-		  // cgSetParameter3f(CgData::instance()->Ks, Ks, Ks, Ks);
-		  // cgSetParameter1f(CgData::instance()->shininess, 50);
 			fvcolor = RGBColor(0,0,0);
 		}
 		else {
-			// cgSetParameter3f(CgData::instance()->Ka, 0.0, 0.0, 0.0);
-			// 		  cgSetParameter3f(CgData::instance()->Kd, 0.0, 0.0, 0.0);
-			// 		  cgSetParameter3f(CgData::instance()->Ks, 0.0, 0.0, 0.0);
-			// 		  cgSetParameter1f(CgData::instance()->shininess, 0);
-		  
     	fvcolor = lightptr->illuminate(pos,normal)*Kd;
 	    fvcolor += (1.0-Kd)*basecolor;
 		}
-    // fvcolor *= Kd; 
+		#else
+  	fvcolor = lightptr->illuminate(pos,normal)*Kd;
+    fvcolor += (1.0-Kd)*basecolor;		
+		#endif
     current->color = fvcolor;
 
     current = current->next();
@@ -38,16 +33,19 @@ void computeLighting( DLFLFacePtr fp, LightPtr lightptr, bool usegpu ) {
       normal = current->getNormal();
       pos = current->getVertexCoords();
 
-      if (usegpu){
+      #ifdef GPU_OK
+			if (usegpu){
 				// cgSetParameter3f(CgData::instance()->Kd, basecolor.r, basecolor.g, basecolor.b);
 				fvcolor = RGBColor(0,0,0);
-				// fvcolor = basecolor;
 			}
 			else {
 	    	fvcolor = lightptr->illuminate(pos,normal)*Kd;
-	    	// fvcolor *= Kd;
 		    fvcolor += (1.0-Kd)*basecolor;
 			}
+			#else
+    	fvcolor = lightptr->illuminate(pos,normal)*Kd;
+	    fvcolor += (1.0-Kd)*basecolor;
+			#endif
     	current->color = fvcolor;
 
 			// current->color = RGBColor(((double)rand() / ((double)(RAND_MAX)+(double)(1)) ),

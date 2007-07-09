@@ -35,6 +35,7 @@ void GeometryRenderer::render( DLFLObjectPtr obj ) const {
 }
 
 void GeometryRenderer::renderFace( DLFLFacePtr df, bool useAttrs ) const {
+	#ifdef GPU_OK
 	if (useGPU){
 		double Ka = df->material()->Ka;
 		double Kd = df->material()->Kd;
@@ -47,6 +48,7 @@ void GeometryRenderer::renderFace( DLFLFacePtr df, bool useAttrs ) const {
 	  cgSetParameter3f(CgData::instance()->Ks, Ks, Ks, Ks);
 	  cgSetParameter1f(CgData::instance()->shininess, 50);
 	}
+	#endif
 	if( useAttrs ) {
 		glBeginFace( df->size(), useOutline );
 	} else {
@@ -71,9 +73,13 @@ void GeometryRenderer::renderFaceVertex( DLFLFaceVertexPtr dfv, bool useAttrs ) 
 				// Lighting and solid color material
 				RGBColor rgb(renderColor[0], renderColor[1], renderColor[2] );
 				// RGBColor rgb( 0.1, 0.1, 0.1 );
+				#ifdef GPU_OK
 				if (!useGPU){
 					rgb = product(rgb, dfv->color); // this multiplies corresponding elements together (e.g. RGBColor(r1*r2, g1*g2, b1*b2)  ) 
 				}
+				#else
+				rgb = product(rgb, dfv->color); // this multiplies corresponding elements together (e.g. RGBColor(r1*r2, g1*g2, b1*b2)  ) 				
+				#endif
 				glColor4f( rgb.r, rgb.g, rgb.b, renderColor[3]);
 			} else {
 				if( useLighting ) { glColor( dfv->color ); } // Actually means use lighting

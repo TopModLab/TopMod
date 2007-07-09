@@ -5,8 +5,9 @@ CONFIG += qt debug warn_off assistant link_prl
 # exclude verse python or spacenav drivers
 # or include them with CONFIG += 
 CONFIG -=  WITH_PYTHON WITH_SPACENAV WITH_VERSE
-CONFIG += WITH_PYTHON 
-DEFINES += TOPMOD_VERSION GPU_OK
+CONFIG -= WITH_PYTHON 
+# DEFINES += TOPMOD_VERSION 
+DEFINES -= GPU_OK
 
 TEMPLATE = app
 

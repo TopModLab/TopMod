@@ -224,7 +224,7 @@ void BasicsMode::setupInsertEdge() {
 	// mInsertEdgeLayout->setMargin(0);
 	mInsertEdgeLayout->setRowStretch(4,1);
 	mInsertEdgeLayout->setColumnStretch(2,1);
-	mInsertEdgeWidget->setWindowTitle(tr(""));
+	mInsertEdgeWidget->setWindowTitle(tr("Insert Edge"));
 	mInsertEdgeWidget->setLayout(mInsertEdgeLayout);	
 }
 
@@ -251,7 +251,7 @@ void BasicsMode::setupCollapseEdge() {
 	// mCollapseEdgeLayout->setMargin(0);
 	mCollapseEdgeLayout->setRowStretch(4,1);
 	mCollapseEdgeLayout->setColumnStretch(2,1);
-	mCollapseEdgeWidget->setWindowTitle(tr(""));
+	mCollapseEdgeWidget->setWindowTitle(tr("Collapse Edge"));
 	mCollapseEdgeWidget->setLayout(mCollapseEdgeLayout);	
 }
 
@@ -278,7 +278,7 @@ void BasicsMode::setupConnectEdges(){
 	// mConnectEdgesLayout->setMargin(0);
 	mConnectEdgesLayout->setRowStretch(0,1);
 	mConnectEdgesLayout->setColumnStretch(2,1);
-	mConnectEdgesWidget->setWindowTitle(tr(""));
+	mConnectEdgesWidget->setWindowTitle(tr("Connect Edges"));
 	mConnectEdgesWidget->setLayout(mConnectEdgesLayout);	
 	
 }
@@ -289,7 +289,7 @@ void BasicsMode::setupSpliceCorners(){
 	// mSpliceCornersLayout->setMargin(0);
 	mSpliceCornersLayout->setRowStretch(4,1);
 	mSpliceCornersLayout->setColumnStretch(2,1);
-	mSpliceCornersWidget->setWindowTitle(tr(""));
+	mSpliceCornersWidget->setWindowTitle(tr("Splice Corners"));
 	mSpliceCornersWidget->setLayout(mSpliceCornersLayout);
 	
 }

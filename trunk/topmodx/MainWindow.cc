@@ -239,6 +239,7 @@ MainWindow::MainWindow(char *filename) : object(), patchObject(NULL), mode(Norma
 	// mToolOptionsDockWidget->hide();
 	mToolOptionsDockWidget->setWidget(mToolOptionsStackedWidget);
 	mToolOptionsDockWidget->setFloating(true);
+	mToolOptionsDockWidget->move(width() , 150);
 	// mToolOptionsTitleBarLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	// mToolOptionsTitleBarWidget = new QWidget;
 	// mToolOptionsTitleBarWidget->setLayout(mToolOptionsTitleBarLayout);
@@ -247,7 +248,6 @@ MainWindow::MainWindow(char *filename) : object(), patchObject(NULL), mode(Norma
 	// mToolOptionsDockWidget->move(0,22);
 	// mToolOptionsDockWidget->setWindowTitle("Insert Edge Mode");
 	// addDockWidget(Qt::TopDockWidgetArea, mToolOptionsDockWidget);
-	
 	
 	//animated help dockwidget
 	initializeAnimatedHelp();
@@ -276,6 +276,9 @@ MainWindow::MainWindow(char *filename) : object(), patchObject(NULL), mode(Norma
 	//preference dialog
 	mSettings = new QSettings("TopMod", "Topological Mesh Modeler");
 	mPreferencesDialog = new TopModPreferences(mSettings, mStyleSheetEditor, sm, this);	
+	
+	//for HUD
+	
 }
 
 void MainWindow::createActions() {
@@ -909,6 +912,18 @@ void MainWindow::createActions() {
 	sm->registerAction(mHelpAct, "Help Menu", "F1");
 	mActionListWidget->addAction(mHelpAct);
 
+	mTopModWebAct = new QAction(tr("&TopMod on the Web"), this);
+	mTopModWebAct->setStatusTip( tr("Go to the TopMod web page") );
+	connect(mTopModWebAct, SIGNAL(triggered()), this, SLOT(topModWeb()));
+	sm->registerAction(mTopModWebAct, "Help Menu", "");
+	mActionListWidget->addAction(mTopModWebAct);
+
+	mCheckForUpdatesAct = new QAction(tr("&Check for Updates"), this);
+	mCheckForUpdatesAct->setStatusTip( tr("Check for updates to TopMod Online") );
+	connect(mCheckForUpdatesAct, SIGNAL(triggered()), this, SLOT(checkForUpdates()));
+	sm->registerAction(mCheckForUpdatesAct, "Help Menu", "");
+	mActionListWidget->addAction(mCheckForUpdatesAct);
+
 	mAboutAct = new QAction(tr("&About TopMod"), this);
 	mAboutAct->setStatusTip( tr("About TopMod") );
 	connect(mAboutAct, SIGNAL(triggered()), this, SLOT(about()));
@@ -1106,9 +1121,12 @@ void MainWindow::createMenus(){
 	mHelpMenu = new QMenu(tr("&Help"));
 	menuBar->addMenu(mHelpMenu);
 	mHelpMenu->addAction(mHelpAct);
+	mHelpMenu->addAction(mCheckForUpdatesAct);
+	mHelpMenu->addAction(mTopModWebAct);
+	mHelpMenu->addSeparator();
 	mHelpMenu->addAction(mAboutAct);
 	mHelpMenu->addAction(mAboutQtAct);
-
+	
 	// mLanguageMenu = new QMenu(tr("&Language"));
 	// mLanguageMenu->setTearOffEnabled(true);
 	// settingsMenu->addMenu(mLanguageMenu);
@@ -1198,7 +1216,7 @@ void MainWindow::createToolBars() {
 }
 
 void MainWindow::setToolOptions(QWidget *optionsWidget) {
-	mToolOptionsDockWidget->setWindowTitle(optionsWidget->windowTitle());
+	mToolOptionsDockWidget->setWindowTitle(tr("Tool Options - ") + optionsWidget->windowTitle());
 	mToolOptionsStackedWidget->setCurrentWidget(optionsWidget);
 	// show or hide the dockwidget options
 	// if (optionsWidget->windowTitle() != "" && mToolOptionsDockWidget->isHidden())
@@ -1284,13 +1302,30 @@ void MainWindow::about() {
 
 void MainWindow::initializeHelp(){
 	mAssistantClient = new QAssistantClient(QLibraryInfo::location(QLibraryInfo::BinariesPath), this);
-	// QStringList arguments;
-	// arguments << "-profile" << QString("documentation") + QDir::separator() + QString("simpletextviewer.adp");
-	// mAssistantClient->setArguments(arguments);
+  QStringList arguments;
+  arguments << "-profile" << QString("userdoc") + QDir::separator() + QString("topmod.adp");
+  mAssistantClient->setArguments(arguments);
 }
 
+/** 
+* \brief show the help file in the QAssistant help file viewer 
+*/
 void MainWindow::help() {
-	mAssistantClient->showPage("");
+	mAssistantClient->openAssistant();//showPage(QString("userdoc/index.html"));
+}
+
+/**
+* \brief will eventually check for updates on the TopMod website and download the necessary files
+*/
+void MainWindow::checkForUpdates(){
+	QDesktopServices::openUrl(QUrl("http://www.google.com"));
+}
+
+/**
+* \brief opens the current TopMod homepage in the user's default web browser
+*/
+void MainWindow::topModWeb(){
+	QDesktopServices::openUrl(QUrl("http://www-viz.tamu.edu/faculty/ergun/research/topology/index.html"));
 }
 
 void MainWindow::documentWasModified() {
@@ -1743,10 +1778,105 @@ void MainWindow::mousePressEvent(QMouseEvent *event) {
 	else event->ignore();
 }
 
+/**
+* \brief load custom right click menu options based on the current mode of operation
+* 
+*/
 void MainWindow::getRightClickMenu(){
 	mRightClickMenu->clear();
 	//add generic items for now to test it out
 	
+	switch (mode){
+		NormalMode :
+		break;
+		SelectVertex :
+		break;
+		SelectEdge :
+		break;
+		SelectFace :
+		break;
+		SelectFaceVertex :
+		break;
+		MultiSelectVertex :
+		break;
+		MultiSelectEdge :
+		break;
+		MultiSelectFace :
+		break;
+		MultiSelectFaceVertex :
+		break;
+		SelectCheckerboard :
+		break;
+		InsertEdge :
+		break;
+		DeleteEdge :
+		break;
+		SubdivideEdge :
+		break;
+		CollapseEdge :
+		break;
+		SpliceCorners :
+		break;
+		ConnectEdges :
+		break;
+		ExtrudeFace :
+		break;
+		ExtrudeFaceDS :
+		break;
+		ExtrudeDualFace :
+		break;
+		ExtrudeFaceDodeca :
+		break;
+		ExtrudeFaceIcosa :
+		break;
+		ExtrudeMultipleFaces :
+		break;
+		StellateFace :
+		break;
+		DoubleStellateFace  :
+		break;
+		ConnectFaceVertices :
+		break;
+		ConnectFaces :
+		break;
+		BezierConnectFaces :
+		break;
+		HermiteConnectFaces :
+		break;
+		ReorderFace :
+		break;
+		SubdivideFace :
+		break;
+		CrustModeling :
+		break;
+		CutEdge :
+		break;
+		CutVertex :
+		break;
+		CutEdgeandVertex  :
+		break;
+		CutFace  :
+		break;
+		TruncateEdge :
+		break;
+		MarkEdge :
+		break;
+		MarkVertex :
+		break;
+		ConvexHullMode :
+		break;
+		EditVertex :
+		break;
+		SelectEdgeLoop :
+		break;
+		SelectFaceLoop :
+		break;
+		SelectSimilarFaces :
+		break;
+		
+		default:
+		break;
+	};
 	//face stuff
 	mRightClickMenu->addAction(selectFaceLoopAct);
 	mRightClickMenu->addAction(selectMultipleFacesAct);
@@ -2632,7 +2762,6 @@ void MainWindow::redraw() {
 // Switch to specified operating mode
 void MainWindow::setMode(Mode m) {
 	mode = m;
-	active->setMode("Testing testing...");
 	
 	switch ( mode )	{
 		// case BezierMode: // brianb
@@ -2698,31 +2827,201 @@ void MainWindow::setMode(Mode m) {
 		MainWindow::clearSelected();
 		break;
 	}
-	if (mode != MultiSelectFace)
-		active->hideBrush();
-	else active->showBrush();	
+	// if (mode != MultiSelectFace)
+		// active->hideBrush();
+	// else active->showBrush();	
+	
+	QString s;
+	//this switch statement is for setting the string for the Heads up display
+	switch (mode){
+		case NormalMode: s = tr("Normal Mode");
+		break;
+		case SelectVertex: s = tr("Select Vertex");
+		break;
+		case SelectEdge: s = tr("Select Edge");
+		break;
+		case SelectFace: s = tr("Select Face");
+		break;
+		case SelectFaceVertex: s = tr("Select Corner");
+		break;
+		case MultiSelectVertex: s = tr("Multi-Select Vertex");
+		break;
+		case MultiSelectEdge: s = tr("Multi-Select Edge");
+		break;
+		case MultiSelectFace: s = tr("Multi-Select Face");
+		break;
+		case MultiSelectFaceVertex: s = tr("Multi-Select Corner");
+		break;
+		case SelectCheckerboard: s = tr("Select Checkerboard");
+		break;
+		case InsertEdge: s = tr("Insert Edge");
+		break;
+		case DeleteEdge: s = tr("Delete Edge");
+		break;
+		case SubdivideEdge: s = tr("Subdivide Edge");
+		break;
+		case CollapseEdge: s = tr("Collapse Edge");
+		break;
+		case SpliceCorners: s = tr("Splice Corners");
+		break;
+		case ConnectEdges: s = tr("Connect Edges");
+		break;
+		case ExtrudeFace: s = tr("Cubical Extrusion");
+		break;
+		case ExtrudeFaceDS: s = tr("Doo Sabin Extrusion");
+		break;
+		case ExtrudeDualFace: s = tr("Dual Extrusion");
+		break;
+		case ExtrudeFaceDodeca: s = tr("Dodecahedral Extrusion");
+		break;
+		case ExtrudeFaceIcosa: s = tr("Icosahedral Extrusion");
+		break;
+		case ExtrudeMultipleFaces: s = tr("Extrude Multiple Faces");
+		break;
+		case StellateFace: s = tr("Stellate Face");
+		break;
+		case DoubleStellateFace : s = tr("Double Stellate Face");
+		break;
+		case ConnectFaceVertices: s = tr("Connect Corners");
+		break;
+		case ConnectFaces: s = tr("Connect Faces");
+		break;
+		case BezierConnectFaces: s = tr("Bezier Connect Faces");
+		break;
+		case HermiteConnectFaces: s = tr("Hermite Connect Faces");
+		break;
+		case ReorderFace: s = tr("Reorder Face");
+		break;
+		case SubdivideFace: s = tr("Subdivide Face");
+		break;
+		case CrustModeling: s = tr("Crust Modeling");
+		break;
+		case CutEdge: s = tr("Cut Edge");
+		break;
+		case CutVertex: s = tr("Cut Vertex");
+		break;
+		case CutEdgeandVertex : s = tr("Cut Edge and Vertex");
+		break;
+		case CutFace : s = tr("Cut Face");
+		break;
+		case TruncateEdge: s = tr("Truncate Edge");
+		break;
+		case MarkEdge: s = tr("Mark Edge");
+		break;
+		case MarkVertex: s = tr("Mark Vertex");
+		break;
+		case ConvexHullMode: s = tr("Convex Hull Mode");
+		break;
+		case EditVertex: s = tr("Edit Vertex");
+		break;
+		case SelectEdgeLoop: s = tr("Select Edge Loop");
+		break;
+		case SelectFaceLoop: s = tr("Select Face Loop");
+		break;
+		case SelectSimilarFaces: s = tr("Select Similar Faces");
+	};
+	active->setModeString(s);
 }
 
 void MainWindow::setSelectionMask(SelectionMask m){
 	selectionmask = m;
+	
 	active->clearSelected();
 	active->repaint();
+	
 	switch(selectionmask){
-	case MaskVertices :
-		break;
-	case MaskEdges :
-		break;
-	case MaskFaces :
-		break;
-	case MaskFaceVertices :
-		break;
+	case MaskVertices : active->setSelectionMaskString(tr("Vertices"));
+	break;
+	case MaskEdges :	active->setSelectionMaskString(tr("Edges"));
+	break;
+	case MaskFaces :	active->setSelectionMaskString(tr("Faces"));
+	break;
+	case MaskFaceVertices :	active->setSelectionMaskString(tr("Face-Vertices"));
+	break;
 	default:
-		break;
+	break;
 	}
 }
 
 void MainWindow::setRemeshingScheme(RemeshingScheme scheme) {
 	remeshingscheme = scheme;
+	QString s;
+	
+	switch (remeshingscheme){		
+		case Dual : s = tr("Dual");
+		break;
+		case Root3 : s = tr("Root-3");
+		break;
+		case DualVertexTrunc : s = tr("Dual Vertex Truncation");
+		break;
+		case GlobalStellate : s = tr("Global Stellate");
+		break;
+		case Star : s = tr("Star");
+		break;
+		case Generic1264 : s = tr("Generic 12.6.4");
+		break;
+		case Honeycomb : s = tr("Honeycomb");
+		break;
+		case VertexTrunc : s = tr("Vertex Truncation");
+		break;
+		case DualGeneric1264 : s = tr("Dual Generic 12.6.4");
+		break;
+		case LinearVertexInsertion : s = tr("Linear Vertex Truncation");
+		break;
+		case CatmullClark : s = tr("Catmull-Clark");
+		break;
+		case ModifiedStellate : s = tr("Modified Stellate");
+		break;
+		case DooSabin : s = tr("Doo Sabin");
+		break;
+		case CornerCutting : s = tr("Corner Cutting");
+		break;
+		case Simplest : s = tr("Simplest");
+		break;
+		case Pentagonal : s = tr("Pentagonal");
+		break;
+		case CubicPentagonal : s = tr("Cubic Pentagonal");
+		break;
+		case DualPentagonal : s = tr("Dual Pentagonal");
+		break;
+		case LoopStyle : s = tr("Loop Style");
+		break;
+		case Loop : s = tr("Loop");
+		break;
+		case Root4 : s = tr("Root4");
+		break;
+		case DualLoop : s = tr("Dual Loop");
+		break;
+		case GlobalCubicExtrude : s = tr("Global Cubic Extrude");
+		break;
+		case CheckerBoard : s = tr("Checkerboard");
+		break;
+		case DualGlobalCubicExtrude : s = tr("Dual Global Cubic Extrude");
+		break;
+		case DualCheckerBoard : s = tr("Dual Checkerboard");
+		break;
+		case PentagonPreserving : s = tr("Pentagon Preserving");
+		break;
+		case DualPentagonPreserving : s = tr("Dual Pentagon Preserving");
+		break;
+		case HexagonPreserving : s = tr("Hexagon Preserving");
+		break;
+		case DualHexagonPreserving : s = tr("Dual Hexagon Preserving");
+		break;
+		case Fractal : s = tr("Fractal");
+		break;
+		case ModifiedDoubleStellate : s = tr("Modified Double Stellate");
+		break;
+		case Dome : s = tr("Dome");
+		break;
+		case DooSabinBC : s = tr("Doo Sabin BC");
+		break;
+		case DooSabinBCNew :  s = tr("Doo Sabin BC New");
+		break;
+		default: s = tr("None");
+		break;
+	};
+	active->setRemeshingSchemeString(s);
 }
 
 
@@ -3251,4 +3550,4 @@ void MainWindow::getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr 
 		}//end for loop
 		// }//end if fptr2	
 	}
-}
+} 

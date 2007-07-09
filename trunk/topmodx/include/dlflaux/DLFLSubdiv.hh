@@ -17,6 +17,7 @@ namespace DLFL {
   void dooSabinSubdivideBCNew(DLFLObjectPtr obj, double sf, double length);
   void cornerCuttingSubdivide(DLFLObjectPtr obj);
   void modifiedCornerCuttingSubdivide(DLFLObjectPtr obj, double thickness);
+  void modifiedCornerCuttingSubdivide2(DLFLObjectPtr obj, double thickness);
   void root4Subdivide(DLFLObjectPtr obj, double a=0.0, double twist=0.0);  
   void catmullClarkSubdivide( DLFLObjectPtr obj );
   void starSubdivide(DLFLObjectPtr obj, double offset = 0.0);

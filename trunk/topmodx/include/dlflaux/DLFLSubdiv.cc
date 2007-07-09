@@ -1011,6 +1011,172 @@ namespace DLFL {
     }
   }
 
+  void modifiedCornerCuttingSubdivide2(DLFLObjectPtr obj,double scale) {
+    // (Modified) Corner-cutting subdivision scheme
+    // Tension parameter is calculated based on number of vertices in face
+
+    // Go through list of faces and create new inner faces for each face
+    DLFLFacePtrList::iterator fl_first, fl_last , fl_last_hole;
+    DLFLEdgePtrList::iterator el_first, el_last;
+    DLFLVertexPtrList::iterator vl_first, vl_last;
+    DLFLFacePtr fp, ifp;
+    DLFLEdgePtrArray eplist1, eplist2; // List of edges to be connected
+    DLFLFaceVertexPtr fvp1, fvp2, head1, head2;
+    DLFLEdgePtr ep, iep;
+    DLFLVertexPtr vp;
+    Vector3dArray vertex_coords, new_vertex_coords;
+    Vector3d p;
+    Vector3d v0, v1, v2, n1, n2, v0hat;
+    float n1n2,x,t;
+    int num_old_faces, num_old_edges, num_old_verts;
+    int num_faces, num_edges, num_verts;
+    int eistart, edgeindex;
+  
+    num_old_verts = obj->num_vertices();
+    num_old_faces = obj->num_faces();
+    num_old_edges = obj->num_edges();
+
+    // Apply make-unique on the obj->num_edges to make sure all Edge IDs are consecutive
+    DLFLEdgePtrList::iterator efirst=obj->beginEdge(), elast=obj->endEdge();
+
+    obj->makeEdgesUnique();
+  
+    // Reserve and create num_old_edges entries in the 2 temporary lists
+    eplist1.resize(num_old_edges,NULL); eplist2.resize(num_old_edges,NULL);
+  
+    // Find starting edge ID to use as offset.
+    eistart = (obj->firstEdge())->getID();
+
+    fl_first = obj->beginFace(); fl_last = obj->endFace();
+    num_faces = 0;
+    while ( fl_first != fl_last && num_faces < num_old_faces ) {
+      fp = (*fl_first);
+
+      fp->getVertexCoords(vertex_coords);
+
+      num_verts = vertex_coords.size();
+      new_vertex_coords.reserve(num_verts);
+            
+      // Compute new coordinates for the new polygon
+      //double coef, alpha;
+      //alpha = 12.0/16.0;
+      for (int i=0; i < num_verts; ++i) {
+				t = scale/2.0;
+				v0 = vertex_coords[i];
+				if ( i > 0 ) 
+					v1 = vertex_coords[i-1];
+				else 
+					v1 = vertex_coords[num_verts-1];
+				if 
+					( i < num_verts-1 ) v2 = vertex_coords[i+1];
+				else 
+					v2 = vertex_coords[0];
+				if ( norm(v1-v2) < 0.001 ) {
+					if ( i < num_verts-2 ) 
+						v2 = vertex_coords[i+2]; 
+					else if ( i == num_verts-1 ) 
+						v2 = vertex_coords[0]; 
+					else 
+						v2 = vertex_coords[1];
+				}
+				n1 = normalized(v1-v0);
+				n2 = normalized(v2-v0);
+				n1n2 = n1*n2;
+				// x = sqrt(t*t/(1.0-n1n2*n1n2));
+				x = scale;
+				// std::cout<< x << "\n";
+				v0hat = x*(n1+n2) + v0;
+				p = v0hat;
+
+				new_vertex_coords.push_back(p);
+      }
+
+      obj->createFace(new_vertex_coords);
+      new_vertex_coords.clear(); vertex_coords.clear();
+
+      // Get the second newly inserted face, the one facing inwards
+      ifp = obj->lastFace();
+      // Set type of inner face so we can use the type to
+      // determine which face to use for edge connects
+      ifp->setType(FTNew);
+      ////////////////////////////////////////////////////////////////////
+      fl_last_hole = obj->endFace();
+      --fl_last_hole; --fl_last_hole; 
+      (*fl_last_hole)->setType(FTHole);
+
+      //////////////////////////////////////////////////////////////////////
+            
+            
+      // Go through current face and ifp and store the face-vertices in the
+      // array of corners to make connections afterwards. Array is indexed
+      // using the ID of the edge starting at each corner of the old face
+      // offset to start at 0 using num_edges
+      // ifp has to be traversed in the reverse direction starting at the back
+            
+      fvp1 = head1 = fp->front(); fvp2 = head2 = ifp->back();
+       
+      ep = fvp1->getEdgePtr(); iep = fvp2->getEdgePtr();
+      edgeindex = ep->getID() - eistart;
+      if ( eplist1[edgeindex] == NULL ) 
+				eplist1[edgeindex] = iep;
+      else
+				eplist2[edgeindex] = iep;
+      fvp1 = fvp1->next(); fvp2 = fvp2->prev();
+
+      while ( fvp1 != head1 && fvp2 != head2 ) {
+				ep = fvp1->getEdgePtr(); iep = fvp2->getEdgePtr();
+				edgeindex = ep->getID() - eistart;
+				if ( eplist1[edgeindex] == NULL ) 
+					eplist1[edgeindex] = iep;
+				else
+					eplist2[edgeindex] = iep;
+				fvp1 = fvp1->next(); fvp2 = fvp2->prev();
+      }
+      ++fl_first; ++num_faces;
+    }
+
+    // Go through the face_list,obj->num_edges and vertex_list and destroy all the old faces, edges and vertices
+    num_faces = 0; fl_first = obj->beginFace(); fl_last = obj->endFace();
+    while ( fl_first != fl_last && num_faces < num_old_faces ) {
+      fp = (*fl_first); ++fl_first; ++num_faces;
+      obj->removeFace(fp); delete fp;
+    }
+
+    num_edges = 0; el_first = obj->beginEdge(); el_last = obj->endEdge();
+    while ( el_first != el_last && num_edges < num_old_edges ) {
+      ep = (*el_first); ++el_first; ++num_edges;
+      obj->removeEdge(ep); delete ep;
+    }
+
+    num_verts = 0; vl_first = obj->beginVertex(); vl_last = obj->endVertex();
+    while ( vl_first != vl_last && num_verts < num_old_verts ) {
+      vp = (*vl_first); ++vl_first; ++num_verts;
+      obj->removeVertex(vp); delete vp;
+    }
+
+    // Go through eplist1,fplist1 and eplist2,fplist2 and connect corresponding half-edges
+    DLFLFacePtr fp1, fp2, tfp1, tfp2;
+    for (int i=0; i < num_old_edges; ++i) {
+      if ( eplist1[i] != NULL && eplist2[i] != NULL ) {
+				// Find the faces adjacent to the edges which are of type FTNew
+				// These will be the inner faces
+				eplist1[i]->getFacePointers(tfp1,tfp2);
+				if ( tfp1->getType() == FTNew ) fp1 = tfp1;
+				else if ( tfp2->getType() == FTNew ) fp1 = tfp2;
+				else cout << i << " : " << "Face not found for half-edge!" << endl;
+
+				eplist2[i]->getFacePointers(tfp1,tfp2);
+				if ( tfp1->getType() == FTNew ) fp2 = tfp1;
+				else if ( tfp2->getType() == FTNew ) fp2 = tfp2;
+				else cout << i << " : " << "Face not found for half-edge!" << endl;
+
+				connectEdges(obj,eplist1[i],fp1,eplist2[i],fp2);
+      } else
+				cout << "NULL pointers found! i = " << i << " "
+						 << eplist1[i] << " -- " << eplist2[i] << endl;
+    }
+  }
+
   void root4Subdivide(DLFLObjectPtr obj, double a, double twist) {
     // Root-4 subdivision
     // Go through list of faces and create the inner faces for each face

@@ -1094,7 +1094,7 @@ void MainWindow::makeWireframe2() {// Create a wireframe // dave {
 	vector<DLFLFacePtr>::iterator it;
 	undoPush();
 	setModified(true);
-	DLFL::makeWireframe(&object,MainWindow::wireframe_thickness);
+	DLFL::makeWireframe2(&object,MainWindow::wireframe_thickness);
 	// active->recomputePatches();
 	// active->recomputeNormals();
 	// if ( active->numSelectedFaces() >= 1 ) {
@@ -1267,6 +1267,9 @@ void MainWindow::initializeAnimatedHelp(){
 	//sizing
 	mAnimatedHelpDockWidget->setMinimumSize(200,200);
 	mAnimatedHelpDockWidget->setMaximumSize(200,200);
+	
+	//fix positioning later
+	mAnimatedHelpDockWidget->move(width() , 150+mToolOptionsDockWidget->height()+200);
 }
 
 void MainWindow::setAnimatedHelpImage(){

@@ -377,8 +377,16 @@ public :
 	// 	return &viewport;
 	// }
 	
-	void setMode(QString s){
-		mode = s;
+	void setModeString(QString s){
+		mModeString = s;
+	}
+	
+	void setRemeshingSchemeString(QString s){
+		mRemeshingSchemeString = s;
+	}
+
+	void setSelectionMaskString(QString s){
+		mSelectionMaskString = s;
 	}
 
 	void renderLocatorsForSelect() // brianb
@@ -761,7 +769,7 @@ QColor mYAxisColor;
 QColor mZAxisColor;
 
 QWidget *mParent;
-QString mode;
+QString mModeString, mRemeshingSchemeString, mSelectionMaskString;
 
 };
 

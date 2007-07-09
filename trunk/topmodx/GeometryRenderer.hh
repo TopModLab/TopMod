@@ -65,7 +65,7 @@ private :
   //DLFLObjectPtr mObj;
 
   static GeometryRenderer *mInstance;
-  GeometryRenderer( bool gpu = true) : useMaterial(false), useLighting(false), 
+  GeometryRenderer( bool gpu = false) : useMaterial(false), useLighting(false), 
 				       useNormal(false), useTexture(false), 
 							useOutline(false), drawFaceCentroids(false), drawVertices(false),
 							drawSilhouette(false),drawWireframe(true),

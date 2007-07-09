@@ -190,18 +190,18 @@ namespace DLFL {
       scale_factor = -1.0/scale_factor;
       vl_first = obj->beginVertex();
       while ( num_verts < num_old_verts ) {
-	vp = (*vl_first); ++vl_first; ++num_verts;
-	newpos = (vp->coords - objcen)*scale_factor + objcen;
-	vp->coords = newpos;
+				vp = (*vl_first); ++vl_first; ++num_verts;
+				newpos = (vp->coords - objcen)*scale_factor + objcen;
+				vp->coords = newpos;
       }
     }
     else {
       vl_first = obj->beginVertex(); vl_last = obj->endVertex();
       advance(vl_first,num_old_verts);
       while ( vl_first != vl_last ) {
-	vp = (*vl_first); ++vl_first;
-	newpos = (vp->coords - objcen)*scale_factor + objcen;
-	vp->coords = newpos;
+				vp = (*vl_first); ++vl_first;
+				newpos = (vp->coords - objcen)*scale_factor + objcen;
+				vp->coords = newpos;
       }
     }
 
@@ -225,44 +225,43 @@ namespace DLFL {
       fvp1 = fp1->firstVertex(); fvp2 = fp2->firstVertex();
       //fvp2 = fp2->findClosest(fvp1->vertex->coords);
       if ( cleanup ) {
-	// Find edges in the 2 faces and store them in the arrays. These
-	// will be used to cleanup the edges afterwards.
-	fp1->getEdges(eparray1); fp2->getEdges(eparray2);
+				// Find edges in the 2 faces and store them in the arrays. These
+				// will be used to cleanup the edges afterwards.
+				fp1->getEdges(eparray1); fp2->getEdges(eparray2);
       }
       connectFaces(obj,fvp1,fvp2);
       crustfp1[index] = crustfp2[index] = NULL; // These face pointers are no longer valid
 
       // Do the cleanup if required
       if ( cleanup ) {
-	// Traverse eparray1 in forward direction, eparray2 in reverse direction
-	int num_edges = eparray1.size();
-	DLFLEdgePtr ep1, ep2;
-	DLFLFacePtr fp11,fp12,fp21,fp22;
-	for (int i=0; i < num_edges; ++i) {
-	  ep1 = eparray1[i]; ep2 = eparray2[num_edges-i-1];
-	  ep1->getFacePointers(fp11,fp12); ep2->getFacePointers(fp21,fp22);
-	  if ( ( (fp11 == fp21) && (fp12 == fp22) ) ||
-	       ( (fp11 == fp22) && (fp12 == fp21) ) ) {
-	    // Both edges are adjacent to the same 2 faces.
-	    // We have an infinitesimally thin face which we want to remove
-	    // We can use either of the 2 faces to do the deletion of the edges
-	    DLFLEdgePtrArray eparray;
+				// Traverse eparray1 in forward direction, eparray2 in reverse direction
+				int num_edges = eparray1.size();
+				DLFLEdgePtr ep1, ep2;
+				DLFLFacePtr fp11,fp12,fp21,fp22;
+				for (int i=0; i < num_edges; ++i) {
+				  ep1 = eparray1[i]; ep2 = eparray2[num_edges-i-1];
+				  ep1->getFacePointers(fp11,fp12); ep2->getFacePointers(fp21,fp22);
+				  if ( ( (fp11 == fp21) && (fp12 == fp22) ) ||
+				       ( (fp11 == fp22) && (fp12 == fp21) ) ) {
+				    // Both edges are adjacent to the same 2 faces.
+				    // We have an infinitesimally thin face which we want to remove
+				    // We can use either of the 2 faces to do the deletion of the edges
+				    DLFLEdgePtrArray eparray;
+						
+				    // Get all the edges in one of the faces
+				    fp11->getEdges(eparray);
 
-	    // Get all the edges in one of the faces
-	    fp11->getEdges(eparray);
-
-	    // Go through the edges obtained above and delete them
-	    // Point-spheres will be cleaned up by default
-	    for (int j=0; j < eparray.size(); ++j)
-	      deleteEdge(obj,eparray[j]);
-	  }
+				    // Go through the edges obtained above and delete them
+				    // Point-spheres will be cleaned up by default
+				    for (int j=0; j < eparray.size(); ++j)
+				      deleteEdge(obj,eparray[j]);
+				  }
+				}
+			}
+		}
+		else cout << "NULL pointers found" << endl;
+		
 	}
-      }
-    }
-    else {
-      cout << "NULL pointers found" << endl;
-    }
-  }
 
   void createCrustForWireframe(DLFLObjectPtr obj, double thickness) {
     if ( !isNonZero(thickness) ) return;
@@ -317,91 +316,244 @@ namespace DLFL {
       return;
     }
     if ( thickness > 0.0 ) {
-      vl_first = obj->beginVertex();vl_first_old= obj->beginVertex();
+      vl_first = obj->beginVertex(); vl_first_old= obj->beginVertex();
       for (int i = 0; i < num_old_verts; i++) 
-	++vl_first_old;
+				++vl_first_old;
 
       while (  num_verts < num_old_verts) {
-	vpNew = (*vl_first_old); vp = (*vl_first); ++vl_first; ++num_verts; ++vl_first_old;
+				vpNew = (*vl_first_old); vp = (*vl_first); ++vl_first; ++num_verts; ++vl_first_old;
 
-	DLFLFaceVertexPtrList fvpList;
-	DLFLFaceVertexPtr fvp1,fvp2,fvp0, fvp3, fvp4, fvptemp, fvptemp1, fvptemp2;
-	DLFLFacePtr fphole, fp1, fp2, fp;
-	DLFLEdgePtr ep1, ep0;
-	Vector3d v0, v1, v2, v3, v4, n1, n2, n3 ,n4, ntemp;
-	DLFLFaceVertexPtrList fvplist;
-	fvplist=vp->getFaceVertexList();
+				DLFLFaceVertexPtrList fvpList;
+				DLFLFaceVertexPtr fvp1,fvp2,fvp0, fvp3, fvp4, fvptemp, fvptemp1, fvptemp2;
+				DLFLFacePtr fphole, fp1, fp2, fp;
+				DLFLEdgePtr ep1, ep0;
+				Vector3d v0, v1, v2, v3, v4, n1, n2, n3 ,n4, ntemp;
+				DLFLFaceVertexPtrList fvplist;
+				fvplist=vp->getFaceVertexList();
 
-	// get the face that has the current vertex as one of its vertices
-	// and is marked for making a hole
+				// get the face that has the current vertex as one of its vertices
+				// and is marked for making a hole
+				DLFLFaceVertexPtrList::iterator first = fvplist.begin(), last = fvplist.end();
+				while ( first != last ) {
+					fvptemp = (*first);
+					fp = fvptemp->getFacePtr();		
 
-	DLFLFaceVertexPtrList::iterator first = fvplist.begin(), last = fvplist.end();
-	while ( first != last ) {
-	  fvptemp = (*first);
-	  fp = fvptemp->getFacePtr();		
+				 	if ( fp->getType() == FTHole ) {
+				   	fphole = fp; break;
+				 	}
+				 	++first;
+				}
+				fp = fphole;
 
-	  if ( fp->getType() == FTHole ) {
-	    fphole = fp; break;
-	  }
-	  ++first;
-	}
-	fp = fphole;
+				fvp0 = vp->getFaceVertexInFace(fp);
+				fvp1 = fvp0->next();
+				fvp2 = fvp0->prev();
 
-	fvp0 = vp->getFaceVertexInFace(fp);
-	fvp1 = fvp0->next();
-	fvp2 = fvp0->prev();
+				// get vertex pointers
+				//vp1 = fvp1->getVertexPtr(); vp2 = fvp2->getVertexPtr();
 
-	// get vertex pointers
-	//vp1 = fvp1->getVertexPtr(); vp2 = fvp2->getVertexPtr();
+				// Get the two edges originating from the present vertex
+				ep0 = fvp0->getEdgePtr(); ep1 = fvp2->getEdgePtr(); 
 
-	// Get the two edges originating from the present vertex
-	ep0 = fvp0->getEdgePtr(); ep1 = fvp2->getEdgePtr(); 
+				// For the edge starting at v0 to wards v1 
+				ep0->getFacePointers(fp1,fp2);
 
-	// For the edge starting at v0 to wards v1 
-	ep0->getFacePointers(fp1,fp2);
-
-	// get the face to NOT be holed
-	if ( fp1->getType() == FTHole ) fp = fp2;
-	else fp = fp1;
+				// get the face to NOT be holed
+				if ( fp1->getType() == FTHole ) fp = fp2;
+				else fp = fp1;
 	    
-	// get the three face vertices
-	fvptemp = vp->getFaceVertexInFace(fp);
-	fvptemp1 = fvptemp->next();
+				// get the three face vertices
+				fvptemp = vp->getFaceVertexInFace(fp);
+				fvptemp1 = fvptemp->next();
 
-	// get the vertices of the other two vertices in the face
-	//vptemp1 = fvptemp1->getVertexPtr();
+				// get the vertices of the other two vertices in the face
+				//vptemp1 = fvptemp1->getVertexPtr();
 
-	fvp3 = fvptemp1;
+				fvp3 = fvptemp1;
 
-	// For the edge starting at v1 towards v0
-	// Same as before after this
-	ep1->getFacePointers(fp1, fp2);
-	if ( fp1->getType() == FTHole ) fp = fp2;
-	else fp = fp1;
+				// For the edge starting at v1 towards v0
+				// Same as before after this
+				ep1->getFacePointers(fp1, fp2);
+				if ( fp1->getType() == FTHole ) fp = fp2;
+				else fp = fp1;
 
-	fvptemp = vp->getFaceVertexInFace(fp);
-	fvptemp2 = fvptemp->prev();
+				fvptemp = vp->getFaceVertexInFace(fp);
+				fvptemp2 = fvptemp->prev();
 
-	//vptemp2 = fvptemp2->getVertexPtr();
+				//vptemp2 = fvptemp2->getVertexPtr();
+				fvp4 = fvptemp2;
 
-	fvp4 = fvptemp2;
-
-	// Get the vertex coordinates of the five face vertices found
-
-	v0 = fvp0->getVertexCoords();
-	v1 = fvp1->getVertexCoords();
-	v2 = fvp2->getVertexCoords();
-	v3 = fvp3->getVertexCoords();
-	v4 = fvp4->getVertexCoords();
+				// Get the vertex coordinates of the five face vertices found
+				v0 = fvp0->getVertexCoords();
+				v1 = fvp1->getVertexCoords();
+				v2 = fvp2->getVertexCoords();
+				v3 = fvp3->getVertexCoords();
+				v4 = fvp4->getVertexCoords();
 		
-	n1 = normalized( (v1-v0) % (v3-v0) );
-	n2 = normalized( n1 % (v1-v0) );
-	n3 = normalized( (v2-v0)% ( v4-v0) );
-	n4 = normalized( (v2-v0) % n3 );
-	normal = normalized(n2 % n4); // normal is the direction in which the new_pos will lie.
+				n1 = normalized( (v1-v0) % (v3-v0) );
+				n2 = normalized( n1 % (v1-v0) );
+				n3 = normalized( (v2-v0)% ( v4-v0) );
+				n4 = normalized( (v2-v0) % n3 );
+				normal = normalized(n2 % n4); // normal is the direction in which the new_pos will lie.
 
-	newpos = vpNew->coords - thickness*normal;
-	vpNew->coords = newpos;
+				newpos = vpNew->coords - thickness*normal;
+				vpNew->coords = newpos;
+      }
+    }
+
+    // Find and store the min. id for the face list
+    crust_min_face_id = (obj->firstFace())->getID();
+  }
+
+  void createCrustForWireframe2(DLFLObjectPtr obj, double scale_factor) {
+    if ( !isNonZero(scale_factor) ) return;
+
+    // Clear the arrays used to store crust modeling information
+    crustfp1.clear(); crustfp2.clear();
+
+    // Resize the arrays to appropriate size
+    crust_num_old_faces = obj->num_faces();
+    crustfp1.resize(crust_num_old_faces,NULL);
+    crustfp2.resize(crust_num_old_faces,NULL);
+  
+    StringStream dlflstream; // Stream used to duplicate the object
+
+    // Write the object in DLFL format with the faces reversed
+    obj->writeDLFL(dlflstream,true);
+
+    int num_old_verts = obj->num_vertices();
+
+    // Read back from the stream and append to existing object
+    obj->readDLFL(dlflstream,false);
+
+    // Fill the arrays storing information for crust modeling
+    // Since we are traversing the faces, also compute and store
+    // the normals at corners of each face for use later
+    DLFLFacePtrList::iterator fl_first, fl_last;
+    DLFLFacePtr fp;
+    int num_faces = 0;
+    fl_first = obj->beginFace(); fl_last = obj->endFace();
+    while ( num_faces < crust_num_old_faces ) {
+      fp = *fl_first;
+      crustfp1[num_faces] = fp; fp->makeUnique(); fp->storeNormals();
+      ++fl_first; ++num_faces;
+    }
+    num_faces = 0; 
+    while ( fl_first != fl_last ) {
+      fp = *fl_first;
+      crustfp2[num_faces] = fp; fp->makeUnique(); fp->storeNormals();
+      ++fl_first; ++num_faces;
+    }
+
+    // If scale_factor is negative move the old vertices outward
+    // Otherwise move the new vertices inward
+
+    DLFLVertexPtrList::iterator vl_first, vl_first_old;
+    DLFLVertexPtr vp,vpNew;
+    Vector3d normal, newpos;
+    int num_verts = 0;
+
+    if ( scale_factor < 0.0 ) {
+      cout<<"ERROR: scale_factor should be positive"<<endl;
+      return;
+    }
+    if ( scale_factor > 0.0 ) {
+      vl_first = obj->beginVertex(); vl_first_old= obj->beginVertex();
+      for (int i = 0; i < num_old_verts; i++) 
+				++vl_first_old;
+
+      while (  num_verts < num_old_verts) {
+				vpNew = (*vl_first_old); vp = (*vl_first); ++vl_first; ++num_verts; ++vl_first_old;
+
+				DLFLFaceVertexPtrList fvpList;
+				DLFLFaceVertexPtr fvp1,fvp2,fvp0, fvp3, fvp4, fvptemp, fvptemp1, fvptemp2;
+				DLFLFacePtr fphole, fp1, fp2, fp;
+				DLFLEdgePtr ep1, ep0;
+				Vector3d v0, v1, v2, v3, v4, n1, n2, n3 ,n4, ntemp;
+				DLFLFaceVertexPtrList fvplist;
+				fvplist=vp->getFaceVertexList();
+
+				// get the face that has the current vertex as one of its vertices
+				// and is marked for making a hole
+				DLFLFaceVertexPtrList::iterator first = fvplist.begin(), last = fvplist.end();
+				while ( first != last ) {
+					fvptemp = (*first);
+					fp = fvptemp->getFacePtr();		
+
+				 	if ( fp->getType() == FTHole ) {
+				   	fphole = fp; break;
+				 	}
+				 	++first;
+				}
+				fp = fphole;
+
+				fvp0 = vp->getFaceVertexInFace(fp);
+				fvp1 = fvp0->next();
+				fvp2 = fvp0->prev();
+
+				// get vertex pointers
+				//vp1 = fvp1->getVertexPtr(); vp2 = fvp2->getVertexPtr();
+
+				// Get the two edges originating from the present vertex
+				ep0 = fvp0->getEdgePtr(); ep1 = fvp2->getEdgePtr(); 
+
+				// For the edge starting at v0 to wards v1 
+				ep0->getFacePointers(fp1,fp2);
+
+				// get the face to NOT be holed
+				if ( fp1->getType() == FTHole ) fp = fp2;
+				else fp = fp1;
+	    
+				// get the three face vertices
+				fvptemp = vp->getFaceVertexInFace(fp);
+				fvptemp1 = fvptemp->next();
+
+				// get the vertices of the other two vertices in the face
+				//vptemp1 = fvptemp1->getVertexPtr();
+
+				fvp3 = fvptemp1;
+
+				// For the edge starting at v1 towards v0
+				// Same as before after this
+				ep1->getFacePointers(fp1, fp2);
+				if ( fp1->getType() == FTHole ) fp = fp2;
+				else fp = fp1;
+
+				fvptemp = vp->getFaceVertexInFace(fp);
+				fvptemp2 = fvptemp->prev();
+
+				//vptemp2 = fvptemp2->getVertexPtr();
+				fvp4 = fvptemp2;
+
+				// Get the vertex coordinates of the five face vertices found
+				v0 = fvp0->getVertexCoords();
+				v1 = fvp1->getVertexCoords();
+				v2 = fvp2->getVertexCoords();
+				v3 = fvp3->getVertexCoords();
+				v4 = fvp4->getVertexCoords();
+		
+				n1 = normalized( (v1-v0) % (v3-v0) );
+				n2 = normalized( n1 % (v1-v0) );
+				n3 = normalized( (v2-v0)% ( v4-v0) );
+				n4 = normalized( (v2-v0) % n3 );
+				normal = normalized(n2 % n4); // normal is the direction in which the new_pos will lie.
+
+				//****by dave - experimental - find the centroid of the faces that contain the current vertex
+				Vector3d vpcen; vpcen.reset();
+		    // We need to find the centroid of the object
+		    // We can find num of vertices at the same time
+				DLFLEdgePtrArray eparr;
+				vpNew->getEdges(eparr);
+		    DLFLEdgePtrArray::iterator it;
+				for (it = eparr.begin(); it != eparr.end(); it++){
+					// vpcen += (*it)->getMidPoint(true);
+					vpcen += (*it)->getOtherVertexPointer(vpNew)->coords;
+				}
+				vpcen /= eparr.size();
+
+				newpos = (vpNew->coords - vpcen)*scale_factor*2 + vpcen;
+				// newpos = vpNew->coords - scale*normal;
+				vpNew->coords = newpos;
       }
     }
 
@@ -884,6 +1036,22 @@ namespace DLFL {
   
     // Create a crust with specified thickness
     createCrustForWireframe(obj,crust_thickness);
+
+    // Punch holes to get the wireframe
+    punchHoles(obj);
+  }
+
+  void makeWireframe2(DLFLObjectPtr obj, double crust_thickness, bool split) {
+    // Make a wireframe from the given model.
+
+    // First do a modified corner-cutting subdivision
+    modifiedCornerCuttingSubdivide2(obj,crust_thickness);
+
+    // Split Valence 2 vertices if 'split' flag is true
+    if ( split ) splitValence2Vertices(obj,-1.0);
+  
+    // Create a crust with specified thickness
+    createCrustForWireframe2(obj,crust_thickness);
 
     // Punch holes to get the wireframe
     punchHoles(obj);

@@ -499,7 +499,7 @@ void HighgenusMode::setupWireframeModeling2(){
 	//set layout and add stretch
 	mWireframeModeling2Layout->setRowStretch(2,1);
 	mWireframeModeling2Layout->setColumnStretch(2,1);
-	mWireframeModeling2Widget->setWindowTitle("Wireframe Modeling ***EXP!!");
+	mWireframeModeling2Widget->setWindowTitle("Wireframe Modeling ***EXP***");
 	mWireframeModeling2Widget->setLayout(mWireframeModeling2Layout);
 }
 

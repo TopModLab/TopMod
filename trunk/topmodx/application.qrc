@@ -70,5 +70,6 @@
 	<file>images/open.png</file>
 	<file>images/saveas.png</file>
 	<file>images/splash.png</file>
+	<!-- <file>assistant.app</file> -->
 </qresource>
 </RCC>
