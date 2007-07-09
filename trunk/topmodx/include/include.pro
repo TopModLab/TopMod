@@ -1,7 +1,6 @@
 TEMPLATE = subdirs
 
-
-CONFIG += ordered release
+CONFIG += ordered
 
 SUBDIRS = \
 	vecmat \

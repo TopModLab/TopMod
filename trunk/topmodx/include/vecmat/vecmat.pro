@@ -1,7 +1,7 @@
 TEMPLATE = lib
 CONFIG -= qt
 CONFIG += static #dll # build shared library
-CONFIG += debug warn_off create_prl
+CONFIG += release warn_off create_prl
 TARGET = vecmat
 DESTDIR = ../../lib
 
