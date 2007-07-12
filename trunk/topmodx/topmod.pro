@@ -1,6 +1,6 @@
 
 QT += opengl xml
-CONFIG += qt debug warn_off assistant link_prl
+CONFIG += qt release warn_off assistant link_prl
 
 # exclude verse python or spacenav drivers
 # or include them with CONFIG += 
@@ -27,7 +27,6 @@ DEPENDPATH += \
 	   include/Graphics \ 
 	   include/Light \
 	   include/vecmat \
-	   # include/arcball \
 	   include/dlflcore \
 	   include/dlflaux \
 	   include/verse 
@@ -71,11 +70,11 @@ macx {
 	LIBS += -framework Cg
 
 	#QMAKE_LFLAGS += -F./lib	
-	#LIBS += -framework vecmat -framework arcball -framework dlflcore -framework dlflaux
+	#LIBS += -framework vecmat -framework dlflcore -framework dlflaux
 	QMAKE_LFLAGS += -L./lib
-	LIBS += -lvecmat -larcball -ldlflcore -ldlflaux -framework CoreFoundation
+	LIBS += -lvecmat -ldlflcore -ldlflaux -framework CoreFoundation
 
-	#PRIVATE_FRAMEWORKS.files = ./lib/vecmat.framework ./lib/arcball.framework ./lib/dlflcore.framework ./lib/dlflaux.framework
+	#PRIVATE_FRAMEWORKS.files = ./lib/vecmat.framework ./lib/dlflcore.framework ./lib/dlflaux.framework
 	#PRIVATE_FRAMEWORKS.path = Contents/Frameworks
 	#QMAKE_BUNDLE_DATA += PRIVATE_FRAMEWORKS
 
@@ -98,7 +97,7 @@ macx {
 } else:unix {
 	CONFIG -= WITH_SPACENAV WITH_VERSE
 	QMAKE_LFLAGS += -L./lib
-	LIBS += -lvecmat -larcball -ldlflcore -ldlflaux
+	LIBS += -lvecmat -ldlflcore -ldlflaux
 
 	CONFIG(WITH_PYTHON){
 		INCLUDEPATH += /usr/include/python2.5
@@ -112,28 +111,25 @@ macx {
 	}
 } else:win32 {
 	CONFIG -= WITH_SPACENAV
-	
-	QMAKE_LFLAGS += -L.\lib
-	
-	LIBS += -L.\lib -lvecmat -larcball -ldlflcore -ldlflaux 
-	
+
+	INCLUDEPATH += C:/topmod/topmodx/lib
+	QMAKE_LFLAGS += -LC:/topmod/topmodx/lib
+	LIBS += -lvecmat -ldlflcore -ldlflaux
+
 	CONFIG(WITH_PYTHON){
-	 INCLUDEPATH += C:\Python25\include
-	
-	 QMAKE_LFLAGS += -LC:\Python25\libs
-	
+	 INCLUDEPATH += C:/Python25/include
+	 QMAKE_LFLAGS += -LC:/Python25/libs
+
 	 LIBS += -lpython25
 	}
 	CONFIG(WITH_SPACENAV){
 
 	}
 	CONFIG(WITH_VERSE){
-		
 		LIBS += -lverse
-		
-		INCLUDEPATH += C:\verse\include
-		
-		QMAKE_LFLAGS += -LC:\verse\lib
+		INCLUDEPATH += C:/verse/include
+		QMAKE_LFLAGS += -LC:/verse/lib
+
 	}
 }
 
