@@ -27,17 +27,17 @@ DEPENDPATH += \
 	   include/Graphics \ 
 	   include/Light \
 	   include/vecmat \
-	   include/arcball \
+	   # include/arcball \
 	   include/dlflcore \
 	   include/dlflaux \
-	   include/verse \
+	   include/verse 
 
 INCLUDEPATH += \
 	    include \	      
 	    include/Graphics \ 
 	    include/Light \
 	    include/vecmat \
-	    include/arcball \
+	    # include/arcball \
 	    include/dlflcore \
 	    include/dlflaux \
 	    include/verse
@@ -112,19 +112,27 @@ macx {
 	}
 } else:win32 {
 	CONFIG -= WITH_SPACENAV
-	LIBS += -L.\lib -lvecmat -larcball -ldlflcore -ldlflaux
-
+	
+	QMAKE_LFLAGS += -L.\lib
+	
+	LIBS += -L.\lib -lvecmat -larcball -ldlflcore -ldlflaux 
+	
 	CONFIG(WITH_PYTHON){
 	 INCLUDEPATH += C:\Python25\include
+	
 	 QMAKE_LFLAGS += -LC:\Python25\libs
+	
 	 LIBS += -lpython25
 	}
 	CONFIG(WITH_SPACENAV){
 
 	}
 	CONFIG(WITH_VERSE){
+		
 		LIBS += -lverse
+		
 		INCLUDEPATH += C:\verse\include
+		
 		QMAKE_LFLAGS += -LC:\verse\lib
 	}
 }
@@ -164,7 +172,7 @@ HEADERS += \
 	include/Base/Constants.hh \
 	include/Base/Inlines.hh \
 	include/Base/StreamIO.hh \
-	include/Graphics/Camera.hh \
+	# include/Graphics/Camera.hh \
 	include/Graphics/Color.hh \
 	include/Graphics/Grid.hh \
 	include/Graphics/Texture.hh \
@@ -174,7 +182,7 @@ HEADERS += \
 	include/Light/PointLight.hh \
 	include/Light/SpotLight.hh \
 	CgData.hh \
-	include/Camera2.hh \
+	# include/Camera2.hh \
 	include/Camera3.hh
 
 FORMS += shortcutdialog.ui stylesheeteditor.ui
@@ -210,7 +218,7 @@ SOURCES += \
 	TMPatchFace.cc \
 	stylesheeteditor.cc \
 	CgData.cc \
-	include/Camera2.cc \
+	# include/Camera2.cc \
 	include/Camera3.cc
 
 RESOURCES += application.qrc

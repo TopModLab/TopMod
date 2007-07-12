@@ -428,6 +428,11 @@ protected:
 
 	QDockWidget *mToolOptionsDockWidget;					//!< the floating window that displays the current tool's options (spinboxes, checkboxes, etc...)
 	QStackedWidget *mToolOptionsStackedWidget;		//!< the widget that references each tool option widget and handles switching the display
+	
+	QDockWidget *mStartupDialogDockWidget;
+	QWidget *mStartupDialogWidget;
+	QGridLayout *mStartupDialogLayout;
+	bool mShowStartupDialogAtStartup;
 			
 	// Renderers
 	static WireframeRendererPtr wired;            //!< WireframeRenderer
@@ -462,6 +467,7 @@ private:
 	bool maybeSave();															//!< save before exit?
 	void initializeHelp();												//!< initialize the help files / create index / load html files
 
+ 	void createStartupDialog();										//!< initialize the startup screen that will show links to beginner video tutorials / will include link to quicktime website and "disable checkbox"
 	void initializeAnimatedHelp();								//!< initialize the in-context help animated screen captures. these will display in a small floatable window to the right 
 
 	QAssistantClient *mAssistantClient;						//!< Qt help file viewer, will display html files created by DocBook xml transformation
@@ -663,6 +669,7 @@ private:
 #endif
 			
 	QAction *mShowToolOptionsAct;
+	QAction *mShowStartupDialogAct;
 			
 	StyleSheetEditor *mStyleSheetEditor;
 	QAction *mEditStyleSheetAct;
@@ -682,6 +689,24 @@ private:
 			
 	QDoubleSpinBox *mSpinBoxOne,*mSpinBoxTwo,*mSpinBoxThree,*mSpinBoxFour,*mSpinBoxFive,*mSpinBoxSix;
 			
+	//startup dialog actions for loading movies
+	QAction *mTutorialNavigationAct;
+	QAction *mTutorialInterfaceAct;
+	QAction *mTutorialBasicAct;
+	QAction *mTutorialExtrusionAct;
+	QAction *mTutorialRemeshingAct;
+	QAction *mTutorialHighgenusAct;
+	QAction *mTutorialTexturingAct;	
+	//associated toolbuttons
+	QToolButton *mTutorialNavigationButton;
+	QToolButton *mTutorialInterfaceButton;
+	QToolButton *mTutorialBasicButton;
+	QToolButton *mTutorialExtrusionButton;
+	QToolButton *mTutorialRemeshingButton;
+	QToolButton *mTutorialHighgenusButton;
+	QToolButton *mTutorialTexturingButton;
+	QCheckBox *mShowStartupDialogAtStartupCheckBox;
+	
 public slots:
 
 	void about(); 												//!< \todo  topmod developer credits 
@@ -696,6 +721,17 @@ public slots:
 
 	void showAllToolBars();
 	void hideAllToolBars();
+	
+	bool getShowStartupDialogAtStartup();
+	void setShowStartupDialogAtStartup(int b);
+	//load the seven basic tutorial movies
+	void loadNavigationTutorial();
+	void loadInterfaceTutorial();
+	void loadBasicTutorial();
+	void loadExtrusionTutorial();
+	void loadRemeshingTutorial();
+	void loadHighgenusTutorial();
+	void loadTexturingTutorial();	
 	
 	void load_texture();
 	//renderers

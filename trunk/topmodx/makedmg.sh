@@ -193,7 +193,7 @@ imagedir="/tmp/$APPNAME.$$"
 mkdir $imagedir
 cp -R $BUNDLE $imagedir
 
-# TODO: copy over additional files, if any
+# \todo  copy over additional files, if any
 hdiutil create -ov -srcfolder $imagedir -format UDBZ -volname "$APPNAME" "$APPNAME.dmg"
 rm -rf $imagedir
 

@@ -5,7 +5,7 @@
 * \class Camera2
 *	\brief Camera class from Chris Root used as an alternative to the original TopMod camera class
 * 
-* has an error when the aim and position vectors are not at the same y-value. TODO: fix the camera2 class up vector problem
+* has an error when the aim and position vectors are not at the same y-value. \todo  fix the camera2 class up vector problem
 * 
 */
 

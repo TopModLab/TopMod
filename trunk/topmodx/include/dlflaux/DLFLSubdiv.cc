@@ -1950,7 +1950,7 @@ namespace DLFL {
     // mark the newly created vertices by subdivision
     setNewSubVertexType(obj);
 
-    // TODO: put new code here below
+    // \todo  put new code here below
     num_old_faces = obj->num_faces();
 	
     num_faces = 0; fl_first = obj->beginFace(); fl_last = obj->endFace();

@@ -325,7 +325,8 @@ void DLFLScriptEditor::execFile( ) {
 		QFileDialog::getOpenFileName(this,
 																 tr("Exec File"),
 																 "$HOME",
-																 tr("Python Files (*.py);;All Files (*)"));
+																 tr("Python Files (*.py);;All Files (*)"),
+																0, QFileDialog::DontUseSheet);
 	QString error("");
 
 	if( !filename.isEmpty() ) {
@@ -356,7 +357,8 @@ void DLFLScriptEditor::openFile( ) {
 		QFileDialog::getOpenFileName(this,
 																 tr("Open Python File"),
 																 "$HOME",
-																 tr("Python Files (*.py);;All Files (*)"));
+																 tr("Python Files (*.py);;All Files (*)"),
+																0, QFileDialog::DontUseSheet);
 }
 
 void DLFLScriptEditor::saveFile( ) {
@@ -364,7 +366,8 @@ void DLFLScriptEditor::saveFile( ) {
 		QFileDialog::getOpenFileName(this,
 																 tr("Save Python File"),
 																 "$HOME",
-																 tr("Python Files (*.py);;All Files (*)"));
+																 tr("Python Files (*.py);;All Files (*)"),
+																	0, QFileDialog::DontUseSheet);
 }
 
 void DLFLScriptEditor::clearHistory( ) {

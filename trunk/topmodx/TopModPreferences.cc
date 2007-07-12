@@ -7,7 +7,7 @@ TopModPreferences::TopModPreferences(QSettings *settings, StyleSheetEditor *sse,
 	mParent = parent;
 	setSizeGripEnabled(false);
 	resize(600,600);
-	setMinimumSize(600,500);
+	setFixedSize(600,500);
 	setWindowTitle(tr("TopMod Preferences"));
 	// setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
 	
@@ -95,6 +95,7 @@ void TopModPreferences::saveSettings(){
 	mSettings->beginGroup("MainWindow");
 	mSettings->setValue("pos", ((MainWindow*)mParent)->pos());
 	mSettings->setValue("size", ((MainWindow*)mParent)->size());
+	mSettings->setValue("showStartupDialogAtStartup", ((MainWindow*)mParent)->getShowStartupDialogAtStartup());
 	mSettings->endGroup();
 	
 	accept();
@@ -104,13 +105,13 @@ void TopModPreferences::readSettings(){
 
 	//load the settings file and set defaults if values don't exist
 	mSettings->beginGroup("Colors");
-	mViewportColorDefault = QColor(255,255,255); //this is where you set defaults now. only one time in the code it
+	mViewportColorDefault = QColor(67,68,88); //this is where you set defaults now. only one time in the code it
 	mViewportColor = mSettings->value("ViewportColor", mViewportColorDefault).value<QColor>();
-	mRenderColorDefault = QColor(255,255,255);
+	mRenderColorDefault = QColor(255,151,92);
 	mRenderColor = mSettings->value("RenderColor", mRenderColorDefault).value<QColor>();
-	mCoolLightColorDefault = QColor(51,51,102);
+	mCoolLightColorDefault = QColor(27,26,23);
 	mCoolLightColor = mSettings->value("CoolLightColor",mCoolLightColorDefault).value<QColor>();
-	mWarmLightColorDefault = QColor(255,255,153);
+	mWarmLightColorDefault = QColor(255,250,226);
 	mWarmLightColor = mSettings->value("WarmLightColor",mWarmLightColorDefault).value<QColor>();
 	mWireframeColorDefault = QColor(0,0,0,127);
 	mWireframeColor = mSettings->value("WireframeColor", mWireframeColorDefault).value<QColor>();
@@ -160,10 +161,12 @@ void TopModPreferences::readSettings(){
 	mSettings->beginGroup("MainWindow");
 	QPoint pos = mSettings->value("pos", QPoint(100, 100)).toPoint();
 	QSize size = mSettings->value("size", QSize(800, 600)).toSize();
+	mShowStartupDialogAtStartup = mSettings->value("showStartupDialogAtStartup", true).toBool();
 	mSettings->endGroup();
 
 	((MainWindow*)mParent)->resize(size.width(),size.height());
 	((MainWindow*)mParent)->move(pos);
+	((MainWindow*)mParent)->setShowStartupDialogAtStartup((int)mShowStartupDialogAtStartup);
 	
 	//initialize the settings
 	((MainWindow*)mParent)->getActive()->setViewportColor(mViewportColor);
@@ -302,6 +305,13 @@ void TopModPreferences::setupMain(){
 	// connect(mResetCameraButton,SIGNAL(clicked()),
 	// 				((MainWindow*)mParent), SLOT(switchPerspView()));
 	
+	// mShowStartupDialogAtStartupCheckBox = new QCheckBox(tr("Show Tutorial Dialog at Startup"));
+	// mShowStartupDialogAtStartupCheckBox->setChecked(mShowStartupDialogAtStartup);
+	// connect(mShowStartupDialogAtStartupCheckBox,SIGNAL(stateChanged(int)),this,SLOT(setShowStartupDialogAtStartup(int)));
+	
+	mMainLayout->setRowStretch(2,1);
+	mMainLayout->setColumnStretch(2,1);
+	
 	mMainTab->setLayout(mMainLayout);
 	// mMainLayout->addWidget(mResetCameraButton,0,0);
 	
@@ -425,6 +435,9 @@ void TopModPreferences::setupColors(){
 	connect(mResetColorsButton,SIGNAL(clicked()),this, SLOT(loadDefaults()));
 	mColorsLayout->addWidget(mResetColorsButton,14,3);
 	
+	mColorsLayout->setRowStretch(15,17);
+	mColorsLayout->setColumnStretch(4,10);
+
 	// mColorsLayout->addStretch(1);
 	mColorsTab->setLayout(mColorsLayout);	
 	

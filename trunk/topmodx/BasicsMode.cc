@@ -222,6 +222,9 @@ void BasicsMode::setupInsertEdge() {
 	
 	mInsertEdgeLayout = new QGridLayout;
 	// mInsertEdgeLayout->setMargin(0);
+	QLabel *noOptionsLabel = new QLabel(tr("No Options for this tool."));
+	mInsertEdgeLayout->addWidget(noOptionsLabel,0,0);
+	
 	mInsertEdgeLayout->setRowStretch(4,1);
 	mInsertEdgeLayout->setColumnStretch(2,1);
 	mInsertEdgeWidget->setWindowTitle(tr("Insert Edge"));
@@ -249,6 +252,9 @@ void BasicsMode::setupCollapseEdge() {
 	
 	mCollapseEdgeLayout = new QGridLayout;
 	// mCollapseEdgeLayout->setMargin(0);
+	QLabel *noOptionsLabel = new QLabel(tr("No Options for this tool."));
+	mCollapseEdgeLayout->addWidget(noOptionsLabel,0,0);
+	
 	mCollapseEdgeLayout->setRowStretch(4,1);
 	mCollapseEdgeLayout->setColumnStretch(2,1);
 	mCollapseEdgeWidget->setWindowTitle(tr("Collapse Edge"));
@@ -276,6 +282,9 @@ void BasicsMode::setupConnectEdges(){
 	
 	mConnectEdgesLayout = new QGridLayout;
 	// mConnectEdgesLayout->setMargin(0);
+	QLabel *noOptionsLabel = new QLabel(tr("No Options for this tool."));
+	mConnectEdgesLayout->addWidget(noOptionsLabel,0,0);
+	
 	mConnectEdgesLayout->setRowStretch(0,1);
 	mConnectEdgesLayout->setColumnStretch(2,1);
 	mConnectEdgesWidget->setWindowTitle(tr("Connect Edges"));
@@ -289,6 +298,10 @@ void BasicsMode::setupSpliceCorners(){
 	// mSpliceCornersLayout->setMargin(0);
 	mSpliceCornersLayout->setRowStretch(4,1);
 	mSpliceCornersLayout->setColumnStretch(2,1);
+	
+	QLabel *noOptionsLabel = new QLabel(tr("No Options for this tool."));
+	mSpliceCornersLayout->addWidget(noOptionsLabel,0,0);
+	
 	mSpliceCornersWidget->setWindowTitle(tr("Splice Corners"));
 	mSpliceCornersWidget->setLayout(mSpliceCornersLayout);
 	

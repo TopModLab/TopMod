@@ -70,6 +70,13 @@
 	<file>images/open.png</file>
 	<file>images/saveas.png</file>
 	<file>images/splash.png</file>
+	<file>images/tutorial_01.png</file>
+	<file>images/tutorial_02.png</file>
+	<file>images/tutorial_03.png</file>
+	<file>images/tutorial_04.png</file>
+	<file>images/tutorial_05.png</file>
+	<file>images/tutorial_06.png</file>
+	<file>images/tutorial_07.png</file>
 	<!-- <file>assistant.app</file> -->
 </qresource>
 </RCC>

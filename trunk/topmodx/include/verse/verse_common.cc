@@ -163,7 +163,7 @@ void post_node_destroy(VNode *vnode)
 {
 /*	allqueue(REDRAWOOPS, 0);*/
 
-	/* TODO: destroy bindings between vnode and blender data structures */
+	/* \todo  destroy bindings between vnode and blender data structures */
 }
 
 /*

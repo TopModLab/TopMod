@@ -151,8 +151,6 @@ DLFLEdgePtr MainWindow::face_loop_start_edge = NULL;
 
 /**
  * asdflkjasdf
- * asdflkjasd;f
- * asdf;alsjkdf
  * asdfl;jkas;df
  **/
 MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(), redoList(), 
@@ -191,6 +189,10 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	// vblayout->setMargin(0);
 	// cWidget->setLayout( layout );
 	setCentralWidget( active);
+	//store user's desktop size
+	QWidget *d = QApplication::desktop();
+	int w=d->width();  // returns screen width
+  int h=d->height(); // returns screen height
 
 #ifdef WITH_PYTHON
 	//the script editor widget will be placed into a QDockWidget
@@ -202,9 +204,6 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	addDockWidget(Qt::BottomDockWidgetArea, mScriptEditorDockWidget);
 	mScriptEditorDockWidget->hide();
 	mScriptEditorDockWidget->setFloating(true);
-	QWidget *d = QApplication::desktop();
-	int w=d->width();  // returns screen width
-  int h=d->height(); // returns screen height
 	mScriptEditorDockWidget->setGeometry(20,h-320,500,300);
 	//mScriptEditorDockWidget->setMaximumHeight(200);
 	connect( this, SIGNAL(loadedObject(DLFLObject*,QString)),mScriptEditor, SLOT(loadObject(DLFLObject*,QString)) );
@@ -230,14 +229,14 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 
 	//Tool options dockwidget must be initialized before setting up the actions
 	//the main tool options DockWidget
-	mToolOptionsDockWidget = new QDockWidget(tr("Tool Options"),this);
+	mToolOptionsDockWidget = new QDockWidget(tr("Tool Options - Insert Edge"),this);
 	// mToolOptionsDockWidget->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable /* | QDockWidget::DockWidgetClosable*/);
 	mToolOptionsDockWidget->setAllowedAreas(Qt::NoDockWidgetArea);
 	mToolOptionsStackedWidget = new QStackedWidget();
 	// mToolOptionsDockWidget->hide();
 	mToolOptionsDockWidget->setWidget(mToolOptionsStackedWidget);
 	mToolOptionsDockWidget->setFloating(true);
-	mToolOptionsDockWidget->move(width() , 150);
+	// mToolOptionsDockWidget->move(width() , 150);
 	// mToolOptionsTitleBarLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	// mToolOptionsTitleBarWidget = new QWidget;
 	// mToolOptionsTitleBarWidget->setLayout(mToolOptionsTitleBarLayout);
@@ -263,6 +262,9 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	mHighgenusMode = new HighgenusMode(this, sm, mActionListWidget);
 	mTexturingMode = new TexturingMode(this, sm, mActionListWidget);
 
+	//startup dialog
+	mStartupDialogDockWidget = new QDockWidget(tr("Learning Movies"),this);
+	
 	createActions();
 	mCommandCompleter = new CommandCompleter(mActionListWidget, this);
 	createToolBars();
@@ -275,7 +277,17 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	mSettings = new QSettings("TopMod", "Topological Mesh Modeler");
 	mPreferencesDialog = new TopModPreferences(mSettings, mStyleSheetEditor, sm, this);	
 	
-	//for HUD
+	// //testing shortcut context
+	// for (int i = 0; i < mActionListWidget->actions().count(); i++){
+	// 	mActionListWidget->actions().at(i)->setShortcutContext(Qt::WidgetShortcut);
+	// }
+	
+	//reposition floating windows:
+	mToolOptionsDockWidget->setGeometry(w-mToolOptionsDockWidget->width(),50,mToolOptionsDockWidget->width(),mToolOptionsDockWidget->height());
+	// mToolOptionsDockWidget->setFixedSize(mToolOptionsDockWidget->width(),mToolOptionsStackWidget->height());
+	
+	//must happen after preference file is loaded
+	createStartupDialog();
 	
 }
 
@@ -553,6 +565,11 @@ void MainWindow::createActions() {
 	mShowToolOptionsAct->setStatusTip( tr("Show the tool options window") );
 	sm->registerAction(mShowToolOptionsAct, "Window Menu", "O");
 	mActionListWidget->addAction(mShowToolOptionsAct);
+
+	mShowStartupDialogAct = mStartupDialogDockWidget->toggleViewAction();
+	mShowStartupDialogAct->setStatusTip( tr("Show the startup screen with links to video tutorials") );
+	sm->registerAction(mShowStartupDialogAct, "Window Menu", "SHIFT+S");
+	mActionListWidget->addAction(mShowStartupDialogAct);
 	
 	mShowAnimatedHelpAct = mAnimatedHelpDockWidget->toggleViewAction();// new QAction(tr("Show Animated Hel&p"), this);
 	// mShowAnimatedHelpAct->setCheckable(true);
@@ -945,7 +962,7 @@ void MainWindow::createActions() {
 	connect(mShowToolBarsAct, SIGNAL(triggered()), this, SLOT(showAllToolBars()));
 	sm->registerAction(mShowToolBarsAct, "Window Menu", "SHIFT+T");
 	mActionListWidget->addAction(mShowToolBarsAct);
-	
+
 }
 
 void MainWindow::createMenus(){
@@ -1123,6 +1140,7 @@ void MainWindow::createMenus(){
 
 	mWindowMenu = new QMenu(tr("&Window"));
 	menuBar->addMenu(mWindowMenu);
+	mWindowMenu->addAction(mShowStartupDialogAct);
 	mWindowMenu->addAction(mShowToolOptionsAct);
 	#ifdef WITH_PYTHON
 	mWindowMenu->addAction(mShowScriptEditorAct);
@@ -1264,6 +1282,133 @@ void MainWindow::createToolBars() {
 	mTexturingToolBarAct  	  = mTexturingToolBar->toggleViewAction();
 	mRemeshingToolBarAct	    = mRemeshingToolBar->toggleViewAction();
 
+}
+
+void MainWindow::createStartupDialog(){
+	
+	//startup screen - links to video tutorials and free quicktime download
+
+	// mStartupDialogDockWidget->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable /* | QDockWidget::DockWidgetClosable*/);
+	mStartupDialogDockWidget->setAllowedAreas(Qt::NoDockWidgetArea);
+	// mStartupDialogDockWidget->hide();
+	
+	mStartupDialogWidget = new QWidget;
+	mStartupDialogLayout = new QGridLayout;
+
+	//actions for the startup screen
+	mTutorialNavigationAct = new QAction(QIcon(":/images/tutorial_01.png"),tr("Navigation Basics"), this);
+	connect(mTutorialNavigationAct, SIGNAL(triggered()), this, SLOT(loadNavigationTutorial()));
+	mTutorialNavigationButton = new QToolButton;
+	mTutorialNavigationButton->setFixedWidth(200);
+	mTutorialNavigationButton->setIconSize(QSize(48,48));
+	mTutorialNavigationButton->setDefaultAction(mTutorialNavigationAct);
+	mTutorialNavigationButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+	mStartupDialogLayout->addWidget(mTutorialNavigationButton,1,0);
+	
+	mTutorialInterfaceAct = new QAction(QIcon(":/images/tutorial_02.png"),tr("Interface Basics"), this);
+	connect(mTutorialInterfaceAct, SIGNAL(triggered()), this, SLOT(loadInterfaceTutorial()));
+	mTutorialInterfaceButton = new QToolButton;
+	mTutorialInterfaceButton->setFixedWidth(200);
+	mTutorialInterfaceButton->setIconSize(QSize(48,48));
+	mTutorialInterfaceButton->setDefaultAction(mTutorialInterfaceAct);
+	mTutorialInterfaceButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+	mStartupDialogLayout->addWidget(mTutorialInterfaceButton,2,0);
+
+	mTutorialBasicAct = new QAction(QIcon(":/images/tutorial_03.png"),tr("Basic Operations"), this);
+	connect(mTutorialBasicAct, SIGNAL(triggered()), this, SLOT(loadBasicTutorial()));
+	mTutorialBasicButton = new QToolButton;
+	mTutorialBasicButton->setFixedWidth(200);
+	mTutorialBasicButton->setIconSize(QSize(48,48));
+	mTutorialBasicButton->setDefaultAction(mTutorialBasicAct);
+	mTutorialBasicButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+	mStartupDialogLayout->addWidget(mTutorialBasicButton,3,0);
+
+	mTutorialExtrusionAct = new QAction(QIcon(":/images/tutorial_04.png"),tr("Extrusion Operations"), this);
+	connect(mTutorialExtrusionAct, SIGNAL(triggered()), this, SLOT(loadExtrusionTutorial()));
+	mTutorialExtrusionButton = new QToolButton;
+	mTutorialExtrusionButton->setFixedWidth(200);
+	mTutorialExtrusionButton->setIconSize(QSize(48,48));
+	mTutorialExtrusionButton->setDefaultAction(mTutorialExtrusionAct);
+	mTutorialExtrusionButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+	mStartupDialogLayout->addWidget(mTutorialExtrusionButton,4,0);
+
+	mTutorialRemeshingAct = new QAction(QIcon(":/images/tutorial_05.png"),tr("Remeshing Operations"), this);
+	connect(mTutorialRemeshingAct, SIGNAL(triggered()), this, SLOT(loadRemeshingTutorial()));
+	mTutorialRemeshingButton = new QToolButton;
+	mTutorialRemeshingButton->setFixedWidth(200);
+	mTutorialRemeshingButton->setIconSize(QSize(48,48));
+	mTutorialRemeshingButton->setDefaultAction(mTutorialRemeshingAct);
+	mTutorialRemeshingButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+	mStartupDialogLayout->addWidget(mTutorialRemeshingButton,1,1);
+
+	mTutorialHighgenusAct = new QAction(QIcon(":/images/tutorial_06.png"),tr("High genus Operations"), this);
+	connect(mTutorialHighgenusAct, SIGNAL(triggered()), this, SLOT(loadHighgenusTutorial()));
+	mTutorialHighgenusButton = new QToolButton;
+	mTutorialHighgenusButton->setFixedWidth(200);
+	mTutorialHighgenusButton->setIconSize(QSize(48,48));
+	mTutorialHighgenusButton->setDefaultAction(mTutorialHighgenusAct);
+	mTutorialHighgenusButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+	mStartupDialogLayout->addWidget(mTutorialHighgenusButton,2,1);
+
+	mTutorialTexturingAct = new QAction(QIcon(":/images/tutorial_07.png"),tr("Texturing Operations"), this);
+	connect(mTutorialTexturingAct, SIGNAL(triggered()), this, SLOT(loadTexturingTutorial()));
+	mTutorialTexturingButton = new QToolButton;
+	mTutorialTexturingButton->setFixedWidth(200);
+	mTutorialTexturingButton->setIconSize(QSize(48,48));
+	mTutorialTexturingButton->setDefaultAction(mTutorialTexturingAct);
+	mTutorialTexturingButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+	mStartupDialogLayout->addWidget(mTutorialTexturingButton,3,1);
+	
+	//show on startup? checkbox
+	mShowStartupDialogAtStartupCheckBox = new QCheckBox(tr("Show this dialog at startup"));
+	mShowStartupDialogAtStartupCheckBox->setChecked(mShowStartupDialogAtStartup);
+	connect(mShowStartupDialogAtStartupCheckBox,SIGNAL(stateChanged(int)),this,SLOT(setShowStartupDialogAtStartup(int)));
+	mStartupDialogLayout->addWidget(mShowStartupDialogAtStartupCheckBox,5,0);
+		
+	mStartupDialogLayout->setColumnStretch(2,1);
+	mStartupDialogLayout->setRowStretch(6,1);
+	mStartupDialogWidget->setLayout(mStartupDialogLayout);
+	mStartupDialogDockWidget->setWidget(mStartupDialogWidget);
+	mStartupDialogDockWidget->setFloating(true);
+	mStartupDialogDockWidget->move(width()/2 , height()/2);
+	if (!mShowStartupDialogAtStartup)
+		mStartupDialogDockWidget->hide();
+}
+
+void MainWindow::setShowStartupDialogAtStartup(int b){
+	mShowStartupDialogAtStartup = (bool)b;
+}
+
+bool MainWindow::getShowStartupDialogAtStartup(){
+	return mShowStartupDialogAtStartup;
+}
+
+void MainWindow::loadNavigationTutorial(){
+	QDesktopServices::openUrl(QUrl::fromLocalFile("video/tutorial_navigation.mov"));
+}
+
+void MainWindow::loadInterfaceTutorial(){
+	QDesktopServices::openUrl(QUrl::fromLocalFile("video/tutorial_interface.mov"));
+}
+
+void MainWindow::loadBasicTutorial(){
+	QDesktopServices::openUrl(QUrl::fromLocalFile("video/tutorial_basic.mov"));
+}
+
+void MainWindow::loadExtrusionTutorial(){
+	QDesktopServices::openUrl(QUrl::fromLocalFile("video/tutorial_extrusion.mov"));
+}
+
+void MainWindow::loadRemeshingTutorial(){
+	QDesktopServices::openUrl(QUrl::fromLocalFile("video/tutorial_remeshing.mov"));
+}
+
+void MainWindow::loadHighgenusTutorial(){
+	QDesktopServices::openUrl(QUrl::fromLocalFile("video/tutorial_highgenus.mov"));
+}
+
+void MainWindow::loadTexturingTutorial(){
+	QDesktopServices::openUrl(QUrl::fromLocalFile("video/tutorial_texturing.mov"));
 }
 
 void MainWindow::showAllToolBars(){
@@ -3221,10 +3366,9 @@ void MainWindow::writeObjectDLFL(const char * filename) {
 
 // File handling
 void MainWindow::openFile(void) {
-	QString fileName = QFileDialog::getOpenFileName(this,
-																									tr("Open File..."),
-																									"$HOME",
-																									tr("All Supported Files (*.obj *.dlfl);;Wavefront Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"));
+	QString fileName = QFileDialog::getOpenFileName(this, tr("Open File..."),
+																									"$HOME", tr("All Supported Files (*.obj *.dlfl);;Wavefront OBJ Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"),
+																									0, QFileDialog::DontUseSheet);
 	if (!fileName.isEmpty()){
 		if (!curFile.isEmpty()){
 			undoPush();
@@ -3260,7 +3404,8 @@ bool MainWindow::saveFile(bool with_normals, bool with_tex_coords) {
 		QString fileName = QFileDialog::getSaveFileName(this,
 																										tr("Save File As..."),
 																										curFile,
-																										tr("All Supported Files (*.obj *.dlfl);;Wavefront Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"));
+																										tr("All Supported Files (*.obj *.dlfl);;Wavefront OBJ Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"),
+																										0, QFileDialog::DontUseSheet);
 		if (!fileName.isEmpty()){
 			if (!fileName.indexOf(".obj") || !fileName.indexOf(".dlfl") || !fileName.indexOf(".OBJ") || !fileName.indexOf(".DLFL"))
 				fileName.append(".dlfl");
@@ -3278,7 +3423,8 @@ bool MainWindow::saveFileAs(bool with_normals, bool with_tex_coords) {
 	QString fileName = QFileDialog::getSaveFileName(this,
 																									tr("Save File As..."),
 																									curFile,
-																									tr("All Supported Files (*.obj *.dlfl);;Wavefront Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"));
+																									tr("All Supported Files (*.obj *.dlfl);;Wavefront OBJ Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"),
+																									0, QFileDialog::DontUseSheet );
 	if (!fileName.isEmpty()){
 		if (!fileName.indexOf(".obj") || !fileName.indexOf(".dlfl") || !fileName.indexOf(".OBJ") || !fileName.indexOf(".DLFL"))
 			fileName.append(".dlfl");
@@ -3295,7 +3441,7 @@ void MainWindow::openFileOBJ(void) {
 	// QString fileName = QFileDialog::getOpenFileName(this,
 	// 																								tr("Open File..."),
 	// 																								"$HOME",
-	// 																								tr("Wavefront Files (*.obj);;All Files (*)"));
+	// 																								tr("Wavefront OBJ Files (*.obj);;All Files (*)"));
 	// if (!fileName.isEmpty()) {
 	// 	
 	// 	setCurrentFile(fileName);
@@ -3313,7 +3459,7 @@ void MainWindow::saveFileOBJ(bool with_normals, bool with_tex_coords) {
 	// QString fileName = QFileDialog::getSaveFileName(this,
 	// 																								tr("Save File As..."),
 	// 																								curFile,
-	// 																								tr("Wavefront Files (*.obj);;All Files (*)"));
+	// 																								tr("Wavefront OBJ Files (*.obj);;All Files (*)"));
 	// if (!fileName.isEmpty()){
 	// 	QByteArray ba = fileName.toLatin1();
 	// 	const char *filename = ba.data();
@@ -3326,7 +3472,8 @@ bool MainWindow::saveFileBezierOBJ( ) {
 	QString fileName = QFileDialog::getSaveFileName(this,
 																									tr("Save Bezier Patch (OBJ)..."),
 																									curFile,
-																									tr("Wavefront Files (*.obj);;All Files (*)"));
+																									tr("Wavefront OBJ Files (*.obj);;All Files (*)"),
+																									0, QFileDialog::DontUseSheet);
 	if (!fileName.isEmpty()){
 		QByteArray ba = fileName.toLatin1();
 		const char *filename = ba.data();

@@ -171,6 +171,8 @@ private:
 	//reset camera button
 	QPushButton *mResetCameraButton;
 	
+	bool mShowStartupDialogAtStartup;
+	
 public:
 	TopModPreferences(QSettings *settings, StyleSheetEditor *sse, QShortcutManager *sm, QWidget *parent = 0 );
 	~TopModPreferences();

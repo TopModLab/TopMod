@@ -9,7 +9,9 @@ void MainWindow::load_texture() {
 	QString fileName = QFileDialog::getOpenFileName(this,
 		tr("Open File..."),
 		"$HOME",
-		tr("All Supported Files (*.jpg *.png);;JPEG Files (*.jpg);;PNG Files (*.png);;All Files (*)"));
+		tr("All Supported Files (*.jpg *.png);;JPEG Files (*.jpg);;PNG Files (*.png);;All Files (*)"),
+		0, QFileDialog::DontUseSheet);
+		
 	if (!fileName.isEmpty()){
 		// undoPush();
 		QByteArray ba = fileName.toLatin1();

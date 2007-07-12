@@ -51,7 +51,7 @@
 	\brief Constructor
 */
 QShortcutManager::QShortcutManager()
- : sLang("untranslated") {
+ : sLang("en_us") {
 	pDialog = new QShortcutDialog(this);
 	pDoc = new QDomDocument("SHORTCUTS");
 	readXml();
@@ -315,17 +315,18 @@ void QShortcutManager::unregisterAction(QAction *a)
 */
 QString QShortcutManager::file(const QString& lang)
 {
-	return 	QDir::homePath()
-			+ QDir::separator()
-			+ "."
-			+ QApplication::applicationName()
-			+ QDir::separator()
-			+ "shortcuts"
-			+ QDir::separator()
-			+ "shortcuts_"
-			+ "en_us"
-			+ ".xml";
-//return "/Users/dvmorris/.topmod/shortcuts/shortcuts_en_us.xml";
+	// return 	QDir::homePath()
+	// 		+ QDir::separator()
+	// 		+ "."
+	// 		+ QApplication::applicationName()
+	// 		+ QDir::separator()
+	// 		+ "shortcuts"
+	// 		+ QDir::separator()
+	// 		+ "shortcuts_"
+	// 		+ "en_us"
+	// 		+ ".xml";
+	
+	return "shortcuts_" + lang + ".xml";
 
 }
 
