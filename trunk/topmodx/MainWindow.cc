@@ -921,8 +921,8 @@ void MainWindow::createActions() {
 	mActionListWidget->addAction(mPerformRemeshingAct);
 
 	//help menu actions
-	mHelpAct = new QAction(tr("&Help Contents"), this);
-	mHelpAct->setStatusTip( tr("View the help file") );
+	mHelpAct = new QAction(tr("&Online User Manual"), this);
+	mHelpAct->setStatusTip( tr("View the User Manual on the TopMod Wiki") );
 	connect(mHelpAct, SIGNAL(triggered()), this, SLOT(help()));
 	sm->registerAction(mHelpAct, "Help Menu", "F1");
 	mActionListWidget->addAction(mHelpAct);
@@ -932,6 +932,12 @@ void MainWindow::createActions() {
 	connect(mTopModWebAct, SIGNAL(triggered()), this, SLOT(topModWeb()));
 	sm->registerAction(mTopModWebAct, "Help Menu", "");
 	mActionListWidget->addAction(mTopModWebAct);
+
+	mTopModResearchAct = new QAction(tr("&TopMod Research Papers"), this);
+	mTopModResearchAct->setStatusTip( tr("Go to the TopMod Research web page") );
+	connect(mTopModResearchAct, SIGNAL(triggered()), this, SLOT(topModWeb()));
+	sm->registerAction(mTopModResearchAct, "Help Menu", "");
+	mActionListWidget->addAction(mTopModResearchAct);
 
 	mCheckForUpdatesAct = new QAction(tr("&Check for Updates"), this);
 	mCheckForUpdatesAct->setStatusTip( tr("Check for updates to TopMod Online") );
@@ -1167,6 +1173,7 @@ void MainWindow::createMenus(){
 	mHelpMenu->addAction(mHelpAct);
 	mHelpMenu->addAction(mCheckForUpdatesAct);
 	mHelpMenu->addAction(mTopModWebAct);
+	mHelpMenu->addAction(mTopModResearchAct);
 	mHelpMenu->addSeparator();
 	mHelpMenu->addAction(mAboutAct);
 	mHelpMenu->addAction(mAboutQtAct);
@@ -1364,6 +1371,12 @@ void MainWindow::createStartupDialog(){
 	mShowStartupDialogAtStartupCheckBox->setChecked(mShowStartupDialogAtStartup);
 	connect(mShowStartupDialogAtStartupCheckBox,SIGNAL(stateChanged(int)),this,SLOT(setShowStartupDialogAtStartup(int)));
 	mStartupDialogLayout->addWidget(mShowStartupDialogAtStartupCheckBox,5,0);
+	
+	//download quicktime link label
+	QLabel *quicktimeLabel = new QLabel(tr("Quicktime 7.2 or greater recommended."));
+	QLabel *downloadQuicktimeLabel = new QLabel(tr("<h5>Quicktime 7.2 or greater recommended.<br /><a href=\"http://apple.com/quicktime/\">Download now.</a></h5>"));
+	downloadQuicktimeLabel->setOpenExternalLinks(true);
+	mStartupDialogLayout->addWidget(downloadQuicktimeLabel,5,1, Qt::AlignRight);
 		
 	mStartupDialogLayout->setColumnStretch(2,1);
 	mStartupDialogLayout->setRowStretch(6,1);
@@ -1453,8 +1466,8 @@ void MainWindow::createStatusBar() {
 
 void MainWindow::closeEvent(QCloseEvent *event) {
 //close the help file if it's open... not sure this is necessary
-	if (mAssistantClient)
-		mAssistantClient->closeAssistant();
+	// if (mAssistantClient)
+	// 	mAssistantClient->closeAssistant();
 
 	mPreferencesDialog->saveSettings();
 	
@@ -1524,32 +1537,39 @@ void MainWindow::about() {
 }
 
 void MainWindow::initializeHelp(){
-	mAssistantClient = new QAssistantClient(QLibraryInfo::location(QLibraryInfo::BinariesPath), this);
-  QStringList arguments;
-  arguments << "-profile" << QString("userdoc") + QDir::separator() + QString("topmod.adp");
-  mAssistantClient->setArguments(arguments);
+	// mAssistantClient = new QAssistantClient(QLibraryInfo::location(QLibraryInfo::BinariesPath), this);
+	//   QStringList arguments;
+	//   arguments << "-profile" << QString("userdoc") + QDir::separator() + QString("topmod.adp");
+	//   mAssistantClient->setArguments(arguments);
 }
 
 /** 
 * \brief show the help file in the QAssistant help file viewer 
 */
 void MainWindow::help() {
-	mAssistantClient->openAssistant();//showPage(QString("userdoc/index.html"));
+	// mAssistantClient->openAssistant();//showPage(QString("userdoc/index.html"));
+	QDesktopServices::openUrl(QUrl("http://www.ends170.com/topmod/wiki"));
 }
 
 /**
 * \brief will eventually check for updates on the TopMod website and download the necessary files
 */
 void MainWindow::checkForUpdates(){
-	QDesktopServices::openUrl(QUrl("http://www.google.com"));
+	QDesktopServices::openUrl(QUrl("http://www.ends170.com/topmod"));
 }
 
 /**
 * \brief opens the current TopMod homepage in the user's default web browser
 */
 void MainWindow::topModWeb(){
+	QDesktopServices::openUrl(QUrl("http://www.ends170.com/topmod"));
+}
+
+
+void MainWindow::topModResearch(){
 	QDesktopServices::openUrl(QUrl("http://www-viz.tamu.edu/faculty/ergun/research/topology/index.html"));
 }
+
 
 void MainWindow::documentWasModified() {
 	setWindowModified(this->isModified());
@@ -3179,7 +3199,7 @@ void MainWindow::setSelectionMask(SelectionMask m){
 	break;
 	case MaskFaces :	active->setSelectionMaskString(tr("Faces"));
 	break;
-	case MaskCorners :	active->setSelectionMaskString(tr("Face-Vertices"));
+	case MaskCorners :	active->setSelectionMaskString(tr("Corners"));
 	break;
 	default:
 	break;
