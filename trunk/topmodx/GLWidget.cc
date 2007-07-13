@@ -436,7 +436,7 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	}
 	#endif
 	
-	drawBrush(&painter);
+	//drawBrush(&painter);
 	drawHUD(&painter);
 	drawSelectedIDs(&painter, &model[0][0], &proj[0][0], &view[0]);
 	drawIDs(&painter, &model[0][0], &proj[0][0], &view[0]); // draw vertex, edge and face ids

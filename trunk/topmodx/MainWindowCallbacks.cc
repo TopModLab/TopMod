@@ -81,7 +81,7 @@ void MainWindow::select_face_loop() {
 
 void MainWindow::select_multiple_faces() {
 	setMode(MainWindow::MultiSelectFace);
-	getActive()->showBrush();
+	//getActive()->showBrush();
 }
 
 void MainWindow::select_similar_faces() {

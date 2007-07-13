@@ -283,8 +283,8 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	// }
 	
 	//reposition floating windows:
-	mToolOptionsDockWidget->setGeometry(w-mToolOptionsDockWidget->width(),50,mToolOptionsDockWidget->width(),mToolOptionsDockWidget->height());
-	// mToolOptionsDockWidget->setFixedSize(mToolOptionsDockWidget->width(),mToolOptionsStackWidget->height());
+	mToolOptionsDockWidget->setGeometry(10 + this->x()/*this->active->width()-mToolOptionsDockWidget->width()*/,this->y()+150,mToolOptionsDockWidget->width(),mToolOptionsDockWidget->height());
+	// mToolOptionsDockWidget->setFixedSize(mToolOptionsDockWidget->width(),mToolOptionsDockWidget->height());
 	
 	//must happen after preference file is loaded
 	createStartupDialog();
@@ -1370,7 +1370,7 @@ void MainWindow::createStartupDialog(){
 	mStartupDialogWidget->setLayout(mStartupDialogLayout);
 	mStartupDialogDockWidget->setWidget(mStartupDialogWidget);
 	mStartupDialogDockWidget->setFloating(true);
-	mStartupDialogDockWidget->move(width()/2 , height()/2);
+	mStartupDialogDockWidget->move(this->width()/2 + this->x() - mStartupDialogDockWidget->width()/2, this->y() + height()/2 - mStartupDialogDockWidget->height()/2);
 	if (!mShowStartupDialogAtStartup)
 		mStartupDialogDockWidget->hide();
 }
@@ -1883,6 +1883,9 @@ void MainWindow::doSelection(int x, int y) {
 		// 	active->clearSelectedFace(sfptr);
 		// 	num_sel_faces--;
 		// }
+		// if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
+		// 	active->clearSelectedFaces();
+		// }
 		if ( QApplication::keyboardModifiers() == Qt::ControlModifier) {
 			sfptrarr = active->deselectFaces(x,y);
 			first = sfptrarr.begin(); last = sfptrarr.end();
@@ -2107,9 +2110,9 @@ void MainWindow::getRightClickMenu(){
 		case MaskEdges: 
 			// mRightClickMenu->addAction(selectEdgeAct);
 			mRightClickMenu->addAction(selectEdgeLoopAct);
-			
 		break;
 		case MaskFaces://face stuff
+			mRightClickMenu->addAction(selectFaceAct);
 			mRightClickMenu->addAction(selectFaceLoopAct);
 			mRightClickMenu->addAction(selectMultipleFacesAct);
 			mRightClickMenu->addAction(selectSimilarFacesAct);

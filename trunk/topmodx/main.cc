@@ -128,7 +128,7 @@ int main( int argc, char **argv ) {
 	QPixmap pixmap(":/images/splash.png");
   QSplashScreen *splash = new QSplashScreen(pixmap, Qt::WindowStaysOnTopHint);
   splash->show();
-	splash->showMessage("doin stuff...");
+	// splash->showMessage("doin stuff...");
   app.processEvents();
 	//artificial delay for now to debug, and to give mad props to the developers
 	// splash->finish(app.getMainWindow());
