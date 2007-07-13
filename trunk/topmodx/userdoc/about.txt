@@ -1,3 +1,0 @@
-TopMod is a manifold mesh modeling system
-
-more later...
