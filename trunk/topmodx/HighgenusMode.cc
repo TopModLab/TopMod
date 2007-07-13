@@ -593,12 +593,12 @@ void HighgenusMode::toggleMultiFaceHandleUseMaxOffsetFlag(int state){
 	((MainWindow*)mParent)->toggleMultiFaceHandleUseMaxOffsetFlag(state);
 	
 	if (state){
-		multiFaceHandleExtrudeDistanceSpinBox->setEnabled(false);
-		multiFaceHandleExtrudeDistanceLabel->setEnabled(false);
+//		multiFaceHandleExtrudeDistanceSpinBox->setEnabled(false);
+	//	multiFaceHandleExtrudeDistanceLabel->setEnabled(false);
 	}
 	else {
-		multiFaceHandleExtrudeDistanceLabel->setEnabled(true);
-		multiFaceHandleExtrudeDistanceSpinBox->setEnabled(true);
+		//multiFaceHandleExtrudeDistanceLabel->setEnabled(true);
+		//multiFaceHandleExtrudeDistanceSpinBox->setEnabled(true);
 	}
 }
 
