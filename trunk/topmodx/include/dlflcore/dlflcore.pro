@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG -= qt
-CONFIG += static #dll # build shared library
+CONFIG += staticlib #dll # build shared library
 CONFIG += release warn_off create_prl
 TARGET = dlflcore
 INCLUDEPATH += .. ../vecmat
@@ -16,6 +16,9 @@ macx {
 #} else:unix {
  QMAKE_LFLAGS += -L../../lib
  #LIBS += -lvecmat
+}
+else:win32 {
+
 }
 
 HEADERS += \
