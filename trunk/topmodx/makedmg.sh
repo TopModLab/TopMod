@@ -55,8 +55,7 @@ for n in `otool -L $BUNDLE/Contents/MacOS/$APPNAME | grep Qt` ; do
 	FRAMEWORKS="$FRAMEWORKS $name"
 	# sanity check
 	if [ "$path" != "$FWPATH/$name.framework/Versions/4/$name" ] ; then
-	    echo "ERROR: problem with framework paths. Perhaps this script " \
-		 "has already been run?"
+	    echo "ERROR: problem with framework paths. Perhaps this script has already been run?"
 	    exit
 	fi
     fi
@@ -94,7 +93,7 @@ for framework in $FRAMEWORKS ; do
 done
 
 # copy over the 3dx framework
-cp -fR /Library/Frameworks/3DconnexionClient.framework $BUNDLE/Contents/Frameworks
+# cp -fR /Library/Frameworks/3DconnexionClient.framework $BUNDLE/Contents/Frameworks
 
 # remove unwanted parts
 find $BUNDLE/Contents/Frameworks | egrep "debug|Headers" | xargs rm -rf
@@ -112,10 +111,10 @@ done
 echo
 
 # 3Dx framework
-framework="3DconnexionClient"
-install_name_tool \
-			-id @executable_path/../Frameworks/$framework.framework/Versions/A/$framework \
-			$BUNDLE/Contents/Frameworks/$framework.framework/Versions/A/$framework
+# framework="3DconnexionClient"
+# install_name_tool \
+			# -id @executable_path/../Frameworks/$framework.framework/Versions/A/$framework \
+			# $BUNDLE/Contents/Frameworks/$framework.framework/Versions/A/$framework
 
 ### change framework location #######################################
 
@@ -130,11 +129,11 @@ done
 echo
 
 # 3Dx framework
-framework="3DconnexionClient"
-install_name_tool \
--change /Library/Frameworks/$framework.framework/Versions/A/$framework \
-      @executable_path/../Frameworks/$framework.framework/Versions/A/$framework \
-      $BUNDLE/Contents/MacOS/$APPNAME
+# framework="3DconnexionClient"
+# install_name_tool \
+# -change /Library/Frameworks/$framework.framework/Versions/A/$framework \
+      # @executable_path/../Frameworks/$framework.framework/Versions/A/$framework \
+      # $BUNDLE/Contents/MacOS/$APPNAME
 
 ### change location for bundled frameworks #########################
 
@@ -161,30 +160,30 @@ for framework in $FRAMEWORKS ; do
 			fi
     done
 done
-echo
+# echo
 
 # 3Dx framework
-framework="3DconnexionClient"
+# framework="3DconnexionClient"
 # echo -n " $framework"
-fwdeps=""
-bundledfw="$BUNDLE/Contents/Frameworks/$framework.framework/Versions/A/$framework"
-# get framework dependencies
-for n in `otool -LX $bundledfw | grep 3DConnexion` ; do
-	path=`echo $n | grep 3DConnexion`
-	if [ $path ] ; then
-	    name=`basename $path`
-	    fwdeps="$fwdeps $name"
-	fi
-done
-# fix dependency location
-for dep in $fwdeps ; do
-	if [ "$dep" != "$framework" ] ; then
-		install_name_tool \
-			-change $FWPATH/$dep.framework/Versions/4/$dep \
-			@executable_path/../Frameworks/$dep.framework/Versions/4/$dep \
-			$bundledfw
-	fi
-done
+# fwdeps=""
+# bundledfw="$BUNDLE/Contents/Frameworks/$framework.framework/Versions/A/$framework"
+# # get framework dependencies
+# for n in `otool -LX $bundledfw | grep 3DConnexion` ; do
+# 	path=`echo $n | grep 3DConnexion`
+# 	if [ $path ] ; then
+# 	    name=`basename $path`
+# 	    fwdeps="$fwdeps $name"
+# 	fi
+# done
+# # fix dependency location
+# for dep in $fwdeps ; do
+# 	if [ "$dep" != "$framework" ] ; then
+# 		install_name_tool \
+# 			-change $FWPATH/$dep.framework/Versions/4/$dep \
+# 			@executable_path/../Frameworks/$dep.framework/Versions/4/$dep \
+# 			$bundledfw
+# 	fi
+# done
 
 ### create disk image ###############################################
 

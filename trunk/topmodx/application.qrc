@@ -77,6 +77,21 @@
 	<file>images/tutorial_05.png</file>
 	<file>images/tutorial_06.png</file>
 	<file>images/tutorial_07.png</file>
+
+	<file>images/document-save-as.svg</file>
+	<file>images/document-save.svg</file>
+	<file>images/edit-redo.svg</file>
+	<file>images/edit-undo.svg</file>
+	<file>images/folder.svg</file>
+	<file>images/help-browser.svg</file>
+	<file>images/package-x-generic.svg</file>
+	<file>images/preferences-system.svg</file>
+	<file>images/printer.svg</file>
+	<file>images/system-search.svg</file>
+	<file>images/utilities-terminal.svg</file>
+	<file>images/view-fullscreen.svg</file>
+	<file>images/applications-internet.svg</file>
+	<file>images/accessories-text-editor.svg</file>
 	<!-- <file>assistant.app</file> -->
 </qresource>
 </RCC>
