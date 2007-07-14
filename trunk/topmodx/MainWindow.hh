@@ -20,7 +20,7 @@
 #include <QMenuBar>
 #include <QMenu>
 #include <QStyleOptionMenuItem>
-#include <QAssistantClient>
+//#include <QAssistantClient>
 #include <QPen>
 #include "GLWidget.hh"
 
@@ -470,7 +470,7 @@ private:
  	void createStartupDialog();										//!< initialize the startup screen that will show links to beginner video tutorials / will include link to quicktime website and "disable checkbox"
 	void initializeAnimatedHelp();								//!< initialize the in-context help animated screen captures. these will display in a small floatable window to the right 
 
-	QAssistantClient *mAssistantClient;						//!< Qt help file viewer, will display html files created by DocBook xml transformation
+	//QAssistantClient *mAssistantClient;						//!< Qt help file viewer, will display html files created by DocBook xml transformation
 
 	//top level and sublevel menus
 	QMenuBar *menuBar;														//!< the main menubar pointer to which all qmenu's will be added
