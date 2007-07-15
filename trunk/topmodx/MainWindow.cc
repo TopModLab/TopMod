@@ -294,19 +294,19 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 void MainWindow::createActions() {
 
 	//File Menu Actions
-	mOpenAct = new QAction(QIcon(":images/folder.svg"),tr("&Open..."), this);
+	mOpenAct = new QAction(QIcon(":images/folder.png"),tr("&Open..."), this);
 	sm->registerAction(mOpenAct, "File Menu", "CTRL+O");
 	mOpenAct->setStatusTip(tr("Open an existing file"));
 	connect(mOpenAct, SIGNAL(triggered()), this, SLOT(openFile()));
 	mActionListWidget->addAction(mOpenAct);
 	
-	mSaveAct = new QAction(QIcon(":images/document-save.svg"),tr("&Save"), this);
+	mSaveAct = new QAction(QIcon(":images/document-save.png"),tr("&Save"), this);
 	sm->registerAction(mSaveAct, "File Menu", "CTRL+S");
 	mSaveAct->setStatusTip(tr("Save the document to disk"));
 	connect(mSaveAct, SIGNAL(triggered()), this, SLOT(saveFile()));
 	mActionListWidget->addAction(mSaveAct);
 
-	mSaveAsAct = new QAction(QIcon(":images/document-save-as.svg"),tr("Save &As..."), this);
+	mSaveAsAct = new QAction(QIcon(":images/document-save-as.png"),tr("Save &As..."), this);
 	sm->registerAction(mSaveAsAct, "File Menu", "CTRL+SHIFT+S");
 	mSaveAsAct->setStatusTip(tr("Save the document under a new name"));
 	connect(mSaveAsAct, SIGNAL(triggered()), this, SLOT(saveFileAs()));
@@ -369,13 +369,13 @@ void MainWindow::createActions() {
 	// mActionListWidget->addAction(mQuickCommandAct);
 	
 	//Edit Menu Actions
-	mUndoAct = new QAction(QIcon(":images/edit-undo.svg"), tr("&Undo"), this);
+	mUndoAct = new QAction(QIcon(":images/edit-undo.png"), tr("&Undo"), this);
 	sm->registerAction(mUndoAct, "Edit Menu", "CTRL+Z");
 	mUndoAct->setStatusTip(tr("Undo the last operation"));
 	connect(mUndoAct, SIGNAL(triggered()), this, SLOT(undo()));
 	mActionListWidget->addAction(mUndoAct);
 
-	mRedoAct = new QAction(QIcon(":images/edit-redo.svg"), tr("&Redo"), this);
+	mRedoAct = new QAction(QIcon(":images/edit-redo.png"), tr("&Redo"), this);
 	sm->registerAction(mRedoAct, "Edit Menu", "CTRL+SHIFT+Z");
 	mUndoAct->setStatusTip(tr("Redo the last operation"));
 	connect(mRedoAct, SIGNAL(triggered()), this, SLOT(redo()));
@@ -431,7 +431,7 @@ void MainWindow::createActions() {
 	// mActionListWidget->addAction(mRightViewAct);
 
 	//Display Menu Actions
-	mFullscreenAct = new QAction(QIcon(":images/view-fullscreen.svg"),tr("&Full Screen"), this);
+	mFullscreenAct = new QAction(QIcon(":images/view-fullscreen.png"),tr("&Full Screen"), this);
 	mFullscreenAct->setCheckable(true);
 	sm->registerAction( mFullscreenAct, "Display Menu", "M");
 	mFullscreenAct->setStatusTip(tr("Toggle Full Screen"));
@@ -838,7 +838,7 @@ void MainWindow::createActions() {
 	mSelectFaceVerticesMaskAct->setChecked(true);
 
 	//SETTINGS ACTIONS	
-	mPreferencesAct = new QAction(QIcon(":images/preferences-system.svg"), tr("&Preferences"), this);
+	mPreferencesAct = new QAction(QIcon(":images/preferences-system.png"), tr("&Preferences"), this);
 	sm->registerAction(mPreferencesAct, "Settings", "CTRL+,");
 	mPreferencesAct->setStatusTip(tr("Open the Preferences Dialog"));
 	connect(mPreferencesAct, SIGNAL(triggered()), this, SLOT(openPreferences()));	
@@ -921,25 +921,25 @@ void MainWindow::createActions() {
 	mActionListWidget->addAction(mPerformRemeshingAct);
 
 	//help menu actions
-	mHelpAct = new QAction(QIcon(":images/applications-internet.svg"),tr("&Online User Manual"), this);
+	mHelpAct = new QAction(QIcon(":images/applications-internet.png"),tr("&Online User Manual"), this);
 	mHelpAct->setStatusTip( tr("View the User Manual on the TopMod Wiki") );
 	connect(mHelpAct, SIGNAL(triggered()), this, SLOT(help()));
 	sm->registerAction(mHelpAct, "Help Menu", "F1");
 	mActionListWidget->addAction(mHelpAct);
 
-	mTopModWebAct = new QAction(QIcon(":images/applications-internet.svg"),tr("&TopMod on the Web"), this);
+	mTopModWebAct = new QAction(QIcon(":images/applications-internet.png"),tr("&TopMod on the Web"), this);
 	mTopModWebAct->setStatusTip( tr("Go to the TopMod web page") );
 	connect(mTopModWebAct, SIGNAL(triggered()), this, SLOT(topModWeb()));
 	sm->registerAction(mTopModWebAct, "Help Menu", "");
 	mActionListWidget->addAction(mTopModWebAct);
 
-	mTopModResearchAct = new QAction(QIcon(":images/applications-internet.svg"),tr("&TopMod Research Papers"), this);
+	mTopModResearchAct = new QAction(QIcon(":images/applications-internet.png"),tr("&TopMod Research Papers"), this);
 	mTopModResearchAct->setStatusTip( tr("Go to the TopMod Research web page") );
 	connect(mTopModResearchAct, SIGNAL(triggered()), this, SLOT(topModWeb()));
 	sm->registerAction(mTopModResearchAct, "Help Menu", "");
 	mActionListWidget->addAction(mTopModResearchAct);
 
-	mCheckForUpdatesAct = new QAction(QIcon(":images/applications-internet.svg"),tr("&Check for Updates"), this);
+	mCheckForUpdatesAct = new QAction(QIcon(":images/applications-internet.png"),tr("&Check for Updates"), this);
 	mCheckForUpdatesAct->setStatusTip( tr("Check for updates to TopMod Online") );
 	connect(mCheckForUpdatesAct, SIGNAL(triggered()), this, SLOT(checkForUpdates()));
 	sm->registerAction(mCheckForUpdatesAct, "Help Menu", "");

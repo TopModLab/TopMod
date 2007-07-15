@@ -1,5 +1,5 @@
 
-QT += opengl xml svg
+QT += opengl xml
 CONFIG += qt release warn_off link_prl
 
 # exclude verse python or spacenav drivers
