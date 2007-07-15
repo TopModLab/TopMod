@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = TopMod
-PROJECT_NUMBER         = 2
+PROJECT_NUMBER         = 2.0
 OUTPUT_DIRECTORY       = /Users/dvmorris/topmod2/topmodx/doc
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
@@ -44,13 +44,13 @@ SUBGROUPING            = YES
 #---------------------------------------------------------------------------
 # Build related configuration options
 #---------------------------------------------------------------------------
-EXTRACT_ALL            = NO
-EXTRACT_PRIVATE        = NO
-EXTRACT_STATIC         = NO
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
 EXTRACT_LOCAL_CLASSES  = YES
 EXTRACT_LOCAL_METHODS  = NO
-HIDE_UNDOC_MEMBERS     = YES
-HIDE_UNDOC_CLASSES     = YES
+HIDE_UNDOC_MEMBERS     = NO
+HIDE_UNDOC_CLASSES     = NO
 HIDE_FRIEND_COMPOUNDS  = NO
 HIDE_IN_BODY_DOCS      = NO
 INTERNAL_DOCS          = NO
@@ -83,16 +83,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = /Users/dvmorris/topmod2/topmodx \
-                         /Users/dvmorris/topmod2/topmodx/include \
-                         /Users/dvmorris/topmod2/topmodx/include/arcball \
-                         /Users/dvmorris/topmod2/topmodx/include/Base \
-                         /Users/dvmorris/topmod2/topmodx/include/dlflaux \
-                         /Users/dvmorris/topmod2/topmodx/include/dlflcore \
-                         /Users/dvmorris/topmod2/topmodx/include/Graphics \
-                         /Users/dvmorris/topmod2/topmodx/include/Light \
-                         /Users/dvmorris/topmod2/topmodx/include/pydlfl \
-                         /Users/dvmorris/topmod2/topmodx/include/vecmat
+INPUT                  = /Users/dvmorris/topmod2/topmodx
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.c \
                          *.cc \
@@ -120,7 +111,7 @@ FILE_PATTERNS          = *.c \
                          *.mm \
                          *.dox \
                          *.py
-RECURSIVE              = NO
+RECURSIVE              = YES
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 

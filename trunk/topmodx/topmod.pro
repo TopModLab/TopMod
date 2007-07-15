@@ -1,5 +1,5 @@
 
-QT += opengl xml
+QT += opengl xml svg
 CONFIG += qt release warn_off link_prl
 
 # exclude verse python or spacenav drivers
@@ -62,12 +62,13 @@ macx {
 	QMAKE_INFO_PLIST    = Info.plist
 	MACOSX_DEPLOYMENT_TARGET = 10.2
 	# compile release + universal binary 
-	CONFIG += x86
+	CONFIG += x86 ppc
 
-	# for cg gpu shading
-	INCLUDEPATH += /Library/Frameworks/Cg.framework/Versions/1.0 
-	QMAKE_LFLAGS += -L/Library/Frameworks/Cg.framework 
-	LIBS += -framework Cg
+	CONFIG(GPU_OK){# for cg gpu shading
+		INCLUDEPATH += /Library/Frameworks/Cg.framework/Versions/1.0 
+		QMAKE_LFLAGS += -L/Library/Frameworks/Cg.framework 
+		LIBS += -framework Cg
+	}
 
 	#QMAKE_LFLAGS += -F./lib	
 	#LIBS += -framework vecmat -framework dlflcore -framework dlflaux
@@ -121,6 +122,9 @@ macx {
 	 QMAKE_LFLAGS += -LC:/Python25/libs
 
 	 LIBS += -lpython25
+	}
+	CONFIG (GPU_OK){
+		
 	}
 	CONFIG(WITH_SPACENAV){
 

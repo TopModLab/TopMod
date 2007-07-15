@@ -11,7 +11,7 @@ macx {
  # compile release + universal binary
  #QMAKE_LFLAGS += -F../../lib
  #LIBS += -framework vecmat
- CONFIG += x86
+ CONFIG += x86 ppc
  #CONFIG += lib_bundle
  QMAKE_BUNDLE_EXTENSION = .framework
 #} else:unix {

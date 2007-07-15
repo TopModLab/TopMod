@@ -7,7 +7,7 @@ DESTDIR = ../../lib
 
 macx {
  # compile release + universal binary
- CONFIG += x86
+ CONFIG += x86 ppc
  #CONFIG += lib_bundle
  #QMAKE_BUNDLE_EXTENSION = .framework
 }

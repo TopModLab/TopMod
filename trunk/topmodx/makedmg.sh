@@ -187,13 +187,13 @@ done
 
 ### create disk image ###############################################
 
-echo "Creating disk image"
-imagedir="/tmp/$APPNAME.$$"
-mkdir $imagedir
-cp -R $BUNDLE $imagedir
-
-# \todo  copy over additional files, if any
-hdiutil create -ov -srcfolder $imagedir -format UDBZ -volname "$APPNAME" "$APPNAME.dmg"
-rm -rf $imagedir
+# echo "Creating disk image"
+# imagedir="/tmp/$APPNAME.$$"
+# mkdir $imagedir
+# cp -R $BUNDLE $imagedir
+# 
+# # \todo  copy over additional files, if any
+# hdiutil create -ov -srcfolder $imagedir -format UDBZ -volname "$APPNAME" "$APPNAME.dmg"
+# rm -rf $imagedir
 
 echo "Done"
