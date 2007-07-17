@@ -2,6 +2,7 @@
 QT += opengl xml
 CONFIG += qt release warn_off link_prl
 
+
 # exclude verse python or spacenav drivers
 # or include them with CONFIG += 
 CONFIG -=  WITH_PYTHON WITH_SPACENAV WITH_VERSE
@@ -57,6 +58,9 @@ CONFIG(WITH_SPACENAV){
 }
 
 macx {
+	#mac icon when not using a custom info.plist file
+	ICON = topmod.icns
+	
 	# either compile the mac version as an app bundle or a console app
 	# tell it to load a custom info.plist file here
 	QMAKE_INFO_PLIST    = Info.plist
@@ -111,6 +115,10 @@ macx {
 
 	}
 } else:win32 {
+
+	#application icon windows
+	RC_FILE = topmod.rc
+
 	CONFIG -= WITH_SPACENAV
 
 	INCLUDEPATH += C:/topmod/topmodx/lib
