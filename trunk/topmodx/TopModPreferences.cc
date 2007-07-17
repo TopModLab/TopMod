@@ -59,6 +59,10 @@ void TopModPreferences::createTabs(){
 	mPrefTabs->addTab(mColorsTab,tr("Colors"));
 	mPrefTabs->addTab(((QWidget*)mShortcutsTab),tr("Shortcuts"));
 	mPrefTabs->addTab(mStyleSheetsTab,tr("Stylesheets"));
+#ifdef WITH_PYTHON
+	mScriptEditTab = new QWidget;
+	mPrefTabs->addTab(mScriptEditTab,tr("Script Editor"));
+#endif
 }
 
 

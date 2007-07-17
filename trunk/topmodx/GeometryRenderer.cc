@@ -111,16 +111,14 @@ void GeometryRenderer::renderVertex( DLFLVertexPtr dvp ) const {
 }
 
 void GeometryRenderer::renderVertices( DLFLObjectPtr obj, double size ) const {
-	DLFLEdgePtrList::iterator it;
-// Just render all the vertices with specified point size
+	DLFLVertexPtrList::iterator it;
+	// Just render all the vertices with specified point size
 	glPushMatrix(); {
 		transform( obj );
 		glPointSize( size );
-		glBegin(GL_POINTS);
-		for( it = obj->beginEdge(); it != obj->endEdge(); it++ ) {
-			renderEdge( *it );
+		for( it = obj->beginVertex(); it != obj->endVertex(); it++ ) {
+			renderVertex( *it );
 		}
-		glEnd();
 		glPointSize(1.0);
 	} glPopMatrix();
 }

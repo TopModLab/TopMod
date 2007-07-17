@@ -549,7 +549,10 @@ void GLWidget::drawIDs( QPainter *painter, const GLdouble *model, const GLdouble
 			Vector3d point = (*it)->coords;
 			point.get(x,y,z);		
 			QString id = QString::number((*it)->getID() );
-			d = (vlsqr_array[count]-min_dist)*(max_alpha-min_alpha)/(max_dist - min_dist) + min_alpha;
+			if(max_dist == min_dist)
+				d = min_alpha;
+			else
+				d = (vlsqr_array[count]-min_dist)*(max_alpha-min_alpha)/(max_dist - min_dist) + min_alpha;
 			gluProject(x, y, z, model, proj, view, &win_x, &win_y, &win_z);
 			win_y = height() - win_y; // y is inverted
 			painter->setPen(Qt::NoPen);
@@ -581,7 +584,10 @@ void GLWidget::drawIDs( QPainter *painter, const GLdouble *model, const GLdouble
 		for( it = eparray.begin(); it != eparray.end(); it++) {
 			QString id = QString::number( (*it)->getID() );
 			(*it)->getMidPoint().get(x,y,z);
-			d = (elsqr_array[count]-min_dist)*(max_alpha-min_alpha)/(max_dist - min_dist) + min_alpha;
+			if(max_dist == min_dist)
+				d = min_alpha;
+			else
+				d = (elsqr_array[count]-min_dist)*(max_alpha-min_alpha)/(max_dist - min_dist) + min_alpha;
 			gluProject(x, y, z, model, proj, view, &win_x, &win_y, &win_z);
 			win_y = height() - win_y; // y is inverted
 			painter->setPen(Qt::NoPen);
@@ -615,7 +621,10 @@ void GLWidget::drawIDs( QPainter *painter, const GLdouble *model, const GLdouble
 			QString id = QString::number( (*it)->getID() );
 			Vector3d point = (*it)->geomCentroid();// + (*it)->getNormal();
 			point.get(x,y,z);
-			d = (flsqr_array[count]-min_dist)*(max_alpha-min_alpha)/(max_dist - min_dist) + min_alpha;
+			if(max_dist == min_dist)
+				d = min_alpha;
+			else
+				d = (flsqr_array[count]-min_dist)*(max_alpha-min_alpha)/(max_dist - min_dist) + min_alpha;
 			gluProject(x, y, z, model, proj, view, &win_x, &win_y, &win_z);
 			win_y = height() - win_y; // y is inverted
 			painter->setPen(Qt::NoPen);

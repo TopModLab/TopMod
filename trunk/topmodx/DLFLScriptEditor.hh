@@ -55,8 +55,10 @@ public slots :
 	void execFile( );
 	void openFile( );
 	void saveFile( );
+	void saveOutput( );
 	void clearHistory( );
 	void clearInput( );
+	void toggleEchoing( );
 private :
 	// The place where the user types the commands (multiline)
   Editor *mCommandEdit;
@@ -65,9 +67,10 @@ private :
 	// The menubar with some options
 	QMenuBar *mMenuBar;
 	QMenu *scriptMenu;
-	QAction *mExecFile, *mOpenFile, *mSaveFile;
+	QAction *mExecFile, *mOpenFile, *mSaveFile, *mSaveOutput;
 	QAction *mClearHistory;
 	QAction *mClearInput;
+	QAction *mToggleEchoing;
 	
 
   PythonHighlighter *pyhigh;

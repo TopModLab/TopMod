@@ -43,19 +43,24 @@ DLFLScriptEditor::DLFLScriptEditor( DLFLObjectPtr obj, QWidget *parent, Qt::Wind
 	
 	scriptMenu = mMenuBar->addMenu(tr("&Script"));
 	mExecFile = new QAction(QIcon(":images/run_script.png"),tr("&Execute File"), this);
-	mExecFile->setStatusTip(tr("Execute an existing python script"));
+	mExecFile->setStatusTip(tr("Execute an existing Python script"));
 	connect(mExecFile, SIGNAL(triggered()), this, SLOT(execFile()));
 	scriptMenu->addAction(mExecFile);
 
 	mOpenFile = new QAction(QIcon(":images/folder.svg"),tr("&Open File"), this);
-	mOpenFile->setStatusTip(tr("Open the input window to a python script"));
+	mOpenFile->setStatusTip(tr("Open the input window to a Python script"));
 	connect(mOpenFile, SIGNAL(triggered()), this, SLOT(openFile()));
 	scriptMenu->addAction(mOpenFile);
 
 	mSaveFile = new QAction(QIcon(":images/document-save.svg"),tr("&Save File"), this);
-	mSaveFile->setStatusTip(tr("Save the input window to a python script"));
+	mSaveFile->setStatusTip(tr("Save the input window to a Python script"));
 	connect(mSaveFile, SIGNAL(triggered()), this, SLOT(saveFile()));
 	scriptMenu->addAction(mSaveFile);
+
+	mSaveOutput = new QAction(QIcon(":images/save.png"),tr("Save Out&put"), this);
+	mSaveOutput->setStatusTip(tr("Save the output window to a Python script"));
+	connect(mSaveOutput, SIGNAL(triggered()), this, SLOT(saveFile()));
+	scriptMenu->addAction(mSaveOutput);
 
 	mClearHistory = new QAction(QIcon(":images/clear_scriptoutput.png"),tr("Clear &History"), this);
 	mClearHistory->setStatusTip(tr("Clears both output window and history"));
@@ -67,6 +72,11 @@ DLFLScriptEditor::DLFLScriptEditor( DLFLObjectPtr obj, QWidget *parent, Qt::Wind
 	connect(mClearInput, SIGNAL(triggered()), this, SLOT(clearInput()));
 	scriptMenu->addAction(mClearInput);
 	
+	mToggleEchoing = new QAction(QIcon(":images/placeholder.png"),tr("&Toggle Echoing"), this);
+	mToggleEchoing->setStatusTip(tr("Turn on/off command echoing"));
+	connect(mToggleEchoing, SIGNAL(triggered()), this, SLOT(toggleEchoing()));
+	scriptMenu->addAction(mToggleEchoing);
+
 	// Layout
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
 	mainLayout->setMenuBar(mMenuBar);
@@ -359,15 +369,44 @@ void DLFLScriptEditor::openFile( ) {
 																 "$HOME",
 																 tr("Python Files (*.py);;All Files (*)"),
 																0, QFileDialog::DontUseSheet);
+	if(!filename.isEmpty()) {
+		QFile file(filename);
+		file.open(QIODevice::ReadOnly);
+		QByteArray ba = file.readAll();
+		QString content;
+		content.append(ba);
+		mCommandEdit->setPlainText(content);
+		file.close();
+	}
 }
 
 void DLFLScriptEditor::saveFile( ) {
 	QString filename = 
-		QFileDialog::getOpenFileName(this,
+		QFileDialog::getSaveFileName(this,
 																 tr("Save Python File"),
-																 "$HOME",
+																 "myscript",
 																 tr("Python Files (*.py);;All Files (*)"),
 																	0, QFileDialog::DontUseSheet);
+	if(!filename.isEmpty()) {
+		QFile file(filename);
+		file.open(QIODevice::WriteOnly);
+		file.write(mCommandEdit->toPlainText().toLocal8Bit());
+		file.close();
+	}
+}
+
+void DLFLScriptEditor::saveOutput( ) {
+	QString filename = 
+		QFileDialog::getSaveFileName(this,
+																 tr("Save Python File"),
+																 "myscript",
+																 tr("Python Files (*.py);;All Files (*)"));
+	if(!filename.isEmpty()) {
+		QFile file(filename);
+		file.open(QIODevice::WriteOnly);
+		file.write(mHistoryBox->toPlainText().toLocal8Bit());
+		file.close();
+	}
 }
 
 void DLFLScriptEditor::clearHistory( ) {
@@ -381,4 +420,7 @@ void DLFLScriptEditor::clearInput( ) {
 	mCommandEdit->goToHistoryStart( );
 }
 
+void DLFLScriptEditor::toggleEchoing( ) {
+	mEchoing = !mEchoing;
+}
 #endif // WITH_PYTHON

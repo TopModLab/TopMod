@@ -14,8 +14,10 @@ namespace DLFL {
    ***************/
 
   int insertEdge( DLFLObjectPtr obj, 
-									uint &faceId1, uint vertId1,
-									uint &faceId2, uint vertId2,
+									uint &faceId1, uint &vertId1,
+									uint &faceId2, uint &vertId2,
+									uint &faceId1b, uint &vertId1b,
+									uint &faceId2b, uint &vertId2b,
 									bool check,
 									bool set_type = false );
 

@@ -1420,7 +1420,8 @@ namespace DLFL {
 
       edgept = ep->getAuxCoords(); ep->resetAuxCoords();
       vp = subdivideEdge(obj,ep); vp->coords = edgept;
-      vp->getFaceVertices(fvparray);
+			if( vp != NULL )
+				vp->getFaceVertices(fvparray);
 
       for (int i=0; i < fvparray.size(); ++i) {
 				fvp = fvparray[i];
@@ -2106,7 +2107,8 @@ namespace DLFL {
       endpoints.resize(edges.size(),NULL);
       for (int i=0; i < edges.size(); ++i) {
 				vp = subdivideEdge(obj,edges[i]);
-				endpoints[i] = vp->getFaceVertexInFace(faceptr);
+				if( vp != NULL)
+					endpoints[i] = vp->getFaceVertexInFace(faceptr);
       }
     } else {
       // Use existing corners in face as end points of the new edges
@@ -2168,13 +2170,15 @@ namespace DLFL {
 				for (int i=0; i < edges.size(); ++i) {
 					if ( edges[i]->getType() != ETNew ) {
 						vp = subdivideEdge(obj,edges[i],true);
-						// Find the edges and the corners associated with this vertex
-						// Add them to the list for resetting type later
-						// We can make use of the fact that there will only 2 edges
-						// and 2 corners associated with this vertex
-						vp->getEdges(vedges); vp->getFaceVertices(vcorners);
-						eptypereset.push_back(vedges[0]); eptypereset.push_back(vedges[1]); 
-						fvptypereset.push_back(vcorners[0]); fvptypereset.push_back(vcorners[1]); 
+						if( vp != NULL ) {
+							// Find the edges and the corners associated with this vertex
+							// Add them to the list for resetting type later
+							// We can make use of the fact that there will only 2 edges
+							// and 2 corners associated with this vertex
+							vp->getEdges(vedges); vp->getFaceVertices(vcorners);
+							eptypereset.push_back(vedges[0]); eptypereset.push_back(vedges[1]); 
+							fvptypereset.push_back(vcorners[0]); fvptypereset.push_back(vcorners[1]); 
+						}
 					}
 				}
 
@@ -2257,13 +2261,15 @@ namespace DLFL {
 				for (int i=0; i < edges.size(); ++i) {
 					if ( edges[i]->getType() != ETNew ) {
 						vp = subdivideEdge(obj,edges[i],true);
-						// Find the edges and the corners associated with this vertex
-						// Add them to the list for resetting type later
-						// We can make use of the fact that there will only 2 edges
-						// and 2 corners associated with this vertex
-						vp->getEdges(vedges); vp->getFaceVertices(vcorners);
-						eptypereset.push_back(vedges[0]); eptypereset.push_back(vedges[1]); 
-						fvptypereset.push_back(vcorners[0]); fvptypereset.push_back(vcorners[1]); 
+						if( vp != NULL ) {
+							// Find the edges and the corners associated with this vertex
+							// Add them to the list for resetting type later
+							// We can make use of the fact that there will only 2 edges
+							// and 2 corners associated with this vertex
+							vp->getEdges(vedges); vp->getFaceVertices(vcorners);
+							eptypereset.push_back(vedges[0]); eptypereset.push_back(vedges[1]); 
+							fvptypereset.push_back(vcorners[0]); fvptypereset.push_back(vcorners[1]); 
+						}
 					}
 				}
 

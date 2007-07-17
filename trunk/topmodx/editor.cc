@@ -503,12 +503,14 @@ void Editor::keyPressEvent( QKeyEvent* e )
 
 void Editor::wheelEvent( QWheelEvent *e )
 {
-  if( e->delta() > 0 )
+  /*if( e->delta() > 0 )
     historyBack();
   else if( e->delta() < 0 )
     historyForward();
 
   e->accept();
+	*/
+	QTextEdit::wheelEvent( e );
 }
 
 void Editor::setSyntaxHighlight( bool enable )

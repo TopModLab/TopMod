@@ -8,8 +8,6 @@ PythonHighlighter::PythonHighlighter(QTextEdit *parent)
 								 << "is" << "lambda" << "not" << "or" << "pass" << "print" << "raise"
 								 << "return" << "try" << "while" << "yield" << "True" << "False";
 
-  //dlflKeywords << "insert_edge" << "delete_edge" << "collapse_edge" << "subdivide_edge";
-
   promptFormat.setForeground(QColor("greenyellow"));
   promptFormat.setFontWeight(QFont::Bold);
   promptFormat.setFontItalic(true);
@@ -19,12 +17,12 @@ PythonHighlighter::PythonHighlighter(QTextEdit *parent)
 
   tupleFormat.setForeground(QColor("lightskyblue"));
   tupleFormat.setFontWeight(QFont::Bold);
-  //tupleFormat.setFontItalic(true);
 
   pythonFormat.setForeground(QColor("coral"));
   pythonFormat.setFontWeight(QFont::Bold);
 
   stringFormat.setForeground(QColor("crimson"));
+
   commentFormat.setForeground(QColor("orangered"));
   commentFormat.setFontItalic(true);
   compilePattern( );
@@ -42,11 +40,11 @@ void PythonHighlighter::compilePattern() {
     pythonPatterns.push_back(QRegExp(delim + *lit + delim));
   }
 
-  stringPattern  = QRegExp("\".*\"");
-  commentPattern = QRegExp("#.*");
+  stringPattern  = QRegExp("(\".*\")|'.*'");
   functionPattern = QRegExp("\\b[A-Za-z0-9_]+(?=\\()");
-  tuplePattern = QRegExp("(\\((\\d+,)+\\d+\\))|(\\[\\d+(,\\d+)*\\])");
+  tuplePattern = QRegExp("(\\((-?\\d+(\\.\\d*)?,[ ]*)+-?\\d+(\\.\\d*)?\\))|(\\[(-?\\d+(\\.\\d*)?,[ ]*)+-?\\d+(\\.\\d*)?\\])");
   promptPattern = QRegExp("dlfl>");
+  commentPattern = QRegExp("#.*");
 }
 
 void PythonHighlighter::highlightBlock(const QString& text) {
@@ -69,13 +67,6 @@ void PythonHighlighter::highlightBlock(const QString& text) {
     index = text.indexOf(stringPattern, index + length);
   }
 
-  index = text.indexOf(commentPattern);
-  while (index >= 0) {
-    int length = commentPattern.matchedLength();
-    setFormat(index, length, commentFormat);
-    index = text.indexOf(commentPattern, index + length);
-  }
-
   index = text.indexOf(functionPattern);
   while (index >= 0) {
     int length = functionPattern.matchedLength();
@@ -95,6 +86,14 @@ void PythonHighlighter::highlightBlock(const QString& text) {
     int length = promptPattern.matchedLength();
     setFormat(index, length, promptFormat);
     index = text.indexOf(promptPattern, index + length);
+  }
+
+	// Must be last to highlight correctly
+  index = text.indexOf(commentPattern);
+  while (index >= 0) {
+    int length = commentPattern.matchedLength();
+    setFormat(index, length, commentFormat);
+    index = text.indexOf(commentPattern, index + length);
   }
 }
 

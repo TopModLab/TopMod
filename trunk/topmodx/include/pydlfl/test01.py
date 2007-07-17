@@ -26,3 +26,33 @@ subdivide("doo-sabin")
 # Save out as a new file
 save("cuberandom.obj")
 
+#####
+
+import time
+
+load("cube.obj")
+face = faces(0)[0]
+
+for i in range(14):
+    t = abs(sin(time.time()))
+    s = abs(sin(time.time()))
+    face = extrude("cubical", face, t, 1, 0, s)
+    time.sleep(1)
+
+dual()
+subdivide("checker",0.33)
+dual()
+
+oldfaces = faces(0)
+punchfaces = []
+for face in oldfaces:
+	if( faceInfo(face)['size'] == 4 ):
+		vv,ee = walk(face)
+		punch = False
+		for v in vv:
+			if( vertexInfo(v)['valence'] == 3 ):
+				punch = True
+		if( punch ):
+			punchfaces += [face]
+
+rind(punchfaces,True,0.8)

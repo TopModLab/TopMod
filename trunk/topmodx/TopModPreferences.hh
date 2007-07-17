@@ -38,7 +38,10 @@ private:
 	
 	//tab pages
 	QWidget *mMainTab;
-	QWidget *mColorsTab;	
+	QWidget *mColorsTab;
+#ifdef WITH_PYTHON
+	QWidget *mScriptEditTab;
+#endif
 	QShortcutDialog *mShortcutsTab;
 	QShortcutManager *mShortcutsManager;
 	StyleSheetEditor *mStyleSheetsTab;

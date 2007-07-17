@@ -13,8 +13,10 @@ namespace DLFL {
    ***************/
 
   int insertEdge( DLFLObjectPtr obj, 
-									 uint &faceId1, uint vertId1,
-									 uint &faceId2, uint vertId2,
+									 uint &faceId1, uint &vertId1,
+									 uint &faceId2, uint &vertId2,
+									 uint &faceId1b, uint &vertId1b,
+									 uint &faceId2b, uint &vertId2b,
 									 bool check,
 									 bool set_type ) {
 		int id = -1;
@@ -23,6 +25,7 @@ namespace DLFL {
       return -1;
     DLFLFacePtr fptr1, fptr2;
     DLFLFaceVertexPtr fvptr1 = NULL, fvptr2 = NULL;
+    DLFLFaceVertexPtr fvptr1b = NULL, fvptr2b = NULL;
 
     DLFLEdgePtr eptr;
 
@@ -37,10 +40,20 @@ namespace DLFL {
 					eptr = insertEdge( obj, fvptr1, fvptr2, set_type );
 				else
 					eptr = insertEdgeWithoutCheck( obj, fvptr1, fvptr2, set_type );
-				id = eptr->getID( );
+				if( eptr != 0 )
+					id = eptr->getID( );
 
 				faceId1 = fvptr1->getFaceID();
 				faceId2 = fvptr2->getFaceID();
+				vertId1 = fvptr1->getVertexID();
+				vertId2 = fvptr2->getVertexID();
+
+				fvptr1b = fvptr1->next();
+				fvptr2b = fvptr2->next();
+				faceId1b =  fvptr1b->getFaceID();
+				faceId2b =  fvptr2b->getFaceID();
+				vertId1b = fvptr1b->getVertexID();
+				vertId2b = fvptr2b->getVertexID();
 			}
 		}
     return id;
@@ -94,7 +107,11 @@ namespace DLFL {
     //Copy needs to be made
     temp->addSelfToVertex();
     ep = fvptr1->getEdgePtr();
-    ep->resetFaceVertexPtr(fvptr1);
+
+		if( ep == NULL)
+			return NULL;
+
+		ep->resetFaceVertexPtr(fvptr1);
     ep->setNullFaceVertexPtr(temp);
 
     //Remove face - vertices from fvptr1 to fvptr2
@@ -556,8 +573,14 @@ namespace DLFL {
 
     edgeptr->getFaceVertexPointers(fvpV1, fvpV2);
 
+		if( fvpV1 == NULL || fvpV2 == NULL )
+			return NULL;
+
     f1 = fvpV1->getFacePtr();
     f2 = fvpV2->getFacePtr();
+
+		if( f1 == NULL || f2 == NULL )
+			return NULL;
 
     //Edge subdivision will work whether the two Edge sides belong to different Faces
     // or not.

@@ -1008,7 +1008,7 @@ void MainWindow::globalStellate(void)
 	active->recomputeNormals();
 	MainWindow::clearSelected();
 
-	QString cmd = QString("subdivide(\"globalStellate\",False)");
+	QString cmd = QString("subdivide(\"allfaces\",False)");
 	emit echoCommand( cmd );
 }
 
@@ -1065,6 +1065,8 @@ void MainWindow::createCrust2(bool use_scaling) {
 	// DLFLFacePtrArray::iterator first, last;
 	vector<DLFLFacePtr>::iterator it;
 
+	QString facelist("[");
+
 	undoPush();
 	setModified(true);
 	if ( use_scaling ) 
@@ -1076,15 +1078,24 @@ void MainWindow::createCrust2(bool use_scaling) {
 	if ( active->numSelectedFaces() >= 1 ) {
 		DLFLFacePtrArray sfptrarr = active->getSelectedFaces();
 		if ( sfptrarr[0] ) {
-			for(it = sfptrarr.begin(); it != sfptrarr.end(); it++) 
+			for(it = sfptrarr.begin(); it != sfptrarr.end(); it++) {
 				(*it)->setType(FTHole);
+				facelist += QString().setNum((*it)->getID()) + QString(",");
+			}
+			facelist += QString("]");
 			DLFL::punchHoles(&object);
 		}
 	}
 	active->recomputePatches();
 	active->recomputeNormals();
 	active->clearSelectedFaces();
-	redraw();	
+	redraw();
+
+	QString cmd = QString("rind(") + 
+		facelist + QString(",True,") + 
+		MainWindow::crust_thickness +
+		QString(")");
+	emit echoCommand( cmd );
 }
 
 void MainWindow::makeWireframe(void)                    // Create a wireframe
