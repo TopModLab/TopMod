@@ -44,7 +44,7 @@ extern DLFLFaceVertexPtrArray DLFLObject::sel_fvptr_array; // List of selected D
 // exit(0); // could not create stereo context
 
 GLWidget::GLWidget(int w, int h, DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op, const QGLFormat & format, QWidget * parent ) 
- : 	QGLWidget(format, parent, NULL), /*viewport(w,h,v),*/ object(op), patchObject(NULL), renderer(rp), 
+ : 	QGLWidget(format, parent, NULL), /*viewport(w,h,v),*/ object(op), patchObject(NULL), renderer(rp), renderObject(true),
 		mRenderColor(color), mViewportColor(vcolor),/*grid(ZX,20.0,10),*/ showgrid(false), showaxes(false), mUseGPU(false), mAntialiasing(true) { 
 		mParent = parent;
 	// Vector3d neweye = eye - center;
@@ -392,9 +392,11 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	
 		}
 		#endif // GPU_OK
-	  if(patchObject)
-	    renderer->render(patchObject);
-	  renderer->render(object);
+		if (renderObject){
+		  if(patchObject) 
+		    renderer->render(patchObject);
+		  renderer->render(object);
+		}
 		#ifdef GPU_OK
 		if (mUseGPU){
 		  cgGLDisableProfile( cg->vertProfile );
@@ -489,6 +491,33 @@ void GLWidget::drawBrush(QPainter *painter){
 //other data that could be shown will be added later
 void GLWidget::drawHUD(QPainter *painter){	
 	if (mShowHUD){
+		
+		if (mSelectionMaskString == "Faces"){
+		//show info about a selected face	
+			if (numSelectedFaces() == 1) {
+				DLFLFacePtr fp = object->sel_fptr_array[0];
+			}
+		}
+		if (mSelectionMaskString == "Edges"){
+		//show info about a selected edge	
+			if (numSelectedEdges() == 1) {
+				DLFLEdgePtr ep = object->sel_eptr_array[0];
+			}			
+		}
+		if (mSelectionMaskString == "Vertices"){
+		//show info about a selected vertex	
+			if (numSelectedVertices() == 1) {
+				DLFLVertexPtr vp = object->sel_vptr_array[0];
+			}
+		}
+		if (mSelectionMaskString == "Corners"){
+		//show info about a selected corner	
+			if (numSelectedCorners() == 1) {
+				DLFLFaceVertexPtr fvp = object->sel_fvptr_array[0];
+				std::cout << fvp << "\n";
+			}
+		}
+		
 		QString s1 = "Vertices: " + QString("%1").arg((uint)object->num_vertices()) +
 		 						"\nEdges: " + QString("%1").arg((uint)object->num_edges()) +
 								"\nFaces: " + QString("%1").arg((uint)object->num_faces()) +
@@ -497,14 +526,18 @@ void GLWidget::drawHUD(QPainter *painter){
 		QString s2 = "Sel. Vertices:" + QString("%1").arg(numSelectedVertices()) +
 		 						"\nSel. Edges: " + QString("%1").arg(numSelectedEdges()) +
 								"\nSel. Faces: " + QString("%1").arg(numSelectedFaces()) +
-								"\nSel. Face-Verts: " + QString("%1").arg(numSelectedFaceVertices());
+								"\nSel. Face-Verts: " + QString("%1").arg(numSelectedCorners());
 
 		QString s3 = "Mode: " + mModeString + "\nRemeshing Mode: " + mRemeshingSchemeString + "\nSelection Mask: " + mSelectionMaskString;
-		QFont font("verdana", 14);
+		
+		
+		// QString s4 = ""
+		QFont font("verdana", 11);
 		QFontMetrics fm(font);
 		painter->setFont(font);
 
 		QRect r1(fm.boundingRect(s1));
+		// std::cout<<r1.width() << "\n";
 		QRect r2(fm.boundingRect(s2));
 		QRect r3(fm.boundingRect(s3));
 
@@ -515,9 +548,9 @@ void GLWidget::drawHUD(QPainter *painter){
 		// painter->drawRoundRect(QRect(3.0,3.0,rectangle.width(),rectangle.height()),25,25);
 		painter->drawRect(rectangle);
 		painter->setPen(Qt::white);
-		painter->drawText(r3.width(), 										rectangle.top()+5, 	r1.width(), rectangle.height(),Qt::AlignLeft, s1);
-		painter->drawText(r3.width()+r1.width(), 			rectangle.top()+5, 	r2.width(),	rectangle.height(),Qt::AlignLeft, s2);
-		painter->drawText(rectangle.left()+5, 							rectangle.top()+5,	r3.width(),	rectangle.height(),Qt::AlignLeft, s3);
+		painter->drawText(rectangle.left()+5, 										rectangle.top()+5,	r3.width(),	rectangle.height(),Qt::AlignLeft, s3);
+		painter->drawText(/*fm.width(s3)*/220, 										rectangle.top()+5, 	r1.width(), rectangle.height(),Qt::AlignLeft, s1);
+		painter->drawText(/*fm.width(s3)+fm.width(s1)*/400, 			rectangle.top()+5, 	r2.width(),	rectangle.height(),Qt::AlignLeft, s2);
 	}
 }
 
@@ -1005,7 +1038,8 @@ DLFLFacePtr GLWidget::selectFace(int mx, int my) {
 }
 
 // Subroutine for selecting multiple faces at once
-DLFLFacePtrArray GLWidget::selectFaces(int mx, int my) {
+// DLFLFacePtrArray GLWidget::selectFaces(int mx, int my) {
+DLFLFacePtr GLWidget::selectFaces(int mx, int my) {
 	glEnable(GL_CULL_FACE);
 	GLuint selectBuf[1024];
 	uint closest;
@@ -1052,26 +1086,30 @@ DLFLFacePtrArray GLWidget::selectFaces(int mx, int my) {
 		closest = 0; dist = 0xffffffff;
 		while ( hits ){
 			index = (hits-1)*4;
-			// if ( selectBuf[index+1] < dist ){
-				// dist = selectBuf[index+1];
-				// closest = selectBuf[index+3];
-			// }
-			
-			//if (DLFLObject::fparray[selectBuf[index+3]].normalCentroid()*camera.getPos()){
-			if(!isSelected(DLFLObject::fparray[selectBuf[index+3]]))
-				fparray.push_back(DLFLObject::fparray[selectBuf[index+3]]);
-			//}
+			if ( selectBuf[index+1] < dist ){
+				dist = selectBuf[index+1];
+				closest = selectBuf[index+3];
+			}
 			hits--;
+			
+			// if (DLFLObject::fparray[selectBuf[index+3]].normalCentroid()*camera.getPos()){
+			// if(!	(DLFLObject::fparray[selectBuf[index+3]]))
+			// 	fparray.push_back(DLFLObject::fparray[selectBuf[index+3]]);
+			
+			// }
+			// hits--;
 		}
 		// closest now has the id of the selected face
-		//sel = DLFLObject::fparray[closest];
+		sel = DLFLObject::fparray[closest];
 	}	
 	glDisable(GL_CULL_FACE);
-	return fparray;
+	// return fparray;
+	return sel;
 }
 
 // Subroutine for selecting multiple faces at once
-DLFLFacePtrArray GLWidget::deselectFaces(int mx, int my) {
+// DLFLFacePtrArray GLWidget::deselectFaces(int mx, int my) {
+DLFLFacePtr GLWidget::deselectFaces(int mx, int my) {
 	glEnable(GL_CULL_FACE);
 	GLuint selectBuf[1024];
 	uint closest;
@@ -1118,22 +1156,23 @@ DLFLFacePtrArray GLWidget::deselectFaces(int mx, int my) {
 		closest = 0; dist = 0xffffffff;
 		while ( hits ){
 			index = (hits-1)*4;
-			// if ( selectBuf[index+1] < dist ){
-				// dist = selectBuf[index+1];
-				// closest = selectBuf[index+3];
-			// }
+			if ( selectBuf[index+1] < dist ){
+				dist = selectBuf[index+1];
+				closest = selectBuf[index+3];
+			}
 			
 			//if (DLFLObject::fparray[selectBuf[index+3]].normalCentroid()*camera.getPos()){
-			if(isSelected(DLFLObject::fparray[selectBuf[index+3]]))
-				fparray.push_back(DLFLObject::fparray[selectBuf[index+3]]);
+			// if(isSelected(DLFLObject::fparray[selectBuf[index+3]]))
+				// fparray.push_back(DLFLObject::fparray[selectBuf[index+3]]);
 			//}
 			hits--;
 		}
 		// closest now has the id of the selected face
-		//sel = DLFLObject::fparray[closest];
+		sel = DLFLObject::fparray[closest];
 	}	
 	glDisable(GL_CULL_FACE);
-	return fparray;
+	// return fparray;
+	return sel;
 }
 
 // Subroutine for selecting a FaceVertex (Corner) within a Face

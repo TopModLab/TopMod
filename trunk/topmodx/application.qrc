@@ -70,6 +70,7 @@
 	<file>images/open.png</file>
 	<file>images/saveas.png</file>
 	<file>images/splash.png</file>
+	<file>images/topmod.png</file>
 	<file>images/tutorial_01.png</file>
 	<file>images/tutorial_02.png</file>
 	<file>images/tutorial_03.png</file>
@@ -106,5 +107,15 @@
 	<file>images/applications-internet.png</file>
 	<file>images/accessories-text-editor.png</file>
 	<!-- <file>assistant.app</file> -->
+	<!--translation files (*.qm)-->
+	<file>lang/topmod_en.qm</file>
+	<file>lang/topmod_en_us.qm</file>
+	<file>lang/topmod_es.qm</file>
+	<file>lang/topmod_fr.qm</file>
+	<file>lang/topmod_it.qm</file>
+	<file>lang/topmod_de.qm</file>
+	<file>lang/topmod_tr.qm</file>
+	<file>lang/topmod_hi.qm</file>
+	
 </qresource>
 </RCC>

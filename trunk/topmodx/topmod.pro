@@ -1,12 +1,12 @@
 
 QT += opengl xml
-CONFIG += qt release warn_off link_prl
+CONFIG += qt debug warn_off link_prl
 
 
 # exclude verse python or spacenav drivers
 # or include them with CONFIG += 
 CONFIG -=  WITH_PYTHON WITH_SPACENAV WITH_VERSE
-CONFIG -= WITH_PYTHON 
+CONFIG += WITH_PYTHON 
 # DEFINES += TOPMOD_VERSION 
 DEFINES -= GPU_OK
 
@@ -226,18 +226,18 @@ SOURCES += \
 	TMPatchFace.cc \
 	stylesheeteditor.cc \
 	CgData.cc \
-	# include/Camera2.cc \
 	include/Camera3.cc
 
 RESOURCES += application.qrc
 
 TRANSLATIONS += \
-	     lang/topmod_ca.ts \
 	     lang/topmod_de.ts \
+			 lang/topmod_it.ts \
 	     lang/topmod_en.ts \
 	     lang/topmod_en_us.ts \
 	     lang/topmod_es.ts \
 	     lang/topmod_fr.ts \
+	     lang/topmod_hi.ts \
 	     lang/topmod_tr.ts
 
 CONFIG(WITH_VERSE){

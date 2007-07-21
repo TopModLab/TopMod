@@ -2,7 +2,7 @@
  **
  **
  ****************************************************************************/
-
+ 
 #include <QtGui>
 #include <QtOpenGL>
 #include "MainWindow.hh"
@@ -155,6 +155,10 @@ DLFLEdgePtr MainWindow::face_loop_start_edge = NULL;
  **/
 MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(), redoList(), 
 																				 undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimitive(false), mSpinBoxMode(None) {
+	// #ifdef __APPLE__
+	//mac icon
+	this->setWindowIcon(QIcon(":/images/topmod.png"));
+  // #endif
 	//initialize the OpenGL Window GLWidget
 	QGLFormat fmt;
 	//initialize renderer
@@ -288,7 +292,7 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	
 	//must happen after preference file is loaded
 	createStartupDialog();
-	
+	retranslateUi();
 }
 
 void MainWindow::createActions() {
@@ -369,6 +373,12 @@ void MainWindow::createActions() {
 	// mActionListWidget->addAction(mQuickCommandAct);
 	
 	//Edit Menu Actions
+	mDeleteSelectedAct = new QAction(/*QIcon(":images/edit-undo.png"),*/ tr("&Delete Selected"), this);
+	sm->registerAction(mDeleteSelectedAct, "Edit Menu", "Del");
+	mDeleteSelectedAct->setStatusTip(tr("Delete Selected"));
+	connect(mDeleteSelectedAct, SIGNAL(triggered()), this, SLOT(deleteSelected()));
+	mActionListWidget->addAction(mDeleteSelectedAct);
+
 	mUndoAct = new QAction(QIcon(":images/edit-undo.png"), tr("&Undo"), this);
 	sm->registerAction(mUndoAct, "Edit Menu", "CTRL+Z");
 	mUndoAct->setStatusTip(tr("Undo the last operation"));
@@ -377,7 +387,7 @@ void MainWindow::createActions() {
 
 	mRedoAct = new QAction(QIcon(":images/edit-redo.png"), tr("&Redo"), this);
 	sm->registerAction(mRedoAct, "Edit Menu", "CTRL+SHIFT+Z");
-	mUndoAct->setStatusTip(tr("Redo the last operation"));
+	mRedoAct->setStatusTip(tr("Redo the last operation"));
 	connect(mRedoAct, SIGNAL(triggered()), this, SLOT(redo()));
 	mActionListWidget->addAction(mRedoAct);
 
@@ -1015,6 +1025,8 @@ void MainWindow::createMenus(){
 
 	mEditMenu = new QMenu(tr("&Edit"));
 	menuBar->addMenu(mEditMenu);
+	mEditMenu->addAction(mDeleteSelectedAct);
+	mEditMenu->addSeparator();	
 	mEditMenu->addAction(mUndoAct);
 	mEditMenu->addAction(mRedoAct);
 	mEditMenu->setTearOffEnabled(true);
@@ -1789,7 +1801,9 @@ void MainWindow::doSelection(int x, int y) {
 	case SelectVertex:
 	case MarkVertex:
 	case CutVertex://ozgur
-		std::cout<< "selecting a vertex\n";
+		if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
+			active->clearSelectedVertices();
+		}
 		svptr = active->selectVertex(x,y);
 		active->setSelectedVertex(num_sel_verts,svptr);
 		break;
@@ -1906,23 +1920,27 @@ void MainWindow::doSelection(int x, int y) {
 		// if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
 		// 	active->clearSelectedFaces();
 		// }
+		sfptr = active->selectFace(x,y);
+		// active->setSelectedFace(num_sel_faces,sfptr);
+		// bre ak;
 		if ( QApplication::keyboardModifiers() == Qt::ControlModifier) {
-			sfptrarr = active->deselectFaces(x,y);
-			first = sfptrarr.begin(); last = sfptrarr.end();
-			while ( first != last ){
-				active->clearSelectedFace(*first);
-				++first;
+			// sfptr = active->deselectFaces(x,y);
+			// first = sfptrarr.begin(); last = sfptrarr.end();
+			// while ( first != last ){
+			if ( active->isSelected(sfptr)){
+				active->clearSelectedFace(sfptr);
 				num_sel_faces--;
 			}
 			active->redraw();
 			sfptrarr.clear();
 		}
 		else {
-			sfptrarr = active->selectFaces(x,y);
-			first = sfptrarr.begin(); last = sfptrarr.end();
-			while ( first != last ){
-				active->setSelectedFace(num_sel_faces,*first);
-				++first;
+			sfptr = active->selectFaces(x,y);
+			// first = sfptrarr.begin(); last = sfptrarr.end();
+			// while ( first != last ){
+			if ( !active->isSelected(sfptr)){
+				active->setSelectedFace(num_sel_faces,sfptr);
+				// ++first;
 				num_sel_faces++;
 			}
 			active->redraw();
@@ -2244,25 +2262,26 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 					}
 					break;
 				case SelectVertex :
+					
 					if ( active->numSelectedVertices() >= 1 )
 						{
-							DLFLVertexPtr vp = active->getSelectedVertex(0);
-							vp->print();
-							active->clearSelectedVertices();
-							num_sel_verts = 0;
-							redraw();
+							// DLFLVertexPtr vp = active->getSelectedVertex(0);
+							// vp->print();
+							// active->clearSelectedVertices();
+							// num_sel_verts = 0;
+							// redraw();
 						}
 					break;
 				case SelectEdge :
-					if ( active->numSelectedEdges() >= 1 ) {
-						DLFLEdgePtr septr = active->getSelectedEdge(0);
-						if (septr) {
+					// if ( active->numSelectedEdges() >= 1 ) {
+						// DLFLEdgePtr septr = active->getSelectedEdge(0);
+						// if (septr) {
 							//septr->print();
 							//num_sel_edges = 0;
-						}
-						active->clearSelectedEdges();
-						redraw();
-					}
+						// }
+						// active->clearSelectedEdges();
+						// redraw();
+					// }
 					break;
 				case SelectEdgeLoop:
 					if ( active->numSelectedEdges() >= 1 ){
@@ -2318,7 +2337,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 					}
 					break;
 				case SelectFaceVertex :
-					if ( active->numSelectedFaceVertices() >= 1 )
+					if ( active->numSelectedCorners() >= 1 )
 						{
 							DLFLFaceVertexPtr fvp = active->getSelectedFaceVertex(0);
 							fvp->print();
@@ -2329,7 +2348,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 						}
 					break;
 				case InsertEdge :
-					if ( active->numSelectedFaceVertices() >= 2 )
+					if ( active->numSelectedCorners() >= 2 )
 						{
 							DLFLFaceVertexPtr sfvptr1, sfvptr2;
 							sfvptr1 = active->getSelectedFaceVertex(0);
@@ -2361,7 +2380,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 									redraw();   
 								}
 						}
-					else if ( active->numSelectedFaceVertices() == 1 )
+					else if ( active->numSelectedCorners() == 1 )
 						{
 							num_sel_faceverts=1; num_sel_faces=1;
 						}
@@ -2430,7 +2449,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 						}
 					break;
 				case SpliceCorners :
-					if ( active->numSelectedFaceVertices() >= 2 )
+					if ( active->numSelectedCorners() >= 2 )
 						{
 							DLFLFaceVertexPtr sfvptr1, sfvptr2;
 							sfvptr1 = active->getSelectedFaceVertex(0);
@@ -2450,7 +2469,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 									redraw();   
 								}
 						}
-					else if ( active->numSelectedFaceVertices() == 1 )
+					else if ( active->numSelectedCorners() == 1 )
 						{
 							num_sel_faceverts=1; num_sel_faces=1;
 						}
@@ -2478,7 +2497,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 						}
 					break;
 				case ConnectFaceVertices :
-					if ( active->numSelectedFaceVertices() >= 2 )
+					if ( active->numSelectedCorners() >= 2 )
 						{
 							DLFLFaceVertexPtr sfvptr1, sfvptr2;
 							sfvptr1 = active->getSelectedFaceVertex(0);
@@ -2496,7 +2515,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 									redraw();   
 								}
 						}
-					else if ( active->numSelectedFaceVertices() == 1 )
+					else if ( active->numSelectedCorners() == 1 )
 						{
 							num_sel_faceverts = 1; num_sel_faces = 1;
 						}
@@ -2688,7 +2707,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 						}
 					break;
 				case BezierConnectFaces :
-					if ( active->numSelectedFaceVertices() >= 2 )
+					if ( active->numSelectedCorners() >= 2 )
 						{
 							DLFLFaceVertexPtr sfvptr1, sfvptr2;
 							sfvptr1 = active->getSelectedFaceVertex(0);
@@ -2707,13 +2726,13 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 									redraw();   
 								}
 						}
-					else if ( active->numSelectedFaceVertices() == 1 )
+					else if ( active->numSelectedCorners() == 1 )
 						{
 							num_sel_faceverts = 1; num_sel_faces = 1;
 						}
 					break;
 				case HermiteConnectFaces :
-					if ( active->numSelectedFaceVertices() >= 2 )
+					if ( active->numSelectedCorners() >= 2 )
 						{
 							DLFLFaceVertexPtr sfvptr1, sfvptr2;
 							sfvptr1 = active->getSelectedFaceVertex(0);
@@ -2738,13 +2757,13 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 									redraw();
 								}
 						}
-					else if ( active->numSelectedFaceVertices() == 1 )
+					else if ( active->numSelectedCorners() == 1 )
 						{
 							num_sel_faceverts = 1; num_sel_faces = 1;
 						}
 					break;
 				case ReorderFace :
-					if ( active->numSelectedFaceVertices() >= 1 )
+					if ( active->numSelectedCorners() >= 1 )
 						{
 							DLFLFaceVertexPtr sfvptr = active->getSelectedFaceVertex(0);
 							if ( sfvptr ) sfvptr->getFacePtr()->reorder(sfvptr);
@@ -3819,3 +3838,54 @@ void MainWindow::getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr 
 		// }//end if fptr2	
 	}
 }
+
+void MainWindow::changeLanguage(const QString & string){
+
+	if(string == QString("sp")) {
+		translator_es->load(QString(":/topmod_es"));
+		qApp->installTranslator(translator_es);
+	}
+	if(string == QString("fr")) {
+		translator_fr->load(QString(":/topmod_fr") );
+		qApp->installTranslator(translator_fr);
+	}
+	if(string == QString("de")) {
+		translator_de->load(QString(":/topmod_de") );
+		qApp->installTranslator(translator_de);
+	}
+	if(string == QString("tr")) {
+		translator_tr->load(QString(":/topmod_tr") );
+		qApp->installTranslator(translator_tr);
+	}
+	if(string == QString("it")) {
+		translator_it->load(QString(":/topmod_it") );
+		qApp->installTranslator(translator_it);
+	}
+	if(string == QString("hi")) {
+		translator_hi->load(QString(":/topmod_hi") );
+		qApp->installTranslator(translator_hi);
+	}
+	if(string == QString("en")){
+    qApp->removeTranslator(translator_es);
+    qApp->removeTranslator(translator_fr);
+    qApp->removeTranslator(translator_de);
+    qApp->removeTranslator(translator_tr);
+    qApp->removeTranslator(translator_it);
+    qApp->removeTranslator(translator_hi);
+	}
+}
+
+/**
+* \brief realtime app translation function
+* 
+* \todo all translatable text will eventually go in this function, but that would take forever! we'll see if there's another 
+* way to handle that. it's probably going to be a matter of putting all the QAction->setText() and 
+* QAction->setTooltip() calls into one function. This is going to be a pain but could be beneficial in the long run
+* 
+*/
+void MainWindow::retranslateUi() {
+	mFileMenu->setTitle(tr("File"));
+   // menu->setTitle(tr("File"));
+   // fileAction->setText(tr("First action"));   
+}
+

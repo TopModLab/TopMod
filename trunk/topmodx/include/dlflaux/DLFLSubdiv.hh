@@ -2,6 +2,8 @@
 #define _DLFLSUBDIV_H_
 
 #include <DLFLObject.hh>
+// #include <QApplication>
+// #include <QProgressDialog>
 
 namespace DLFL {
 
@@ -12,7 +14,7 @@ namespace DLFL {
   void pentagonalSubdivide2(DLFLObjectPtr obj, double scale_factor=0.75);
   void pentagonalSubdivide(DLFLObjectPtr obj, double offset=0);
   void honeycombSubdivide(DLFLObjectPtr obj);
-  void dooSabinSubdivide(DLFLObjectPtr obj, bool check=true);
+  bool dooSabinSubdivide(DLFLObjectPtr obj, bool check=true /*,QProgressDialog *progress = 0*/);
   void dooSabinSubdivideBC(DLFLObjectPtr obj, bool check=true);
   void dooSabinSubdivideBCNew(DLFLObjectPtr obj, double sf, double length);
   void cornerCuttingSubdivide(DLFLObjectPtr obj);

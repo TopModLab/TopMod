@@ -457,6 +457,7 @@ void MainWindow::subdivideAllEdges(void)              // Sub-divide all edges
 	MainWindow::clearSelected();
 	active->recomputePatches();
 	active->recomputeNormals();
+	redraw();
 }
 
 void MainWindow::subdivideSelectedFaces(void) // Subdivide all selected faces
@@ -471,6 +472,7 @@ void MainWindow::subdivideSelectedFaces(void) // Subdivide all selected faces
 	MainWindow::clearSelected();
 	active->recomputePatches();
 	active->recomputeNormals();
+	redraw();
 }
 
 void MainWindow::subdivideAllFaces(void) // Subdivide all the faces
@@ -480,6 +482,7 @@ void MainWindow::subdivideAllFaces(void) // Subdivide all the faces
 	MainWindow::clearSelected();
 	active->recomputePatches();
 	active->recomputeNormals();
+	redraw();
 }
 
 void MainWindow::createMultiFaceHandle(void) // Create multi-face handle between selected faes
@@ -508,6 +511,7 @@ void MainWindow::createMultiFaceHandle(void) // Create multi-face handle between
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	redraw();
 }
 
 void MainWindow::multiConnectMidpoints(void)
@@ -518,6 +522,7 @@ void MainWindow::multiConnectMidpoints(void)
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	redraw();
 }
 
 void MainWindow::multiConnectCrust(void)
@@ -528,6 +533,7 @@ void MainWindow::multiConnectCrust(void)
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	redraw();
 }
 
 void MainWindow::modifiedMultiConnectCrust(void)
@@ -538,6 +544,7 @@ void MainWindow::modifiedMultiConnectCrust(void)
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	redraw();
 }
 
 void MainWindow::createSponge(void)
@@ -548,6 +555,7 @@ void MainWindow::createSponge(void)
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	redraw();
 }
 
 void MainWindow::planarizeFaces(void)                  // Planarize all faces
@@ -556,6 +564,7 @@ void MainWindow::planarizeFaces(void)                  // Planarize all faces
 	DLFL::planarize(&object);
 	active->recomputePatches();
 	active->recomputeNormals();
+	redraw();
 }
 
 void MainWindow::spheralizeObject(void)         // Spheralize object vertices
@@ -564,6 +573,7 @@ void MainWindow::spheralizeObject(void)         // Spheralize object vertices
 	DLFL::spheralize(&object);
 	active->recomputePatches();
 	active->recomputeNormals();
+	redraw();
 }
 
 void MainWindow::smoothMesh(void)                          // Smooth the mesh
@@ -572,6 +582,7 @@ void MainWindow::smoothMesh(void)                          // Smooth the mesh
 	DLFL::meshsmooth(&object);
 	active->recomputePatches();
 	active->recomputeNormals();
+	redraw();
 }
 
 void MainWindow::subdivideCatmullClark(void)     // Catmull-Clark subdivision
@@ -583,21 +594,43 @@ void MainWindow::subdivideCatmullClark(void)     // Catmull-Clark subdivision
 	MainWindow::clearSelected();
 	QString cmd( "subdivide(\"catmull-clark\")");
 	emit echoCommand( cmd );
+	// redraw();
 }
 
 void MainWindow::subdivideDooSabin(void)             // Doo-Sabin subdivision
 {
 	undoPush();
-	DLFL::dooSabinSubdivide(&object,doo_sabin_check);
-	active->recomputePatches();
-	active->recomputeNormals();
-	MainWindow::clearSelected();
-	QString cmd( "subdivide(\"doo-sabin\",");
-	QString check("False");
-	if( doo_sabin_check )
-		check = QString("True");
-	cmd += check + QString(")");
-	emit echoCommand( cmd );
+	
+	// QProgressDialog *progress = new QProgressDialog("Performing Doo Sabin Remeshing...", "Cancel", 0, 1);
+	// progress->setMinimumDuration(2000);
+	// progress->setWindowModality(Qt::WindowModal);
+	
+	// DLFLObjectPtr t = object;
+	// active->setRenderingEnabled(false);
+	
+	// if (!DLFL::dooSabinSubdivide(&object, doo_sabin_check/* , progress*/) ){
+		// active->recomputePatches();
+		// active->recomputeNormals();
+		// undo();
+		// MainWindow::clearSelected();
+		// active->setRenderingEnabled(true);
+	// }
+	// else {
+		// object = t;
+		// delete t;
+		// active->setRenderingEnabled(true);
+		DLFL::dooSabinSubdivide(&object, doo_sabin_check/* , progress*/);
+		active->recomputePatches();
+		active->recomputeNormals();
+		MainWindow::clearSelected();
+		QString cmd( "subdivide(\"doo-sabin\",");
+		QString check("False");
+		if( doo_sabin_check )
+			check = QString("True");
+		cmd += check + QString(")");
+		emit echoCommand( cmd );
+	// }
+	
 }
 
 void MainWindow::subdivideHoneycomb(void)            // Honeycomb subdivision
@@ -1294,4 +1327,53 @@ void MainWindow::initializeAnimatedHelp(){
 void MainWindow::setAnimatedHelpImage(){
   mAnimatedHelpMovie->setFileName("images/insert_edge.mng");
   mAnimatedHelpMovie->start();
+}
+
+void MainWindow::deleteSelected(){
+	DLFLEdgePtrArray septrarr;
+	DLFLFacePtrArray sfptrarr;
+	DLFLVertexPtrArray svptrarr;
+	DLFLFaceVertexPtrArray sfvptrarr;
+	
+	undoPush();
+	setModified(true);
+	
+	switch (selectionmask){
+		case MaskEdges:
+			septrarr = active->getSelectedEdges();
+			if ( septrarr[0] ) {
+				undoPush();
+				setModified(true);
+				vector<DLFLEdgePtr>::iterator it;
+				for(it = septrarr.begin(); it != septrarr.end(); it++)
+					DLFL::deleteEdge( &object, *it, MainWindow::delete_edge_cleanup);
+				active->recomputePatches();
+				active->recomputeNormals();						
+			}			
+			active->clearSelectedEdges();
+			redraw();
+		break;
+		case MaskVertices:
+			// svptrarr = active->getSelectedVertices();
+			// if ( svptrarr[0] ) {
+			// 	undoPush();
+			// 	setModified(true);
+			// 	vector<DLFLVertexPtr>::iterator it;
+			// 	for(it = svptrarr.begin(); it != svptrarr.end(); it++)
+			// 		object.removeVertex(*it);
+			// 	active->recomputePatches();
+			// 	active->recomputeNormals();						
+			// }			
+			// active->clearSelectedVertices();
+			// redraw();
+		break;
+		case MaskFaces:
+		break;
+		case MaskCorners:
+		break;
+		case MaskObject://someday...
+		break;
+		default:
+		break;
+	};
 }

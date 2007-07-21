@@ -122,6 +122,7 @@ int TdxComputeEventZero()
 #include <iostream>
 int main( int argc, char **argv ) {
 	TopMod app( argc, argv, true );
+	QApplication::setWindowIcon(QIcon(":/images/topmod.png"));
 
 	//this is a preliminary version of a splash screen functionality.
 	//the app opens so quickly it is hardly shown, so i will consider adding a delay

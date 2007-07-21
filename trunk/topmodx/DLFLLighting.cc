@@ -59,24 +59,37 @@ void computeLighting( DLFLFacePtr fp, LightPtr lightptr, bool usegpu ) {
 
 void computeLighting(DLFLObjectPtr obj, TMPatchObjectPtr po, LightPtr lightptr, bool usegpu) {
 		// std::cout<< "usegpu = " << usegpu << "\n";
+	// int patchsize = (po)?po->list().size():0;
+	// 
+	// QProgressDialog *progress = new QProgressDialog("Computing Lighting...", "Cancel", 0, obj->num_faces() + patchsize);
+	// progress->setMinimumDuration(4000);
+	// progress->setWindowModality(Qt::WindowModal);
+	// int progressvalue = 0;
+	
+  DLFLFacePtrList::iterator first, last;
+  DLFLFacePtr faceptr;
+  first = obj->beginFace(); last = obj->endFace();
+  while ( first != last ) {
+		// progress->setValue(progressvalue++);
+		// QApplication::processEvents();
 		
-	  DLFLFacePtrList::iterator first, last;
-	  DLFLFacePtr faceptr;
-	  first = obj->beginFace(); last = obj->endFace();
-	  while ( first != last ) {
-	    faceptr = (*first);
-	    computeLighting(faceptr,lightptr, usegpu);
-	    ++first;
-	  }
-	  if( po ) {
-	    TMPatchFacePtrList patch_list = po->list( );
-	    TMPatchFacePtrList::iterator pfirst = patch_list.begin(), plast = patch_list.end();
-	    TMPatchFacePtr pfp = NULL;
-	    while ( pfirst != plast ) {
-	      pfp = (*pfirst); ++pfirst;
-	      pfp->computeLighting(lightptr);
-	    }
-	  }
+    faceptr = (*first);
+    computeLighting(faceptr,lightptr, usegpu);
+    ++first;
+  }
+  if( po ) {
+    TMPatchFacePtrList patch_list = po->list( );
+    TMPatchFacePtrList::iterator pfirst = patch_list.begin(), plast = patch_list.end();
+    TMPatchFacePtr pfp = NULL;
+    while ( pfirst != plast ) {
+			// progress->setValue(progressvalue++);
+			// QApplication::processEvents();
+	
+      pfp = (*pfirst); ++pfirst;
+      pfp->computeLighting(lightptr);
+    }
+  }
+	// progress->setValue(obj->num_faces() + patchsize);
 }
 
 

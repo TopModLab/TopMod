@@ -5,9 +5,20 @@
 #ifndef _DLFL_OBJECT_HH_
 #define _DLFL_OBJECT_HH_
 
-// The Doubly Linked Face List object classs
-// Contains a vertex list, edge list and a face list
-// The lists actually store pointerss
+/**
+* TRANSLATOR DLFL::DLFLObject
+*   
+* Necessary for lupdate.
+*/
+
+/**
+* \brief DLFLObject class - The Doubly Linked Face List object classs
+* 
+* The Doubly Linked Face List object classs
+* Contains a vertex list, edge list and a face list
+* The lists actually store pointerss
+* 
+*/
 
 #include "DLFLCommon.hh"
 #include "DLFLVertex.hh"
@@ -19,9 +30,6 @@
 
 namespace DLFL {
 
-/**
- * DLFLObject class
- */
 class DLFLObject {
 public :
 

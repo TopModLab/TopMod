@@ -13,7 +13,7 @@ TopMod::TopMod(int & argc, char ** argv, bool GUIenabled )
 
 	QString locale = QLocale::system().name();
 	QTranslator translator;
-	translator.load(QString("topmod_") + locale);
+	translator.load(QString(":/topmod_") + locale);
 	installTranslator(&translator);
 
 	processEvents( );

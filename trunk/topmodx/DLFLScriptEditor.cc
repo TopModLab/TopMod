@@ -47,12 +47,12 @@ DLFLScriptEditor::DLFLScriptEditor( DLFLObjectPtr obj, QWidget *parent, Qt::Wind
 	connect(mExecFile, SIGNAL(triggered()), this, SLOT(execFile()));
 	scriptMenu->addAction(mExecFile);
 
-	mOpenFile = new QAction(QIcon(":images/folder.svg"),tr("&Open File"), this);
+	mOpenFile = new QAction(QIcon(":images/folder.png"),tr("&Open File"), this);
 	mOpenFile->setStatusTip(tr("Open the input window to a Python script"));
 	connect(mOpenFile, SIGNAL(triggered()), this, SLOT(openFile()));
 	scriptMenu->addAction(mOpenFile);
 
-	mSaveFile = new QAction(QIcon(":images/document-save.svg"),tr("&Save File"), this);
+	mSaveFile = new QAction(QIcon(":images/document-save.png"),tr("&Save File"), this);
 	mSaveFile->setStatusTip(tr("Save the input window to a Python script"));
 	connect(mSaveFile, SIGNAL(triggered()), this, SLOT(saveFile()));
 	scriptMenu->addAction(mSaveFile);

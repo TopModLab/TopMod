@@ -28,6 +28,7 @@
 	\see QShortcutDialog
 */
 
+// #include <QA// pplication>
 #include <QHash>
 #include <QLabel>
 #include <QString>
@@ -219,8 +220,8 @@ static QStringList modToString(Qt::KeyboardModifiers k)
 	return l;
 }
 
-class ShortcutGetter : public QDialog
-{
+class ShortcutGetter : public QDialog {
+	// Q_OBJECT
 	public:
 		ShortcutGetter(QWidget *p = 0)
 		 : QDialog(p)

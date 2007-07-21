@@ -103,7 +103,7 @@ namespace DLFL {
     DLFLVertexPtr getVertexPtr( ) const { return vertex; };
     DLFLEdgePtr getEdgePtr( ) const { return epEPtr; };
     DLFLFaceVertexPtr getOppositeCorner( ) { return epEPtr->getOtherFaceVertexPtr(this); };
-    DLFLFacePtr getFacePtr( ) const { return fpFPtr; };
+		DLFLFacePtr getFacePtr( ) const { if (fpFPtr) return fpFPtr; else return NULL; };
     uint getVertexID( ) const { return vertex->getID(); };
     uint getFaceID( ) const;
     uint getEdgeID( ) const { return epEPtr->getID(); };

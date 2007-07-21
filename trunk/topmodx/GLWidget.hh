@@ -328,6 +328,9 @@ public :
 	bool mUseGPU;
 	bool mAntialiasing;
 	int mBrushStartX;
+	
+	//temporarily disable object rendering
+	bool renderObject;
 
 		// Selection lists - these are shared by all viewports
 	static DLFLLocatorPtrArray sel_lptr_array; // List of selected DLFLLocator pointers  // brianb  
@@ -378,6 +381,8 @@ public :
 	// {
 	// 	return &viewport;
 	// }
+	
+	void setRenderingEnabled(bool b){ renderObject = b; };
 	
 	void setModeString(QString s){
 		mModeString = s;
@@ -578,6 +583,18 @@ public :
 		return object->sel_fptr_array;
 	}
 
+	DLFLVertexPtrArray getSelectedVertices() {
+		return object->sel_vptr_array;
+	}
+
+	DLFLEdgePtrArray getSelectedEdges() {
+		return object->sel_eptr_array;
+	}
+
+	DLFLFaceVertexPtrArray getSelectedCorners() {
+		return object->sel_fvptr_array;
+	}
+
 	DLFLFaceVertexPtr getSelectedFaceVertex(int index) {
 		if ( (uint) index < object->sel_fvptr_array.size() ) return object->sel_fvptr_array[index];
 		return NULL;
@@ -600,7 +617,7 @@ int numSelectedFaces(void) {
 	return object->sel_fptr_array.size();
 }
 
-int numSelectedFaceVertices(void) {
+int numSelectedCorners(void) {
 	return object->sel_fvptr_array.size();
 }
 
@@ -727,8 +744,10 @@ DLFLLocatorPtr selectLocator(int mx, int my);  // brianb
 DLFLVertexPtr selectVertex(int mx, int my);
 DLFLEdgePtr selectEdge(int mx, int my);
 DLFLFacePtr selectFace(int mx, int my);
-DLFLFacePtrArray selectFaces(int mx, int my);
-DLFLFacePtrArray deselectFaces(int mx, int my);
+DLFLFacePtr selectFaces(int mx, int my);
+DLFLFacePtr deselectFaces(int mx, int my);
+// DLFLFacePtrArray selectFaces(int mx, int my);
+// DLFLFacePtrArray deselectFaces(int mx, int my);
 DLFLFaceVertexPtr selectFaceVertex(DLFLFacePtr fp, int mx, int my);
 
 	// Event handler for the viewport. handles only mouse events when glwidget has focus

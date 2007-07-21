@@ -579,7 +579,7 @@ namespace DLFL {
     }
   }
 
-  void dooSabinSubdivide(DLFLObjectPtr obj,bool check) {
+  bool dooSabinSubdivide(DLFLObjectPtr obj,bool check/*, QProgressDialog *progress*/) {		
     // Regular Doo-Sabin subdivision scheme
 
     // Go through list of faces and create new inner faces for each face
@@ -596,10 +596,18 @@ namespace DLFL {
     int num_old_faces, num_old_edges, num_old_verts;
     int num_faces, num_edges, num_verts;
     int eistart, edgeindex;
-  
+  	// int progressvalue = 0; // progress bar test dave
+	
     num_old_verts = obj->num_vertices();
     num_old_faces = obj->num_faces();
     num_old_edges = obj->num_edges();
+
+		//testing qprogressbar - need to figure out a way to do this without putting qt
+		//into the dlfl libraries
+		// if (progress) {
+		// 	progress->setMaximum(num_old_faces*2+num_old_edges*2+num_old_verts);
+		// 	progress->setValue(progressvalue);
+		// }
 
     // Apply make-unique on the obj->num_edges to make sure all Edge IDs are consecutive
     obj->makeEdgesUnique();
@@ -612,6 +620,13 @@ namespace DLFL {
 
     fl_first = obj->beginFace(); fl_last = obj->endFace(); num_faces = 0;
     while ( fl_first != fl_last && num_faces < num_old_faces ) {
+			// //update progress bar status - dave
+			// if (progress){
+			// 	progress->setValue(progressvalue++);
+			// 	// QApplication::processEvents();
+			// 	if (progress->wasCanceled())
+			// 		return false;
+			// }
       fp = (*fl_first);
 
       fp->getVertexCoords(vertex_coords);
@@ -672,6 +687,13 @@ namespace DLFL {
     num_faces = 0; 
     fl_first = obj->beginFace(); fl_last = obj->endFace();
     while ( fl_first != fl_last && num_faces < num_old_faces ) {
+			//progress bar stuff - dave
+			// if (progress){
+			// 	progress->setValue(progressvalue++);
+			// 	// QApplication::processEvents();
+			// 	if (progress->wasCanceled())
+			// 		return false;
+			// }
       fp = (*fl_first); ++fl_first; ++num_faces;
       obj->removeFace(fp); delete fp;
     }
@@ -679,6 +701,14 @@ namespace DLFL {
     num_edges = 0; 
     el_first = obj->beginEdge(); el_last = obj->endEdge();
     while ( el_first != el_last && num_edges < num_old_edges ) {
+			//progress bar shit - dave
+			// if (progress){
+			// 	progress->setValue(progressvalue++);
+			// 	// QApplication::processEvents();
+			// 	if (progress->wasCanceled())
+			// 		return false;
+			// }
+			
       ep = (*el_first); ++el_first; ++num_edges;
       obj->removeEdge(ep); delete ep;
     }
@@ -686,6 +716,14 @@ namespace DLFL {
     num_verts = 0; 
     vl_first = obj->beginVertex(); vl_last = obj->endVertex();
     while ( vl_first != vl_last && num_verts < num_old_verts ) {
+			//progress bar stuff - dave
+			// if (progress){
+			// 	progress->setValue(progressvalue++);
+			// 	// QApplication::processEvents();
+			// 	if (progress->wasCanceled())
+			// 		return false;
+			// }
+
       vp = (*vl_first); ++vl_first; ++num_verts;
       obj->removeVertex(vp); delete vp;
     }
@@ -693,6 +731,14 @@ namespace DLFL {
     // Go through eplist1,fplist1 and eplist2,fplist2 and connect corresponding half-edges
     DLFLFacePtr fp1, fp2, tfp1, tfp2;
     for (int i=0; i < num_old_edges; ++i) {
+			//progress bar stuff - dave
+			// if (progress){
+			// 	progress->setValue(progressvalue++);
+			// 	// QApplication::processEvents();
+			// 	if (progress->wasCanceled())
+			// 		return false;
+			// }
+
       if ( eplist1[i] != NULL && eplist2[i] != NULL ) {
 				// Find the faces adjacent to the edges which are of type FTNew
 				// These will be the inner faces
@@ -711,6 +757,10 @@ namespace DLFL {
 				cout << "NULL pointers found! i = " << i << " "
 						 << eplist1[i] << " -- " << eplist2[i] << endl;
     }
+		// //progress bar stuff - dave
+		// if (progress)
+		// 	progress->setValue(num_old_faces*2+num_old_edges*2+num_old_verts);
+		return true;
   }
 
   void cornerCuttingSubdivide(DLFLObjectPtr obj) {

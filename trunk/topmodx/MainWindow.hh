@@ -365,6 +365,18 @@ public :
 		clearRedoList();
 		delete active;
 	}
+	
+	/**
+	* \brief translation function. see tutorial at http://trolltech.com/developer/knowledgebase/faq.2007-05-23.5871663589/
+	*/
+	void changeEvent ( QEvent * event ) {
+		if (event->type() == QEvent::LanguageChange) {
+		    retranslateUi();
+		}
+		QMainWindow::changeEvent(event);
+	}
+	
+	void retranslateUi();
 
 	/**
 	* \brief clears all currently selected vertices, edges, faces, whatever is selected
@@ -391,7 +403,7 @@ public :
 		num_sel_faces = 0;
 		num_sel_faceverts = 0;
 	}
-
+	
 	void getCheckerboardSelection(DLFLFacePtr fptr);		//!< \todo  needs to be moved to DLFL namespace
 	void getEdgeLoopSelection(DLFLEdgePtr eptr);				//!< \todo  needs to be moved to DLFL namespace
 	void getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr face_loop_marker, bool select_face_loop);	//!< \todo  needs to be moved to DLFL namespace
@@ -516,6 +528,7 @@ private:
 	QAction *mQuickCommandAct;
 
 	//Edit Menu Actions
+	QAction *mDeleteSelectedAct;						//!< delete the selected objects.
 	QAction *mUndoAct;											//!< pop the previous model state off the undo stack
 	QAction *mRedoAct;											//!< push the model back onto the undo stack
 	QAction *mClearUndoListAct;							//!< clear the undo list to free up memory
@@ -708,8 +721,18 @@ private:
 	QToolButton *mTutorialTexturingButton;
 	QCheckBox *mShowStartupDialogAtStartupCheckBox;
 	
+	//translation stuff for future
+	QTranslator *translator_es;							//!< \todo translation widget spanish
+  QTranslator *translator_fr;							//!< \todo translation widget french
+  QTranslator *translator_de;							//!< \todo translation widget german
+  QTranslator *translator_tr;							//!< \todo translation widget turkish
+  QTranslator *translator_it;							//!< \todo translation widget italian
+  QTranslator *translator_hi;							//!< \todo translation widget hindi
+
+	
 public slots:
 
+	void changeLanguage(const QString &string);
 	void about(); 												//!< \todo  topmod developer credits 
 	void help(); 													//!< open the qtassistantclient help viewer
 	void checkForUpdates(); 							//!< check for updates on the topMod home page
@@ -762,6 +785,8 @@ public slots:
 	void selectionMaskCorners();
 	void selectAll();
 	void selectInverse();
+	
+	void deleteSelected();																						//!< delete selected objects
 
 	//Basics Widget
 	void toggleDeleteEdgeCleanupFlag(int state);

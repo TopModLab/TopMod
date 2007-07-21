@@ -6,6 +6,9 @@
 #include "TMPatchObject.hh"
 #include <DLFLObject.hh>
 
+#include <QApplication>
+#include <QProgressDialog>
+
 #include "CgData.hh"
 
 #ifdef GPU_OK
