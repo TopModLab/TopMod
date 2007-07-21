@@ -613,9 +613,12 @@ namespace DLFL {
     }
     //Insert the new FaceVertexes into the respective
     // Faces at the appropriate locations
-    f1->insertAfter(fvpV1, newfv1, false);
+		//check if they are null - added by dave
+		if (f1 && newfv1)
+	    f1->insertAfter(fvpV1, newfv1, false);
 
-    f2->insertAfter(fvpV2, newfv2, false);
+		if (f2 && newfv2)
+	    f2->insertAfter(fvpV2, newfv2, false);
 
     //Average the normals, coordinates, color and texture coordinates
     average(fvpV1, f1->nextFaceVertex(newfv1), newfv1);

@@ -14,6 +14,10 @@ TEMPLATE = app
 
 SUBDIRS = include
 
+MOC_DIR = tmp
+OBJECTS_DIR = tmp
+UI_DIR = tmp
+
 # TopModd will be the name for the debug version, 
 # and TopMod will be the release version
 CONFIG(debug, debug|release) {
@@ -60,7 +64,7 @@ CONFIG(WITH_SPACENAV){
 macx {
 	#mac icon when not using a custom info.plist file
 	ICON = topmod.icns
-	
+		
 	# either compile the mac version as an app bundle or a console app
 	# tell it to load a custom info.plist file here
 	QMAKE_INFO_PLIST    = Info.plist

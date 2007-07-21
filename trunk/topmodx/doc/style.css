@@ -12,6 +12,18 @@ h3{margin-top:20px;}
 h2{font-size:24px;margin-bottom:20px;}
 h4{font-size:14px;}
 
+/*navigation styles for doxygen pags*/
+#main{width:980px;margin:10px auto;padding:0;}
+#header{width:200px;height:110px;float:left;margin:0;padding:0;}
+#tnav{height:110px;width:700px;float:right;margin:0;padding:0;}
+ul.tnav{height:110px;line-height:110px;float:right;list-style:none;font-size:11px;text-transform:uppercase;margin:0;padding:0;}
+ul.tnav li{float:left !important;list-style-type:none;margin:0;padding:0;}
+ul.tnav li a,ul.tnav li a:link,ul.tnav li a:visited{background:#3e4651;color:#fff;float:left;display:block;text-decoration:none;padding:0 10px;}
+ul.tnav li a:hover,ul.tnav li a:active{background:#586373;color:#fff;text-decoration:none;}
+ul.tnav li.current_page_item a{text-decoration:none;background:#586373;color:#fff;}
+ul.tnav li ul{float:left;margin:0;padding:0;}
+
+
 H1,H2,H3,H4,H5,H6,P,CENTER,TD,TH,UL,DL,DIV {
 font-family: Geneva, Arial, Helvetica, sans-serif;
 }
