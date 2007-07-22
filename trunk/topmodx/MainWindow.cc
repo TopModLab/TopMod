@@ -278,7 +278,7 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	//style sheet editor
 	mStyleSheetEditor = new StyleSheetEditor;
 	//preference dialog
-	mSettings = new QSettings("TopMod", "Topological Mesh Modeler");
+	mSettings = new QSettings("TopMod");
 	mPreferencesDialog = new TopModPreferences(mSettings, mStyleSheetEditor, sm, this);	
 	
 	// //testing shortcut context

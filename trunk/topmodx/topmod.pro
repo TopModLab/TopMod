@@ -16,7 +16,7 @@ SUBDIRS = include
 
 MOC_DIR = tmp
 OBJECTS_DIR = tmp
-UI_DIR = tmp
+# UI_DIR = tmp
 
 # TopModd will be the name for the debug version, 
 # and TopMod will be the release version
