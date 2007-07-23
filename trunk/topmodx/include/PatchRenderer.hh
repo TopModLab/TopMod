@@ -7,7 +7,7 @@
   Renders using Bezier patches
 */
 
-#include "DLFLRenderer.hh"
+#include "../DLFLRenderer.hh"
 
 class PatchRenderer;
 typedef PatchRenderer * PatchRendererPtr;

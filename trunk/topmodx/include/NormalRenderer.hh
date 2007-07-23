@@ -7,7 +7,7 @@
  * Renders with face-vertex wireframes with solid colors, no shading/materials/lighting
 */
 
-#include "DLFLRenderer.hh"
+#include "../DLFLRenderer.hh"
 
 class NormalRenderer;
 typedef NormalRenderer *NormalRendererPtr;

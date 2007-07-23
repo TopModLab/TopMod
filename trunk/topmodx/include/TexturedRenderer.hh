@@ -10,7 +10,7 @@
 #include <QFile>
 #include <QString>
 #include <QImage>
-#include "DLFLRenderer.hh"
+#include "../DLFLRenderer.hh"
 
 class TexturedRenderer;
 typedef TexturedRenderer * TexturedRendererPtr;

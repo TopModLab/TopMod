@@ -7,7 +7,7 @@
   Renders with face-vertex normals, with material colors
 */
 
-#include "DLFLRenderer.hh"
+#include "../DLFLRenderer.hh"
 
 class ShadedRenderer;
 typedef ShadedRenderer * ShadedRendererPtr;

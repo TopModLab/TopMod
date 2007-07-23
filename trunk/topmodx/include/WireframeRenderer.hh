@@ -7,7 +7,7 @@
  * Renders with face-vertex wireframes only
 */
 
-#include "DLFLRenderer.hh"
+#include "../DLFLRenderer.hh"
 
 class WireframeRenderer;
 typedef WireframeRenderer *WireframeRendererPtr;

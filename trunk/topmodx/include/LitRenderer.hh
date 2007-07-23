@@ -8,7 +8,7 @@
   Renders using light information.
 */
 
-#include "DLFLRenderer.hh"
+#include "../DLFLRenderer.hh"
 
 class LitRenderer;
 typedef LitRenderer * LitRendererPtr;

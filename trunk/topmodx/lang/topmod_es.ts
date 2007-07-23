@@ -2428,12 +2428,12 @@ Do you want to save your changes?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MainWindowCallbacks.cc" line="1288"/>
+        <location filename="../MainWindowCallbacks.cc" line="1293"/>
         <source>No movie loaded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MainWindowCallbacks.cc" line="1306"/>
+        <location filename="../MainWindowCallbacks.cc" line="1311"/>
         <source>TopMod Animated Help</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2441,22 +2441,22 @@ Do you want to save your changes?</source>
 <context>
     <name>QShortcut</name>
     <message>
-        <location filename="../qshortcutdialog.cc" line="360"/>
+        <location filename="../qshortcutdialog.cc" line="361"/>
         <source>Shift</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qshortcutdialog.cc" line="361"/>
+        <location filename="../qshortcutdialog.cc" line="362"/>
         <source>Ctrl</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qshortcutdialog.cc" line="361"/>
+        <location filename="../qshortcutdialog.cc" line="362"/>
         <source>Alt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qshortcutdialog.cc" line="361"/>
+        <location filename="../qshortcutdialog.cc" line="362"/>
         <source>Meta</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3110,23 +3110,23 @@ Do you want to save your changes?</source>
 <context>
     <name>ShortcutGetter</name>
     <message>
-        <location filename="../qshortcutdialog.cc" line="228"/>
+        <location filename="../qshortcutdialog.cc" line="229"/>
         <source>Shortcut getter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qshortcutdialog.cc" line="235"/>
+        <location filename="../qshortcutdialog.cc" line="236"/>
         <source>Press the key combination
 you want to assign.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qshortcutdialog.cc" line="249"/>
+        <location filename="../qshortcutdialog.cc" line="250"/>
         <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qshortcutdialog.cc" line="254"/>
+        <location filename="../qshortcutdialog.cc" line="255"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
