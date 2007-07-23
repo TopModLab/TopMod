@@ -1,7 +1,6 @@
 
 QT += opengl xml
-CONFIG += qt debug warn_off link_prl
-
+CONFIG += qt release warn_off link_prl
 
 # exclude verse python or spacenav drivers
 # or include them with CONFIG += 

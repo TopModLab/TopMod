@@ -1053,6 +1053,7 @@ void MainWindow::splitValence2Vertices(void)      // Split Valence 2 vertices
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	redraw();
 }
 
 void MainWindow::cleanupWingedVertices(void)     // Remove valence 2 vertices
@@ -1063,6 +1064,7 @@ void MainWindow::cleanupWingedVertices(void)     // Remove valence 2 vertices
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	redraw();
 }
 
 void MainWindow::createDual(void)                       // Create dual object
@@ -1089,6 +1091,7 @@ void MainWindow::createCrust(bool use_scaling)        // Create a crust
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	redraw();
 }
 
 
@@ -1173,6 +1176,7 @@ void MainWindow::makeWireframeWithColumns(void) // Create a wireframe using colu
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	redraw();
 }
 /*
 void MainWindow::makeUnitCube(double edgelength)
@@ -1230,11 +1234,13 @@ void MainWindow::makeSierpinskiTetrahedron(int level)
 void MainWindow::randomAssignTexCoords(void) // Randomly assign texture coordinates
 {
 	object.randomAssignTexCoords();
+	redraw();
 }
 
 void MainWindow::assignTileTexCoords(void) // Assign texture coordinates for tile texturing
 {
 	object.assignTileTexCoords(MainWindow::tile_tex_n);
+	redraw();
 }
 
 void MainWindow::edgeCleanup(void) // Cleanup redundant edges
@@ -1245,6 +1251,7 @@ void MainWindow::edgeCleanup(void) // Cleanup redundant edges
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
+	redraw();
 }
 
 void MainWindow::printSummary(void)              // Print summary information
