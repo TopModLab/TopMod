@@ -14,19 +14,23 @@ tar -czvf doc.tar.gz ./html
 echo "Uploading to server, it should ask for the server password..."
 scp doc.tar.gz unclehor@unclehorrid.com:/home/unclehor/public_html/ends170/topmod/doc/
 
+echo "cd public_html/ends170/topmod/doc && tar -xzvf doc.tar.gz ./ && mv html/* ./ && exit"
+
 # login to server and go to the doc directory 
 ssh unclehor@unclehorrid.com
-cd public_html/ends170/topmod/doc
+
+
+# cd public_html/ends170/topmod/doc
 
 # untar it into the ./html directory 
-tar -xzvf doc.tar.gz ./
+# tar -xzvf doc.tar.gz ./
 # move the files up a directory
 # not sure if there is a way to do this thing 
 # without needing to do that every time..
-mv html/* ./
+# mv html/* ./
 
 # end the ssh session
-exit
+# exit
 
 
 # the script stops once you get into the ssh session
