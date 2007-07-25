@@ -51,7 +51,7 @@ public:
 		this->setAutoFillBackground(true);
 		// this->setStyle(plastiqueStyle);
 		QPalette p = this->palette();
-		p.setColor(this->backgroundRole(), QColor(255,255,255,127));
+		p.setColor(this->backgroundRole(), QColor(255,255,255,255));
 		this->setPalette(p);	
 		
 		mLineEdit = new QLineEdit(this);

@@ -322,6 +322,12 @@ void MainWindow::createActions() {
 	connect(mSavePatchesAct, SIGNAL(triggered()), this, SLOT(saveFileBezierOBJ()));
 	mActionListWidget->addAction(mSavePatchesAct);
 
+	mSaveLG3dAct = new QAction(QIcon(":images/saveas.png"),tr("Export LiveGrahpics3D..."), this);
+	sm->registerAction(mSaveLG3dAct, "File Menu", "CTRL+ALT+S");
+	mSaveLG3dAct->setStatusTip(tr("Export a LiveGraphics3D (*.m) file for embedding into the TopMod Wiki, Warning: you cannot import this file back into TopMod"));
+	connect(mSaveLG3dAct, SIGNAL(triggered()), this, SLOT(saveFileLG3d()));
+	mActionListWidget->addAction(mSaveLG3dAct);
+
 	loadTextureAct = new QAction(tr("Load &Texture..."), this);
 	sm->registerAction(loadTextureAct, "File Menu", "CTRL+L");
 	loadTextureAct->setStatusTip(tr("Load Texture from file"));
@@ -999,6 +1005,7 @@ void MainWindow::createMenus(){
 	mFileMenu->addAction(mSaveAct);
 	mFileMenu->addAction(mSaveAsAct);
 	mFileMenu->addAction(mSavePatchesAct);
+	mFileMenu->addAction(mSaveLG3dAct);
 #ifdef WITH_VERSE
 	mFileMenu->addSeparator();
 	mVerseMenu = new QMenu(tr("&Verse"));
@@ -3399,6 +3406,16 @@ void MainWindow::writePatchOBJ( const char *filename ) {
 	}
 }
 
+/* stuart - bezier export */
+void MainWindow::writeLG3d( const char *filename ) {
+	// if( active->patchobject() != NULL ) {
+	ofstream file;
+	file.open(filename);
+	object.writeLG3d(file);
+	file.close();
+	// }
+}
+
 void MainWindow::writeObjectDLFL(const char * filename) {
 	ofstream file;
 	file.open(filename);
@@ -3520,6 +3537,22 @@ bool MainWindow::saveFileBezierOBJ( ) {
 		QByteArray ba = fileName.toLatin1();
 		const char *filename = ba.data();
 		writePatchOBJ(filename);
+		return true;
+	}
+	return false;
+}
+
+/* stuart - bezier export */
+bool MainWindow::saveFileLG3d( ) {
+	QString fileName = QFileDialog::getSaveFileName(this,
+																									tr("Export to LiveGraphics3D  (M)..."),
+																									curFile,
+																									tr("Mathematica Graphics3D Files (*.m);;All Files (*)"),
+																									0, QFileDialog::DontUseSheet);
+	if (!fileName.isEmpty()){
+		QByteArray ba = fileName.toLatin1();
+		const char *filename = ba.data();
+		writeLG3d(filename);
 		return true;
 	}
 	return false;

@@ -514,6 +514,7 @@ private:
 	QAction *mOpenAct;
 	QAction *mSaveAct;
 	QAction *mSavePatchesAct;
+	QAction *mSaveLG3dAct;
 	QAction *mSaveAsAct;
 	QAction *loadTextureAct;
 	QAction *printInfoAct;
@@ -1036,7 +1037,9 @@ public slots:
 	void openFileDLFL();
 	void saveFileDLFL();
 	bool saveFileBezierOBJ( );
+	bool saveFileLG3d( );
 	void writePatchOBJ(const char *filename);
+	void writeLG3d(const char *filename);
 	void setCurrentFile(QString fileName);
 
 	//primitive slot functions finally work

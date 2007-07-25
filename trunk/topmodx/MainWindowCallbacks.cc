@@ -24,7 +24,7 @@ void MainWindow::load_texture() {
 
 		// readObject(filename);
 		// active->recomputePatches();
-		// active->recomputeNormals();
+ 		// active->recomputeNormals();
 		// //loadFile(fileName);
 		// active->redraw();
 	}
