@@ -502,7 +502,7 @@ public :
   void readDLFL( istream& i, bool clearold = true );
   void writeObject( ostream& o, bool with_normals = false, bool with_tex_coords = false );
   void writeDLFL(ostream& o, bool reverse_faces = false);
-  void writeLG3d(ostream& o); //!< added by dave - for LiveGraphics3D support to embed 3d models into html
+  void writeLG3d(ostream& o, bool select = false); //!< added by dave - for LiveGraphics3D support to embed 3d models into html
   inline void setFilename( char *filename ) { 
     if( mFilename) { delete [] mFilename; mFilename = NULL; }
     mFilename = filename; 

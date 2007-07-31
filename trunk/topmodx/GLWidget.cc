@@ -528,13 +528,17 @@ void GLWidget::drawHUD(QPainter *painter){
 								"\nSel. Faces: " + QString("%1").arg(numSelectedFaces()) +
 								"\nSel. Face-Verts: " + QString("%1").arg(numSelectedCorners());
 
-		QString s3 = "Mode: " + mModeString + "\nRemeshing Mode: " + mRemeshingSchemeString + "\nSelection Mask: " + mSelectionMaskString;
+		QString s3 = 	"Mode: " + mModeString + 
+									"\nRemeshing Mode: " + mRemeshingSchemeString + 
+									"\nExtrusion Mode: " + mExtrusionModeString;
+									"\nSelection Mask: " + mSelectionMaskString;
+									
 		
 		
 		// QString s4 = ""
-		QFont font("verdana", 11);
+		QFont font("Arial", 11);
 		QFontMetrics fm(font);
-		painter->setFont(font);
+		// painter->setFont(font);
 
 		QRect r1(fm.boundingRect(s1));
 		// std::cout<<r1.width() << "\n";

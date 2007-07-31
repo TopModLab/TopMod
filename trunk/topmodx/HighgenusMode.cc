@@ -105,13 +105,13 @@ HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm, QWidget *act
 	connect(mWireframeModelingAction, SIGNAL(triggered()), this, SLOT(triggerWireframeModeling()));
 	actionList->addAction(mWireframeModelingAction);
 
-	mWireframeModeling2Action = new QAction(QIcon(":images/highgenus_wireframe.png"),tr("Wireframe Modeling *EXP!!!"),this);
-	mWireframeModeling2Action->setCheckable(true);
-	sm->registerAction(mWireframeModeling2Action, "High Genus Operations", "");
-	mWireframeModeling2Action->setStatusTip(tr("Enter Wireframe Modeling Mode"));
-	mWireframeModeling2Action->setToolTip(tr("Wireframe Modeling Mode"));
-	connect(mWireframeModeling2Action, SIGNAL(triggered()), this, SLOT(triggerWireframeModeling2()));
-	actionList->addAction(mWireframeModeling2Action);
+	// mWireframeModeling2Action = new QAction(QIcon(":images/highgenus_wireframe.png"),tr("Wireframe Modeling *EXP!!!"),this);
+	// mWireframeModeling2Action->setCheckable(true);
+	// sm->registerAction(mWireframeModeling2Action, "High Genus Operations", "CTRL+W");
+	// mWireframeModeling2Action->setStatusTip(tr("Enter Wireframe Modeling Mode"));
+	// mWireframeModeling2Action->setToolTip(tr("Wireframe Modeling Mode"));
+	// connect(mWireframeModeling2Action, SIGNAL(triggered()), this, SLOT(triggerWireframeModeling2()));
+	// actionList->addAction(mWireframeModeling2Action);
 
 	mColumnModelingAction = new QAction(QIcon(":images/highgenus_column.png"),tr("Column Modeling"),this);
 	mColumnModelingAction->setCheckable(true);
@@ -173,7 +173,7 @@ void HighgenusMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 	actionGroup->addAction(mRindModelingScalingAction); 
 	actionGroup->addAction(mRindModelingThicknessAction);
 	actionGroup->addAction(mWireframeModelingAction); 
-	actionGroup->addAction(mWireframeModeling2Action); 
+	// actionGroup->addAction(mWireframeModeling2Action); 
 	actionGroup->addAction(mColumnModelingAction);	
 	actionGroup->addAction(mSierpinskyAction);
 	actionGroup->addAction(mMultiFaceHandleAction);
@@ -185,7 +185,7 @@ void HighgenusMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 	toolBar->addAction(mRindModelingScalingAction); 
 	toolBar->addAction(mRindModelingThicknessAction);
 	toolBar->addAction(mWireframeModelingAction); 
-	toolBar->addAction(mWireframeModeling2Action); 
+	// toolBar->addAction(mWireframeModeling2Action); 
 	toolBar->addAction(mColumnModelingAction);	
 	toolBar->addAction(mSierpinskyAction);
 	toolBar->addAction(mMultiFaceHandleAction);
@@ -197,7 +197,7 @@ void HighgenusMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 	stackedWidget->addWidget(mRindModelingScalingWidget); 
 	stackedWidget->addWidget(mRindModelingThicknessWidget);
 	stackedWidget->addWidget(mWireframeModelingWidget); 
-	stackedWidget->addWidget(mWireframeModeling2Widget); 
+	// stackedWidget->addWidget(mWireframeModeling2Widget); 
 	stackedWidget->addWidget(mColumnModelingWidget);	
 	stackedWidget->addWidget(mSierpinskyWidget);
 	stackedWidget->addWidget(mMultiFaceHandleWidget);

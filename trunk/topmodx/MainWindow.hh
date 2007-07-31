@@ -26,7 +26,7 @@
 
 //the six modes are now separated into separate classes
 #include "BasicsMode.hh"
-#include "ExtrusionMode.hh"
+#include "ExtrusionsMode.hh"
 #include "RemeshingMode.hh"
 #include "HighgenusMode.hh"
 #include "ConicalMode.hh"
@@ -65,7 +65,7 @@ typedef list<StringStreamPtr> StringStreamPtrList;
 class TopModPreferences;
 
 class BasicsMode;
-class ExtrusionMode;
+class ExtrusionsMode;
 class RemeshingMode;
 class ConicalMode;
 class HighgenusMode;
@@ -152,6 +152,19 @@ class MainWindow : public QMainWindow {
 				MaskEdges,
 				MaskFaces,
 				MaskCorners 
+			};
+			
+			/**
+			* Enumerations for Extrusion operatoers
+			*/
+			enum ExtrusionMode {
+				CubicalExtrude,
+				DooSabinExtrude,
+				DodecahedralExtrude,
+				IcosahedralExtrude,
+				OctahedralExtrude, //!< also called dual
+				StellateExtrude,
+				DoubleStellateExtrude				
 			};
 
 				// Enumerations for various multi-face-handle algorithms
@@ -332,6 +345,7 @@ protected :
 	DLFLObject object;                            //!< The DLFL object
 	//TMPatchObject *patchObject;										//!< the patch object
 	Mode mode;																		//!< Current operating mode
+	ExtrusionMode extrusionmode;														//!< Current operating mode
 	SelectionMask selectionmask;            			//!< Current selection mask
 	RemeshingScheme remeshingscheme;							//!< Current selected remeshing scheme
 	PointLight plight;														//!< Light used to compute lighting
@@ -412,6 +426,7 @@ public :
 	void destroyRenderers();														//!< delete memory allcated for the renderer pointers
 
 	void setMode(Mode m);																//!< Switch to specified operating mode
+	void setExtrusionMode(ExtrusionMode m);							//!< Switch to specified operating mode
 	Mode getMode(){ return mode; };											//!< returns the current operation mode enum... this needs to return a string eventually. don't know how to do that yet
 	void setRemeshingScheme(RemeshingScheme scheme);		//!< switch the current remeshing scheme
 	void setSelectionMask(SelectionMask m);							//!< set the current selection mask (verts, edges, faces, multiple?)
@@ -422,11 +437,6 @@ public :
 	* \brief this will store pointers to the current mode's spinboxes so we can do keyboard interaction with them
 	*/
 	void setSpinBoxes(QDoubleSpinBox *one=0,QDoubleSpinBox *two=0,QDoubleSpinBox *three=0,QDoubleSpinBox *four=0,QDoubleSpinBox *five=0,QDoubleSpinBox *six=0 );
-
-protected:
-	void closeEvent( QCloseEvent *event );				//!< what will execute when the main window is closed (on application exit/quit)
-
-	SpinBoxMode mSpinBoxMode;											//!< enum to store which spinbox mode we are in. e.g. 1, 2, 3, 4, 5, to allow mouse motion to update the values
 
 #ifdef WITH_PYTHON
 	DLFLScriptEditor *mScriptEditor;							//!< ScriptEditor Object by Stuart
@@ -446,6 +456,11 @@ protected:
 	QGridLayout *mStartupDialogLayout;
 	bool mShowStartupDialogAtStartup;
 			
+protected:
+	void closeEvent( QCloseEvent *event );				//!< what will execute when the main window is closed (on application exit/quit)
+
+	SpinBoxMode mSpinBoxMode;											//!< enum to store which spinbox mode we are in. e.g. 1, 2, 3, 4, 5, to allow mouse motion to update the values
+
 	// Renderers
 	static WireframeRendererPtr wired;            //!< WireframeRenderer
 	static NormalRendererPtr normal;              //!< Normal Renderer - white color - like a "hidden line" view
@@ -455,7 +470,7 @@ protected:
 	static PatchRendererPtr patch;								//!< Bezier Patch Display
 
 	BasicsMode *mBasicsMode;											//!< widget that holds all displayable option widgets for basic operating modes (InsertEdge, DeleteEdge, CollapseEdge, ConnectEdges, etc...)
-	ExtrusionMode *mExtrusionMode;								//!< widget that holds all displayable option widgets for the extrusion operation modes
+	ExtrusionsMode *mExtrusionsMode;								//!< widget that holds all displayable option widgets for the extrusion operation modes
 	ConicalMode *mConicalMode;										//!< for future implementation of Ozgur's Conical/Planar modeling modes.
 	RemeshingMode *mRemeshingMode;								//!< widget that holds all displayable option widgets for all remeshing modes
 	HighgenusMode *mHighgenusMode;								//!< high genus operation options (e.g. wireframe, sierpinsky, add handle)
@@ -515,6 +530,7 @@ private:
 	QAction *mSaveAct;
 	QAction *mSavePatchesAct;
 	QAction *mSaveLG3dAct;
+	QAction *mSaveLG3dSelectedAct;
 	QAction *mSaveAsAct;
 	QAction *loadTextureAct;
 	QAction *printInfoAct;
@@ -526,6 +542,8 @@ private:
 			
 	QAction *mFullscreenAct;
 	QAction *mPerformRemeshingAct;
+	QAction *mPerformExtrusionAct;
+	QAction *mExtrudeMultipleAct; 					//!< temporary for now... not sure how to handle this in the future...
 	QAction *mQuickCommandAct;
 
 	//Edit Menu Actions
@@ -586,7 +604,11 @@ private:
 	QAction *planarizeAllFacesAct;
 	QAction *makeObjectSphericalAct;
 	QAction *makeObjectSmoothAct;
-	QAction *createCrustAct;
+	QAction *makeWireframeAct;
+	QAction *makeColumnsAct;
+	QAction *makeSierpinskiAct;
+	QAction *createCrustThicknessAct;
+	QAction *createCrustScalingAct;
 	QAction *computeLightingAct;
 	QAction *computeNormalsAndLightingAct;
 	QAction *assignTextureCoordinatesAct;
@@ -960,7 +982,9 @@ public slots:
 	
 	void spheralizeObject();
 	void smoothMesh();
-	void performRemeshing(); // Generic method for all remeshing schemes
+	void performRemeshing(); //!< Generic method for all remeshing schemes
+	void performExtrusion(); //!< Generic method for all extrusion schemes on multiple faces
+	// void getExtrudeMultiple(); //!< are we in multi select mode or not?
 	void subdivideCatmullClark();
 	void subdivideDooSabin();
 	void subdivideHoneycomb();
@@ -1038,8 +1062,9 @@ public slots:
 	void saveFileDLFL();
 	bool saveFileBezierOBJ( );
 	bool saveFileLG3d( );
+	bool saveFileLG3dSelected();
 	void writePatchOBJ(const char *filename);
-	void writeLG3d(const char *filename);
+	void writeLG3d(const char *filename, bool selected = false);
 	void setCurrentFile(QString fileName);
 
 	//primitive slot functions finally work

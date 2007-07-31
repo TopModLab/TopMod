@@ -387,6 +387,10 @@ public :
 	void setModeString(QString s){
 		mModeString = s;
 	}
+
+	void setExtrusionModeString(QString s){
+		mExtrusionModeString = s;
+	}
 	
 	void setRemeshingSchemeString(QString s){
 		mRemeshingSchemeString = s;
@@ -794,7 +798,7 @@ QColor mYAxisColor;
 QColor mZAxisColor;
 
 QWidget *mParent;
-QString mModeString, mRemeshingSchemeString, mSelectionMaskString;
+QString mModeString, mRemeshingSchemeString, mSelectionMaskString, mExtrusionModeString;
 
 };
 

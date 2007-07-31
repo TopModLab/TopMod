@@ -449,52 +449,61 @@ namespace DLFL {
 					o << '#' << endl;
 				}
 
-	void DLFLObject::writeLG3d(ostream& o) {
-		
-		DLFLFacePtrList::iterator ff = face_list.begin(), fl = face_list.end();
-		Vector3dArray coords; int i=0, j=0;;
-		// Write the object in LG3d (*.m) format for use with the LiveGraphics3D live.jar java archive from Mathworld.com
-		o << "Graphics3D[{";
+	void DLFLObject::writeLG3d(ostream& o, bool selected) {
 
-		// Write the Polygon list
-		// ff = face_list.begin(); fl = face_list.end();
-		
-		//write the first one
-		// if (*ff){
-		// 	o << "Polygon[{";
-		// 	(*ff)->getVertexCoords(coords);
-		// 	for (i=0; i < coords.size(); i++){
-		// 		o << "{" << coords[i][0] << "," << coords[i][0] << "," << coords[i][2] << "}"; 
-		// 		if (i != coords.size()-1){
-		// 			o << ",";
-		// 		}
-		// 	}
-		// 	o << "}]";
-		// 	if (ff != fl){
-		// 		o << ",";
-		// 	}
-		// 	// ++ff;
-		// }
-		while ( ff != fl ) {
-			// ++ff;
-			//format: Polygon[{ {x,y,z}, {x,y,z}, {x,y,z}, {x,y,z} }],
-			o << "Polygon[{";
-			(*ff)->getVertexCoords(coords);
-			for (i=0; i < coords.size(); i++){
-				o << "{" << coords[i][0] << "," << coords[i][1] << "," << coords[i][2] << "}"; 
-				if (i != coords.size()-1){
+		Vector3dArray coords; int i=0, j=0;		
+		if (selected){
+			vector<DLFLFacePtr>::iterator ff = this->sel_fptr_array.begin(), 
+																		fl = this->sel_fptr_array.end();
+			// Write the object in LG3d (*.m) format for use with the LiveGraphics3D live.jar java archive from Mathworld.com
+			o << "Graphics3D[{";
+
+			while ( ff != fl ) {
+				//format: Polygon[{ {x,y,z}, {x,y,z}, {x,y,z}, {x,y,z} }],
+				o << "Polygon[{";
+				(*ff)->getVertexCoords(coords);
+				for (i=0; i < coords.size(); i++){
+					o << "{" << coords[i][0] << "," << coords[i][1] << "," << coords[i][2] << "}"; 
+					if (i != coords.size()-1){
+						o << ",";
+					}
+				}
+				o << "}]";
+				if ( j < num_faces()-1){
 					o << ",";
 				}
+				++ff; j++;
 			}
-			o << "}]";
-			if ( j < num_faces()-1){
-				// std::cout << j << " \t\tnum_faces = " << num_faces() << "\n";
-				o << ",";
-			}
-			++ff; j++;
+			//close out the file and make sure it doesn't have a "box" around it
+			o << "}, { Boxed -> False }]";
+			
 		}
-		//close out the file and make sure it doesn't have a "box" around it
-		o << "}, { Boxed -> False }]";
+		else {
+			DLFLFacePtrList::iterator ff, fl;
+			ff = face_list.begin(); 
+			fl = face_list.end();
+			// Write the object in LG3d (*.m) format for use with the LiveGraphics3D live.jar java archive from Mathworld.com
+			o << "Graphics3D[{";
+
+			while ( ff != fl ) {
+				//format: Polygon[{ {x,y,z}, {x,y,z}, {x,y,z}, {x,y,z} }],
+				o << "Polygon[{";
+				(*ff)->getVertexCoords(coords);
+				for (i=0; i < coords.size(); i++){
+					o << "{" << coords[i][0] << "," << coords[i][1] << "," << coords[i][2] << "}"; 
+					if (i != coords.size()-1){
+						o << ",";
+					}
+				}
+				o << "}]";
+				if ( j < num_faces()-1){
+					o << ",";
+				}
+				++ff; j++;
+			}
+			//close out the file and make sure it doesn't have a "box" around it
+			o << "}, { Boxed -> False }]";
+		}
 	}
 
 } // end namespace

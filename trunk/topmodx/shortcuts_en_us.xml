@@ -74,7 +74,7 @@
 	<action default="" context="View Menu" name="B&amp;ack View" />
 	<action default="" context="View Menu" name="&amp;Left View" />
 	<action default="" context="View Menu" name="&amp;Right View" />
-	<action shortcut="M" default="M" context="Display Menu" name="&amp;Full Screen" />
+	<action shortcut="M" default="" context="Display Menu" name="&amp;Full Screen" />
 	<action shortcut="V" default="V" context="Display Menu" name="Show &amp;Vertices" />
 	<action shortcut="CTRL+F" default="CTRL+F" context="Display Menu" name="Show &amp;Face IDs" />
 	<action shortcut="CTRL+E" default="CTRL+E" context="Display Menu" name="Show &amp;Edge IDs" />
@@ -152,4 +152,7 @@
 	<action shortcut="F1" default="F1" context="Help Menu" name="&amp;Online User Manual" />
 	<action default="" context="Help Menu" name="&amp;TopMod Research Papers" />
 	<action shortcut="SHIFT+CTRL+E" default="SHIFT+CTRL+E" context="Window Menu" name="Script Editor" />
+	<action shortcut="CTRL+ALT+S" default="CTRL+ALT+S" context="File Menu" name="Export LiveGrahpics3D..." />
+	<action shortcut="CTRL+X" default="CTRL+X" context="Tools Menu" name="Perform Extrusion" />
+	<action default="M" context="Tools Menu" name="Extrude Multiple Faces" />
 </SHORTCUTS>

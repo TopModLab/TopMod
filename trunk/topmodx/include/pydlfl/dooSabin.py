@@ -3,6 +3,9 @@
 from dlfl import *
 import math
 
+import sysx
+from PyQt4 import QtCore, QtGui
+
 def add2tuples(x,y):
 	if( len(x) < 3 or len(y) < 3 ):
 		return
@@ -119,6 +122,25 @@ def doosabin():
 	# Done with Doo-Sabin remeshing algorithm
 
 
+	class MyWidget(QtGui.QWidget):
+	    def __init__(self, parent=None):
+	        QtGui.QWidget.__init__(self, parent)
+
+	        self.setFixedSize(200, 120)
+
+	        self.quit = QtGui.QPushButton("Quit", self)
+	        self.quit.setGeometry(62, 40, 75, 30)
+	        self.quit.setFont(QtGui.QFont("Times", 18, QtGui.QFont.Bold))
+
+	        self.connect(self.quit, QtCore.SIGNAL("clicked()"),
+	                     QtGui.qApp, QtCore.SLOT("quit()"))
+
+
+	app = QtGui.QApplication(sys.argv)
+	widget = MyWidget()
+	widget.show()
+	sys.exit(app.exec_())
+	
 # Perform...
 #load("/Users/stuart/topmod/topmodx/cube.obj")
 #test()

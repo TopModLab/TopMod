@@ -208,7 +208,7 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	addDockWidget(Qt::BottomDockWidgetArea, mScriptEditorDockWidget);
 	mScriptEditorDockWidget->hide();
 	mScriptEditorDockWidget->setFloating(true);
-	mScriptEditorDockWidget->setGeometry(20,h-320,500,300);
+	// mScriptEditorDockWidget->setGeometry(20,h-320,500,300);
 	//mScriptEditorDockWidget->setMaximumHeight(200);
 	connect( this, SIGNAL(loadedObject(DLFLObject*,QString)),mScriptEditor, SLOT(loadObject(DLFLObject*,QString)) );
 	connect( this, SIGNAL(echoCommand(QString)),mScriptEditor, SLOT(echoCommand(QString)) );
@@ -260,7 +260,7 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 
 	//instantiate toolbars
 	mBasicsMode = new BasicsMode(this, sm, mActionListWidget);
-	mExtrusionMode = new ExtrusionMode(this, sm, mActionListWidget );
+	mExtrusionsMode = new ExtrusionsMode(this, sm, mActionListWidget );
 	// mConicalMode = new ConicalMode(this, sm);
 	mRemeshingMode = new RemeshingMode(this, sm, mActionListWidget);
 	mHighgenusMode = new HighgenusMode(this, sm, mActionListWidget);
@@ -287,13 +287,17 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	// }
 	
 	//reposition floating windows:
-	mToolOptionsDockWidget->setGeometry(10 + this->x()/*this->active->width()-mToolOptionsDockWidget->width()*/,this->y()+150,mToolOptionsDockWidget->width(),mToolOptionsDockWidget->height());
+	// mToolOptionsDockWidget->setGeometry(10 + this->x()/*this->active->width()-mToolOptionsDockWidget->width()*/,this->y()+150,mToolOptionsDockWidget->width(),mToolOptionsDockWidget->height());
 	// mToolOptionsDockWidget->setFixedSize(mToolOptionsDockWidget->width(),mToolOptionsDockWidget->height());
 	
 	//must happen after preference file is loaded
 	createStartupDialog();
 	retranslateUi();
+	
+	setExtrusionMode(CubicalExtrude);
 }
+
+// void MainWindow::setToolOptionsPo
 
 void MainWindow::createActions() {
 
@@ -327,6 +331,12 @@ void MainWindow::createActions() {
 	mSaveLG3dAct->setStatusTip(tr("Export a LiveGraphics3D (*.m) file for embedding into the TopMod Wiki, Warning: you cannot import this file back into TopMod"));
 	connect(mSaveLG3dAct, SIGNAL(triggered()), this, SLOT(saveFileLG3d()));
 	mActionListWidget->addAction(mSaveLG3dAct);
+
+	mSaveLG3dSelectedAct = new QAction(QIcon(":images/saveas.png"),tr("Export LiveGrahpics3D (Sel. Faces)..."), this);
+	sm->registerAction(mSaveLG3dSelectedAct, "File Menu", "");
+	mSaveLG3dSelectedAct->setStatusTip(tr("Export a LiveGraphics3D (*.m) of the current selected faces file for embedding into the TopMod Wiki, Warning: you cannot import this file back into TopMod"));
+	connect(mSaveLG3dSelectedAct, SIGNAL(triggered()), this, SLOT(saveFileLG3dSelected()));
+	mActionListWidget->addAction(mSaveLG3dSelectedAct);
 
 	loadTextureAct = new QAction(tr("Load &Texture..."), this);
 	sm->registerAction(loadTextureAct, "File Menu", "CTRL+L");
@@ -447,12 +457,12 @@ void MainWindow::createActions() {
 	// mActionListWidget->addAction(mRightViewAct);
 
 	//Display Menu Actions
-	mFullscreenAct = new QAction(QIcon(":images/view-fullscreen.png"),tr("&Full Screen"), this);
-	mFullscreenAct->setCheckable(true);
-	sm->registerAction( mFullscreenAct, "Display Menu", "M");
-	mFullscreenAct->setStatusTip(tr("Toggle Full Screen"));
-	connect(mFullscreenAct, SIGNAL(triggered()), active, SLOT(toggleFullScreen()) );
-	mActionListWidget->addAction(mFullscreenAct);
+	// mFullscreenAct = new QAction(QIcon(":images/view-fullscreen.png"),tr("&Full Screen"), this);
+	// mFullscreenAct->setCheckable(true);
+	// sm->registerAction( mFullscreenAct, "Display Menu", "");
+	// mFullscreenAct->setStatusTip(tr("Toggle Full Screen"));
+	// connect(mFullscreenAct, SIGNAL(triggered()), active, SLOT(toggleFullScreen()) );
+	// mActionListWidget->addAction(mFullscreenAct);
 
 	showVerticesAct = new QAction(tr("Show &Vertices"), this);
 	showVerticesAct->setCheckable(true);
@@ -692,49 +702,73 @@ void MainWindow::createActions() {
 
 	//Object Menu Actions
 	subdivideAllEdgesAct = new QAction(tr("Subdivide All &Edges"), this);
-	sm->registerAction(subdivideAllEdgesAct, "Settings", "");
+	sm->registerAction(subdivideAllEdgesAct, "Tools", "");
 	// subdivideAllEdgesAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(subdivideAllEdgesAct, SIGNAL(triggered()), this, SLOT(subdivideAllEdges()));
 	mActionListWidget->addAction(subdivideAllEdgesAct);
 
 	planarizeAllFacesAct = new QAction(tr("Planarize All &Faces"), this);
-	sm->registerAction(planarizeAllFacesAct, "Settings", "");
+	sm->registerAction(planarizeAllFacesAct, "Tools", "");
 	// planarizeAllFacesAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(planarizeAllFacesAct, SIGNAL(triggered()), this, SLOT(planarizeFaces()));
 	mActionListWidget->addAction(planarizeAllFacesAct);
 
 	makeObjectSphericalAct = new QAction(tr("Make &Object Spherical"), this);
-	sm->registerAction(makeObjectSphericalAct, "Settings", "");
+	sm->registerAction(makeObjectSphericalAct, "Tools", "");
 	// makeObjectSphericalAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(makeObjectSphericalAct, SIGNAL(triggered()), this, SLOT(spheralizeObject()));
 	mActionListWidget->addAction(makeObjectSphericalAct);
 
 	makeObjectSmoothAct = new QAction(tr("Make Object &Smooth"), this);
-	sm->registerAction(makeObjectSmoothAct, "Settings", "");
+	sm->registerAction(makeObjectSmoothAct, "Tools", "");
 	// makeObjectSmoothAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(makeObjectSmoothAct, SIGNAL(triggered()), this, SLOT(smoothMesh()));
 	mActionListWidget->addAction(makeObjectSmoothAct);
 
-	createCrustAct = new QAction(tr("&Create Crust"), this);
-	sm->registerAction(createCrustAct, "Settings", "");
-	// createCrustAct->setStatusTip(tr("Copy the current selection's contents to the "
-	connect(createCrustAct, SIGNAL(triggered()), this, SLOT(createCrust()));
-	mActionListWidget->addAction(createCrustAct);
+	createCrustScalingAct = new QAction(tr("&Create Crust (Scaling)"), this);
+	sm->registerAction(createCrustScalingAct, "Tools", "CTRL+ALT+C");
+	createCrustScalingAct->setStatusTip(tr("Create a crust using the currently selected faces with scaling mode"));
+	connect(createCrustScalingAct, SIGNAL(triggered()), this, SLOT(crustModeling4()));
+	mActionListWidget->addAction(createCrustScalingAct);
+
+	createCrustThicknessAct = new QAction(tr("Create Crust (&Thickness)"), this);
+	sm->registerAction(createCrustThicknessAct, "Tools", "CTRL+C");
+	createCrustThicknessAct->setStatusTip(tr("Create a crust using the currently selected faces with thickness mode"));
+	connect(createCrustThicknessAct, SIGNAL(triggered()), this, SLOT(crustModeling3()));
+	mActionListWidget->addAction(createCrustThicknessAct);
+
+	makeWireframeAct = new QAction(tr("Create Wireframe"), this);
+	sm->registerAction(makeWireframeAct, "Tools", "CTRL+W");
+	makeWireframeAct->setStatusTip(tr("Create a wireframe model using the current options"));
+	connect(makeWireframeAct, SIGNAL(triggered()), this, SLOT(makeWireframe()));
+	mActionListWidget->addAction(makeWireframeAct);
+
+	makeColumnsAct = new QAction(tr("Create Columns"), this);
+	sm->registerAction(makeColumnsAct, "Tools", "CTRL+ALT+W");
+	makeColumnsAct->setStatusTip(tr("Create a column model using the current options"));
+	connect(makeColumnsAct, SIGNAL(triggered()), this, SLOT(makeWireframeWithColumns()));
+	mActionListWidget->addAction(makeColumnsAct);
+
+	makeSierpinskiAct = new QAction(tr("Create Sierpinski"), this);
+	sm->registerAction(makeSierpinskiAct, "Tools", "CTRL+K");
+	makeSierpinskiAct->setStatusTip(tr("Create a sierpinski tetrahedra"));
+	connect(makeSierpinskiAct, SIGNAL(triggered()), this, SLOT(multiConnectMidpoints()));
+	mActionListWidget->addAction(makeSierpinskiAct);
 
 	computeLightingAct = new QAction(tr("Compute &Lighting"), this);
-	sm->registerAction(computeLightingAct, "Settings", "");
+	sm->registerAction(computeLightingAct, "Tools", "");
 	// computeLightingAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(computeLightingAct, SIGNAL(triggered()), getActive(), SLOT(recomputeLighting()));
 	mActionListWidget->addAction(computeLightingAct);
 
 	computeNormalsAndLightingAct = new QAction(tr("Compute &Normals and Lighting"), this);
-	sm->registerAction(computeNormalsAndLightingAct, "Settings", "");
+	sm->registerAction(computeNormalsAndLightingAct, "Tools", "");
 	// computeNormalsAndLightingAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(computeNormalsAndLightingAct, SIGNAL(triggered()), getActive(), SLOT(recomputeNormals()));
 	mActionListWidget->addAction(computeNormalsAndLightingAct);
 
 	assignTextureCoordinatesAct = new QAction(tr("Assign &Texture Coordinates"), this);
-	sm->registerAction(assignTextureCoordinatesAct, "Settings", "");
+	sm->registerAction(assignTextureCoordinatesAct, "Tools", "");
 	// assignTextureCoordinatesAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(assignTextureCoordinatesAct, SIGNAL(triggered()), this, SLOT(assignTileTexCoords()));
 	mActionListWidget->addAction(assignTextureCoordinatesAct);
@@ -936,6 +970,20 @@ void MainWindow::createActions() {
 	sm->registerAction(mPerformRemeshingAct, "Remeshing Menu", "CTRL+R");
 	mActionListWidget->addAction(mPerformRemeshingAct);
 
+	mPerformExtrusionAct = new QAction(tr("Perform Extrusion"), this);
+	mPerformExtrusionAct->setStatusTip( tr("Perform the current extrusion operator on the selected faces") );
+	connect(mPerformExtrusionAct, SIGNAL(triggered()), this, SLOT(performExtrusion()));
+	sm->registerAction(mPerformExtrusionAct, "Tools Menu", "CTRL+X");
+	mActionListWidget->addAction(mPerformExtrusionAct);
+
+	mExtrudeMultipleAct = new QAction(tr("Extrude Multiple Faces"), this);
+	mExtrudeMultipleAct->setCheckable(true);
+	mExtrudeMultipleAct->setChecked(false);
+	mExtrudeMultipleAct->setStatusTip( tr("Check this if you want to be able to select multiple faces and then hit CTRL+X to extrude the selected faces") );
+	// connect(mExtrudeMultipleAct, SIGNAL(triggered()), this, SLOT(performExtrusion()));
+	sm->registerAction(mExtrudeMultipleAct, "Tools Menu", "M");
+	mActionListWidget->addAction(mExtrudeMultipleAct);
+
 	//help menu actions
 	mHelpAct = new QAction(QIcon(":images/applications-internet.png"),tr("&Online User Manual"), this);
 	mHelpAct->setStatusTip( tr("View the User Manual on the TopMod Wiki") );
@@ -1006,6 +1054,7 @@ void MainWindow::createMenus(){
 	mFileMenu->addAction(mSaveAsAct);
 	mFileMenu->addAction(mSavePatchesAct);
 	mFileMenu->addAction(mSaveLG3dAct);
+	mFileMenu->addAction(mSaveLG3dSelectedAct);
 #ifdef WITH_VERSE
 	mFileMenu->addSeparator();
 	mVerseMenu = new QMenu(tr("&Verse"));
@@ -1094,7 +1143,7 @@ void MainWindow::createMenus(){
 	mDisplayMenu->addAction(objectOrientationAct);
 	mDisplayMenu->addAction(mShowNormalsAct);
 	mDisplayMenu->addAction(mShowFaceCentroidsAct);
-	mDisplayMenu->addAction(mFullscreenAct);
+	// mDisplayMenu->addAction(mFullscreenAct);
 
 	mPrimitivesMenu = new QMenu(tr("&Primitives"));
 	mPrimitivesMenu->setTearOffEnabled(true);
@@ -1131,11 +1180,13 @@ void MainWindow::createMenus(){
 	mToolsMenu = new QMenu(tr("&Tools"));
 	mToolsMenu->setTearOffEnabled(true);
 	mToolsMenu->addMenu(mBasicsMode->getMenu());
-	mToolsMenu->addMenu(mExtrusionMode->getMenu());
+	mToolsMenu->addMenu(mExtrusionsMode->getMenu());
 	// mToolsMenu->addMenu(mConicalMode->getMenu());
 	mToolsMenu->addMenu(mHighgenusMode->getMenu());
 	mToolsMenu->addMenu(mTexturingMode->getMenu());
 	mToolsMenu->addAction(mQuickCommandAct);
+	mToolsMenu->addAction(mExtrudeMultipleAct);
+	mToolsMenu->addAction(mPerformExtrusionAct);
 	menuBar->addMenu(mToolsMenu);
 
 	mRemeshingMenu = mRemeshingMode->getMenu();
@@ -1146,11 +1197,15 @@ void MainWindow::createMenus(){
 	mObjectMenu = new QMenu(tr("&Object"));
 	mObjectMenu->setTearOffEnabled(true);
 	mToolsMenu->addMenu(mObjectMenu);
+	mObjectMenu->addAction(makeWireframeAct);
+	mObjectMenu->addAction(makeColumnsAct);
+	mObjectMenu->addAction(makeSierpinskiAct);
+	mObjectMenu->addAction(createCrustThicknessAct);
+	mObjectMenu->addAction(createCrustScalingAct);
 	mObjectMenu->addAction(subdivideAllEdgesAct);
 	mObjectMenu->addAction(planarizeAllFacesAct);
 	mObjectMenu->addAction(makeObjectSphericalAct);
 	mObjectMenu->addAction(makeObjectSmoothAct);
-	mObjectMenu->addAction(createCrustAct);
 	mObjectMenu->addAction(computeLightingAct);
 	mObjectMenu->addAction(computeNormalsAndLightingAct);
 	mObjectMenu->addAction(assignTextureCoordinatesAct);
@@ -1288,7 +1343,7 @@ void MainWindow::createToolBars() {
 	mToolsActionGroup->setExclusive(true);
 
 	mBasicsMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);	
-	mExtrusionMode->addActions(mToolsActionGroup, mExtrusionToolBar, mToolOptionsStackedWidget);
+	mExtrusionsMode->addActions(mToolsActionGroup, mExtrusionToolBar, mToolOptionsStackedWidget);
 	// mConicalMode->addActions(mToolsActionGroup, mConicalToolBar, mToolOptionsStackedWidget);
 
 	mRemeshingActionGroup = new QActionGroup(this);
@@ -1860,13 +1915,6 @@ void MainWindow::doSelection(int x, int y) {
 		active->redraw();
 		break;
 	case SelectFace :
-	case ExtrudeFace :
-	case ExtrudeFaceDS :
-	case ExtrudeDualFace :
-	case ExtrudeFaceDodeca :
-	case ExtrudeFaceIcosa :
-	case StellateFace :
-	case DoubleStellateFace :
 	case CrustModeling :
 	case ConnectFaces :
 	case CutFace://ozgur
@@ -1911,29 +1959,18 @@ void MainWindow::doSelection(int x, int y) {
 		}
 		active->redraw();
 		break;
+	case ExtrudeFace :
+	case ExtrudeFaceDS :
+	case ExtrudeDualFace :
+	case ExtrudeFaceDodeca :
+	case ExtrudeFaceIcosa :
+	case StellateFace :
+	case DoubleStellateFace :		
 	case ExtrudeMultipleFaces :
 	case MultiSelectFace :
 	case SubdivideFace :
-		// No duplicates allowed
-		// sfptr = active->selectFace(x,y);
-		// if ( !active->isSelected(sfptr) ){
-		// 	active->setSelectedFace(num_sel_faces,sfptr);
-		// 	num_sel_faces++;
-		// }
-		// else if ( active->isSelected(sfptr) && QApplication::keyboardModifiers() == Qt::ControlModifier) {
-		// 	active->clearSelectedFace(sfptr);
-		// 	num_sel_faces--;
-		// }
-		// if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
-		// 	active->clearSelectedFaces();
-		// }
 		sfptr = active->selectFace(x,y);
-		// active->setSelectedFace(num_sel_faces,sfptr);
-		// bre ak;
 		if ( QApplication::keyboardModifiers() == Qt::ControlModifier) {
-			// sfptr = active->deselectFaces(x,y);
-			// first = sfptrarr.begin(); last = sfptrarr.end();
-			// while ( first != last ){
 			if ( active->isSelected(sfptr)){
 				active->clearSelectedFace(sfptr);
 				num_sel_faces--;
@@ -1943,17 +1980,14 @@ void MainWindow::doSelection(int x, int y) {
 		}
 		else {
 			sfptr = active->selectFaces(x,y);
-			// first = sfptrarr.begin(); last = sfptrarr.end();
-			// while ( first != last ){
 			if ( !active->isSelected(sfptr)){
 				active->setSelectedFace(num_sel_faces,sfptr);
-				// ++first;
 				num_sel_faces++;
 			}
 			active->redraw();
 			sfptrarr.clear();
 		}
-		break;
+	break;
 	case SelectCheckerboard :
 		if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
 			active->clearSelectedFaces();
@@ -2059,6 +2093,7 @@ void MainWindow::getRightClickMenu(){
 	
 	switch (mode){
 		NormalMode :
+		// mRightClickMenu->addAction(createWireframeAct);
 		break;
 		SelectVertex :
 		break;
@@ -2091,20 +2126,15 @@ void MainWindow::getRightClickMenu(){
 		ConnectEdges :
 		break;
 		ExtrudeFace :
-		break;
 		ExtrudeFaceDS :
-		break;
 		ExtrudeDualFace :
-		break;
 		ExtrudeFaceDodeca :
-		break;
 		ExtrudeFaceIcosa :
-		break;
 		ExtrudeMultipleFaces :
-		break;
 		StellateFace :
-		break;
 		DoubleStellateFace  :
+		mRightClickMenu->addAction(mPerformExtrusionAct);
+		mRightClickMenu->addSeparator();
 		break;
 		ConnectFaceVertices :
 		break;
@@ -2119,6 +2149,9 @@ void MainWindow::getRightClickMenu(){
 		SubdivideFace :
 		break;
 		CrustModeling :
+		mRightClickMenu->addAction(createCrustThicknessAct);
+		mRightClickMenu->addAction(createCrustScalingAct);
+		mRightClickMenu->addSeparator();
 		break;
 		CutEdge :
 		break;
@@ -2151,9 +2184,10 @@ void MainWindow::getRightClickMenu(){
 	
 	switch (selectionmask){
 		case MaskVertices:
+			mRightClickMenu->addAction(selectVertexAct);
 		break;
 		case MaskEdges: 
-			// mRightClickMenu->addAction(selectEdgeAct);
+			mRightClickMenu->addAction(selectEdgeAct);
 			mRightClickMenu->addAction(selectEdgeLoopAct);
 		break;
 		case MaskFaces://face stuff
@@ -2164,6 +2198,7 @@ void MainWindow::getRightClickMenu(){
 			mRightClickMenu->addAction(selectCheckerboardFacesAct);
 		break;
 		case MaskCorners:
+			mRightClickMenu->addAction(selectCornerAct);
 		break;
 		default:
 		break;
@@ -2553,6 +2588,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 						}
 					break;
 				case ExtrudeFace :
+				if (!mExtrudeMultipleAct->isChecked()){
 					if ( active->numSelectedFaces() >= 1 )
 						{
 							DLFLFacePtr sfptr = active->getSelectedFace(0);
@@ -2567,27 +2603,31 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 							active->clearSelectedFaces();
 							redraw();
 						}
+					}
 					break;
 				case ExtrudeMultipleFaces :
-					if ( active->numSelectedFaces() >= 1 )
-						{
-							DLFLFacePtrArray sfptrarr = active->getSelectedFaces();
-							if ( sfptrarr[0] )
-								{
-									undoPush();
-									setModified(true);
-									vector<DLFLFacePtr>::iterator it;
-									for(it = sfptrarr.begin(); it != sfptrarr.end(); it++) {
-										DLFL::extrudeFace(&object,*it,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
+					if (!mExtrudeMultipleAct->isChecked()){
+						if ( active->numSelectedFaces() >= 1 )
+							{
+								DLFLFacePtrArray sfptrarr = active->getSelectedFaces();
+								if ( sfptrarr[0] )
+									{
+										undoPush();
+										setModified(true);
+										vector<DLFLFacePtr>::iterator it;
+										for(it = sfptrarr.begin(); it != sfptrarr.end(); it++) {
+											DLFL::extrudeFace(&object,*it,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
+										}
+										active->recomputePatches();
+										active->recomputeNormals();						
 									}
-									active->recomputePatches();
-									active->recomputeNormals();						
-								}
-							active->clearSelectedFaces();
-							redraw();
+								active->clearSelectedFaces();
+								redraw();
+							}
 						}
 					break;
 				case ExtrudeFaceDS :
+				if (!mExtrudeMultipleAct->isChecked()){
 					if ( active->numSelectedFaces() >= 1 )
 						{
 							DLFLFacePtr sfptr = active->getSelectedFace(0);
@@ -2603,8 +2643,10 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 							active->clearSelectedFaces();
 							redraw();
 						}
+					}
 					break;
 				case ExtrudeDualFace :
+				if (!mExtrudeMultipleAct->isChecked()){
 					if ( active->numSelectedFaces() >= 1 )
 						{
 							DLFLFacePtr sfptr = active->getSelectedFace(0);
@@ -2621,8 +2663,10 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 							active->clearSelectedFaces();
 							redraw();
 						}
+					}
 					break;
 				case ExtrudeFaceDodeca :
+				if (!mExtrudeMultipleAct->isChecked()){
 					if ( active->numSelectedFaces() >= 1 )
 						{
 							DLFLFacePtr sfptr = active->getSelectedFace(0);
@@ -2639,8 +2683,10 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 							active->clearSelectedFaces();
 							redraw();
 						}
+					}
 					break;
 				case ExtrudeFaceIcosa :
+				if (!mExtrudeMultipleAct->isChecked()){
 					if ( active->numSelectedFaces() >= 1 )
 						{
 							DLFLFacePtr sfptr = active->getSelectedFace(0);
@@ -2656,8 +2702,10 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 							active->clearSelectedFaces();
 							redraw();
 						}
+					}
 					break;
 				case StellateFace :
+				if (!mExtrudeMultipleAct->isChecked()){
 					if ( active->numSelectedFaces() >= 1 )
 						{
 							DLFLFacePtr sfptr = active->getSelectedFace(0);
@@ -2672,8 +2720,10 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 							active->clearSelectedFaces();
 							redraw();
 						}
+					}
 					break;
 				case DoubleStellateFace :
+				if (!mExtrudeMultipleAct->isChecked()){
 					if ( active->numSelectedFaces() >= 1 )
 						{
 							DLFLFacePtr sfptr = active->getSelectedFace(0);
@@ -2688,6 +2738,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 							active->clearSelectedFaces();
 							redraw();
 						}
+					}
 					break;
 				case CrustModeling :
 					if ( active->numSelectedFaces() >= 1 )
@@ -3031,6 +3082,43 @@ void MainWindow::performRemeshing(void) {
 	redraw();
 }
 
+void MainWindow::performExtrusion(){
+	if ( active->numSelectedFaces() >= 1 )
+		{
+			DLFLFacePtrArray sfptrarr = active->getSelectedFaces();
+			if ( sfptrarr[0] )
+				{
+					undoPush();
+					setModified(true);
+					vector<DLFLFacePtr>::iterator it;
+					for(it = sfptrarr.begin(); it != sfptrarr.end(); it++) {
+						switch (extrusionmode){
+							case DooSabinExtrude: DLFL::extrudeFaceDS(&object,*it,extrude_dist,num_extrusions,ds_ex_twist,extrude_scale);
+							break;
+							case CubicalExtrude: DLFL::extrudeFace(&object,*it,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
+							break;
+							case IcosahedralExtrude: DLFL::extrudeFaceIcosa(&object,*it,extrude_dist,num_extrusions, ds_ex_twist,extrude_scale);
+							break;
+							case DodecahedralExtrude: DLFL::extrudeFaceDodeca(&object,*it,extrude_dist,num_extrusions, ds_ex_twist,extrude_scale, hexagonalize_dodeca_extrude);							
+							break;
+							case OctahedralExtrude: DLFL::extrudeDualFace(&object,*it,extrude_dist,num_extrusions, extrude_rot,extrude_scale, dual_mesh_edges_check);
+							break;
+							case StellateExtrude: DLFL::stellateFace(&object,*it,extrude_dist);							
+							break;
+							case DoubleStellateExtrude: DLFL::doubleStellateFace(&object,*it,extrude_dist);
+							break;
+							default: DLFL::extrudeFace(&object,*it,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
+							break;
+						};
+					}
+					active->recomputePatches();
+					active->recomputeNormals();						
+				}
+			active->clearSelectedFaces();
+			redraw();
+		}
+}
+
 // Change the renderer for all viewports
 void MainWindow::setRenderer(DLFLRendererPtr rp) {
 	active->setRenderer(rp);
@@ -3210,6 +3298,32 @@ void MainWindow::setMode(Mode m) {
 		case SelectSimilarFaces: s = tr("Select Similar Faces");
 	};
 	active->setModeString(s);
+}
+
+void MainWindow::setExtrusionMode(ExtrusionMode m){
+	extrusionmode = m;
+	QString s;
+	switch(m){
+		case DooSabinExtrude: s = "Doo Sabin";
+		break;
+		case CubicalExtrude: s = "Cubical";
+		break;
+		case DodecahedralExtrude: s = "Dodecahedral";
+		break;
+		case IcosahedralExtrude: s = "Icosahedral";
+		break;
+		case OctahedralExtrude: s = "Octahedral";
+		break;
+		// case Dual:
+		// break;
+		case StellateExtrude: s = "Stellate";
+		break;
+		case DoubleStellateExtrude: s = "Double Stellate";
+		break;
+		default:
+		break;
+	};
+	active->setExtrusionModeString(s);
 }
 
 void MainWindow::setSelectionMask(SelectionMask m){
@@ -3407,11 +3521,11 @@ void MainWindow::writePatchOBJ( const char *filename ) {
 }
 
 /* stuart - bezier export */
-void MainWindow::writeLG3d( const char *filename ) {
+void MainWindow::writeLG3d( const char *filename, bool selected ) {
 	// if( active->patchobject() != NULL ) {
 	ofstream file;
 	file.open(filename);
-	object.writeLG3d(file);
+	object.writeLG3d(file, selected);
 	file.close();
 	// }
 }
@@ -3542,7 +3656,7 @@ bool MainWindow::saveFileBezierOBJ( ) {
 	return false;
 }
 
-/* stuart - bezier export */
+/* dave - lg3d export */
 bool MainWindow::saveFileLG3d( ) {
 	QString fileName = QFileDialog::getSaveFileName(this,
 																									tr("Export to LiveGraphics3D  (M)..."),
@@ -3552,11 +3666,27 @@ bool MainWindow::saveFileLG3d( ) {
 	if (!fileName.isEmpty()){
 		QByteArray ba = fileName.toLatin1();
 		const char *filename = ba.data();
-		writeLG3d(filename);
+		writeLG3d(filename, false);
 		return true;
 	}
 	return false;
 }
+
+bool MainWindow::saveFileLG3dSelected( ) {
+	QString fileName = QFileDialog::getSaveFileName(this,
+																									tr("Export Selected Faces to LiveGraphics3D  (M)..."),
+																									curFile,
+																									tr("Mathematica Graphics3D Files (*.m);;All Files (*)"),
+																									0, QFileDialog::DontUseSheet);
+	if (!fileName.isEmpty()){
+		QByteArray ba = fileName.toLatin1();
+		const char *filename = ba.data();
+		writeLG3d(filename, true);
+		return true;
+	}
+	return false;
+}
+
 
 void MainWindow::openFileDLFL(void) {
 	// QString fileName = QFileDialog::getOpenFileName(this,

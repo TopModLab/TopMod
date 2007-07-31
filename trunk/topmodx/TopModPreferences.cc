@@ -6,8 +6,8 @@ TopModPreferences::TopModPreferences(QSettings *settings, StyleSheetEditor *sse,
 	mSettings = settings;
 	mParent = parent;
 	setSizeGripEnabled(false);
-	resize(600,600);
-	setFixedSize(600,500);
+	resize(700,600);
+	setFixedSize(700,600);
 	setWindowTitle(tr("TopMod Preferences"));
 	// setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
 	
@@ -99,7 +99,14 @@ void TopModPreferences::saveSettings(){
 	mSettings->beginGroup("MainWindow");
 	mSettings->setValue("pos", ((MainWindow*)mParent)->pos());
 	mSettings->setValue("size", ((MainWindow*)mParent)->size());
+	// std::cout << "size = " << ((MainWindow*)mParent)->size().width();
 	mSettings->setValue("showStartupDialogAtStartup", ((MainWindow*)mParent)->getShowStartupDialogAtStartup());
+	mSettings->setValue("toolOptionsPos", ((MainWindow*)mParent)->mToolOptionsDockWidget->pos());
+	
+	#ifdef WITH_PYTHON
+	mSettings->setValue("scriptEditorPos", ((MainWindow*)mParent)->mScriptEditorDockWidget->pos());
+	mSettings->setValue("scriptEditorSize", ((MainWindow*)mParent)->mScriptEditorDockWidget->size());
+	#endif
 	mSettings->endGroup();
 	
 	accept();
@@ -123,11 +130,11 @@ void TopModPreferences::readSettings(){
 	mSilhouetteColor = mSettings->value("SilhouetteColor", mSilhouetteColorDefault).value<QColor>();
 	mPatchBoundaryColorDefault = QColor(0,0,0);
 	mPatchBoundaryColor = mSettings->value("PatchBoundaryColor", mPatchBoundaryColor).value<QColor>();
-	mSelectedVertexColorDefault = QColor(0,127,0,127);
+	mSelectedVertexColorDefault = QColor(0,255,0,127);
 	mSelectedVertexColor = mSettings->value("SelectedVertexColor", mSelectedVertexColorDefault).value<QColor>();
-	mSelectedEdgeColorDefault = QColor(127,0,0,127);
+	mSelectedEdgeColorDefault = QColor(255,0,0,127);
 	mSelectedEdgeColor = mSettings->value("SelectedEdgeColor", mSelectedEdgeColorDefault).value<QColor>();
-	mSelectedFaceColorDefault = QColor(0,0,127,127);
+	mSelectedFaceColorDefault = QColor(247,0,229,127);
 	mSelectedFaceColor = mSettings->value("SelectedFaceColor", mSelectedFaceColorDefault).value<QColor>();
 	mVertexIDBgColorDefault = QColor(127,0,0,127);
 	mVertexIDBgColor = mSettings->value("VertexIDBgColor", mVertexIDBgColorDefault).value<QColor>();
@@ -165,12 +172,23 @@ void TopModPreferences::readSettings(){
 	mSettings->beginGroup("MainWindow");
 	QPoint pos = mSettings->value("pos", QPoint(100, 100)).toPoint();
 	QSize size = mSettings->value("size", QSize(800, 600)).toSize();
+	QPoint toolOptionsPos = mSettings->value("toolOptionsPos", QPoint()).toPoint();
+	
+	#ifdef WITH_PYTHON
+	QSize scriptEditorSize = mSettings->value("scriptEditorSize", QSize(500,300)).toSize();
+	QPoint scriptEditorPos = mSettings->value("scriptEditorPos", QPoint(20, QApplication::desktop()->height()-20)).toPoint();	
+	#endif
 	mShowStartupDialogAtStartup = mSettings->value("showStartupDialogAtStartup", true).toBool();
 	mSettings->endGroup();
 
 	((MainWindow*)mParent)->resize(size.width(),size.height());
 	((MainWindow*)mParent)->move(pos);
 	((MainWindow*)mParent)->setShowStartupDialogAtStartup((int)mShowStartupDialogAtStartup);
+	((MainWindow*)mParent)->mToolOptionsDockWidget->setGeometry(10 + ((MainWindow*)mParent)->x(),((MainWindow*)mParent)->y()+150,((MainWindow*)mParent)->mToolOptionsDockWidget->width(),((MainWindow*)mParent)->mToolOptionsDockWidget->height());	
+	#ifdef WITH_PYTHON
+	((MainWindow*)mParent)->mScriptEditorDockWidget->resize(scriptEditorSize.width(),scriptEditorSize.height());
+	((MainWindow*)mParent)->mScriptEditorDockWidget->move(scriptEditorPos);	
+	#endif
 	
 	//initialize the settings
 	((MainWindow*)mParent)->getActive()->setViewportColor(mViewportColor);
