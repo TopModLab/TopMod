@@ -3305,6 +3305,7 @@ void MainWindow::setMode(Mode m) {
 		case SelectSimilarFaces: s = tr("Select Similar Faces");
 	};
 	active->setModeString(s);
+	redraw();
 }
 
 void MainWindow::setExtrusionMode(ExtrusionMode m){
