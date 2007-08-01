@@ -332,11 +332,17 @@ void MainWindow::createActions() {
 	connect(mSaveLG3dAct, SIGNAL(triggered()), this, SLOT(saveFileLG3d()));
 	mActionListWidget->addAction(mSaveLG3dAct);
 
-	mSaveLG3dSelectedAct = new QAction(QIcon(":images/saveas.png"),tr("Export LiveGrahpics3D (Sel. Faces)..."), this);
+	mSaveLG3dSelectedAct = new QAction(QIcon(":images/saveas.png"),tr("Export LG3d (Sel. Faces)..."), this);
 	sm->registerAction(mSaveLG3dSelectedAct, "File Menu", "");
 	mSaveLG3dSelectedAct->setStatusTip(tr("Export a LiveGraphics3D (*.m) of the current selected faces file for embedding into the TopMod Wiki, Warning: you cannot import this file back into TopMod"));
 	connect(mSaveLG3dSelectedAct, SIGNAL(triggered()), this, SLOT(saveFileLG3dSelected()));
 	mActionListWidget->addAction(mSaveLG3dSelectedAct);
+
+	mExportSTLAct = new QAction(QIcon(":images/saveas.png"),tr("Export STL..."), this);
+	sm->registerAction(mExportSTLAct, "File Menu", "CTRL+ALT+SHIFT+S");
+	mExportSTLAct->setStatusTip(tr("Export a stereolithography (*.stl) file for use with various rapid prototyping software and hardware"));
+	connect(mExportSTLAct, SIGNAL(triggered()), this, SLOT(saveFileSTL()));
+	mActionListWidget->addAction(mExportSTLAct);
 
 	loadTextureAct = new QAction(tr("Load &Texture..."), this);
 	sm->registerAction(loadTextureAct, "File Menu", "CTRL+L");
@@ -1055,6 +1061,7 @@ void MainWindow::createMenus(){
 	mFileMenu->addAction(mSavePatchesAct);
 	mFileMenu->addAction(mSaveLG3dAct);
 	mFileMenu->addAction(mSaveLG3dSelectedAct);
+	mFileMenu->addAction(mExportSTLAct);
 #ifdef WITH_VERSE
 	mFileMenu->addSeparator();
 	mVerseMenu = new QMenu(tr("&Verse"));
@@ -3520,7 +3527,7 @@ void MainWindow::writePatchOBJ( const char *filename ) {
 	}
 }
 
-/* stuart - bezier export */
+/* dave - lg3d export */
 void MainWindow::writeLG3d( const char *filename, bool selected ) {
 	// if( active->patchobject() != NULL ) {
 	ofstream file;
@@ -3528,6 +3535,14 @@ void MainWindow::writeLG3d( const char *filename, bool selected ) {
 	object.writeLG3d(file, selected);
 	file.close();
 	// }
+}
+
+/* dave - lg3d export */
+void MainWindow::writeSTL( const char *filename) {
+	ofstream file;
+	file.open(filename);
+	object.writeSTL(file);
+	file.close();
 }
 
 void MainWindow::writeObjectDLFL(const char * filename) {
@@ -3672,6 +3687,7 @@ bool MainWindow::saveFileLG3d( ) {
 	return false;
 }
 
+
 bool MainWindow::saveFileLG3dSelected( ) {
 	QString fileName = QFileDialog::getSaveFileName(this,
 																									tr("Export Selected Faces to LiveGraphics3D  (M)..."),
@@ -3687,6 +3703,21 @@ bool MainWindow::saveFileLG3dSelected( ) {
 	return false;
 }
 
+/* dave - stl export */
+bool MainWindow::saveFileSTL( ) {
+	QString fileName = QFileDialog::getSaveFileName(this,
+																									tr("Export STL..."),
+																									curFile,
+																									tr("STL Files (*.stl);;All Files (*)"),
+																									0, QFileDialog::DontUseSheet);
+	if (!fileName.isEmpty()){
+		QByteArray ba = fileName.toLatin1();
+		const char *filename = ba.data();
+		writeSTL(filename);
+		return true;
+	}
+	return false;
+}
 
 void MainWindow::openFileDLFL(void) {
 	// QString fileName = QFileDialog::getOpenFileName(this,

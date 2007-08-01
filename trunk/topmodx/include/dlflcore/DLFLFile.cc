@@ -505,5 +505,53 @@ namespace DLFL {
 			o << "}, { Boxed -> False }]";
 		}
 	}
+	
+	void DLFLObject::writeSTL(ostream& o){		
+		// if(binary)
+		// {
+		// 	// Write Header
+		// 	char *header="VCG                                                                                                  ";
+		// 	if(objectname)	strncpy(header,objectname,80);
+		// 	fwrite(header,80,1,fp);
+		// 	// write number of facets
+		// 	fwrite(&m.fn,1,sizeof(int),fp); 
+		// 	Point3f p;
+		// 	unsigned short attributes=0;
+		//     
+		//     FaceIterator fi;		
+		// 	for(fi=m.face.begin(); fi!=m.face.end(); ++fi) if( !(*fi).IsD() )
+		// 	{
+		// 		// For each triangle write the normal, the three coords and a short set to zero
+		// 		p.Import(vcg::NormalizedNormal(*fi));
+		// 		fwrite(p.V(),3,sizeof(float),fp);
+		//  
+		// 		for(int k=0;k<3;++k){
+		// 			p.Import((*fi).V(k)->P());
+		// 			fwrite(p.V(),3,sizeof(float),fp);
+		// 		}
+		// 		fwrite(&attributes,1,sizeof(short),fp);
+		// 	}
+		// }
+		// else
+		// {
+			DLFLFacePtrList::iterator ff = face_list.begin(); 
+			DLFLFacePtrList::iterator fl = face_list.end();
+			Vector3dArray coords; int i=0;
+			
+			o << "solid ascii\n";
+			while ( ff != fl ) {
+				o << "  facet normal "	<< (*ff)->getNormal(true)[0] << " "  << (*ff)->getNormal()[1] << " " << (*ff)->getNormal()[2] << "\n";
+				o << "    outer loop\n";	
+				(*ff)->getVertexCoords(coords);
+				for (i=0; i < coords.size(); i++){
+					o << "      vertex  " << coords[i][0] << " " << coords[i][1] << " " << coords[i][2] << "\n"; 
+				}
+				o << "    endloop\n";
+				o << "  endfacet\n";
+				++ff;
+			}			
+			o << "endsolid ascii";
+		// }
+	}
 
 } // end namespace

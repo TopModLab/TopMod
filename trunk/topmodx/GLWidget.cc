@@ -526,11 +526,11 @@ void GLWidget::drawHUD(QPainter *painter){
 		QString s2 = "Sel. Vertices:" + QString("%1").arg(numSelectedVertices()) +
 		 						"\nSel. Edges: " + QString("%1").arg(numSelectedEdges()) +
 								"\nSel. Faces: " + QString("%1").arg(numSelectedFaces()) +
-								"\nSel. Face-Verts: " + QString("%1").arg(numSelectedCorners());
+								"\nSel. Corners: " + QString("%1").arg(numSelectedCorners());
 
 		QString s3 = 	"Mode: " + mModeString + 
 									"\nRemeshing Mode: " + mRemeshingSchemeString + 
-									"\nExtrusion Mode: " + mExtrusionModeString;
+									"\nExtrusion Mode: " + mExtrusionModeString + 
 									"\nSelection Mask: " + mSelectionMaskString;
 									
 		

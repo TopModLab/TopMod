@@ -44,14 +44,14 @@ public:
 	CommandCompleter ( QWidget *m, QWidget * parent = 0, Qt::WindowFlags f = 0 ) : QDialog(parent, f) {
 		setSizeGripEnabled(false);
 		setWindowFlags(Qt::SplashScreen);
-		setWindowOpacity(0.7);
+		setWindowOpacity(1.0);
 		
 		// QStyle* plastiqueStyle = new QPlastiqueStyle;
 		mQuickCommandLabel = new QLabel(tr("Type a command:"));
 		this->setAutoFillBackground(true);
 		// this->setStyle(plastiqueStyle);
 		QPalette p = this->palette();
-		p.setColor(this->backgroundRole(), QColor(255,255,255,255));
+		p.setColor(this->backgroundRole(), QColor(67,68,88,255));
 		this->setPalette(p);	
 		
 		mLineEdit = new QLineEdit(this);
