@@ -544,6 +544,7 @@ private:
 	QAction *mFullscreenAct;
 	QAction *mPerformRemeshingAct;
 	QAction *mPerformExtrusionAct;
+	QAction *mSubdivideSelectedFacesAct;
 	QAction *mExtrudeMultipleAct; 					//!< temporary for now... not sure how to handle this in the future...
 	QAction *mQuickCommandAct;
 

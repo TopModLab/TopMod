@@ -115,7 +115,6 @@
 	<file>lang/topmod_it.qm</file>
 	<file>lang/topmod_de.qm</file>
 	<file>lang/topmod_tr.qm</file>
-	<file>lang/topmod_hi.qm</file>
-	
+	<file>images/commandcompleter.png</file>
 </qresource>
 </RCC>

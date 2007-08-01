@@ -351,7 +351,7 @@ void MainWindow::createActions() {
 	mActionListWidget->addAction(loadTextureAct);
 
 	printInfoAct = new QAction(tr("Print &Information"), this);
-	sm->registerAction(printInfoAct, "File Menu", "CTRL+P");
+	sm->registerAction(printInfoAct, "File Menu", "P");
 	printInfoAct->setStatusTip(tr("Print Information to the console"));
 	connect(printInfoAct, SIGNAL(triggered()), this, SLOT(printSummary()));
 	mActionListWidget->addAction(printInfoAct);
@@ -708,25 +708,25 @@ void MainWindow::createActions() {
 
 	//Object Menu Actions
 	subdivideAllEdgesAct = new QAction(tr("Subdivide All &Edges"), this);
-	sm->registerAction(subdivideAllEdgesAct, "Tools", "");
+	sm->registerAction(subdivideAllEdgesAct, "Tools", "CTRL+D");
 	// subdivideAllEdgesAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(subdivideAllEdgesAct, SIGNAL(triggered()), this, SLOT(subdivideAllEdges()));
 	mActionListWidget->addAction(subdivideAllEdgesAct);
 
 	planarizeAllFacesAct = new QAction(tr("Planarize All &Faces"), this);
-	sm->registerAction(planarizeAllFacesAct, "Tools", "");
+	sm->registerAction(planarizeAllFacesAct, "Tools", "CTRL+P");
 	// planarizeAllFacesAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(planarizeAllFacesAct, SIGNAL(triggered()), this, SLOT(planarizeFaces()));
 	mActionListWidget->addAction(planarizeAllFacesAct);
 
 	makeObjectSphericalAct = new QAction(tr("Make &Object Spherical"), this);
-	sm->registerAction(makeObjectSphericalAct, "Tools", "");
+	sm->registerAction(makeObjectSphericalAct, "Tools", "CTRL+H");
 	// makeObjectSphericalAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(makeObjectSphericalAct, SIGNAL(triggered()), this, SLOT(spheralizeObject()));
 	mActionListWidget->addAction(makeObjectSphericalAct);
 
 	makeObjectSmoothAct = new QAction(tr("Make Object &Smooth"), this);
-	sm->registerAction(makeObjectSmoothAct, "Tools", "");
+	sm->registerAction(makeObjectSmoothAct, "Tools", "CTRL+M");
 	// makeObjectSmoothAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(makeObjectSmoothAct, SIGNAL(triggered()), this, SLOT(smoothMesh()));
 	mActionListWidget->addAction(makeObjectSmoothAct);
@@ -970,6 +970,12 @@ void MainWindow::createActions() {
 	mActionListWidget->addAction(mVerseKillServerAct);
 #endif
 
+	mSubdivideSelectedFacesAct = new QAction(tr("Subdivide Selected Faces"), this);
+	mSubdivideSelectedFacesAct->setStatusTip( tr("Subdivide all Selected Faces") );
+	connect(mSubdivideSelectedFacesAct, SIGNAL(triggered()), this, SLOT(subdivideSelectedFaces()));
+	sm->registerAction(mSubdivideSelectedFacesAct, "Tools Menu", "CTRL+B");
+	mActionListWidget->addAction(mSubdivideSelectedFacesAct);
+	
 	mPerformRemeshingAct = new QAction(tr("Perform Remeshing"), this);
 	mPerformRemeshingAct->setStatusTip( tr("Perform the current remeshing scheme") );
 	connect(mPerformRemeshingAct, SIGNAL(triggered()), this, SLOT(performRemeshing()));
@@ -1194,6 +1200,7 @@ void MainWindow::createMenus(){
 	mToolsMenu->addAction(mQuickCommandAct);
 	mToolsMenu->addAction(mExtrudeMultipleAct);
 	mToolsMenu->addAction(mPerformExtrusionAct);
+	mToolsMenu->addAction(mSubdivideSelectedFacesAct);
 	menuBar->addMenu(mToolsMenu);
 
 	mRemeshingMenu = mRemeshingMode->getMenu();
@@ -2107,6 +2114,7 @@ void MainWindow::getRightClickMenu(){
 		SelectEdge :
 		break;
 		SelectFace :
+		mRightClickMenu->addAction(mSubdivideSelectedFacesAct);
 		break;
 		SelectFaceVertex :
 		break;
@@ -2115,10 +2123,12 @@ void MainWindow::getRightClickMenu(){
 		MultiSelectEdge :
 		break;
 		MultiSelectFace :
+		mRightClickMenu->addAction(mSubdivideSelectedFacesAct);
 		break;
 		MultiSelectFaceVertex :
 		break;
 		SelectCheckerboard :
+		mRightClickMenu->addAction(mSubdivideSelectedFacesAct);
 		break;
 		InsertEdge :
 		break;
@@ -2141,6 +2151,7 @@ void MainWindow::getRightClickMenu(){
 		StellateFace :
 		DoubleStellateFace  :
 		mRightClickMenu->addAction(mPerformExtrusionAct);
+		mRightClickMenu->addAction(mSubdivideSelectedFacesAct);
 		mRightClickMenu->addSeparator();
 		break;
 		ConnectFaceVertices :
@@ -2154,6 +2165,7 @@ void MainWindow::getRightClickMenu(){
 		ReorderFace :
 		break;
 		SubdivideFace :
+		mRightClickMenu->addAction(mSubdivideSelectedFacesAct);
 		break;
 		CrustModeling :
 		mRightClickMenu->addAction(createCrustThicknessAct);
@@ -2183,6 +2195,7 @@ void MainWindow::getRightClickMenu(){
 		SelectFaceLoop :
 		break;
 		SelectSimilarFaces :
+		mRightClickMenu->addAction(mSubdivideSelectedFacesAct);
 		break;
 		
 		default:

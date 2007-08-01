@@ -138,13 +138,15 @@ int main( int argc, char **argv ) {
 	//this is a preliminary version of a splash screen functionality.
 	//the app opens so quickly it is hardly shown, so i will consider adding a delay
 	QPixmap pixmap(":/images/splash.png");
-  QSplashScreen *splash = new QSplashScreen(pixmap, Qt::WindowStaysOnTopHint);
-  splash->show();
+	QSplashScreen *splash = new QSplashScreen(pixmap, Qt::WindowStaysOnTopHint);
+	splash->setMask(pixmap.mask());
+	splash->setGeometry(300,200,splash->width(),splash->height());
+	splash->show();
 	// splash->showMessage("doin stuff...");
-  app.processEvents();
+	app.processEvents();
 	//artificial delay for now to debug, and to give mad props to the developers
 	// splash->finish(app.getMainWindow());
-  QTimer::singleShot(1000, splash, SLOT(hide()));
+	QTimer::singleShot(1000, splash, SLOT(hide()));
 
  	#ifdef WITH_SPACENAV
 		#ifdef __APPLE__

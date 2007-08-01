@@ -33,47 +33,7 @@ class CommandCompleter : public QDialog {
 
 public:
 
-	/*!
-	* \brief Constructor
-	* 
-	* @param m the actionList passed from the MainWindow class after each Mode class is instantiated
-	* @param parent the MainWindow parent widget 
-	* @param f window flags for the QDialog constructor
-	* 
-	*/
-	CommandCompleter ( QWidget *m, QWidget * parent = 0, Qt::WindowFlags f = 0 ) : QDialog(parent, f) {
-		setSizeGripEnabled(false);
-		setWindowFlags(Qt::SplashScreen);
-		setWindowOpacity(1.0);
-		
-		// QStyle* plastiqueStyle = new QPlastiqueStyle;
-		mQuickCommandLabel = new QLabel(tr("Type a command:"));
-		this->setAutoFillBackground(true);
-		// this->setStyle(plastiqueStyle);
-		QPalette p = this->palette();
-		p.setColor(this->backgroundRole(), QColor(67,68,88,255));
-		this->setPalette(p);	
-		
-		mLineEdit = new QLineEdit(this);
-		mCompleter = new QCompleter(this);
-
-		mCompleter->setCaseSensitivity(Qt::CaseInsensitive);
-		mCompleter->setCompletionMode(QCompleter::PopupCompletion);
-		//loop through the actions added to the widget *m, add the text to a word list for now
-		for (int i = 0; i < m->actions().count(); ++i)
-			mWordList << ((QAction*)(m->actions().at(i)))->toolTip();
-
-		mModel = new QStringListModel(mWordList,mCompleter);
-		mCompleter->setModel(mModel);
-		mLineEdit->setCompleter(mCompleter);
-		
-		QVBoxLayout *vbox = new QVBoxLayout(this);
-		vbox->addWidget(mQuickCommandLabel);
-		vbox->addWidget(mLineEdit);
-
-		// QShortcut *shortcut = new QShortcut(QKeySequence(tr("Enter")),this);
-		connect(mLineEdit, SIGNAL(editingFinished()), this, SLOT(accept()));
-	}
+	CommandCompleter ( QWidget *m, QWidget * parent = 0, Qt::WindowFlags f = 0 );
 	
 private:
 	
