@@ -41,6 +41,9 @@ namespace DLFL {
   void subdivideFaces(DLFLObjectPtr obj, DLFLFacePtrArray fparray, bool usequads=true);
   void subdivideFaces(DLFLObjectPtr obj, DLFLFacePtrList fplist, bool usequads=true);
   void subdivideAllFaces(DLFLObjectPtr obj, bool usequads=true);
+	void triangulateFaces(DLFLObjectPtr obj, DLFLFacePtrList fplist);
+	void triangulateAllFaces(DLFLObjectPtr obj);
+
 } // end namespace
 
 #endif // _DLFLSUBDIV_H_

@@ -3719,6 +3719,12 @@ bool MainWindow::saveFileLG3dSelected( ) {
 
 /* dave - stl export */
 bool MainWindow::saveFileSTL( ) {
+	
+	//triangulate the mesh first - this isn't the best solution but will work for now.
+	// globalStellate();
+	//testing out a custom triangulate function
+	triangulate();
+	
 	QString fileName = QFileDialog::getSaveFileName(this,
 																									tr("Export STL..."),
 																									curFile,

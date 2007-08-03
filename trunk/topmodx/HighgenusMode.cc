@@ -565,11 +565,31 @@ void HighgenusMode::setupMultiFaceHandle(){
 	          this, SLOT(changeMultiFaceAlgorithm(bool)));
 	
 	//scaling
-	multiFaceHandleScaleSpinBox = createDoubleSpinBox(mMultiFaceAlgorithmLayout, multiFaceHandleScaleLabel, tr("Scale Factor:"), 0.0, 5.0, 0.01, 1.0, 2, 0,0);	
+	multiFaceHandleScaleLabel = new QLabel( tr("Scale Factor:"));
+	multiFaceHandleScaleSpinBox = new QDoubleSpinBox;
+	multiFaceHandleScaleSpinBox->setRange(0.0,5.0);
+	multiFaceHandleScaleSpinBox->setSingleStep(0.01);
+	multiFaceHandleScaleSpinBox->setValue(1.0);
+	multiFaceHandleScaleSpinBox->setDecimals(2);
+	multiFaceHandleScaleSpinBox->setMaximumSize(75,25);
+	mMultiFaceAlgorithmLayout->addWidget(multiFaceHandleScaleLabel,0,0);
+	mMultiFaceAlgorithmLayout->addWidget(multiFaceHandleScaleSpinBox,0,1);
+	// multiFaceHandleScaleSpinBox = createDoubleSpinBox(mMultiFaceAlgorithmLayout, multiFaceHandleScaleLabel, tr("Scale Factor:"), 0.0, 5.0, 0.01, 1.0, 2, 0,0);	
 	connect(multiFaceHandleScaleSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeMultiFaceHandleScaleFactor(double)));
+
 	//extrude distance
-	multiFaceHandleExtrudeDistanceSpinBox = createDoubleSpinBox(mMultiFaceAlgorithmLayout, multiFaceHandleExtrudeDistanceLabel, tr("Extrude Dist.\nFactor:"), -2.0, 2.0, 0.1, 0.5, 1, 1,0);	
+	multiFaceHandleExtrudeDistanceLabel = new QLabel( tr("Extrude Dist.\nFactor:"));
+	multiFaceHandleExtrudeDistanceSpinBox = new QDoubleSpinBox;
+	multiFaceHandleExtrudeDistanceSpinBox->setRange(-2.0,2.0);
+	multiFaceHandleExtrudeDistanceSpinBox->setSingleStep(0.01);
+	multiFaceHandleExtrudeDistanceSpinBox->setValue(0.5);
+	multiFaceHandleExtrudeDistanceSpinBox->setDecimals(1);
+	multiFaceHandleExtrudeDistanceSpinBox->setMaximumSize(75,25);
+	mMultiFaceAlgorithmLayout->addWidget(multiFaceHandleExtrudeDistanceLabel,1,0);
+	mMultiFaceAlgorithmLayout->addWidget(multiFaceHandleExtrudeDistanceSpinBox,1,1);
+	// multiFaceHandleExtrudeDistanceSpinBox = createDoubleSpinBox(mMultiFaceAlgorithmLayout, multiFaceHandleExtrudeDistanceLabel, tr("Extrude Dist.\nFactor:"), -2.0, 2.0, 0.1, 0.5, 1, 1,0);	
 	connect(multiFaceHandleExtrudeDistanceSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeMultiFaceHandleExtrudeDist(double)));	
+
 	//use max. offsets
 	multiFaceHandleMaxOffsetsCheckBox = new QCheckBox(tr("Use max offsets"),this);
 	connect(multiFaceHandleMaxOffsetsCheckBox, SIGNAL(stateChanged(int)), this, SLOT(toggleMultiFaceHandleUseMaxOffsetFlag(int)));
@@ -593,12 +613,12 @@ void HighgenusMode::toggleMultiFaceHandleUseMaxOffsetFlag(int state){
 	((MainWindow*)mParent)->toggleMultiFaceHandleUseMaxOffsetFlag(state);
 	
 	if (state){
-//		multiFaceHandleExtrudeDistanceSpinBox->setEnabled(false);
-	//	multiFaceHandleExtrudeDistanceLabel->setEnabled(false);
+		multiFaceHandleExtrudeDistanceSpinBox->setEnabled(false);
+		multiFaceHandleExtrudeDistanceLabel->setEnabled(false);
 	}
 	else {
-		//multiFaceHandleExtrudeDistanceLabel->setEnabled(true);
-		//multiFaceHandleExtrudeDistanceSpinBox->setEnabled(true);
+		multiFaceHandleExtrudeDistanceLabel->setEnabled(true);
+		multiFaceHandleExtrudeDistanceSpinBox->setEnabled(true);
 	}
 }
 
@@ -607,25 +627,25 @@ void HighgenusMode::changeMultiFaceAlgorithm(bool on){
 	if (!on) {
 		((MainWindow*)mParent)->mfh_use_closest_edge_algo();	
 		// //set all three widgets to be disabled
-		// multiFaceHandleScaleLabel->setEnabled(false);
-		// multiFaceHandleExtrudeDistanceLabel->setEnabled(false);
-		// multiFaceHandleExtrudeDistanceSpinBox->setEnabled(false);
-		// multiFaceHandleMaxOffsetsCheckBox->setEnabled(false);
-		// multiFaceHandleScaleSpinBox->setEnabled(false);		
+		multiFaceHandleScaleLabel->setEnabled(false);
+		multiFaceHandleExtrudeDistanceLabel->setEnabled(false);
+		multiFaceHandleExtrudeDistanceSpinBox->setEnabled(false);
+		multiFaceHandleMaxOffsetsCheckBox->setEnabled(false);
+		multiFaceHandleScaleSpinBox->setEnabled(false);		
 		
 	}
 	else { 		
 		((MainWindow*)mParent)->mfh_use_convex_hull_algo();	
-		// 
-		// multiFaceHandleScaleLabel->setEnabled(false);
-		// multiFaceHandleScaleSpinBox->setEnabled(true);
-		// multiFaceHandleMaxOffsetsCheckBox->setEnabled(true);
-		// 
-		// //check if the checkbox is checked first or not, then enable widgets accordingly
-		// if (multiFaceHandleMaxOffsetsCheckBox->checkState() == Qt::Checked){
-		// 	multiFaceHandleExtrudeDistanceLabel->setEnabled(true);
-		// 	multiFaceHandleExtrudeDistanceSpinBox->setEnabled(true);
-		// }
+		
+		multiFaceHandleScaleLabel->setEnabled(true);
+		multiFaceHandleScaleSpinBox->setEnabled(true);
+		multiFaceHandleMaxOffsetsCheckBox->setEnabled(true);
+		
+		//check if the checkbox is checked first or not, then enable widgets accordingly
+		if (multiFaceHandleMaxOffsetsCheckBox->checkState() == Qt::Checked){
+			multiFaceHandleExtrudeDistanceLabel->setEnabled(true);
+			multiFaceHandleExtrudeDistanceSpinBox->setEnabled(true);
+		}
 	}
 }
 

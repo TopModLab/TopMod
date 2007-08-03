@@ -121,6 +121,9 @@ EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = */.svn/* \
                          */TopMod/* \
 												 */doc/*
+												 */.m/*
+												 */.obj/*
+												 */.dlfl/*
 EXCLUDE_SYMBOLS        = 
 EXAMPLE_PATH           = 
 EXAMPLE_PATTERNS       = *

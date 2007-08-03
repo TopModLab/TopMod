@@ -2372,4 +2372,33 @@ namespace DLFL {
     subdivideFaces( obj, obj->getFaceList(),usequads );
   }
 
+  void triangulateFaces(DLFLObjectPtr obj, DLFLFacePtrList fplist) {
+    // NOTE: fplist parameter is to passed by value to ensure copy will be made
+    // This is to allow subdivision of all faces in the mesh, in which case
+    // the entire face list will be passed to this subroutine.
+
+    // If there is only 1 face do regular face subdivision and return
+    if ( fplist.size() == 1 ) {
+      subdivideFace(obj, fplist.front());
+      return;
+    }
+
+		// Go through list and subdivide each face
+		DLFLFacePtrList::iterator fpfirst, fplast;
+		fpfirst = fplist.begin(); fplast = fplist.end();
+		while ( fpfirst != fplast ) {
+			if ((*fpfirst)->size() != 3)
+				subdivideFace(obj, *fpfirst,false); ++fpfirst;
+		}
+    
+  }
+
+  void triangulateAllFaces(DLFLObjectPtr obj) {
+    // NOTE: A copy of the list needs to be made since subdivision
+    // will add new faces. Parameter has to passed by value to ensure copy will be made
+		// this function will only triangulate faces which are not already triangles
+		// this will help prepare files for STL export
+    triangulateFaces( obj, obj->getFaceList() );
+  }
+
 } // end namespace

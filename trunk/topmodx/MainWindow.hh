@@ -1018,6 +1018,7 @@ public slots:
 	void subdivideDooSabinBCNew();
 	void subdivideLoopStyle();
 	void globalStellate();
+	void triangulate();
 	void splitValence2Vertices();
 	void cleanupWingedVertices();
 	void createDual();

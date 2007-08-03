@@ -485,7 +485,7 @@ void MainWindow::subdivideAllFaces(void) // Subdivide all the faces
 	redraw();
 }
 
-void MainWindow::createMultiFaceHandle(void) // Create multi-face handle between selected faes
+void MainWindow::createMultiFaceHandle(void) // Create multi-face handle between selected faces
 {
 	int numsel = active->numSelectedFaces();
 	if ( numsel < 3 ) return;
@@ -498,9 +498,7 @@ void MainWindow::createMultiFaceHandle(void) // Create multi-face handle between
 	}
 	switch ( MainWindow::mfh_algo )	{
 		case ConvexHull :
-		DLFL::multiConnectFaces(&object,sel_faces,MainWindow::mfh_scale_factor,
-			MainWindow::mfh_extrude_dist,
-			MainWindow::mfh_use_max_offsets);
+		DLFL::multiConnectFaces(&object,sel_faces,MainWindow::mfh_scale_factor,MainWindow::mfh_extrude_dist,MainWindow::mfh_use_max_offsets);
 		break;
 		case ClosestEdge :
 		DLFL::multiConnectFaces(&object,sel_faces);
@@ -1043,6 +1041,19 @@ void MainWindow::globalStellate(void)
 
 	QString cmd = QString("subdivide(\"allfaces\",False)");
 	emit echoCommand( cmd );
+}
+
+void MainWindow::triangulate(void)
+{
+	undoPush();
+	setModified(true);
+	DLFL::triangulateAllFaces(&object);
+	active->recomputePatches();
+	active->recomputeNormals();
+	MainWindow::clearSelected();
+
+	// QString cmd = QString("subdivide(\"triangulate\",False)");
+	// emit echoCommand( cmd );
 }
 
 void MainWindow::splitValence2Vertices(void)      // Split Valence 2 vertices
