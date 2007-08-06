@@ -79,9 +79,20 @@ void MainWindow::select_face_loop() {
 	setMode(MainWindow::SelectFaceLoop);
 }
 
+void MainWindow::select_edge_ring() {
+	setMode(MainWindow::SelectEdgeRing);
+}
+
 void MainWindow::select_multiple_faces() {
 	setMode(MainWindow::MultiSelectFace);
-	//getActive()->showBrush();
+}
+
+void MainWindow::select_multiple_edges() {
+	setMode(MainWindow::MultiSelectEdge);
+}
+
+void MainWindow::select_multiple_vertices() {
+	setMode(MainWindow::MultiSelectVertex);
 }
 
 void MainWindow::select_similar_faces() {
@@ -454,6 +465,21 @@ void MainWindow::subdivideAllEdges(void)              // Sub-divide all edges
 {
 	undoPush();
 	DLFL::subdivideAllEdges(&object,MainWindow::num_e_subdivs);
+	MainWindow::clearSelected();
+	active->recomputePatches();
+	active->recomputeNormals();
+	redraw();
+}
+
+void MainWindow::subdivideSelectedEdges(void) // Subdivide all selected edges
+{
+	undoPush();
+	// DLFLEdgePtrArray eparray;
+	// eparray.resize(active->numSelectedEdges());
+	for (int i=0; i < active->numSelectedEdges(); ++i)	{
+		subdivideEdge(&object,MainWindow::num_e_subdivs, active->getSelectedEdge(i));
+	}  
+	// DLFL::subdivideEdges(&object,fparray,use_quads);
 	MainWindow::clearSelected();
 	active->recomputePatches();
 	active->recomputeNormals();
@@ -1353,18 +1379,22 @@ void MainWindow::deleteSelected(){
 	DLFLVertexPtrArray svptrarr;
 	DLFLFaceVertexPtrArray sfvptrarr;
 	
-	undoPush();
-	setModified(true);
+	vector<DLFLFaceVertexPtr>::iterator fvt;
+	vector<DLFLVertexPtr>::iterator vit;
+	vector<DLFLEdgePtr>::iterator eit;
+	vector<DLFLFacePtr>::iterator fit;
 	
+	// undoPush();
+	// setModified(true);
 	switch (selectionmask){
 		case MaskEdges:
 			septrarr = active->getSelectedEdges();
 			if ( septrarr[0] ) {
 				undoPush();
 				setModified(true);
-				vector<DLFLEdgePtr>::iterator it;
-				for(it = septrarr.begin(); it != septrarr.end(); it++)
-					DLFL::deleteEdge( &object, *it, MainWindow::delete_edge_cleanup);
+				vector<DLFLEdgePtr>::iterator eit;
+				for(eit = septrarr.begin(); eit != septrarr.end(); eit++)
+					DLFL::deleteEdge( &object, *eit, MainWindow::delete_edge_cleanup);
 				active->recomputePatches();
 				active->recomputeNormals();						
 			}			
@@ -1372,20 +1402,49 @@ void MainWindow::deleteSelected(){
 			redraw();
 		break;
 		case MaskVertices:
-			// svptrarr = active->getSelectedVertices();
-			// if ( svptrarr[0] ) {
-			// 	undoPush();
-			// 	setModified(true);
-			// 	vector<DLFLVertexPtr>::iterator it;
-			// 	for(it = svptrarr.begin(); it != svptrarr.end(); it++)
-			// 		object.removeVertex(*it);
-			// 	active->recomputePatches();
-			// 	active->recomputeNormals();						
-			// }			
-			// active->clearSelectedVertices();
-			// redraw();
+			svptrarr = active->getSelectedVertices();
+			if ( svptrarr[0] ) {
+				undoPush();
+				setModified(true);
+				for(vit = svptrarr.begin(); vit != svptrarr.end(); vit++){
+					(*vit)->getEdges(septrarr);
+					vector<DLFLEdgePtr>::iterator eit;
+					for(eit = septrarr.begin(); eit != septrarr.end(); eit++)
+						DLFL::deleteEdge( &object, *eit, MainWindow::delete_edge_cleanup);
+				}
+				active->recomputePatches();
+				active->recomputeNormals();						
+			}			
+			active->clearSelectedVertices();
+			redraw();
 		break;
 		case MaskFaces:
+		// sfptrarr = active->getSelectedFaces();
+		// if ( sfptrarr[0] ) {
+		// 	undoPush();
+		// 	setModified(true);
+		// 	for(fit = sfptrarr.begin(); fit != sfptrarr.end(); fit++){
+		// 		//get edges, collapse them
+		// 		(*fit)->getEdges(septrarr);
+		// 		for(eit = septrarr.begin(); eit != septrarr.end(); eit++)
+		// 			DLFL::collapseEdge( &object, *eit, MainWindow::delete_edge_cleanup);
+		// 		// (*fit)->getCorners(sfvptrarr);
+		// 		// for(fvt = sfvptrarr.begin(); fvt != sfvptrarr.end(); fvt++){
+		// 		// 	if (*fvt){
+		// 		// 		DLFLVertexPtr vptr = (*fvt)->getVertexPtr();
+		// 		// 		if (vptr){
+		// 		// 			vptr->getEdges(septrarr);
+		// 		// 			for(eit = septrarr.begin(); eit != septrarr.end(); eit++)
+		// 		// 				DLFL::deleteEdge( &object, *eit, MainWindow::delete_edge_cleanup);
+		// 		// 		}
+		// 		// 	}
+		// 		// } // end loop through corners of current face
+		// 	}//end loop through selected faces
+		// 	active->recomputePatches();
+		// 	active->recomputeNormals();						
+		// }			
+		// active->clearSelectedFaces();
+		// redraw();		
 		break;
 		case MaskCorners:
 		break;
@@ -1394,4 +1453,173 @@ void MainWindow::deleteSelected(){
 		default:
 		break;
 	};
+}
+
+void MainWindow::collapseSelectedEdges(){
+	DLFLEdgePtrArray septrarr;
+	vector<DLFLEdgePtr>::iterator eit;
+	septrarr = active->getSelectedEdges();
+	if ( septrarr[0] ) {
+		undoPush();
+		setModified(true);
+		vector<DLFLEdgePtr>::iterator eit;
+		for(eit = septrarr.begin(); eit != septrarr.end(); eit++){
+			if (*eit){
+				DLFL::collapseEdge( &object, *eit, MainWindow::delete_edge_cleanup);
+			}
+		}
+		active->recomputePatches();
+		active->recomputeNormals();						
+	}			
+	active->clearSelectedEdges();
+	redraw();
+}
+
+void MainWindow::selectEdgesFromFaces(){
+	DLFLEdgePtrArray septrarr;
+	DLFLFacePtrArray sfptrarr;
+	vector<DLFLFacePtr>::iterator fit;
+	vector<DLFLEdgePtr>::iterator eit;
+	//loop through selected faces, get corresponding edges, select them
+	sfptrarr = active->getSelectedFaces();
+	if ( sfptrarr[0] ) {
+		for(fit = sfptrarr.begin(); fit != sfptrarr.end(); fit++){
+			(*fit)->getEdges(septrarr);
+			vector<DLFLEdgePtr>::iterator eit;
+			for(eit = septrarr.begin(); eit != septrarr.end(); eit++){
+				if (!active->isSelected(*eit)){
+					active->setSelectedEdge(num_sel_edges,*eit);
+					num_sel_edges++;
+				}
+			}
+		}
+		active->recomputePatches();
+		active->recomputeNormals();						
+	}			
+	active->clearSelectedFaces();
+	redraw();		
+}
+
+void MainWindow::selectEdgesFromVertices(){
+	DLFLEdgePtrArray septrarr;
+	DLFLVertexPtrArray svptrarr;
+	vector<DLFLVertexPtr>::iterator vit;
+	vector<DLFLEdgePtr>::iterator eit;
+	//loop through selected vertices, get corresponding edges, select them
+	svptrarr = active->getSelectedVertices();
+	if ( svptrarr[0] ) {
+		for(vit = svptrarr.begin(); vit != svptrarr.end(); vit++){
+			(*vit)->getEdges(septrarr);
+			for(eit = septrarr.begin(); eit != septrarr.end(); eit++){
+				if (!active->isSelected(*eit)){
+					active->setSelectedEdge(num_sel_edges,*eit);
+					num_sel_edges++;
+				}
+			}
+		}
+		active->recomputePatches();
+		active->recomputeNormals();						
+	}			
+	active->clearSelectedVertices();
+	redraw();	
+}
+
+void MainWindow::selectFacesFromEdges(){
+	DLFLEdgePtrArray septrarr;
+	vector<DLFLEdgePtr>::iterator eit;
+	DLFLFacePtr fptr1, fptr2;
+	//loop through selected faces, get corresponding vertices, select them
+	septrarr = active->getSelectedEdges();
+	if ( septrarr[0] ) {
+		for(eit = septrarr.begin(); eit != septrarr.end(); eit++){
+			(*eit)->getFacePointers(fptr1,fptr2);
+			if (!active->isSelected(fptr1)){
+				active->setSelectedFace(num_sel_faces,fptr1);
+				num_sel_faces++;
+			}
+			if (!active->isSelected(fptr2)){
+				active->setSelectedFace(num_sel_faces,fptr2);
+				num_sel_faces++;
+			}
+		}
+		active->recomputePatches();
+		active->recomputeNormals();						
+	}			
+	active->clearSelectedEdges();
+	redraw();	
+}
+
+void MainWindow::selectFacesFromVertices(){
+	DLFLVertexPtrArray svptrarr;
+	vector<DLFLVertexPtr>::iterator vit;
+	DLFLFacePtrArray sfptrarr;
+	vector<DLFLFacePtr>::iterator fit;
+	//loop through selected faces, get corresponding edges, select them
+	svptrarr = active->getSelectedVertices();
+	if ( svptrarr[0] ) {
+		for(vit = svptrarr.begin(); vit != svptrarr.end(); vit++){
+			(*vit)->getFaces(sfptrarr);
+			for(fit = sfptrarr.begin(); fit != sfptrarr.end(); fit++){
+				if (!active->isSelected(*fit)){
+					active->setSelectedFace(num_sel_faces,*fit);
+					num_sel_faces++;
+				}
+			}
+		}
+		active->recomputePatches();
+		active->recomputeNormals();						
+	}			
+	active->clearSelectedVertices();
+	redraw();			
+}
+
+void MainWindow::selectVerticesFromFaces(){
+	DLFLFacePtrArray sfptrarr;
+	vector<DLFLFacePtr>::iterator fit;
+	DLFLFaceVertexPtrArray sfvptrarr;
+	vector<DLFLFaceVertexPtr>::iterator fvit;
+	DLFLVertexPtr vptr;
+	//loop through selected faces, get corresponding vertices, select them
+	sfptrarr = active->getSelectedFaces();
+	if ( sfptrarr[0] ) {
+		for(fit = sfptrarr.begin(); fit != sfptrarr.end(); fit++){
+			(*fit)->getCorners(sfvptrarr);
+			for(fvit = sfvptrarr.begin(); fvit != sfvptrarr.end(); fvit++){
+				vptr = (*fvit)->getVertexPtr();
+				if (!active->isSelected(vptr)){
+					active->setSelectedVertex(num_sel_verts,vptr);
+					num_sel_verts++;
+				}
+			}
+		}
+		active->recomputePatches();
+		active->recomputeNormals();						
+	}			
+	active->clearSelectedFaces();
+	redraw();	
+}
+
+void MainWindow::selectVerticesFromEdges(){	
+	DLFLEdgePtrArray septrarr;
+	vector<DLFLEdgePtr>::iterator eit;
+	DLFLVertexPtr vptr1,vptr2;
+	//loop through selected faces, get corresponding vertices, select them
+	septrarr = active->getSelectedEdges();
+	if ( septrarr[0] ) {
+		for(eit = septrarr.begin(); eit != septrarr.end(); eit++){
+			(*eit)->getVertexPointers(vptr1,vptr2);
+			if (!active->isSelected(vptr1)){
+				active->setSelectedVertex(num_sel_verts,vptr1);
+				num_sel_verts++;
+			}
+			if (!active->isSelected(vptr2)){
+				active->setSelectedVertex(num_sel_verts,vptr2);
+				num_sel_verts++;
+			}
+		}
+		active->recomputePatches();
+		active->recomputeNormals();						
+	}			
+	active->clearSelectedEdges();
+	redraw();	
 }

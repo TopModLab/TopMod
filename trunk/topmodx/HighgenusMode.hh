@@ -23,6 +23,7 @@ public:
 	HighgenusMode(QWidget *parent, QShortcutManager *sm, QWidget *actionList);
 	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
 	QMenu* getMenu();
+	void retranslateUi();
 	
 	QAction *mAddHoleHandleAction;
 	QAction *mAddHoleHandleCVAction;

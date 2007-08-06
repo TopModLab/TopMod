@@ -359,3 +359,7 @@ void BasicsMode::freezeTransforms()
 	yScaleSpinBox->setValue(1.0);
 	zScaleSpinBox->setValue(1.0);
 }
+
+void BasicsMode::retranslateUi(){
+	
+}

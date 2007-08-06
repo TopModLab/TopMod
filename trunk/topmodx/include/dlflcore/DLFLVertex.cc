@@ -209,16 +209,17 @@ namespace DLFL {
 
   void DLFLVertex::getEdges(DLFLEdgePtrArray& edges) const {
     // Return edges in an DLFLEdgePtrArray
+		// if (fvpList ){
+	    edges.clear(); edges.reserve(fvpList.size());
 
-    edges.clear(); edges.reserve(fvpList.size());
-
-    DLFLFaceVertexPtrList::const_iterator first, last;
-    DLFLFaceVertexPtr fvp = NULL;
-    first = fvpList.begin(); last = fvpList.end();
-    while ( first != last ) {
-      fvp = (*first); ++first;
-      edges.push_back(fvp->getEdgePtr());
-    }
+	    DLFLFaceVertexPtrList::const_iterator first, last;
+	    DLFLFaceVertexPtr fvp = NULL;
+	    first = fvpList.begin(); last = fvpList.end();
+	    while ( first != last ) {
+	      fvp = (*first); ++first;
+	      edges.push_back(fvp->getEdgePtr());
+	    }
+		// }
   }
 
   DLFLEdgePtr DLFLVertex::getEdgeTo(DLFLVertexPtr vp) {

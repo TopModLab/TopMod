@@ -675,3 +675,7 @@ void HighgenusMode::setupMengerSponge(){
 	mMengerSpongeWidget->setWindowTitle("Menger Sponge");
 	mMengerSpongeWidget->setLayout(mMengerSpongeLayout);
 }
+
+void HighgenusMode::retranslateUi(){
+	
+}

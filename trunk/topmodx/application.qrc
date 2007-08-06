@@ -16,22 +16,27 @@
     <file>images/clear_scriptinput.png</file>
     <file>images/clear_scriptoutput.png</file>
     <file>images/run_script.png</file>
+
 	<file>lang/topmod_ca.ts</file>
 	<file>lang/topmod_en.ts</file>
-	<file>lang/topmod_en_us.ts</file>
 	<file>lang/topmod_es.ts</file>
 	<file>lang/topmod_de.ts</file>
 	<file>lang/topmod_tr.ts</file>
 	<file>lang/topmod_fr.ts</file>
+	<file>lang/topmod_it.ts</file>
+	<file>lang/topmod_hi.ts</file>
+	
 	<file>lang/topmod_ca.qm</file>
 	<file>lang/topmod_en.qm</file>
-	<file>lang/topmod_en_us.qm</file>
 	<file>lang/topmod_es.qm</file>
 	<file>lang/topmod_de.qm</file>
 	<file>lang/topmod_tr.qm</file>
 	<file>lang/topmod_fr.qm</file>
-    <file>qss/modo.qss</file>
-    <file>qss/default.qss</file>
+	<file>lang/topmod_it.qm</file>
+	<file>lang/topmod_hi.qm</file>
+
+	<file>qss/modo.qss</file>
+	<file>qss/default.qss</file>
 	<file alias="cube.obj">objs/cube.obj</file>
 	<file alias="octahedron.obj">objs/octahedron.obj</file>
 	<file alias="tetrahedron.obj">objs/tetrahedron.obj</file>

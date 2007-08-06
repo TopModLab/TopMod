@@ -61,6 +61,14 @@ RemeshingMode::RemeshingMode(QWidget *parent, QShortcutManager *sm, QWidget *act
 	connect(mRootThreeAction, SIGNAL(triggered()), this, SLOT(triggerRootThree()));
 	actionList->addAction(mRootThreeAction);
 
+	mTriangulateAction = new QAction(/*QIcon(":images/doosabin_extrude.png"),*/tr("Triangulate"),this);
+	mTriangulateAction->setCheckable(true);
+	sm->registerAction(mTriangulateAction, "Remeshing", "");
+	mTriangulateAction->setStatusTip(tr("Enter Triangulate Remeshing Mode"));
+	mTriangulateAction->setToolTip(tr("Triangulate Remeshing Mode"));
+	connect(mTriangulateAction, SIGNAL(triggered()), this, SLOT(triggerTriangulate()));
+	actionList->addAction(mTriangulateAction);
+
 	mDualVertexTruncationAction = new QAction(/*QIcon(":images/doosabin_extrude.png"),*/tr("Dual Vertex Truncation"),this);
 	mDualVertexTruncationAction->setCheckable(true);
 	sm->registerAction(mDualVertexTruncationAction, "Remeshing", "");
@@ -343,6 +351,7 @@ QMenu* RemeshingMode::getMenu(){
 	
 	mThreeConversionMenu = new QMenu(tr("3-Conversion"));
 	mThreeConversionMenu->addAction(mRootThreeAction);
+	mThreeConversionMenu->addAction(mTriangulateAction);
 	mThreeConversionMenu->addAction(mDualVertexTruncationAction);
 	mThreeConversionMenu->addAction(mStellationAction);
 	mThreeConversionMenu->addAction(mDoubleStellationAction);
@@ -415,6 +424,7 @@ void RemeshingMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 	
 	actionGroup->addAction(mDualAction);
 	actionGroup->addAction(mRootThreeAction);
+	actionGroup->addAction(mTriangulateAction);
 	actionGroup->addAction(mDualVertexTruncationAction);
 	actionGroup->addAction(mStellationAction);
 	actionGroup->addAction(mDoubleStellationAction);
@@ -457,6 +467,7 @@ void RemeshingMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 	
 	toolBar->addAction(mDualAction);
 	toolBar->addAction(mRootThreeAction);
+	toolBar->addAction(mTriangulateAction);
 	toolBar->addAction(mDualVertexTruncationAction);
 	toolBar->addAction(mStellationAction);
 	toolBar->addAction(mDoubleStellationAction);
@@ -501,6 +512,7 @@ void RemeshingMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 	
 	stackedWidget->addWidget(mDualWidget);
 	stackedWidget->addWidget(mRootThreeWidget);
+	stackedWidget->addWidget(mTriangulateWidget);
 	stackedWidget->addWidget(mDualVertexTruncationWidget);
 	stackedWidget->addWidget(mStellationWidget);
 	stackedWidget->addWidget(mDoubleStellationWidget);
@@ -582,6 +594,7 @@ void RemeshingMode::triggerDual(){
 void RemeshingMode::setupThreeConversion(){
 
 	mRootThreeWidget = new QWidget;
+	mTriangulateWidget = new QWidget;
 	mDualVertexTruncationWidget = new QWidget;
 	mStellationWidget = new QWidget;
 	mDoubleStellationWidget = new QWidget;
@@ -605,6 +618,19 @@ void RemeshingMode::setupThreeConversion(){
 	mRootThreeLayout->setColumnStretch(1,1);
 	mRootThreeWidget->setWindowTitle("Root-3 Remeshing");
 	mRootThreeWidget->setLayout(mRootThreeLayout);
+
+	//triangulate
+	mTriangulateLayout = new QGridLayout;
+	mTriangulateLayout->setVerticalSpacing(1);
+	mTriangulateLayout->setHorizontalSpacing(1);
+	QPushButton *triangulateCreateButton = new QPushButton(tr("Perform Remeshing"), this);
+	connect(triangulateCreateButton, SIGNAL(clicked()), ((MainWindow*)mParent),SLOT(performRemeshing()) );
+	mTriangulateLayout->addWidget(triangulateCreateButton,0,0);
+
+	mTriangulateLayout->setRowStretch(1,1);
+	mTriangulateLayout->setColumnStretch(1,1);
+	mTriangulateWidget->setWindowTitle("Triangulate Remeshing");
+	mTriangulateWidget->setLayout(mTriangulateLayout);
 	
 	//dual vertex truncation
 	mDualVertexTruncationLayout = new QGridLayout;
@@ -722,6 +748,12 @@ void RemeshingMode::triggerRootThree(){
 
 	((MainWindow*)mParent)->setToolOptions(mRootThreeWidget);
 	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::Root3);
+}
+
+void RemeshingMode::triggerTriangulate(){
+
+	((MainWindow*)mParent)->setToolOptions(mTriangulateWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::Triangulate);
 }
 
 void RemeshingMode::triggerDualVertexTruncation(){
@@ -1379,4 +1411,8 @@ void RemeshingMode::triggerSubdivideFace(){
 
 	((MainWindow*)mParent)->setToolOptions(mSubdivideFaceWidget);
 	((MainWindow*)mParent)->setMode(MainWindow::SubdivideFace);
+}
+
+void RemeshingMode::retranslateUi(){
+	
 }

@@ -774,15 +774,17 @@ namespace DLFL {
 
   // Does this face contain the given face-vertex?
   bool DLFLFace::contains(DLFLFaceVertexPtr fvptr) {
-    if ( head ) {
-      DLFLFaceVertexPtr current = head; 
-      if ( current == fvptr ) return true;
-      current = current->next();
-      while ( current != head ) {
-				if ( current == fvptr ) return true;
-				current = current->next();
-      }
-    }
+		if (fvptr){
+	    if ( head ) {
+	      DLFLFaceVertexPtr current = head; 
+	      if ( current == fvptr ) return true;
+	      current = current->next();
+	      while ( current != head ) {
+					if ( current == fvptr ) return true;
+					current = current->next();
+	      }
+	    }
+		}
     return false;
   }
 
@@ -921,7 +923,7 @@ namespace DLFL {
     // Simply have to change the head pointer to point to the new face vertex
     // Check if fvptr belongs to this face. If yes, simply reset head to be fvptr
     // Otherwise don't change anything
-    if ( this->contains(fvptr) ) head = fvptr;
+    if ( fvptr && this->contains(fvptr) ) head = fvptr;
   }
 
   void DLFLFace::reverse(void) {

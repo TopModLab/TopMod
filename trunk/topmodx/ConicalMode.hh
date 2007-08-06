@@ -23,6 +23,7 @@ public:
 	ConicalMode(QWidget *parent, QShortcutManager *sm);
 	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
 	QMenu *getMenu();
+	void retranslateUi();
 	
 	QWidget *mCutbyEdgeWidget;
 	QWidget *mCutbyVertexWidget;

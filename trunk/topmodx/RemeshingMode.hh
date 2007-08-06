@@ -28,6 +28,7 @@ public:
 	RemeshingMode(QWidget *parent, QShortcutManager *sm, QWidget *actionList);
 	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
 	QMenu *getMenu();
+	void retranslateUi();
 
 		//dual
 	QGridLayout *mDualLayout;
@@ -36,6 +37,7 @@ public:
 	
 	//three conversion
 	QWidget *mRootThreeWidget;
+	QWidget *mTriangulateWidget;
 	QWidget *mDualVertexTruncationWidget;
 	QWidget *mStellationWidget;
 	QWidget *mDoubleStellationWidget;
@@ -45,6 +47,7 @@ public:
 	QWidget *mDualTwelveSixFourWidget;
 	
 	QGridLayout *mRootThreeLayout;
+	QGridLayout *mTriangulateLayout;
 	QGridLayout *mDualVertexTruncationLayout;
 	QGridLayout *mStellationLayout;
 	QGridLayout *mDoubleStellationLayout;
@@ -54,6 +57,7 @@ public:
 	QGridLayout *mDualTwelveSixFourLayout;
 	
 	QAction *mRootThreeAction;
+	QAction *mTriangulateAction;
 	QAction *mDualVertexTruncationAction;
 	QAction *mStellationAction;
 	QAction *mDoubleStellationAction;
@@ -190,6 +194,7 @@ public slots:
 	void triggerDual();
 
 	void triggerRootThree();
+	void triggerTriangulate();
 	void triggerDualVertexTruncation();
 	void triggerStellation();
 	void triggerDoubleStellation();

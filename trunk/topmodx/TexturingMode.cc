@@ -105,3 +105,7 @@ void TexturingMode::setupTileTexturing(){
 	mTileTexturingWidget->setLayout(mTileTexturingLayout);
 	
 }
+
+void TexturingMode::retranslateUi(){
+	
+}

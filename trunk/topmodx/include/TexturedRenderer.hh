@@ -27,13 +27,13 @@ protected :
   void readTexture(const char *imagefile) {
     QString filename(imagefile);
     if ( 	filename.indexOf(".jpg",filename.length()-5) == filename.length()-4 ||
-		filename.indexOf(".jpeg",filename.length()-5) == filename.length()-4 ||
-		filename.indexOf(".JPG",filename.length()-5) == filename.length()-4 ||
-		filename.indexOf(".JPEG",filename.length()-5) == filename.length()-4 ||
-		filename.indexOf(".png",filename.length()-5) == filename.length()-4 ||			  
-		filename.indexOf(".PNG",filename.length()-5) == filename.length()-4 )
+					filename.indexOf(".jpeg",filename.length()-5) == filename.length()-4 ||
+					filename.indexOf(".JPG",filename.length()-5) == filename.length()-4 ||
+					filename.indexOf(".JPEG",filename.length()-5) == filename.length()-4 ||
+					filename.indexOf(".png",filename.length()-5) == filename.length()-4 ||			  
+					filename.indexOf(".PNG",filename.length()-5) == filename.length()-4 )
       image = new QImage(imagefile);
-		
+		// std::cout << image->height() << "\n";
     if ( !image->isNull() )	{
       width = image->width(); 
       height = image->height(); 
@@ -42,16 +42,18 @@ protected :
   }
 
   void glTexture(void) {
+		std::cout << image->bits() << "\n";
+	
     // Do a glTexImage2D using the texture image data
     if ( image && !image->isNull() ) {
       if ( depth == 1 )
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width, height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, image->bits());
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width, height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, image->bits());
       else if ( depth == 2 )
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, width, height, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, image->bits());
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, width, height, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, image->bits());
       else if ( depth== 3 )
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image->bits());
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image->bits());
       else if ( depth == 4 )
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,	GL_RGBA, GL_UNSIGNED_BYTE, image->bits());
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,	GL_RGBA, GL_UNSIGNED_BYTE, image->bits());
     }
   }
 

@@ -148,6 +148,7 @@ bool MainWindow::deselect_faceverts = false;
 
 // for face loop selection 
 DLFLEdgePtr MainWindow::face_loop_start_edge = NULL;
+DLFLEdgePtr MainWindow::edge_ring_start_edge = NULL;
 
 /**
  * asdflkjasdf
@@ -155,6 +156,18 @@ DLFLEdgePtr MainWindow::face_loop_start_edge = NULL;
  **/
 MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(), redoList(), 
 																				 undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimitive(false), mSpinBoxMode(None) {
+																					
+																					
+	// i18n stuff
+	translator_es = new QTranslator(this);
+	translator_fr = new QTranslator(this);
+	translator_de = new QTranslator(this);
+	translator_tr = new QTranslator(this);
+	translator_it = new QTranslator(this);
+	translator_hi = new QTranslator(this);
+	translator_ca = new QTranslator(this);
+
+
 	// #ifdef __APPLE__
 	//mac icon
 	this->setWindowIcon(QIcon(":/images/topmod.png"));
@@ -292,8 +305,8 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	
 	//must happen after preference file is loaded
 	createStartupDialog();
-	retranslateUi();
 	
+	retranslateUi();
 	setExtrusionMode(CubicalExtrude);
 }
 
@@ -426,54 +439,53 @@ void MainWindow::createActions() {
 	connect(mPerspViewAct, SIGNAL(triggered()), this, SLOT(switchPerspView()));
 	mActionListWidget->addAction(mPerspViewAct);
 
-	mTopViewAct = new QAction( tr("&Top View"), this);
-	sm->registerAction(mTopViewAct, "View Menu", "");
-	mTopViewAct->setStatusTip(tr("Switch to Top View"));
-	connect(mTopViewAct, SIGNAL(triggered()), this, SLOT(switchTopView()));
-	// mActionListWidget->addAction(mTopViewAct);
-
-	mBottomViewAct = new QAction( tr("&Bottom View"), this);
-	sm->registerAction(mBottomViewAct, "View Menu", "");
-	mBottomViewAct->setStatusTip(tr("Switch to Bottom View"));
-	connect(mBottomViewAct, SIGNAL(triggered()), this, SLOT(switchBottomView()));
-	// mActionListWidget->addAction(mBottomViewAct);
-
-	mFrontViewAct = new QAction( tr("&Front View"), this);
-	sm->registerAction(mFrontViewAct, "View Menu", "");
-	mFrontViewAct->setStatusTip(tr("Switch to Front View"));
-	connect(mFrontViewAct, SIGNAL(triggered()), this, SLOT(switchFrontView()));
-	// mActionListWidget->addAction(mFrontViewAct);
-
-	mBackViewAct = new QAction( tr("B&ack View"), this);
-	sm->registerAction(mBackViewAct, "View Menu", "");
-	mBackViewAct->setStatusTip(tr("Switch to Back View"));
-	connect(mBackViewAct, SIGNAL(triggered()), this, SLOT(switchBackView()));
-	// mActionListWidget->addAction(mBackViewAct);
-
-	mLeftViewAct = new QAction( tr("&Left View"), this);
-	sm->registerAction(mLeftViewAct, "View Menu", "");
-	mLeftViewAct->setStatusTip(tr("Switch to Left View"));
-	connect(mLeftViewAct, SIGNAL(triggered()), this, SLOT(switchLeftView()));
-	// mActionListWidget->addAction(mLeftViewAct);
-
-	mRightViewAct = new QAction( tr("&Right View"), this);
-	sm->registerAction(mRightViewAct, "View Menu", "");
-	mRightViewAct->setStatusTip(tr("Switch to Right View"));
-	connect(mRightViewAct, SIGNAL(triggered()), this, SLOT(switchRightView()));
-	// mActionListWidget->addAction(mRightViewAct);
+	// mTopViewAct = new QAction( tr("&Top View"), this);
+	// sm->registerAction(mTopViewAct, "View Menu", "");
+	// mTopViewAct->setStatusTip(tr("Switch to Top View"));
+	// connect(mTopViewAct, SIGNAL(triggered()), this, SLOT(switchTopView()));
+	// // mActionListWidget->addAction(mTopViewAct);
+	// 
+	// mBottomViewAct = new QAction( tr("&Bottom View"), this);
+	// sm->registerAction(mBottomViewAct, "View Menu", "");
+	// mBottomViewAct->setStatusTip(tr("Switch to Bottom View"));
+	// connect(mBottomViewAct, SIGNAL(triggered()), this, SLOT(switchBottomView()));
+	// // mActionListWidget->addAction(mBottomViewAct);
+	// 
+	// mFrontViewAct = new QAction( tr("&Front View"), this);
+	// sm->registerAction(mFrontViewAct, "View Menu", "");
+	// mFrontViewAct->setStatusTip(tr("Switch to Front View"));
+	// connect(mFrontViewAct, SIGNAL(triggered()), this, SLOT(switchFrontView()));
+	// // mActionListWidget->addAction(mFrontViewAct);
+	// 
+	// mBackViewAct = new QAction( tr("B&ack View"), this);
+	// sm->registerAction(mBackViewAct, "View Menu", "");
+	// mBackViewAct->setStatusTip(tr("Switch to Back View"));
+	// connect(mBackViewAct, SIGNAL(triggered()), this, SLOT(switchBackView()));
+	// // mActionListWidget->addAction(mBackViewAct);
+	// 
+	// mLeftViewAct = new QAction( tr("&Left View"), this);
+	// sm->registerAction(mLeftViewAct, "View Menu", "");
+	// mLeftViewAct->setStatusTip(tr("Switch to Left View"));
+	// connect(mLeftViewAct, SIGNAL(triggered()), this, SLOT(switchLeftView()));
+	// // mActionListWidget->addAction(mLeftViewAct);
+	// 
+	// mRightViewAct = new QAction( tr("&Right View"), this);
+	// sm->registerAction(mRightViewAct, "View Menu", "");
+	// mRightViewAct->setStatusTip(tr("Switch to Right View"));
+	// connect(mRightViewAct, SIGNAL(triggered()), this, SLOT(switchRightView()));
+	// // mActionListWidget->addAction(mRightViewAct);
 
 	//Display Menu Actions
-	// mFullscreenAct = new QAction(QIcon(":images/view-fullscreen.png"),tr("&Full Screen"), this);
-	// mFullscreenAct->setCheckable(true);
-	// sm->registerAction( mFullscreenAct, "Display Menu", "");
-	// mFullscreenAct->setStatusTip(tr("Toggle Full Screen"));
-	// connect(mFullscreenAct, SIGNAL(triggered()), active, SLOT(toggleFullScreen()) );
+	mFullscreenAct = new QAction(QIcon(":images/view-fullscreen.png"),tr("&Full Screen"), this);
+	mFullscreenAct->setCheckable(true);
+	sm->registerAction( mFullscreenAct, "Display Menu", "");
+	mFullscreenAct->setStatusTip(tr("Toggle Full Screen"));
+	connect(mFullscreenAct, SIGNAL(triggered()), active, SLOT(toggleFullScreen()) );
 	// mActionListWidget->addAction(mFullscreenAct);
 
 	showVerticesAct = new QAction(tr("Show &Vertices"), this);
 	showVerticesAct->setCheckable(true);
 	sm->registerAction(showVerticesAct, "Display Menu", "V");
-	// showVerticesAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(showVerticesAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleVertices()));
 	mActionListWidget->addAction(showVerticesAct);
 
@@ -504,7 +516,6 @@ void MainWindow::createActions() {
 	showSilhouetteAct = new QAction(tr("Show &Silhouette"), this);
 	showSilhouetteAct->setCheckable(true);
 	sm->registerAction(showSilhouetteAct, "Display Menu", "S" );
-	// showSilhouetteAct->setStatusTip((tr"Blah"));
 	connect(showSilhouetteAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleSilhouette()));
 	mActionListWidget->addAction(showSilhouetteAct);
 
@@ -512,28 +523,24 @@ void MainWindow::createActions() {
 	showWireframeAct->setCheckable(true);
 	showWireframeAct->setChecked(true);
 	sm->registerAction(showWireframeAct, "Display Menu", "W");
-	// showWireframeAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(showWireframeAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleWireframe()));
 	mActionListWidget->addAction(showWireframeAct);
 
 	showCoordinateAxesAct = new QAction(tr("Show &Coordinate Axes"), this);
 	showCoordinateAxesAct->setCheckable(true);
 	sm->registerAction(showCoordinateAxesAct, "Display Menu", "X");
-	// showCoordinateAxesAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(showCoordinateAxesAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleAxes()));
 	mActionListWidget->addAction(showCoordinateAxesAct);
 
 	objectOrientationAct = new QAction(tr("Reverse Object"), this);
 	objectOrientationAct->setCheckable(true);
 	sm->registerAction(objectOrientationAct, "Display Menu", "R");
-	// objectOrienationAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(objectOrientationAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleObjectOrientation()));
 	mActionListWidget->addAction(objectOrientationAct);
 
 	mShowNormalsAct = new QAction(tr("Show &Normals"), this);
 	mShowNormalsAct->setCheckable(true);
 	sm->registerAction(mShowNormalsAct, "Display Menu", "N");
-	// objectOrienationAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(mShowNormalsAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleNormals()));
 	mActionListWidget->addAction(mShowNormalsAct);
 
@@ -786,6 +793,12 @@ void MainWindow::createActions() {
 	connect(selectVertexAct, SIGNAL(triggered()), this, SLOT(select_vertex()));
 	mActionListWidget->addAction(selectVertexAct);
 
+	selectMultipleVerticesAct = new QAction(tr("Select Multiple Vertices"), this);
+	sm->registerAction(selectMultipleVerticesAct, "Selection", "");
+	selectMultipleVerticesAct->setStatusTip(tr("Select multiple vertices"));
+	connect(selectMultipleVerticesAct, SIGNAL(triggered()), this, SLOT(select_multiple_vertices()));
+	mActionListWidget->addAction(selectMultipleVerticesAct);
+
 	mEditVertexAct = new QAction(tr("Edit Verte&x"), this);
 	sm->registerAction(mEditVertexAct, "Selection", "SHIFT+V");
 	mEditVertexAct->setStatusTip(tr("Select and Move Vertices One at a time."));
@@ -835,11 +848,29 @@ void MainWindow::createActions() {
 	connect( selectEdgeAct , SIGNAL( triggered() ), this,SLOT( select_edge() ) );
 	mActionListWidget->addAction(selectEdgeAct);
 
+	selectMultipleEdgesAct = new QAction(tr("Select Multiple Edges"), this);
+	sm->registerAction(selectMultipleEdgesAct, "Selection", "");
+	selectMultipleEdgesAct->setStatusTip(tr("Select multiple edges"));
+	connect( selectMultipleEdgesAct , SIGNAL( triggered() ), this,SLOT( select_multiple_edges() ) );
+	mActionListWidget->addAction(selectMultipleEdgesAct);
+	
+	mCollapseSelectedEdgesAct = new QAction(tr("Collapse Selected Edges"), this);
+	sm->registerAction(mCollapseSelectedEdgesAct, "Edit Menu", "ALT+C");
+	mCollapseSelectedEdgesAct->setStatusTip(tr("Collapse Selected Edges"));
+	connect(mCollapseSelectedEdgesAct, SIGNAL(triggered()), this, SLOT(collapseSelectedEdges()));
+	mActionListWidget->addAction(mCollapseSelectedEdgesAct);
+
 	selectEdgeLoopAct = new QAction(tr("Select Edge &Loop"), this);
 	sm->registerAction(selectEdgeLoopAct, "Selection", "SHIFT+L");
 	selectEdgeLoopAct->setStatusTip(tr("Select an Edge Loop"));
 	connect( selectEdgeLoopAct , SIGNAL( triggered() ), this,SLOT( select_edge_loop() ) );
 	mActionListWidget->addAction(selectEdgeLoopAct);
+
+	selectEdgeRingAct = new QAction(tr("Select Edge &Ring"), this);
+	sm->registerAction(selectEdgeRingAct, "Selection", "SHIFT+R");
+	selectEdgeRingAct->setStatusTip(tr("Select an edge ring."));
+	connect(selectEdgeRingAct, SIGNAL(triggered()), this, SLOT(select_edge_ring() ) );
+	mActionListWidget->addAction(selectEdgeRingAct);
 
 	selectCornerAct = new QAction(tr("Select &Corner"), this);
 	sm->registerAction(selectCornerAct, "Selection", "SHIFT+C");
@@ -857,6 +888,38 @@ void MainWindow::createActions() {
 	connect( clearSelectedModeAct , SIGNAL( triggered() ), this, SLOT( clear_selected() ) );
 	mActionListWidget->addAction(clearSelectedModeAct);
 
+	selectEdgesFromFacesAct = new QAction(tr("Select Edges from Faces"), this);
+	sm->registerAction(selectEdgesFromFacesAct, "Selection", "");
+	connect( selectEdgesFromFacesAct , SIGNAL( triggered() ), this, SLOT( selectEdgesFromFaces() ) );
+	mActionListWidget->addAction(selectEdgesFromFacesAct);
+	
+	selectEdgesFromVerticesAct = new QAction(tr("Select Edges from Vertices"), this);
+	sm->registerAction(selectEdgesFromVerticesAct, "Selection", "");
+	connect( selectEdgesFromVerticesAct , SIGNAL( triggered() ), this, SLOT( selectEdgesFromVertices() ) );
+	mActionListWidget->addAction(selectEdgesFromVerticesAct);
+	
+	selectFacesFromEdgesAct = new QAction(tr("Select Faces from Edges"), this);
+	sm->registerAction(selectFacesFromEdgesAct, "Selection", "");
+	connect( selectFacesFromEdgesAct , SIGNAL( triggered() ), this, SLOT( selectFacesFromEdges() ) );
+	mActionListWidget->addAction(selectFacesFromEdgesAct);
+	
+	selectFacesFromVerticesAct = new QAction(tr("Select Faces from Vertices"), this);
+	sm->registerAction(selectFacesFromVerticesAct, "Selection", "");
+	connect( selectFacesFromVerticesAct , SIGNAL( triggered() ), this, SLOT( selectFacesFromVertices() ) );
+	mActionListWidget->addAction(selectFacesFromVerticesAct);
+	
+	selectVerticesFromEdgesAct = new QAction(tr("Select Vertices from Edges"), this);
+	sm->registerAction(selectVerticesFromEdgesAct, "Selection", "CTRL+I");
+	connect( selectVerticesFromEdgesAct , SIGNAL( triggered() ), this, SLOT( selectVerticesFromEdges() ) );
+	mActionListWidget->addAction(selectVerticesFromEdgesAct);
+	
+	selectVerticesFromFacesAct = new QAction(tr("Select Vertices from Faces"), this);
+	sm->registerAction(selectVerticesFromFacesAct, "Selection", "CTRL+I");
+	connect( selectVerticesFromFacesAct , SIGNAL( triggered() ), this, SLOT( selectVerticesFromFaces() ) );
+	mActionListWidget->addAction(selectVerticesFromFacesAct);
+	
+
+	//selection masks
 	mSelectVerticesMaskAct = new QAction(tr("Select &Vertices"), this);
 	mSelectVerticesMaskAct->setCheckable(true);
 	sm->registerAction(mSelectVerticesMaskAct, "Selection", "");
@@ -902,34 +965,64 @@ void MainWindow::createActions() {
 
 	//LANGUAGE MENU BAR ACTIONS
 	englishAct = new QAction(tr("English"),this);
-	//sm->connect( englishAct , SIGNAL( triggered() ), SLOT  ( configure() ) );
-	sm->registerAction(englishAct, "Languages", "CTRL+F7");
+	englishAct->setCheckable(true);
+	connect( englishAct , SIGNAL( triggered() ), this, SLOT  ( setLanguageEnglish() ) );
+	sm->registerAction(englishAct, "Languages", "CTRL+ALT+1");
 	mActionListWidget->addAction(englishAct);
 
 	spanishAct = new QAction(tr("Spanish"),this);
-	//sm->connect( spanishAct , SIGNAL( triggered() ), SLOT  ( configure() ) );
-	sm->registerAction(spanishAct, "Languages", "CTRL+F8");
+	spanishAct->setCheckable(true);
+	connect( spanishAct , SIGNAL( triggered() ), this, SLOT  ( setLanguageSpanish() ) );
+	sm->registerAction(spanishAct, "Languages", "CTRL+ALT+2");
 	mActionListWidget->addAction(spanishAct);
 
 	germanAct = new QAction(tr("German"),this);
-	//sm->connect( germanAct , SIGNAL( triggered() ), SLOT  ( configure() ) );
-	sm->registerAction(germanAct, "Languages", "CTRL+F9");
+	germanAct->setCheckable(true);
+	connect( germanAct , SIGNAL( triggered() ), this, SLOT  ( setLanguageGerman() ) );
+	sm->registerAction(germanAct, "Languages", "CTRL+ALT+3");
 	mActionListWidget->addAction(germanAct);
 
 	frenchAct = new QAction(tr("French"),this);
-	//sm->connect( frenchAct , SIGNAL( triggered() ), SLOT  ( configure() ) );
-	sm->registerAction(frenchAct, "Languages", "CTRL+F10");
+	frenchAct->setCheckable(true);
+	connect( frenchAct , SIGNAL( triggered() ), this, SLOT  ( setLanguageFrench() ) );
+	sm->registerAction(frenchAct, "Languages", "CTRL+ALT+4");
 	mActionListWidget->addAction(frenchAct);
+	
+	italianAct = new QAction(tr("Italian"),this);
+	italianAct->setCheckable(true);
+	connect( italianAct , SIGNAL( triggered() ), this, SLOT  ( setLanguageItalian() ) );
+	sm->registerAction(italianAct, "Languages", "CTRL+ALT+5");
+	mActionListWidget->addAction(italianAct);
 
 	turkishAct = new QAction(tr("Turkish"),this);
-	//sm->connect( turkishAct , SIGNAL( triggered() ), SLOT  ( configure() ) );
-	sm->registerAction(turkishAct, "Languages", "CTRL+F11");
+	turkishAct->setCheckable(true);
+	connect( turkishAct , SIGNAL( triggered() ), this, SLOT  ( setLanguageTurkish() ) );
+	sm->registerAction(turkishAct, "Languages", "CTRL+ALT+6");
 	mActionListWidget->addAction(turkishAct);
 
 	catalanAct = new QAction(tr("Catalan"),this);
-	// sm->connect( catalanAct , SIGNAL( triggered() ), SLOT  ( configure() ) );
-	sm->registerAction(catalanAct, "Languages", "CTRL+F12");
+	catalanAct->setCheckable(true);
+	connect( catalanAct , SIGNAL( triggered() ), this, SLOT  ( setLanguageCatalan() ) );
+	sm->registerAction(catalanAct, "Languages", "CTRL+ALT+7");
 	mActionListWidget->addAction(catalanAct);
+
+	hindiAct = new QAction(tr("Hindi"),this);
+	hindiAct->setCheckable(true);
+	connect( hindiAct , SIGNAL( triggered() ), this, SLOT  ( setLanguageHindi() ) );
+	sm->registerAction(hindiAct, "Languages", "CTRL+ALT+8");
+	mActionListWidget->addAction(hindiAct);
+	
+	mLanguageActionGroup = new QActionGroup(this);
+	mLanguageActionGroup->setExclusive(true);
+	mLanguageActionGroup->addAction(englishAct);
+	mLanguageActionGroup->addAction(spanishAct);
+	mLanguageActionGroup->addAction(germanAct);
+	mLanguageActionGroup->addAction(frenchAct);
+	mLanguageActionGroup->addAction(italianAct);
+	mLanguageActionGroup->addAction(turkishAct);
+	mLanguageActionGroup->addAction(catalanAct);
+	mLanguageActionGroup->addAction(hindiAct);
+	englishAct->setChecked(true);
 
 #ifdef WITH_VERSE
 	//verse menu actions
@@ -975,6 +1068,12 @@ void MainWindow::createActions() {
 	connect(mSubdivideSelectedFacesAct, SIGNAL(triggered()), this, SLOT(subdivideSelectedFaces()));
 	sm->registerAction(mSubdivideSelectedFacesAct, "Tools Menu", "CTRL+B");
 	mActionListWidget->addAction(mSubdivideSelectedFacesAct);
+
+	mSubdivideSelectedEdgesAct = new QAction(tr("Subdivide Selected Edges"), this);
+	mSubdivideSelectedEdgesAct->setStatusTip( tr("Subdivide all Selected Edges") );
+	connect(mSubdivideSelectedEdgesAct, SIGNAL(triggered()), this, SLOT(subdivideSelectedEdges()));
+	sm->registerAction(mSubdivideSelectedEdgesAct, "Tools Menu", "CTRL+SHIFT+E");
+	mActionListWidget->addAction(mSubdivideSelectedEdgesAct);
 	
 	mPerformRemeshingAct = new QAction(tr("Perform Remeshing"), this);
 	mPerformRemeshingAct->setStatusTip( tr("Perform the current remeshing scheme") );
@@ -1177,10 +1276,19 @@ void MainWindow::createMenus(){
 	mSelectionMenu->addAction(clearSelectedModeAct);
 	mSelectionMenu->addSeparator();
 	mSelectionMenu->addAction(selectEdgeAct);
+	mSelectionMenu->addAction(selectMultipleEdgesAct);
 	mSelectionMenu->addAction(selectEdgeLoopAct);
+	mSelectionMenu->addAction(selectEdgeRingAct);
+	mSelectionMenu->addAction(mCollapseSelectedEdgesAct);	
+	mSelectionMenu->addAction(mSubdivideSelectedEdgesAct);
+	mSelectionMenu->addAction(selectEdgesFromFacesAct);
+	mSelectionMenu->addAction(selectEdgesFromVerticesAct);
 	mSelectionMenu->addSeparator();
 	mSelectionMenu->addAction(selectVertexAct);
+	mSelectionMenu->addAction(selectMultipleVerticesAct);
 	mSelectionMenu->addAction(mEditVertexAct);
+	mSelectionMenu->addAction(selectVerticesFromFacesAct);
+	mSelectionMenu->addAction(selectVerticesFromEdgesAct);
 	mSelectionMenu->addAction(selectCornerAct);
 	mSelectionMenu->addSeparator();
 	mSelectionMenu->addAction(selectFaceAct);
@@ -1188,7 +1296,9 @@ void MainWindow::createMenus(){
 	mSelectionMenu->addAction(selectMultipleFacesAct);
 	mSelectionMenu->addAction(selectSimilarFacesAct);
 	mSelectionMenu->addAction(selectCheckerboardFacesAct);
-	// mSelectionMenu->addSeparator();
+	mSelectionMenu->addAction(selectFacesFromEdgesAct);
+	mSelectionMenu->addAction(selectFacesFromVerticesAct);
+	mSelectionMenu->addSeparator();
 	
 	mToolsMenu = new QMenu(tr("&Tools"));
 	mToolsMenu->setTearOffEnabled(true);
@@ -1201,6 +1311,7 @@ void MainWindow::createMenus(){
 	mToolsMenu->addAction(mExtrudeMultipleAct);
 	mToolsMenu->addAction(mPerformExtrusionAct);
 	mToolsMenu->addAction(mSubdivideSelectedFacesAct);
+	mToolsMenu->addAction(mSubdivideSelectedEdgesAct);
 	menuBar->addMenu(mToolsMenu);
 
 	mRemeshingMenu = mRemeshingMode->getMenu();
@@ -1263,19 +1374,21 @@ void MainWindow::createMenus(){
 	mHelpMenu->addAction(mTopModWebAct);
 	mHelpMenu->addAction(mTopModResearchAct);
 	mHelpMenu->addSeparator();
+	mLanguageMenu = new QMenu(tr("&Language"));
+	// mLanguageMenu->setTearOffEnabled(true);
+	mHelpMenu->addMenu(mLanguageMenu);
+	mLanguageMenu->addAction(englishAct);
+	mLanguageMenu->addAction(spanishAct);
+	mLanguageMenu->addAction(germanAct);
+	mLanguageMenu->addAction(frenchAct);
+	mLanguageMenu->addAction(italianAct);
+	mLanguageMenu->addAction(turkishAct);
+	mLanguageMenu->addAction(catalanAct);
+	mLanguageMenu->addAction(hindiAct);
+	mHelpMenu->addSeparator();
 	mHelpMenu->addAction(mAboutAct);
 	mHelpMenu->addAction(mAboutQtAct);
-	
-	// mLanguageMenu = new QMenu(tr("&Language"));
-	// mLanguageMenu->setTearOffEnabled(true);
-	// settingsMenu->addMenu(mLanguageMenu);
-	// mLanguageMenu->addAction(englishAct);
-	// mLanguageMenu->addAction(spanishAct);
-	// mLanguageMenu->addAction(germanAct);
-	// mLanguageMenu->addAction(frenchAct);
-	// mLanguageMenu->addAction(turkishAct);
-	// mLanguageMenu->addAction(catalanAct);
-	
+		
 	mRightClickMenu = new QMenu();
 
 }
@@ -1461,8 +1574,8 @@ void MainWindow::createStartupDialog(){
 	mStartupDialogLayout->addWidget(mShowStartupDialogAtStartupCheckBox,5,0);
 	
 	//download quicktime link label
-	QLabel *quicktimeLabel = new QLabel(tr("Quicktime 7.2 or greater recommended."));
-	QLabel *downloadQuicktimeLabel = new QLabel(tr("<h5>Quicktime 7.2 or greater recommended.<br /><a href=\"http://apple.com/quicktime/\">Download now.</a></h5>"));
+	quicktimeLabel = new QLabel(tr("Quicktime 7.2 or greater recommended."));
+	downloadQuicktimeLabel = new QLabel(tr("<h5>Quicktime 7.2 or greater recommended.<br /><a href=\"http://apple.com/quicktime/\">Download now.</a></h5>"));
 	downloadQuicktimeLabel->setOpenExternalLinks(true);
 	mStartupDialogLayout->addWidget(downloadQuicktimeLabel,5,1, Qt::AlignRight);
 		
@@ -1643,7 +1756,7 @@ void MainWindow::help() {
 * \brief will eventually check for updates on the TopMod website and download the necessary files
 */
 void MainWindow::checkForUpdates(){
-	QDesktopServices::openUrl(QUrl("http://www.ends170.com/topmod"));
+	QDesktopServices::openUrl(QUrl("http://www.ends170.com/topmod/?page_id=5"));
 }
 
 /**
@@ -1849,6 +1962,8 @@ void MainWindow::doSelection(int x, int y) {
 
 	DLFLEdgePtrArray septrarr;
 	DLFLEdgePtrArray::iterator eit;
+	DLFLEdgePtrArray svptrarr;
+	DLFLEdgePtrArray::iterator vit;
 	DLFLFacePtrArray sfptrarr;
 	DLFLFacePtrArray::iterator first, last;
 
@@ -1885,8 +2000,26 @@ void MainWindow::doSelection(int x, int y) {
 		break;
 	case MultiSelectVertex :
 		svptr = active->selectVertex(x,y);
-		if ( !active->isSelected(svptr) )
-			active->setSelectedVertex(num_sel_verts,svptr);
+		if ( QApplication::keyboardModifiers() == Qt::ControlModifier) {
+			if ( active->isSelected(svptr)){
+				active->clearSelectedVertex(svptr);
+				num_sel_verts--;
+			}
+			active->redraw();
+			svptrarr.clear();
+		}
+		else {
+			svptr = active->selectVertex(x,y);
+			if ( !active->isSelected(svptr)){
+				active->setSelectedVertex(num_sel_verts,svptr);
+				num_sel_verts++;
+			}
+			active->redraw();
+			svptrarr.clear();
+		}	
+		// svptr = active->selectVertex(x,y);
+		// if ( !active->isSelected(svptr) )
+		// 	active->setSelectedVertex(num_sel_verts,svptr);
 		break;
 	case DeleteEdge :
 	case SubdivideEdge :
@@ -1906,8 +2039,26 @@ void MainWindow::doSelection(int x, int y) {
 		break;
 	case MultiSelectEdge :
 		septr = active->selectEdge(x,y);
-		if ( !active->isSelected(septr) )
-			active->setSelectedEdge(num_sel_edges,septr);
+		if ( QApplication::keyboardModifiers() == Qt::ControlModifier) {
+			if ( active->isSelected(septr)){
+				active->clearSelectedEdge(septr);
+				num_sel_edges--;
+			}
+			active->redraw();
+			septrarr.clear();
+		}
+		else {
+			septr = active->selectEdge(x,y);
+			if ( !active->isSelected(septr)){
+				active->setSelectedEdge(num_sel_edges,septr);
+				num_sel_edges++;
+			}
+			active->redraw();
+			septrarr.clear();
+		}	
+		// septr = active->selectEdge(x,y);
+		// if ( !active->isSelected(septr) )
+		// 	active->setSelectedEdge(num_sel_edges,septr);
 		break;
 	case SelectEdgeLoop:
 		if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
@@ -1969,6 +2120,24 @@ void MainWindow::doSelection(int x, int y) {
 			else { //select
 				face_loop_start_edge = septr;
 				getFaceLoopSelection(septr, true, NULL, true);
+			}
+		}
+		active->redraw();
+		break;
+	case SelectEdgeRing:
+		if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
+			active->clearSelectedEdges();
+		}
+		septr = active->selectEdge(x,y);
+		active->setSelectedEdge(num_sel_edges,septr);
+		if ( septr ){
+			if (QApplication::keyboardModifiers() == Qt::ControlModifier){ // deselect
+				edge_ring_start_edge = septr;
+				getEdgeRingSelection(septr, true, NULL, false);
+			}
+			else { //select
+				edge_ring_start_edge = septr;
+				getEdgeRingSelection(septr, true, NULL, true);
 			}
 		}
 		active->redraw();
@@ -2112,6 +2281,7 @@ void MainWindow::getRightClickMenu(){
 		SelectVertex :
 		break;
 		SelectEdge :
+		mRightClickMenu->addAction(mSubdivideSelectedEdgesAct);
 		break;
 		SelectFace :
 		mRightClickMenu->addAction(mSubdivideSelectedFacesAct);
@@ -2121,6 +2291,7 @@ void MainWindow::getRightClickMenu(){
 		MultiSelectVertex :
 		break;
 		MultiSelectEdge :
+		mRightClickMenu->addAction(mSubdivideSelectedEdgesAct);
 		break;
 		MultiSelectFace :
 		mRightClickMenu->addAction(mSubdivideSelectedFacesAct);
@@ -2137,10 +2308,14 @@ void MainWindow::getRightClickMenu(){
 		SubdivideEdge :
 		break;
 		CollapseEdge :
+		mRightClickMenu->addAction(mSubdivideSelectedEdgesAct);
+		mRightClickMenu->addAction(mCollapseSelectedEdgesAct);
 		break;
 		SpliceCorners :
 		break;
 		ConnectEdges :
+		mRightClickMenu->addAction(mSubdivideSelectedEdgesAct);
+		mRightClickMenu->addAction(mCollapseSelectedEdgesAct);
 		break;
 		ExtrudeFace :
 		ExtrudeFaceDS :
@@ -2194,6 +2369,8 @@ void MainWindow::getRightClickMenu(){
 		break;
 		SelectFaceLoop :
 		break;
+		SelectEdgeRing :
+		break;
 		SelectSimilarFaces :
 		mRightClickMenu->addAction(mSubdivideSelectedFacesAct);
 		break;
@@ -2204,13 +2381,21 @@ void MainWindow::getRightClickMenu(){
 	
 	switch (selectionmask){
 		case MaskVertices:
+			mRightClickMenu->addAction(mDeleteSelectedAct);
 			mRightClickMenu->addAction(selectVertexAct);
+			mRightClickMenu->addAction(selectMultipleVerticesAct);
+			mRightClickMenu->addAction(mEditVertexAct);
 		break;
 		case MaskEdges: 
+			mRightClickMenu->addAction(mDeleteSelectedAct);
+			mRightClickMenu->addAction(mCollapseSelectedEdgesAct);
 			mRightClickMenu->addAction(selectEdgeAct);
+			mRightClickMenu->addAction(selectMultipleEdgesAct);
 			mRightClickMenu->addAction(selectEdgeLoopAct);
+			mRightClickMenu->addAction(selectEdgeRingAct);
 		break;
 		case MaskFaces://face stuff
+			mRightClickMenu->addAction(mDeleteSelectedAct);
 			mRightClickMenu->addAction(selectFaceAct);
 			mRightClickMenu->addAction(selectFaceLoopAct);
 			mRightClickMenu->addAction(selectMultipleFacesAct);
@@ -2218,6 +2403,7 @@ void MainWindow::getRightClickMenu(){
 			mRightClickMenu->addAction(selectCheckerboardFacesAct);
 		break;
 		case MaskCorners:
+			mRightClickMenu->addAction(mDeleteSelectedAct);
 			mRightClickMenu->addAction(selectCornerAct);
 		break;
 		default:
@@ -2353,6 +2539,22 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 					}
 					// active->clearSelectedEdges();
 					active->redraw();			
+					break;
+				case SelectEdgeRing:
+					if ( active->numSelectedEdges() >= 1 ){
+						DLFLEdgePtr septr = active->getSelectedEdge(0);
+						if (septr){
+							if (QApplication::keyboardModifiers() == Qt::ControlModifier){ // deselect
+								edge_ring_start_edge = septr;
+								getEdgeRingSelection(septr, true, NULL, false);
+							}
+							else { //select
+								edge_ring_start_edge = septr;
+								getEdgeRingSelection(septr, true, NULL, true);
+							}
+						}
+					}
+					active->redraw();
 					break;
 				case SelectFaceLoop:
 					if ( active->numSelectedEdges() >= 1 ){
@@ -2852,6 +3054,12 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 				case MultiSelectFace :
 					// num_sel_faces++;
 					break;
+				case MultiSelectEdge :
+					break;
+				case MultiSelectVertex :
+					break;
+				case MultiSelectFaceVertex :
+					break;
 					//from ozgur
 				case CutEdge :
 					if ( active->numSelectedEdges() >= 1 )
@@ -2997,6 +3205,9 @@ void MainWindow::performRemeshing(void) {
 			break;
 		case Root3 :
 			subdivideRoot3();
+			break;
+		case Triangulate :
+			triangulate();
 			break;
 		case DualVertexTrunc :
 			subdivideSqrt3();
@@ -3174,6 +3385,7 @@ void MainWindow::setMode(Mode m) {
 		break;
 	case SelectEdge :
 	case SelectEdgeLoop :
+	case SelectEdgeRing :
 	case MultiSelectEdge :
 	case DeleteEdge :
 	case SubdivideEdge :
@@ -3312,6 +3524,8 @@ void MainWindow::setMode(Mode m) {
 		case EditVertex: s = tr("Edit Vertex");
 		break;
 		case SelectEdgeLoop: s = tr("Select Edge Loop");
+		break;
+		case SelectEdgeRing: s = tr("Select Edge Ring");
 		break;
 		case SelectFaceLoop: s = tr("Select Face Loop");
 		break;
@@ -4053,39 +4267,115 @@ void MainWindow::getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr 
 	}
 }
 
-void MainWindow::changeLanguage(const QString & string){
+//recurse through selected edge to get a list of 
+void MainWindow::getEdgeRingSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr face_loop_marker, bool select_face_loop) {
+	if ( (eptr == edge_ring_start_edge) && !start) 
+		return;
 
-	if(string == QString("sp")) {
-		translator_es->load(QString(":/topmod_es"));
-		qApp->installTranslator(translator_es);
+	int idx = 0;
+	DLFLEdgePtrArray edges;
+	vector<DLFLEdgePtr>::iterator it;
+	DLFLFacePtr fptr1, fptr2;
+	if (!active->isSelected(eptr)){
+		active->setSelectedEdge(num_sel_edges,eptr);
+		num_sel_edges++;
+	}
+	//get the two faces corresponding to this edge ptr
+	eptr->getFacePointers(fptr1,fptr2);
+	//check if the two faces are quads
+	if (fptr1 && fptr1->numFaceVertexes() == 4 && !(fptr1 == face_loop_marker) ){
+		fptr1->getEdges(edges);
+		idx =0;
+		for (it = edges.begin(); it != edges.end(); it++){
+			if (*it == eptr){
+				getEdgeRingSelection(edges[(idx+2)%4],false,fptr1, select_face_loop);
+			}
+			idx++;
+		}//end for loop
+	}
+	if (fptr2 && fptr2->numFaceVertexes() == 4 && !(fptr2 == face_loop_marker) ){
+		fptr2->getEdges(edges);
+		idx =0;
+		for (it = edges.begin(); it != edges.end(); it++){
+			if (*it == eptr){
+				getEdgeRingSelection(edges[(idx+2)%4], false, fptr2, select_face_loop);
+				// return;
+			}
+			idx++;
+		}//end for loop
+	}
+}
+
+void MainWindow::setLanguageSpanish(){
+	changeLanguage("es");
+}
+
+void MainWindow::setLanguageFrench(){
+	changeLanguage("fr");
+}
+
+void MainWindow::setLanguageGerman(){
+	changeLanguage("de");
+}
+
+void MainWindow::setLanguageTurkish(){
+	changeLanguage("tr");
+}
+
+void MainWindow::setLanguageItalian(){
+	changeLanguage("it");
+}
+
+void MainWindow::setLanguageHindi(){
+	changeLanguage("hi");
+}
+
+void MainWindow::setLanguageCatalan(){
+	changeLanguage("ca");
+}
+
+void MainWindow::setLanguageEnglish(){
+	changeLanguage("en");
+}
+
+void MainWindow::changeLanguage(const QString & string){
+	
+	if(string == QString("es")) {
+		translator_es->load(QString(":lang/topmod_es"));
+		QCoreApplication::installTranslator(translator_es);
 	}
 	if(string == QString("fr")) {
-		translator_fr->load(QString(":/topmod_fr") );
-		qApp->installTranslator(translator_fr);
+		translator_fr->load(QString(":lang/topmod_fr") );
+		QCoreApplication::installTranslator(translator_fr);
 	}
 	if(string == QString("de")) {
-		translator_de->load(QString(":/topmod_de") );
-		qApp->installTranslator(translator_de);
+		translator_de->load(QString(":lang/topmod_de") );
+		QCoreApplication::installTranslator(translator_de);
 	}
 	if(string == QString("tr")) {
-		translator_tr->load(QString(":/topmod_tr") );
-		qApp->installTranslator(translator_tr);
+		translator_tr->load(QString(":lang/topmod_tr") );
+		QCoreApplication::installTranslator(translator_tr);
 	}
 	if(string == QString("it")) {
-		translator_it->load(QString(":/topmod_it") );
-		qApp->installTranslator(translator_it);
+		translator_it->load(QString(":lang/topmod_it") );
+		QCoreApplication::installTranslator(translator_it);
 	}
 	if(string == QString("hi")) {
-		translator_hi->load(QString(":/topmod_hi") );
-		qApp->installTranslator(translator_hi);
+		translator_hi->load(QString(":lang/topmod_hi") );
+		QCoreApplication::installTranslator(translator_hi);
+	}
+	if(string == QString("ca")) {
+		translator_ca->load(QString(":lang/topmod_ca") );
+		QCoreApplication::installTranslator(translator_ca);
 	}
 	if(string == QString("en")){
-    qApp->removeTranslator(translator_es);
-    qApp->removeTranslator(translator_fr);
-    qApp->removeTranslator(translator_de);
-    qApp->removeTranslator(translator_tr);
-    qApp->removeTranslator(translator_it);
-    qApp->removeTranslator(translator_hi);
+    QCoreApplication::removeTranslator(translator_es);
+    QCoreApplication::removeTranslator(translator_fr);
+    QCoreApplication::removeTranslator(translator_de);
+    QCoreApplication::removeTranslator(translator_tr);
+    QCoreApplication::removeTranslator(translator_it);
+    QCoreApplication::removeTranslator(translator_hi);
+    QCoreApplication::removeTranslator(translator_ca);
 	}
 }
 
@@ -4095,11 +4385,301 @@ void MainWindow::changeLanguage(const QString & string){
 * \todo all translatable text will eventually go in this function, but that would take forever! we'll see if there's another 
 * way to handle that. it's probably going to be a matter of putting all the QAction->setText() and 
 * QAction->setTooltip() calls into one function. This is going to be a pain but could be beneficial in the long run
+* I'm testing it out right now. we'll see how this goes...
 * 
 */
 void MainWindow::retranslateUi() {
-	mFileMenu->setTitle(tr("File"));
-   // menu->setTitle(tr("File"));
-   // fileAction->setText(tr("First action"));   
-}
 
+	//retranslate all the operating mode classes
+	mBasicsMode->retranslateUi();
+	mExtrusionsMode->retranslateUi();
+	mRemeshingMode->retranslateUi();
+	mTexturingMode->retranslateUi();
+	mHighgenusMode->retranslateUi();
+	// mConicalMode->retranslateUi();
+	
+	mStartupDialogDockWidget->setWindowTitle(tr("Learning Movies"));
+	mToolOptionsDockWidget->setWindowTitle(mToolOptionsDockWidget->windowTitle());
+
+	#ifdef WITH_PYTHON
+	mScriptEditor->retranslateUi();
+	mScriptEditorDockWidget->setWindowTitle(tr("Script Editor"));
+	mShowScriptEditorAct->setStatusTip( tr("Show the script editor to execute DLFL commands") );
+	#endif
+
+	//from createMenus()
+	mFileMenu->setTitle(tr("&File"));
+	#ifdef WITH_VERSE
+	mVerseMenu->setTitle(tr("&Verse"));
+	#endif
+	mEditMenu->setTitle(tr("&Edit"));
+	mDisplayMenu->setTitle(tr("&Display"));
+	mRendererMenu->setTitle(tr("&Renderer"));
+	mShowIDsMenu->setTitle(tr("&Show IDs"));
+	mPrimitivesMenu->setTitle(tr("&Primitives"));
+	mSelectionMenu->setTitle(tr("&Selection"));
+	mToolsMenu->setTitle(tr("&Tools"));
+	mObjectMenu->setTitle(tr("&Object"));
+	mSelectionMaskMenu->setTitle(tr("Selection &Masks"));
+	mWindowMenu->setTitle(tr("&Window"));
+	mHelpMenu->setTitle(tr("&Help"));
+	mLanguageMenu->setTitle(tr("&Language"));
+
+
+	//from creatActions()!
+	mOpenAct->setText(tr("&Open..."));
+	mOpenAct->setStatusTip(tr("Open an existing file"));
+	mSaveAct->setText(tr("&Save"));
+	mSaveAct->setStatusTip(tr("Save the document to disk"));
+	mSaveAsAct->setText(tr("Save &As..."));
+	mSaveAsAct->setStatusTip(tr("Save the document under a new name"));
+	mSavePatchesAct->setText(tr("Save &Patch OBJ..."));
+	mSavePatchesAct->setStatusTip(tr("Save a bezier patch .obj file"));
+	mSaveLG3dAct->setText(tr("Export LiveGrahpics3D..."));
+	mSaveLG3dAct->setStatusTip(tr("Export a LiveGraphics3D (*.m) file for embedding into the TopMod Wiki, Warning: you cannot import this file back into TopMod"));
+	mSaveLG3dSelectedAct->setText(tr("Export LG3d (Sel. Faces)..."));
+	mSaveLG3dSelectedAct->setStatusTip(tr("Export a LiveGraphics3D (*.m) of the current selected faces file for embedding into the TopMod Wiki, Warning: you cannot import this file back into TopMod"));
+	mExportSTLAct->setText(tr("Export STL..."));
+	mExportSTLAct->setStatusTip(tr("Export a stereolithography (*.stl) file for use with various rapid prototyping software and hardware"));
+	loadTextureAct->setText(tr("Load &Texture..."));
+	loadTextureAct->setStatusTip(tr("Load Texture from file"));
+	printInfoAct->setText(tr("Print &Information"));
+	printInfoAct->setStatusTip(tr("Print Information to the console"));
+	printFaceListAct->setText(tr("Print &Face List"));
+	printFaceListAct->setStatusTip(tr("Print Face List to the console"));
+	printVertexListAct->setText(tr("Print &Vertex List"));
+	printVertexListAct->setStatusTip(tr("Save the document under a new name"));
+	printEdgeListAct->setText(tr("Print &Edge List"));
+	printEdgeListAct->setStatusTip(tr("Print Edge list to the console"));
+	mPrintCVListAct->setText(tr("Print &CV List"));
+	mPrintCVListAct->setStatusTip(tr("Print CV list to the console"));
+	mExitAct->setText(tr("E&xit"));
+	mExitAct->setStatusTip(tr("Exit the application"));
+
+
+	//quick command quicksilver like interface
+	mQuickCommandAct->setText(tr("Quick Command"));
+	mQuickCommandAct->setStatusTip(tr("Quick Command Access with Autocompletion"));
+
+	//Edit Menu Actions
+	mDeleteSelectedAct->setText(/*QIcon(":images/edit-undo.png"),*/ tr("&Delete Selected"));
+	mDeleteSelectedAct->setStatusTip(tr("Delete Selected"));
+	mUndoAct->setText(tr("&Undo"));
+	mRedoAct->setText(tr("&Redo"));
+	mClearUndoListAct->setText(tr("&Clear Undo List"));
+	//View Menu Actions
+	mPerspViewAct->setText( tr("&Reset Camera"));
+	// mTopViewAct->setText( tr("&Top View"));
+	// 	mBottomViewAct->setText( tr("&Bottom View"));
+	// 	mFrontViewAct->setText( tr("&Front View"));
+	// 	mBackViewAct->setText( tr("B&ack View"));
+	// 	mLeftViewAct->setText( tr("&Left View"));
+	// 	mRightViewAct->setText( tr("&Right View"));
+
+	//Display Menu Actions
+	mFullscreenAct->setText(tr("&Full Screen"));
+	mFullscreenAct->setStatusTip(tr("Toggle Full Screen"));
+	showVerticesAct->setText(tr("Show &Vertices"));
+	mShowFaceIDsAct->setText(tr("Show &Face IDs"));
+	mShowEdgeIDsAct->setText(tr("Show &Edge IDs"));
+	mShowVertexIDsAct->setText(tr("Show &Vertex IDs"));
+	mShowSelectedIDsAct->setText(tr("Show &Selected IDs"));
+	showSilhouetteAct->setText(tr("Show &Silhouette"));
+	showWireframeAct->setText(tr("Show &Wireframe"));
+	showCoordinateAxesAct->setText(tr("Show &Coordinate Axes"));
+	objectOrientationAct->setText(tr("Reverse Object"));
+	mShowNormalsAct->setText(tr("Show &Normals"));
+	mShowFaceCentroidsAct->setText(tr("Show &Face Centroids"));
+	showHUDAct->setText(tr("Show &Heads Up Display"));
+	showHUDAct->setStatusTip(tr("Show the Heads Up Display"));
+	#ifdef GPU_OK
+	mUseGPUAct->setText(tr("&Use GPU Shading"));
+	mUseGPUAct->setStatusTip(tr("Use GPU Shading"));
+	#endif
+	mAntialiasingAct->setText(tr("Toggle &Antialiasing"));
+	mAntialiasingAct->setStatusTip(tr("Toggle Antialiasing"));
+
+
+	#ifdef WITH_PYTHON
+	mShowScriptEditorAct->setStatusTip( tr("Show the script editor to execute DLFL commands") );
+	#endif
+	#ifdef WITH_VERSE
+	mShowVerseDialogAct->setStatusTip( tr("Show the verse dialog to view verse server connection status") );
+	#endif	
+
+	mShowToolOptionsAct->setStatusTip( tr("Show the tool options window") );
+	mShowStartupDialogAct->setStatusTip( tr("Show the startup screen with links to video tutorials") );
+	mShowAnimatedHelpAct->setStatusTip( tr("Show/Hide the animated help window") );
+
+	//Renderer Menu Actions
+	wireframeRendererAct->setText(tr("&Wireframe Renderer"));
+	wireframeRendererAct->setStatusTip(tr("Switch the current renderer to Wireframe"));
+	normalRendererAct->setText(tr("&Normal Renderer"));
+	normalRendererAct->setStatusTip(tr("Switch the current renderer to Normal"));
+	lightedRendererAct->setText(tr("&Lighted Renderer"));
+	lightedRendererAct->setStatusTip(tr("Switch the current renderer to Lighted"));
+	texturedRendererAct->setText(tr("&Textured Renderer"));
+	texturedRendererAct->setStatusTip(tr("Switch the current renderer to Textured"));
+	texturedLightedAct->setText(tr("Te&xtured Lighted Renderer"));
+	texturedLightedAct->setStatusTip(tr("Switch the current renderer to Textured Lit"));
+	patchRendererAct->setText(tr("&Patch Renderer"));
+	patchRendererAct->setStatusTip(tr("Switch the current renderer to Patch"));
+
+	//PRIMITIVES MENU ACTIONS
+	pCubeAct->setText(tr("&Cube"));
+	pCubeAct->setStatusTip(tr("Load a Cube"));
+	pOctahedronAct->setText(tr("&Octahedron"));
+	pOctahedronAct->setStatusTip(tr("Load an octahedron"));
+	pTetrahedronAct->setText(tr("&Tetrahedron"));
+	pTetrahedronAct->setStatusTip(tr("Load a tetrahedron"));
+	pDodecahedronAct->setText(tr("&Dodecahedron"));
+	pDodecahedronAct->setStatusTip(tr("Load a dodecahedron"));
+	pIcosahedronAct->setText(tr("&Icosahedron"));
+	pIcosahedronAct->setStatusTip(tr("Load an icosahedron"));
+	pSoccerBallAct->setText(tr("&Soccer ball"));
+	pSoccerBallAct->setStatusTip(tr("Load a soccer ball"));
+	pGeodesicAct->setText(tr("&Geodesic Dome"));
+	pGeodesicAct->setStatusTip(tr("Load a geodesic dome"));
+	//Object Menu Actions
+	subdivideAllEdgesAct->setText(tr("Subdivide All &Edges"));
+	planarizeAllFacesAct->setText(tr("Planarize All &Faces"));
+	makeObjectSphericalAct->setText(tr("Make &Object Spherical"));
+	makeObjectSmoothAct->setText(tr("Make Object &Smooth"));
+	createCrustScalingAct->setText(tr("&Create Crust (Scaling)"));
+	createCrustScalingAct->setStatusTip(tr("Create a crust using the currently selected faces with scaling mode"));
+	createCrustThicknessAct->setText(tr("Create Crust (&Thickness)"));
+	createCrustThicknessAct->setStatusTip(tr("Create a crust using the currently selected faces with thickness mode"));
+	makeWireframeAct->setText(tr("Create Wireframe"));
+	makeWireframeAct->setStatusTip(tr("Create a wireframe model using the current options"));
+	makeColumnsAct->setText(tr("Create Columns"));
+	makeColumnsAct->setStatusTip(tr("Create a column model using the current options"));
+	makeSierpinskiAct->setText(tr("Create Sierpinski"));
+	makeSierpinskiAct->setStatusTip(tr("Create a sierpinski tetrahedra"));
+	computeLightingAct->setText(tr("Compute &Lighting"));
+	computeNormalsAndLightingAct->setText(tr("Compute &Normals and Lighting"));
+	assignTextureCoordinatesAct->setText(tr("Assign &Texture Coordinates"));
+	//SELECTION MENU ACTIONS
+	selectVertexAct->setText(tr("Select &Vertex"));
+	selectVertexAct->setStatusTip(tr("Select a Vertex"));
+	selectMultipleVerticesAct->setText(tr("Select Multiple Vertices"));
+	selectMultipleVerticesAct->setStatusTip(tr("Select multiple vertices"));
+	mEditVertexAct->setText(tr("Edit Verte&x"));
+	mEditVertexAct->setStatusTip(tr("Select and Move Vertices One at a time."));
+	selectFaceAct->setText(tr("Select &Face"));
+	selectFaceAct->setStatusTip(tr("Select One Face. Just for practice. :)"));
+	selectFaceLoopAct->setText(tr("Select Face Loo&p"));
+	selectFaceLoopAct->setStatusTip(tr("Select a Face Loop."));
+	selectEdgeRingAct->setText(tr("Select Edge &Ring"));
+	selectEdgeRingAct->setStatusTip(tr("Select an Edge Ring."));
+	selectMultipleFacesAct->setText(tr("Select &Multiple Faces"));
+	selectSimilarFacesAct->setText(tr("Select &Similar Faces"));
+	selectCheckerboardFacesAct->setText(tr("C&heckerboard Select Faces"));
+	selectAllAct->setText(tr("Select &All"));
+	selectInverseAct->setText(tr("Select &Inverse"));
+	selectEdgeAct->setText(tr("Select &Edge"));
+	selectEdgeAct->setStatusTip(tr("Select one Edge"));
+	mCollapseSelectedEdgesAct->setText(tr("Collapse Selected Edges"));
+	mCollapseSelectedEdgesAct->setStatusTip(tr("Collapse Selected Edges"));
+	selectMultipleEdgesAct->setText(tr("Select Multiple Edges"));
+	selectMultipleEdgesAct->setStatusTip(tr("Select multiple edges"));
+	selectEdgeLoopAct->setText(tr("Select Edge &Loop"));
+	selectEdgeLoopAct->setStatusTip(tr("Select an Edge Loop"));
+	selectCornerAct->setText(tr("Select &Corner"));
+	selectCornerAct->setStatusTip(tr("Select a Face Vertex"));
+	exitSelectionModeAct->setText(tr("E&xit Selection Mode"));
+	clearSelectedModeAct->setText(tr("&Clear Selected"));
+	mSelectVerticesMaskAct->setText(tr("Select &Vertices"));
+	mSelectVerticesMaskAct->setStatusTip(tr("Select by Component type: Vertices"));
+	mSelectEdgesMaskAct->setText(tr("Select &Edges"));
+	mSelectEdgesMaskAct->setStatusTip(tr("Select by Component type: Edges"));
+	mSelectFacesMaskAct->setText(tr("Select &Faces"));
+	mSelectFacesMaskAct->setStatusTip(tr("Select by Component type: Faces"));
+	mSelectFaceVerticesMaskAct->setText(tr("Select &Face Vertex"));
+	mSelectFaceVerticesMaskAct->setStatusTip(tr("Select by Component type: Face-Vertices"));
+
+	//SETTINGS ACTIONS	
+	mPreferencesAct->setText(tr("&Preferences"));
+	mPreferencesAct->setStatusTip(tr("Open the Preferences Dialog"));
+
+	//LANGUAGE MENU BAR ACTIONS
+	englishAct->setText(tr("English"));
+	spanishAct->setText(tr("Spanish"));
+	germanAct->setText(tr("German"));
+	frenchAct->setText(tr("French"));
+	italianAct->setText(tr("Italian"));
+	turkishAct->setText(tr("Turkish"));
+	catalanAct->setText(tr("Catalan"));
+	hindiAct->setText(tr("Hindi"));
+
+	#ifdef WITH_VERSE
+	//verse menu actions
+	mVerseConnectLocalhostAct->setText(tr("Connect to localhost..."));
+	mVerseConnectLocalhostAct->setStatusTip( tr("Connect to localhost") );
+	mVerseConnectAct->setText(tr("Connect to host..."));
+	mVerseConnectAct->setStatusTip( tr("Connect to host...") );
+	mVerseDisconnectAct->setText(tr("Disconnect session"));
+	mVerseDisconnectAct->setStatusTip( tr("Disconnect Verse Session") );
+	mVerseDisconnectAllAct->setText(tr("Disconnect All Sessions"));
+	mVerseDisconnectAllAct->setStatusTip( tr("Disconnect All Sessions") );
+	mVerseStartServerAct->setText(tr("Start Verse Server"));
+	mVerseStartServerAct->setStatusTip( tr("Disconnect All Nodes") );
+	mVerseKillServerAct->setText(tr("Kill Verse Server"));
+	mVerseKillServerAct->setStatusTip( tr("Kill the Local Verse server process") );
+	#endif
+
+	mSubdivideSelectedFacesAct->setText(tr("Subdivide Selected Faces"));
+	mSubdivideSelectedFacesAct->setStatusTip( tr("Subdivide all Selected Faces") );
+	mSubdivideSelectedEdgesAct->setText(tr("Subdivide Selected Edges"));
+	mSubdivideSelectedEdgesAct->setStatusTip( tr("Subdivide all Selected Edges") );
+	mPerformRemeshingAct->setText(tr("Perform Remeshing"));
+	mPerformRemeshingAct->setStatusTip( tr("Perform the current remeshing scheme") );
+	mPerformExtrusionAct->setText(tr("Perform Extrusion"));
+	mPerformExtrusionAct->setStatusTip( tr("Perform the current extrusion operator on the selected faces") );
+	mExtrudeMultipleAct->setText(tr("Extrude Multiple Faces"));
+	mExtrudeMultipleAct->setStatusTip( tr("Check this if you want to be able to select multiple faces and then hit CTRL+X to extrude the selected faces") );
+
+	//help menu actions
+	mHelpAct->setText(tr("&Online User Manual"));
+	mHelpAct->setStatusTip( tr("View the User Manual on the TopMod Wiki") );
+	mTopModWebAct->setText(tr("&TopMod on the Web"));
+	mTopModWebAct->setStatusTip( tr("Go to the TopMod web page") );
+	mTopModResearchAct->setText(tr("&TopMod Research Papers"));
+	mTopModResearchAct->setStatusTip( tr("Go to the TopMod Research web page") );
+	mCheckForUpdatesAct->setText(tr("&Check for Updates"));
+	mCheckForUpdatesAct->setStatusTip( tr("Check for updates to TopMod Online") );
+	mAboutAct->setText(tr("&About TopMod"));
+	mAboutAct->setStatusTip( tr("About TopMod") );
+	mAboutQtAct->setText(tr("About &Qt"));
+	mAboutQtAct->setStatusTip( tr("About Qt") );
+	mHideToolBarsAct->setText(tr("Hide All ToolBars"));
+	mHideToolBarsAct->setStatusTip( tr("Hide All ToolBars") );
+	mShowToolBarsAct->setText(tr("Show All ToolBars"));
+	mShowToolBarsAct->setStatusTip( tr("Show All ToolBars") );
+
+	//from createAnimatedHelp
+	
+	
+	//from creatToolbars()
+	mEditToolBar->setWindowTitle(tr("Edit"));
+	mSelectionMaskToolBar->setWindowTitle(tr("Selection Masks"));
+	mPrimitivesToolBar->setWindowTitle(tr("Primitives"));
+	mToolsToolBar->setWindowTitle(tr("Tools"));
+	mExtrusionToolBar->setWindowTitle(tr("Extrusion Tools"));
+	// mConicalToolBar->setWindowTitle(tr("Conical Tools"));
+	mHighgenusToolBar->setWindowTitle(tr("High Genus Tools"));
+	mTexturingToolBar->setWindowTitle(tr("Texturing Tools"));
+	mRemeshingToolBar->setWindowTitle(tr("Remeshing Tools"));
+
+	//createStartupDialog
+	mTutorialNavigationAct->setText(tr("Navigation Basics"));	
+	mTutorialInterfaceAct->setText(tr("Interface Basics"));
+	mTutorialBasicAct->setText(tr("Basic Operations"));
+	mTutorialExtrusionAct->setText(tr("Extrusion Operations"));
+	mTutorialRemeshingAct->setText(tr("Remeshing Operations"));
+	mTutorialHighgenusAct->setText(tr("High genus Operations"));
+	mTutorialTexturingAct->setText(tr("Texturing Operations"));
+	mShowStartupDialogAtStartupCheckBox->setText(tr("Show this dialog at startup"));
+	quicktimeLabel->setText(tr("Quicktime 7.2 or greater recommended."));
+	downloadQuicktimeLabel->setText(tr("<h5>Quicktime 7.2 or greater recommended.<br /><a href=\"http://apple.com/quicktime/\">Download now.</a></h5>"));
+
+}//end retranslateUi

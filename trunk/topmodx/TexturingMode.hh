@@ -29,6 +29,7 @@ public:
 	TexturingMode(QWidget *parent, QShortcutManager *sm, QWidget *actionList);
 	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
 	QMenu *getMenu();
+	void retranslateUi();
 
 	QAction *mTileTexturingAction;
 	QWidget *mTileTexturingWidget;	

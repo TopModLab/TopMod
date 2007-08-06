@@ -40,6 +40,7 @@ public:
 
   QColor& outputBgColor( ) { return mOutputBgColor; };
   QColor& inputBgColor( ) { return mInputBgColor; };
+	void retranslateUi();
 
 signals :
   void makingChange( ); // for undo push

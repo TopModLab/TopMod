@@ -236,14 +236,14 @@ SOURCES += \
 RESOURCES += application.qrc
 
 TRANSLATIONS += \
-	     lang/topmod_de.ts \
-			 lang/topmod_it.ts \
-	     lang/topmod_en.ts \
-	     lang/topmod_en_us.ts \
-	     lang/topmod_es.ts \
-	     lang/topmod_fr.ts \
-	     lang/topmod_hi.ts \
-	     lang/topmod_tr.ts
+	lang/topmod_de.ts \
+	lang/topmod_it.ts \
+	lang/topmod_en.ts \
+	lang/topmod_ca.ts \
+	lang/topmod_es.ts \
+	lang/topmod_fr.ts \
+	lang/topmod_hi.ts \
+	lang/topmod_tr.ts
 
 CONFIG(WITH_VERSE){
 

@@ -139,6 +139,7 @@ class MainWindow : public QMainWindow {
 				ConvexHullMode=301,			/**< create a convex hull or dual convex hull // ozgur. */
 				EditVertex=81,					/**< select and move individual vertices // brianb. */
 				SelectEdgeLoop=82,			/**< select an edge loop. shift select for multiple. */
+				SelectEdgeRing=85,			/**< select an edge ring. shift select for multiple. */
 				SelectFaceLoop=83,			/**< allows user to select one edge in the viewport and selects the corresponding face loop. shift select for multiple. */
 				SelectSimilarFaces=84 	/**< select all faces with the same number of vertices as the selected face. */
 			};
@@ -176,6 +177,7 @@ class MainWindow : public QMainWindow {
 			enum RemeshingScheme {
 				Dual=0,															/**< . */
 				Root3=10,														/**< . */
+				Triangulate=15,											/**< . */
 				DualVertexTrunc=11,									/**< . */
 				GlobalStellate=12, 									/**< . */
 				Star=13, 														/**< . */
@@ -338,6 +340,7 @@ protected :
 	static bool deselect_faceverts;
 
 	static DLFLEdgePtr face_loop_start_edge; 						//!< face loop edge pointer
+	static DLFLEdgePtr edge_ring_start_edge; 						//!< edge ring edge pointer
 	static bool face_loop_start;												//!< face loop start
 
 	GLWidget *active;															     	//!< Active viewport to handle events
@@ -421,6 +424,7 @@ public :
 	void getCheckerboardSelection(DLFLFacePtr fptr);		//!< \todo  needs to be moved to DLFL namespace
 	void getEdgeLoopSelection(DLFLEdgePtr eptr);				//!< \todo  needs to be moved to DLFL namespace
 	void getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr face_loop_marker, bool select_face_loop);	//!< \todo  needs to be moved to DLFL namespace
+	void getEdgeRingSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr face_loop_marker, bool select_face_loop);	//!< \todo  needs to be moved to DLFL namespace
 
 	void createRenderers();															//!< allocate memory for the renderer pointers
 	void destroyRenderers();														//!< delete memory allcated for the renderer pointers
@@ -455,7 +459,9 @@ public :
 	QWidget *mStartupDialogWidget;
 	QGridLayout *mStartupDialogLayout;
 	bool mShowStartupDialogAtStartup;
-			
+	QLabel *quicktimeLabel;
+	QLabel *downloadQuicktimeLabel;
+	
 protected:
 	void closeEvent( QCloseEvent *event );				//!< what will execute when the main window is closed (on application exit/quit)
 
@@ -617,20 +623,31 @@ private:
 
 	//Selection Menu Actions
 	QAction *selectVertexAct;
+	QAction *selectMultipleVerticesAct;
 	QAction *mEditVertexAct;
 	QAction *selectFaceAct;
 	QAction *selectFaceLoopAct;
+	QAction *selectEdgeRingAct;
+	QAction *mSubdivideSelectedEdgesAct;					//!< subdivide the selected edges.
+	QAction *mCollapseSelectedEdgesAct;						//!< collapse the selected edges.
 	QAction *selectMultipleFacesAct;
 	QAction *selectSimilarFacesAct;
 	QAction *selectCheckerboardFacesAct;
 	QAction *selectAllAct;
 	QAction *selectInverseAct;
 	QAction *selectEdgeAct;
+	QAction *selectMultipleEdgesAct;
 	QAction *selectEdgeLoopAct;
 	QAction *selectCornerAct;
 	QAction *clearSelectedModeAct;
 	QAction *exitSelectionModeAct;
-
+	QAction *selectEdgesFromFacesAct;
+	QAction *selectEdgesFromVerticesAct;
+	QAction *selectFacesFromEdgesAct;
+	QAction *selectFacesFromVerticesAct;
+	QAction *selectVerticesFromFacesAct;
+	QAction *selectVerticesFromEdgesAct;
+	
 	//selection mask actions
 	QAction *mSelectVerticesMaskAct;
 	QAction *mSelectFacesMaskAct;
@@ -638,10 +655,13 @@ private:
 	QAction *mSelectFaceVerticesMaskAct;
 
 	//Language Menu actions;
+	QActionGroup *mLanguageActionGroup;
 	QAction *englishAct;
 	QAction *spanishAct;
 	QAction *germanAct;
 	QAction *frenchAct;
+	QAction *hindiAct;
+	QAction *italianAct;
 	QAction *turkishAct;
 	QAction *catalanAct;
 			
@@ -751,13 +771,24 @@ private:
   QTranslator *translator_fr;							//!< \todo translation widget french
   QTranslator *translator_de;							//!< \todo translation widget german
   QTranslator *translator_tr;							//!< \todo translation widget turkish
+	QTranslator *translator_ca;							//!< \todo translation widget catalan
   QTranslator *translator_it;							//!< \todo translation widget italian
   QTranslator *translator_hi;							//!< \todo translation widget hindi
 
 	
 public slots:
 
+	// i18n stuff
 	void changeLanguage(const QString &string);
+	void setLanguageSpanish();
+	void setLanguageFrench();
+	void setLanguageGerman();
+	void setLanguageTurkish();
+	void setLanguageItalian();
+	void setLanguageCatalan();
+	void setLanguageHindi();
+	void setLanguageEnglish();	
+	
 	void about(); 												//!< \todo  topmod developer credits 
 	void help(); 													//!< open the qtassistantclient help viewer
 	void checkForUpdates(); 							//!< check for updates on the topMod home page
@@ -793,13 +824,16 @@ public slots:
 	void usePatchRenderer();
 
 	void select_vertex();
+	void select_multiple_vertices();
 	void edit_vertex();
 	void select_face();
 	void select_face_loop();
+	void select_edge_ring();
 	void select_multiple_faces();
 	void select_similar_faces();
 	void select_checkerboard_faces();
 	void select_edge();
+	void select_multiple_edges();
 	void select_edge_loop();
 	void select_corner();
 	void exit_selection_mode();
@@ -810,8 +844,15 @@ public slots:
 	void selectionMaskCorners();
 	void selectAll();
 	void selectInverse();
-	
+	void selectEdgesFromFaces();
+	void selectEdgesFromVertices();
+	void selectFacesFromEdges();
+	void selectFacesFromVertices();
+	void selectVerticesFromFaces();
+	void selectVerticesFromEdges();
+
 	void deleteSelected();																						//!< delete selected objects
+	void collapseSelectedEdges();																			//!< collapse selected edges
 
 	//Basics Widget
 	void toggleDeleteEdgeCleanupFlag(int state);
@@ -973,6 +1014,7 @@ public slots:
 	// void recomputeLighting();
 	// void recomputePatches();
 	void subdivideAllEdges();
+	void subdivideSelectedEdges();
 	void subdivideSelectedFaces();
 	void subdivideAllFaces();
 	void createMultiFaceHandle();

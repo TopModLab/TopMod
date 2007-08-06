@@ -416,3 +416,7 @@ void ExtrusionsMode::setupDoubleStellateExtrude(){
 	mDoubleStellateExtrudeWidget->setWindowTitle(tr("Double Stellate Extrusion"));
 	mDoubleStellateExtrudeWidget->setLayout(mDoubleStellateExtrudeLayout);	
 }
+
+void ExtrusionsMode::retranslateUi(){
+	
+}

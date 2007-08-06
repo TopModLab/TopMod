@@ -9,6 +9,7 @@
 	<action default="" context="Extrusion Operations" name="Double Stellate" />
 	<action default="" context="Remeshing" name="Dual" />
 	<action default="" context="Remeshing" name="Root-3" />
+	<action default="" context="Remeshing" name="Triangulate" />
 	<action default="" context="Remeshing" name="Dual Vertex Truncation" />
 	<action default="" context="Remeshing" name="Stellate" />
 	<action default="" context="Remeshing" name="Double Stellate" />
@@ -48,7 +49,6 @@
 	<action default="" context="High Genus Operations" name="Rind Modeling Scaling" />
 	<action default="" context="High Genus Operations" name="Rind Modeling Thickness" />
 	<action default="" context="High Genus Operations" name="Wireframe Modeling" />
-	<action default="" context="High Genus Operations" name="Wireframe Modeling *EXP!!!" />
 	<action default="" context="High Genus Operations" name="Column Modeling" />
 	<action default="" context="High Genus Operations" name="Sierpinsky" />
 	<action default="" context="High Genus Operations" name="Multi-face Handle" />
@@ -58,23 +58,22 @@
 	<action shortcut="CTRL+S" default="CTRL+S" context="File Menu" name="&amp;Save" />
 	<action shortcut="CTRL+SHIFT+S" default="CTRL+SHIFT+S" context="File Menu" name="Save &amp;As..." />
 	<action default="" context="File Menu" name="Save &amp;Patch OBJ..." />
+	<action shortcut="CTRL+ALT+S" default="CTRL+ALT+S" context="File Menu" name="Export LiveGrahpics3D..." />
+	<action default="" context="File Menu" name="Export LG3d (Sel. Faces)..." />
+	<action shortcut="CTRL+ALT+SHIFT+S" default="CTRL+ALT+SHIFT+S" context="File Menu" name="Export STL..." />
 	<action shortcut="CTRL+L" default="CTRL+L" context="File Menu" name="Load &amp;Texture..." />
-	<action shortcut="CTRL+P" default="CTRL+P" context="File Menu" name="Print &amp;Information" />
+	<action shortcut="P" default="P" context="File Menu" name="Print &amp;Information" />
 	<action shortcut="CTRL+ALT+P" default="CTRL+ALT+P" context="File Menu" name="Print &amp;Face List" />
+	<action shortcut="CTRL+SHIFT+P" default="CTRL+SHIFT+P" context="File Menu" name="Print &amp;Vertex List" />
 	<action shortcut="CTRL+ALT+SHIFT+P" default="CTRL+ALT+SHIFT+P" context="File Menu" name="Print &amp;Edge List" />
 	<action default="" context="File Menu" name="Print &amp;CV List" />
 	<action shortcut="CTRL+Q" default="CTRL+Q" context="File Menu" name="E&amp;xit" />
+	<action shortcut="Del" default="Del" context="Edit Menu" name="&amp;Delete Selected" />
 	<action shortcut="CTRL+Z" default="CTRL+Z" context="Edit Menu" name="&amp;Undo" />
 	<action shortcut="CTRL+SHIFT+Z" default="CTRL+SHIFT+Z" context="Edit Menu" name="&amp;Redo" />
 	<action default="CTRL+SHIFT+Z" context="Edit Menu" name="&amp;Clear Undo List" />
 	<action shortcut="F" default="F" context="View Menu" name="&amp;Reset Camera" />
-	<action default="" context="View Menu" name="&amp;Top View" />
-	<action default="" context="View Menu" name="&amp;Bottom View" />
-	<action default="" context="View Menu" name="&amp;Front View" />
-	<action default="" context="View Menu" name="B&amp;ack View" />
-	<action default="" context="View Menu" name="&amp;Left View" />
-	<action default="" context="View Menu" name="&amp;Right View" />
-	<action shortcut="M" default="" context="Display Menu" name="&amp;Full Screen" />
+	<action default="" context="Display Menu" name="&amp;Full Screen" />
 	<action shortcut="V" default="V" context="Display Menu" name="Show &amp;Vertices" />
 	<action shortcut="CTRL+F" default="CTRL+F" context="Display Menu" name="Show &amp;Face IDs" />
 	<action shortcut="CTRL+E" default="CTRL+E" context="Display Menu" name="Show &amp;Edge IDs" />
@@ -89,7 +88,8 @@
 	<action shortcut="G" default="G" context="Display Menu" name="Show &amp;Grid" />
 	<action shortcut="H" default="H" context="Display Menu" name="Show &amp;Heads Up Display" />
 	<action shortcut="K" default="K" context="Display Menu" name="Toggle &amp;Antialiasing" />
-	<action shortcut="O" default="O" context="Window Menu" name="Tool Options" />
+	<action shortcut="O" default="O" context="Window Menu" name="Tool Options - Insert Edge" />
+	<action default="SHIFT+S" context="Window Menu" name="Learning Movies" />
 	<action shortcut="SHIFT+H" default="SHIFT+H" context="Window Menu" name="TopMod Animated Help" />
 	<action shortcut="1" default="1" context="Renderer Menu" name="&amp;Wireframe Renderer" />
 	<action shortcut="2" default="2" context="Renderer Menu" name="&amp;Normal Renderer" />
@@ -104,15 +104,20 @@
 	<action shortcut="CTRL+5" default="CTRL+5" context="Primitives Menu" name="&amp;Icosahedron" />
 	<action shortcut="CTRL+6" default="CTRL+6" context="Primitives Menu" name="&amp;Soccer ball" />
 	<action shortcut="CTRL+7" default="CTRL+7" context="Primitives Menu" name="&amp;Geodesic Dome" />
-	<action default="" context="Settings" name="Subdivide All &amp;Edges" />
-	<action default="" context="Settings" name="Planarize All &amp;Faces" />
-	<action default="" context="Settings" name="Make &amp;Object Spherical" />
-	<action default="" context="Settings" name="Make Object &amp;Smooth" />
-	<action default="" context="Settings" name="&amp;Create Crust" />
-	<action default="" context="Settings" name="Compute &amp;Lighting" />
-	<action default="" context="Settings" name="Compute &amp;Normals and Lighting" />
-	<action default="" context="Settings" name="Assign &amp;Texture Coordinates" />
+	<action shortcut="CTRL+D" default="CTRL+D" context="Tools" name="Subdivide All &amp;Edges" />
+	<action shortcut="CTRL+P" default="CTRL+P" context="Tools" name="Planarize All &amp;Faces" />
+	<action shortcut="CTRL+H" default="CTRL+H" context="Tools" name="Make &amp;Object Spherical" />
+	<action shortcut="CTRL+M" default="CTRL+M" context="Tools" name="Make Object &amp;Smooth" />
+	<action shortcut="CTRL+ALT+C" default="CTRL+ALT+C" context="Tools" name="&amp;Create Crust (Scaling)" />
+	<action shortcut="CTRL+C" default="CTRL+C" context="Tools" name="Create Crust (&amp;Thickness)" />
+	<action shortcut="CTRL+W" default="CTRL+W" context="Tools" name="Create Wireframe" />
+	<action shortcut="CTRL+ALT+W" default="CTRL+ALT+W" context="Tools" name="Create Columns" />
+	<action shortcut="CTRL+K" default="CTRL+K" context="Tools" name="Create Sierpinski" />
+	<action default="" context="Tools" name="Compute &amp;Lighting" />
+	<action default="" context="Tools" name="Compute &amp;Normals and Lighting" />
+	<action default="" context="Tools" name="Assign &amp;Texture Coordinates" />
 	<action shortcut="SHIFT+V" default="SHIFT+V" context="Selection" name="Select &amp;Vertex" />
+	<action default="" context="Selection" name="Select Multiple Vertices" />
 	<action default="SHIFT+V" context="Selection" name="Edit Verte&amp;x" />
 	<action shortcut="SHIFT+F" default="SHIFT+F" context="Selection" name="Select &amp;Face" />
 	<action shortcut="SHIFT+P" default="SHIFT+P" context="Selection" name="Select Face Loo&amp;p" />
@@ -122,7 +127,9 @@
 	<action shortcut="CTRL+A" default="CTRL+A" context="Selection" name="Select &amp;All" />
 	<action shortcut="CTRL+I" default="CTRL+I" context="Selection" name="Select &amp;Inverse" />
 	<action shortcut="SHIFT+E" default="SHIFT+E" context="Selection" name="Select &amp;Edge" />
+	<action default="" context="Selection" name="Select Multiple Edges" />
 	<action shortcut="SHIFT+L" default="SHIFT+L" context="Selection" name="Select Edge &amp;Loop" />
+	<action shortcut="SHIFT+R" default="SHIFT+R" context="Selection" name="Select Edge &amp;Ring" />
 	<action shortcut="SHIFT+C" default="SHIFT+C" context="Selection" name="Select &amp;Corner" />
 	<action shortcut="SHIFT+X" default="SHIFT+X" context="Selection" name="E&amp;xit Selection Mode" />
 	<action shortcut="Escape" default="Escape" context="Selection" name="&amp;Clear Selected" />
@@ -131,28 +138,24 @@
 	<action default="" context="Selection" name="Select &amp;Faces" />
 	<action default="" context="Selection" name="Select &amp;Face Vertex" />
 	<action shortcut="CTRL+," default="CTRL+," context="Settings" name="&amp;Preferences" />
-	<action shortcut="CTRL+F7" default="CTRL+F7" context="Languages" name="English" />
-	<action shortcut="CTRL+F8" default="CTRL+F8" context="Languages" name="Spanish" />
-	<action shortcut="CTRL+F9" default="CTRL+F9" context="Languages" name="German" />
-	<action shortcut="CTRL+F10" default="CTRL+F10" context="Languages" name="French" />
-	<action shortcut="CTRL+F11" default="CTRL+F11" context="Languages" name="Turkish" />
-	<action shortcut="CTRL+F12" default="CTRL+F12" context="Languages" name="Catalan" />
+	<action shortcut="CTRL+ALT+1" default="CTRL+ALT+1" context="Languages" name="English" />
+	<action shortcut="CTRL+ALT+2" default="CTRL+ALT+2" context="Languages" name="Spanish" />
+	<action shortcut="CTRL+ALT+3" default="CTRL+ALT+3" context="Languages" name="German" />
+	<action shortcut="CTRL+ALT+4" default="CTRL+ALT+4" context="Languages" name="French" />
+	<action shortcut="CTRL+ALT+5" default="CTRL+ALT+5" context="Languages" name="Italian" />
+	<action shortcut="CTRL+ALT+6" default="CTRL+ALT+6" context="Languages" name="Turkish" />
+	<action shortcut="CTRL+ALT+7" default="CTRL+ALT+7" context="Languages" name="Catalan" />
+	<action shortcut="CTRL+ALT+8" default="CTRL+ALT+8" context="Languages" name="Hindi" />
+	<action shortcut="CTRL+B" default="CTRL+B" context="Tools Menu" name="Subdivide Selected Faces" />
 	<action shortcut="CTRL+R" default="CTRL+R" context="Remeshing Menu" name="Perform Remeshing" />
-	<action shortcut="F1" default="F1" context="Help Menu" name="&amp;Help Contents" />
+	<action shortcut="CTRL+X" default="CTRL+X" context="Tools Menu" name="Perform Extrusion" />
+	<action shortcut="M" default="M" context="Tools Menu" name="Extrude Multiple Faces" />
+	<action shortcut="F1" default="F1" context="Help Menu" name="&amp;Online User Manual" />
 	<action default="" context="Help Menu" name="&amp;TopMod on the Web" />
+	<action default="" context="Help Menu" name="&amp;TopMod Research Papers" />
 	<action default="" context="Help Menu" name="&amp;Check for Updates" />
 	<action default="" context="Help Menu" name="&amp;About TopMod" />
 	<action default="" context="Help Menu" name="About &amp;Qt" />
 	<action shortcut="T" default="T" context="Window Menu" name="Hide All ToolBars" />
 	<action shortcut="SHIFT+T" default="SHIFT+T" context="Window Menu" name="Show All ToolBars" />
-	<action shortcut="O" default="O" context="Window Menu" name="Tool Options - Insert Edge" />
-	<action default="SHIFT+S" context="Window Menu" name="Learning Movies" />
-	<action shortcut="CTRL+SHIFT+P" default="CTRL+SHIFT+P" context="File Menu" name="Print &amp;Vertex List" />
-	<action shortcut="Del" default="Del" context="Edit Menu" name="&amp;Delete Selected" />
-	<action shortcut="F1" default="F1" context="Help Menu" name="&amp;Online User Manual" />
-	<action default="" context="Help Menu" name="&amp;TopMod Research Papers" />
-	<action shortcut="SHIFT+CTRL+E" default="SHIFT+CTRL+E" context="Window Menu" name="Script Editor" />
-	<action shortcut="CTRL+ALT+S" default="CTRL+ALT+S" context="File Menu" name="Export LiveGrahpics3D..." />
-	<action shortcut="CTRL+X" default="CTRL+X" context="Tools Menu" name="Perform Extrusion" />
-	<action default="M" context="Tools Menu" name="Extrude Multiple Faces" />
 </SHORTCUTS>

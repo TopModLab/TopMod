@@ -34,7 +34,8 @@ void TMPatchFace::createPatches(TMPatchMap &patchMap) {
   // Get the centroid and normal for the face - these will be used in all patches
   Vector3d vface = dlflface->getAuxCoords();
   Vector3d nface = dlflface->getAuxNormal();
-	 
+	// std::cout << vface << " " << nface << "\n";
+
   // Get the corners of the face as an array
   // A patch will be created for each corner
   DLFLFaceVertexPtrArray corners;

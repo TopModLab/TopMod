@@ -423,4 +423,9 @@ void DLFLScriptEditor::clearInput( ) {
 void DLFLScriptEditor::toggleEchoing( ) {
 	mEchoing = !mEchoing;
 }
+
+void DLFLScriptEditor::retranslateUi(){
+	
+}
+
 #endif // WITH_PYTHON

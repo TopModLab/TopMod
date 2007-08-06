@@ -567,3 +567,7 @@ void ConicalMode::setupDualConvexHull(){
 	mDualConvexHullWidget->setWindowTitle("Dual Convex Hull");
 	mDualConvexHullWidget->setLayout(mDualConvexHullLayout);	
 }
+
+void ConicalMode::retranslateUi(){
+	
+}

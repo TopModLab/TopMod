@@ -1042,7 +1042,6 @@ DLFLFacePtr GLWidget::selectFace(int mx, int my) {
 }
 
 // Subroutine for selecting multiple faces at once
-// DLFLFacePtrArray GLWidget::selectFaces(int mx, int my) {
 DLFLFacePtr GLWidget::selectFaces(int mx, int my) {
 	glEnable(GL_CULL_FACE);
 	GLuint selectBuf[1024];
