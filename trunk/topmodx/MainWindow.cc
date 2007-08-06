@@ -2161,7 +2161,7 @@ void MainWindow::doSelection(int x, int y) {
 		if ( QApplication::keyboardModifiers() == Qt::ControlModifier) {
 			if ( active->isSelected(sfptr)){
 				active->clearSelectedFace(sfptr);
-				// num_sel_faces--;
+				num_sel_faces--;
 			}
 			active->redraw();
 			sfptrarr.clear();
@@ -2169,8 +2169,8 @@ void MainWindow::doSelection(int x, int y) {
 		else {
 			sfptr = active->selectFaces(x,y);
 			if ( !active->isSelected(sfptr)){
-				active->setSelectedFace(sfptr);
-				// num_sel_faces++;
+				active->setSelectedFace(num_sel_faces,sfptr);
+				num_sel_faces++;
 			}
 			active->redraw();
 			sfptrarr.clear();
