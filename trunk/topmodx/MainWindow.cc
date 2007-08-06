@@ -1996,7 +1996,7 @@ void MainWindow::doSelection(int x, int y) {
 			active->clearSelectedVertices();
 		}
 		svptr = active->selectVertex(x,y);
-		active->setSelectedVertex(num_sel_verts,svptr);
+		active->setSelectedVertex(svptr);
 		break;
 	case MultiSelectVertex :
 		svptr = active->selectVertex(x,y);
@@ -2011,7 +2011,7 @@ void MainWindow::doSelection(int x, int y) {
 		else {
 			svptr = active->selectVertex(x,y);
 			if ( !active->isSelected(svptr)){
-				active->setSelectedVertex(num_sel_verts,svptr);
+				active->setSelectedVertex(svptr);
 				num_sel_verts++;
 			}
 			active->redraw();
@@ -2029,13 +2029,13 @@ void MainWindow::doSelection(int x, int y) {
 	case TruncateEdge :
 	case MarkEdge ://ozgur
 		septr = active->selectEdge(x,y);
-		active->setSelectedEdge(num_sel_edges,septr);
+		active->setSelectedEdge(septr);
 		break;
 	case CutEdgeandVertex://ozgur
 		septr = active->selectEdge(x,y);
 		svptr = active->selectVertex(x,y);
-		active->setSelectedEdge(num_sel_edges,septr);
-		active->setSelectedVertex(num_sel_verts,svptr);
+		active->setSelectedEdge(septr);
+		active->setSelectedVertex(svptr);
 		break;
 	case MultiSelectEdge :
 		septr = active->selectEdge(x,y);
@@ -2050,7 +2050,7 @@ void MainWindow::doSelection(int x, int y) {
 		else {
 			septr = active->selectEdge(x,y);
 			if ( !active->isSelected(septr)){
-				active->setSelectedEdge(num_sel_edges,septr);
+				active->setSelectedEdge(septr);
 				num_sel_edges++;
 			}
 			active->redraw();
@@ -2073,7 +2073,8 @@ void MainWindow::doSelection(int x, int y) {
 			deselect_edges = false;
 		}
 		else if ( septr && !active->isSelected(septr)){
-			active->setSelectedEdge(num_sel_edges,septr);
+			// active->setSelectedEdge(num_sel_edges,septr);
+			active->setSelectedEdge(septr);
 			num_sel_edges++;
 			getEdgeLoopSelection(septr);
 		}
@@ -2084,7 +2085,8 @@ void MainWindow::doSelection(int x, int y) {
 	case ConnectFaces :
 	case CutFace://ozgur
 		sfptr = active->selectFace(x,y);
-		active->setSelectedFace(num_sel_faces,sfptr);
+		// active->setSelectedFace(num_sel_faces,sfptr);
+		active->setSelectedFace(sfptr);
 		break;
 	case SelectSimilarFaces :
 		//clear selection if shift isn't down
@@ -2092,14 +2094,17 @@ void MainWindow::doSelection(int x, int y) {
 			active->clearSelectedFaces();
 		sfptr = active->selectFace(x,y);
 		if (sfptr){
-			active->setSelectedFace(num_sel_faces,sfptr);
-			num_sel_faces++;
+			if (!active->isSelected(sfptr)){
+				// active->setSelectedFace(num_sel_faces,sfptr);
+				active->setSelectedFace(sfptr);
+				num_sel_faces++;
+			}
 			DLFLFacePtrArray sfptrarray;
 			vector<DLFLFacePtr>::iterator it;
 			DLFL::selectMatchingFaces(&object, sfptr, sfptrarray);
 			for (it = sfptrarray.begin(); it != sfptrarray.end(); it++){
 				if (!active->isSelected(*it)){
-					active->setSelectedFace(num_sel_faces,*it);
+					active->setSelectedFace(*it);
 					num_sel_faces++;
 				}
 			}
@@ -2111,7 +2116,7 @@ void MainWindow::doSelection(int x, int y) {
 			active->clearSelectedFaces();
 		}
 		septr = active->selectEdge(x,y);
-		active->setSelectedEdge(num_sel_edges,septr);
+		active->setSelectedEdge(septr);
 		if ( septr ){
 			if (QApplication::keyboardModifiers() == Qt::ControlModifier){ // deselect
 				face_loop_start_edge = septr;
@@ -2129,7 +2134,7 @@ void MainWindow::doSelection(int x, int y) {
 			active->clearSelectedEdges();
 		}
 		septr = active->selectEdge(x,y);
-		active->setSelectedEdge(num_sel_edges,septr);
+		active->setSelectedEdge(septr);
 		if ( septr ){
 			if (QApplication::keyboardModifiers() == Qt::ControlModifier){ // deselect
 				edge_ring_start_edge = septr;
@@ -2164,7 +2169,7 @@ void MainWindow::doSelection(int x, int y) {
 		else {
 			sfptr = active->selectFaces(x,y);
 			if ( !active->isSelected(sfptr)){
-				active->setSelectedFace(num_sel_faces,sfptr);
+				active->setSelectedFace(sfptr);
 				num_sel_faces++;
 			}
 			active->redraw();
@@ -2185,7 +2190,7 @@ void MainWindow::doSelection(int x, int y) {
 			deselect_edges = false;
 		}
 		else if (sfptr && !active->isSelected(sfptr) ){
-			active->setSelectedFace(num_sel_faces,sfptr);
+			active->setSelectedFace(sfptr);
 			num_sel_faces++;
 			getCheckerboardSelection(sfptr);
 		}		
@@ -2200,32 +2205,32 @@ void MainWindow::doSelection(int x, int y) {
 	case BezierConnectFaces :
 	case HermiteConnectFaces :
 		sfptr = active->selectFace(x,y);
-		active->setSelectedFace(num_sel_faces,sfptr);
+		active->setSelectedFace(sfptr);
 		if ( sfptr )
 			{
 				sfvptr = active->selectFaceVertex(sfptr,x,y);
-				active->setSelectedFaceVertex(num_sel_faceverts,sfvptr);
+				active->setSelectedFaceVertex(sfvptr);
 			}
 		break;
 
 	case MultiSelectFaceVertex :
 		sfptr = active->selectFace(x,y);
-		active->setSelectedFace(num_sel_faces,sfptr);
+		active->setSelectedFace(sfptr);
 		if ( sfptr )
 			{
 				sfvptr = active->selectFaceVertex(sfptr,x,y);
 				if ( !active->isSelected(sfvptr) )
-					active->setSelectedFaceVertex(num_sel_faceverts,sfvptr);
+					active->setSelectedFaceVertex(sfvptr);
 			}
 		break;
 
 	case ConnectEdges :
 		sfptr = active->selectFace(x,y);
-		active->setSelectedFace(num_sel_faces,sfptr);
+		active->setSelectedFace(sfptr);
 		if ( sfptr )
 			{
 				septr = active->selectEdge(x,y);
-				active->setSelectedEdge(num_sel_edges,septr);
+				active->setSelectedEdge(septr);
 			}
 		break;
 	};	
@@ -2592,7 +2597,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 							DLFL::selectMatchingFaces(&object, sfptr, sfptrarray);
 							for (it = sfptrarray.begin(); it != sfptrarray.end(); it++){
 								if (!active->isSelected(*it)){
-									active->setSelectedFace(num_sel_faces,*it);
+									active->setSelectedFace(*it);
 									num_sel_faces++;
 								}
 							}
@@ -4155,7 +4160,7 @@ void MainWindow::getCheckerboardSelection(DLFLFacePtr fptr) {
 					num_sel_faces--;
 				}
 				else {
-					active->setSelectedFace(num_sel_faces,*it);
+					active->setSelectedFace(*it);
 					num_sel_faces++;					
 				}
 				getCheckerboardSelection((*it));
@@ -4186,7 +4191,7 @@ void MainWindow::getEdgeLoopSelection(DLFLEdgePtr eptr) {
 						getEdgeLoopSelection(*it);
 					}
 					else if (!active->isSelected(*it)){
-						active->setSelectedEdge(num_sel_edges,*it);
+						active->setSelectedEdge(*it);
 						num_sel_edges++;
 						getEdgeLoopSelection(*it);
 					}
@@ -4204,7 +4209,7 @@ void MainWindow::getEdgeLoopSelection(DLFLEdgePtr eptr) {
 						getEdgeLoopSelection(*it);
 					}
 					else if (!active->isSelected(*it)){
-						active->setSelectedEdge(num_sel_edges,*it);
+						active->setSelectedEdge(*it);
 						num_sel_edges++;
 						getEdgeLoopSelection(*it);
 					}
@@ -4231,7 +4236,7 @@ void MainWindow::getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr 
 	if (fptr1 && fptr1->numFaceVertexes() == 4 && !(fptr1 == face_loop_marker) ){
 		// cout << select_face_loop << "\t" << !active->isSelected(fptr1) << std::endl;
 		if (/*select_face_loop &&*/ !active->isSelected(fptr1)){
-			active->setSelectedFace(num_sel_faces,fptr1);
+			active->setSelectedFace(fptr1);
 			num_sel_faces++;
 		}
 		/*else if (active->isSelected(fptr1)){
@@ -4249,7 +4254,8 @@ void MainWindow::getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr 
 	}
 	if (fptr2 && fptr2->numFaceVertexes() == 4 && !(fptr2 == face_loop_marker) ){
 		if (/*select_face_loop &&*/!active->isSelected(fptr2)){
-			active->setSelectedFace(num_sel_faces,fptr2);
+			active->setSelectedFace(fptr2);
+			// active->setSelectedFace(num_sel_faces,fptr2);
 			num_sel_faces++;
 		}
 		/*else if (active->isSelected(fptr2)){
@@ -4279,7 +4285,7 @@ void MainWindow::getEdgeRingSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr 
 	vector<DLFLEdgePtr>::iterator it;
 	DLFLFacePtr fptr1, fptr2;
 	if (!active->isSelected(eptr)){
-		active->setSelectedEdge(num_sel_edges,eptr);
+		active->setSelectedEdge(eptr);
 		num_sel_edges++;
 	}
 	//get the two faces corresponding to this edge ptr

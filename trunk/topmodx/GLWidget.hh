@@ -556,6 +556,38 @@ public :
 		}
 	}
 
+	void setSelectedVertex(DLFLVertexPtr vp) {
+		if ( vp )
+		{
+			// if ( (uint) index < object->sel_vptr_array.size() ) object->sel_vptr_array[index] = vp;
+			object->sel_vptr_array.push_back(vp);
+		}
+	}
+
+	void setSelectedEdge(DLFLEdgePtr ep) {
+		if ( ep )
+		{
+			// if ( (uint) index < object->sel_eptr_array.size() ) object->sel_eptr_array[index] = ep;
+			 object->sel_eptr_array.push_back(ep);
+		}
+	}
+
+	void setSelectedFace(DLFLFacePtr fp) {
+		if ( fp )
+		{
+			// if ( (uint) index < object->sel_fptr_array.size() ) object->sel_fptr_array[index] = fp;
+			object->sel_fptr_array.push_back(fp);
+		}
+	}
+
+	void setSelectedFaceVertex(DLFLFaceVertexPtr fvp) {
+		if ( fvp )
+		{
+			// if ( (uint) index < object->sel_fvptr_array.size() ) object->sel_fvptr_array[index] = fvp;
+			object->sel_fvptr_array.push_back(fvp);
+		}
+	}
+
 		//--- Return the selected items at given index ---//
 	DLFLLocatorPtr getLocatorPtr() const  // brianb
 	{
