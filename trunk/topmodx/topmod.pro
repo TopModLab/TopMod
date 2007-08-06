@@ -5,7 +5,7 @@ CONFIG += qt release warn_off link_prl
 # exclude verse python or spacenav drivers
 # or include them with CONFIG += 
 CONFIG -=  WITH_PYTHON WITH_SPACENAV WITH_VERSE
-CONFIG -= WITH_PYTHON 
+CONFIG += WITH_PYTHON 
 # DEFINES += TOPMOD_VERSION 
 DEFINES -= GPU_OK
 

@@ -10,6 +10,7 @@
 // row operations are simplified
 
 #include "../Base/BaseObject.hh"
+#include "Vector3d.hh"
 #include "Vector4d.hh"
 #include "Matrix3x3.hh"
 
@@ -297,6 +298,14 @@ class Matrix4x4 : public BaseObject
          prod.set( mat.row[0]*vec, mat.row[1]*vec, mat.row[2]*vec, mat.row[3]*vec );
          return prod;
        }
+
+			friend Vector3d operator*( const Matrix4x4& mat, const Vector3d& vec ) {
+				Vector3d prod3;
+				Vector4d prod4, vec4 = vec; vec4[3] = 1.0;
+				prod4 = mat * vec4;
+				prod3 = prod4;
+				return prod3;
+			}
      
         // Pre-multiplication by a Vector4d. Vector is assumed to be a row vector
      friend Vector4d operator * (const Vector4d& vec, const Matrix4x4& mat);

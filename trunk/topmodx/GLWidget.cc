@@ -567,6 +567,8 @@ void GLWidget::drawIDs( QPainter *painter, const GLdouble *model, const GLdouble
 	Vector3d coord = mCamera->getEye(); //use this to find the dist from the camera
 	QBrush brush;
 	
+	Vector3d offset = object->position;
+	
 	/* Draw Vertex IDs */
 	if( mShowVertexIDs ) {
 		DLFLVertexPtrArray vparray;
@@ -581,9 +583,11 @@ void GLWidget::drawIDs( QPainter *painter, const GLdouble *model, const GLdouble
 			min_dist = (vlsqr_array[count] < min_dist ) ? vlsqr_array[count] : min_dist;
 			count++;
 		}
-		count =0;
+		count = 0;
 		for( it = vparray.begin(); it != vparray.end(); it++) {
 			Vector3d point = (*it)->coords;
+			point = object->tr.applyTo(point);
+			//point += object->position;
 			point.get(x,y,z);		
 			QString id = QString::number((*it)->getID() );
 			if(max_dist == min_dist)
@@ -620,7 +624,9 @@ void GLWidget::drawIDs( QPainter *painter, const GLdouble *model, const GLdouble
 		count=0;
 		for( it = eparray.begin(); it != eparray.end(); it++) {
 			QString id = QString::number( (*it)->getID() );
-			(*it)->getMidPoint().get(x,y,z);
+			Vector3d point = (*it)->getMidPoint();
+			point = object->tr.applyTo(point);
+			point.get(x,y,z);
 			if(max_dist == min_dist)
 				d = min_alpha;
 			else
@@ -657,6 +663,7 @@ void GLWidget::drawIDs( QPainter *painter, const GLdouble *model, const GLdouble
 		for( it = fparray.begin(); it != fparray.end(); it++) {
 			QString id = QString::number( (*it)->getID() );
 			Vector3d point = (*it)->geomCentroid();// + (*it)->getNormal();
+			point = object->tr.applyTo(point);
 			point.get(x,y,z);
 			if(max_dist == min_dist)
 				d = min_alpha;
@@ -675,12 +682,18 @@ void GLWidget::drawIDs( QPainter *painter, const GLdouble *model, const GLdouble
 		}
 	}
 
+	glPopMatrix( );
 	glEnable(GL_DEPTH_TEST);
 }
 
 void GLWidget::drawSelectedIDs( QPainter *painter, const GLdouble *model, const GLdouble *proj, const GLint	*view) {
 	if (mShowSelectedIDs){
 		glDisable(GL_DEPTH_TEST);
+		
+		glPushMatrix( );
+		double mat[16];
+		object->tr.fillArrayColumnMajor(mat);
+		glMultMatrixd(mat);
 	
 		double x,y,z;
 		QBrush brush;
@@ -696,6 +709,7 @@ void GLWidget::drawSelectedIDs( QPainter *painter, const GLdouble *model, const 
 					QString id = QString::number( (*first)->getID() );
 					double x,y,z;
 					Vector3d point = (*first)->coords;// + (*it)->getNormal();
+					point = object->tr.applyTo(point);
 					point.get(x,y,z);
 					win_x = 0, win_y = 0, win_z = 0;
 					gluProject(x, y, z, model, proj, view, &win_x, &win_y, &win_z);
@@ -718,7 +732,9 @@ void GLWidget::drawSelectedIDs( QPainter *painter, const GLdouble *model, const 
 				first = object->sel_eptr_array.begin(); last = object->sel_eptr_array.end();
 				while ( first != last ){
 					QString id = QString::number( (*first)->getID() );
-					(*first)->getMidPoint().get(x,y,z);
+					Vector3d point = (*first)->getMidPoint(true);
+					point = object->tr.applyTo(point);
+					point.get(x,y,z);
 					win_x = 0, win_y = 0, win_z = 0;
 					gluProject(x, y, z, model, proj, view, &win_x, &win_y, &win_z);
 					win_y = height() - win_y; // y is inverted
@@ -742,6 +758,7 @@ void GLWidget::drawSelectedIDs( QPainter *painter, const GLdouble *model, const 
 					QString id = QString::number( (*first)->getID() );
 					double x,y,z; 
 					Vector3d point = (*first)->geomCentroid();// + (*it)->getNormal();
+					point = object->tr.applyTo(point);
 					point.get(x,y,z);
 					win_x = 0, win_y = 0, win_z = 0;
 					gluProject(x, y, z, model, proj, view, &win_x, &win_y, &win_z);
@@ -766,6 +783,7 @@ void GLWidget::drawSelectedIDs( QPainter *painter, const GLdouble *model, const 
 					QString id = QString::number( (*first)->vertex->getID() );
 					double x,y,z; 
 					Vector3d point = (*first)->vertex->coords;
+					point = object->tr.applyTo(point);
 					point.get(x,y,z);
 					win_x = 0, win_y = 0, win_z = 0;
 					gluProject(x, y, z, model, proj, view, &win_x, &win_y, &win_z);
@@ -781,6 +799,7 @@ void GLWidget::drawSelectedIDs( QPainter *painter, const GLdouble *model, const 
 				}
 			}
 		} 
+		glPopMatrix( );
 		glEnable(GL_DEPTH_TEST);
 	}
 }

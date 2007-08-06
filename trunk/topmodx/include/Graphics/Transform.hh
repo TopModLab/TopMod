@@ -24,7 +24,7 @@ typedef Transformation * TransformationPtr;
 
 class Transformation
 {
-	protected :
+	public :
 
 	Matrix4x4 transform;                              // Combined transformation matrix
 
@@ -194,8 +194,13 @@ class Transformation
 						// Invert the transformation matrix
 		transform.invert();
 	}
+	
+	// Apply the transformation matrix to a vector
+	Vector3d applyTo(const Vector3d& vec) {
+		return transform*vec;
+	}
 
-				// Apply transformations - pre-multiply by corresponding transformation matrices
+	// Apply transformations - pre-multiply by corresponding transformation matrices
 	void translate(const Vector3d& t)
 	{
 		transform = Transformation :: translation(t) * transform;

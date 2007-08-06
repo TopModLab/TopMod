@@ -68,7 +68,7 @@ public :
   // Render the patches
   void renderPatches(void) {
     glPushMatrix();
-    ///transform();
+    transform();
     for_each(&TMPatchFace::render);
     glPopMatrix();
   }
@@ -76,7 +76,7 @@ public :
   // Render the object using wireframe patches
   void renderWireframePatches(void) {
     glPushMatrix();
-    ///transform();
+    transform();
     //for_each(face_list.begin(), face_list.end(), outline);
     for_each(&TMPatchFace::outline);
     glPopMatrix();
@@ -85,7 +85,7 @@ public :
   // Render the object using point patches
   void renderPointPatches(void) {
     glPushMatrix();
-    ///transform();
+    transform();
     //for_each(face_list.begin(), face_list.end(), controlpoints);
     for_each(&TMPatchFace::controlpoints);
     glPopMatrix();
@@ -93,7 +93,7 @@ public :
 
   void renderPatchBoundaries(void) {
     glPushMatrix();
-    ///transform();
+    transform();
     //for_each(patch_list.begin(), patch_list.end(), tmpf_patch_boundary);
     for_each(&TMPatchFace::patch_boundary);
     glPopMatrix();
@@ -101,7 +101,7 @@ public :
 
   void renderPatchFaceBoundaries(void) {
     glPushMatrix();
-    ///transform();
+    transform();
     //for_each(patch_list.begin(), patch_list.end(), tmpf_face_boundary);
     for_each(&TMPatchFace::face_boundary);
     glPopMatrix();
@@ -109,7 +109,7 @@ public :
 
   void renderPatchNormals(void) {
     glPushMatrix();
-    ///transform();
+    transform();
     //for_each(patch_list.begin(), patch_list.end(), tmpf_render_normals);
     for_each(&TMPatchFace::renderNormals);
     glPopMatrix();
@@ -136,6 +136,12 @@ public :
       ++first;
     }
   }
+
+	void transform( ) {
+		double mat[16];
+		mObj->tr.fillArrayColumnMajor(mat);
+		glMultMatrixd(mat);		
+	}
 
 };
 

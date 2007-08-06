@@ -1396,9 +1396,9 @@ void MainWindow::createMenus(){
 void MainWindow::createToolBars() {
 
 	mEditToolBar = new QToolBar(tr("Edit"),this);
-	mEditToolBar->setFloatable(true);
+	//mEditToolBar->setFloatable(true);
 	addToolBar(Qt::TopToolBarArea,mEditToolBar);
-	mEditToolBar->setFloatable(true);
+	//mEditToolBar->setFloatable(true);
 	mEditToolBar->addAction(mOpenAct);
 	mEditToolBar->addAction(mSaveAsAct);
 	mEditToolBar->addAction(mUndoAct);
@@ -1408,7 +1408,7 @@ void MainWindow::createToolBars() {
 	//selection masks toolbar
 	mSelectionMaskToolBar = new QToolBar(tr("Selection Masks"));
 	mSelectionMaskToolBar->hide();
-	mSelectionMaskToolBar->setFloatable(true);
+	//mSelectionMaskToolBar->setFloatable(true);
 	//addToolBar(Qt::TopToolBarArea,mSelectionMaskToolBar);
 	mSelectionMaskToolBar->addAction(mSelectVerticesMaskAct);
 	mSelectionMaskToolBar->addAction(mSelectFacesMaskAct);
@@ -1417,7 +1417,7 @@ void MainWindow::createToolBars() {
 	mSelectionMaskToolBar->setOrientation(Qt::Vertical);
 
 	mPrimitivesToolBar = new QToolBar(tr("Primitives"),this);
-	mPrimitivesToolBar->setFloatable(true);
+	//mPrimitivesToolBar->setFloatable(true);
 	addToolBar(Qt::TopToolBarArea,mPrimitivesToolBar);
 	mPrimitivesToolBar->setIconSize(QSize(32,32));
 	mPrimitivesToolBar->addAction(pCubeAct);
@@ -1430,14 +1430,14 @@ void MainWindow::createToolBars() {
 
 	//basic tools - six buttons
 	mToolsToolBar = new QToolBar(tr("Tools"),this);
-	mToolsToolBar->setFloatable(true);
+	//mToolsToolBar->setFloatable(true);
 	addToolBar(Qt::TopToolBarArea,mToolsToolBar);
 	mToolsToolBar->setIconSize(QSize(32,32));
 
 	addToolBarBreak();
 
 	mExtrusionToolBar = new QToolBar(tr("Extrusion Tools"),this);
-	mExtrusionToolBar->setFloatable(true);
+	//mExtrusionToolBar->setFloatable(true);
 	addToolBar(Qt::TopToolBarArea,mExtrusionToolBar);
 	mExtrusionToolBar->setIconSize(QSize(32,32));
 
@@ -1446,12 +1446,12 @@ void MainWindow::createToolBars() {
 	// mConicalToolBar->setIconSize(QSize(32,32));
 
 	mHighgenusToolBar = new QToolBar(tr("High Genus Tools"),this);
-	mHighgenusToolBar->setFloatable(true);
+	//mHighgenusToolBar->setFloatable(true);
 	addToolBar(Qt::TopToolBarArea,mHighgenusToolBar);
 	mHighgenusToolBar->setIconSize(QSize(32,32));
 
 	mTexturingToolBar = new QToolBar(tr("Texturing Tools"),this);
-	mTexturingToolBar->setFloatable(true);
+	//mTexturingToolBar->setFloatable(true);
 	addToolBar(Qt::TopToolBarArea,mTexturingToolBar);
 	mTexturingToolBar->setIconSize(QSize(32,32));
 
@@ -1459,7 +1459,7 @@ void MainWindow::createToolBars() {
 	mRemeshingToolBar->setAllowedAreas(Qt::RightToolBarArea);
 	mRemeshingToolBar->setOrientation(Qt::Vertical);
 	mRemeshingToolBar->setToolButtonStyle(Qt::ToolButtonTextOnly);
-	mRemeshingToolBar->setFloatable(false);
+	//mRemeshingToolBar->setFloatable(false);
 	// mRemeshingToolBar->setFloating(true);
 	addToolBar(Qt::RightToolBarArea,mRemeshingToolBar);
 	// mRemeshingToolBar->setIconSize(QSize(16,16));

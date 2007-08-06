@@ -406,32 +406,39 @@ void MainWindow::changeTiltPlane2(double value){
 
 // Geometric transformations
 void MainWindow::translatex(double x) {
+	Vector3d oldtr = object.position;
 	object.position[0] = x;
+	object.tr.transform[0][3] = x;
 	redraw();
 }
 
 void MainWindow::translatey(double y) {
 	object.position[1] = y;
+	object.tr.transform[1][3] = y;
 	redraw();
 }
 
 void MainWindow::translatez(double z) {
 	object.position[2] = z;
+	object.tr.transform[2][3] = z;
 	redraw();
 }
 
 void MainWindow::scalex(double x) {
 	object.scale_factor[0] = x;
+	object.tr.transform[0][0] = x;
 	redraw();
 }
 
 void MainWindow::scaley(double y) {
 	object.scale_factor[1] = y;
+	object.tr.transform[1][1] = y;
 	redraw();
 }
 
 void MainWindow::scalez(double z) {
 	object.scale_factor[2] = z;
+	object.tr.transform[2][2] = z;
 	redraw();
 }
 
@@ -440,6 +447,9 @@ void MainWindow::freezeTransforms() {
 	object.position.reset();
 	object.scale_factor.set(1,1,1);
 	object.rotation.reset();
+	object.tr.reset();
+	active->recomputePatches();
+	active->recomputeLighting();
 	redraw();
 }
 

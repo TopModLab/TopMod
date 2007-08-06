@@ -37,13 +37,13 @@ def connEdges(e1,f1,e2,f2):
     c1np = saveCorner(c1n)
     c2np = saveCorner(c2n)
     if( next(c1) != c2n and prev(c1) != c2n ):
-        e,c1,c2n = insertEdge(c1,c2n,False)
+        e,c1,c2n,c3,c4 = insertEdge(c1,c2n,False)
     c1  = restoreCorner(c1p)
     c2  = restoreCorner(c2p)
     c1n = restoreCorner(c1np)
     c2n = restoreCorner(c2np)
     if( next(c1n) != c2 and prev(c1n) != c2 ):
-        e,c1n,c2 = insertEdge(c1n,c2,False)
+        e,c1n,c2,c3,c4 = insertEdge(c1n,c2,False)
 
 def myextrude( faceid, dist, segs ):
     for i in range(segs):
