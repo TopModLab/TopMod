@@ -3433,7 +3433,7 @@ void MainWindow::setMode(Mode m) {
 	default :
 		// Nothing to be done for other modes except clearing selection lists
 		setSelectionMask(MainWindow::MaskObject);									
-		MainWindow::clearSelected();
+		// MainWindow::clearSelected();
 		break;
 	}
 	// if (mode != MultiSelectFace)
@@ -3562,22 +3562,24 @@ void MainWindow::setExtrusionMode(ExtrusionMode m){
 }
 
 void MainWindow::setSelectionMask(SelectionMask m){
-	selectionmask = m;
+	if (selectionmask != m){
+		selectionmask = m;
 	
-	active->clearSelected();
-	active->repaint();
+		// active->clearSelected();
+		active->repaint();
 	
-	switch(selectionmask){
-	case MaskVertices : active->setSelectionMaskString(tr("Vertices"));
-	break;
-	case MaskEdges :	active->setSelectionMaskString(tr("Edges"));
-	break;
-	case MaskFaces :	active->setSelectionMaskString(tr("Faces"));
-	break;
-	case MaskCorners :	active->setSelectionMaskString(tr("Corners"));
-	break;
-	default:
-	break;
+		switch(selectionmask){
+		case MaskVertices : active->setSelectionMaskString(tr("Vertices"));
+		break;
+		case MaskEdges :	active->setSelectionMaskString(tr("Edges"));
+		break;
+		case MaskFaces :	active->setSelectionMaskString(tr("Faces"));
+		break;
+		case MaskCorners :	active->setSelectionMaskString(tr("Corners"));
+		break;
+		default:
+		break;
+		}
 	}
 }
 
