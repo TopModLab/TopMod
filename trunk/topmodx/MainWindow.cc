@@ -44,8 +44,8 @@ bool MainWindow::delete_edge_cleanup = true;
 int MainWindow::num_segments = 10;
 int MainWindow::max_segments = -1;
 bool MainWindow::symmetric_weights = true;
-double MainWindow::nwt1 = 5.0;
-double MainWindow::nwt2 = 5.0;
+double MainWindow::nwt1 = 25.0;
+double MainWindow::nwt2 = 25.0;
 int MainWindow::num_extra_twists = 0;
 
 // Extrusions
@@ -2161,7 +2161,7 @@ void MainWindow::doSelection(int x, int y) {
 		if ( QApplication::keyboardModifiers() == Qt::ControlModifier) {
 			if ( active->isSelected(sfptr)){
 				active->clearSelectedFace(sfptr);
-				num_sel_faces--;
+				// num_sel_faces--;
 			}
 			active->redraw();
 			sfptrarr.clear();
@@ -2170,7 +2170,7 @@ void MainWindow::doSelection(int x, int y) {
 			sfptr = active->selectFaces(x,y);
 			if ( !active->isSelected(sfptr)){
 				active->setSelectedFace(sfptr);
-				num_sel_faces++;
+				// num_sel_faces++;
 			}
 			active->redraw();
 			sfptrarr.clear();
@@ -2185,13 +2185,13 @@ void MainWindow::doSelection(int x, int y) {
 		if (sfptr && active->isSelected(sfptr) && QApplication::keyboardModifiers() == Qt::ControlModifier){
 			deselect_edges = true;
 			active->clearSelectedFace(sfptr);
-			num_sel_faces--;
+			// num_sel_faces--;
 			getCheckerboardSelection(sfptr);
 			deselect_edges = false;
 		}
 		else if (sfptr && !active->isSelected(sfptr) ){
 			active->setSelectedFace(sfptr);
-			num_sel_faces++;
+			// num_sel_faces++;
 			getCheckerboardSelection(sfptr);
 		}		
 		active->redraw();
@@ -2205,11 +2205,11 @@ void MainWindow::doSelection(int x, int y) {
 	case BezierConnectFaces :
 	case HermiteConnectFaces :
 		sfptr = active->selectFace(x,y);
-		active->setSelectedFace(sfptr);
+		active->setSelectedFace(num_sel_faces,sfptr);
 		if ( sfptr )
 			{
 				sfvptr = active->selectFaceVertex(sfptr,x,y);
-				active->setSelectedFaceVertex(sfvptr);
+				active->setSelectedFaceVertex(num_sel_faceverts,sfvptr);
 			}
 		break;
 
@@ -2226,11 +2226,11 @@ void MainWindow::doSelection(int x, int y) {
 
 	case ConnectEdges :
 		sfptr = active->selectFace(x,y);
-		active->setSelectedFace(sfptr);
+		active->setSelectedFace(num_sel_faces,sfptr);
 		if ( sfptr )
 			{
 				septr = active->selectEdge(x,y);
-				active->setSelectedEdge(septr);
+				active->setSelectedEdge(num_sel_edges,septr);
 			}
 		break;
 	};	
@@ -2584,7 +2584,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 							DLFLFacePtr fp = active->getSelectedFace(0);
 							fp->print();
 							active->clearSelectedFaces();
-							num_sel_faces = 0;
+							// num_sel_faces = 0;
 							redraw();
 						}
 					break;
@@ -2598,7 +2598,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 							for (it = sfptrarray.begin(); it != sfptrarray.end(); it++){
 								if (!active->isSelected(*it)){
 									active->setSelectedFace(*it);
-									num_sel_faces++;
+									// num_sel_faces++;
 								}
 							}
 							redraw();
@@ -2612,11 +2612,12 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 							fvp->print();
 							active->clearSelectedFaceVertices();
 							active->clearSelectedFaces();
-							num_sel_faceverts = 0; num_sel_faces = 0;
+							num_sel_faceverts = 0; // num_sel_faces = 0;
 							redraw();
 						}
 					break;
 				case InsertEdge :
+				std::cout << "num_sel_corners = "<<active->numSelectedCorners() << "\n";
 					if ( active->numSelectedCorners() >= 2 )
 						{
 							DLFLFaceVertexPtr sfvptr1, sfvptr2;
@@ -2643,7 +2644,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 #endif
 									active->clearSelectedFaces();
 									active->clearSelectedFaceVertices();
-									num_sel_faceverts = 0; num_sel_faces = 0;
+									num_sel_faceverts = 0; // num_sel_faces = 0;
 									active->recomputePatches();
 									active->recomputeNormals();
 									redraw();   

@@ -380,7 +380,7 @@ void HighgenusMode::setupAddHandleSI(){
 	addHandleSINumSegmentsConnectSpinBox = createDoubleSpinBox(mAddHandleSILayout, addHandleSINumSegmentsConnectLabel, tr("# Segments to\nConnect (0=all)"), 0, 10, 1, 0, 0, 1,0);
 	connect(addHoleHandleNumSegmentsConnectSpinBox, SIGNAL(valueChanged(double)), this, SLOT(numSegmentsConnectValueChanged(double)));
 	//weight 1
-	addHandleSIWeight1SpinBox = createDoubleSpinBox(mAddHandleSILayout, addHandleSIWeight1Label, tr("Weight 1"), -100, 100, 0.1, 5.0, 1, 2,0);
+	addHandleSIWeight1SpinBox = createDoubleSpinBox(mAddHandleSILayout, addHandleSIWeight1Label, tr("Weight 1"), -100, 100, 0.1, 25.0, 1, 2,0);
 	connect(addHandleSIWeight1SpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeWeight1(double)));
 	//symmetric weights checkbox
 	QCheckBox *addHandleSISymmetricWeightsCheckBox = new QCheckBox(tr("Symmetric Weights"),this);
@@ -388,7 +388,7 @@ void HighgenusMode::setupAddHandleSI(){
 	connect(addHandleSISymmetricWeightsCheckBox, SIGNAL(stateChanged(int)), this, SLOT(toggleSymmetricWeightsFlag(int)));
 	mAddHandleSILayout->addWidget(addHandleSISymmetricWeightsCheckBox,3,0,1,2);
 	//weight 2 - must be disabled when the checkbox is unchecked...
-	addHandleSIWeight2SpinBox = createDoubleSpinBox(mAddHandleSILayout, addHandleSIWeight2Label, tr("Weight 1"), -100, 100, 0.1, 5.0, 1, 4,0);	
+	addHandleSIWeight2SpinBox = createDoubleSpinBox(mAddHandleSILayout, addHandleSIWeight2Label, tr("Weight 1"), -100, 100, 0.1, 25.0, 1, 4,0);	
 	addHandleSIWeight2SpinBox->setEnabled(false);
 	connect(addHandleSIWeight2SpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeWeight2(double)));
 
