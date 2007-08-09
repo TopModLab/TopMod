@@ -879,8 +879,13 @@ namespace DLFL {
     } else if( strcasecmp(ext,".dlfl") == 0 ) {
       obj->writeDLFL( file, false );
       //obj->setFilename( filename );
+    }	else if( strcasecmp(ext,".m") == 0 ) {
+      obj->writeLG3d( file, false );
+      //obj->setFilename( filename );
+    }	else if( strcasecmp(ext,".stl") == 0 ) {
+      obj->writeSTL( file );
+      //obj->setFilename( filename );
     }
-
     return wrote;
   }
 

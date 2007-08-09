@@ -478,10 +478,10 @@ void MainWindow::createActions() {
 	//Display Menu Actions
 	mFullscreenAct = new QAction(QIcon(":images/view-fullscreen.png"),tr("&Full Screen"), this);
 	mFullscreenAct->setCheckable(true);
-	sm->registerAction( mFullscreenAct, "Display Menu", "");
+	sm->registerAction( mFullscreenAct, "Display Menu", "ALT+F");
 	mFullscreenAct->setStatusTip(tr("Toggle Full Screen"));
-	connect(mFullscreenAct, SIGNAL(triggered()), active, SLOT(toggleFullScreen()) );
-	// mActionListWidget->addAction(mFullscreenAct);
+	connect(mFullscreenAct, SIGNAL(triggered()), this, SLOT(toggleFullScreen()) );
+	mActionListWidget->addAction(mFullscreenAct);
 
 	showVerticesAct = new QAction(tr("Show &Vertices"), this);
 	showVerticesAct->setCheckable(true);
@@ -1255,7 +1255,7 @@ void MainWindow::createMenus(){
 	mDisplayMenu->addAction(objectOrientationAct);
 	mDisplayMenu->addAction(mShowNormalsAct);
 	mDisplayMenu->addAction(mShowFaceCentroidsAct);
-	// mDisplayMenu->addAction(mFullscreenAct);
+	mDisplayMenu->addAction(mFullscreenAct);
 
 	mPrimitivesMenu = new QMenu(tr("&Primitives"));
 	mPrimitivesMenu->setTearOffEnabled(true);
@@ -1733,8 +1733,8 @@ void MainWindow::openFile(QString fileName){
 }
 
 void MainWindow::about() {
-	QMessageBox::about(this, tr("About TopMod"),
-										 tr("The About page for TopMod is still in the works \n stay tuned... \n"));
+	QString s = QString("TopMod Topological Mesh Modeler v%1 <br /><a href=\"http://www.ends170.com/topmod/\">TopMod Home Page</a><br /><a href=\"http://code.google.com/p/topmod/downloads/list\">Check for Updates.</a>").arg(VER);
+	QMessageBox::about(this, tr("About TopMod"), s);
 }
 
 void MainWindow::initializeHelp(){
@@ -1756,7 +1756,7 @@ void MainWindow::help() {
 * \brief will eventually check for updates on the TopMod website and download the necessary files
 */
 void MainWindow::checkForUpdates(){
-	QDesktopServices::openUrl(QUrl("http://www.ends170.com/topmod/?page_id=5"));
+	QDesktopServices::openUrl(QUrl("http://code.google.com/p/topmod/downloads/list/"));
 }
 
 /**

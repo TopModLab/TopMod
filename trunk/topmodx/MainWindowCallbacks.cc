@@ -1633,3 +1633,38 @@ void MainWindow::selectVerticesFromEdges(){
 	active->clearSelectedEdges();
 	redraw();	
 }
+
+void MainWindow::toggleFullScreen(){
+	// go back into normal screen mode
+	if (windowState() == Qt::WindowFullScreen && !mToolsToolBar->isVisible()) {
+		setWindowState(Qt::WindowNoState);
+		mEditToolBar->setVisible(true);
+		//mSelectionMaskToolBar->toggleViewAction();
+		mPrimitivesToolBar->setVisible(true);
+		mToolsToolBar->setVisible(true);
+		mExtrusionToolBar->setVisible(true);
+		//mConicalToolBar->toggleViewAction();
+		mHighgenusToolBar->setVisible(true);
+		mTexturingToolBar->setVisible(true);
+		// mRemeshingToolBar->setVisible(true);		
+		mStatusBar->show();
+	}
+	// go to full screen mode 2
+	else if (windowState() == Qt::WindowFullScreen) {
+		// setWindowState(windowState() ^ Qt::WindowFullScreen);	
+		mStatusBar->hide();
+		mEditToolBar->setVisible(false);
+		mPrimitivesToolBar->setVisible(false);
+		mToolsToolBar->setVisible(false);
+		mExtrusionToolBar->setVisible(false);
+		mHighgenusToolBar->setVisible(false);
+		mTexturingToolBar->setVisible(false);
+		mRemeshingToolBar->setVisible(false);		
+	}
+	//go into full screen mode 1
+	else {
+		setWindowState(windowState() ^ Qt::WindowFullScreen);		
+	}
+	
+	
+}

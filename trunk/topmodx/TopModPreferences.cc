@@ -171,6 +171,7 @@ void TopModPreferences::readSettings(){
 	
 	mSettings->beginGroup("MainWindow");
 	QPoint pos = mSettings->value("pos", QPoint(100, 100)).toPoint();
+	if (pos.y()==0) pos.setY(pos.y()+20);
 	QSize size = mSettings->value("size", QSize(800, 600)).toSize();
 	QPoint toolOptionsPos = mSettings->value("toolOptionsPos", QPoint()).toPoint();
 	

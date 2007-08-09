@@ -18,6 +18,8 @@ static PyObject *dlfl_load_obj(PyObject *self, PyObject *args);
 static PyObject *dlfl_kill_obj(PyObject *self, PyObject *args);
 static PyObject *dlfl_switch_obj(PyObject *self, PyObject *args);
 static PyObject *dlfl_save_obj(PyObject *self, PyObject *args);
+// static PyObject *dlfl_save_lg3d(PyObject *self, PyObject *args);
+// static PyObject *dlfl_save_stl(PyObject *self, PyObject *args);
 //static PyObject *dlfl_query_obj(PyObject *self, PyObject *args);
 
 /* Core */
@@ -91,6 +93,8 @@ static PyMethodDef DLFLMethods[] = {
 	/* Object Management */
   {"load",           dlfl_load_obj,       METH_VARARGS, "load(string)"},
   {"save",           dlfl_save_obj,       METH_VARARGS, "save(string)"},  
+  // {"saveLG3d",       dlfl_save_lg3d,      METH_VARARGS, "saveLG3d(string)"},  
+  // {"saveSTL",        dlfl_save_stl,       METH_VARARGS, "saveSTL(string)"},  
   {"kill",           dlfl_kill_obj,       METH_VARARGS, "kill(object id)"},
   {"switch",         dlfl_switch_obj,     METH_VARARGS, "switch(object id)"},
   //{"query",          dlfl_query_obj,      METH_VARARGS, "query()"},

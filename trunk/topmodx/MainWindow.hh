@@ -795,6 +795,7 @@ public slots:
 	void topModWeb(); 										//!< open the TopMod web page in the default browser
 	void topModResearch(); 								//!< open the TopMod research web page in the default browser
 	void documentWasModified();
+	void toggleFullScreen();							//!< fullscreen mode in the mainwindow class... this is a test...
 
 	void getCommand(); 										//!< this will open up the quicksilver like interface and accept a value from the user
 

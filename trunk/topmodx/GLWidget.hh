@@ -61,7 +61,7 @@ public :
 
 	public slots :
 
-	void toggleFullScreen( );
+	// void toggleFullScreen( ); //not needed anymore... moved to main window
 	void update() { repaint(); };
 	// void switchTo(VPView view);
 

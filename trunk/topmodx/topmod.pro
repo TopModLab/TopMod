@@ -1,3 +1,13 @@
+# version info : code from -- http://wiki.qtcentre.org/index.php?title=Version_numbering_using_QMake
+VERSION = $$system(svn info -r HEAD . | grep 'Changed\ Rev' | cut -b 19-)
+!isEmpty(VERSION){
+	VERSION = 2.$${VERSION}
+} 
+
+VERSTR = '\\"$${VERSION}\\"'  # place quotes around the version string
+DEFINES += VER=\"$${VERSTR}\" # create a VER macro containing the version string
+
+# main stuff
 
 QT += opengl xml
 CONFIG += qt release warn_off link_prl
@@ -5,7 +15,7 @@ CONFIG += qt release warn_off link_prl
 # exclude verse python or spacenav drivers
 # or include them with CONFIG += 
 CONFIG -=  WITH_PYTHON WITH_SPACENAV WITH_VERSE
-CONFIG += WITH_PYTHON 
+CONFIG -= WITH_PYTHON 
 # DEFINES += TOPMOD_VERSION 
 DEFINES -= GPU_OK
 
@@ -20,9 +30,9 @@ OBJECTS_DIR = tmp
 # TopModd will be the name for the debug version, 
 # and TopMod will be the release version
 CONFIG(debug, debug|release) {
- TARGET = TopMod
+ TARGET = TopMod-$${VERSION}
 } else {
- TARGET = TopMod
+ TARGET = TopMod-$${VERSION}
 }
 
 DEPENDPATH += \

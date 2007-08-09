@@ -804,21 +804,24 @@ void GLWidget::drawSelectedIDs( QPainter *painter, const GLdouble *model, const 
 	}
 }
 
-void GLWidget::toggleFullScreen( ) {
-	if( !mIsFullScreen ) {    
-		move(0,20);
-		resize( QApplication::desktop()->size() );
-		// resizeGL( QApplication::desktop()->size().width(), QApplication::desktop()->size().height() );
-		// setFocusPolicy( Qt::StrongFocus );
-		// setWindowFlags( Qt::FramelessWindowHint );
-		// show();
-	} else {
-		// setWindowFlags( Qt::Widget );
-		resize( 700, 800 );
-		show();
-	}
-	mIsFullScreen != mIsFullScreen;
-}
+// void GLWidget::toggleFullScreen( ) {
+// 	std::cout<<"toggle fullscreen mode\n";
+// 	// if( !mIsFullScreen ) {   
+// 		setWindowState(windowState() ^ Qt::WindowFullScreen);
+// 		// setWindowState(Qt::WindowFullScreen);
+// 		// move(0,20);
+// 		// resize( QApplication::desktop()->size() );
+// 		// resizeGL( QApplication::desktop()->size().width(), QApplication::desktop()->size().height() );
+// 		// setFocusPolicy( Qt::StrongFocus );
+// 		// setWindowFlags( Qt::FramelessWindowHint );
+// 		// show();
+// 	// } else {
+// 	// 	// setWindowFlags( Qt::Widget );
+// 	// 	resize( 700, 800 );
+// 	// 	show();
+// 	// }
+// 	// mIsFullScreen != mIsFullScreen;
+// }
 
 // Subroutine for selecting a Vertex
 DLFLVertexPtr GLWidget::selectVertex(int mx, int my) {
