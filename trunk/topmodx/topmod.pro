@@ -30,9 +30,9 @@ OBJECTS_DIR = tmp
 # TopModd will be the name for the debug version, 
 # and TopMod will be the release version
 CONFIG(debug, debug|release) {
- TARGET = TopMod-$${VERSION}
+ TARGET = TopMod# -$${VERSION}
 } else {
- TARGET = TopMod-$${VERSION}
+ TARGET = TopMod# -$${VERSION}
 }
 
 DEPENDPATH += \
@@ -129,6 +129,14 @@ macx {
 	}
 } else:win32 {
 
+	# TopModd will be the name for the debug version, 
+	# and TopMod will be the release version
+	CONFIG(debug, debug|release) {
+	 TARGET = TopMod# -$${VERSION}
+	} else {
+	 TARGET = TopMod# -$${VERSION}
+	}
+	
 	#application icon windows
 	RC_FILE = topmod.rc
 

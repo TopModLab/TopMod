@@ -97,6 +97,9 @@ public :
 
 	inline void setLightPosition(Vector3d p){ plight.position = p; };
 
+	void setNearPlane(double n) { mCamera->setNearPlane(n); redraw(); };
+	void setFarPlane(double f){ mCamera->setFarPlane(f); redraw(); };
+	void setFOV(double fov){ mCamera->setFOV(fov); redraw(); };
 	
 		//compute lighting and normals functions now moved here from MainWindow
 	void recomputeNormals();

@@ -207,6 +207,7 @@ void BasicsMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStack
 QDoubleSpinBox *BasicsMode::createDoubleSpinBox(QGridLayout *layout, QLabel *label, QString s, double low, double high, double step, double value, double decimals, int row, int col){
 	label = new QLabel(s);
 	QDoubleSpinBox *spinbox = new QDoubleSpinBox;
+	spinbox->setAccelerated(true);
 	spinbox->setRange(low, high);
 	spinbox->setSingleStep(step);
 	spinbox->setValue(value);

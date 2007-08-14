@@ -10,7 +10,7 @@ TopModPreferences::TopModPreferences(QSettings *settings, StyleSheetEditor *sse,
 	setFixedSize(700,600);
 	setWindowTitle(tr("TopMod Preferences"));
 	// setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
-	
+		
 	// mMainTab = new QWidget;
 	mStyleSheetsTab = sse;
 	mShortcutsManager = sm;
@@ -95,6 +95,12 @@ void TopModPreferences::saveSettings(){
 	mSettings->setValue("SelectedVertexThickness", mSelectedVertexThickness);
 	mSettings->setValue("SelectedEdgeThickness", mSelectedEdgeThickness);
 	mSettings->endGroup();
+
+	mSettings->beginGroup("Camera");
+	mSettings->setValue("NearPlane",mCameraNearPlane);
+	mSettings->setValue("FarPlane",mCameraFarPlane);	
+	mSettings->setValue("Fov",mCameraFov);
+	mSettings->endGroup();
 	
 	mSettings->beginGroup("MainWindow");
 	mSettings->setValue("pos", ((MainWindow*)mParent)->pos());
@@ -169,6 +175,15 @@ void TopModPreferences::readSettings(){
 	mFaceCentroidThickness = mSettings->value("FaceCentroidThickness", mFaceCentroidThicknessDefault).toDouble();
 	mSettings->endGroup();
 	
+	mSettings->beginGroup("Camera");
+	mCameraNearPlaneDefault = 1.0;
+	mCameraNearPlane = mSettings->value("NearPlane", mCameraNearPlaneDefault).toDouble();
+	mCameraFarPlaneDefault = 200;
+	mCameraFarPlane = mSettings->value("FarPlane", mCameraFarPlaneDefault).toDouble();
+	mCameraFovDefault = 60;
+	mCameraFov = mSettings->value("Fov", mCameraFovDefault).toDouble();
+	mSettings->endGroup();
+
 	mSettings->beginGroup("MainWindow");
 	QPoint pos = mSettings->value("pos", QPoint(100, 100)).toPoint();
 	if (pos.y()==0) pos.setY(pos.y()+20);
@@ -216,7 +231,12 @@ void TopModPreferences::readSettings(){
 	((MainWindow*)mParent)->getActive()->setSilhouetteThickness(mSilhouetteThickness);	
 	((MainWindow*)mParent)->getActive()->setVertexThickness(mVertexThickness);	
 	((MainWindow*)mParent)->getActive()->setSelectedVertexThickness(mSelectedVertexThickness);	
-	((MainWindow*)mParent)->getActive()->setSelectedEdgeThickness(mSelectedEdgeThickness);	
+	((MainWindow*)mParent)->getActive()->setSelectedEdgeThickness(mSelectedEdgeThickness);
+	
+	((MainWindow*)mParent)->getActive()->setNearPlane(mCameraNearPlane);
+	((MainWindow*)mParent)->getActive()->setFarPlane(mCameraFarPlane);
+	((MainWindow*)mParent)->getActive()->setFOV(mCameraFov);
+		
 
 }
 
@@ -318,6 +338,17 @@ void TopModPreferences::loadDefaults(){
 	
 	mSelectedEdgeThickness = mSelectedEdgeThickness;
 	mSelectedEdgeThicknessSpinBox->setValue(mSelectedVertexThickness);
+	
+	
+	//camera stuff
+	mCameraNearPlane = mCameraNearPlaneDefault;
+	((MainWindow*)mParent)->getActive()->setNearPlane(mCameraNearPlane);
+	
+	mCameraFarPlane = mCameraFarPlaneDefault;
+	((MainWindow*)mParent)->getActive()->setFarPlane(mCameraFarPlane);
+	
+	mViewportColor = mCameraFov;
+	((MainWindow*)mParent)->getActive()->setFOV(mCameraFov);
 }
 
 void TopModPreferences::setupMain(){
@@ -332,8 +363,23 @@ void TopModPreferences::setupMain(){
 	// mShowStartupDialogAtStartupCheckBox->setChecked(mShowStartupDialogAtStartup);
 	// connect(mShowStartupDialogAtStartupCheckBox,SIGNAL(stateChanged(int)),this,SLOT(setShowStartupDialogAtStartup(int)));
 	
-	mMainLayout->setRowStretch(2,1);
-	mMainLayout->setColumnStretch(2,1);
+	QStyle* colorPickerStyle = new QPlastiqueStyle;
+	QPalette p;
+
+	//camera nearplane
+	mCameraNearPlaneSpinBox = addSpinBoxPreference(mCameraNearPlaneLabel, tr("Near Plane:"), 0.0, 100, 0.1, mCameraNearPlane, 1, mMainLayout, 0, 0);
+	connect(mCameraNearPlaneSpinBox, SIGNAL(valueChanged(double)),((MainWindow*)mParent)->getActive(), SLOT(setNearPlane(double)));
+
+	//camera farplane
+	mCameraFarPlaneSpinBox = addSpinBoxPreference(mCameraFarPlaneLabel, tr("Far Plane:"), 10, 1000, 0.1, mCameraFarPlane, 1, mMainLayout, 1, 0);
+	connect(mCameraFarPlaneSpinBox, SIGNAL(valueChanged(double)),((MainWindow*)mParent)->getActive(), SLOT(setFarPlane(double)));
+
+	//camera nearplane
+	mCameraFovSpinBox = addSpinBoxPreference(mCameraFovLabel, tr("Field of View:"), 15, 100, 1, mCameraFov, 0, mMainLayout, 2, 0);
+	connect(mCameraFovSpinBox, SIGNAL(valueChanged(double)),((MainWindow*)mParent)->getActive(), SLOT(setFOV(double)));
+	
+	mMainLayout->setRowStretch(3,2);
+	mMainLayout->setColumnStretch(3,2);
 	
 	mMainTab->setLayout(mMainLayout);
 	// mMainLayout->addWidget(mResetCameraButton,0,0);

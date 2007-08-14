@@ -538,6 +538,8 @@ private:
 	QAction *mSaveLG3dAct;
 	QAction *mSaveLG3dSelectedAct;
 	QAction *mExportSTLAct;
+	QAction *mScreenshotViewportAct;
+	QAction *mScreenshotAppAct;
 	QAction *mSaveAsAct;
 	QAction *loadTextureAct;
 	QAction *printInfoAct;
@@ -775,8 +777,14 @@ private:
   QTranslator *translator_it;							//!< \todo translation widget italian
   QTranslator *translator_hi;							//!< \todo translation widget hindi
 
+	//for screenshots
+	QPixmap viewportPixmap;
+	QPixmap appPixmap;
 	
 public slots:
+
+	bool viewportScreenshot(); //!< take a screenshot of just the opengl viewport
+	bool appScreenshot(); //!< take a screenshot of the whole app (for forum posting and bug reports)
 
 	// i18n stuff
 	void changeLanguage(const QString &string);
@@ -851,6 +859,7 @@ public slots:
 	void selectFacesFromVertices();
 	void selectVerticesFromFaces();
 	void selectVerticesFromEdges();
+	void reorderSelectedFaces();
 
 	void deleteSelected();																						//!< delete selected objects
 	void collapseSelectedEdges();																			//!< collapse selected edges

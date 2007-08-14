@@ -117,8 +117,8 @@ class PerspCamera : public Camera
 {
 
 public:
-	PerspCamera():FOV(60),nearplane(1.0),farplane(1000),Camera(){};
-	PerspCamera(Vector3d eye, Vector3d center, Vector3d up):FOV(60),nearplane(1.0),farplane(1000),Camera(eye,center,up){};
+	PerspCamera():FOV(60),nearplane(0.1),farplane(500),Camera(){};
+	PerspCamera(Vector3d eye, Vector3d center, Vector3d up):FOV(60),nearplane(0.1),farplane(500),Camera(eye,center,up){};
 	PerspCamera(Vector3d eye, Vector3d center, Vector3d up, float fov, float n, float f):FOV(fov),nearplane(n),farplane(f),Camera(eye,center,up){};
 	~PerspCamera(){};
 	
@@ -128,6 +128,9 @@ public:
 	virtual void HandleMouseWheel(int delta, int WinX, int WinY);
 	virtual void enterSelectionMode(double x, double y, double w, double h, GLint * vp);
 	virtual void leaveSelectionMode();																								//!< \brief for OpenGL selection
+	void setNearPlane(float n) { nearplane = n; };
+	void setFarPlane(float f) { farplane = f; };
+	void setFOV(float f){ FOV = f; };
 	
 protected:
   float FOV;

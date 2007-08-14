@@ -167,6 +167,11 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	translator_hi = new QTranslator(this);
 	translator_ca = new QTranslator(this);
 
+	//QSettings Path for windows
+	#ifdef WIN32 
+	QSettings::setPath(QSettings::IniFormat,QSettings::UserScope,QString("%APPDATA%"));
+	#endif
+	
 
 	// #ifdef __APPLE__
 	//mac icon
@@ -356,6 +361,18 @@ void MainWindow::createActions() {
 	mExportSTLAct->setStatusTip(tr("Export a stereolithography (*.stl) file for use with various rapid prototyping software and hardware"));
 	connect(mExportSTLAct, SIGNAL(triggered()), this, SLOT(saveFileSTL()));
 	mActionListWidget->addAction(mExportSTLAct);
+
+	mScreenshotViewportAct = new QAction(QIcon(":images/camera-photo.png"),tr("Save Viewport Screenshot..."), this);
+	sm->registerAction(mScreenshotViewportAct, "File Menu", "0");
+	mScreenshotViewportAct->setStatusTip(tr("Save a screenshot of the contents of the OpenGL viewport (*.png)"));
+	connect(mScreenshotViewportAct, SIGNAL(triggered()), this, SLOT(viewportScreenshot()));
+	mActionListWidget->addAction(mScreenshotViewportAct);
+
+	mScreenshotAppAct = new QAction(QIcon(":images/image-x-generic.png"),tr("Save App Screenshot..."), this);
+	sm->registerAction(mScreenshotAppAct, "File Menu", "9");
+	mScreenshotAppAct->setStatusTip(tr("Save a screenshot of the entire main application window (*.png)"));
+	connect(mScreenshotAppAct, SIGNAL(triggered()), this, SLOT(appScreenshot()));
+	mActionListWidget->addAction(mScreenshotAppAct);
 
 	loadTextureAct = new QAction(tr("Load &Texture..."), this);
 	sm->registerAction(loadTextureAct, "File Menu", "CTRL+L");
@@ -1167,6 +1184,8 @@ void MainWindow::createMenus(){
 	mFileMenu->addAction(mSaveLG3dAct);
 	mFileMenu->addAction(mSaveLG3dSelectedAct);
 	mFileMenu->addAction(mExportSTLAct);
+	mFileMenu->addAction(mScreenshotViewportAct);
+	mFileMenu->addAction(mScreenshotAppAct);
 #ifdef WITH_VERSE
 	mFileMenu->addSeparator();
 	mVerseMenu = new QMenu(tr("&Verse"));
@@ -1403,6 +1422,8 @@ void MainWindow::createToolBars() {
 	mEditToolBar->addAction(mSaveAsAct);
 	mEditToolBar->addAction(mUndoAct);
 	mEditToolBar->addAction(mRedoAct);
+	mEditToolBar->addAction(mScreenshotViewportAct);
+	mEditToolBar->addAction(mScreenshotAppAct);	
 	mEditToolBar->setIconSize(QSize(32,32));
 
 	//selection masks toolbar
@@ -2185,13 +2206,13 @@ void MainWindow::doSelection(int x, int y) {
 		if (sfptr && active->isSelected(sfptr) && QApplication::keyboardModifiers() == Qt::ControlModifier){
 			deselect_edges = true;
 			active->clearSelectedFace(sfptr);
-			// num_sel_faces--;
+			num_sel_faces--;
 			getCheckerboardSelection(sfptr);
 			deselect_edges = false;
 		}
 		else if (sfptr && !active->isSelected(sfptr) ){
 			active->setSelectedFace(sfptr);
-			// num_sel_faces++;
+			num_sel_faces++;
 			getCheckerboardSelection(sfptr);
 		}		
 		active->redraw();
@@ -2303,9 +2324,6 @@ void MainWindow::getRightClickMenu(){
 		break;
 		MultiSelectFaceVertex :
 		break;
-		SelectCheckerboard :
-		mRightClickMenu->addAction(mSubdivideSelectedFacesAct);
-		break;
 		InsertEdge :
 		break;
 		DeleteEdge :
@@ -2332,15 +2350,12 @@ void MainWindow::getRightClickMenu(){
 		DoubleStellateFace  :
 		mRightClickMenu->addAction(mPerformExtrusionAct);
 		mRightClickMenu->addAction(mSubdivideSelectedFacesAct);
-		mRightClickMenu->addSeparator();
 		break;
 		ConnectFaceVertices :
-		break;
 		ConnectFaces :
-		break;
 		BezierConnectFaces :
-		break;
 		HermiteConnectFaces :
+		mRightClickMenu->addMenu(mHighgenusMode->getMenu());
 		break;
 		ReorderFace :
 		break;
@@ -2371,12 +2386,14 @@ void MainWindow::getRightClickMenu(){
 		EditVertex :
 		break;
 		SelectEdgeLoop :
+		SelectEdgeRing :
+		mRightClickMenu->addAction(mSubdivideSelectedEdgesAct);
+		mRightClickMenu->addAction(mCollapseSelectedEdgesAct);
+		// mRightClickMenu->addAction(mDeleteSelectedAct);
 		break;
 		SelectFaceLoop :
-		break;
-		SelectEdgeRing :
-		break;
 		SelectSimilarFaces :
+		SelectCheckerboard :	
 		mRightClickMenu->addAction(mSubdivideSelectedFacesAct);
 		break;
 		
@@ -2384,12 +2401,17 @@ void MainWindow::getRightClickMenu(){
 		break;
 	};
 	
+	mRightClickMenu->addSeparator();
+	
 	switch (selectionmask){
 		case MaskVertices:
 			mRightClickMenu->addAction(mDeleteSelectedAct);
 			mRightClickMenu->addAction(selectVertexAct);
 			mRightClickMenu->addAction(selectMultipleVerticesAct);
 			mRightClickMenu->addAction(mEditVertexAct);
+			mRightClickMenu->addAction(mEditVertexAct);
+			mRightClickMenu->addAction(selectEdgesFromVerticesAct);			
+			mRightClickMenu->addAction(selectFacesFromVerticesAct);			
 		break;
 		case MaskEdges: 
 			mRightClickMenu->addAction(mDeleteSelectedAct);
@@ -2398,23 +2420,28 @@ void MainWindow::getRightClickMenu(){
 			mRightClickMenu->addAction(selectMultipleEdgesAct);
 			mRightClickMenu->addAction(selectEdgeLoopAct);
 			mRightClickMenu->addAction(selectEdgeRingAct);
+			mRightClickMenu->addAction(selectVerticesFromEdgesAct);			
+			mRightClickMenu->addAction(selectFacesFromEdgesAct);			
 		break;
 		case MaskFaces://face stuff
-			mRightClickMenu->addAction(mDeleteSelectedAct);
+			// mRightClickMenu->addAction(mDeleteSelectedAct);
 			mRightClickMenu->addAction(selectFaceAct);
 			mRightClickMenu->addAction(selectFaceLoopAct);
 			mRightClickMenu->addAction(selectMultipleFacesAct);
 			mRightClickMenu->addAction(selectSimilarFacesAct);
 			mRightClickMenu->addAction(selectCheckerboardFacesAct);
+			mRightClickMenu->addAction(selectEdgesFromFacesAct);			
+			mRightClickMenu->addAction(selectVerticesFromFacesAct);						
 		break;
 		case MaskCorners:
-			mRightClickMenu->addAction(mDeleteSelectedAct);
+			// mRightClickMenu->addAction(mDeleteSelectedAct);
 			mRightClickMenu->addAction(selectCornerAct);
 		break;
 		default:
 		break;
 	};
 	
+	mRightClickMenu->addSeparator();
 	mRightClickMenu->addAction(selectAllAct);
 	mRightClickMenu->addAction(selectInverseAct);
 	mRightClickMenu->addAction(clearSelectedModeAct);		
@@ -2423,6 +2450,7 @@ void MainWindow::getRightClickMenu(){
 	mRightClickMenu->addSeparator();
 	mRightClickMenu->addMenu(mToolsMenu);
 	mRightClickMenu->addMenu(mRemeshingMenu);
+	mRightClickMenu->addMenu(mSelectionMaskMenu);
 }
 
 
@@ -2598,7 +2626,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 							for (it = sfptrarray.begin(); it != sfptrarray.end(); it++){
 								if (!active->isSelected(*it)){
 									active->setSelectedFace(*it);
-									// num_sel_faces++;
+									num_sel_faces++;
 								}
 							}
 							redraw();
@@ -3388,7 +3416,7 @@ void MainWindow::setMode(Mode m) {
 	case MarkVertex :
 		setSelectionMask(MainWindow::MaskVertices);
 		MainWindow::num_sel_verts = 0;
-		break;
+		break; 
 	case SelectEdge :
 	case SelectEdgeLoop :
 	case SelectEdgeRing :
@@ -3401,7 +3429,7 @@ void MainWindow::setMode(Mode m) {
 	case TruncateEdge :
 	case MarkEdge :
 		setSelectionMask(MainWindow::MaskEdges);
-		MainWindow::num_sel_edges = 0;
+		// MainWindow::num_sel_edges = 0;
 		break;
 	case SelectFace :
 	case SelectFaceLoop :
@@ -3424,7 +3452,7 @@ void MainWindow::setMode(Mode m) {
 	case CutFace :
 	case SelectSimilarFaces :
 		setSelectionMask(MainWindow::MaskFaces);
-		MainWindow::num_sel_faces = 0;
+		// MainWindow::num_sel_faces = 0;
 		break;
 	case SelectFaceVertex :
 	case MultiSelectFaceVertex :
@@ -3432,7 +3460,7 @@ void MainWindow::setMode(Mode m) {
 	case SpliceCorners :
 	case ConnectFaceVertices :
 		setSelectionMask(MainWindow::MaskCorners);
-		MainWindow::num_sel_faceverts = 0;
+		// MainWindow::num_sel_faceverts = 0;
 		break;
 	case NormalMode:
 		setSelectionMask(MainWindow::MaskObject);
@@ -3791,7 +3819,7 @@ void MainWindow::writeObjectDLFL(const char * filename) {
 // File handling
 void MainWindow::openFile(void) {
 	QString fileName = QFileDialog::getOpenFileName(this, tr("Open File..."),
-																									"$HOME", tr("All Supported Files (*.obj *.dlfl);;Wavefront OBJ Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"),
+																									QDir::currentPath(), tr("All Supported Files (*.obj *.dlfl);;Wavefront OBJ Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"),
 																									0, QFileDialog::DontUseSheet);
 	if (!fileName.isEmpty()){
 		if (!curFile.isEmpty()){
@@ -3827,7 +3855,7 @@ bool MainWindow::saveFile(bool with_normals, bool with_tex_coords) {
 	else {
 		QString fileName = QFileDialog::getSaveFileName(this,
 																										tr("Save File As..."),
-																										curFile,
+																										QDir::currentPath() + curFile,
 																										tr("All Supported Files (*.obj *.dlfl);;Wavefront OBJ Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"),
 																										0, QFileDialog::DontUseSheet);
 		if (!fileName.isEmpty()){
@@ -3846,7 +3874,7 @@ bool MainWindow::saveFile(bool with_normals, bool with_tex_coords) {
 bool MainWindow::saveFileAs(bool with_normals, bool with_tex_coords) {
 	QString fileName = QFileDialog::getSaveFileName(this,
 																									tr("Save File As..."),
-																									curFile,
+																									QDir::currentPath() + curFile,
 																									tr("All Supported Files (*.obj *.dlfl);;Wavefront OBJ Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"),
 																									0, QFileDialog::DontUseSheet );
 	if (!fileName.isEmpty()){
@@ -3895,7 +3923,7 @@ void MainWindow::saveFileOBJ(bool with_normals, bool with_tex_coords) {
 bool MainWindow::saveFileBezierOBJ( ) {
 	QString fileName = QFileDialog::getSaveFileName(this,
 																									tr("Save Bezier Patch (OBJ)..."),
-																									curFile,
+																									QDir::currentPath() + curFile,
 																									tr("Wavefront OBJ Files (*.obj);;All Files (*)"),
 																									0, QFileDialog::DontUseSheet);
 	if (!fileName.isEmpty()){
@@ -3911,7 +3939,7 @@ bool MainWindow::saveFileBezierOBJ( ) {
 bool MainWindow::saveFileLG3d( ) {
 	QString fileName = QFileDialog::getSaveFileName(this,
 																									tr("Export to LiveGraphics3D  (M)..."),
-																									curFile,
+																									QDir::currentPath() + curFile,
 																									tr("Mathematica Graphics3D Files (*.m);;All Files (*)"),
 																									0, QFileDialog::DontUseSheet);
 	if (!fileName.isEmpty()){
@@ -3927,7 +3955,7 @@ bool MainWindow::saveFileLG3d( ) {
 bool MainWindow::saveFileLG3dSelected( ) {
 	QString fileName = QFileDialog::getSaveFileName(this,
 																									tr("Export Selected Faces to LiveGraphics3D  (M)..."),
-																									curFile,
+																									QDir::currentPath() + curFile,
 																									tr("Mathematica Graphics3D Files (*.m);;All Files (*)"),
 																									0, QFileDialog::DontUseSheet);
 	if (!fileName.isEmpty()){
@@ -3939,6 +3967,7 @@ bool MainWindow::saveFileLG3dSelected( ) {
 	return false;
 }
 
+
 /* dave - stl export */
 bool MainWindow::saveFileSTL( ) {
 	
@@ -3949,7 +3978,7 @@ bool MainWindow::saveFileSTL( ) {
 	
 	QString fileName = QFileDialog::getSaveFileName(this,
 																									tr("Export STL..."),
-																									curFile,
+																									QDir::currentPath() + curFile,
 																									tr("STL Files (*.stl);;All Files (*)"),
 																									0, QFileDialog::DontUseSheet);
 	if (!fileName.isEmpty()){
@@ -3961,6 +3990,47 @@ bool MainWindow::saveFileSTL( ) {
 	return false;
 }
 
+/* dave - png opengl viewport screenshot export */
+bool MainWindow::viewportScreenshot( ) {
+	
+	// viewportPixmap = QPixmap::grabWidget(active,0,0,active->width(),active->height());
+	// viewportPixmap = QPixmap::grabWindow(active->winId(),/*mapToGlobal(active->pos()).x()*/0,/*mapToGlobal(active->pos()).y()*/0,active->width(),active->height());
+	QImage image = active->grabFrameBuffer(true);
+	QString format = "png";
+	QString initialPath = QDir::currentPath() + tr("/untitled.") + format;
+
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Save Viewport Screenshot As"),
+																									initialPath,
+																									tr("%1 Files (*.%2);;All Files (*)")
+																									.arg(format.toUpper())
+																									.arg(format),
+																									0, QFileDialog::DontUseSheet);
+	if (!fileName.isEmpty()){
+		image.save(fileName, format.toAscii());
+		return true;
+	}
+	return false;
+}
+
+bool MainWindow::appScreenshot(){
+	// appPixmap = QPixmap::grabWidget(this);
+	appPixmap = QPixmap::grabWindow(this->winId());
+	
+	QString format = "png";
+	QString initialPath = QDir::currentPath() + tr("/untitled.") + format;
+
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Save App Screenshot As"),
+																									initialPath,
+																									tr("%1 Files (*.%2);;All Files (*)")
+																									.arg(format.toUpper())
+																									.arg(format),
+																									0, QFileDialog::DontUseSheet);
+	if (!fileName.isEmpty()){
+		appPixmap.save(fileName, format.toAscii());
+		return true;
+	}
+	return false;
+}
 void MainWindow::openFileDLFL(void) {
 	// QString fileName = QFileDialog::getOpenFileName(this,
 	// 																								tr("Open File..."),
@@ -4237,7 +4307,8 @@ void MainWindow::getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr 
 	if (fptr1 && fptr1->numFaceVertexes() == 4 && !(fptr1 == face_loop_marker) ){
 		// cout << select_face_loop << "\t" << !active->isSelected(fptr1) << std::endl;
 		if (/*select_face_loop &&*/ !active->isSelected(fptr1)){
-			active->setSelectedFace(fptr1);
+			// active->setSelectedFace(fptr1);
+			active->setSelectedFace(num_sel_faces,fptr1);
 			num_sel_faces++;
 		}
 		/*else if (active->isSelected(fptr1)){
@@ -4255,8 +4326,8 @@ void MainWindow::getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr 
 	}
 	if (fptr2 && fptr2->numFaceVertexes() == 4 && !(fptr2 == face_loop_marker) ){
 		if (/*select_face_loop &&*/!active->isSelected(fptr2)){
-			active->setSelectedFace(fptr2);
-			// active->setSelectedFace(num_sel_faces,fptr2);
+			// active->setSelectedFace(fptr2);
+			active->setSelectedFace(num_sel_faces,fptr2);
 			num_sel_faces++;
 		}
 		/*else if (active->isSelected(fptr2)){
@@ -4450,6 +4521,10 @@ void MainWindow::retranslateUi() {
 	mSaveLG3dSelectedAct->setStatusTip(tr("Export a LiveGraphics3D (*.m) of the current selected faces file for embedding into the TopMod Wiki, Warning: you cannot import this file back into TopMod"));
 	mExportSTLAct->setText(tr("Export STL..."));
 	mExportSTLAct->setStatusTip(tr("Export a stereolithography (*.stl) file for use with various rapid prototyping software and hardware"));
+	mScreenshotAppAct->setText(tr("Save App Screenshot..."));
+	mScreenshotAppAct->setStatusTip(tr("Save a screenshot of the entire main application window (*.png)"));
+	mScreenshotViewportAct->setText(tr("Save Viewport Screenshot..."));
+	mScreenshotViewportAct->setStatusTip(tr("Save a screenshot of the contents of the OpenGL viewport (*.png)"));
 	loadTextureAct->setText(tr("Load &Texture..."));
 	loadTextureAct->setStatusTip(tr("Load Texture from file"));
 	printInfoAct->setText(tr("Print &Information"));

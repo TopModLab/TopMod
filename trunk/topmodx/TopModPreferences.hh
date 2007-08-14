@@ -174,6 +174,13 @@ private:
 	//reset camera button
 	QPushButton *mResetCameraButton;
 	
+	//camera nearplane/farplane/fov
+	QLabel *mCameraFovLabel,*mCameraNearPlaneLabel,*mCameraFarPlaneLabel;
+	QDoubleSpinBox *mCameraFovSpinBox,*mCameraNearPlaneSpinBox,*mCameraFarPlaneSpinBox;
+	float mCameraFov,mCameraFovDefault;
+	float mCameraNearPlane,mCameraNearPlaneDefault;
+	float mCameraFarPlane,mCameraFarPlaneDefault;	
+	
 	bool mShowStartupDialogAtStartup;
 	
 public:

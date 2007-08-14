@@ -1403,10 +1403,11 @@ void MainWindow::deleteSelected(){
 				undoPush();
 				setModified(true);
 				vector<DLFLEdgePtr>::iterator eit;
-				for(eit = septrarr.begin(); eit != septrarr.end(); eit++)
+				for(eit = septrarr.begin(); eit != septrarr.end(); eit++){
 					DLFL::deleteEdge( &object, *eit, MainWindow::delete_edge_cleanup);
-				active->recomputePatches();
-				active->recomputeNormals();						
+					active->recomputePatches();
+					active->recomputeNormals();						
+				}
 			}			
 			active->clearSelectedEdges();
 			redraw();
@@ -1421,9 +1422,9 @@ void MainWindow::deleteSelected(){
 					vector<DLFLEdgePtr>::iterator eit;
 					for(eit = septrarr.begin(); eit != septrarr.end(); eit++)
 						DLFL::deleteEdge( &object, *eit, MainWindow::delete_edge_cleanup);
-				}
-				active->recomputePatches();
-				active->recomputeNormals();						
+						active->recomputePatches();
+						active->recomputeNormals();						
+					}
 			}			
 			active->clearSelectedVertices();
 			redraw();
@@ -1476,10 +1477,10 @@ void MainWindow::collapseSelectedEdges(){
 		for(eit = septrarr.begin(); eit != septrarr.end(); eit++){
 			if (*eit){
 				DLFL::collapseEdge( &object, *eit, MainWindow::delete_edge_cleanup);
+				active->recomputeNormals();						
 			}
 		}
 		active->recomputePatches();
-		active->recomputeNormals();						
 	}			
 	active->clearSelectedEdges();
 	redraw();
@@ -1632,6 +1633,30 @@ void MainWindow::selectVerticesFromEdges(){
 	}			
 	active->clearSelectedEdges();
 	redraw();	
+}
+
+void MainWindow::reorderSelectedFaces(){
+	// DLFLFaceVertexPtrArray sfvptrarr;
+	// vector<DLFLFaceVertexPtr>::iterator fvit;
+	// DLFLFacePtrArray sfptrarr;
+	// vector<DLFLFacePtr>::iterator fit;
+	// //loop through selected corners, get corresponding faces, reorder them to start from the selected fvptr's
+	// svptrarr = active->getSelectedVertices();
+	// if ( svptrarr[0] ) {
+	// 	for(vit = svptrarr.begin(); vit != svptrarr.end(); vit++){
+	// 		(*vit)->getFaces(sfptrarr);
+	// 		for(fit = sfptrarr.begin(); fit != sfptrarr.end(); fit++){
+	// 			if (!active->isSelected(*fit)){
+	// 				active->setSelectedFace(num_sel_faces,*fit);
+	// 				num_sel_faces++;
+	// 			}
+	// 		}
+	// 	}
+	// 	active->recomputePatches();
+	// 	active->recomputeNormals();						
+	// }			
+	// active->clearSelectedVertices();
+	// redraw();			
 }
 
 void MainWindow::toggleFullScreen(){

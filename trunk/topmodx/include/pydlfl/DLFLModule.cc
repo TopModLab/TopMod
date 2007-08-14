@@ -1058,7 +1058,7 @@ dlfl_subdivide(PyObject *self, PyObject *args) {
     return Py_None;
   }
 
-  int choiceSize = 24;
+  int choiceSize = 26;
   const char* choices[] = { "loop",
 														"checker",
 														"simplest",
@@ -1082,7 +1082,9 @@ dlfl_subdivide(PyObject *self, PyObject *args) {
 														"dual-12.6.4",
 														"loop-style",
 														"linear-vertex",
-														"allfaces"};
+														"allfaces",
+														"dual",
+														"root3"};
 
   char* subdivType;
   int size;
@@ -1180,7 +1182,17 @@ dlfl_subdivide(PyObject *self, PyObject *args) {
       break;
 		case 21 : // loop style
 			DLFL::loopStyleSubdivide( currObj, attrb1 );
-    case 22 : // linear-vertex
+			break;
+		case 24 : // dual - dave
+		 	DLFL::createDual(currObj);
+			break;
+		case 25 : // root3 - dave
+			DLFL::createDual(&object,true); // Use accurate method
+			DLFL::honeycombSubdivide(&object);
+			DLFL::createDual(&object,true); // Use accurate method
+			break;
+		case 22 : // linear-vertex
+		case 23 : // allfaces
     default : // allfaces
       if( battrb1 ) DLFL::subdivideAllFaces( currObj, (bool)attrb1 );
       else DLFL::subdivideAllFaces( currObj );
