@@ -108,6 +108,7 @@ class MainWindow : public QMainWindow {
 				MultiSelectFace=7,			/**< . */
 				MultiSelectFaceVertex=8,/**< . */
 				SelectCheckerboard=9, 	/**< select alternating faces forming a checkerboard pattern. works well after Doo Sabin Remeshing. */
+				SelectionWindow=10, 		/**< crossing window selection  - dave. */
 				InsertEdge=11,					/**< insert edge. */
 				DeleteEdge=12,					/**< delete an edge. */
 				SubdivideEdge=13,				/**< subdivide an edge into n segments. */
@@ -152,7 +153,8 @@ class MainWindow : public QMainWindow {
 				MaskVertices,
 				MaskEdges,
 				MaskFaces,
-				MaskCorners 
+				MaskCorners,
+				MaskNone
 			};
 			
 			/**
@@ -634,6 +636,7 @@ private:
 	QAction *mCollapseSelectedEdgesAct;						//!< collapse the selected edges.
 	QAction *selectMultipleFacesAct;
 	QAction *selectSimilarFacesAct;
+	QAction *mSelectionWindowAct;
 	QAction *selectCheckerboardFacesAct;
 	QAction *selectAllAct;
 	QAction *selectInverseAct;
@@ -840,6 +843,7 @@ public slots:
 	void select_edge_ring();
 	void select_multiple_faces();
 	void select_similar_faces();
+	void selection_window();
 	void select_checkerboard_faces();
 	void select_edge();
 	void select_multiple_edges();

@@ -171,6 +171,7 @@ void GLWidget::initializeGL( ) {
 	mShowHUD = false;
 	mBrushSize = 2.5;
 	mShowBrush = false;
+	mShowSelectionWindow = false;
 	setMouseTracking(true);
 	
 	locatorPtr = new DLFLLocator(); // brianb
@@ -383,13 +384,7 @@ void GLWidget::paintEvent(QPaintEvent *event){
 		  //     glLoadIdentity();
 		  //     gluLookAt(light_position[0],light_position[1],light_position[2],0.0f,0.0f,0.0f,0,0,1);
 	    //glTranslatef(-light_position[0],-light_position[2],-light_position[1]);
-	    //glRotatef(90,1,0,0);
-
-	  	//set light matrix
-			//this is probably wrong dammit
-
-		
-	
+	    //glRotatef(90,1,0,0);	
 		}
 		#endif // GPU_OK
 		if (renderObject){
@@ -438,6 +433,7 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	}
 	#endif
 	
+	drawSelectionWindow(&painter);	
 	//drawBrush(&painter);
 	drawHUD(&painter);
 	drawSelectedIDs(&painter, &model[0][0], &proj[0][0], &view[0]);
@@ -468,6 +464,25 @@ void GLWidget::setupViewport(int width, int height){
 }
 
 void GLWidget::drawText(int width, int height ){	
+}
+
+/**
+ * \brief draw a selection window when in the proper mode
+ *	by dave - experimental
+ */
+void GLWidget::drawSelectionWindow(QPainter *painter){
+	if (mShowSelectionWindow){
+		QBrush brush = QBrush(QColor(0,0,0,127));
+		QPen pen = QPen(brush,1.0);
+		painter->setPen(pen);
+		painter->setBrush(Qt::NoBrush);
+		//get the mouse position from global coordinate system
+		int x = mapFromGlobal(QCursor::pos()).x();
+		int y = mapFromGlobal(QCursor::pos()).y();
+		// std::cout << "y = " << y << "\t\tYY = " << mSelectionWindowStartY <<" \n";
+		painter->drawRect(mSelectionWindowStartX,height()-mSelectionWindowStartY, x-mSelectionWindowStartX, y-(height()-mSelectionWindowStartY));
+		// painter->drawRect(1,0, x, y);
+	}
 }
 
 void GLWidget::drawBrush(QPainter *painter){
@@ -824,7 +839,7 @@ void GLWidget::drawSelectedIDs( QPainter *painter, const GLdouble *model, const 
 // }
 
 // Subroutine for selecting a Vertex
-DLFLVertexPtr GLWidget::selectVertex(int mx, int my) {
+DLFLVertexPtr GLWidget::selectVertex(int mx, int my, int w, int h) {
 	GLuint selectBuf[1024];
 	uint closest;
 	GLuint dist;
@@ -839,7 +854,7 @@ DLFLVertexPtr GLWidget::selectVertex(int mx, int my) {
 	GLint vp[4];
 	glGetIntegerv(GL_VIEWPORT, vp);
 	// viewport.camera.enterSelectionMode(mx,my,30,30,vp); // Reduced sensitivity for picking points
-	mCamera->enterSelectionMode(mx,my,30,30,vp); // Reduced sensitivity for picking points
+	mCamera->enterSelectionMode(mx,my,w,h,vp); // Reduced sensitivity for picking points
 
 	// Make sure earlier matrices are preserved, since multiple windows
 	// seem to be sharing the same matrix stacks
@@ -883,7 +898,61 @@ DLFLVertexPtr GLWidget::selectVertex(int mx, int my) {
 }
 
 // Subroutine for selecting a Vertex
-DLFLLocatorPtr GLWidget::selectLocator(int mx, int my) // brianb
+DLFLVertexPtrArray GLWidget::selectVertices(int mx, int my, int w, int h) {
+	GLuint selectBuf[1024];
+	long hits, index;
+	DLFLVertexPtrArray vparray;
+
+	glSelectBuffer(1024,selectBuf);
+	glRenderMode(GL_SELECT);
+
+	glInitNames(); glPushName(0);
+
+	GLint vp[4];
+	glGetIntegerv(GL_VIEWPORT, vp);
+	mCamera->enterSelectionMode(mx,my,w,h,vp); // Reduced sensitivity for picking points
+
+	// Make sure earlier matrices are preserved, since multiple windows
+	// seem to be sharing the same matrix stacks
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+
+	// viewport.reshape();
+	// viewport.apply_transform();
+	// glViewport(0,0,width(),height());
+	mCamera->SetProjection(width(),height());
+	// viewport.apply_transform();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	renderVerticesForSelect(object);
+	glFlush();
+
+	glPopMatrix();
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+
+	mCamera->leaveSelectionMode();
+
+	hits = glRenderMode(GL_RENDER);
+	std::cout <<  "hits = " << hits << "\n";
+	if ( hits > 0 ){
+		while ( hits ){
+			index = (hits-1)*4;
+			// if(DLFLObject::vparray[selectBuf[index+3]])
+				vparray.push_back(DLFLObject::vparray[selectBuf[index+3]]);
+			hits--;
+		}
+		return vparray;
+	}
+	vparray.clear();
+	return vparray;
+}
+
+// Subroutine for selecting a locator
+DLFLLocatorPtr GLWidget::selectLocator(int mx, int my, int w, int h) // brianb
 {
   GLuint selectBuf[1024];
   uint closest;
@@ -898,7 +967,7 @@ DLFLLocatorPtr GLWidget::selectLocator(int mx, int my) // brianb
   GLint vp[4];
   glGetIntegerv(GL_VIEWPORT, vp);
   // viewport.camera.enterSelectionMode(mx,my,10,10,vp); // Reduced sensitivity for picking points
-  mCamera->enterSelectionMode(mx,my,10,10,vp); // Reduced sensitivity for picking points
+  mCamera->enterSelectionMode(mx,my,w,h,vp); // Reduced sensitivity for picking points
 
   // Make sure earlier matrices are preserved, since multiple windows
   // seem to be sharing the same matrix stacks
@@ -949,7 +1018,7 @@ DLFLLocatorPtr GLWidget::selectLocator(int mx, int my) // brianb
 }  // brianb
 
 // Subroutine for selecting an Edge
-DLFLEdgePtr GLWidget::selectEdge(int mx, int my) {
+DLFLEdgePtr GLWidget::selectEdge(int mx, int my,int w, int h) {
 	GLuint selectBuf[1024];
 	uint closest;
 	GLuint dist;
@@ -963,7 +1032,7 @@ DLFLEdgePtr GLWidget::selectEdge(int mx, int my) {
 
 	GLint vp[4];
 	glGetIntegerv(GL_VIEWPORT, vp);
-	mCamera->enterSelectionMode(mx,my,10,10,vp);
+	mCamera->enterSelectionMode(mx,my,w,h,vp);
 
 	// Make sure earlier matrices are preserved, since multiple windows
 	// seem to be sharing the same matrix stacks
@@ -1005,8 +1074,57 @@ DLFLEdgePtr GLWidget::selectEdge(int mx, int my) {
 	return sel;
 }
 
+// Subroutine for selecting an Edge
+DLFLEdgePtrArray GLWidget::selectEdges(int mx, int my,int w, int h) {
+	GLuint selectBuf[1024];
+	long hits, index;
+	DLFLEdgePtr sel(NULL);
+	DLFLEdgePtrArray eparray;
+
+	glSelectBuffer(1024,selectBuf);
+	glRenderMode(GL_SELECT);
+
+	glInitNames(); glPushName(0);
+
+	GLint vp[4];
+	glGetIntegerv(GL_VIEWPORT, vp);
+	mCamera->enterSelectionMode(mx,my,w,h,vp);
+
+	// Make sure earlier matrices are preserved, since multiple windows
+	// seem to be sharing the same matrix stacks
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+
+	mCamera->SetProjection(width(),height());
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	renderEdgesForSelect(object);
+	glFlush();
+
+	glPopMatrix();
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+
+	mCamera->leaveSelectionMode();
+
+	hits = glRenderMode(GL_RENDER);
+	if ( hits > 0 ){
+		while ( hits ){
+			index = (hits-1)*4;
+			// if(DLFLObject::eparray[selectBuf[index+3]])
+				eparray.push_back(DLFLObject::eparray[selectBuf[index+3]]);
+			hits--;
+		}
+		return eparray;
+	}
+	eparray.clear();
+	return eparray;
+}
+
 // Subroutine for selecting a Face
-DLFLFacePtr GLWidget::selectFace(int mx, int my) {
+DLFLFacePtr GLWidget::selectFace(int mx, int my, int w, int h) {
 	GLuint selectBuf[1024];
 	uint closest;
 	GLuint dist;
@@ -1020,7 +1138,7 @@ DLFLFacePtr GLWidget::selectFace(int mx, int my) {
 
 	GLint vp[4];
 	glGetIntegerv(GL_VIEWPORT, vp);
-	mCamera->enterSelectionMode(mx,my,2.5,2.5,vp);
+	mCamera->enterSelectionMode(mx,my,w,h,vp);
 
 	// Make sure earlier matrices are preserved, since multiple windows
 	// seem to be sharing the same matrix stacks
@@ -1064,14 +1182,13 @@ DLFLFacePtr GLWidget::selectFace(int mx, int my) {
 }
 
 // Subroutine for selecting multiple faces at once
-DLFLFacePtr GLWidget::selectFaces(int mx, int my) {
-	glEnable(GL_CULL_FACE);
+DLFLFacePtrArray GLWidget::selectFaces(int mx, int my, int w, int h) {
+	// glEnable(GL_CULL_FACE);
 	GLuint selectBuf[1024];
-	uint closest;
-	GLuint dist;
 	long hits, index;
 	DLFLFacePtr sel(NULL);
 	DLFLFacePtrArray fparray;
+	fparray.clear();
 
 	glSelectBuffer(1024,selectBuf);
 	glRenderMode(GL_SELECT);
@@ -1080,21 +1197,16 @@ DLFLFacePtr GLWidget::selectFaces(int mx, int my) {
 
 	GLint vp[4];
 	glGetIntegerv(GL_VIEWPORT, vp);
-	mCamera->enterSelectionMode(mx,my,mBrushSize,mBrushSize,vp);
+	mCamera->enterSelectionMode(mx,my,w,h,vp);
 
 	// Make sure earlier matrices are preserved, since multiple windows
 	// seem to be sharing the same matrix stacks
-	// glLoadIdentity();
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
-
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 
-	// viewport.reshape();
-	// viewport.apply_transform();
 	mCamera->SetProjection(width(),height());
-	// viewport.apply_transform();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	renderFacesForSelect(object);
 	glFlush();
@@ -1107,34 +1219,26 @@ DLFLFacePtr GLWidget::selectFaces(int mx, int my) {
 	mCamera->leaveSelectionMode();
 
 	hits = glRenderMode(GL_RENDER);
+	std::cout << hits << " = hits\n";
 	if ( hits > 0 ){
-		closest = 0; dist = 0xffffffff;
 		while ( hits ){
-			index = (hits-1)*4;
-			if ( selectBuf[index+1] < dist ){
-				dist = selectBuf[index+1];
-				closest = selectBuf[index+3];
-			}
+			index = (hits-1)*4;			
+			// if(DLFLObject::fparray[selectBuf[index+3]])
+			fparray.push_back(DLFLObject::fparray[selectBuf[index+3]]);
 			hits--;
-			
-			// if (DLFLObject::fparray[selectBuf[index+3]].normalCentroid()*camera.getPos()){
-			// if(!	(DLFLObject::fparray[selectBuf[index+3]]))
-			// 	fparray.push_back(DLFLObject::fparray[selectBuf[index+3]]);
-			
-			// }
-			// hits--;
-		}
-		// closest now has the id of the selected face
-		sel = DLFLObject::fparray[closest];
+		}	
+		// glDisable(GL_CULL_FACE);
+		return fparray;		
 	}	
-	glDisable(GL_CULL_FACE);
-	// return fparray;
-	return sel;
+	// glDisable(GL_CULL_FACE);
+	fparray.clear();
+	return fparray;
 }
+
 
 // Subroutine for selecting multiple faces at once
 // DLFLFacePtrArray GLWidget::deselectFaces(int mx, int my) {
-DLFLFacePtr GLWidget::deselectFaces(int mx, int my) {
+DLFLFacePtr GLWidget::deselectFaces(int mx, int my, int w, int h) {
 	glEnable(GL_CULL_FACE);
 	GLuint selectBuf[1024];
 	uint closest;
@@ -1201,7 +1305,7 @@ DLFLFacePtr GLWidget::deselectFaces(int mx, int my) {
 }
 
 // Subroutine for selecting a FaceVertex (Corner) within a Face
-DLFLFaceVertexPtr GLWidget::selectFaceVertex(DLFLFacePtr fp, int mx, int my) {
+DLFLFaceVertexPtr GLWidget::selectFaceVertex(DLFLFacePtr fp, int mx, int my, int w, int h) {
 	GLuint selectBuf[1024];
 	uint closest;
 	GLuint dist;
@@ -1215,7 +1319,7 @@ DLFLFaceVertexPtr GLWidget::selectFaceVertex(DLFLFacePtr fp, int mx, int my) {
 
 	GLint vp[4];
 	glGetIntegerv(GL_VIEWPORT, vp);
-	mCamera->enterSelectionMode(mx,my,40,40,vp);
+	mCamera->enterSelectionMode(mx,my,w,h,vp);
 	// Make sure earlier matrices are preserved, since multiple windows
 	// seem to be sharing the same matrix stacks
 	glMatrixMode(GL_PROJECTION);

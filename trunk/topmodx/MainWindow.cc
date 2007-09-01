@@ -167,7 +167,7 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	translator_hi = new QTranslator(this);
 	translator_ca = new QTranslator(this);
 
-	//QSettings Path for windows
+	//QSettings Path for windows     
 	#ifdef WIN32 
 	QSettings::setPath(QSettings::IniFormat,QSettings::UserScope,QString("%APPDATA%"));
 	#endif
@@ -804,6 +804,11 @@ void MainWindow::createActions() {
 	mActionListWidget->addAction(assignTextureCoordinatesAct);
 
 	// //SELECTION MENU ACTIONS
+	mSelectionWindowAct = new QAction(tr("Selection Window"), this);
+	sm->registerAction(mSelectionWindowAct, "Selection", "SHIFT+M");
+	connect( mSelectionWindowAct , SIGNAL( triggered() ), this, SLOT( selection_window() ) );
+	mActionListWidget->addAction(mSelectionWindowAct);
+	
 	selectVertexAct = new QAction(tr("Select &Vertex"), this);
 	sm->registerAction(selectVertexAct, "Selection", "SHIFT+V");
 	selectVertexAct->setStatusTip(tr("Select a Vertex"));
@@ -1289,6 +1294,7 @@ void MainWindow::createMenus(){
 
 	mSelectionMenu = new QMenu(tr("&Selection"));
 	menuBar->addMenu(mSelectionMenu);
+	mSelectionMenu->addAction(mSelectionWindowAct);
 	mSelectionMenu->addAction(selectAllAct);
 	mSelectionMenu->addAction(selectInverseAct);
 	mSelectionMenu->addAction(exitSelectionModeAct);
@@ -1866,15 +1872,29 @@ void MainWindow::toggleUndo(void) {
 }
 
 void MainWindow::doDrag(int x, int y) { // brianb
+	DLFLVertexPtr svptr = NULL;
+	DLFLEdgePtr septr = NULL;
+	DLFLFacePtr sfptr = NULL;
+	DLFLFaceVertexPtr sfvptr = NULL;
+	DLFLLocatorPtr slptr = NULL; // brianb
+
+	DLFLEdgePtrArray septrarr;
+	DLFLEdgePtrArray::iterator eit;
+	DLFLVertexPtrArray svptrarr;
+	DLFLVertexPtrArray::iterator vit;
+	DLFLFacePtrArray sfptrarr;
+	DLFLFacePtrArray::iterator fit,first, last;
+	
 	int drag_endx = x;
 	int drag_endy = y;
 
-	GLdouble obj_world[3],  // Object world coordinates
-		obj_window[3], // Object window coordinates 
-		ms_window[3],  // Mouse start drag window
-		ms_world[3],   // Mouse start drag world
-		me_window[3],  // Mouse end drag window
-		me_world[3];   // Mouse end drag world
+	GLdouble 	obj_world[3],  // Object world coordinates
+						obj_window[3], // Object window coordinates 
+						ms_window[3],  // Mouse start drag window
+						ms_world[3],   // Mouse start drag world
+						me_window[3],  // Mouse end drag window
+						me_world[3];   // Mouse end drag world
+
 	GLdouble modelMatrix[16], projMatrix[16];
 	GLint viewport[4];
 	GLint realy;
@@ -1966,7 +1986,94 @@ void MainWindow::doDrag(int x, int y) { // brianb
 				redraw();
 			}
 		break;
+	case SelectionWindow:
+		// std::cout << "masking!\n";
+	
+		//draw the window with qPainter
+		active->showSelectionWindow();
+		active->setSelectionWindowStartX(drag_startx);// mapFromGlobal(QCursor::pos()).x());
+		active->setSelectionWindowStartY(drag_starty);// mapFromGlobal(QCursor::pos()).y());
+		//find center of rectangle
+		// int w = abs(mapFromGlobal(QCursor::pos()).x()-drag_startx);
+		// int h =	abs(mapFromGlobal(QCursor::pos()).y()-(active->height()-drag_starty));
 
+		int w = max(1,abs(x-drag_startx));
+		int h =	max(1,abs(y-drag_starty));
+
+		// int cx = (w)/2+drag_startx;
+		// //invert this???
+		// int cy = (h)/2+(active->height()-drag_starty);
+
+		int cx = (x+drag_startx)/2;
+		int cy = (y+drag_starty)/2;
+		
+		cout << "cx = " << cx << "\t\tcy = " << cy << "\t\tw = " << w << "\t\th = " << h << "\n"; 
+		
+		switch(selectionmask){
+			case MaskVertices:
+			std::cout << "vertices!\n";
+			// if ( QApplication::keyboardModifiers() == Qt::ControlModifier) {
+			// }
+			// else
+			// svptrarr.clear();
+			svptrarr = active->selectVertices(cx,cy,w,h);
+			for(vit = svptrarr.begin(); vit != svptrarr.end(); vit++){
+				if ( !active->isSelected(*vit)){
+					active->setSelectedVertex(*vit);
+					num_sel_verts++;
+				}
+			}
+			active->redraw();
+			svptrarr.clear();
+			break;
+			case MaskEdges:
+			std::cout << "edges!\n";
+				// septr = active->selectEdge(x,y);
+				// if ( QApplication::keyboardModifiers() == Qt::ControlModifier) {
+				// 	if ( active->isSelected(septr)){
+				// 		active->clearSelectedEdge(septr);
+				// 		num_sel_edges--;
+				// 	}
+				// 	active->redraw();
+				// 	septrarr.clear();
+				// }
+				// else {
+					septrarr = active->selectEdges(cx,cy,w,h);
+					for(eit = septrarr.begin(); eit != septrarr.end(); eit++){
+						if ( !active->isSelected(*eit)){
+							active->setSelectedEdge(*eit);
+							num_sel_edges++;
+						}
+					}
+					active->redraw();
+					septrarr.clear();
+				// }
+			break;
+			case MaskFaces:
+			std::cout << "faces!\n";
+			sfptrarr = active->selectFaces(cx,cy,w,h);
+			for(fit = sfptrarr.begin(); fit != sfptrarr.end(); fit++){
+				if ( !active->isSelected(*fit)){
+					active->setSelectedFace(*fit);
+					num_sel_faces++;
+				}
+			}
+			active->redraw();
+			sfptrarr.clear();
+			
+			break;
+			case MaskCorners:
+			std::cout << "corners!\n";
+			break;
+			case MaskObject:
+			std::cout << "object!\n";
+			break;
+			default:
+			std::cout << "default!\n";
+			
+			break;
+		};
+	break;
 	default:
 		doSelection(x,y);
 		break;
@@ -2051,6 +2158,7 @@ void MainWindow::doSelection(int x, int y) {
 	case MarkEdge ://ozgur
 		septr = active->selectEdge(x,y);
 		active->setSelectedEdge(septr);
+		cout << "x = " << x << "\t\ty = " << y << "\n";
 		break;
 	case CutEdgeandVertex://ozgur
 		septr = active->selectEdge(x,y);
@@ -2188,7 +2296,7 @@ void MainWindow::doSelection(int x, int y) {
 			sfptrarr.clear();
 		}
 		else {
-			sfptr = active->selectFaces(x,y);
+			sfptr = active->selectFace(x,y);
 			if ( !active->isSelected(sfptr)){
 				active->setSelectedFace(num_sel_faces,sfptr);
 				num_sel_faces++;
@@ -2254,6 +2362,16 @@ void MainWindow::doSelection(int x, int y) {
 				active->setSelectedEdge(num_sel_edges,septr);
 			}
 		break;
+	case SelectionWindow:
+		if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
+			active->clearSelectedEdges();
+			active->clearSelectedVertices();
+			active->clearSelectedFaces();
+		}
+		startDrag(x,y);
+		
+		
+		break;	
 	};	
 	if ( svptr != NULL || septr != NULL || sfptr != NULL ) redraw();
 }
@@ -2276,6 +2394,10 @@ void MainWindow::dropEvent(QDropEvent *event) {
 // Handle keyboard and mouse events
 void MainWindow::mousePressEvent(QMouseEvent *event) {
 
+	//experimental for crossing window selection
+	// if (event->buttons() == Qt::LeftButton && mode == SelectionWindow){
+		
+	// }
 	if ( event->buttons() == Qt::LeftButton && mode != NormalMode ){
 		doSelection(event->x(),height()-mStatusBar->height()-event->y());
 	}
@@ -2425,6 +2547,7 @@ void MainWindow::getRightClickMenu(){
 		break;
 		case MaskFaces://face stuff
 			// mRightClickMenu->addAction(mDeleteSelectedAct);
+			// mRightClickMenu->addAction(selectSimilarFacesAct);
 			mRightClickMenu->addAction(selectFaceAct);
 			mRightClickMenu->addAction(selectFaceLoopAct);
 			mRightClickMenu->addAction(selectMultipleFacesAct);
@@ -3197,6 +3320,10 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 							redraw();
 						}
 					break;
+					case SelectionWindow:
+						active->hideSelectionWindow();
+					
+					break;
 				}//end switch (mode)
 
 		}//end if (mode != NormalMode)
@@ -3462,11 +3589,14 @@ void MainWindow::setMode(Mode m) {
 		setSelectionMask(MainWindow::MaskCorners);
 		// MainWindow::num_sel_faceverts = 0;
 		break;
+	case SelectionWindow:
+		// set
+	break;
 	case NormalMode:
-		setSelectionMask(MainWindow::MaskObject);
+		setSelectionMask(MainWindow::MaskNone);
 	default :
 		// Nothing to be done for other modes except clearing selection lists
-		setSelectionMask(MainWindow::MaskObject);									
+		setSelectionMask(MainWindow::MaskNone);									
 		// MainWindow::clearSelected();
 		break;
 	}
@@ -3564,6 +3694,11 @@ void MainWindow::setMode(Mode m) {
 		case SelectFaceLoop: s = tr("Select Face Loop");
 		break;
 		case SelectSimilarFaces: s = tr("Select Similar Faces");
+		break;
+		case SelectionWindow: s = tr("Selection Window");
+		break;
+		default:	s = tr("-");
+		break;
 	};
 	active->setModeString(s);
 	redraw();
@@ -4657,6 +4792,7 @@ void MainWindow::retranslateUi() {
 	selectEdgeRingAct->setStatusTip(tr("Select an Edge Ring."));
 	selectMultipleFacesAct->setText(tr("Select &Multiple Faces"));
 	selectSimilarFacesAct->setText(tr("Select &Similar Faces"));
+	mSelectionWindowAct->setText(tr("Selection Window"));
 	selectCheckerboardFacesAct->setText(tr("C&heckerboard Select Faces"));
 	selectAllAct->setText(tr("Select &All"));
 	selectInverseAct->setText(tr("Select &Inverse"));

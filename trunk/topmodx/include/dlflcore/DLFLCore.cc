@@ -972,7 +972,7 @@ namespace DLFL {
     DLFLFacePtr fp;
     while ( ffirst != flast ) {
       fp = (*ffirst); ++ffirst;
-      if ( fp->size() == 2 ) {
+      if ( fp && fp->size() == 2 ) {
 				// Face is a 2-gon.
 				// Get one of the edges in the face and delete it
 				DLFLFaceVertexPtr fvp = fp->front();

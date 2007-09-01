@@ -99,6 +99,10 @@ void MainWindow::select_similar_faces() {
 	setMode(MainWindow::SelectSimilarFaces);
 }
 
+void MainWindow::selection_window() {
+	setMode(MainWindow::SelectionWindow);
+}
+
 void MainWindow::select_checkerboard_faces() {
 	setMode(MainWindow::SelectCheckerboard);
 }

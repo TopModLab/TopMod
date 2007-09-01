@@ -173,6 +173,29 @@ public :
 		this->repaint();
 	}
 
+	void toggleSelectionWindow( ) {
+		mShowSelectionWindow = !mShowSelectionWindow;
+		this->repaint();
+	}
+
+	void showSelectionWindow( ) {
+		mShowSelectionWindow = true;
+		this->repaint();
+	}
+
+	void hideSelectionWindow( ) {
+		mShowSelectionWindow = false;
+		this->repaint();
+	}
+	
+	void setSelectionWindowStartX(double x){
+		mSelectionWindowStartX = x;
+	}
+
+	void setSelectionWindowStartY(double y){
+		mSelectionWindowStartY = y;
+	}
+
 	void showBrush( ) {
 		mShowBrush = true;
 		setCursor(Qt::BlankCursor);
@@ -304,6 +327,7 @@ public :
 	void drawSelectedIDs( QPainter *painter, const GLdouble *model, const GLdouble *proj, const GLint	*view);
 	void drawHUD(QPainter *painter);
 	void drawBrush(QPainter *painter);
+	void drawSelectionWindow(QPainter *painter);
 	void resizeGL( int width, int height );
 
 	void setupViewport(int width, int height);
@@ -328,6 +352,7 @@ public :
 	bool mShowFaceVertexIDs;
 	bool mShowHUD;
 	bool mShowBrush;
+	bool mShowSelectionWindow;
 	bool mUseGPU;
 	bool mAntialiasing;
 	int mBrushStartX;
@@ -787,15 +812,18 @@ int getRenderFlags(void) const {
 }
 
 	// Subroutines for selecting Vertices, Edges, Faces and FaceVertices (Corners)
-DLFLLocatorPtr selectLocator(int mx, int my);  // brianb
-DLFLVertexPtr selectVertex(int mx, int my);
-DLFLEdgePtr selectEdge(int mx, int my);
-DLFLFacePtr selectFace(int mx, int my);
-DLFLFacePtr selectFaces(int mx, int my);
-DLFLFacePtr deselectFaces(int mx, int my);
+DLFLLocatorPtr selectLocator(int mx, int my, int w=10, int h=10);  // brianb
+DLFLVertexPtr selectVertex(int mx, int my, int w=30, int h=30);
+DLFLVertexPtrArray selectVertices(int mx, int my, int w=30, int h=30);
+DLFLEdgePtr selectEdge(int mx, int my, int w=10, int h=10);
+DLFLEdgePtrArray selectEdges(int mx, int my, int w=10, int h=10);
+DLFLFacePtr selectFace(int mx, int my, int w=2.5, int h=2.5);
+DLFLFacePtrArray selectFaces(int mx, int my, int w=2.5, int h=2.5);
+DLFLFacePtr deselectFaces(int mx, int my, int w=2.5, int h=2.5);
 // DLFLFacePtrArray selectFaces(int mx, int my);
 // DLFLFacePtrArray deselectFaces(int mx, int my);
-DLFLFaceVertexPtr selectFaceVertex(DLFLFacePtr fp, int mx, int my);
+DLFLFaceVertexPtr selectFaceVertex(DLFLFacePtr fp, int mx, int my, int w=40, int h=40);
+DLFLFaceVertexPtrArray selectFaceVertices(DLFLFacePtr fp, int mx, int my, int w=40, int h=40);
 
 	// Event handler for the viewport. handles only mouse events when glwidget has focus
 	// which relate to navigational controls (ALT + push/drag/release)
@@ -835,6 +863,8 @@ double mSelectedEdgeThickness;
 double mBrushSize;
 double mStartDragX;
 double mStartDragY;
+double mSelectionWindowStartX;
+double mSelectionWindowStartY;
 
 QColor mXAxisColor;
 QColor mYAxisColor;
