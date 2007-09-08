@@ -1949,6 +1949,7 @@ void MainWindow::doDrag(int x, int y) { // brianb
 
 	switch ( mode ) {
 	case EditVertex:
+	{
 		if (GLWidget::numSelectedLocators() > 0)
 			{
 				if (!is_editing) {
@@ -2031,8 +2032,10 @@ void MainWindow::doDrag(int x, int y) { // brianb
 
 				redraw();
 			}
+		}
 		break;
 	case SelectionWindow:
+	{
 		// std::cout << "masking!\n";
 	
 		//draw the window with qPainter
@@ -2075,8 +2078,6 @@ void MainWindow::doDrag(int x, int y) { // brianb
 					}
 					active->redraw();
 					septrarr.clear();
-				// }
-					
 		} else if (selectionmask == MainWindow::MaskFaces){
 			// std::cout << "faces!\n";
 			sfptrarr = active->selectFaces(cx,cy,w,h);
@@ -2090,9 +2091,8 @@ void MainWindow::doDrag(int x, int y) { // brianb
 			sfptrarr.clear();	
 		} else if (selectionmask == MainWindow::MaskCorners){
 			
-		} else {
-			
 		}
+	}
 	break;
 	default:
 		doSelection(x,y);

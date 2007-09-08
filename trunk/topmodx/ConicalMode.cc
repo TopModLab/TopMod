@@ -15,7 +15,7 @@
 	
 	\note 
 	
-	\see ConicalMode
+	\see ConicalMode 
 */
 
 ConicalMode::ConicalMode(QWidget *parent, QShortcutManager *sm)
@@ -41,14 +41,14 @@ ConicalMode::ConicalMode(QWidget *parent, QShortcutManager *sm)
 	// setupTruncateVertex();
 	// setupDualConvexHull();
 
-	mCutbyEdgeAction = new QAction(QIcon(":images/prim_cube.png"),tr("Cut by Edge"),this);
+	mCutbyEdgeAction = new QAction(QIcon(":images/sculpting-cutedges.png"),tr("Cut by Edge"),this);
 	mCutbyEdgeAction->setCheckable(true);
 	sm->registerAction(mCutbyEdgeAction, "Conical Operations", "");
 	mCutbyEdgeAction->setStatusTip(tr("Enter Cut by Edge Mode"));
 	mCutbyEdgeAction->setToolTip(tr("Cut by Edge Mode"));
 	connect(mCutbyEdgeAction, SIGNAL(triggered()), this, SLOT(triggerCutbyEdge()));
 
-	mCutbyVertexAction = new QAction(QIcon(":images/prim_cube.png"),tr("Cut by Vertex"),this);
+	mCutbyVertexAction = new QAction(QIcon(":images/sculpting-cutvertices.png"),tr("Cut by Vertex"),this);
 	mCutbyVertexAction->setCheckable(true);
 	sm->registerAction(mCutbyVertexAction, "Conical Operations", "");
 	mCutbyVertexAction->setStatusTip(tr("Enter Cut by Vertex Mode"));
@@ -62,7 +62,7 @@ ConicalMode::ConicalMode(QWidget *parent, QShortcutManager *sm)
 	// mCutbyEdgeVertexAction->setToolTip(tr("Cut by EdgeVertex Mode"));
 	// connect(mCutbyEdgeVertexAction, SIGNAL(triggered()), this, SLOT(triggerCutbyEdgeVertex()));
 
-	mCutbyFaceAction = new QAction(QIcon(":images/prim_cube.png"),tr("Cut by Face"),this);
+	mCutbyFaceAction = new QAction(QIcon(":images/sculpting-cutfaces.png"),tr("Cut by Face"),this);
 	mCutbyFaceAction->setCheckable(true);
 	sm->registerAction(mCutbyFaceAction, "Conical Operations", "");
 	mCutbyFaceAction->setStatusTip(tr("Enter Cut by Face Mode"));

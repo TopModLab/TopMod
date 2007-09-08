@@ -16,6 +16,9 @@
     <file>images/clear_scriptinput.png</file>
     <file>images/clear_scriptoutput.png</file>
     <file>images/run_script.png</file>
+    <file>images/sculpting-cutfaces.png</file>
+    <file>images/sculpting-cutedges.png</file>
+    <file>images/sculpting-cutvertices.png</file>
 
 	<file>lang/topmod_ca.ts</file>
 	<file>lang/topmod_en.ts</file>
