@@ -43,6 +43,7 @@ public:
 	QAction *mConnectEdgesAction;	
 	QAction *mSpliceCornersAction;
 	QAction *mTransformsAction;
+	QAction *mSelectionOptionsAction;
 	
 	QWidget *mInsertEdgeWidget;
 	QWidget *mDeleteEdgeWidget;
@@ -51,6 +52,7 @@ public:
 	QWidget *mConnectEdgesWidget;
 	QWidget *mSpliceCornersWidget; 
 	QWidget *mTransformsWidget;	
+	QWidget *mSelectionOptionsWidget;	
 	
 	QGridLayout *mInsertEdgeLayout;
 	QGridLayout *mDeleteEdgeLayout;
@@ -59,6 +61,7 @@ public:
 	QGridLayout *mConnectEdgesLayout;
 	QGridLayout *mSpliceCornersLayout; 
 	QGridLayout *mTransformsLayout;
+	QGridLayout *mSelectionOptionsLayout;
 
 protected:
 	void setupInsertEdge();
@@ -68,6 +71,7 @@ protected:
 	void setupConnectEdges();
 	void setupSpliceCorners();
 	void setupTransforms();
+	void setupSelectionOptions();
 	QDoubleSpinBox *createDoubleSpinBox(QGridLayout *layout, QLabel *label, QString s, double low, double high, double step, double value, double decimals, int row, int col);
 	
 
@@ -95,6 +99,9 @@ private:
 	QDoubleSpinBox *yPosSpinBox;
 	QDoubleSpinBox *zPosSpinBox;
 	
+	QLabel *mFaceAreaToleranceLabel;
+	QDoubleSpinBox *mFaceAreaToleranceSpinBox;
+	
 public slots:
 	void freezeTransforms();
 		
@@ -105,6 +112,7 @@ public slots:
 	void triggerConnectEdges();
 	void triggerSpliceCorners();
 	void triggerTransforms();
+	void triggerSelectionOptions();
 };
 
 #endif

@@ -39,9 +39,10 @@ namespace DLFL {
   void createWireframeWithSegments(DLFLObjectPtr obj, double thickness = 0.1, int numSides = 4);
 	void tagMatchingFaces(DLFLObjectPtr obj, DLFLFacePtr fptr);
 	void selectMatchingFaces(DLFLObjectPtr obj, DLFLFacePtr fptr, DLFLFacePtrArray &fparray);
+	void selectFacesByArea(DLFLObjectPtr obj, DLFLFacePtr fptr, DLFLFacePtrArray &fparray, float delta = 0.1);
   void punchHoles(DLFLObjectPtr obj);
   void makeWireframe(DLFLObjectPtr obj, double crust_thickness = 0.1, bool split = true );
-  void makeWireframe2(DLFLObjectPtr obj, double crust_thickness = 0.1, bool split = true );
+  void makeWireframe2(DLFLObjectPtr obj, double crust_thickness = 0.1, double crust_width = 0.1, bool split = true );
   void makeWireframeWithColumns(DLFLObjectPtr obj, double wireframe_thickness, int wireframe_segments);
 
 } // end namespace

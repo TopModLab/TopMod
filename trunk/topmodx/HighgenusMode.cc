@@ -81,7 +81,7 @@ HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm, QWidget *act
 	connect(mAddHandleSIAction, SIGNAL(triggered()), this, SLOT(triggerAddHandleSI()));
 	actionList->addAction(mAddHandleSIAction);
 
-	mRindModelingScalingAction = new QAction(QIcon(":images/highgenus_rind.png"),tr("Rind Modeling Scaling"),this);
+	mRindModelingScalingAction = new QAction(QIcon(":images/highgenus_rindscaling.png"),tr("Rind Modeling Scaling"),this);
 	mRindModelingScalingAction->setCheckable(true);
 	sm->registerAction(mRindModelingScalingAction, "High Genus Operations", "");
 	mRindModelingScalingAction->setStatusTip(tr("Enter Rind Modeling Scaling Mode"));
@@ -89,7 +89,7 @@ HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm, QWidget *act
 	connect(mRindModelingScalingAction, SIGNAL(triggered()), this, SLOT(triggerRindModelingScaling()));
 	actionList->addAction(mRindModelingScalingAction);
 
-	mRindModelingThicknessAction = new QAction(QIcon(":images/highgenus_rind.png"),tr("Rind Modeling Thickness"),this);
+	mRindModelingThicknessAction = new QAction(QIcon(":images/highgenus_rindthickness.png"),tr("Rind Modeling Thickness"),this);
 	mRindModelingThicknessAction->setCheckable(true);
 	sm->registerAction(mRindModelingThicknessAction, "High Genus Operations", "");
 	mRindModelingThicknessAction->setStatusTip(tr("Enter Rind Modeling Thickness Mode"));
@@ -105,13 +105,13 @@ HighgenusMode::HighgenusMode(QWidget *parent, QShortcutManager *sm, QWidget *act
 	connect(mWireframeModelingAction, SIGNAL(triggered()), this, SLOT(triggerWireframeModeling()));
 	actionList->addAction(mWireframeModelingAction);
 
-	// mWireframeModeling2Action = new QAction(QIcon(":images/highgenus_wireframe.png"),tr("Wireframe Modeling *EXP!!!"),this);
-	// mWireframeModeling2Action->setCheckable(true);
-	// sm->registerAction(mWireframeModeling2Action, "High Genus Operations", "CTRL+W");
-	// mWireframeModeling2Action->setStatusTip(tr("Enter Wireframe Modeling Mode"));
-	// mWireframeModeling2Action->setToolTip(tr("Wireframe Modeling Mode"));
-	// connect(mWireframeModeling2Action, SIGNAL(triggered()), this, SLOT(triggerWireframeModeling2()));
-	// actionList->addAction(mWireframeModeling2Action);
+	mWireframeModeling2Action = new QAction(QIcon(":images/highgenus_wireframe.png"),tr("Wireframe Modeling 2"),this);
+	mWireframeModeling2Action->setCheckable(true);
+	sm->registerAction(mWireframeModeling2Action, "High Genus Operations", "");
+	mWireframeModeling2Action->setStatusTip(tr("Enter Wireframe Modeling 2 Mode"));
+	mWireframeModeling2Action->setToolTip(tr("Wireframe Modeling 2 Mode"));
+	connect(mWireframeModeling2Action, SIGNAL(triggered()), this, SLOT(triggerWireframeModeling2()));
+	actionList->addAction(mWireframeModeling2Action);
 
 	mColumnModelingAction = new QAction(QIcon(":images/highgenus_column.png"),tr("Column Modeling"),this);
 	mColumnModelingAction->setCheckable(true);
@@ -173,7 +173,7 @@ void HighgenusMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 	actionGroup->addAction(mRindModelingScalingAction); 
 	actionGroup->addAction(mRindModelingThicknessAction);
 	actionGroup->addAction(mWireframeModelingAction); 
-	// actionGroup->addAction(mWireframeModeling2Action); 
+	actionGroup->addAction(mWireframeModeling2Action); 
 	actionGroup->addAction(mColumnModelingAction);	
 	actionGroup->addAction(mSierpinskyAction);
 	actionGroup->addAction(mMultiFaceHandleAction);
@@ -185,7 +185,7 @@ void HighgenusMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 	toolBar->addAction(mRindModelingScalingAction); 
 	toolBar->addAction(mRindModelingThicknessAction);
 	toolBar->addAction(mWireframeModelingAction); 
-	// toolBar->addAction(mWireframeModeling2Action); 
+	toolBar->addAction(mWireframeModeling2Action); 
 	toolBar->addAction(mColumnModelingAction);	
 	toolBar->addAction(mSierpinskyAction);
 	toolBar->addAction(mMultiFaceHandleAction);
@@ -197,7 +197,7 @@ void HighgenusMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 	stackedWidget->addWidget(mRindModelingScalingWidget); 
 	stackedWidget->addWidget(mRindModelingThicknessWidget);
 	stackedWidget->addWidget(mWireframeModelingWidget); 
-	// stackedWidget->addWidget(mWireframeModeling2Widget); 
+	stackedWidget->addWidget(mWireframeModeling2Widget); 
 	stackedWidget->addWidget(mColumnModelingWidget);	
 	stackedWidget->addWidget(mSierpinskyWidget);
 	stackedWidget->addWidget(mMultiFaceHandleWidget);
@@ -245,7 +245,7 @@ void HighgenusMode::triggerWireframeModeling(){
 void HighgenusMode::triggerWireframeModeling2(){
 	
 	((MainWindow*)mParent)->setToolOptions(mWireframeModeling2Widget);
-	((MainWindow*)mParent)->setMode(MainWindow::MultiSelectFace);
+	((MainWindow*)mParent)->setMode(MainWindow::NormalMode);
 }
 
 void HighgenusMode::triggerColumnModeling(){
@@ -492,15 +492,17 @@ void HighgenusMode::setupWireframeModeling2(){
 	mWireframeModeling2Layout->setHorizontalSpacing(1);
 	//thickness
 	wireframeModeling2ThicknessSpinBox = createDoubleSpinBox(mWireframeModeling2Layout, wireframeModeling2ThicknessLabel, tr("Thickness:"), 0.0, 1.0, 0.01, 0.25, 2, 0,0);	
-	connect(wireframeModeling2ThicknessSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeWireframeThickness(double)));
+	connect(wireframeModeling2ThicknessSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeWireframe2Thickness(double)));
+	wireframeModeling2WidthSpinBox = createDoubleSpinBox(mWireframeModeling2Layout, wireframeModeling2WidthLabel, tr("Width:"), 0.0, 1.0, 0.01, 0.25, 2, 1,0);	
+	connect(wireframeModeling2WidthSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeWireframe2Width(double)));
 	//create wireframe button
-	QPushButton *wireframeModeling2CreateButton = new QPushButton("Create Wireframe", this);
+	QPushButton *wireframeModeling2CreateButton = new QPushButton("Create Wireframe 2", this);
 	connect(wireframeModeling2CreateButton, SIGNAL(clicked()), ((MainWindow*)mParent), SLOT(makeWireframe2()));
-	mWireframeModeling2Layout->addWidget(wireframeModeling2CreateButton,1,0,1,2);	
+	mWireframeModeling2Layout->addWidget(wireframeModeling2CreateButton,2,0,1,2);	
 	//set layout and add stretch
-	mWireframeModeling2Layout->setRowStretch(2,1);
+	mWireframeModeling2Layout->setRowStretch(3,1);
 	mWireframeModeling2Layout->setColumnStretch(2,1);
-	mWireframeModeling2Widget->setWindowTitle("Wireframe Modeling ***EXP***");
+	mWireframeModeling2Widget->setWindowTitle("Wireframe Modeling 2");
 	mWireframeModeling2Widget->setLayout(mWireframeModeling2Layout);
 }
 

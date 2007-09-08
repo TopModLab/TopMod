@@ -113,7 +113,7 @@ namespace DLFL {
 
     // Compute texture coordinates using the edge flags
     DLFLFaceVertexPtrArray corners;
-    int flag[4];
+    int flag[10];
     double u,v;
 	 
     DLFLFacePtrList :: const_iterator first = face_list.begin(), last = face_list.end();

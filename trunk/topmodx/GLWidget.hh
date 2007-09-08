@@ -245,8 +245,8 @@ public :
 		repaint();
 	}
 
-	void selectAllFaceVertices(){
-		clearSelectedFaceVertices();
+	void selectAllCorners(){
+		clearSelectedCorners();
 		// object->getVertices(object->sel_vptr_array);
 		repaint();
 	}
@@ -752,7 +752,7 @@ void clearSelectedFaceVertex(DLFLFaceVertexPtr fvp){
 	}
 }
 
-void clearSelectedFaceVertices(void) {
+void clearSelectedCorners(void) {
 	object->sel_fvptr_array.clear();
 }
 

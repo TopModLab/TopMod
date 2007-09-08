@@ -86,6 +86,8 @@ void GeometryRenderer::renderFaceVertex( DLFLFaceVertexPtr dfv, bool useAttrs ) 
 				if( useMaterial ) { glColor4dv(renderColor); }
 			}
 			if( useTexture ) { 
+				// std::cout <<"geomrend using texture!!!\n";
+				
 				if( isReversed )
 					glTexCoord2d(1.0-dfv->texcoord[0],1.0-dfv->texcoord[1]);
 				else

@@ -415,6 +415,8 @@ namespace DLFL {
      
     void updateMaterial(void);
 
+		float getArea();
+
     //--- Rendering subroutines ---//
 
     // Call glBegin with the appropriate macro depending on no of vertices

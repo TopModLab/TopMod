@@ -72,6 +72,7 @@ public:
 	QWidget *mStellateEdgeRemovalWidget;
 	QWidget *mDooSabinWidget;
 	QWidget *mCornerCuttingWidget;
+	QWidget *mModifiedCornerCuttingWidget;
 	QWidget *mSimplestWidget;
 	
 	QGridLayout *mLinearVertexLayout;
@@ -79,6 +80,7 @@ public:
 	QGridLayout *mStellateEdgeRemovalLayout;
 	QGridLayout *mDooSabinLayout;
 	QGridLayout *mCornerCuttingLayout;
+	QGridLayout *mModifiedCornerCuttingLayout;
 	QGridLayout *mSimplestLayout;
 
 	QAction *mLinearVertexAction;
@@ -86,6 +88,7 @@ public:
 	QAction *mStellateEdgeRemovalAction;
 	QAction *mDooSabinAction;
 	QAction *mCornerCuttingAction;
+	QAction *mModifiedCornerCuttingAction;
 	QAction *mSimplestAction;
 	
 	
@@ -208,6 +211,7 @@ public slots:
 	void triggerStellateEdgeRemoval();
 	void triggerDooSabin();
 	void triggerCornerCutting();
+	void triggerModifiedCornerCutting();
 	void triggerSimplest();
 
 	void triggerPentagonalization();
@@ -256,6 +260,7 @@ private:
 	QDoubleSpinBox *vertexTruncationSpinBox;
 	QDoubleSpinBox *dualTwelveSixFourSpinBox;
 	QDoubleSpinBox *pentagonalizationSpinBox;
+	QDoubleSpinBox *modifiedCornerCuttingSpinBox;
 	QDoubleSpinBox *cubicPentagonalizationSpinBox;
 	QDoubleSpinBox *loopStyleRemeshingSpinBox;
 	QDoubleSpinBox *dualLoopStyleRemeshingTwistSpinBox;
@@ -277,6 +282,7 @@ private:
 	QLabel *vertexTruncationLabel;
 	QLabel *dualTwelveSixFourLabel;
 	QLabel *pentagonalizationLabel;
+	QLabel *modifiedCornerCuttingLabel;
 	QLabel *cubicPentagonalizationLabel;
 	QLabel *loopStyleRemeshingLabel;
 	QLabel *dualLoopStyleRemeshingTwistLabel;

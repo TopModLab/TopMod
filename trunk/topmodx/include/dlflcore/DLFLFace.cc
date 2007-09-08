@@ -1197,4 +1197,24 @@ namespace DLFL {
     return o;
   }
 
+	float DLFLFace::getArea(){
+		updateCentroid();
+
+		vector<DLFLEdgePtr>::iterator eit;
+		DLFLEdgePtrArray eptrarray;
+		
+		float area = 0;
+		//get the edges for the current face
+		getEdges(eptrarray);
+		for(eit = eptrarray.begin(); eit != eptrarray.end(); eit++){
+			//get the 2 faces for the current edge, select them if they aren't already selected
+			DLFLVertexPtr vp1, vp2;
+			//get the two vertices for each edge, select them if they aren't already selected
+			(*eit)->getVertexPointers(vp1,vp2);
+			//find the area of this triangle
+			area += 0.5 * (vp1->coords-centroid)*(vp1->coords-vp2->coords);
+		}
+		return area;
+	}
+
 } // end namespace

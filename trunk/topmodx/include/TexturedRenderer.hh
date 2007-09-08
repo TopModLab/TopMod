@@ -37,15 +37,17 @@ protected :
     if ( !image->isNull() )	{
       width = image->width(); 
       height = image->height(); 
-      depth = image->depth();
+      depth = image->depth()/8;
+			// glTexture();
     }
   }
 
   void glTexture(void) {
-		std::cout << image->bits() << "\n";
+		// std::cout << image->bits() << "\n";
 	
     // Do a glTexImage2D using the texture image data
     if ( image && !image->isNull() ) {
+			// std::cout<<"depth  = " <<  depth << "\n";
       if ( depth == 1 )
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width, height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, image->bits());
       else if ( depth == 2 )
@@ -131,6 +133,15 @@ public :
   /* Implement render function. Doesn't render if texture_id is negative */
   virtual int render(DLFLObjectPtr object) {
     if ( isValid() == false ) return -1;
+
+		if (DLFLRenderer::antialiasing){
+	    glEnable( GL_LINE_SMOOTH );
+			glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);									// Set Line Antialiasing
+		}
+		else {
+	    glDisable( GL_LINE_SMOOTH );
+		}
+
     glEnable(GL_CULL_FACE);
     setCulling();
     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
@@ -147,7 +158,7 @@ public :
 
   virtual void setState( ) {
     gr->useLighting = false;
-    gr->useMaterial = true;
+    gr->useMaterial = false;
     gr->useTexture = true;
     gr->useOutline = false;
   }

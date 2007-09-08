@@ -472,10 +472,10 @@ void GLWidget::drawText(int width, int height ){
  */
 void GLWidget::drawSelectionWindow(QPainter *painter){
 	if (mShowSelectionWindow){
-		QBrush brush = QBrush(QColor(0,0,0,127));
+		QBrush brush = QBrush(QColor(0,0,0,255));
 		QPen pen = QPen(brush,1.0);
 		painter->setPen(pen);
-		painter->setBrush(Qt::NoBrush);
+		painter->setBrush(QBrush(QColor(0,0,0,50)));//Qt::NoBrush);
 		//get the mouse position from global coordinate system
 		int x = mapFromGlobal(QCursor::pos()).x();
 		int y = mapFromGlobal(QCursor::pos()).y();
@@ -529,7 +529,7 @@ void GLWidget::drawHUD(QPainter *painter){
 		//show info about a selected corner	
 			if (numSelectedCorners() == 1) {
 				DLFLFaceVertexPtr fvp = object->sel_fvptr_array[0];
-				std::cout << fvp << "\n";
+				// std::cout << fvp << "\n";
 			}
 		}
 		
@@ -546,7 +546,7 @@ void GLWidget::drawHUD(QPainter *painter){
 		QString s3 = 	"Mode: " + mModeString + 
 									"\nRemeshing Mode: " + mRemeshingSchemeString + 
 									"\nExtrusion Mode: " + mExtrusionModeString + 
-									"\nSelection Mask: " + mSelectionMaskString;
+									"\nSelection Mode: " + mSelectionMaskString;
 									
 		
 		
@@ -937,7 +937,7 @@ DLFLVertexPtrArray GLWidget::selectVertices(int mx, int my, int w, int h) {
 	mCamera->leaveSelectionMode();
 
 	hits = glRenderMode(GL_RENDER);
-	std::cout <<  "hits = " << hits << "\n";
+	// std::cout <<  "hits = " << hits << "\n";
 	if ( hits > 0 ){
 		while ( hits ){
 			index = (hits-1)*4;
@@ -1219,7 +1219,7 @@ DLFLFacePtrArray GLWidget::selectFaces(int mx, int my, int w, int h) {
 	mCamera->leaveSelectionMode();
 
 	hits = glRenderMode(GL_RENDER);
-	std::cout << hits << " = hits\n";
+	// std::cout << hits << " = hits\n";
 	if ( hits > 0 ){
 		while ( hits ){
 			index = (hits-1)*4;			

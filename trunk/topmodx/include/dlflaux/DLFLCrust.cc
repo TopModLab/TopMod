@@ -1003,6 +1003,16 @@ namespace DLFL {
 		}
 	}
 
+	void selectFacesByArea(DLFLObjectPtr obj, DLFLFacePtr fptr, DLFLFacePtrArray &fparray, float delta ){
+		fparray.clear();
+		DLFLFacePtrList::iterator fl_first=obj->beginFace(), fl_last = obj->endFace();
+		float area = fptr->getArea();
+		while ( fl_first != fl_last )	{
+			if ( (*fl_first)->getArea() <= (area+delta) && (*fl_first)->getArea() >= (area-delta) ) fparray.push_back(*fl_first);
+			fl_first++;
+		}
+	}
+
   void punchHoles( DLFLObjectPtr obj ) {
     // Go through list of faces and punch holes through faces that have type
     // flag set to FTHole
@@ -1041,17 +1051,17 @@ namespace DLFL {
     punchHoles(obj);
   }
 
-  void makeWireframe2(DLFLObjectPtr obj, double crust_thickness, bool split) {
+  void makeWireframe2(DLFLObjectPtr obj, double crust_thickness, double crust_width, bool split) {
     // Make a wireframe from the given model.
-
+		// std::cout << crust_thickness << "\t" << crust_width << "\n";
     // First do a modified corner-cutting subdivision
-    modifiedCornerCuttingSubdivide2(obj,crust_thickness);
+    modifiedCornerCuttingSubdivide(obj,crust_width);
 
     // Split Valence 2 vertices if 'split' flag is true
     if ( split ) splitValence2Vertices(obj,-1.0);
   
     // Create a crust with specified thickness
-    createCrustForWireframe2(obj,crust_thickness);
+    createCrustForWireframe(obj,crust_thickness);
 
     // Punch holes to get the wireframe
     punchHoles(obj);

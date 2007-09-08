@@ -705,6 +705,33 @@ namespace DLFL {
 		}
 	}
 
+  void extrudeFaceDome(DLFLObjectPtr obj, DLFLFacePtr fptr, double length, double sf) {	
+    // DLFLFacePtrList::iterator fl_first, fl_last;
+    // DLFLFacePtr fp;
+    // int num_old_faces;
+    // int num_faces;
+
+    // num_old_faces = obj->num_faces();
+
+    // Subdivide all the edges by 4
+    // subdivideAllEdges(obj,4);
+
+		// DLFLEdgePtrArray eptrarr;
+		// fptr->getEdges(eptrarr);
+
+    // num_faces = 0; fl_first = obj->beginFace(); fl_last = obj->endFace();
+    // while ( fl_first != fl_last && num_faces < num_old_faces ) {
+      // fp = (*fl_first); ++fl_first; ++num_faces;
+      fptr = extrudeFaceDS(obj,fptr, 0.0*length, 1, 0.0, 1.6*sf);
+      fptr = extrudeFaceDS(obj,fptr, 0.3*length, 1, 0.0, 1.7*sf);
+      fptr = extrudeFaceDS(obj,fptr, 0.18*length, 1, 0.0, 1.6*sf);
+      fptr = extrudeFaceDS(obj,fptr, 0.1*length, 1, 0.0, 1.4*sf);
+      fptr = extrudeFaceDS(obj,fptr, 0.05*length, 1, 0.0, 1.2*sf);
+      fptr = extrudeFaceDS(obj,fptr, 0.025*length, 1, 0.0, 1.1*sf);
+      fptr = extrudeFaceDS(obj,fptr, 0.01*length, 1, 0.0, 0.01*sf);		
+    // }
+  }
+
 	/* API
 		 uint extrudeFace(DLFLObjectPtr obj, uint faceID, double d, int num, double rot, double sf ) {
 		 DLFLFacePtr fp = extrudeFace( obj, obj->findFace(faceID), d, num, rot, sf );

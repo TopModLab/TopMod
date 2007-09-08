@@ -62,10 +62,12 @@
 	<file>images/extrude_octahedral.png</file>
 	<file>images/extrude_stellate.png</file>
 	<file>images/extrude_doublestellate.png</file>
+	<file>images/extrude_dome.png</file>
 	<file>images/highgenus_addholehandle.png</file>
 	<file>images/highgenus_addholehandlecv.png</file>
 	<file>images/highgenus_addhandlesi.png</file>
-	<file>images/highgenus_rind.png</file>
+	<file>images/highgenus_rindthickness.png</file>
+	<file>images/highgenus_rindscaling.png</file>
 	<file>images/highgenus_column.png</file>
 	<file>images/highgenus_wireframe.png</file>
 	<file>images/highgenus_multifacehandle.png</file>
@@ -99,8 +101,13 @@
 	<file>images/utilities-terminal.svg</file>
 	<file>images/view-fullscreen.svg</file>
 	<file>images/applications-internet.svg</file>
-	<file>images/accessories-text-editor.svg</file>
--->		
+	<file>images/accessories-text-editor.svg</file>-->		
+
+	<file>images/selection-mask-vertices.png</file>
+	<file>images/selection-mask-faces.png</file>
+	<file>images/selection-mask-edges.png</file>
+	<file>images/selection-mask-corners.png</file>
+
 	<file>images/document-save-as.png</file>
 	<file>images/document-save.png</file>
 	<file>images/edit-redo.png</file>

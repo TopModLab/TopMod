@@ -35,6 +35,7 @@ public:
 	QAction *mOctahedralExtrudeAction;
 	QAction *mStellateExtrudeAction;
 	QAction *mDoubleStellateExtrudeAction;	
+	QAction *mDomeExtrudeAction;	
 
 	QWidget *mDooSabinExtrudeWidget;
 	QWidget *mCubicalExtrudeWidget;
@@ -43,6 +44,7 @@ public:
 	QWidget *mOctahedralExtrudeWidget;
 	QWidget *mStellateExtrudeWidget;
 	QWidget *mDoubleStellateExtrudeWidget;
+	QWidget *mDomeExtrudeWidget;
 	
 	QGridLayout *mDooSabinExtrudeLayout;
 	QGridLayout *mCubicalExtrudeLayout;
@@ -51,6 +53,7 @@ public:
 	QGridLayout *mOctahedralExtrudeLayout;
 	QGridLayout *mStellateExtrudeLayout; 
 	QGridLayout *mDoubleStellateExtrudeLayout;
+	QGridLayout *mDomeExtrudeLayout;
 	
 	QWidget *mParent;
 	QMenu *mExtrusionMenu;
@@ -113,6 +116,12 @@ public:
 	QLabel *doubleStellateLengthLabel;
 	QDoubleSpinBox *doubleStellateLengthSpinBox;
 	
+	//dome extrude
+	QLabel *domeHeightLabel;
+	QLabel *domeScaleLabel;
+	QDoubleSpinBox *domeHeightSpinBox;
+	QDoubleSpinBox *domeScaleSpinBox;
+	
 	
 protected:
 	void setupDooSabinExtrude();
@@ -122,6 +131,7 @@ protected:
 	void setupOctahedralExtrude();
 	void setupStellateExtrude();
 	void setupDoubleStellateExtrude();
+	void setupDomeExtrude();
 	QDoubleSpinBox *createDoubleSpinBox(QGridLayout *layout, QLabel *label, QString s, double low, double high, double step, double value, double decimals, int row, int col);
 	
 	
@@ -139,6 +149,7 @@ public slots:
 	void triggerOctahedralExtrude();
 	void triggerStellateExtrude();
 	void triggerDoubleStellateExtrude();	
+	void triggerDomeExtrude();	
 	
 };
 

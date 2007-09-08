@@ -8,7 +8,7 @@
 
 #include <QWidget>
 
-#include <QBoxLayout>
+#include <QGridLayout>
 #include <QStackedWidget>
 #include <QComboBox>
 
@@ -25,6 +25,8 @@ public:
 	QMenu *getMenu();
 	void retranslateUi();
 	
+	QDoubleSpinBox *createDoubleSpinBox(QGridLayout *layout, QLabel *label, QString s, double low, double high, double step, double value, double decimals, int row, int col);
+
 	QWidget *mCutbyEdgeWidget;
 	QWidget *mCutbyVertexWidget;
 	QWidget *mCutbyEdgeVertexWidget;
@@ -41,13 +43,13 @@ public:
 	QAction *mTruncateVertexAction; 
 	QAction *mDualConvexHullAction;
 	
-	QBoxLayout *mCutbyEdgeLayout;
-	QBoxLayout *mCutbyVertexLayout;
-	QBoxLayout *mCutbyEdgeVertexLayout;
-	QBoxLayout *mCutbyFaceLayout;
-	QBoxLayout *mTruncateEdgeLayout;
-	QBoxLayout *mTruncateVertexLayout; 
-	QBoxLayout *mDualConvexHullLayout;
+	QGridLayout *mCutbyEdgeLayout;
+	QGridLayout *mCutbyVertexLayout;
+	QGridLayout *mCutbyEdgeVertexLayout;
+	QGridLayout *mCutbyFaceLayout;
+	QGridLayout *mTruncateEdgeLayout;
+	QGridLayout *mTruncateVertexLayout; 
+	QGridLayout *mDualConvexHullLayout;
 	
 protected:
 	void setupCutbyEdge();
@@ -103,6 +105,11 @@ private:
 	QCheckBox *truncateEdgeCutSelectedCheckBox;
 	QCheckBox *truncateVertexGlobalCheckBox;
 	QCheckBox *truncateVertexCutSelectedCheckBox;
+	
+	QLabel *cutbyEdgeOffsetLabel;
+	QLabel *cutbyVertexOffsetLabel;
+	QLabel *cutbyFaceOffsetLabel;
+	
 };
 
 #endif

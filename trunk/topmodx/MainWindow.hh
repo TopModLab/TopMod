@@ -102,11 +102,11 @@ class MainWindow : public QMainWindow {
 				SelectVertex=1, 				/**< select one vertex. */
 				SelectEdge=2, 					/**< select one edge. */
 				SelectFace=3, 					/**< select one face. */
-				SelectFaceVertex=4, 		/**< select one corner, which requires selection of a face and a vertex. */
+				SelectCorner=4, 		/**< select one corner, which requires selection of a face and a vertex. */
 				MultiSelectVertex=5,		/**< select multiple vertices. */
 				MultiSelectEdge=6,			/**< select multiple edges. */
 				MultiSelectFace=7,			/**< . */
-				MultiSelectFaceVertex=8,/**< . */
+				MultiSelectCorner=8,/**< . */
 				SelectCheckerboard=9, 	/**< select alternating faces forming a checkerboard pattern. works well after Doo Sabin Remeshing. */
 				SelectionWindow=10, 		/**< crossing window selection  - dave. */
 				InsertEdge=11,					/**< insert edge. */
@@ -123,6 +123,7 @@ class MainWindow : public QMainWindow {
 				ExtrudeMultipleFaces=36,/**< cubical extrusion for multiple faces at once. */
 				StellateFace=41,				/**< stellate extrusion. */
 				DoubleStellateFace = 42,/**< double stellate extrusion. */
+				ExtrudeFaceDome = 43,   /**< dome extrusion. dave */
 				ConnectFaceVertices=51,	/**< add . */
 				ConnectFaces=52,				/**< add hole/handle operation. */
 				BezierConnectFaces=53,	/**< add handle operation. */
@@ -142,7 +143,8 @@ class MainWindow : public QMainWindow {
 				SelectEdgeLoop=82,			/**< select an edge loop. shift select for multiple. */
 				SelectEdgeRing=85,			/**< select an edge ring. shift select for multiple. */
 				SelectFaceLoop=83,			/**< allows user to select one edge in the viewport and selects the corresponding face loop. shift select for multiple. */
-				SelectSimilarFaces=84 	/**< select all faces with the same number of vertices as the selected face. */
+				SelectSimilarFaces=84, 	/**< select all faces with the same number of vertices as the selected face. */
+				SelectFacesByArea=856		 	/**< select all faces with the a similar surface area. */
 			};
 
 			/**
@@ -167,7 +169,8 @@ class MainWindow : public QMainWindow {
 				IcosahedralExtrude,
 				OctahedralExtrude, //!< also called dual
 				StellateExtrude,
-				DoubleStellateExtrude				
+				DoubleStellateExtrude,
+				DomeExtrude			
 			};
 
 				// Enumerations for various multi-face-handle algorithms
@@ -192,6 +195,7 @@ class MainWindow : public QMainWindow {
 				ModifiedStellate=32,								/**< . */
 				DooSabin=40, 												/**< . */
 				CornerCutting=41, 									/**< . */
+				ModifiedCornerCutting=43, 					/**< . */
 				Simplest=42,												/**< . */
 				Pentagonal=50, 											/**< . */
 				CubicPentagonal=51, 								/**< . */
@@ -227,6 +231,9 @@ class MainWindow : public QMainWindow {
 
 	//-- Parameters used in various operations on the DLFL object --//
 
+	// face area tolerance - dave
+	static float face_area_tolerance;
+
 	// Edge deletion
 	static bool delete_edge_cleanup; //!< Flag for point-sphere cleanup after edge deletion
 
@@ -260,6 +267,8 @@ class MainWindow : public QMainWindow {
 
 	//!< Wire-frame modeling
 	static double wireframe_thickness; //!< Thickness of crust for wireframe
+	static double wireframe2_thickness; //!< depth of crust for wireframe2
+	static double wireframe2_width; //!< width of crust for wireframe2
 
 	//!< Column modeling
 	static double column_thickness; //!< Thickness of columns for column modeling
@@ -274,6 +283,7 @@ class MainWindow : public QMainWindow {
 	static double pentagonal_scale; //!< Scale factor for pentagonal subdivision (preserving)
 	static bool accurate_dual; //!< Flag to indicate that accurate dual method should be used
 	static double checkerboard_thickness; //!< Fractional thickness for checkerboard remeshing
+	static double modified_corner_cutting_thickness; //!< for modified corner cutting scheme same as Thickness of crust for wireframe
 
 	//!< Added by Doug
 	static double star_offset; //!< Offset value for star subdivision
@@ -283,6 +293,10 @@ class MainWindow : public QMainWindow {
 	static double substellate_height; //amount of first stellation extrusion
 	static double substellate_curve; //amount of second stellation extrusion
 
+	//!< added by dave
+	static double domeExtrudeLength_factor;     //!< Length for dome extrusion
+	static double domeExtrudeScale_factor; 			//!< Scale factor for dome extrusion
+	
 	//!< Added by Bei & Cansin
 	static double domeLength_factor;     //!< Length for dome extrusion
 	static double domeScale_factor; //!< Scale factor for dome extrusion
@@ -621,6 +635,7 @@ private:
 	QAction *makeSierpinskiAct;
 	QAction *createCrustThicknessAct;
 	QAction *createCrustScalingAct;
+	QAction *mPerformCuttingAct;
 	QAction *computeLightingAct;
 	QAction *computeNormalsAndLightingAct;
 	QAction *assignTextureCoordinatesAct;
@@ -628,6 +643,7 @@ private:
 	//Selection Menu Actions
 	QAction *selectVertexAct;
 	QAction *selectMultipleVerticesAct;
+	QAction *mSelectMultipleAct;
 	QAction *mEditVertexAct;
 	QAction *selectFaceAct;
 	QAction *selectFaceLoopAct;
@@ -636,9 +652,12 @@ private:
 	QAction *mCollapseSelectedEdgesAct;						//!< collapse the selected edges.
 	QAction *selectMultipleFacesAct;
 	QAction *selectSimilarFacesAct;
+	QAction *selectFacesByAreaAct;
 	QAction *mSelectionWindowAct;
 	QAction *selectCheckerboardFacesAct;
 	QAction *selectAllAct;
+	QAction *mGrowSelectionAct;
+	QAction *mShrinkSelectionAct;
 	QAction *selectInverseAct;
 	QAction *selectEdgeAct;
 	QAction *selectMultipleEdgesAct;
@@ -657,7 +676,7 @@ private:
 	QAction *mSelectVerticesMaskAct;
 	QAction *mSelectFacesMaskAct;
 	QAction *mSelectEdgesMaskAct;
-	QAction *mSelectFaceVerticesMaskAct;
+	QAction *mSelectCornersMaskAct;
 
 	//Language Menu actions;
 	QActionGroup *mLanguageActionGroup;
@@ -837,12 +856,14 @@ public slots:
 
 	void select_vertex();
 	void select_multiple_vertices();
+	void select_multiple();
 	void edit_vertex();
 	void select_face();
 	void select_face_loop();
 	void select_edge_ring();
 	void select_multiple_faces();
 	void select_similar_faces();
+	void select_faces_by_area();
 	void selection_window();
 	void select_checkerboard_faces();
 	void select_edge();
@@ -856,6 +877,8 @@ public slots:
 	void selectionMaskEdges();
 	void selectionMaskCorners();
 	void selectAll();
+	void growSelection();
+	void shrinkSelection();
 	void selectInverse();
 	void selectEdgesFromFaces();
 	void selectEdgesFromVertices();
@@ -875,6 +898,8 @@ public slots:
 	void changeTileTexNum(double value);
 	void toggleUseQuadsFlag(int state);
 
+	void changeFaceAreaTolerance(double value);	//!< dave - facial area calculation
+	
 	// Extrusion
 	void changeExtrudeLength(double value);
 	void changeExtrudeRotation(double value);
@@ -898,6 +923,9 @@ public slots:
 	void toggleCrustCleanupFlag(int state);
 
 	void changeWireframeThickness(double value);
+	void changeWireframe2Width(double value);
+	void changeWireframe2Thickness(double value);
+	void changeModifiedCornerCuttingThickness(double value);
 
 			void changeColumnThickness(double value); // Esan
 			void changeColumnSegments(double value); // Esan
@@ -939,6 +967,8 @@ public slots:
 	void changeDual1264Scale(double value); // Bei & Cansin
 	void changeDomeSubdivisionLength(double value); // Bei & Cansin
 	void changeDomeSubdivisionScale(double value); // Bei & Cansin
+	void changeDomeExtrudeLength(double value); // dave
+	void changeDomeExtrudeScale(double value); // dave
 	void toggleAccurateDualFlag(int state);
 
 	//right click menu support coming soon...
@@ -1048,6 +1078,7 @@ public slots:
 	void subdivideHoneycomb();
 	void subdivideRoot4();
 	void subdivideCornerCutting();
+	void subdivideModifiedCornerCutting();
 	void subdivideLinearVertexInsertion();
 	void subdivideSimplest();
 	void subdivideVertexCutting();

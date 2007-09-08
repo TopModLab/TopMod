@@ -33,7 +33,7 @@ BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm, QWidget *actionLis
 	mParent = parent;
 	
 	//here we set the default mode for when the application is executed.
-	((MainWindow*)mParent)->setMode(MainWindow::InsertEdge);
+	// ((MainWindow*)mParent)->setMode(MainWindow::InsertEdge);
 	
 	mInsertEdgeWidget = new QWidget;
   mDeleteEdgeWidget = new QWidget;
@@ -42,6 +42,7 @@ BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm, QWidget *actionLis
   mConnectEdgesWidget = new QWidget;
   mSpliceCornersWidget = new QWidget;
   mTransformsWidget = new QWidget;
+  mSelectionOptionsWidget = new QWidget;
 
 	//each mode widget will each be added to the 
 	//ToolOptionsDockWidget of the MainWindow class
@@ -52,11 +53,12 @@ BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm, QWidget *actionLis
 	setupConnectEdges();
 	setupSpliceCorners();
 	setupTransforms();
+	setupSelectionOptions();
 	
 	mInsertEdgeAction = new QAction(tr("Insert Edge"),this);
 	mInsertEdgeAction->setIcon(QIcon(":/images/insert_edge.png"));
 	mInsertEdgeAction->setCheckable(true);
-	mInsertEdgeAction->setChecked(true);
+	// mInsertEdgeAction->setChecked(true);
 	// sm->registerAction(mInsertEdgeAction, "Basics Modes", "9");
 	mInsertEdgeAction->setStatusTip(tr("Enter Insert Edge Mode"));
 	mInsertEdgeAction->setToolTip(tr("Insert Edge Mode"));
@@ -117,6 +119,14 @@ BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm, QWidget *actionLis
 	mTransformsAction->setToolTip(tr("Transforms Mode"));
 	connect(mTransformsAction, SIGNAL(triggered()), this, SLOT(triggerTransforms()));
 	actionList->addAction(mTransformsAction);
+
+	mSelectionOptionsAction = new QAction(tr("Selection Options"),this);
+	mSelectionOptionsAction->setIcon(QIcon(":/images/selection-mask-faces.png"));
+	mSelectionOptionsAction->setCheckable(true);
+	mSelectionOptionsAction->setStatusTip(tr("Enter Selection Options Mode"));
+	mSelectionOptionsAction->setToolTip(tr("Selection Options Mode"));
+	connect(mSelectionOptionsAction, SIGNAL(triggered()), this, SLOT(triggerSelectionOptions()));
+	actionList->addAction(mSelectionOptionsAction);
 		
 }
 
@@ -130,6 +140,7 @@ QMenu* BasicsMode::getMenu(){
 	mBasicsMenu->addAction(mConnectEdgesAction);	
 	mBasicsMenu->addAction(mSpliceCornersAction);
 	mBasicsMenu->addAction(mTransformsAction);
+	mBasicsMenu->addAction(mSelectionOptionsAction);
 	
 	return mBasicsMenu;
 }
@@ -176,6 +187,12 @@ void BasicsMode::triggerTransforms(){
 	((MainWindow*)mParent)->setMode(MainWindow::NormalMode);
 }
 
+void BasicsMode::triggerSelectionOptions(){
+	
+	((MainWindow*)mParent)->setToolOptions(mSelectionOptionsWidget);
+	// ((MainWindow*)mParent)->setMode(MainWindow::NormalMode);
+}
+
 void BasicsMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget){
 	
 	actionGroup->addAction(mInsertEdgeAction);	
@@ -185,6 +202,7 @@ void BasicsMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStack
 	actionGroup->addAction(mConnectEdgesAction);	
 	actionGroup->addAction(mSpliceCornersAction);
 	actionGroup->addAction(mTransformsAction);
+	actionGroup->addAction(mSelectionOptionsAction);
 		
 	toolBar->addAction(mInsertEdgeAction);
 	toolBar->addAction(mDeleteEdgeAction);	
@@ -193,6 +211,7 @@ void BasicsMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStack
 	toolBar->addAction(mConnectEdgesAction);	
 	toolBar->addAction(mSpliceCornersAction);
 	toolBar->addAction(mTransformsAction);
+	toolBar->addAction(mSelectionOptionsAction);
 	
 	stackedWidget->addWidget(mInsertEdgeWidget);
 	stackedWidget->addWidget(mDeleteEdgeWidget);	
@@ -201,6 +220,7 @@ void BasicsMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStack
 	stackedWidget->addWidget(mConnectEdgesWidget);	
 	stackedWidget->addWidget(mSpliceCornersWidget);
 	stackedWidget->addWidget(mTransformsWidget);
+	stackedWidget->addWidget(mSelectionOptionsWidget);
 
 }
 
@@ -359,6 +379,44 @@ void BasicsMode::freezeTransforms()
 	xScaleSpinBox->setValue(1.0);
 	yScaleSpinBox->setValue(1.0);
 	zScaleSpinBox->setValue(1.0);
+}
+
+void BasicsMode::setupSelectionOptions(){
+	
+	mSelectionOptionsLayout = new QGridLayout;
+	mSelectionOptionsLayout->setVerticalSpacing(1);
+	mSelectionOptionsLayout->setHorizontalSpacing(1);
+		
+	mFaceAreaToleranceSpinBox = createDoubleSpinBox(mSelectionOptionsLayout, mFaceAreaToleranceLabel, tr("Face Area Sel.\nTolerance"), 0.0, 5.0, 0.001, 0.05, 3, 0,0);
+	connect(mFaceAreaToleranceSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeFaceAreaTolerance(double)));
+	
+	// yPosSpinBox = createDoubleSpinBox(mSelectionOptionsLayout, yPosLabel, tr("Y-translate"), -100.0, 100.0, 0.5, 0.0, 1, 2,0);
+	// connect(yPosSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(translatey(double)));
+	// 
+	// zPosSpinBox = createDoubleSpinBox(mSelectionOptionsLayout, zPosLabel, tr("Z-translate"), -100.0, 100.0, 0.5, 0.0, 1, 3,0);
+	// connect(zPosSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(translatez(double)));
+	// 
+	// // scaleLabel = new QLabel(tr("Scale:"));
+	// // mSelectionOptionsLayout->addWidget(scaleLabel,4,0,1,2);
+	// 
+	// //x scale
+	// xScaleSpinBox = createDoubleSpinBox(mSelectionOptionsLayout, xScaleLabel, tr("X-scale"), 0.1, 10.0, 0.1, 1.0, 1, 5,0);
+	// connect(xScaleSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(scalex(double)));
+	// 
+	// yScaleSpinBox = createDoubleSpinBox(mSelectionOptionsLayout, yScaleLabel, tr("Y-scale"), 0.1, 10.0, 0.1, 1.0, 1, 6,0);
+	// connect(yScaleSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(scaley(double)));
+	// 
+	// zScaleSpinBox = createDoubleSpinBox(mSelectionOptionsLayout, zScaleLabel, tr("Z-scale"), 0.1, 10.0, 0.1, 1.0, 1, 7,0);
+	// connect(zScaleSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(scalez(double)));
+	// 
+	// QPushButton *freezeTransformsButton = new QPushButton(tr("&Freeze Transforms"));
+	// connect(freezeTransformsButton, SIGNAL(clicked()), this, SLOT(freezeTransforms()));
+	// mSelectionOptionsLayout->addWidget(freezeTransformsButton,8,0,1,2);
+
+	mSelectionOptionsLayout->setRowStretch(1,1);
+	mSelectionOptionsLayout->setColumnStretch(2,1);
+	mSelectionOptionsWidget->setWindowTitle(tr("Selection Options Mode"));
+	mSelectionOptionsWidget->setLayout(mSelectionOptionsLayout);	
 }
 
 void BasicsMode::retranslateUi(){

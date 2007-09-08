@@ -165,6 +165,14 @@ RemeshingMode::RemeshingMode(QWidget *parent, QShortcutManager *sm, QWidget *act
 	connect(mCornerCuttingAction, SIGNAL(triggered()), this, SLOT(triggerCornerCutting()));	
 	actionList->addAction(mCornerCuttingAction);
 
+	mModifiedCornerCuttingAction = new QAction(/*QIcon(":images/doosabin_extrude.png"),*/tr("Modified Corner Cutting"),this);
+	mModifiedCornerCuttingAction->setCheckable(true);
+	sm->registerAction(mModifiedCornerCuttingAction, "Remeshing", "");
+	mModifiedCornerCuttingAction->setStatusTip(tr("Enter Modified Corner Cutting Remeshing Mode"));
+	mModifiedCornerCuttingAction->setToolTip(tr("Modified Corner Cutting Remeshing Mode"));
+	connect(mModifiedCornerCuttingAction, SIGNAL(triggered()), this, SLOT(triggerModifiedCornerCutting()));	
+	actionList->addAction(mModifiedCornerCuttingAction);
+
 	mSimplestAction = new QAction(/*QIcon(":images/doosabin_extrude.png"),*/tr("Simplest"),this);
 	mSimplestAction->setCheckable(true);
 	sm->registerAction(mSimplestAction, "Remeshing", "");
@@ -356,6 +364,7 @@ QMenu* RemeshingMode::getMenu(){
 	mThreeConversionMenu->addAction(mStellationAction);
 	mThreeConversionMenu->addAction(mDoubleStellationAction);
 	mThreeConversionMenu->addAction(mTwelveSixFourAction);
+	mThreeConversionMenu->addSeparator();
 	mThreeConversionMenu->addAction(mHoneycombAction);
 	mThreeConversionMenu->addAction(mVertexTruncationAction);
 	mThreeConversionMenu->addAction(mDualTwelveSixFourAction);
@@ -366,8 +375,10 @@ QMenu* RemeshingMode::getMenu(){
 	mFourConversionMenu->addAction(mLinearVertexAction);
 	mFourConversionMenu->addAction(mCatmullClarkAction);
 	mFourConversionMenu->addAction(mStellateEdgeRemovalAction);
+	mFourConversionMenu->addSeparator();
 	mFourConversionMenu->addAction(mDooSabinAction);
 	mFourConversionMenu->addAction(mCornerCuttingAction);
+	mFourConversionMenu->addAction(mModifiedCornerCuttingAction);
 	mFourConversionMenu->addAction(mSimplestAction);
 	
 	mRemeshingMenu->addMenu(mFourConversionMenu);
@@ -375,6 +386,7 @@ QMenu* RemeshingMode::getMenu(){
 	mFiveConversionMenu = new QMenu(tr("5-Conversion"));	
 	mFiveConversionMenu->addAction(mPentagonalizationAction);
 	mFiveConversionMenu->addAction(mCubicPentagonalizationAction);
+	mFiveConversionMenu->addSeparator();
 	mFiveConversionMenu->addAction(mDualPentagonalizationAction);
 	
 	mRemeshingMenu->addMenu(mFiveConversionMenu);
@@ -382,6 +394,7 @@ QMenu* RemeshingMode::getMenu(){
 	mThreePreservationMenu = new QMenu(tr("3-Preservation"));
 	mThreePreservationMenu->addAction(mLoopStyleRemeshingAction);
 	mThreePreservationMenu->addAction(mLoopSubdivisionAction);
+	mThreePreservationMenu->addSeparator();
 	mThreePreservationMenu->addAction(mDualLoopStyleRemeshingAction);
 	mThreePreservationMenu->addAction(mDualLoopSubdivisionAction);
 	
@@ -390,6 +403,7 @@ QMenu* RemeshingMode::getMenu(){
 	mFourPreservationMenu = new QMenu(tr("4-Preservation"));
 	// mFourPreservationMenu->addAction(mGlobalExtrudeAction);
 	mFourPreservationMenu->addAction(mCheckerboardAction);
+	mFourPreservationMenu->addSeparator();
 	// mFourPreservationMenu->addAction(mDualGlobalExtrudeAction);
 	mFourPreservationMenu->addAction(mDualCheckerboardAction);
 	
@@ -397,12 +411,14 @@ QMenu* RemeshingMode::getMenu(){
 	
 	mFivePreservationMenu = new QMenu(tr("5-Preservation"));
 	mFivePreservationMenu->addAction(mPentagonPreservingAction);
+	mFivePreservationMenu->addSeparator();
 	mFivePreservationMenu->addAction(mDualPentagonPreservingAction);
 	
 	mRemeshingMenu->addMenu(mFivePreservationMenu);
 	
 	mSixPreservationMenu = new QMenu(tr("6-Preservation"));
 	mSixPreservationMenu->addAction(mDualLoopStyleRemeshingSixAction);
+	mSixPreservationMenu->addSeparator();
 	mSixPreservationMenu->addAction(mLoopStyleRemeshingSixAction);	
 	
 	mRemeshingMenu->addMenu(mSixPreservationMenu);
@@ -437,6 +453,7 @@ void RemeshingMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 	actionGroup->addAction(mStellateEdgeRemovalAction);
 	actionGroup->addAction(mDooSabinAction);
 	actionGroup->addAction(mCornerCuttingAction);
+	actionGroup->addAction(mModifiedCornerCuttingAction);
 	actionGroup->addAction(mSimplestAction);
 	actionGroup->addAction(mPentagonalizationAction);
 	actionGroup->addAction(mCubicPentagonalizationAction);
@@ -481,6 +498,7 @@ void RemeshingMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 	toolBar->addAction(mStellateEdgeRemovalAction);
 	toolBar->addAction(mDooSabinAction);
 	toolBar->addAction(mCornerCuttingAction);
+	toolBar->addAction(mModifiedCornerCuttingAction);
 	toolBar->addAction(mSimplestAction);
 	// toolBar->addSeparator();
 	toolBar->addAction(mPentagonalizationAction);
@@ -525,6 +543,7 @@ void RemeshingMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 	stackedWidget->addWidget(mStellateEdgeRemovalWidget);
 	stackedWidget->addWidget(mDooSabinWidget);
 	stackedWidget->addWidget(mCornerCuttingWidget);
+	stackedWidget->addWidget(mModifiedCornerCuttingWidget);
 	stackedWidget->addWidget(mSimplestWidget);
 	stackedWidget->addWidget(mPentagonalizationWidget);
 	stackedWidget->addWidget(mCubicPentagonalizationWidget);
@@ -806,6 +825,7 @@ void RemeshingMode::setupFourConversion(){
   mStellateEdgeRemovalWidget = new QWidget;
   mDooSabinWidget = new QWidget;
 	mCornerCuttingWidget = new QWidget;
+	mModifiedCornerCuttingWidget = new QWidget;
   mSimplestWidget = new QWidget;
 
 	//linear vertex insertion
@@ -876,6 +896,22 @@ void RemeshingMode::setupFourConversion(){
 	mCornerCuttingLayout->setColumnStretch(2,1);
 	mCornerCuttingWidget->setWindowTitle("Corner Cutting Remeshing");
 	mCornerCuttingWidget->setLayout(mCornerCuttingLayout);
+
+	//modified corner cutting
+	mModifiedCornerCuttingLayout = new QGridLayout;
+	mModifiedCornerCuttingLayout->setVerticalSpacing(1);
+	mModifiedCornerCuttingLayout->setHorizontalSpacing(1);
+	// mCornerCuttingLayout->setMargin(0);
+	//offset spinbox
+	modifiedCornerCuttingSpinBox = createDoubleSpinBox(mModifiedCornerCuttingLayout, modifiedCornerCuttingLabel, tr("Thickness:"), 0.0, 1.0, 0.01, 0.25, 2, 0,0);
+	connect(modifiedCornerCuttingSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent),SLOT(changeModifiedCornerCuttingThickness(double)) );
+	QPushButton *modifiedCornerCuttingCreateButton = new QPushButton(tr("Perform Remeshing"), this);
+	connect(modifiedCornerCuttingCreateButton, SIGNAL(clicked()), ((MainWindow*)mParent),SLOT(performRemeshing()) );
+	mModifiedCornerCuttingLayout->addWidget(modifiedCornerCuttingCreateButton,1,0,1,2);
+	mModifiedCornerCuttingLayout->setRowStretch(2,1);
+	mModifiedCornerCuttingLayout->setColumnStretch(2,1);
+	mModifiedCornerCuttingWidget->setWindowTitle("Modified Corner Cutting Remeshing");
+	mModifiedCornerCuttingWidget->setLayout(mModifiedCornerCuttingLayout);
 	
 	//simplest
 	mSimplestLayout = new QGridLayout;
@@ -920,6 +956,12 @@ void RemeshingMode::triggerCornerCutting(){
 
 	((MainWindow*)mParent)->setToolOptions(mCornerCuttingWidget);
 	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::CornerCutting);
+}
+
+void RemeshingMode::triggerModifiedCornerCutting(){
+
+	((MainWindow*)mParent)->setToolOptions(mModifiedCornerCuttingWidget);
+	((MainWindow*)mParent)->setRemeshingScheme(MainWindow::ModifiedCornerCutting);
 }
 
 void RemeshingMode::triggerSimplest(){

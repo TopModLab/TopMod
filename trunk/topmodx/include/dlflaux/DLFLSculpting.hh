@@ -19,6 +19,11 @@ namespace DLFL {
   DLFLObjectPtr createDualConvexHull( DLFLObjectPtr obj, const Vector3dArray &ovarray);
 
   void peelByPlane( DLFLObjectPtr obj, Vector3d normal,Vector3d P0);
-
+	void localCut(DLFLObjectPtr obj, DLFLVertexPtr vp,Vector3d normal,Vector3d P0);
+		
   void performCutting( DLFLObjectPtr obj, int type,float offsetE,float offsetV,bool global,bool selected) ;
+	void cutSelectedFaces( DLFLObjectPtr obj, float offsetE,float offsetV);
+	void cutSelectedEdges( DLFLObjectPtr obj, float offsetE,float offsetV);
+	void cutSelectedVertices( DLFLObjectPtr obj, float offsetE,float offsetV);
+	
 } // end namespace

@@ -116,6 +116,7 @@ private:
 	QLabel *rindModelingThicknessLabel;
 	QLabel *wireframeModelingThicknessLabel;
 	QLabel *wireframeModeling2ThicknessLabel;
+	QLabel *wireframeModeling2WidthLabel;
 	QLabel *columnModelingThicknessLabel;
 	QLabel *mengerSpongeThicknessLabel;
 	QLabel *mengerSpongeThresholdLabel;
@@ -146,6 +147,7 @@ private:
 	QDoubleSpinBox *rindModelingThicknessSpinBox;
 	QDoubleSpinBox *wireframeModelingThicknessSpinBox;
 	QDoubleSpinBox *wireframeModeling2ThicknessSpinBox;
+	QDoubleSpinBox *wireframeModeling2WidthSpinBox;
 	QDoubleSpinBox *columnModelingThicknessSpinBox;
 	QDoubleSpinBox *columnModelingNumSegmentsSpinBox;
 	QDoubleSpinBox *mengerSpongeThicknessSpinBox;

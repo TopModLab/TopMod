@@ -196,7 +196,7 @@ namespace DLFL {
     // Vertex-cutting subdivision
 
     // If the offset is 0.5 this is the same as simplest subdivision
-    if ( areEqual(offset,0.5) ) {
+    if ( offset == 0.5 ) {
       simplestSubdivide(obj);
       return;
     }
