@@ -2055,13 +2055,7 @@ void MainWindow::doDrag(int x, int y) { // brianb
 		
 		// cout << "cx = " << cx << "\t\tcy = " << cy << "\t\tw = " << w << "\t\th = " << h << "\n"; 
 		
-		switch(selectionmask){
-			case MaskVertices:
-			// std::cout << "vertices!\n";
-			// if ( QApplication::keyboardModifiers() == Qt::ControlModifier) {
-			// }
-			// else
-			// svptrarr.clear();
+		if(selectionmask == MainWindow::MaskVertices){
 			svptrarr = active->selectVertices(cx,cy,w,h);
 			for(vit = svptrarr.begin(); vit != svptrarr.end(); vit++){
 				if ( !active->isSelected(*vit)){
@@ -2071,19 +2065,7 @@ void MainWindow::doDrag(int x, int y) { // brianb
 			}
 			active->redraw();
 			svptrarr.clear();
-			break;
-			case MaskEdges:
-			// std::cout << "edges!\n";
-				// septr = active->selectEdge(x,y);
-				// if ( QApplication::keyboardModifiers() == Qt::ControlModifier) {
-				// 	if ( active->isSelected(septr)){
-				// 		active->clearSelectedEdge(septr);
-				// 		num_sel_edges--;
-				// 	}
-				// 	active->redraw();
-				// 	septrarr.clear();
-				// }
-				// else {
+		}	else if ( selectionmask == MainWindow::MaskEdges){
 					septrarr = active->selectEdges(cx,cy,w,h);
 					for(eit = septrarr.begin(); eit != septrarr.end(); eit++){
 						if ( !active->isSelected(*eit)){
@@ -2094,8 +2076,8 @@ void MainWindow::doDrag(int x, int y) { // brianb
 					active->redraw();
 					septrarr.clear();
 				// }
-			break;
-			case MaskFaces:
+					
+		} else if (selectionmask == MainWindow::MaskFaces){
 			// std::cout << "faces!\n";
 			sfptrarr = active->selectFaces(cx,cy,w,h);
 			for(fit = sfptrarr.begin(); fit != sfptrarr.end(); fit++){
@@ -2105,20 +2087,12 @@ void MainWindow::doDrag(int x, int y) { // brianb
 				}
 			}
 			active->redraw();
-			sfptrarr.clear();
+			sfptrarr.clear();	
+		} else if (selectionmask == MainWindow::MaskCorners){
 			
-			break;
-			case MaskCorners:
-			// std::cout << "corners!\n";
-			break;
-			case MaskObject:
-			// std::cout << "object!\n";
-			break;
-			default:
-			// std::cout << "default!\n";
+		} else {
 			
-			break;
-		};
+		}
 	break;
 	default:
 		doSelection(x,y);
