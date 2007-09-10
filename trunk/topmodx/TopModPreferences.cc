@@ -194,7 +194,7 @@ void TopModPreferences::readSettings(){
 	QSize scriptEditorSize = mSettings->value("scriptEditorSize", QSize(500,300)).toSize();
 	QPoint scriptEditorPos = mSettings->value("scriptEditorPos", QPoint(20, QApplication::desktop()->height()-20)).toPoint();	
 	#endif
-	mShowStartupDialogAtStartup = mSettings->value("showStartupDialogAtStartup", true).toBool();
+	mShowStartupDialogAtStartup = mSettings->value("showStartupDialogAtStartup", false).toBool();
 	mSettings->endGroup();
 
 	((MainWindow*)mParent)->resize(size.width(),size.height());
