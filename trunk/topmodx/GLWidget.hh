@@ -245,8 +245,8 @@ public :
 		repaint();
 	}
 
-	void selectAllCorners(){
-		clearSelectedCorners();
+	void selectAllFaceVertices(){
+		clearSelectedFaceVertices();
 		// object->getVertices(object->sel_vptr_array);
 		repaint();
 	}
@@ -427,7 +427,8 @@ public :
 	void setSelectionMaskString(QString s){
 		mSelectionMaskString = s;
 	}
-
+	QString getSelectionMaskString() { return mSelectionMaskString; }
+	
 	void renderLocatorsForSelect() // brianb
 	{
 		locatorPtr->setRenderSelection(true);
@@ -710,6 +711,9 @@ void clearSelectedFaces(void) {
 	object->sel_fptr_array.clear();
 }
 
+void clearSelectedCorners(void) {
+	object->sel_fvptr_array.clear();
+}
 
 void clearSelectedFace(DLFLFacePtr fp){
 	vector<DLFLFacePtr>::iterator fiterator;
@@ -752,7 +756,7 @@ void clearSelectedFaceVertex(DLFLFaceVertexPtr fvp){
 	}
 }
 
-void clearSelectedCorners(void) {
+void clearSelectedFaceVertices(void) {
 	object->sel_fvptr_array.clear();
 }
 

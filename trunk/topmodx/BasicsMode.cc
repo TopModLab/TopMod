@@ -121,7 +121,7 @@ BasicsMode::BasicsMode(QWidget *parent, QShortcutManager *sm, QWidget *actionLis
 	actionList->addAction(mTransformsAction);
 
 	mSelectionOptionsAction = new QAction(tr("Selection Options"),this);
-	mSelectionOptionsAction->setIcon(QIcon(":/images/selection-mask-faces.png"));
+	mSelectionOptionsAction->setIcon(QIcon(":/images/selection-options.png"));
 	mSelectionOptionsAction->setCheckable(true);
 	mSelectionOptionsAction->setStatusTip(tr("Enter Selection Options Mode"));
 	mSelectionOptionsAction->setToolTip(tr("Selection Options Mode"));

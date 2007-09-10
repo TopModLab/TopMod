@@ -18,7 +18,6 @@ namespace DLFL {
 		obj->splice(chull);
 	}
 
-
 	void createDualConvexHull( DLFLObjectPtr obj ){
 
 		DLFLVertexPtrArray verts;
@@ -214,15 +213,14 @@ namespace DLFL {
 		edgestodel.clear();
 	}
 	
-	void localCut(DLFLObjectPtr obj, DLFLVertexPtr vp,Vector3d normal,Vector3d P0){
-
+	void localCut( DLFLObjectPtr obj, DLFLVertexPtr vp,Vector3d normal,Vector3d P0 ){
 		// DLFLVertexPtrArray verts;
 		// for(int i=0;i<verts.size();i++)
 		// 	verts.at(i)->isvisited=0;
 		// 
 		// int size = num_edges();
 		// newcorners = new DLFLFaceVertexPtr[size];
-		// 	        edges2del  = new DLFLEdgePtr[size];
+		// edges2del  = new DLFLEdgePtr[size];
 		// e2dsize=0;
 		// ncsize=0;
 		// visitVertex(vp,0,normal,P0);
@@ -244,7 +242,7 @@ namespace DLFL {
 		// //delete edges
 		// for(int i=0;i<e2dsize;i++)
 		// 	deleteEdge(edges2del[i]);
-		// 
+		
 
 	}
 

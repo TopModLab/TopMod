@@ -728,7 +728,7 @@ namespace DLFL {
       fptr = extrudeFaceDS(obj,fptr, 0.1*length, 1, 0.0, 1.4*sf);
       fptr = extrudeFaceDS(obj,fptr, 0.05*length, 1, 0.0, 1.2*sf);
       fptr = extrudeFaceDS(obj,fptr, 0.025*length, 1, 0.0, 1.1*sf);
-      fptr = extrudeFaceDS(obj,fptr, 0.01*length, 1, 0.0, 0.01*sf);		
+			stellateFace(obj,fptr, 0.01*length);//, 1, 0.0, 0.01*sf);		
     // }
   }
 

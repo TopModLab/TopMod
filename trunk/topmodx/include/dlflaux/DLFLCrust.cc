@@ -1003,6 +1003,32 @@ namespace DLFL {
 		}
 	}
 
+	void selectMatchingEdges(DLFLObjectPtr obj, DLFLEdgePtr eptr, DLFLEdgePtrArray &eparray) {
+		eparray.clear();
+		DLFLEdgePtrList::iterator el_first=obj->beginEdge(), el_last = obj->endEdge();
+		DLFLVertexPtr vp1,vp2,v2,v1;
+		eptr->getVertexPointers(v2,v1);
+		while ( el_first != el_last )	{
+			(*el_first)->getVertexPointers(vp1,vp2);
+			
+			if ( (vp1->numEdges() == v1->numEdges() && vp2->numEdges() == v2->numEdges()) ||
+			 		 (vp1->numEdges() == v2->numEdges() && vp2->numEdges() == v1->numEdges())   ) {
+				eparray.push_back(*el_first);
+			}
+			el_first++;
+		}
+	}
+
+	void selectMatchingVertices(DLFLObjectPtr obj, DLFLVertexPtr vptr, DLFLVertexPtrArray &vparray) {
+		vparray.clear();
+		DLFLVertexPtrList::iterator vl_first=obj->beginVertex(), vl_last = obj->endVertex();
+
+		while ( vl_first != vl_last )	{
+			if ( (*vl_first)->numEdges() == vptr->numEdges() ) vparray.push_back(*vl_first);
+			vl_first++;
+		}
+	}
+
 	void selectFacesByArea(DLFLObjectPtr obj, DLFLFacePtr fptr, DLFLFacePtrArray &fparray, float delta ){
 		fparray.clear();
 		DLFLFacePtrList::iterator fl_first=obj->beginFace(), fl_last = obj->endFace();

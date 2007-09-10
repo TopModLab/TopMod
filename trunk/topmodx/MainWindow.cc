@@ -539,7 +539,7 @@ void MainWindow::createActions() {
 
 	mShowSelectedIDsAct = new QAction(tr("Show &Selected IDs"), this);
 	mShowSelectedIDsAct->setCheckable(true);
-	sm->registerAction(mShowSelectedIDsAct, "Display Menu", "SHIFT+S");
+	sm->registerAction(mShowSelectedIDsAct, "Display Menu", "SHIFT+D");
 	connect(mShowSelectedIDsAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleSelectedIDs()));
 	mActionListWidget->addAction(mShowSelectedIDsAct);
 
@@ -637,7 +637,7 @@ void MainWindow::createActions() {
 
 	mShowStartupDialogAct = mStartupDialogDockWidget->toggleViewAction();
 	mShowStartupDialogAct->setStatusTip( tr("Show the startup screen with links to video tutorials") );
-	sm->registerAction(mShowStartupDialogAct, "Window Menu", "SHIFT+S");
+	sm->registerAction(mShowStartupDialogAct, "Window Menu", "");
 	mActionListWidget->addAction(mShowStartupDialogAct);
 	
 	mShowAnimatedHelpAct = mAnimatedHelpDockWidget->toggleViewAction();// new QAction(tr("Show Animated Hel&p"), this);
@@ -780,7 +780,6 @@ void MainWindow::createActions() {
 	connect(createCrustScalingAct, SIGNAL(triggered()), this, SLOT(crustModeling4()));
 	mActionListWidget->addAction(createCrustScalingAct);
 
-
 	createCrustThicknessAct = new QAction(tr("Create Crust (&Thickness)"), this);
 	sm->registerAction(createCrustThicknessAct, "Tools", "CTRL+C");
 	createCrustThicknessAct->setStatusTip(tr("Create a crust using the currently selected faces with thickness mode"));
@@ -875,8 +874,13 @@ void MainWindow::createActions() {
 	connect( selectSimilarFacesAct , SIGNAL( triggered() ), this, SLOT( select_similar_faces() ) );
 	mActionListWidget->addAction(selectSimilarFacesAct);
 
+	mSelectSimilarAct = new QAction(tr("Select Similar"), this);
+	sm->registerAction(mSelectSimilarAct, "Selection", "SHIFT+S");
+	connect( mSelectSimilarAct , SIGNAL( triggered() ), this, SLOT( select_similar() ) );
+	mActionListWidget->addAction(mSelectSimilarAct);
+
 	selectFacesByAreaAct = new QAction(tr("Select Faces By Surf. Area"), this);
-	sm->registerAction(selectFacesByAreaAct, "Selection", "");
+	sm->registerAction(selectFacesByAreaAct, "Selection", "CTRL+SHIFT+A");
 	connect( selectFacesByAreaAct , SIGNAL( triggered() ), this, SLOT( select_faces_by_area() ) );
 	mActionListWidget->addAction(selectFacesByAreaAct);
 
@@ -972,15 +976,14 @@ void MainWindow::createActions() {
 	mActionListWidget->addAction(selectFacesFromVerticesAct);
 	
 	selectVerticesFromEdgesAct = new QAction(tr("Select Vertices from Edges"), this);
-	sm->registerAction(selectVerticesFromEdgesAct, "Selection", "CTRL+I");
+	sm->registerAction(selectVerticesFromEdgesAct, "Selection", "");
 	connect( selectVerticesFromEdgesAct , SIGNAL( triggered() ), this, SLOT( selectVerticesFromEdges() ) );
 	mActionListWidget->addAction(selectVerticesFromEdgesAct);
 	
 	selectVerticesFromFacesAct = new QAction(tr("Select Vertices from Faces"), this);
-	sm->registerAction(selectVerticesFromFacesAct, "Selection", "CTRL+I");
+	sm->registerAction(selectVerticesFromFacesAct, "Selection", "");
 	connect( selectVerticesFromFacesAct , SIGNAL( triggered() ), this, SLOT( selectVerticesFromFaces() ) );
 	mActionListWidget->addAction(selectVerticesFromFacesAct);
-	
 
 	//selection masks
 	mSelectVerticesMaskAct = new QAction(QIcon(":images/selection-mask-vertices.png"), tr("Select &Vertices"), this);
@@ -1338,6 +1341,7 @@ void MainWindow::createMenus(){
 	mSelectionMenu->addAction(selectAllAct);
 	mSelectionMenu->addAction(selectInverseAct);
 	mSelectionMenu->addAction(mSelectMultipleAct);
+	mSelectionMenu->addAction(mSelectSimilarAct);
 	mSelectionMenu->addAction(mSelectionWindowAct);
 	mSelectionMenu->addAction(mGrowSelectionAct);
 	mSelectionMenu->addAction(mShrinkSelectionAct);
@@ -1356,7 +1360,7 @@ void MainWindow::createMenus(){
 	// mSelectionMenu->addAction(selectFaceAct);
 	mSelectionMenu->addAction(selectFaceLoopAct);
 	// mSelectionMenu->addAction(selectMultipleFacesAct);
-	mSelectionMenu->addAction(selectSimilarFacesAct);
+	// mSelectionMenu->addAction(selectSimilarFacesAct);
 	mSelectionMenu->addAction(selectFacesByAreaAct);
 	mSelectionMenu->addAction(selectCheckerboardFacesAct);
 	mSelectionMenu->addAction(selectFacesFromEdgesAct);
@@ -1844,7 +1848,6 @@ void MainWindow::topModResearch(){
 	QDesktopServices::openUrl(QUrl("http://www-viz.tamu.edu/faculty/ergun/research/topology/index.html"));
 }
 
-
 void MainWindow::documentWasModified() {
 	setWindowModified(this->isModified());
 }
@@ -1864,7 +1867,6 @@ void MainWindow::verseConnected(){
 	mVerseMenu->removeAction(mVerseConnectLocalhostAct);
 	mVerseMenu->removeAction(mVerseConnectAct);
 }
-
 void MainWindow::verseDisconnected(){
 	mVerseMenu->insertAction(mVerseDisconnectAct,mVerseConnectLocalhostAct);
 	mVerseMenu->insertAction(mVerseDisconnectAct,mVerseConnectAct);
@@ -2243,29 +2245,106 @@ void MainWindow::doSelection(int x, int y) {
 		// active->setSelectedFace(num_sel_faces,sfptr);
 		active->setSelectedFace(sfptr);
 		break;
-	case SelectSimilarFaces :
-		//clear selection if shift isn't down
-		if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
-			active->clearSelectedFaces();
-		sfptr = active->selectFace(x,y);
-		if (sfptr){
-			if (!active->isSelected(sfptr)){
-				// active->setSelectedFace(num_sel_faces,sfptr);
-				active->setSelectedFace(sfptr);
-				num_sel_faces++;
-			}
-			DLFLFacePtrArray sfptrarray;
-			vector<DLFLFacePtr>::iterator it;
-			DLFL::selectMatchingFaces(&object, sfptr, sfptrarray);
-			for (it = sfptrarray.begin(); it != sfptrarray.end(); it++){
-				if (!active->isSelected(*it)){
-					active->setSelectedFace(*it);
-					num_sel_faces++;
+	// case SelectSimilarFaces :
+	// 	//clear selection if shift isn't down
+	// 	if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
+	// 		active->clearSelectedFaces();
+	// 	sfptr = active->selectFace(x,y);
+	// 	if (sfptr){
+	// 		if (!active->isSelected(sfptr)){
+	// 			// active->setSelectedFace(num_sel_faces,sfptr);
+	// 			active->setSelectedFace(sfptr);
+	// 			num_sel_faces++;
+	// 		}
+	// 		DLFLFacePtrArray sfptrarray;
+	// 		vector<DLFLFacePtr>::iterator it;
+	// 		DLFL::selectMatchingFaces(&object, sfptr, sfptrarray);
+	// 		for (it = sfptrarray.begin(); it != sfptrarray.end(); it++){
+	// 			if (!active->isSelected(*it)){
+	// 				active->setSelectedFace(*it);
+	// 				num_sel_faces++;
+	// 			}
+	// 		}
+	// 	}
+	// 	active->redraw();
+	// 	break;
+		case SelectSimilar:
+		// std::cout << active->getSelectionMaskString() << " = select similar\n";
+		
+			switch (selectionmask){
+				case MaskFaces:
+				// std::cout<< "Mask faces select sim\n";
+				//clear selection if shift isn't down
+				if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
+					active->clearSelectedFaces();
+				sfptr = active->selectFace(x,y);
+				if (sfptr){
+					if (!active->isSelected(sfptr)){
+						// active->setSelectedFace(num_sel_faces,sfptr);
+						active->setSelectedFace(sfptr);
+						num_sel_faces++;
+					}
+					DLFLFacePtrArray sfptrarray;
+					vector<DLFLFacePtr>::iterator it;
+					DLFL::selectMatchingFaces(&object, sfptr, sfptrarray);
+					for (it = sfptrarray.begin(); it != sfptrarray.end(); it++){
+						if (!active->isSelected(*it)){
+							active->setSelectedFace(*it);
+							num_sel_faces++;
+						}
+					}
 				}
-			}
-		}
-		active->redraw();
-		break;
+				break;
+				case MaskEdges:
+			// } else if (selectionmask == MainWindow::MaskEdges){
+				//clear selection if shift isn't down
+				if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
+					active->clearSelectedEdges();
+				septr = active->selectEdge(x,y);
+				if (septr){
+					if (!active->isSelected(septr)){
+						active->setSelectedEdge(septr);
+						num_sel_edges++;
+					}
+					DLFLEdgePtrArray septrarray;
+					vector<DLFLEdgePtr>::iterator eit;
+					DLFL::selectMatchingEdges(&object, septr, septrarray);
+					for (eit = septrarray.begin(); eit != septrarray.end(); eit++){
+						if (!active->isSelected(*eit)){
+							active->setSelectedEdge(*eit);
+							num_sel_edges++;
+						}
+					}
+				}
+				break;
+			// } else if (selectionmask == MainWindow::MaskVertices){
+				case MaskVertices:
+				//clear selection if shift isn't down
+				if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
+					active->clearSelectedVertices();
+				svptr = active->selectVertex(x,y);
+				if (svptr){
+					if (!active->isSelected(svptr)){
+						active->setSelectedVertex(svptr);
+						num_sel_verts++;
+					}
+					DLFLVertexPtrArray svptrarray;
+					vector<DLFLVertexPtr>::iterator vit;
+					DLFL::selectMatchingVertices(&object, svptr, svptrarray);
+					for (vit = svptrarray.begin(); vit != svptrarray.end(); vit++){
+						if (!active->isSelected(*vit)){
+							active->setSelectedVertex(*vit);
+							num_sel_verts++;
+						}
+					}
+				}
+			// }
+			active->redraw();
+			break;
+			default:
+			break;
+		};
+			break;
 		case SelectFacesByArea :
 			//clear selection if shift isn't down
 			if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
@@ -2564,7 +2643,7 @@ void MainWindow::getRightClickMenu(){
 		// mRightClickMenu->addAction(mDeleteSelectedAct);
 		break;
 		SelectFaceLoop :
-		SelectSimilarFaces :
+		// SelectSimilarFaces :
 		SelectFacesByArea:
 		SelectCheckerboard :	
 		mRightClickMenu->addAction(mSubdivideSelectedFacesAct);
@@ -2578,6 +2657,7 @@ void MainWindow::getRightClickMenu(){
 	mRightClickMenu->addAction(selectAllAct);
 	mRightClickMenu->addAction(selectInverseAct);
 	mRightClickMenu->addAction(mSelectMultipleAct);
+	mRightClickMenu->addAction(mSelectSimilarAct);
 	mRightClickMenu->addAction(mSelectionWindowAct);	
 	mRightClickMenu->addAction(mGrowSelectionAct);
 	mRightClickMenu->addAction(mShrinkSelectionAct);
@@ -2610,7 +2690,7 @@ void MainWindow::getRightClickMenu(){
 			// mRightClickMenu->addAction(selectFaceAct);
 			mRightClickMenu->addAction(selectFaceLoopAct);
 			// mRightClickMenu->addAction(selectMultipleFacesAct);
-			mRightClickMenu->addAction(selectSimilarFacesAct);
+			// mRightClickMenu->addAction(selectSimilarFacesAct);
 			mRightClickMenu->addAction(selectFacesByAreaAct);
 			mRightClickMenu->addAction(selectCheckerboardFacesAct);
 			mRightClickMenu->addAction(selectEdgesFromFacesAct);			
@@ -2796,22 +2876,59 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 					// 		redraw();
 					// 	}
 					break;
-					case SelectSimilarFaces :
-						if ( active->numSelectedFaces() >= 1 ){
-							DLFLFacePtr sfptr = active->getSelectedFace(0);			
-							if (sfptr){
-								DLFLFacePtrArray sfptrarray;
-								vector<DLFLFacePtr>::iterator it;
-								DLFL::selectMatchingFaces(&object, sfptr, sfptrarray);
-								for (it = sfptrarray.begin(); it != sfptrarray.end(); it++){
-									if (!active->isSelected(*it)){
-										active->setSelectedFace(*it);
-										num_sel_faces++;
+					case SelectSimilar :
+						if (selectionmask == MainWindow::MaskFaces){
+							// cout << "select similar faces mouse release\n";
+							if ( active->numSelectedFaces() >= 1 ){
+								DLFLFacePtr sfptr = active->getSelectedFace(0);			
+								if (sfptr){
+									DLFLFacePtrArray sfptrarray;
+									vector<DLFLFacePtr>::iterator it;
+									DLFL::selectMatchingFaces(&object, sfptr, sfptrarray);
+									for (it = sfptrarray.begin(); it != sfptrarray.end(); it++){
+										if (!active->isSelected(*it)){
+											active->setSelectedFace(*it);
+											num_sel_faces++;
+										}
 									}
 								}
-								redraw();
+							}
+						} else if (selectionmask == MainWindow::MaskEdges){
+							if ( active->numSelectedEdges() >= 1 ){
+								DLFLEdgePtr septr = active->getSelectedEdge(0);
+								if (septr){
+									DLFLEdgePtrArray septrarray;
+									vector<DLFLEdgePtr>::iterator eit;
+									DLFL::selectMatchingEdges(&object, septr, septrarray);
+									for (eit = septrarray.begin(); eit != septrarray.end(); eit++){
+										if (!active->isSelected(*eit)){
+											active->setSelectedEdge(*eit);
+											num_sel_edges++;
+										}
+									}
+								}
+							}
+						} else if (selectionmask == MainWindow::MaskVertices){
+							if ( active->numSelectedVertices() >= 1 ){
+								DLFLVertexPtr svptr = active->getSelectedVertex(0);
+								if (svptr){
+									if (!active->isSelected(svptr)){
+										active->setSelectedVertex(svptr);
+										num_sel_verts++;
+									}
+									DLFLVertexPtrArray svptrarray;
+									vector<DLFLVertexPtr>::iterator vit;
+									DLFL::selectMatchingVertices(&object, svptr, svptrarray);
+									for (vit = svptrarray.begin(); vit != svptrarray.end(); vit++){
+										if (!active->isSelected(*vit)){
+											active->setSelectedVertex(*vit);
+											num_sel_verts++;
+										}
+									}
+								}
 							}
 						}
+						redraw();
 						break;
 						case SelectFacesByArea :
 							if ( active->numSelectedFaces() >= 1 ){
@@ -3450,6 +3567,7 @@ void MainWindow::testConvexHull(void) {
 }
 
 void MainWindow::performRemeshing(void) {
+	setModified(true);
 
 	switch ( remeshingscheme )
 		{
@@ -3669,22 +3787,37 @@ void MainWindow::setMode(Mode m) {
 	case DoubleStellateFace :
 	case ExtrudeFaceDome :
 	case ConnectFaces :
-	case BezierConnectFaces :
-	case HermiteConnectFaces :
 	case ReorderFace :
 	case SubdivideFace :
 	case CrustModeling :
 	case CutFace :
-	case SelectSimilarFaces :
 	case SelectFacesByArea:
 		setSelectionMask(MainWindow::MaskFaces);
 		// MainWindow::num_sel_faces = 0;
 		break;
+	case SelectSimilar:
+	//do nothing...
+	break;
+	// case SelectSimilar :
+	// switch(selectionmask){
+	// 	case MaskEdges: 
+	// 	break;
+	// 	case MaskFaces:
+	// 	break;
+	// 	case MaskVertices:
+	// 	
+	// 	break;
+	// 	default:
+	// 	break;
+	// };
+	// break;
 	case SelectCorner :
 	case MultiSelectCorner :
 	case InsertEdge :
 	case SpliceCorners :
 	case ConnectFaceVertices :
+	case BezierConnectFaces :
+	case HermiteConnectFaces :
 		setSelectionMask(MainWindow::MaskCorners);
 		// MainWindow::num_sel_faceverts = 0;
 		break;
@@ -3794,7 +3927,7 @@ void MainWindow::setMode(Mode m) {
 		break;
 		case SelectFaceLoop: s = tr("Select Face Loop");
 		break;
-		case SelectSimilarFaces: s = tr("Select Similar Faces");
+		case SelectSimilar: s = tr("Select Similar");
 		break;
 		case SelectFacesByArea: s = tr("Select Faces By Surf. Area");
 		break;
@@ -3888,6 +4021,16 @@ void MainWindow::setSelectionMask(SelectionMask m){
 		active->setSelectionMaskString(tr("Corners"));
 		break;
 		default:
+		active->clearSelectedEdges();
+		active->clearSelectedVertices();
+		active->clearSelectedCorners();
+		active->clearSelectedFaces();
+		mSelectVerticesMaskAct->setChecked(false);
+		mSelectEdgesMaskAct->setChecked(false);
+		mSelectFacesMaskAct->setChecked(false);
+		mSelectCornersMaskAct->setChecked(false);
+		active->setSelectionMaskString(tr("None"));
+		
 		break;
 		}
 	}

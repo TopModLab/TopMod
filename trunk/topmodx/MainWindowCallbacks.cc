@@ -127,7 +127,23 @@ void MainWindow::select_multiple_vertices() {
 }
 
 void MainWindow::select_similar_faces() {
-	setMode(MainWindow::SelectSimilarFaces);
+	// setMode(MainWindow::SelectSimilarFaces);
+}
+
+void MainWindow::select_similar() {
+	// switch(selectionmask){
+	// 	case MaskFaces:
+	setMode(MainWindow::SelectSimilar);
+	// 	break;
+	// 	case MaskEdges:
+	// 	setMode(MainWindow::SelectSimilarEdges);
+	// 	break;
+	// 	case MaskVertices:
+	// 	setMode(MainWindow::SelectSimilarVertices);
+	// 	break;
+	// 	default:
+	// 	break;
+	// };
 }
 
 void MainWindow::select_faces_by_area() {
@@ -188,7 +204,7 @@ void MainWindow::selectAll(){
 		active->selectAllFaces();
 		break;
 		case MaskCorners:
-		active->selectAllCorners();
+		// active->selectAllCorners();
 		case MaskObject:
 		break;
 		default:
@@ -1504,12 +1520,15 @@ void MainWindow::deleteSelected(){
 				setModified(true);
 				vector<DLFLEdgePtr>::iterator eit;
 				for(eit = septrarr.begin(); eit != septrarr.end(); eit++){
-					DLFL::deleteEdge( &object, *eit, MainWindow::delete_edge_cleanup);
-					active->recomputePatches();
-					active->recomputeNormals();						
+					DLFL::deleteEdge( &object, *eit, true);
+					// DLFL::deleteEdge( &object, septr, MainWindow::delete_edge_cleanup);					
+					// active->recomputePatches();
+					// active->recomputeNormals();						
 				}
 			}			
 			active->clearSelectedEdges();
+			active->recomputePatches();
+			active->recomputeNormals();		
 			redraw();
 		break;
 		case MaskVertices:
@@ -1521,12 +1540,14 @@ void MainWindow::deleteSelected(){
 					(*vit)->getEdges(septrarr);
 					vector<DLFLEdgePtr>::iterator eit;
 					for(eit = septrarr.begin(); eit != septrarr.end(); eit++)
-						DLFL::deleteEdge( &object, *eit, MainWindow::delete_edge_cleanup);
-						active->recomputePatches();
-						active->recomputeNormals();						
+						DLFL::deleteEdge( &object, *eit, true);
+						// active->recomputePatches();
+						// active->recomputeNormals();						
 					}
 			}			
 			active->clearSelectedVertices();
+			active->recomputePatches();
+			active->recomputeNormals();		
 			redraw();
 		break;
 		case MaskFaces:

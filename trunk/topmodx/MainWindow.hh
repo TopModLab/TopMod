@@ -143,7 +143,7 @@ class MainWindow : public QMainWindow {
 				SelectEdgeLoop=82,			/**< select an edge loop. shift select for multiple. */
 				SelectEdgeRing=85,			/**< select an edge ring. shift select for multiple. */
 				SelectFaceLoop=83,			/**< allows user to select one edge in the viewport and selects the corresponding face loop. shift select for multiple. */
-				SelectSimilarFaces=84, 	/**< select all faces with the same number of vertices as the selected face. */
+				SelectSimilar=84, 			/**< select all sub objects with the same number of verts edges or faces whatever... . */
 				SelectFacesByArea=856		 	/**< select all faces with the a similar surface area. */
 			};
 
@@ -652,6 +652,7 @@ private:
 	QAction *mCollapseSelectedEdgesAct;						//!< collapse the selected edges.
 	QAction *selectMultipleFacesAct;
 	QAction *selectSimilarFacesAct;
+	QAction *mSelectSimilarAct;
 	QAction *selectFacesByAreaAct;
 	QAction *mSelectionWindowAct;
 	QAction *selectCheckerboardFacesAct;
@@ -863,6 +864,7 @@ public slots:
 	void select_edge_ring();
 	void select_multiple_faces();
 	void select_similar_faces();
+	void select_similar();
 	void select_faces_by_area();
 	void selection_window();
 	void select_checkerboard_faces();
