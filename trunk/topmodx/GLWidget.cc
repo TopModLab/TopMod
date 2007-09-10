@@ -840,13 +840,13 @@ void GLWidget::drawSelectedIDs( QPainter *painter, const GLdouble *model, const 
 
 // Subroutine for selecting a Vertex
 DLFLVertexPtr GLWidget::selectVertex(int mx, int my, int w, int h) {
-	GLuint selectBuf[1024];
+	GLuint selectBuf[8192];
 	uint closest;
 	GLuint dist;
 	long hits, index;
 	DLFLVertexPtr sel(NULL);
 
-	glSelectBuffer(1024,selectBuf);
+	glSelectBuffer(8192,selectBuf);
 	glRenderMode(GL_SELECT);
 
 	glInitNames(); glPushName(0);
@@ -899,11 +899,11 @@ DLFLVertexPtr GLWidget::selectVertex(int mx, int my, int w, int h) {
 
 // Subroutine for selecting a Vertex
 DLFLVertexPtrArray GLWidget::selectVertices(int mx, int my, int w, int h) {
-	GLuint selectBuf[1024];
+	GLuint selectBuf[8192];
 	long hits, index;
 	DLFLVertexPtrArray vparray;
 
-	glSelectBuffer(1024,selectBuf);
+	glSelectBuffer(8192,selectBuf);
 	glRenderMode(GL_SELECT);
 
 	glInitNames(); glPushName(0);
@@ -954,12 +954,12 @@ DLFLVertexPtrArray GLWidget::selectVertices(int mx, int my, int w, int h) {
 // Subroutine for selecting a locator
 DLFLLocatorPtr GLWidget::selectLocator(int mx, int my, int w, int h) // brianb
 {
-  GLuint selectBuf[1024];
+  GLuint selectBuf[8192];
   uint closest;
   GLuint dist;
   long hits, index;
 
-  glSelectBuffer(1024,selectBuf);
+  glSelectBuffer(8192,selectBuf);
   glRenderMode(GL_SELECT);
 
   glInitNames(); glPushName(0);
@@ -1019,13 +1019,13 @@ DLFLLocatorPtr GLWidget::selectLocator(int mx, int my, int w, int h) // brianb
 
 // Subroutine for selecting an Edge
 DLFLEdgePtr GLWidget::selectEdge(int mx, int my,int w, int h) {
-	GLuint selectBuf[1024];
+	GLuint selectBuf[8192];
 	uint closest;
 	GLuint dist;
 	long hits, index;
 	DLFLEdgePtr sel(NULL);
 
-	glSelectBuffer(1024,selectBuf);
+	glSelectBuffer(8192,selectBuf);
 	glRenderMode(GL_SELECT);
 
 	glInitNames(); glPushName(0);
@@ -1076,12 +1076,12 @@ DLFLEdgePtr GLWidget::selectEdge(int mx, int my,int w, int h) {
 
 // Subroutine for selecting an Edge
 DLFLEdgePtrArray GLWidget::selectEdges(int mx, int my,int w, int h) {
-	GLuint selectBuf[1024];
+	GLuint selectBuf[8192];
 	long hits, index;
 	DLFLEdgePtr sel(NULL);
 	DLFLEdgePtrArray eparray;
 
-	glSelectBuffer(1024,selectBuf);
+	glSelectBuffer(8192,selectBuf);
 	glRenderMode(GL_SELECT);
 
 	glInitNames(); glPushName(0);
@@ -1125,13 +1125,13 @@ DLFLEdgePtrArray GLWidget::selectEdges(int mx, int my,int w, int h) {
 
 // Subroutine for selecting a Face
 DLFLFacePtr GLWidget::selectFace(int mx, int my, int w, int h) {
-	GLuint selectBuf[1024];
+	GLuint selectBuf[8192];
 	uint closest;
 	GLuint dist;
 	long hits, index;
 	DLFLFacePtr sel(NULL);
 
-	glSelectBuffer(1024,selectBuf);
+	glSelectBuffer(8192,selectBuf);
 	glRenderMode(GL_SELECT);
 
 	glInitNames(); glPushName(0);
@@ -1184,13 +1184,13 @@ DLFLFacePtr GLWidget::selectFace(int mx, int my, int w, int h) {
 // Subroutine for selecting multiple faces at once
 DLFLFacePtrArray GLWidget::selectFaces(int mx, int my, int w, int h) {
 	// glEnable(GL_CULL_FACE);
-	GLuint selectBuf[1024];
+	GLuint selectBuf[8192];
 	long hits, index;
 	DLFLFacePtr sel(NULL);
 	DLFLFacePtrArray fparray;
 	fparray.clear();
 
-	glSelectBuffer(1024,selectBuf);
+	glSelectBuffer(8192,selectBuf);
 	glRenderMode(GL_SELECT);
 
 	glInitNames(); glPushName(0);
@@ -1240,14 +1240,14 @@ DLFLFacePtrArray GLWidget::selectFaces(int mx, int my, int w, int h) {
 // DLFLFacePtrArray GLWidget::deselectFaces(int mx, int my) {
 DLFLFacePtr GLWidget::deselectFaces(int mx, int my, int w, int h) {
 	glEnable(GL_CULL_FACE);
-	GLuint selectBuf[1024];
+	GLuint selectBuf[8192];
 	uint closest;
 	GLuint dist;
 	long hits, index;
 	DLFLFacePtr sel(NULL);
 	DLFLFacePtrArray fparray;
 
-	glSelectBuffer(1024,selectBuf);
+	glSelectBuffer(8192,selectBuf);
 	glRenderMode(GL_SELECT);
 
 	glInitNames(); glPushName(0);
@@ -1306,13 +1306,13 @@ DLFLFacePtr GLWidget::deselectFaces(int mx, int my, int w, int h) {
 
 // Subroutine for selecting a FaceVertex (Corner) within a Face
 DLFLFaceVertexPtr GLWidget::selectFaceVertex(DLFLFacePtr fp, int mx, int my, int w, int h) {
-	GLuint selectBuf[1024];
+	GLuint selectBuf[8192];
 	uint closest;
 	GLuint dist;
 	long hits, index;
 	DLFLFaceVertexPtr sel(NULL);
 
-	glSelectBuffer(1024,selectBuf);
+	glSelectBuffer(8192,selectBuf);
 	glRenderMode(GL_SELECT);
 
 	glInitNames(); glPushName(0);
