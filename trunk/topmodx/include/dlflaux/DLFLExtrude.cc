@@ -11,7 +11,7 @@ namespace DLFL {
 		return duplicateFace(obj,fptr,dir,offset,rot,sf);
 	}
 
-	DLFLFacePtr duplicateFace(DLFLObjectPtr obj, DLFLFacePtr fptr, const Vector3d& dir, double offset, double rot, double sf) {p
+	DLFLFacePtr duplicateFace(DLFLObjectPtr obj, DLFLFacePtr fptr, const Vector3d& dir, double offset, double rot, double sf) {
 		// Duplicate given face, offsetting, scaling and rotating if necessary
 		DLFLFacePtr endface = NULL;
 
@@ -20,7 +20,7 @@ namespace DLFL {
 		DLFLFaceVertexPtr head;
 		head = fptr->front();
 		if ( head ) {
-			Vector3d ndir = normalized(dir);p-p-0o9i
+			Vector3d ndir = normalized(dir);//p-p-0o9i
 			Vector3dArray newverts;
 
 			fptr->getVertexCoords(newverts);
@@ -193,7 +193,7 @@ namespace DLFL {
 		return exface;
 	}
 
-	DLFLFacePtr extrudeFacesTogether(DLFLObjectPtr obj, DLFLFacePtrArray fparray, double d) {
+	/*DLFLFacePtr extrudeFacesTogether(DLFLObjectPtr obj, DLFLFacePtrArray fparray, double d) {
 
 		//need an array of old vertices, new vertices, and which ones are outside, and which ones need to be connected
 		DLFLVertexArray old_verts;
@@ -226,7 +226,7 @@ namespace DLFL {
 
 
 		return exface;
-	}
+	}*/
 	
 	DLFLFacePtr extrudeFace(DLFLObjectPtr obj, DLFLFacePtr fptr, double d, double rot, double sf) {
 		// Extrude the given face along its normal for a given distance
