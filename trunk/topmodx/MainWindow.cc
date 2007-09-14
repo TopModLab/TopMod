@@ -55,6 +55,14 @@ int MainWindow::num_extra_twists = 0;
 double MainWindow::extrude_dist = 2.0;
 double MainWindow::extrude_rot = 0.0;
 double MainWindow::extrude_scale = 1.0;
+double MainWindow::extrude_angle = 40.0;
+double MainWindow::extrude_length1 = 0.5;
+double MainWindow::extrude_length2 = 1.0;
+double MainWindow::extrude_length3 = 1.0;
+double MainWindow::extrude_angle_icosa = 50.0;
+double MainWindow::extrude_length1_icosa = 0.5;
+double MainWindow::extrude_length2_icosa = 0.7;
+double MainWindow::extrude_length3_icosa = 0.8;
 int MainWindow::num_extrusions = 1;
 double MainWindow::ds_ex_twist = 0.0;
 bool MainWindow::dual_mesh_edges_check = false;
@@ -160,6 +168,9 @@ bool MainWindow::deselect_faceverts = false;
 DLFLEdgePtr MainWindow::face_loop_start_edge = NULL;
 DLFLEdgePtr MainWindow::edge_ring_start_edge = NULL;
 
+//incremental save...
+int MainWindow::incremental_save_count = 0;
+
 /**
  * asdflkjasdf
  * asdfl;jkas;df
@@ -176,6 +187,11 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	translator_it = new QTranslator(this);
 	translator_hi = new QTranslator(this);
 	translator_ca = new QTranslator(this);
+
+	//for auto save
+	//auto save timer // and connect it to the saveFile slot
+	mAutoSaveTimer = new QTimer(this);
+	connect(mAutoSaveTimer, SIGNAL(timeout()), this, SLOT(saveFile(/*normals and texture options should go here... eventually*/)));
 
 	//QSettings Path for windows     
 	#ifdef WIN32 
@@ -199,6 +215,7 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	active->redraw();
 	active->setMinimumSize(400,400);
 	active->setFocusPolicy(Qt::StrongFocus);
+	setFocusPolicy(Qt::StrongFocus);
 	// active->setResizeEnabled(true);
 	//status bar
 	mStatusBar = new QStatusBar(this);
@@ -207,6 +224,7 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	setAttribute(Qt::WA_AcceptDrops, true);
 	setWindowFlags(Qt::Window);
 	setWindowTitle(tr("newfile[*] - TopMod"));
+	setCurrentFile("untitled");
 	// cWidget = new QWidget( );	
 	// QWidget *shwidget = new QWidget;
 	// QVBoxLayout *vblayout = new QVBoxLayout;
@@ -326,6 +344,8 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	retranslateUi();
 	setExtrusionMode(CubicalExtrude);
 	setMode(MainWindow::NormalMode);
+	
+
 }
 
 // void MainWindow::setToolOptionsPo
@@ -468,6 +488,18 @@ void MainWindow::createActions() {
 	mPerspViewAct->setStatusTip(tr("Reset Camera Position to default"));
 	connect(mPerspViewAct, SIGNAL(triggered()), this, SLOT(switchPerspView()));
 	mActionListWidget->addAction(mPerspViewAct);
+
+
+	mZoomInAct = new QAction( tr("Zoom In"), this);
+	sm->registerAction(mZoomInAct, "Display", "ALT+=");
+	mZoomInAct->setStatusTip(tr("Zoom in on the Model"));
+	connect(mZoomInAct, SIGNAL(triggered()), active, SLOT(zoomIn()));
+	// mActionListWidget->addAction(mZoomInAct);
+
+	mZoomOutAct = new QAction( tr("Zoom Out"), this);
+	sm->registerAction(mZoomOutAct, "Display", "ALT+-");
+	mZoomOutAct->setStatusTip(tr("Zoom in on the Model"));
+	connect(mZoomOutAct, SIGNAL(triggered()), active, SLOT(zoomOut()));
 
 	// mTopViewAct = new QAction( tr("&Top View"), this);
 	// sm->registerAction(mTopViewAct, "View Menu", "");
@@ -1324,6 +1356,8 @@ void MainWindow::createMenus(){
 	mDisplayMenu->addAction(mShowNormalsAct);
 	mDisplayMenu->addAction(mShowFaceCentroidsAct);
 	mDisplayMenu->addAction(mFullscreenAct);
+	mDisplayMenu->addAction(mZoomInAct);
+	mDisplayMenu->addAction(mZoomOutAct);
 
 	mPrimitivesMenu = new QMenu(tr("&Primitives"));
 	mPrimitivesMenu->setTearOffEnabled(true);
@@ -1776,6 +1810,7 @@ void MainWindow::loadFile(QString fileName) {
 	this->setCurrentFile(fileName);
 	statusBar()->showMessage(tr("File loaded"), 2000);
 }
+
 
 bool MainWindow::saveFile(QString fileName) {
 	this->setCurrentFile(fileName);
@@ -3702,9 +3737,19 @@ void MainWindow::performExtrusion(){
 							break;
 							case CubicalExtrude: DLFL::extrudeFace(&object,*it,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
 							break;
-							case IcosahedralExtrude: DLFL::extrudeFaceIcosa(&object,*it,extrude_dist,num_extrusions, ds_ex_twist,extrude_scale);
+							// case IcosahedralExtrude: DLFL::extrudeFaceIcosa(&object,*it,extrude_dist,num_extrusions, ds_ex_twist,extrude_scale);
+							case IcosahedralExtrude: 
+							// std::cout<< extrude_angle_icosa  << "\t" << num_extrusions  << "\t" << extrude_length1_icosa  << "\t" << extrude_length2_icosa << "\t" << extrude_length3_icosa <<"\n";
+							DLFL::extrudeFaceIcosa(&object, *it, extrude_angle_icosa, num_extrusions, extrude_length1_icosa,extrude_length2_icosa,extrude_length3_icosa);
+							// DLFL::extrudeFaceCubOcta(&object, *it, extrude_angle_icosa,num_extrusions, extrude_length1_icosa,extrude_length2_icosa,extrude_length3_icosa);
+							
 							break;
-							case DodecahedralExtrude: DLFL::extrudeFaceDodeca(&object,*it,extrude_dist,num_extrusions, ds_ex_twist,extrude_scale, hexagonalize_dodeca_extrude);							
+							// DLFLFacePtr extrudeFaceDodeca(DLFLObjectPtr obj, DLFLFacePtr fptr, double angle, int num, double ex_dist1, double ex_dist2, double ex_dist3, bool hexagonalize);
+							case DodecahedralExtrude: 
+							DLFL::extrudeFaceDodeca(&object,*it,extrude_angle,num_extrusions, extrude_length1,extrude_length2,extrude_length3, hexagonalize_dodeca_extrude);							
+							// case DodecahedralExtrude: DLFL::extrudeFaceDodeca(&object,*it,extrude_dist,num_extrusions, ds_ex_twist,extrude_scale, hexagonalize_dodeca_extrude);							
+							// DLFL::extrudeFaceSmallRhombiCubOcta(&object,*it,extrude_angle,num_extrusions, extrude_length1,extrude_length2,extrude_length3);
+							
 							break;
 							case OctahedralExtrude: DLFL::extrudeDualFace(&object,*it,extrude_dist,num_extrusions, extrude_rot,extrude_scale, dual_mesh_edges_check);
 							break;
@@ -4243,7 +4288,7 @@ void MainWindow::writeObjectDLFL(const char * filename) {
 // File handling
 void MainWindow::openFile(void) {
 	QString fileName = QFileDialog::getOpenFileName(this, tr("Open File..."),
-																									QDir::currentPath(), tr("All Supported Files (*.obj *.dlfl);;Wavefront OBJ Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"),
+																									mSaveDirectory, tr("All Supported Files (*.obj *.dlfl);;Wavefront OBJ Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"),
 																									0, QFileDialog::DontUseSheet);
 	if (!fileName.isEmpty()){
 		if (!curFile.isEmpty()){
@@ -4270,84 +4315,128 @@ void MainWindow::openFile(void) {
 
 
 bool MainWindow::saveFile(bool with_normals, bool with_tex_coords) {
-	if (!curFile.isEmpty() && !mIsPrimitive){
-		QByteArray ba = curFile.toLatin1();
-		const char *filename = ba.data();
-		writeObject(filename,with_normals,with_tex_coords);
-		return true;
-	}
-	else {
-		QString fileName = QFileDialog::getSaveFileName(this,
-																										tr("Save File As..."),
-																										QDir::currentPath() + curFile,
-																										tr("All Supported Files (*.obj *.dlfl);;Wavefront OBJ Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"),
-																										0, QFileDialog::DontUseSheet);
-		if (!fileName.isEmpty()){
-			if (!fileName.indexOf(".obj") || !fileName.indexOf(".dlfl") || !fileName.indexOf(".OBJ") || !fileName.indexOf(".DLFL"))
-				fileName.append(".dlfl");
-			setCurrentFile(fileName);	
-			QByteArray ba = fileName.toLatin1();
+	if (curFile != "untitled"){
+		statusBar()->showMessage(tr("Saving File..."),3000);	
+		QString curFileTemp(curFile);
+	
+		if (!curFile.isEmpty() ){
+			if (mIncrementalSave){
+				if (incremental_save_count >= mIncrementalSaveMax){
+					//go back to zero, start overwriting files...
+					incremental_save_count = 0;
+					//insert 00 at the end of hte name before the last dot
+					if (curFileTemp.lastIndexOf(".") > -1)
+						curFileTemp.insert(curFileTemp.lastIndexOf("."),"000");
+					else curFileTemp.append("000");
+				}
+				else {
+					//add the leading zeros for numbers less than 10
+					QString t;
+					if (incremental_save_count < 10)
+						t = QString("00%1").arg(incremental_save_count);
+					else t = QString("0%1").arg(incremental_save_count);
+					curFileTemp.insert(curFileTemp.lastIndexOf("."),t);
+				}
+			}
+			//add in the directory name
+			QString fullpath = mSaveDirectory + "/" + curFileTemp;
+			QByteArray ba = fullpath.toLatin1();
 			const char *filename = ba.data();
 			writeObject(filename,with_normals,with_tex_coords);
+			if (mIncrementalSave)
+				incremental_save_count++;
+			setModified(false);
+			// statusBar()->clearMessage();
 			return true;
 		}
+		else {
+			QString fileName = QFileDialog::getSaveFileName(this,
+																											tr("Save File As..."),
+																											mSaveDirectory + "/" + curFileTemp,
+																											tr("All Supported Files (*.obj *.dlfl);;Wavefront OBJ Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"),
+																											0, QFileDialog::DontUseSheet);
+			if (!fileName.isEmpty()){
+				//for incremental save test - dave
+				incremental_save_count = 0;
+				if (mIncrementalSave){
+					//insert 000's
+					std::cout<<fileName.toLatin1().data() <<"\n";
+					if (fileName.lastIndexOf(".") > -1)
+						fileName.insert(fileName.lastIndexOf("."),"000");
+					else fileName.append("000");
+				}
+			
+				if (!fileName.indexOf(".obj") || !fileName.indexOf(".dlfl") || !fileName.indexOf(".OBJ") || !fileName.indexOf(".DLFL"))
+					fileName.append(".obj");
+				setCurrentFile(fileName);	
+			
+				mSaveDirectory = QFileInfo(fileName).absoluteDir().absolutePath();
+				mPreferencesDialog->setSaveDirectory(mSaveDirectory);
+			
+				QByteArray ba = fileName.toLatin1();
+				const char *filename = ba.data();
+				writeObject(filename,with_normals,with_tex_coords);
+				if (mIncrementalSave)
+					incremental_save_count++;
+				setModified(false);
+				// statusBar()->clearMessage();
+				return true;
+			}
+		}
 	}
+	// statusBar()->clearMessage();
 	return false;
 }
 
 bool MainWindow::saveFileAs(bool with_normals, bool with_tex_coords) {
+	
+	statusBar()->showMessage(tr("Saving File..."));	
+	
 	QString fileName = QFileDialog::getSaveFileName(this,
 																									tr("Save File As..."),
-																									QDir::currentPath() + curFile,
+																									mSaveDirectory + "/" + curFile,
 																									tr("All Supported Files (*.obj *.dlfl);;Wavefront OBJ Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"),
 																									0, QFileDialog::DontUseSheet );
 	if (!fileName.isEmpty()){
+		//reset the incremental save count no matter what...?
+		incremental_save_count = 0;
+		if (mIncrementalSave){
+			//account for leading zeros for digits 0-9
+			if (fileName.lastIndexOf(".") > -1)
+				fileName.insert(fileName.lastIndexOf("."),"000");
+			else fileName.append("000");
+		}
 		if (!fileName.indexOf(".obj") || !fileName.indexOf(".dlfl") || !fileName.indexOf(".OBJ") || !fileName.indexOf(".DLFL"))
 			fileName.append(".dlfl");
-		setCurrentFile(fileName);				
+		setCurrentFile(fileName);		
+
+		mSaveDirectory = QFileInfo(fileName).absoluteDir().absolutePath();
+		mPreferencesDialog->setSaveDirectory(mSaveDirectory);
+				
 		QByteArray ba = fileName.toLatin1();
 		const char *filename = ba.data();
 		writeObject(filename,with_normals,with_tex_coords);
+		if (mIncrementalSave)
+			incremental_save_count++;
+		
+		statusBar()->clearMessage();	
 		return true;
 	}
+	statusBar()->clearMessage();
 	return false;
 }
 
 void MainWindow::openFileOBJ(void) {	
-	// QString fileName = QFileDialog::getOpenFileName(this,
-	// 																								tr("Open File..."),
-	// 																								"$HOME",
-	// 																								tr("Wavefront OBJ Files (*.obj);;All Files (*)"));
-	// if (!fileName.isEmpty()) {
-	// 	
-	// 	setCurrentFile(fileName);
-	// 	undoPush();
-	// 	setModified(true);
-	// 	QByteArray ba = fileName.toLatin1();
-	// 	const char *filename = ba.data();
-	// 	readObjectOBJ(filename);
-	// 	active->recomputePatches();
-	// 	active->recomputeNormals();
-	// }
 }
 
 void MainWindow::saveFileOBJ(bool with_normals, bool with_tex_coords) {
-	// QString fileName = QFileDialog::getSaveFileName(this,
-	// 																								tr("Save File As..."),
-	// 																								curFile,
-	// 																								tr("Wavefront OBJ Files (*.obj);;All Files (*)"));
-	// if (!fileName.isEmpty()){
-	// 	QByteArray ba = fileName.toLatin1();
-	// 	const char *filename = ba.data();
-	// 	writeObjectOBJ(filename,with_normals,with_tex_coords);
-	// }
 }
 
 /* stuart - bezier export */
 bool MainWindow::saveFileBezierOBJ( ) {
 	QString fileName = QFileDialog::getSaveFileName(this,
 																									tr("Save Bezier Patch (OBJ)..."),
-																									QDir::currentPath() + curFile,
+																									mSaveDirectory+ "/" + curFile,
 																									tr("Wavefront OBJ Files (*.obj);;All Files (*)"),
 																									0, QFileDialog::DontUseSheet);
 	if (!fileName.isEmpty()){
@@ -4363,7 +4452,7 @@ bool MainWindow::saveFileBezierOBJ( ) {
 bool MainWindow::saveFileLG3d( ) {
 	QString fileName = QFileDialog::getSaveFileName(this,
 																									tr("Export to LiveGraphics3D  (M)..."),
-																									QDir::currentPath() + curFile,
+																									mSaveDirectory+ "/" + curFile,
 																									tr("Mathematica Graphics3D Files (*.m);;All Files (*)"),
 																									0, QFileDialog::DontUseSheet);
 	if (!fileName.isEmpty()){
@@ -4379,7 +4468,7 @@ bool MainWindow::saveFileLG3d( ) {
 bool MainWindow::saveFileLG3dSelected( ) {
 	QString fileName = QFileDialog::getSaveFileName(this,
 																									tr("Export Selected Faces to LiveGraphics3D  (M)..."),
-																									QDir::currentPath() + curFile,
+																									mSaveDirectory+ "/" + curFile,
 																									tr("Mathematica Graphics3D Files (*.m);;All Files (*)"),
 																									0, QFileDialog::DontUseSheet);
 	if (!fileName.isEmpty()){
@@ -4402,7 +4491,7 @@ bool MainWindow::saveFileSTL( ) {
 	
 	QString fileName = QFileDialog::getSaveFileName(this,
 																									tr("Export STL..."),
-																									QDir::currentPath() + curFile,
+																									mSaveDirectory+ "/" + curFile,
 																									tr("STL Files (*.stl);;All Files (*)"),
 																									0, QFileDialog::DontUseSheet);
 	if (!fileName.isEmpty()){
@@ -4421,7 +4510,7 @@ bool MainWindow::viewportScreenshot( ) {
 	// viewportPixmap = QPixmap::grabWindow(active->winId(),/*mapToGlobal(active->pos()).x()*/0,/*mapToGlobal(active->pos()).y()*/0,active->width(),active->height());
 	QImage image = active->grabFrameBuffer(true);
 	QString format = "png";
-	QString initialPath = QDir::currentPath() + tr("/untitled.") + format;
+	QString initialPath = mSaveDirectory + tr("/untitled.") + format;
 
 	QString fileName = QFileDialog::getSaveFileName(this, tr("Save Viewport Screenshot As"),
 																									initialPath,
@@ -4441,7 +4530,7 @@ bool MainWindow::appScreenshot(){
 	appPixmap = QPixmap::grabWindow(this->winId());
 	
 	QString format = "png";
-	QString initialPath = QDir::currentPath() + tr("/untitled.") + format;
+	QString initialPath = mSaveDirectory + tr("/untitled.") + format;
 
 	QString fileName = QFileDialog::getSaveFileName(this, tr("Save App Screenshot As"),
 																									initialPath,
@@ -4456,46 +4545,23 @@ bool MainWindow::appScreenshot(){
 	return false;
 }
 void MainWindow::openFileDLFL(void) {
-	// QString fileName = QFileDialog::getOpenFileName(this,
-	// 																								tr("Open File..."),
-	// 																								"$HOME",
-	// 																								tr("DLFL Files (*.dlfl);;All Files (*)"));
-	// if (!fileName.isEmpty()){
-	// 	setCurrentFile(fileName);
-	// 	undoPush();
-	// 	setModified(true);
-	// 	QByteArray ba = fileName.toLatin1();
-	// 	const char *filename = ba.data();
-	// 	readObjectDLFL(filename);
-	// 	active->recomputePatches();
-	// 	active->recomputeNormals();
-	// }
 }
 
 void MainWindow::saveFileDLFL(void) {
 
-	// QString fileName = QFileDialog::getSaveFileName(this,
-	// 																								tr("Save File As..."),
-	// 																								curFile,
-	// 																								tr("DLFL Files (*.dlfl);;All Files (*)"));
-	// if (!fileName.isEmpty()){
-	// 	QByteArray ba = fileName.toLatin1();
-	// 	const char *filename = ba.data();
-	// 	writeObjectDLFL(filename);
-	// }
 }
 
 void MainWindow::setCurrentFile(QString fileName) {
 
-	curFile = fileName;
+	curFile = QFileInfo(fileName).fileName();
 	QString shownName;
 	if (curFile.isEmpty())
 		shownName = "untitled.obj";
 	else
-		shownName = QFileInfo(curFile).fileName();
+		shownName = curFile;
 
 	setWindowTitle( tr("%1[*] - %2").arg(shownName).arg(tr("TopMod")));
-	setWindowModified(false);
+	setModified(false);
 }
 
 // void MainWindow::cleanupForExit(void) // Do memory cleanup if any before exit {
@@ -4977,6 +5043,8 @@ void MainWindow::retranslateUi() {
 	mClearUndoListAct->setText(tr("&Clear Undo List"));
 	//View Menu Actions
 	mPerspViewAct->setText( tr("&Reset Camera"));
+	mZoomOutAct->setText( tr("Zoom Out"));
+	mZoomInAct->setText( tr("Zoom In"));
 	// mTopViewAct->setText( tr("&Top View"));
 	// 	mBottomViewAct->setText( tr("&Bottom View"));
 	// 	mFrontViewAct->setText( tr("&Front View"));

@@ -75,6 +75,54 @@ void MainWindow::usePatchRenderer() {
 	redraw();
 }
 
+//preference functions for topmodpreferences - dave
+void MainWindow::setAutoSave(int value){
+	//start the timer if it's ON
+	//stop timer if it's OFF
+	mAutoSave = bool(value);
+	if (mAutoSave)
+		mAutoSaveTimer->start();
+	else 
+		mAutoSaveTimer->stop();
+}
+
+//this value is sent in minutes... so multiply it by 6000!
+void MainWindow::setAutoSaveDelay(double value){
+	mAutoSaveDelay = value;
+	// mAutoSaveTimer->setInterval(mAutoSaveDelay*60000);
+	mAutoSaveTimer->setInterval(5000);
+}
+
+//incremental save will just save a new file each time...
+void MainWindow::setIncrementalSave(int value){
+	mIncrementalSave = (bool)value;
+}
+
+void MainWindow::setIncrementalSaveMax(double value){
+	mIncrementalSaveMax = (int)value;
+}
+
+void MainWindow::setSaveDirectory(QString s){
+	mSaveDirectory = s;
+}
+
+void MainWindow::checkSaveDirectory(){
+	QDir dir(mSaveDirectory);
+	if (dir.exists()){
+		// std::cout<<"good job\n";
+	}
+	else {
+		QString s = QString("Directory\n\n%1\n\ndoes not exist, please type a different directory name.\n\nCheck to make sure there are no unnecessary spaces at the end.").arg(mSaveDirectory);
+		QMessageBox::about(this, tr("TopMod Error"), s);
+	}
+}
+
+void MainWindow::setCommandCompleterIndexToggle(int value){
+	//stuff here...?
+	std::cout << "toggle command completer thing\n";
+	mCommandCompleterIndexToggle = (bool)value;
+}
+
 // Selection Menu.
 void MainWindow::select_vertex() {
 	setMode(MainWindow::SelectVertex);
@@ -271,6 +319,38 @@ void MainWindow::changeExtrudeRotation(double value) {
 
 void MainWindow::changeExtrudeScale(double value) {
 	MainWindow::extrude_scale = value;
+}
+
+void MainWindow::changeExtrudeLength1(double value) {
+	MainWindow::extrude_length1 = value;
+}
+
+void MainWindow::changeExtrudeLength2(double value) {
+	MainWindow::extrude_length2 = value;
+}
+
+void MainWindow::changeExtrudeLength3(double value) {
+	MainWindow::extrude_length3 = value;
+}
+
+void MainWindow::changeExtrudeAngle(double value){
+	MainWindow::extrude_angle = value;
+}
+
+void MainWindow::changeExtrudeLength1Icosa(double value) {
+	MainWindow::extrude_length1_icosa = value;
+}
+
+void MainWindow::changeExtrudeLength2Icosa(double value) {
+	MainWindow::extrude_length2_icosa = value;
+}
+
+void MainWindow::changeExtrudeLength3Icosa(double value) {
+	MainWindow::extrude_length3_icosa = value;
+}
+
+void MainWindow::changeExtrudeAngleIcosa(double value){
+	MainWindow::extrude_angle_icosa = value;
 }
 
 void MainWindow::changeNumExtrusions(double value) {

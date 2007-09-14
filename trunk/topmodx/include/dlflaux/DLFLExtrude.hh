@@ -53,9 +53,24 @@ namespace DLFL {
 
   DLFLFacePtr extrudeFaceDodeca(DLFLObjectPtr obj, DLFLFacePtr fptr, double d, int num, double rot=0.0, double sf = 1.0, bool hexagonalize=false);
   DLFLFacePtr extrudeFaceDodeca(DLFLObjectPtr obj, DLFLFacePtr fptr, double d, double rot=0.0, double sf = 1.0);
+	
+	DLFLFacePtr extrudeFaceDodeca(DLFLObjectPtr obj, DLFLFacePtr fptr, double angle, int num, double ex_dist1, double ex_dist2, double ex_dist3, bool hexagonalize);
+	DLFLFacePtr extrudeFaceDodeca(DLFLObjectPtr obj, DLFLFacePtr fptr, double angle, double ex_dist1, double ex_dist2, double ex_dist3);
+	DLFLFacePtr extrudeDodeca_Symmetric(DLFLObjectPtr obj, DLFLFacePtr fptr, double d, double rot, double sf, int modfactor);
 
-  DLFLFacePtr extrudeFaceIcosa(DLFLObjectPtr obj, DLFLFacePtr fptr, double d, int num, double rot=0.0,  double sf = 1.0);
-  DLFLFacePtr extrudeFaceIcosa(DLFLObjectPtr obj, DLFLFacePtr fptr, double d, double rot, double sf = 1.0);
+	DLFLFacePtr extrudeFaceCubOcta(DLFLObjectPtr obj, DLFLFacePtr fptr, double angle, int num, double ex_dist1, double ex_dist2, double ex_dist3);
+	DLFLFacePtr extrudeFaceCubOcta(DLFLObjectPtr obj, DLFLFacePtr fptr, double angle, double ex_dist1, double ex_dist2, double ex_dist3);
+	DLFLFacePtr extrudeFaceSmallRhombiCubOcta(DLFLObjectPtr obj, DLFLFacePtr fptr, double angle, int num, double ex_dist1, double ex_dist2, double ex_dist3);
+	DLFLFacePtr extrudeFaceSmallRhombiCubOcta(DLFLObjectPtr obj, DLFLFacePtr fptr, double angle, double ex_dist1, double ex_dist2, double ex_dist3);
+	
+	Vector3d GetRingPosition(DLFLVertexPtrList :: iterator vl_ring, int position, int numfaces);
+	DLFLVertexPtr GetRingVertex(DLFLVertexPtrList :: iterator vl_ring, int position, int numfaces);
+	
+	DLFLFacePtr extrudeFaceIcosa(DLFLObjectPtr obj, DLFLFacePtr fptr, double angle, int num, double ex_dist1, double ex_dist2, double ex_dist3);
+	DLFLFacePtr extrudeFaceIcosa(DLFLObjectPtr obj, DLFLFacePtr fptr, double angle, double ex_dist1, double ex_dist2, double ex_dist3);
+	
+  // DLFLFacePtr extrudeFaceIcosa(DLFLObjectPtr obj, DLFLFacePtr fptr, double d, int num, double rot=0.0,  double sf = 1.0);
+  // DLFLFacePtr extrudeFaceIcosa(DLFLObjectPtr obj, DLFLFacePtr fptr, double d, double rot, double sf = 1.0);
 
   void extrudeFace(DLFLObjectPtr obj, DLFLFacePtr fptr);
 

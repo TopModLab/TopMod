@@ -101,6 +101,9 @@ public :
 	void setFarPlane(double f){ mCamera->setFarPlane(f); redraw(); };
 	void setFOV(double fov){ mCamera->setFOV(fov); redraw(); };
 	
+	void zoomIn(){ mCamera->HandleMouseWheel(100, width(),height()); repaint(); };
+	void zoomOut(){ mCamera->HandleMouseWheel(-100, width(),height()); repaint(); };
+	
 		//compute lighting and normals functions now moved here from MainWindow
 	void recomputeNormals();
 	void recomputeLighting();

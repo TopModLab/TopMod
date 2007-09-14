@@ -253,6 +253,14 @@ class MainWindow : public QMainWindow {
 	static double ds_ex_twist;  //!< Twist factor for doo-sabin extrude
 	static bool dual_mesh_edges_check; //!< Flag to check for removal of dual mesh edges
 	static bool hexagonalize_dodeca_extrude; //!< Flag to hexagonalize when doing dodeca extrude
+	static double extrude_length1;
+	static double extrude_length2;
+	static double extrude_length3;
+	static double extrude_angle;
+	static double extrude_length1_icosa;
+	static double extrude_length2_icosa;
+	static double extrude_length3_icosa;
+	static double extrude_angle_icosa;
 
 	//!< Edge subdivision
 	static int num_e_subdivs;      //!< No. of subdivisions for an edge
@@ -335,6 +343,8 @@ class MainWindow : public QMainWindow {
 	static double extrude_bendT;
 	static double extrude_bendB;
 
+	static int incremental_save_count;
+	
 	QString curFile;
 	//document modified
 	bool isModified();
@@ -508,6 +518,13 @@ private:
 	bool mIsModified;															//!< bool to stop program from exiting if file has been edited but not saved
 	bool mIsPrimitive;														//!< bool to stop program from exiting if file has been edited but not saved
 	bool mWasPrimitive;														//!< bool to stop program from exiting if file has been edited but not saved, used in DLFLUndo.cc
+	bool mAutoSave, mIncrementalSave;
+	int mIncrementalSaveMax;
+	QTimer *mAutoSaveTimer;
+	int mAutoSaveDelay;
+	QString mSaveDirectory;
+	bool mCommandCompleterIndexToggle;
+
 
 	void createActions();													//!< create all MainWindow actions for menu's and icons, also create operating mode actions in subclasses
 	void createMenus();														//!< create top-level QMenuBar and add actions to each QMenu
@@ -587,6 +604,9 @@ private:
 	QAction *mBackViewAct;									//!< switch to back view
 	QAction *mPerspViewAct;									//!< switch to perspective view or reset the current one
 
+	QAction *mZoomInAct;
+	QAction *mZoomOutAct;
+	
 	//Display Menu Actions
 	QAction *showVerticesAct;								
 	QAction *mShowFaceIDsAct;
@@ -808,7 +828,17 @@ public slots:
 
 	bool viewportScreenshot(); //!< take a screenshot of just the opengl viewport
 	bool appScreenshot(); //!< take a screenshot of the whole app (for forum posting and bug reports)
-
+	
+	//brand new stuff - dave - 9/12/07
+	void setAutoSave(int value);
+	void setAutoSaveDelay(double value);
+	void setIncrementalSave(int value);
+	void setCommandCompleterIndexToggle(int value);
+	void setIncrementalSaveMax(double value);
+	void setSaveDirectory(QString s);
+	void checkSaveDirectory();
+	
+	
 	// i18n stuff
 	void changeLanguage(const QString &string);
 	void setLanguageSpanish();
@@ -910,7 +940,15 @@ public slots:
 	void changeStellateLength(double value);
 	void toggleDualMeshEdgesFlag(int state);
 	void toggleHexagonalizeDodecaExtrudeFlag(int state);
-
+	void changeExtrudeLength1(double value);
+	void changeExtrudeLength2(double value);
+	void changeExtrudeLength3(double value);
+	void changeExtrudeAngle(double value);
+	void changeExtrudeLength1Icosa(double value);
+	void changeExtrudeLength2Icosa(double value);
+	void changeExtrudeLength3Icosa(double value);
+	void changeExtrudeAngleIcosa(double value);
+	
 	void changeNumSegments(double value);
 	void changeMaxSegments(double value);
 	void changeNumSegments2(double value);

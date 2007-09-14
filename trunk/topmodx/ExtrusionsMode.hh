@@ -83,6 +83,14 @@ public:
 	QDoubleSpinBox *dodecahedralLengthSpinBox;
 	QLabel *dodecahedralScaleLabel;
 	QDoubleSpinBox *dodecahedralScaleSpinBox;
+	QLabel *dodecahedralLength1Label;
+	QDoubleSpinBox *dodecahedralLength1SpinBox;
+	QLabel *dodecahedralLength2Label;
+	QDoubleSpinBox *dodecahedralLength2SpinBox;
+	QLabel *dodecahedralLength3Label;
+	QDoubleSpinBox *dodecahedralLength3SpinBox;
+	QLabel *dodecahedralAngleLabel;
+	QDoubleSpinBox *dodecahedralAngleSpinBox;
 	QLabel *dodecahedralSegmentsLabel;
 	QDoubleSpinBox *dodecahedralSegmentsSpinBox;
 	QCheckBox *hexagonalizeCheckBox;
@@ -94,6 +102,15 @@ public:
 	QDoubleSpinBox *icosahedralScaleSpinBox;
 	QLabel *icosahedralSegmentsLabel;
 	QDoubleSpinBox *icosahedralSegmentsSpinBox;
+	QLabel *icosahedralLength1Label;
+	QDoubleSpinBox *icosahedralLength1SpinBox;
+	QLabel *icosahedralLength2Label;
+	QDoubleSpinBox *icosahedralLength2SpinBox;
+	QLabel *icosahedralLength3Label;
+	QDoubleSpinBox *icosahedralLength3SpinBox;
+	QLabel *icosahedralAngleLabel;
+	QDoubleSpinBox *icosahedralAngleSpinBox;
+	
 	
 	//octahedral extrude
 	QLabel *octahedralLengthLabel;
@@ -138,6 +155,14 @@ protected:
 public slots:
 
 	void setLength(double value);
+	void setLength1(double value);
+	void setLength2(double value);
+	void setLength3(double value);
+	void setAngle(double value);
+	void setLength1Icosa(double value);
+	void setLength2Icosa(double value);
+	void setLength3Icosa(double value);
+	void setAngleIcosa(double value);
 	void setRotation(double value);
 	void setSegments(double value);
 	void setScale(double value);

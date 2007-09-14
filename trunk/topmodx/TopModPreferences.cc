@@ -97,9 +97,17 @@ void TopModPreferences::saveSettings(){
 	mSettings->endGroup();
 
 	mSettings->beginGroup("Camera");
-	mSettings->setValue("NearPlane",mCameraNearPlane);
-	mSettings->setValue("FarPlane",mCameraFarPlane);	
-	mSettings->setValue("Fov",mCameraFov);
+	mSettings->setValue("NearPlane",mCameraNearPlaneSpinBox->value());
+	mSettings->setValue("FarPlane",mCameraFarPlaneSpinBox->value());	
+	mSettings->setValue("Fov",mCameraFovSpinBox->value());
+	mSettings->endGroup();
+	
+	mSettings->beginGroup("Save Options");
+	mSettings->setValue("SaveDirectory", mSaveDirectoryLineEdit->text());
+	mSettings->setValue("AutoSave", mAutoSaveCheckBox->checkState());
+	mSettings->setValue("AutoSaveDelay", mAutoSaveDelaySpinBox->value());
+	mSettings->setValue("IncrementalSave", mIncrementalSaveCheckBox->checkState());
+	mSettings->setValue("IncrementalSaveMax", mIncrementalSaveMaxSpinBox->value());
 	mSettings->endGroup();
 	
 	mSettings->beginGroup("MainWindow");
@@ -108,6 +116,7 @@ void TopModPreferences::saveSettings(){
 	// std::cout << "size = " << ((MainWindow*)mParent)->size().width();
 	mSettings->setValue("showStartupDialogAtStartup", ((MainWindow*)mParent)->getShowStartupDialogAtStartup());
 	mSettings->setValue("toolOptionsPos", ((MainWindow*)mParent)->mToolOptionsDockWidget->pos());
+	mSettings->setValue("CommandCompleterIndex", mCommandCompleterIndexToggle->checkState());
 	
 	#ifdef WITH_PYTHON
 	mSettings->setValue("scriptEditorPos", ((MainWindow*)mParent)->mScriptEditorDockWidget->pos());
@@ -183,12 +192,31 @@ void TopModPreferences::readSettings(){
 	mCameraFovDefault = 60;
 	mCameraFov = mSettings->value("Fov", mCameraFovDefault).toDouble();
 	mSettings->endGroup();
+	
+	mSettings->beginGroup("Save Options");
+	// std::cout<< QDir::currentPath().toLatin1().data() << "\n";
+	// mSaveDirectory = QDir::currentPath();
+	mSaveDirectoryDefault = QDir::currentPath();
+	mSaveDirectory = mSettings->value("SaveDirectory", mSaveDirectoryDefault).toString();
+	// std::cout<< mSaveDirectory.toLatin1().data() << "\n";
+	mAutoSaveDefault = false;
+	mAutoSave = mSettings->value("AutoSave", mAutoSaveDefault).toBool();
+	mAutoSaveDelayDefault = 5;
+	mAutoSaveDelay = mSettings->value("AutoSaveDelay", mAutoSaveDelayDefault).toDouble();
+	mIncrementalSaveDefault = false;
+	mIncrementalSave = mSettings->value("IncrementalSave", mIncrementalSaveDefault).toBool();
+	mIncrementalSaveMaxDefault = 20;
+	mIncrementalSaveMax = mSettings->value("IncrementalSaveMax", mIncrementalSaveMaxDefault).toDouble();
+	mSettings->endGroup();
 
 	mSettings->beginGroup("MainWindow");
 	QPoint pos = mSettings->value("pos", QPoint(100, 100)).toPoint();
 	if (pos.y()==0) pos.setY(pos.y()+20);
 	QSize size = mSettings->value("size", QSize(800, 600)).toSize();
 	QPoint toolOptionsPos = mSettings->value("toolOptionsPos", QPoint()).toPoint();
+	
+	mCommandCompleterIndexDefault = false;
+	mCommandCompleterIndex = mSettings->value("CommandCompleterIndex", mCommandCompleterIndexDefault).toBool();
 	
 	#ifdef WITH_PYTHON
 	QSize scriptEditorSize = mSettings->value("scriptEditorSize", QSize(500,300)).toSize();
@@ -236,7 +264,13 @@ void TopModPreferences::readSettings(){
 	((MainWindow*)mParent)->getActive()->setNearPlane(mCameraNearPlane);
 	((MainWindow*)mParent)->getActive()->setFarPlane(mCameraFarPlane);
 	((MainWindow*)mParent)->getActive()->setFOV(mCameraFov);
-		
+		//save options
+	((MainWindow*)mParent)->setSaveDirectory(mSaveDirectory);
+	((MainWindow*)mParent)->setAutoSave(mAutoSave);
+	((MainWindow*)mParent)->setAutoSaveDelay(mAutoSaveDelay);
+	((MainWindow*)mParent)->setIncrementalSave(mIncrementalSave);
+	((MainWindow*)mParent)->setIncrementalSaveMax(mIncrementalSaveMax);
+	((MainWindow*)mParent)->setCommandCompleterIndexToggle(mCommandCompleterIndex);
 
 }
 
@@ -336,7 +370,7 @@ void TopModPreferences::loadDefaults(){
 	mSelectedVertexThickness = mSelectedVertexThicknessDefault;
 	mVertexThicknessSpinBox->setValue(mSelectedVertexThickness);
 	
-	mSelectedEdgeThickness = mSelectedEdgeThickness;
+	mSelectedEdgeThickness = mSelectedEdgeThicknessDefault;
 	mSelectedEdgeThicknessSpinBox->setValue(mSelectedVertexThickness);
 	
 	
@@ -347,8 +381,28 @@ void TopModPreferences::loadDefaults(){
 	mCameraFarPlane = mCameraFarPlaneDefault;
 	((MainWindow*)mParent)->getActive()->setFarPlane(mCameraFarPlane);
 	
-	mViewportColor = mCameraFov;
+	mCameraFov = mCameraFovDefault;
 	((MainWindow*)mParent)->getActive()->setFOV(mCameraFov);
+	
+	//save options!
+	mSaveDirectory = mSaveDirectoryDefault;
+	((MainWindow*)mParent)->setSaveDirectory(mSaveDirectory);
+
+	mAutoSave = mAutoSaveDefault;
+	((MainWindow*)mParent)->setAutoSave(mAutoSave);
+	
+	mAutoSaveDelay = mAutoSaveDelayDefault;
+	((MainWindow*)mParent)->setAutoSaveDelay(mAutoSaveDelay);
+
+	mIncrementalSave = mIncrementalSaveDefault;
+	((MainWindow*)mParent)->setIncrementalSave(mIncrementalSave);
+	
+	mIncrementalSaveMax = mIncrementalSaveMaxDefault;
+	((MainWindow*)mParent)->setIncrementalSaveMax(mIncrementalSaveMax);
+	
+	mCommandCompleterIndex = mCommandCompleterIndexDefault;
+	((MainWindow*)mParent)->setCommandCompleterIndexToggle(mCommandCompleterIndex);
+	
 }
 
 void TopModPreferences::setupMain(){
@@ -378,8 +432,44 @@ void TopModPreferences::setupMain(){
 	mCameraFovSpinBox = addSpinBoxPreference(mCameraFovLabel, tr("Field of View:"), 15, 100, 1, mCameraFov, 0, mMainLayout, 2, 0);
 	connect(mCameraFovSpinBox, SIGNAL(valueChanged(double)),((MainWindow*)mParent)->getActive(), SLOT(setFOV(double)));
 	
-	mMainLayout->setRowStretch(3,2);
-	mMainLayout->setColumnStretch(3,2);
+	//auto save toggle
+	mAutoSaveCheckBox = new QCheckBox(tr("Auto Save:"), this);
+	mAutoSaveCheckBox->setChecked(mAutoSave);
+	connect(mAutoSaveCheckBox, SIGNAL(stateChanged(int)),((MainWindow*)mParent), SLOT(setAutoSave(int)));
+	mMainLayout->addWidget(mAutoSaveCheckBox,3,0);
+	
+	//auto save delay in minutes
+	mAutoSaveDelaySpinBox = addSpinBoxPreference(mAutoSaveDelayLabel, tr("Auto Save Delay\n(in minutes):"), 1, 30, 1, mAutoSaveDelay, 0, mMainLayout, 4, 0);
+	connect(mAutoSaveDelaySpinBox, SIGNAL(valueChanged(double)),((MainWindow*)mParent), SLOT(setAutoSaveDelay(double)));
+
+	//incremental save toggle
+	mIncrementalSaveCheckBox = new QCheckBox(tr("Incremental Save:"), this);
+	mIncrementalSaveCheckBox->setChecked(mIncrementalSave);
+	connect(mIncrementalSaveCheckBox, SIGNAL(stateChanged(int)),((MainWindow*)mParent), SLOT(setIncrementalSave(int)));
+	mMainLayout->addWidget(mIncrementalSaveCheckBox,5,0);
+
+	//max incremental save files on disk
+	mIncrementalSaveMaxSpinBox = addSpinBoxPreference(mIncrementalSaveMaxLabel, tr("Max Incremental Saves:"), 2, 50, 1, mIncrementalSaveMax, 0, mMainLayout, 6, 0);
+	connect(mIncrementalSaveMaxSpinBox, SIGNAL(valueChanged(double)),((MainWindow*)mParent), SLOT(setIncrementalSaveMax(double)));
+	
+	//default save directory
+	mSaveDirectoryLabel = new QLabel(tr("Default Save Directory"),this);
+	mSaveDirectoryLineEdit = new QLineEdit(this);
+	std::cout << mSaveDirectory.toLatin1().data() << "\n";
+	mSaveDirectoryLineEdit->setText(mSaveDirectory);
+	connect(mSaveDirectoryLineEdit, SIGNAL(textEdited(QString)),((MainWindow*)mParent), SLOT(setSaveDirectory(QString)));
+	connect(mSaveDirectoryLineEdit, SIGNAL(editingFinished()),((MainWindow*)mParent), SLOT(checkSaveDirectory()));
+	mMainLayout->addWidget(mSaveDirectoryLabel,7,0);
+	mMainLayout->addWidget(mSaveDirectoryLineEdit,8,0,1,3);
+	
+	//command completer word typing toggle
+	mCommandCompleterIndexToggle  = new QCheckBox(tr("Command Completer\nSingle Word Completion:"), this);
+	mCommandCompleterIndexToggle->setChecked(mCommandCompleterIndex);
+	connect(mCommandCompleterIndexToggle, SIGNAL(stateChanged(int)),((MainWindow*)mParent), SLOT(setCommandCompleterIndexToggle(int)));
+	mMainLayout->addWidget(mCommandCompleterIndexToggle,9,0);
+	
+	mMainLayout->setRowStretch(10,2);
+	mMainLayout->setColumnStretch(4,2);
 	
 	mMainTab->setLayout(mMainLayout);
 	// mMainLayout->addWidget(mResetCameraButton,0,0);
@@ -630,4 +720,9 @@ void TopModPreferences::setFaceCentroidColor(){
 		((MainWindow*)mParent)->getActive()->setFaceCentroidColor(mFaceCentroidColor);
 		setButtonColor(mFaceCentroidColor, mFaceCentroidColorButton);
 	}
+}
+
+void TopModPreferences::setSaveDirectory(QString s){
+	mSaveDirectory = s;
+	mSaveDirectoryLineEdit->setText(s);
 }

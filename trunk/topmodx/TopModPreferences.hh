@@ -183,12 +183,30 @@ private:
 	
 	bool mShowStartupDialogAtStartup;
 	
+	QCheckBox *mAutoSaveCheckBox;
+	QCheckBox *mIncrementalSaveCheckBox;
+	bool mIncrementalSave, mIncrementalSaveDefault;
+	QDoubleSpinBox *mAutoSaveDelaySpinBox;
+	QLabel *mAutoSaveDelayLabel;
+	int mAutoSaveDelay, mAutoSaveDelayDefault;
+	bool mAutoSave, mAutoSaveDefault;
+	QLineEdit *mSaveDirectoryLineEdit;
+	QLabel *mSaveDirectoryLabel;
+	QString mSaveDirectory,mSaveDirectoryDefault;
+	QDoubleSpinBox *mIncrementalSaveMaxSpinBox;
+	QLabel *mIncrementalSaveMaxLabel;
+	int mIncrementalSaveMax, mIncrementalSaveMaxDefault;
+	
+	QCheckBox *mCommandCompleterIndexToggle;
+	bool mCommandCompleterIndex,mCommandCompleterIndexDefault;
+	
 public:
 	TopModPreferences(QSettings *settings, StyleSheetEditor *sse, QShortcutManager *sm, QWidget *parent = 0 );
 	~TopModPreferences();
 	
 	int display();
 	void readSettings();
+	void setSaveDirectory(QString s);
 
 protected:
 	void createTabs();

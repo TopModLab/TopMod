@@ -1406,7 +1406,7 @@ namespace DLFL {
     while ( el_first != el_last ) {
       ep = (*el_first); ++el_first; ++num_edges;
       ep->getFacePointers(efp1,efp2);
-      mp = ep->getMidPoint(); afp = ( efp1->getAuxCoords() + efp2->getAuxCoords() ) / 2.0;
+      mp = ep->getMidPoint(true); afp = ( efp1->getAuxCoords() + efp2->getAuxCoords() ) / 2.0;
       edgept = (mp + afp)/2.0;
       ep->setAuxCoords(edgept);
 
