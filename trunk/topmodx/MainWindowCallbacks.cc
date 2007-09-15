@@ -89,8 +89,8 @@ void MainWindow::setAutoSave(int value){
 //this value is sent in minutes... so multiply it by 6000!
 void MainWindow::setAutoSaveDelay(double value){
 	mAutoSaveDelay = value;
-	// mAutoSaveTimer->setInterval(mAutoSaveDelay*60000);
-	mAutoSaveTimer->setInterval(5000);
+	mAutoSaveTimer->setInterval(mAutoSaveDelay*60000);
+	// mAutoSaveTimer->setInterval(5000);
 }
 
 //incremental save will just save a new file each time...
