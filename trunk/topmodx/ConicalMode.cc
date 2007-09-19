@@ -108,8 +108,8 @@ QMenu *ConicalMode::getMenu(){
 }
 
 QDoubleSpinBox *ConicalMode::createDoubleSpinBox(QGridLayout *layout, QLabel *label, QString s, double low, double high, double step, double value, double decimals, int row, int col){
-	label = new QLabel(s);
-	QDoubleSpinBox *spinbox = new QDoubleSpinBox;
+	label->setText(s);
+	QDoubleSpinBox *spinbox = new QDoubleSpinBox(this);
 	spinbox->setAccelerated(true);
 	spinbox->setRange(low, high);
 	spinbox->setSingleStep(step);
@@ -258,12 +258,13 @@ void ConicalMode::setupCutbyEdge(){
 	mCutbyEdgeLayout->setHorizontalSpacing(1);
 
 	//offset
+	cutbyEdgeOffsetLabel = new QLabel(this);
 	cutbyEdgeOffsetSpinBox = createDoubleSpinBox(mCutbyEdgeLayout, cutbyEdgeOffsetLabel, tr("Offset:"), 0.0, 2.0, 0.01, 0.25, 2, 0,0);
 	connect(cutbyEdgeOffsetSpinBox, SIGNAL(valueChanged(double)),this, SLOT(changeCutOffsetE(double)));
 
-	QPushButton *performCuttingButton = new QPushButton(tr("Perform Cutting"), this);
-	connect(performCuttingButton, SIGNAL(clicked()), ((MainWindow*)mParent),SLOT(performCutting()) );
-	mCutbyEdgeLayout->addWidget(performCuttingButton,1,0,1,2);	
+	performCuttingEdgeButton = new QPushButton(tr("Perform Cutting"), this);
+	connect(performCuttingEdgeButton, SIGNAL(clicked()), ((MainWindow*)mParent),SLOT(performCutting()) );
+	mCutbyEdgeLayout->addWidget(performCuttingEdgeButton,1,0,1,2);	
 
 	mCutbyEdgeLayout->setRowStretch(2,1);
 	mCutbyEdgeLayout->setColumnStretch(2,1);
@@ -326,12 +327,13 @@ void ConicalMode::setupCutbyVertex(){
 	mCutbyVertexLayout->setHorizontalSpacing(1);
 
 	//offset
+	cutbyVertexOffsetLabel = new QLabel(this);
 	cutbyVertexOffsetSpinBox = createDoubleSpinBox(mCutbyVertexLayout, cutbyVertexOffsetLabel, tr("Offset:"), 0.0, 2.0, 0.01, 0.25, 2, 0,0);
 	connect(cutbyVertexOffsetSpinBox, SIGNAL(valueChanged(double)),this, SLOT(changeCutOffsetV(double)));
 
-	QPushButton *performCuttingButton = new QPushButton(tr("Perform Cutting"), this);
-	connect(performCuttingButton, SIGNAL(clicked()), ((MainWindow*)mParent),SLOT(performCutting()) );
-	mCutbyVertexLayout->addWidget(performCuttingButton,1,0,1,2);	
+	performCuttingVertexButton = new QPushButton(tr("Perform Cutting"), this);
+	connect(performCuttingVertexButton, SIGNAL(clicked()), ((MainWindow*)mParent),SLOT(performCutting()) );
+	mCutbyVertexLayout->addWidget(performCuttingVertexButton,1,0,1,2);	
 
 	mCutbyVertexLayout->setRowStretch(2,1);
 	mCutbyVertexLayout->setColumnStretch(2,1);
@@ -463,12 +465,13 @@ void ConicalMode::setupCutbyFace(){
 	mCutbyFaceLayout->setHorizontalSpacing(1);
 
 	//offset
+	cutbyFaceOffsetLabel = new QLabel(this);
 	cutbyFaceOffsetSpinBox = createDoubleSpinBox(mCutbyFaceLayout, cutbyFaceOffsetLabel, tr("Offset:"), 0.0, 2.0, 0.01, 0.25, 2, 0,0);
 	connect(cutbyFaceOffsetSpinBox, SIGNAL(valueChanged(double)),this, SLOT(changeCutOffsetE(double)));
 
-	QPushButton *performCuttingButton = new QPushButton(tr("Perform Cutting"), this);
-	connect(performCuttingButton, SIGNAL(clicked()), ((MainWindow*)mParent),SLOT(performCutting()) );
-	mCutbyFaceLayout->addWidget(performCuttingButton,1,0,1,2);	
+	performCuttingFaceButton = new QPushButton(tr("Perform Cutting"), this);
+	connect(performCuttingFaceButton, SIGNAL(clicked()), ((MainWindow*)mParent),SLOT(performCutting()) );
+	mCutbyFaceLayout->addWidget(performCuttingFaceButton,1,0,1,2);	
 
 	mCutbyFaceLayout->setRowStretch(2,1);
 	mCutbyFaceLayout->setColumnStretch(2,1);
@@ -622,4 +625,29 @@ void ConicalMode::setupDualConvexHull(){
 
 void ConicalMode::retranslateUi(){
 	
+	cutbyFaceOffsetLabel->setText(tr("Offset:"));
+	performCuttingFaceButton->setText(tr("Perform Cutting"));
+	mCutbyFaceWidget->setWindowTitle(tr("Cut By Face"));
+
+	cutbyVertexOffsetLabel->setText(tr("Offset:"));
+	performCuttingVertexButton->setText(tr("Perform Cutting"));
+	mCutbyVertexWidget->setWindowTitle(tr("Cut By Vertex"));	
+
+	cutbyEdgeOffsetLabel->setText(tr("Offset:"));
+	performCuttingEdgeButton->setText(tr("Perform Cutting"));
+	mCutbyEdgeWidget->setWindowTitle(tr("Cut By Edge"));
+
+	mConicalMenu->setTitle(tr("Conical"));
+
+	mCutbyEdgeAction->setText(tr("Cut by Edge"));
+	mCutbyEdgeAction->setStatusTip(tr("Enter Cut by Edge Mode"));
+	mCutbyEdgeAction->setToolTip(tr("Cut by Edge Mode"));
+
+	mCutbyVertexAction->setText(tr("Cut by Vertex"));
+	mCutbyVertexAction->setStatusTip(tr("Enter Cut by Vertex Mode"));
+	mCutbyVertexAction->setToolTip(tr("Cut by Vertex Mode"));
+
+	mCutbyFaceAction->setText(tr("Cut by Face"));
+	mCutbyFaceAction->setStatusTip(tr("Enter Cut by Face Mode"));
+	mCutbyFaceAction->setToolTip(tr("Cut by Face Mode"));
 }

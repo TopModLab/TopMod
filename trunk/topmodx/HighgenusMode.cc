@@ -281,8 +281,8 @@ void HighgenusMode::toggleCrustCleanupFlag(int state)
 }
 
 QDoubleSpinBox *HighgenusMode::createDoubleSpinBox(QGridLayout *layout, QLabel *label, QString s, double low, double high, double step, double value, double decimals, int row, int col){
-	label = new QLabel(s);
-	QDoubleSpinBox *spinbox = new QDoubleSpinBox;
+	label = new QLabel(s,this);
+	QDoubleSpinBox *spinbox = new QDoubleSpinBox(this);
 	spinbox->setAccelerated(true);
 	spinbox->setRange(low, high);
 	spinbox->setSingleStep(step);
@@ -680,5 +680,53 @@ void HighgenusMode::setupMengerSponge(){
 }
 
 void HighgenusMode::retranslateUi(){
+	//actions
+	mAddHoleHandleAction->setText(tr("Add Hole/Handle"));
+	mAddHoleHandleAction->setStatusTip(tr("Enter Add Hole/Handle Mode"));
+	mAddHoleHandleAction->setToolTip(tr("Add Hole/Handle Mode"));
+
+	mAddHoleHandleCVAction->setText(tr("Add Hole/Handle CV"));
+	mAddHoleHandleCVAction->setStatusTip(tr("Enter Add Hole/Handle CV Mode"));
+	mAddHoleHandleCVAction->setToolTip(tr("Add Hole/Handle CV Mode"));
+
+	mAddHandleSIAction->setText(tr("Add Handle SI"));
+	mAddHandleSIAction->setStatusTip(tr("Enter Add Handle (Shape Interpolation) Mode"));
+	mAddHandleSIAction->setToolTip(tr("Add Handle (Shape Interpolation) Mode"));
+
+	mRindModelingScalingAction->setText(tr("Rind Modeling Scaling"));
+	mRindModelingScalingAction->setStatusTip(tr("Enter Rind Modeling Scaling Mode"));
+	mRindModelingScalingAction->setToolTip(tr("Rind Modeling Scaling Mode"));
+
+	mRindModelingThicknessAction->setText(tr("Rind Modeling Thickness"));
+	mRindModelingThicknessAction->setStatusTip(tr("Enter Rind Modeling Thickness Mode"));
+	mRindModelingThicknessAction->setToolTip(tr("Rind Modeling Thickness Mode"));
+
+	mWireframeModelingAction->setText(tr("Wireframe Modeling"));
+	mWireframeModelingAction->setStatusTip(tr("Enter Wireframe Modeling Mode"));
+	mWireframeModelingAction->setToolTip(tr("Wireframe Modeling Mode"));
+
+	mWireframeModeling2Action->setText(tr("Wireframe Modeling 2"));
+	mWireframeModeling2Action->setStatusTip(tr("Enter Wireframe Modeling 2 Mode"));
+	mWireframeModeling2Action->setToolTip(tr("Wireframe Modeling 2 Mode"));
+
+	mColumnModelingAction->setText(tr("Column Modeling"));
+	mColumnModelingAction->setStatusTip(tr("Enter Column Modeling Mode"));
+	mColumnModelingAction->setToolTip(tr("Column Modeling Mode"));
+
+	mSierpinskyAction->setText(tr("Sierpinsky"));
+	mSierpinskyAction->setStatusTip(tr("Enter Sierpinsky Mode"));
+	mSierpinskyAction->setToolTip(tr("Sierpinsky Mode"));
+
+	mMultiFaceHandleAction->setText(tr("Multi-face Handle"));
+	mMultiFaceHandleAction->setStatusTip(tr("Enter Multi-face Handle Mode"));
+	mMultiFaceHandleAction->setToolTip(tr("Multi-face Handle Mode"));
+
+	mMengerSpongeAction->setText(tr("Menger Sponge"));
+	mMengerSpongeAction->setStatusTip(tr("Enter Menger Sponge Mode"));
+	mMengerSpongeAction->setToolTip(tr("Menger Sponge Mode"));
+	//menus
+	mHighgenusMenu->setTitle(tr("High Genus"));
+	
+	//!< \todo add buttons and spinbox labels to retranslate function for highgenusmode.cc
 	
 }

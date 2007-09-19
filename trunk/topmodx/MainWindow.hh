@@ -714,6 +714,7 @@ private:
 	QAction *mAboutQtAct;
 	QAction *mHelpAct;
 	QAction *mTopModWebAct;
+	QAction *mVideoTutorialsAct;
 	QAction *mTopModResearchAct;
 	QAction *mCheckForUpdatesAct;
 	QAction *mAboutAct;
@@ -854,6 +855,7 @@ public slots:
 	void help(); 													//!< open the qtassistantclient help viewer
 	void checkForUpdates(); 							//!< check for updates on the topMod home page
 	void topModWeb(); 										//!< open the TopMod web page in the default browser
+	void topModBlip(); 										//!< open the http://topmod.blip.tv web page 
 	void topModResearch(); 								//!< open the TopMod research web page in the default browser
 	void documentWasModified();
 	void toggleFullScreen();							//!< fullscreen mode in the mainwindow class... this is a test...

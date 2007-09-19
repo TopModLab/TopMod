@@ -110,6 +110,11 @@ private:
 	QLabel *cutbyVertexOffsetLabel;
 	QLabel *cutbyFaceOffsetLabel;
 	
+	QPushButton *performCuttingEdgeButton;
+	QPushButton *performCuttingFaceButton;
+	QPushButton *performCuttingVertexButton;
+	
+	
 };
 
 #endif

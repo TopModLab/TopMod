@@ -327,8 +327,8 @@ void ExtrusionsMode::setAngleIcosa(double value){
 }
 
 QDoubleSpinBox *ExtrusionsMode::createDoubleSpinBox(QGridLayout *layout, QLabel *label, QString s, double low, double high, double step, double value, double decimals, int row, int col){
-	label = new QLabel(s);
-	QDoubleSpinBox *spinbox = new QDoubleSpinBox;
+	label = new QLabel(s,this);
+	QDoubleSpinBox *spinbox = new QDoubleSpinBox(this);
 	spinbox->setAccelerated(true);
 	spinbox->setRange(low, high);
 	spinbox->setSingleStep(step);
@@ -568,5 +568,39 @@ void ExtrusionsMode::setupDomeExtrude(){
 }
 
 void ExtrusionsMode::retranslateUi(){
+	//actions
+	mDooSabinExtrudeAction->setText(tr("Doo Sabin"));
+	mDooSabinExtrudeAction->setStatusTip(tr("Enter Doo Sabin Extrude Mode"));
+	mDooSabinExtrudeAction->setToolTip(tr("Doo Sabin Extrude Mode"));
+	
+	mCubicalExtrudeAction->setText(tr("Cubical"));
+	mCubicalExtrudeAction->setStatusTip(tr("Enter Cubical Extrude Mode"));
+	mCubicalExtrudeAction->setToolTip(tr("Cubical Extrude Mode"));
+	
+	mDodecahedralExtrudeAction->setText(tr("Dodecahedral"));
+	mDodecahedralExtrudeAction->setStatusTip(tr("Enter Dodecahedral Extrude Mode"));
+	mDodecahedralExtrudeAction->setToolTip(tr("Dodecahedral Extrude Mode"));
+	
+	mIcosahedralExtrudeAction->setText(tr("Icosahedral"));
+	mIcosahedralExtrudeAction->setStatusTip(tr("Enter Icosahedral Extrude Mode"));
+	mIcosahedralExtrudeAction->setToolTip(tr("Icosahedral Extrude Mode"));
+	
+	mOctahedralExtrudeAction->setText(tr("Octahedral"));
+	mOctahedralExtrudeAction->setStatusTip(tr("Enter Octahedral Extrude Mode"));
+	mOctahedralExtrudeAction->setToolTip(tr("Octahedral Extrude Mode"));
+	
+	mStellateExtrudeAction->setText(tr("Stellate"));
+	mStellateExtrudeAction->setStatusTip(tr("Enter Stellate Extrude Mode"));
+	mStellateExtrudeAction->setToolTip(tr("Stellate Extrude Mode"));
+	
+	mDoubleStellateExtrudeAction->setText(tr("Double Stellate"));
+	mDoubleStellateExtrudeAction->setStatusTip(tr("Enter Double Stellate Mode"));
+	mDoubleStellateExtrudeAction->setToolTip(tr("Double Stellate Mode"));
+
+	mDomeExtrudeAction->setText(tr("Dome"));
+	mDomeExtrudeAction->setStatusTip(tr("Enter Dome Extrude Mode"));
+	mDomeExtrudeAction->setToolTip(tr("Dome Extrude Mode"));
+	
+	mExtrusionMenu->setTitle(tr("Extrusion"));
 	
 }

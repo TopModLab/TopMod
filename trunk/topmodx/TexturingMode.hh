@@ -48,6 +48,7 @@ private:
 	QMenu *mTexturingMenu;
 	QDoubleSpinBox *tileTexturingNumTilesSpinBox;
 	QLabel *tileTexturingNumTilesLabel;
+	QPushButton *tileTexturingAssignButton;
 	
 	QGridLayout *mTileTexturingLayout;	
 	

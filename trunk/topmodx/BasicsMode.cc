@@ -225,7 +225,8 @@ void BasicsMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStack
 }
 
 QDoubleSpinBox *BasicsMode::createDoubleSpinBox(QGridLayout *layout, QLabel *label, QString s, double low, double high, double step, double value, double decimals, int row, int col){
-	label = new QLabel(s);
+	// label = new QLabel(this);(s);
+	label->setText(s);
 	QDoubleSpinBox *spinbox = new QDoubleSpinBox;
 	spinbox->setAccelerated(true);
 	spinbox->setRange(low, high);
@@ -243,8 +244,8 @@ void BasicsMode::setupInsertEdge() {
 	
 	mInsertEdgeLayout = new QGridLayout;
 	// mInsertEdgeLayout->setMargin(0);
-	QLabel *noOptionsLabel = new QLabel(tr("No Options for this tool."));
-	mInsertEdgeLayout->addWidget(noOptionsLabel,0,0);
+	noOptionsInsertEdgeLabel = new QLabel(this);(tr("No Options for this tool."));
+	mInsertEdgeLayout->addWidget(noOptionsInsertEdgeLabel,0,0);
 	
 	mInsertEdgeLayout->setRowStretch(4,1);
 	mInsertEdgeLayout->setColumnStretch(2,1);
@@ -258,10 +259,10 @@ void BasicsMode::setupDeleteEdge() {
 	// mDeleteEdgeLayout->setMargin(0);
 	
 	//cleanup checkbox
-	QCheckBox *cleanupCheckBox = new QCheckBox(tr("Cleanup"),this);
-	connect(cleanupCheckBox, SIGNAL(stateChanged(int)),
+	cleanupDeleteEdgeCheckBox = new QCheckBox(tr("Cleanup"),this);
+	connect(cleanupDeleteEdgeCheckBox, SIGNAL(stateChanged(int)),
           ((MainWindow*)mParent), SLOT(toggleDeleteEdgeCleanupFlag(int)));
-	mDeleteEdgeLayout->addWidget(cleanupCheckBox,0,0);	
+	mDeleteEdgeLayout->addWidget(cleanupDeleteEdgeCheckBox,0,0);	
 	
 	mDeleteEdgeLayout->setRowStretch(1,1);
 	mDeleteEdgeLayout->setColumnStretch(2,1);
@@ -273,8 +274,8 @@ void BasicsMode::setupCollapseEdge() {
 	
 	mCollapseEdgeLayout = new QGridLayout;
 	// mCollapseEdgeLayout->setMargin(0);
-	QLabel *noOptionsLabel = new QLabel(tr("No Options for this tool."));
-	mCollapseEdgeLayout->addWidget(noOptionsLabel,0,0);
+	noOptionsCollapseEdgeLabel = new QLabel(tr("No Options for this tool."), this);
+	mCollapseEdgeLayout->addWidget(noOptionsCollapseEdgeLabel,0,0);
 	
 	mCollapseEdgeLayout->setRowStretch(4,1);
 	mCollapseEdgeLayout->setColumnStretch(2,1);
@@ -288,6 +289,7 @@ void BasicsMode::setupSubdivideEdge() {
 	// mSubdivideEdgeLayout->setMargin(0);
 	
 	//number of subdivisions spinbox
+	numSubdivsLabel = new QLabel(this);;
 	numSubdivsSpinBox = createDoubleSpinBox(mSubdivideEdgeLayout, numSubdivsLabel, tr("# Subdivisions"), 1, 10, 1, 1, 0, 0,0);
 	connect(numSubdivsSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeNumSubDivs(double)));
 
@@ -302,9 +304,8 @@ void BasicsMode::setupSubdivideEdge() {
 void BasicsMode::setupConnectEdges(){
 	
 	mConnectEdgesLayout = new QGridLayout;
-	// mConnectEdgesLayout->setMargin(0);
-	QLabel *noOptionsLabel = new QLabel(tr("No Options for this tool."));
-	mConnectEdgesLayout->addWidget(noOptionsLabel,0,0);
+	noOptionsConnectEdgesLabel = new QLabel(tr("No Options for this tool."), this);
+	mConnectEdgesLayout->addWidget(noOptionsConnectEdgesLabel,0,0);
 	
 	mConnectEdgesLayout->setRowStretch(0,1);
 	mConnectEdgesLayout->setColumnStretch(2,1);
@@ -320,8 +321,8 @@ void BasicsMode::setupSpliceCorners(){
 	mSpliceCornersLayout->setRowStretch(4,1);
 	mSpliceCornersLayout->setColumnStretch(2,1);
 	
-	QLabel *noOptionsLabel = new QLabel(tr("No Options for this tool."));
-	mSpliceCornersLayout->addWidget(noOptionsLabel,0,0);
+	noOptionsSpliceCornersLabel = new QLabel(tr("No Options for this tool."),this);
+	mSpliceCornersLayout->addWidget(noOptionsSpliceCornersLabel,0,0);
 	
 	mSpliceCornersWidget->setWindowTitle(tr("Splice Corners"));
 	mSpliceCornersWidget->setLayout(mSpliceCornersLayout);
@@ -338,29 +339,35 @@ void BasicsMode::setupTransforms(){
 	// transformLabel = new QLabel(tr("Translate:"));
 	// mTransformsLayout->addWidget(transformLabel,0,0,1,2);
 	
+	xPosLabel = new QLabel(this);;
 	xPosSpinBox = createDoubleSpinBox(mTransformsLayout, xPosLabel, tr("X-translate"), -100.0, 100.0, 0.5, 0.0, 1, 1,0);
 	connect(xPosSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(translatex(double)));
 	
+	yPosLabel = new QLabel(this);;
 	yPosSpinBox = createDoubleSpinBox(mTransformsLayout, yPosLabel, tr("Y-translate"), -100.0, 100.0, 0.5, 0.0, 1, 2,0);
 	connect(yPosSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(translatey(double)));
 	
+	zPosLabel = new QLabel(this);;
 	zPosSpinBox = createDoubleSpinBox(mTransformsLayout, zPosLabel, tr("Z-translate"), -100.0, 100.0, 0.5, 0.0, 1, 3,0);
 	connect(zPosSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(translatez(double)));
 	
-	// scaleLabel = new QLabel(tr("Scale:"));
+	// scaleLabel = new QLabel(this);(tr("Scale:"));
 	// mTransformsLayout->addWidget(scaleLabel,4,0,1,2);
 	
 	//x scale
+	xScaleLabel = new QLabel(this);;
 	xScaleSpinBox = createDoubleSpinBox(mTransformsLayout, xScaleLabel, tr("X-scale"), 0.1, 10.0, 0.1, 1.0, 1, 5,0);
 	connect(xScaleSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(scalex(double)));
 
+	yScaleLabel = new QLabel(this);;
 	yScaleSpinBox = createDoubleSpinBox(mTransformsLayout, yScaleLabel, tr("Y-scale"), 0.1, 10.0, 0.1, 1.0, 1, 6,0);
 	connect(yScaleSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(scaley(double)));
 
+ 	zScaleLabel = new QLabel(this);;
 	zScaleSpinBox = createDoubleSpinBox(mTransformsLayout, zScaleLabel, tr("Z-scale"), 0.1, 10.0, 0.1, 1.0, 1, 7,0);
 	connect(zScaleSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(scalez(double)));
 	
-	QPushButton *freezeTransformsButton = new QPushButton(tr("&Freeze Transforms"));
+	freezeTransformsButton = new QPushButton(tr("&Freeze Transforms"));
 	connect(freezeTransformsButton, SIGNAL(clicked()), this, SLOT(freezeTransforms()));
 	mTransformsLayout->addWidget(freezeTransformsButton,8,0,1,2);
 
@@ -387,6 +394,7 @@ void BasicsMode::setupSelectionOptions(){
 	mSelectionOptionsLayout->setVerticalSpacing(1);
 	mSelectionOptionsLayout->setHorizontalSpacing(1);
 		
+	mFaceAreaToleranceLabel = new QLabel(this);
 	mFaceAreaToleranceSpinBox = createDoubleSpinBox(mSelectionOptionsLayout, mFaceAreaToleranceLabel, tr("Face Area Sel.\nTolerance"), 0.0, 5.0, 0.001, 0.05, 3, 0,0);
 	connect(mFaceAreaToleranceSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeFaceAreaTolerance(double)));
 	
@@ -396,7 +404,7 @@ void BasicsMode::setupSelectionOptions(){
 	// zPosSpinBox = createDoubleSpinBox(mSelectionOptionsLayout, zPosLabel, tr("Z-translate"), -100.0, 100.0, 0.5, 0.0, 1, 3,0);
 	// connect(zPosSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(translatez(double)));
 	// 
-	// // scaleLabel = new QLabel(tr("Scale:"));
+	// // scaleLabel = new QLabel(this);(tr("Scale:"));
 	// // mSelectionOptionsLayout->addWidget(scaleLabel,4,0,1,2);
 	// 
 	// //x scale
@@ -420,5 +428,52 @@ void BasicsMode::setupSelectionOptions(){
 }
 
 void BasicsMode::retranslateUi(){
-	
+	mInsertEdgeAction->setText(tr("Insert Edge"));
+	mInsertEdgeAction->setStatusTip(tr("Enter Insert Edge Mode"));
+	mInsertEdgeAction->setToolTip(tr("Insert Edge Mode"));
+	mDeleteEdgeAction->setText(tr("Delete Edge"));
+	mDeleteEdgeAction->setStatusTip(tr("Enter Delete Edge Mode"));
+	mDeleteEdgeAction->setToolTip(tr("Delete Edge Mode"));
+	mCollapseEdgeAction->setText(tr("Collapse Edge"));
+	mCollapseEdgeAction->setStatusTip(tr("Enter Collapse Edge Mode"));
+	mCollapseEdgeAction->setToolTip(tr("Collapse Edge Mode"));
+	mSubdivideEdgeAction->setText(tr("Subdivide Edge"));
+	mSubdivideEdgeAction->setStatusTip(tr("Enter Subdivide Edge Mode"));
+	mSubdivideEdgeAction->setToolTip(tr("Subdivide Edge Mode"));
+	mConnectEdgesAction->setText(tr("Connect Edges"));
+	mConnectEdgesAction->setStatusTip(tr("Enter Connect Edges Mode"));
+	mConnectEdgesAction->setToolTip(tr("Connect Edges Mode"));
+	mSpliceCornersAction->setText(tr("Splice Corners"));
+	mSpliceCornersAction->setStatusTip(tr("Enter Splice Corners Mode"));
+	mSpliceCornersAction->setToolTip(tr("Splice Corners Mode"));
+	mTransformsAction->setText(tr("Transforms"));
+	mTransformsAction->setStatusTip(tr("Enter Transforms Mode"));
+	mTransformsAction->setToolTip(tr("Transforms Mode"));
+	mSelectionOptionsAction->setText(tr("Selection Options"));
+	mSelectionOptionsAction->setStatusTip(tr("Enter Selection Options Mode"));
+	mSelectionOptionsAction->setToolTip(tr("Selection Options Mode"));
+	mBasicsMenu->setTitle(tr("Basics"));
+
+	//mode spinbox labels etc...
+	noOptionsInsertEdgeLabel->setText(tr("No Options for this tool."));
+	mInsertEdgeWidget->setWindowTitle(tr("Insert Edge"));
+	cleanupDeleteEdgeCheckBox->setText(tr("Cleanup"));
+	mDeleteEdgeWidget->setWindowTitle(tr("Delete Edge Mode"));
+	noOptionsCollapseEdgeLabel->setText(tr("No Options for this tool."));
+	mCollapseEdgeWidget->setWindowTitle(tr("Collapse Edge"));
+	numSubdivsLabel->setText(tr("# Subdivisions"));
+	// mSubdivideEdgeWidget->setWindowTitle(tr("Subdivide Edge Mode"));
+	// noOptionsConnectEdgesLabel->setText(tr("No Options for this tool."));
+	// mConnectEdgesWidget->setWindowTitle(tr("Connect Edges"));
+	// noOptionsSpliceCornersLabel->setText(tr("No Options for this tool."));
+	// mSpliceCornersWidget->setWindowTitle(tr("Splice Corners"));
+	// xPosLabel->setText(tr("X-translate"));
+	// yPosLabel->setText(tr("Y-translate"));
+	// zPosLabel->setText(tr("Z-translate"));
+	// xScaleLabel->setText(tr("X-scale"));
+	// yScaleLabel->setText(tr("Y-scale"));
+	// zScaleLabel->setText(tr("Z-scale"));
+	// freezeTransformsButton->setText(tr("&Freeze Transforms"));
+	// mTransformsWidget->setWindowTitle(tr("Transforms Mode"));	
+	// mFaceAreaToleranceLabel->setText(tr("Face Area Sel.\nTolerance"));
 }

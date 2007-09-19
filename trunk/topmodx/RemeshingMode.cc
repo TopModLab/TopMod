@@ -570,8 +570,8 @@ void RemeshingMode::addActions(QActionGroup *actionGroup, QToolBar *toolBar, QSt
 }
 
 QDoubleSpinBox *RemeshingMode::createDoubleSpinBox(QGridLayout *layout, QLabel *label, QString s, double low, double high, double step, double value, double decimals, int row, int col){
-	label = new QLabel(s);
-	QDoubleSpinBox *spinbox = new QDoubleSpinBox;
+	label = new QLabel(s,this);
+	QDoubleSpinBox *spinbox = new QDoubleSpinBox(this);
 	spinbox->setAccelerated(true);
 	spinbox->setRange(low, high);
 	spinbox->setSingleStep(step);
@@ -1457,5 +1457,133 @@ void RemeshingMode::triggerSubdivideFace(){
 }
 
 void RemeshingMode::retranslateUi(){
+	//actions and menus
+	mDualAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Dual"));
+	mDualAction->setStatusTip(tr("Enter Dual Remeshing Mode"));
+	mDualAction->setToolTip(tr("Dual Remeshing Mode"));
+	mRootThreeAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Root-3"));
+	mRootThreeAction->setStatusTip(tr("Enter Root-3 Remeshing Mode"));
+	mRootThreeAction->setToolTip(tr("Root-3 Remeshing Mode"));
+	mTriangulateAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Triangulate"));
+	mTriangulateAction->setStatusTip(tr("Enter Triangulate Remeshing Mode"));
+	mTriangulateAction->setToolTip(tr("Triangulate Remeshing Mode"));
+	mDualVertexTruncationAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Dual Vertex Truncation"));
+	mDualVertexTruncationAction->setStatusTip(tr("Enter Dual Vertex Truncation Remeshing Mode"));
+	mDualVertexTruncationAction->setToolTip(tr("Dual Vertex Truncation Remeshing Mode"));
+	mStellationAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Stellate"));
+	mStellationAction->setStatusTip(tr("Enter Stellate Remeshing Mode"));
+	mStellationAction->setToolTip(tr("Stellate Remeshing Mode"));
+	mDoubleStellationAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Double Stellate"));
+	mDoubleStellationAction->setStatusTip(tr("Enter Double Stellate Remeshing Mode"));
+	mDoubleStellationAction->setToolTip(tr("Double Stellate Remeshing Mode"));
+	mTwelveSixFourAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("12.6.4"));
+	mTwelveSixFourAction->setStatusTip(tr("Enter 12.6.4 Remeshing Mode"));
+	mTwelveSixFourAction->setToolTip(tr("12.6.4 Remeshing Mode"));
+	mHoneycombAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Honeycomb"));
+	mHoneycombAction->setStatusTip(tr("Enter Honeycomb Remeshing Mode"));
+	mHoneycombAction->setToolTip(tr("Honeycomb Remeshing Mode"));
+	mVertexTruncationAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Vertex Truncation"));
+	mVertexTruncationAction->setStatusTip(tr("Enter Vertex Truncation Remeshing Mode"));
+	mVertexTruncationAction->setToolTip(tr("Vertex Truncation Remeshing Mode"));
+	mDualTwelveSixFourAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Dual 12.6.4"));
+	mDualTwelveSixFourAction->setStatusTip(tr("Enter Dual 12.6.4 Remeshing Mode"));
+	mDualTwelveSixFourAction->setToolTip(tr("Dual 12.6.4 Remeshing Mode"));
+	mLinearVertexAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Linear Vertex Insertion"));
+	mLinearVertexAction->setStatusTip(tr("Enter Linear Vertex Insertion Remeshing Mode"));
+	mLinearVertexAction->setToolTip(tr("Linear Vertex Insertion Remeshing Mode"));
+	mCatmullClarkAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Catmull Clark"));
+	mCatmullClarkAction->setStatusTip(tr("Enter Catmull Clark Remeshing Mode"));
+	mCatmullClarkAction->setToolTip(tr("Catmull Clark Remeshing Mode"));
+	mStellateEdgeRemovalAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Stellate with Edge Removal"));
+	mStellateEdgeRemovalAction->setStatusTip(tr("Enter Stellate with Edge Removal Remeshing Mode"));
+	mStellateEdgeRemovalAction->setToolTip(tr("Stellate with Edge Removal Remeshing Mode"));
+	mDooSabinAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Doo Sabin"));
+	mDooSabinAction->setStatusTip(tr("Enter Doo Sabin Remeshing Mode"));
+	mDooSabinAction->setToolTip(tr("Doo Sabin Remeshing Mode"));
+	mCornerCuttingAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Corner Cutting"));
+	mCornerCuttingAction->setStatusTip(tr("Enter Corner Cutting Remeshing Mode"));
+	mCornerCuttingAction->setToolTip(tr("Corner Cutting Remeshing Mode"));
+	mModifiedCornerCuttingAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Modified Corner Cutting"));
+	mModifiedCornerCuttingAction->setStatusTip(tr("Enter Modified Corner Cutting Remeshing Mode"));
+	mModifiedCornerCuttingAction->setToolTip(tr("Modified Corner Cutting Remeshing Mode"));
+	mSimplestAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Simplest"));
+	mSimplestAction->setStatusTip(tr("Enter Simplest Remeshing Mode"));
+	mSimplestAction->setToolTip(tr("Simplest Remeshing Mode"));
+	mPentagonalizationAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Pentagonalization"));
+	mPentagonalizationAction->setStatusTip(tr("Enter Pentagonalization Remeshing Mode"));
+	mPentagonalizationAction->setToolTip(tr("Pentagonalization Remeshing Mode"));
+	mCubicPentagonalizationAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Cubic Pentagonalization"));
+	mCubicPentagonalizationAction->setStatusTip(tr("Enter Cubic Pentagonalization Remeshing Mode"));
+	mCubicPentagonalizationAction->setToolTip(tr("Cubic Pentagonalization Remeshing Mode"));
+	mDualPentagonalizationAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Dual Pentagonalization"));
+	mDualPentagonalizationAction->setStatusTip(tr("Enter Dual Pentagonalization Remeshing Mode"));
+	mDualPentagonalizationAction->setToolTip(tr("Dual Pentagonalization Remeshing Mode"));
+	mLoopStyleRemeshingAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Loop Style Remeshing"));
+	mLoopStyleRemeshingAction->setStatusTip(tr("Enter Loop Style Remeshing Remeshing Mode"));
+	mLoopStyleRemeshingAction->setToolTip(tr("Loop Style Remeshing Remeshing Mode"));
+	mLoopSubdivisionAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Loop Subdivision"));
+	mLoopSubdivisionAction->setStatusTip(tr("Enter Loop Subdivision Remeshing Mode"));
+	mLoopSubdivisionAction->setToolTip(tr("Loop Subdivision Remeshing Mode"));
+	mDualLoopStyleRemeshingAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Dual Loop Style Remeshing"));
+	mDualLoopStyleRemeshingAction->setStatusTip(tr("Enter Dual Loop Style Remeshing Remeshing Mode"));
+	mDualLoopStyleRemeshingAction->setToolTip(tr("Dual Loop Style Remeshing Remeshing Mode"));
+	mDualLoopSubdivisionAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Dual Loop Subdivision"));
+	mDualLoopSubdivisionAction->setStatusTip(tr("Enter Dual Loop Subdivision Remeshing Mode"));
+	mDualLoopSubdivisionAction->setToolTip(tr("Dual Loop Subdivision Remeshing Mode"));
+	mGlobalExtrudeAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Global Extrude"));
+	mGlobalExtrudeAction->setStatusTip(tr("Enter Global Extrude Remeshing Mode"));
+	mGlobalExtrudeAction->setToolTip(tr("Global Extrude Remeshing Mode"));
+	mCheckerboardAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Checkerboard"));
+	mCheckerboardAction->setStatusTip(tr("Enter Checkerboard Remeshing Mode"));
+	mCheckerboardAction->setToolTip(tr("Checkerboard Remeshing Mode"));
+	mDualGlobalExtrudeAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Dual Global Extrude"));
+	mDualGlobalExtrudeAction->setStatusTip(tr("Enter Dual Global Extrude Remeshing Mode"));
+	mDualGlobalExtrudeAction->setToolTip(tr("Dual Global Extrude Remeshing Mode"));
+	mDualCheckerboardAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Dual Checkerboard"));
+	mDualCheckerboardAction->setStatusTip(tr("Enter Dual Checkerboard Remeshing Mode"));
+	mDualCheckerboardAction->setToolTip(tr("Dual Checkerboard Remeshing Mode"));
+	mPentagonPreservingAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Pentagon Preserving"));
+	mPentagonPreservingAction->setStatusTip(tr("Enter Pentagon Preserving Remeshing Mode"));
+	mPentagonPreservingAction->setToolTip(tr("Pentagon Preserving Remeshing Mode"));
+	mDualPentagonPreservingAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Dual Pentagon Preserving"));
+	mDualPentagonPreservingAction->setStatusTip(tr("Enter Dual Pentagon Preserving Remeshing Mode"));
+	mDualPentagonPreservingAction->setToolTip(tr("Dual Pentagon Preserving Remeshing Mode"));
+	mDualLoopStyleRemeshingSixAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Dual Loop Style"));
+	mDualLoopStyleRemeshingSixAction->setStatusTip(tr("Enter Loop Style Remeshing Remeshing Mode"));
+	mDualLoopStyleRemeshingSixAction->setToolTip(tr("Dual Loop Style Remeshing Remeshing Mode"));
+	mLoopStyleRemeshingSixAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Loop Style"));
+	mLoopStyleRemeshingSixAction->setStatusTip(tr("Enter Loop Style Remeshing Remeshing Mode"));
+	mLoopStyleRemeshingSixAction->setToolTip(tr("Loop Style Remeshing Remeshing Mode"));
+	mFractalAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Fractal"));
+	mFractalAction->setStatusTip(tr("Enter Fractal Remeshing Mode"));
+	mFractalAction->setToolTip(tr("Fractal Remeshing Mode"));
+	mDoubleStellateMiscAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Double Stellate"));
+	mDoubleStellateMiscAction->setStatusTip(tr("Enter Double Stellate Remeshing Mode"));
+	mDoubleStellateMiscAction->setToolTip(tr("Double Stellate Remeshing Mode"));
+	mDooSabinBCAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Doo Sabin BC"));
+	mDooSabinBCAction->setStatusTip(tr("Enter Doo Sabin BC Remeshing Mode"));
+	mDooSabinBCAction->setToolTip(tr("Doo Sabin BC Remeshing Mode"));
+	mDooSabinBCNewAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Doo Sabin BC New"));
+	mDooSabinBCNewAction->setStatusTip(tr("Enter Doo Sabin BC New Remeshing Mode"));
+	mDooSabinBCNewAction->setToolTip(tr("Doo Sabin BC New Remeshing Mode"));
+	mDomeAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Dome"));
+	mDomeAction->setStatusTip(tr("Enter Dome Remeshing Mode"));
+	mDomeAction->setToolTip(tr("Dome Remeshing Mode"));
+	mSubdivideFaceAction->setText(/*QIcon(":images/doosabin_extrude.png"),*/tr("Subdivide Face"));
+	mSubdivideFaceAction->setStatusTip(tr("Enter Subdivide Face Remeshing Mode"));
+	mSubdivideFaceAction->setToolTip(tr("Subdivide Face Remeshing Mode"));
+	//qmenus titles
+	mRemeshingMenu->setTitle(tr("Remeshing"));
+	mThreeConversionMenu->setTitle(tr("3-Conversion"));
+	mFourConversionMenu->setTitle(tr("4-Conversion"));
+	mFiveConversionMenu->setTitle(tr("5-Conversion"));	
+	mThreePreservationMenu->setTitle(tr("3-Preservation"));
+	mFourPreservationMenu->setTitle(tr("4-Preservation"));
+	mFivePreservationMenu->setTitle(tr("5-Preservation"));
+	mSixPreservationMenu->setTitle(tr("6-Preservation"));
+	mMiscellaneousMenu->setTitle(tr("Miscellaneous"));
+	
+	// widgets and stuff
+	//!< \todo add buttons and spinbox labels to retranslate function for remeshingmode.cc
 	
 }

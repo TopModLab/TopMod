@@ -91,6 +91,14 @@ private:
 	QLabel *yScaleLabel;
 	QLabel *zScaleLabel;
 	
+	QLabel *noOptionsInsertEdgeLabel;
+	QCheckBox *cleanupDeleteEdgeCheckBox;
+	QLabel *noOptionsCollapseEdgeLabel;
+	QLabel *noOptionsConnectEdgesLabel;
+	QLabel *noOptionsSpliceCornersLabel;
+	
+	QPushButton *freezeTransformsButton;
+	
 	//transform spinboxes
 	QDoubleSpinBox *xScaleSpinBox;
 	QDoubleSpinBox *yScaleSpinBox;

@@ -1200,6 +1200,12 @@ void MainWindow::createActions() {
 	sm->registerAction(mHelpAct, "Help Menu", "F1");
 	mActionListWidget->addAction(mHelpAct);
 
+	mVideoTutorialsAct = new QAction(QIcon(":images/applications-internet.png"),tr("&TopMod Video Tutorials on blip.tv"), this);
+	mVideoTutorialsAct->setStatusTip( tr("Go to http://topmod.blip.tv") );
+	connect(mVideoTutorialsAct, SIGNAL(triggered()), this, SLOT(topModBlip()));
+	sm->registerAction(mVideoTutorialsAct, "Help Menu", "");
+	mActionListWidget->addAction(mVideoTutorialsAct);
+	
 	mTopModWebAct = new QAction(QIcon(":images/applications-internet.png"),tr("&TopMod on the Web"), this);
 	mTopModWebAct->setStatusTip( tr("Go to the TopMod web page") );
 	connect(mTopModWebAct, SIGNAL(triggered()), this, SLOT(topModWeb()));
@@ -1208,7 +1214,7 @@ void MainWindow::createActions() {
 
 	mTopModResearchAct = new QAction(QIcon(":images/applications-internet.png"),tr("&TopMod Research Papers"), this);
 	mTopModResearchAct->setStatusTip( tr("Go to the TopMod Research web page") );
-	connect(mTopModResearchAct, SIGNAL(triggered()), this, SLOT(topModWeb()));
+	connect(mTopModResearchAct, SIGNAL(triggered()), this, SLOT(topModResearch()));
 	sm->registerAction(mTopModResearchAct, "Help Menu", "");
 	mActionListWidget->addAction(mTopModResearchAct);
 
@@ -1481,6 +1487,7 @@ void MainWindow::createMenus(){
 	mHelpMenu->addAction(mHelpAct);
 	mHelpMenu->addAction(mCheckForUpdatesAct);
 	mHelpMenu->addAction(mTopModWebAct);
+	mHelpMenu->addAction(mVideoTutorialsAct);
 	mHelpMenu->addAction(mTopModResearchAct);
 	mHelpMenu->addSeparator();
 	mLanguageMenu = new QMenu(tr("&Language"));
@@ -1609,7 +1616,7 @@ void MainWindow::createStartupDialog(){
 
 	// mStartupDialogDockWidget->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable /* | QDockWidget::DockWidgetClosable*/);
 	mStartupDialogDockWidget->setAllowedAreas(Qt::NoDockWidgetArea);
-	// mStartupDialogDockWidget->hide();
+	mStartupDialogDockWidget->hide();
 	
 	mStartupDialogWidget = new QWidget;
 	mStartupDialogLayout = new QGridLayout;
@@ -1878,6 +1885,9 @@ void MainWindow::topModWeb(){
 	QDesktopServices::openUrl(QUrl("http://www.topmod.org/"));
 }
 
+void MainWindow::topModBlip(){
+	QDesktopServices::openUrl(QUrl("http://topmod.blip.tv/"));
+}
 
 void MainWindow::topModResearch(){
 	QDesktopServices::openUrl(QUrl("http://www-viz.tamu.edu/faculty/ergun/research/topology/index.html"));
@@ -5224,6 +5234,8 @@ void MainWindow::retranslateUi() {
 	mHelpAct->setStatusTip( tr("View the User Manual on the TopMod Wiki") );
 	mTopModWebAct->setText(tr("&TopMod on the Web"));
 	mTopModWebAct->setStatusTip( tr("Go to the TopMod web page") );
+	mVideoTutorialsAct->setText(tr("&TopMod Video Tutorials on blip.tv"));
+	mVideoTutorialsAct->setStatusTip( tr("Go to http://topmod.blip.tv") );
 	mTopModResearchAct->setText(tr("&TopMod Research Papers"));
 	mTopModResearchAct->setStatusTip( tr("Go to the TopMod Research web page") );
 	mCheckForUpdatesAct->setText(tr("&Check for Updates"));
