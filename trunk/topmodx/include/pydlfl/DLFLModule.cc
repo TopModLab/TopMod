@@ -1183,9 +1183,9 @@ dlfl_subdivide(PyObject *self, PyObject *args) {
 			DLFL::loopStyleSubdivide( currObj, attrb1 );
 			break;
 		case 24 : // root3 - dave
-			DLFL::createDual(&currObj, true); // Use accurate method
-			DLFL::honeycombSubdivide(&currObj);
-			DLFL::createDual(&currObj,true); // Use accurate method
+			DLFL::createDual(currObj, true); // Use accurate method
+			DLFL::honeycombSubdivide(currObj);
+			DLFL::createDual(currObj,true); // Use accurate method
 			break;
 		case 22 : // linear-vertex
 		case 23 : // allfaces

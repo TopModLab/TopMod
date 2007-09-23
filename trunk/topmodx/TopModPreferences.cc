@@ -224,7 +224,7 @@ void TopModPreferences::readSettings(){
 	
 	#ifdef WITH_PYTHON
 	QSize scriptEditorSize = mSettings->value("scriptEditorSize", QSize(500,300)).toSize();
-	QPoint scriptEditorPos = mSettings->value("scriptEditorPos", QPoint(20, QApplication::desktop()->height()-20)).toPoint();	
+	QPoint scriptEditorPos = mSettings->value("scriptEditorPos", QPoint(20, QApplication::desktop()->height()-500)).toPoint();	
 	#endif
 	mShowStartupDialogAtStartup = mSettings->value("showStartupDialogAtStartup", false).toBool();
 	mSettings->endGroup();
