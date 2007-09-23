@@ -1083,7 +1083,6 @@ dlfl_subdivide(PyObject *self, PyObject *args) {
 														"loop-style",
 														"linear-vertex",
 														"allfaces",
-														"dual",
 														"root3"};
 
   char* subdivType;
@@ -1183,13 +1182,10 @@ dlfl_subdivide(PyObject *self, PyObject *args) {
 		case 21 : // loop style
 			DLFL::loopStyleSubdivide( currObj, attrb1 );
 			break;
-		case 24 : // dual - dave
-		 	DLFL::createDual(currObj);
-			break;
-		case 25 : // root3 - dave
-			DLFL::createDual(&object,true); // Use accurate method
-			DLFL::honeycombSubdivide(&object);
-			DLFL::createDual(&object,true); // Use accurate method
+		case 24 : // root3 - dave
+			DLFL::createDual(&currObj, true); // Use accurate method
+			DLFL::honeycombSubdivide(&currObj);
+			DLFL::createDual(&currObj,true); // Use accurate method
 			break;
 		case 22 : // linear-vertex
 		case 23 : // allfaces
