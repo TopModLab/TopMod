@@ -302,8 +302,9 @@ class MainWindow : public QMainWindow {
 	static double substellate_curve; //amount of second stellation extrusion
 
 	//!< added by dave
-	static double domeExtrudeLength_factor;     //!< Length for dome extrusion
-	static double domeExtrudeScale_factor; 			//!< Scale factor for dome extrusion
+	static double domeExtrudeLength_factor;     //!< Length for dome extrusion  //dave
+	static double domeExtrudeScale_factor; 			//!< Scale factor for dome extrusion //dave
+	static double domeExtrudeRotation_factor; 			//!< Scale factor for dome extrusion //dave
 	
 	//!< Added by Bei & Cansin
 	static double domeLength_factor;     //!< Length for dome extrusion
@@ -524,6 +525,7 @@ private:
 	int mAutoSaveDelay;
 	QString mSaveDirectory;
 	bool mCommandCompleterIndexToggle;
+	bool mSingleClickExtrude;
 
 
 	void createActions();													//!< create all MainWindow actions for menu's and icons, also create operating mode actions in subclasses
@@ -835,6 +837,7 @@ public slots:
 	void setAutoSaveDelay(double value);
 	void setIncrementalSave(int value);
 	void setCommandCompleterIndexToggle(int value);
+	void setSingleClickExtrude(int value);
 	void setIncrementalSaveMax(double value);
 	void setSaveDirectory(QString s);
 	void checkSaveDirectory();
@@ -1010,6 +1013,7 @@ public slots:
 	void changeDomeSubdivisionLength(double value); // Bei & Cansin
 	void changeDomeSubdivisionScale(double value); // Bei & Cansin
 	void changeDomeExtrudeLength(double value); // dave
+	void changeDomeExtrudeRotation(double value); // dave
 	void changeDomeExtrudeScale(double value); // dave
 	void toggleAccurateDualFlag(int state);
 

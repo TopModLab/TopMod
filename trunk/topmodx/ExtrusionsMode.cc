@@ -228,7 +228,7 @@ void ExtrusionsMode::triggerDomeExtrude(){
 	((MainWindow*)mParent)->setToolOptions(mDomeExtrudeWidget);
 	((MainWindow*)mParent)->setMode(MainWindow::ExtrudeFaceDome);
 	((MainWindow*)mParent)->setExtrusionMode(MainWindow::DomeExtrude);
-	((MainWindow*)mParent)->setSpinBoxes(domeHeightSpinBox,domeScaleSpinBox);
+	((MainWindow*)mParent)->setSpinBoxes(domeHeightSpinBox,domeRotationSpinBox,domeScaleSpinBox);
 }
 
 void ExtrusionsMode::setLength(double value){
@@ -554,14 +554,16 @@ void ExtrusionsMode::setupDomeExtrude(){
 	mDomeExtrudeLayout->setVerticalSpacing(1);
 	mDomeExtrudeLayout->setHorizontalSpacing(1);
 	// mDomeLayout->setMargin(0);
-	domeHeightSpinBox = createDoubleSpinBox(mDomeExtrudeLayout, domeHeightLabel, tr("Height:"), 0.0, 2.0, 0.01, 1.0, 2, 0,0);
+	domeHeightSpinBox = createDoubleSpinBox(mDomeExtrudeLayout, domeHeightLabel, tr("Height:"), -10.0, 100.0, 0.01, 1.0, 2, 0,0);
 	connect(domeHeightSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent),SLOT(changeDomeExtrudeLength(double)) );	
-	domeScaleSpinBox = createDoubleSpinBox(mDomeExtrudeLayout, domeScaleLabel, tr("Scale:"), 0.0, 2.0, 0.01, 1.0, 2, 1,0);
+	domeRotationSpinBox = createDoubleSpinBox(mDomeExtrudeLayout, domeRotationLabel, tr("Twist:"), -1.0, 1.0, 0.01, 0.0, 2, 1,0);
+	connect(domeRotationSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent),SLOT(changeDomeExtrudeRotation(double)) );	
+	domeScaleSpinBox = createDoubleSpinBox(mDomeExtrudeLayout, domeScaleLabel, tr("Scale:"), 0.0, 10.0, 0.01, 1.0, 2, 2,0);
 	connect(domeScaleSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent),SLOT(changeDomeExtrudeScale(double)) );	
 	QPushButton *domeButton = new QPushButton(tr("Perform Extrusion"), this);
 	connect(domeButton, SIGNAL(clicked()), ((MainWindow*)mParent),SLOT(performExtrusion()) );
-	mDomeExtrudeLayout->addWidget(domeButton,2,0,1,2);
-	mDomeExtrudeLayout->setRowStretch(3,1);
+	mDomeExtrudeLayout->addWidget(domeButton,3,0,1,2);
+	mDomeExtrudeLayout->setRowStretch(4,1);
 	mDomeExtrudeLayout->setColumnStretch(2,1);
 	mDomeExtrudeWidget->setWindowTitle("Dome Extrusion");
 	mDomeExtrudeWidget->setLayout(mDomeExtrudeLayout);

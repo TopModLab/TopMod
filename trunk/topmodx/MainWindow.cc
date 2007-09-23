@@ -117,6 +117,7 @@ double MainWindow::dual1264_scale_factor = 0.7 ;
 //dave
 double MainWindow::domeExtrudeLength_factor = 1.0 ;
 double MainWindow::domeExtrudeScale_factor = 1.0  ;
+double MainWindow::domeExtrudeRotation_factor = 0.0  ;
 
 // Added by bei dec 11
 double MainWindow::dooSabinBCnewScale_factor = 1.0;
@@ -3203,22 +3204,22 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 						}
 					break;
 				case ExtrudeFace :
-				// if (!mExtrudeMultipleAct->isChecked()){
-				// 	if ( active->numSelectedFaces() >= 1 )
-				// 		{
-				// 			DLFLFacePtr sfptr = active->getSelectedFace(0);
-				// 			if ( sfptr )
-				// 				{
-				// 					undoPush();
-				// 					setModified(true);
-				// 					DLFL::extrudeFace(&object,sfptr,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
-				// 					active->recomputePatches();
-				// 					active->recomputeNormals();
-				// 				}
-				// 			active->clearSelectedFaces();
-				// 			redraw();
-				// 		}
-				// 	}
+				if (mSingleClickExtrude){
+					if ( active->numSelectedFaces() >= 1 )
+						{
+							DLFLFacePtr sfptr = active->getSelectedFace(0);
+							if ( sfptr )
+								{
+									undoPush();
+									setModified(true);
+									DLFL::extrudeFace(&object,sfptr,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
+									active->recomputePatches();
+									active->recomputeNormals();
+								}
+							active->clearSelectedFaces();
+							redraw();
+						}
+					}
 					break;
 				case ExtrudeMultipleFaces :
 					// if (!mExtrudeMultipleAct->isChecked()){
@@ -3242,136 +3243,132 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 					// 	}
 					break;
 				case ExtrudeFaceDS :
-				// if (!mExtrudeMultipleAct->isChecked()){
-				// 	if ( active->numSelectedFaces() >= 1 )
-				// 		{
-				// 			DLFLFacePtr sfptr = active->getSelectedFace(0);
-				// 			if ( sfptr )
-				// 				{
-				// 					undoPush();
-				// 					setModified(true);
-				// 					DLFL::extrudeFaceDS(&object,sfptr,extrude_dist,num_extrusions,
-				// 															ds_ex_twist,extrude_scale);
-				// 					active->recomputePatches();
-				// 					active->recomputeNormals();
-				// 				}
-				// 			active->clearSelectedFaces();
-				// 			redraw();
-				// 		}
-				// 	}
+				if (mSingleClickExtrude){
+					if ( active->numSelectedFaces() >= 1 )
+						{
+							DLFLFacePtr sfptr = active->getSelectedFace(0);
+							if ( sfptr )
+								{
+									undoPush();
+									setModified(true);
+									DLFL::extrudeFaceDS(&object,sfptr,extrude_dist,num_extrusions, ds_ex_twist,extrude_scale);
+									active->recomputePatches();
+									active->recomputeNormals();
+								}
+							active->clearSelectedFaces();
+							redraw();
+						}
+					}
 					break;
 				case ExtrudeDualFace :
-				// if (!mExtrudeMultipleAct->isChecked()){
-				// 	if ( active->numSelectedFaces() >= 1 )
-				// 		{
-				// 			DLFLFacePtr sfptr = active->getSelectedFace(0);
-				// 			if ( sfptr )
-				// 				{
-				// 					undoPush();
-				// 					setModified(true);
-				// 					DLFL::extrudeDualFace(&object,sfptr,extrude_dist,num_extrusions,
-				// 																extrude_rot,extrude_scale,
-				// 																dual_mesh_edges_check);
-				// 					active->recomputePatches();
-				// 					active->recomputeNormals();
-				// 				}
-				// 			active->clearSelectedFaces();
-				// 			redraw();
-				// 		}
-				// 	}
+				if (mSingleClickExtrude){
+					if ( active->numSelectedFaces() >= 1 )
+						{
+							DLFLFacePtr sfptr = active->getSelectedFace(0);
+							if ( sfptr )
+								{
+									undoPush();
+									setModified(true);
+									DLFL::extrudeDualFace(&object,sfptr,extrude_dist,num_extrusions, extrude_rot,extrude_scale, dual_mesh_edges_check);
+									active->recomputePatches();
+									active->recomputeNormals();
+								}
+							active->clearSelectedFaces();
+							redraw();
+						}
+					}
 					break;
 				case ExtrudeFaceDodeca :
-				// if (!mExtrudeMultipleAct->isChecked()){
-				// 	if ( active->numSelectedFaces() >= 1 )
-				// 		{
-				// 			DLFLFacePtr sfptr = active->getSelectedFace(0);
-				// 			if ( sfptr )
-				// 				{
-				// 					undoPush();
-				// 					setModified(true);
-				// 					DLFL::extrudeFaceDodeca(&object,sfptr,extrude_dist,num_extrusions,
-				// 																	ds_ex_twist,extrude_scale,
-				// 																	hexagonalize_dodeca_extrude);
-				// 					active->recomputePatches();
-				// 					active->recomputeNormals();
-				// 				}
-				// 			active->clearSelectedFaces();
-				// 			redraw();
-				// 		}
-				// 	}
+				if (mSingleClickExtrude){
+					if ( active->numSelectedFaces() >= 1 )
+						{
+							DLFLFacePtr sfptr = active->getSelectedFace(0);
+							if ( sfptr )
+								{
+									undoPush();
+									setModified(true);
+									DLFL::extrudeFaceDodeca(&object,sfptr,extrude_angle,num_extrusions, extrude_length1,extrude_length2,extrude_length3, hexagonalize_dodeca_extrude);							
+									// DLFL::extrudeFaceDodeca(&object,sfptr,extrude_dist,num_extrusions, ds_ex_twist,extrude_scale, hexagonalize_dodeca_extrude);
+									active->recomputePatches();
+									active->recomputeNormals();
+								}
+							active->clearSelectedFaces();
+							redraw();
+						}
+					}
 					break;
 				case ExtrudeFaceIcosa :
-				// if (!mExtrudeMultipleAct->isChecked()){
-				// 	if ( active->numSelectedFaces() >= 1 )
-				// 		{
-				// 			DLFLFacePtr sfptr = active->getSelectedFace(0);
-				// 			if ( sfptr )
-				// 				{
-				// 					undoPush();
-				// 					setModified(true);
-				// 					DLFL::extrudeFaceIcosa(&object,sfptr,extrude_dist,num_extrusions,
-				// 																 ds_ex_twist,extrude_scale);
-				// 					active->recomputePatches();
-				// 					active->recomputeNormals();
-				// 				}
-				// 			active->clearSelectedFaces();
-				// 			redraw();
-				// 		}
-				// 	}
+				if (mSingleClickExtrude){
+					if ( active->numSelectedFaces() >= 1 )
+						{
+							DLFLFacePtr sfptr = active->getSelectedFace(0);
+							if ( sfptr )
+								{
+									undoPush();
+									setModified(true);
+									DLFL::extrudeFaceIcosa(&object, sfptr, extrude_angle_icosa, num_extrusions, extrude_length1_icosa,extrude_length2_icosa,extrude_length3_icosa);
+									// DLFL::extrudeFaceIcosa(&object,sfptr,extrude_dist,num_extrusions, ds_ex_twist,extrude_scale);
+									active->recomputePatches();
+									active->recomputeNormals();
+								}
+							active->clearSelectedFaces();
+							redraw();
+						}
+					}
 					break;
 				case StellateFace :
-				// if (!mExtrudeMultipleAct->isChecked()){
-				// 	if ( active->numSelectedFaces() >= 1 )
-				// 		{
-				// 			DLFLFacePtr sfptr = active->getSelectedFace(0);
-				// 			if ( sfptr )
-				// 				{
-				// 					undoPush();
-				// 					setModified(true);
-				// 					DLFL::stellateFace(&object,sfptr,extrude_dist);
-				// 					active->recomputePatches();
-				// 					active->recomputeNormals();
-				// 				}
-				// 			active->clearSelectedFaces();
-				// 			redraw();
-				// 		}
-				// 	}
+				if (mSingleClickExtrude){
+					if ( active->numSelectedFaces() >= 1 )
+						{
+							DLFLFacePtr sfptr = active->getSelectedFace(0);
+							if ( sfptr )
+								{
+									undoPush();
+									setModified(true);
+									DLFL::stellateFace(&object,sfptr,extrude_dist);
+									active->recomputePatches();
+									active->recomputeNormals();
+								}
+							active->clearSelectedFaces();
+							redraw();
+						}
+					}
 					break;
 				case DoubleStellateFace :
-				// if (!mExtrudeMultipleAct->isChecked()){
-				// 	if ( active->numSelectedFaces() >= 1 )
-				// 		{
-				// 			DLFLFacePtr sfptr = active->getSelectedFace(0);
-				// 			if ( sfptr )
-				// 				{
-				// 					undoPush();
-				// 					setModified(true);
-				// 					DLFL::doubleStellateFace(&object,sfptr,extrude_dist);
-				// 					active->recomputePatches();
-				// 					active->recomputeNormals();
-				// 				}
-				// 			active->clearSelectedFaces();
-				// 			redraw();
-				// 		}
-				// 	}
+				if (mSingleClickExtrude){
+					if ( active->numSelectedFaces() >= 1 )
+						{
+							DLFLFacePtr sfptr = active->getSelectedFace(0);
+							if ( sfptr )
+								{
+									undoPush();
+									setModified(true);
+									DLFL::doubleStellateFace(&object,sfptr,extrude_dist);
+									active->recomputePatches();
+									active->recomputeNormals();
+								}
+							active->clearSelectedFaces();
+							redraw();
+						}
+					}
 					break;
 					case ExtrudeFaceDome :
-					// if (!mExtrudeMultipleAct->isChecked()){
-					// 	if ( active->numSelectedFaces() >= 1 )
-					// 		{
-					// 			DLFLFacePtr sfptr = active->getSelectedFace(0);
-					// 			if ( sfptr )
-					// 				{
-					// 					undoPush();
-					// 					setModified(true);
-					// 					DLFL::extrudeFaceDome(&object,sfptr,extrude_dist);
-					// 					active->recomputePatches();
-					// 					active->recomputeNormals();
-					// 				}
-					// 			active->clearSelectedFaces();
-					// 			redraw();
-					// 		}
-					// 	}
+					if (mSingleClickExtrude){
+						if ( active->numSelectedFaces() >= 1 )
+							{
+								DLFLFacePtr sfptr = active->getSelectedFace(0);
+								if ( sfptr )
+									{
+										undoPush();
+										setModified(true);
+										DLFL::extrudeFaceDome(&object,sfptr,extrude_dist,extrude_rot,extrude_scale);
+										active->recomputePatches();
+										active->recomputeNormals();
+									}
+								active->clearSelectedFaces();
+								redraw();
+							}
+						}
 						break;
 				case CrustModeling :
 					if ( active->numSelectedFaces() >= 1 )
@@ -3752,14 +3749,12 @@ void MainWindow::performExtrusion(){
 							// std::cout<< extrude_angle_icosa  << "\t" << num_extrusions  << "\t" << extrude_length1_icosa  << "\t" << extrude_length2_icosa << "\t" << extrude_length3_icosa <<"\n";
 							DLFL::extrudeFaceIcosa(&object, *it, extrude_angle_icosa, num_extrusions, extrude_length1_icosa,extrude_length2_icosa,extrude_length3_icosa);
 							// DLFL::extrudeFaceCubOcta(&object, *it, extrude_angle_icosa,num_extrusions, extrude_length1_icosa,extrude_length2_icosa,extrude_length3_icosa);
-							
 							break;
 							// DLFLFacePtr extrudeFaceDodeca(DLFLObjectPtr obj, DLFLFacePtr fptr, double angle, int num, double ex_dist1, double ex_dist2, double ex_dist3, bool hexagonalize);
 							case DodecahedralExtrude: 
 							DLFL::extrudeFaceDodeca(&object,*it,extrude_angle,num_extrusions, extrude_length1,extrude_length2,extrude_length3, hexagonalize_dodeca_extrude);							
 							// case DodecahedralExtrude: DLFL::extrudeFaceDodeca(&object,*it,extrude_dist,num_extrusions, ds_ex_twist,extrude_scale, hexagonalize_dodeca_extrude);							
 							// DLFL::extrudeFaceSmallRhombiCubOcta(&object,*it,extrude_angle,num_extrusions, extrude_length1,extrude_length2,extrude_length3);
-							
 							break;
 							case OctahedralExtrude: DLFL::extrudeDualFace(&object,*it,extrude_dist,num_extrusions, extrude_rot,extrude_scale, dual_mesh_edges_check);
 							break;
@@ -3767,7 +3762,7 @@ void MainWindow::performExtrusion(){
 							break;
 							case DoubleStellateExtrude: DLFL::doubleStellateFace(&object,*it,extrude_dist);
 							break;
-							case DomeExtrude: DLFL::extrudeFaceDome(&object,*it,domeExtrudeLength_factor,domeExtrudeScale_factor);
+							case DomeExtrude: DLFL::extrudeFaceDome(&object,*it,domeExtrudeLength_factor,domeExtrudeRotation_factor,domeExtrudeScale_factor);
 							break;
 							default: DLFL::extrudeFace(&object,*it,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
 							break;

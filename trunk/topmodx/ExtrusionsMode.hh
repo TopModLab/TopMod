@@ -135,8 +135,10 @@ public:
 	
 	//dome extrude
 	QLabel *domeHeightLabel;
+	QLabel *domeRotationLabel;
 	QLabel *domeScaleLabel;
 	QDoubleSpinBox *domeHeightSpinBox;
+	QDoubleSpinBox *domeRotationSpinBox;
 	QDoubleSpinBox *domeScaleSpinBox;
 	
 	

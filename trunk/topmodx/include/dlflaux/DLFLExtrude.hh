@@ -74,7 +74,7 @@ namespace DLFL {
 
   void extrudeFace(DLFLObjectPtr obj, DLFLFacePtr fptr);
 
-	void extrudeFaceDome(DLFLObjectPtr obj, DLFLFacePtr fptr, double length, double sf);
+	void extrudeFaceDome(DLFLObjectPtr obj, DLFLFacePtr fptr, double length, double rot=0.0, double sf=1.0);
 
 } // end namespace DLFL
 

@@ -66,17 +66,6 @@ void MainWindow::toggleUseQuadsFlag(int state)
   MainWindow::use_quads = bool(state);
 }
 
-//dave
-void MainWindow::changeDomeExtrudeLength(double value)
-{
-  MainWindow::domeExtrudeLength_factor = value;
-}
-
-void MainWindow::changeDomeExtrudeScale(double value)
-{
-  MainWindow::domeExtrudeScale_factor = value;
-}
-
 // Added by Bei & Cansin
 
 void MainWindow::changeDomeSubdivisionLength(double value)

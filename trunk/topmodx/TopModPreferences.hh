@@ -199,6 +199,9 @@ private:
 	
 	QCheckBox *mCommandCompleterIndexToggle;
 	bool mCommandCompleterIndex,mCommandCompleterIndexDefault;
+
+	QCheckBox *mSingleClickExtrudeCheckBox;
+	bool mSingleClickExtrude, mSingleClickExtrudeDefault;
 	
 public:
 	TopModPreferences(QSettings *settings, StyleSheetEditor *sse, QShortcutManager *sm, QWidget *parent = 0 );

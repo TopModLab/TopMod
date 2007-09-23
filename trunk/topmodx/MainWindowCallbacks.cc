@@ -123,6 +123,25 @@ void MainWindow::setCommandCompleterIndexToggle(int value){
 	mCommandCompleterIndexToggle = (bool)value;
 }
 
+//dave
+void MainWindow::changeDomeExtrudeLength(double value)
+{
+  MainWindow::domeExtrudeLength_factor = value;
+}
+
+void MainWindow::changeDomeExtrudeScale(double value)
+{
+  MainWindow::domeExtrudeScale_factor = value;
+}
+
+void MainWindow::changeDomeExtrudeRotation(double value)
+{
+  MainWindow::domeExtrudeRotation_factor = value;
+}
+
+void MainWindow::setSingleClickExtrude(int value){
+	mSingleClickExtrude = (bool)value;
+}
 // Selection Menu.
 void MainWindow::select_vertex() {
 	setMode(MainWindow::SelectVertex);

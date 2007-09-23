@@ -117,6 +117,7 @@ void TopModPreferences::saveSettings(){
 	mSettings->setValue("showStartupDialogAtStartup", ((MainWindow*)mParent)->getShowStartupDialogAtStartup());
 	mSettings->setValue("toolOptionsPos", ((MainWindow*)mParent)->mToolOptionsDockWidget->pos());
 	mSettings->setValue("CommandCompleterIndex", mCommandCompleterIndexToggle->checkState());
+	mSettings->setValue("SingleClickExtrude", mSingleClickExtrudeCheckBox->checkState());
 	
 	#ifdef WITH_PYTHON
 	mSettings->setValue("scriptEditorPos", ((MainWindow*)mParent)->mScriptEditorDockWidget->pos());
@@ -217,6 +218,9 @@ void TopModPreferences::readSettings(){
 	
 	mCommandCompleterIndexDefault = false;
 	mCommandCompleterIndex = mSettings->value("CommandCompleterIndex", mCommandCompleterIndexDefault).toBool();
+
+	mSingleClickExtrudeDefault = false;
+	mSingleClickExtrude = mSettings->value("SingleClickExtrude", mSingleClickExtrudeDefault).toBool();
 	
 	#ifdef WITH_PYTHON
 	QSize scriptEditorSize = mSettings->value("scriptEditorSize", QSize(500,300)).toSize();
@@ -271,6 +275,7 @@ void TopModPreferences::readSettings(){
 	((MainWindow*)mParent)->setIncrementalSave(mIncrementalSave);
 	((MainWindow*)mParent)->setIncrementalSaveMax(mIncrementalSaveMax);
 	((MainWindow*)mParent)->setCommandCompleterIndexToggle(mCommandCompleterIndex);
+	((MainWindow*)mParent)->setSingleClickExtrude(mSingleClickExtrude);
 
 }
 
@@ -402,6 +407,9 @@ void TopModPreferences::loadDefaults(){
 	
 	mCommandCompleterIndex = mCommandCompleterIndexDefault;
 	((MainWindow*)mParent)->setCommandCompleterIndexToggle(mCommandCompleterIndex);
+
+	mSingleClickExtrude = mSingleClickExtrudeDefault;
+	((MainWindow*)mParent)->setSingleClickExtrude(mSingleClickExtrude);
 	
 }
 
@@ -463,12 +471,18 @@ void TopModPreferences::setupMain(){
 	mMainLayout->addWidget(mSaveDirectoryLineEdit,8,0,1,3);
 	
 	//command completer word typing toggle
-	mCommandCompleterIndexToggle  = new QCheckBox(tr("Command Completer\nSingle Word Completion:"), this);
+	mCommandCompleterIndexToggle  = new QCheckBox(tr("Command Completer\nSingle Word Completion"), this);
 	mCommandCompleterIndexToggle->setChecked(mCommandCompleterIndex);
 	connect(mCommandCompleterIndexToggle, SIGNAL(stateChanged(int)),((MainWindow*)mParent), SLOT(setCommandCompleterIndexToggle(int)));
 	mMainLayout->addWidget(mCommandCompleterIndexToggle,9,0);
+
+	//single click extrude word typing toggle
+	mSingleClickExtrudeCheckBox  = new QCheckBox(tr("Single Click Extrusions"), this);
+	mSingleClickExtrudeCheckBox->setChecked(mSingleClickExtrude);
+	connect(mSingleClickExtrudeCheckBox, SIGNAL(stateChanged(int)),((MainWindow*)mParent), SLOT(setSingleClickExtrude(int)));
+	mMainLayout->addWidget(mSingleClickExtrudeCheckBox,10,0);
 	
-	mMainLayout->setRowStretch(10,2);
+	mMainLayout->setRowStretch(11,2);
 	mMainLayout->setColumnStretch(4,2);
 	
 	mMainTab->setLayout(mMainLayout);
