@@ -23,10 +23,18 @@ DLFLScriptEditor::DLFLScriptEditor( DLFLObjectPtr obj, QWidget *parent, Qt::Wind
   mInputBgColor = QColor(0,0,5,255);
   whiteOnBlack.setColor(QPalette::Active, QPalette::Text, Qt::white );
   whiteOnBlack.setColor(QPalette::Active, QPalette::Base, mInputBgColor );
+  whiteOnBlack.setColor(QPalette::Inactive, QPalette::Text, Qt::white );
+  whiteOnBlack.setColor(QPalette::Inactive, QPalette::Base, mInputBgColor );
+	whiteOnBlack.setColor(QPalette::Disabled, QPalette::Text, Qt::white );
+  whiteOnBlack.setColor(QPalette::Disabled, QPalette::Base, mInputBgColor );
 
   mOutputBgColor = QColor(20,20,25,255);
   whiteOnGrey.setColor(QPalette::Active, QPalette::Text, Qt::white );
   whiteOnGrey.setColor(QPalette::Active, QPalette::Base, mOutputBgColor );
+  whiteOnGrey.setColor(QPalette::Inactive, QPalette::Text, Qt::white );
+  whiteOnGrey.setColor(QPalette::Inactive, QPalette::Base, mOutputBgColor );
+  whiteOnGrey.setColor(QPalette::Disabled, QPalette::Text, Qt::white );
+  whiteOnGrey.setColor(QPalette::Disabled, QPalette::Base, mOutputBgColor );
 
   mHistoryBox->setPalette( whiteOnGrey );
   mCommandEdit->setPalette( whiteOnBlack );
