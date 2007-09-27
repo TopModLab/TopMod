@@ -119,7 +119,7 @@ void MainWindow::checkSaveDirectory(){
 
 void MainWindow::setCommandCompleterIndexToggle(int value){
 	//stuff here...?
-	std::cout << "toggle command completer thing\n";
+	// std::cout << "toggle command completer thing\n";
 	mCommandCompleterIndexToggle = (bool)value;
 }
 
@@ -127,6 +127,11 @@ void MainWindow::setCommandCompleterIndexToggle(int value){
 void MainWindow::changeDomeExtrudeLength(double value)
 {
   MainWindow::domeExtrudeLength_factor = value;
+}
+
+void MainWindow::changeDooSabinExtrudeTwist(double value)
+{
+  MainWindow::ds_ex_twist = value;
 }
 
 void MainWindow::changeDomeExtrudeScale(double value)

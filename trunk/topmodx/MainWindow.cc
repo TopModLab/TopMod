@@ -115,6 +115,7 @@ double MainWindow::domeScale_factor = 1.0  ;
 double MainWindow::dual1264_scale_factor = 0.7 ;
 
 //dave
+// double MainWindow::dooSabinExtrudeTwist_factor = 0.0 ;
 double MainWindow::domeExtrudeLength_factor = 1.0 ;
 double MainWindow::domeExtrudeScale_factor = 1.0  ;
 double MainWindow::domeExtrudeRotation_factor = 0.0  ;
@@ -1265,13 +1266,16 @@ void MainWindow::createMenus(){
 	menuBar->addMenu(mFileMenu);
 	mFileMenu->setTearOffEnabled(true);
 
+	mExportMenu = new QMenu(tr("&Export"));
+	mExportMenu->setIcon(QIcon(":images/document-save-as.png"));
 	mFileMenu->addAction(mOpenAct);
 	mFileMenu->addAction(mSaveAct);
 	mFileMenu->addAction(mSaveAsAct);
-	mFileMenu->addAction(mSavePatchesAct);
-	mFileMenu->addAction(mSaveLG3dAct);
-	mFileMenu->addAction(mSaveLG3dSelectedAct);
-	mFileMenu->addAction(mExportSTLAct);
+	mFileMenu->addMenu(mExportMenu);
+	mExportMenu->addAction(mSavePatchesAct);
+	mExportMenu->addAction(mSaveLG3dAct);
+	mExportMenu->addAction(mSaveLG3dSelectedAct);
+	mExportMenu->addAction(mExportSTLAct);
 	mFileMenu->addAction(mScreenshotViewportAct);
 	mFileMenu->addAction(mScreenshotAppAct);
 #ifdef WITH_VERSE
@@ -1290,11 +1294,11 @@ void MainWindow::createMenus(){
 #endif
 	mFileMenu->addSeparator();
 	mFileMenu->addAction(loadTextureAct);
-	mFileMenu->addAction(printInfoAct);
-	mFileMenu->addAction(printFaceListAct);
-	mFileMenu->addAction(printVertexListAct);
-	mFileMenu->addAction(printEdgeListAct);
-	mFileMenu->addAction(mPrintCVListAct);
+	// mFileMenu->addAction(printInfoAct);
+	// mFileMenu->addAction(printFaceListAct);
+	// mFileMenu->addAction(printVertexListAct);
+	// mFileMenu->addAction(printEdgeListAct);
+	// mFileMenu->addAction(mPrintCVListAct);
 	mFileMenu->addSeparator();
 	mFileMenu->addAction(mExitAct);
 
@@ -1876,14 +1880,14 @@ void MainWindow::help() {
 * \brief will eventually check for updates on the TopMod website and download the necessary files
 */
 void MainWindow::checkForUpdates(){
-	QDesktopServices::openUrl(QUrl("http://code.google.com/p/topmod/downloads/list/"));
+	QDesktopServices::openUrl(QUrl("http://code.google.com/p/topmod/downloads/list"));
 }
 
 /**
 * \brief opens the current TopMod homepage in the user's default web browser
 */
 void MainWindow::topModWeb(){
-	QDesktopServices::openUrl(QUrl("http://www.topmod.org/"));
+	QDesktopServices::openUrl(QUrl("http://www.topmod3d.org/"));
 }
 
 void MainWindow::topModBlip(){
@@ -1891,7 +1895,7 @@ void MainWindow::topModBlip(){
 }
 
 void MainWindow::topModResearch(){
-	QDesktopServices::openUrl(QUrl("http://www-viz.tamu.edu/faculty/ergun/research/topology/index.html"));
+	QDesktopServices::openUrl(QUrl("http://www.topmod3d.org/wiki/index.php?title=Research"));
 }
 
 void MainWindow::documentWasModified() {

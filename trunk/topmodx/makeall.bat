@@ -5,4 +5,6 @@ qmake
 mingw32-make
 cd ..
 qmake
+lupdate topmod.pro
+lrelease topmod.pro
 mingw32-make

@@ -158,6 +158,20 @@ private:
 	QDoubleSpinBox *multiFaceHandleExtrudeDistanceSpinBox;
 	QCheckBox *multiFaceHandleMaxOffsetsCheckBox;
 	QDoubleSpinBox *multiFaceHandleScaleSpinBox;
+	
+	QCheckBox *addHandleSISymmetricWeightsCheckBox;
+	QPushButton *rindModelingScalingCreateCrustButton;
+	QPushButton *rindModelingThicknessCreateButton;
+	QPushButton *wireframeModelingCreateButton;
+	QPushButton *wireframeModeling2CreateButton;
+	QPushButton *columnModelingCreateButton;
+	QPushButton *sierpinskyButton;
+	QGroupBox *multiFaceAlgorithmGroupBox;
+	QPushButton *multiFaceHandleButton;
+	QCheckBox *mengerSpongFractionalThicknessCheckBox;
+	QPushButton *mengerSpongeButton;
+	
+	
 };
 
 #endif

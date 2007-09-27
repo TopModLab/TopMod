@@ -61,8 +61,8 @@ public:
 	//doo sabin extrude
 	QLabel *dooSabinLengthLabel;
 	QDoubleSpinBox *dooSabinLengthSpinBox;
-	QLabel *dooSabinRotationLabel;
-	QDoubleSpinBox *dooSabinRotationSpinBox;
+	QLabel *dooSabinTwistLabel;
+	QDoubleSpinBox *dooSabinTwistSpinBox;
 	QLabel *dooSabinScaleLabel;
 	QDoubleSpinBox *dooSabinScaleSpinBox;
 	QLabel *dooSabinSegmentsLabel;
@@ -141,6 +141,14 @@ public:
 	QDoubleSpinBox *domeRotationSpinBox;
 	QDoubleSpinBox *domeScaleSpinBox;
 	
+	QPushButton *performDooSabinExtrusionButton;
+	QPushButton *performCubicalExtrusionButton;
+	QPushButton *performDodecahedralExtrusionButton;
+	QPushButton *performIcosahedralExtrusionButton;
+	QPushButton *performOctahedralExtrusionButton;
+	QPushButton *performStellateExtrusionButton;
+	QPushButton *performDoubleStellateExtrusionButton;
+	QPushButton *domeButton;
 	
 protected:
 	void setupDooSabinExtrude();

@@ -281,7 +281,7 @@ void HighgenusMode::toggleCrustCleanupFlag(int state)
 }
 
 QDoubleSpinBox *HighgenusMode::createDoubleSpinBox(QGridLayout *layout, QLabel *label, QString s, double low, double high, double step, double value, double decimals, int row, int col){
-	label = new QLabel(s,this);
+	label->setText(s);
 	QDoubleSpinBox *spinbox = new QDoubleSpinBox(this);
 	spinbox->setAccelerated(true);
 	spinbox->setRange(low, high);
@@ -302,15 +302,17 @@ void HighgenusMode::setupAddHoleHandle(){
 	mAddHoleHandleLayout->setVerticalSpacing(1);
 	mAddHoleHandleLayout->setHorizontalSpacing(1);
 	// mAddHoleHandleLayout->setMargin(0);
+	addHoleHandleNumSegmentsLabel = new QLabel(this);
 	addHoleHandleNumSegmentsSpinBox = createDoubleSpinBox(mAddHoleHandleLayout, addHoleHandleNumSegmentsLabel, tr("# Segments"), 1, 100, 1, 10, 0, 0,0);
 	connect(addHoleHandleNumSegmentsSpinBox, SIGNAL(valueChanged(double)), this, SLOT(numSegmentsValueChanged(double)));
 	
+	addHoleHandleNumSegmentsConnectLabel = new QLabel(this);
 	addHoleHandleNumSegmentsConnectSpinBox = createDoubleSpinBox(mAddHoleHandleLayout, addHoleHandleNumSegmentsConnectLabel, tr("# Segments to\nConnect (0=all)"), 0, 10, 1, 0, 0, 1,0);
 	connect(addHoleHandleNumSegmentsConnectSpinBox, SIGNAL(valueChanged(double)), this, SLOT(numSegmentsConnectValueChanged(double)));
 	
 	mAddHoleHandleLayout->setRowStretch(2,1);
 	mAddHoleHandleLayout->setColumnStretch(2,1);
-	mAddHoleHandleWidget->setWindowTitle("Add Hole/Handle");
+	mAddHoleHandleWidget->setWindowTitle(tr("Add Hole/Handle"));
 	mAddHoleHandleWidget->setLayout(mAddHoleHandleLayout);	
 }
 
@@ -355,15 +357,17 @@ void HighgenusMode::setupAddHoleHandleCV(){
 	mAddHoleHandleCVLayout->setVerticalSpacing(1);
 	mAddHoleHandleCVLayout->setHorizontalSpacing(1);
 
+	addHoleHandleCVNumSegmentsLabel = new QLabel(this);
 	addHoleHandleCVNumSegmentsSpinBox = createDoubleSpinBox(mAddHoleHandleCVLayout, addHoleHandleCVNumSegmentsLabel, tr("# Segments"), 1, 100, 1, 10, 0, 0,0);
 	connect(addHoleHandleCVNumSegmentsSpinBox, SIGNAL(valueChanged(double)), this, SLOT(numSegmentsValueChanged(double)));
 	
+	addHoleHandleCVNumSegmentsConnectLabel = new QLabel(this);
 	addHoleHandleCVNumSegmentsConnectSpinBox = createDoubleSpinBox(mAddHoleHandleCVLayout, addHoleHandleCVNumSegmentsConnectLabel, tr("# Segments to\nConnect (0=all)"), 0, 10, 1, 0, 0, 1,0);
 	connect(addHoleHandleNumSegmentsConnectSpinBox, SIGNAL(valueChanged(double)), this, SLOT(numSegmentsConnectValueChanged(double)));
 	
 	mAddHoleHandleCVLayout->setRowStretch(4,1);
 	mAddHoleHandleCVLayout->setColumnStretch(2,1);
-	mAddHoleHandleCVWidget->setWindowTitle("Add Hole/Handle (Closest Vertex)");
+	mAddHoleHandleCVWidget->setWindowTitle(tr("Add Hole/Handle (Closest Vertex)"));
 	mAddHoleHandleCVWidget->setLayout(mAddHoleHandleCVLayout);	
 }
 
@@ -375,31 +379,36 @@ void HighgenusMode::setupAddHandleSI(){
 	mAddHandleSILayout->setHorizontalSpacing(1);
 	
 	//number of segments
+	addHandleSINumSegmentsLabel = new QLabel(this);
 	addHandleSINumSegmentsSpinBox = createDoubleSpinBox(mAddHandleSILayout, addHandleSINumSegmentsLabel, tr("# Segments"), 1, 100, 1, 10, 0, 0,0);
 	connect(addHandleSINumSegmentsSpinBox, SIGNAL(valueChanged(double)), this, SLOT(numSegmentsValueChanged(double)));
 	//number of segments to connect
+	addHandleSINumSegmentsConnectLabel = new QLabel(this);
 	addHandleSINumSegmentsConnectSpinBox = createDoubleSpinBox(mAddHandleSILayout, addHandleSINumSegmentsConnectLabel, tr("# Segments to\nConnect (0=all)"), 0, 10, 1, 0, 0, 1,0);
 	connect(addHoleHandleNumSegmentsConnectSpinBox, SIGNAL(valueChanged(double)), this, SLOT(numSegmentsConnectValueChanged(double)));
 	//weight 1
-	addHandleSIWeight1SpinBox = createDoubleSpinBox(mAddHandleSILayout, addHandleSIWeight1Label, tr("Weight 1"), -100, 100, 0.1, 25.0, 1, 2,0);
+	addHandleSIWeight1Label = new QLabel(this);
+	addHandleSIWeight1SpinBox = createDoubleSpinBox(mAddHandleSILayout, addHandleSIWeight1Label, tr("Weight 1"), -100, 100, 0.1, 25.0, 3, 2,0);
 	connect(addHandleSIWeight1SpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeWeight1(double)));
 	//symmetric weights checkbox
-	QCheckBox *addHandleSISymmetricWeightsCheckBox = new QCheckBox(tr("Symmetric Weights"),this);
+	addHandleSISymmetricWeightsCheckBox = new QCheckBox(tr("Symmetric Weights"),this);
 	addHandleSISymmetricWeightsCheckBox->setChecked(Qt::Checked);
 	connect(addHandleSISymmetricWeightsCheckBox, SIGNAL(stateChanged(int)), this, SLOT(toggleSymmetricWeightsFlag(int)));
 	mAddHandleSILayout->addWidget(addHandleSISymmetricWeightsCheckBox,3,0,1,2);
 	//weight 2 - must be disabled when the checkbox is unchecked...
-	addHandleSIWeight2SpinBox = createDoubleSpinBox(mAddHandleSILayout, addHandleSIWeight2Label, tr("Weight 1"), -100, 100, 0.1, 25.0, 1, 4,0);	
+	addHandleSIWeight2Label = new QLabel(this);
+	addHandleSIWeight2SpinBox = createDoubleSpinBox(mAddHandleSILayout, addHandleSIWeight2Label, tr("Weight 2"), -100, 100, 0.1, 25.0, 3, 4,0);	
 	addHandleSIWeight2SpinBox->setEnabled(false);
 	connect(addHandleSIWeight2SpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeWeight2(double)));
 
 	//add twists?
+	addHandleSITwistsConnectLabel = new QLabel(this);
 	addHandleSITwistsConnectSpinBox = createDoubleSpinBox(mAddHandleSILayout, addHandleSITwistsConnectLabel, tr("Extra Twists"), 0, 100, 1, 0, 0, 5,0);	
 	connect(addHandleSITwistsConnectSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeExtraTwists(double)));
 	
 	mAddHandleSILayout->setRowStretch(6,1);
 	mAddHandleSILayout->setColumnStretch(2,1);
-	mAddHandleSIWidget->setWindowTitle("Add Handle (Shape Interpolation)");
+	mAddHandleSIWidget->setWindowTitle(tr("Add Handle (Shape Interpolation)"));
 	mAddHandleSIWidget->setLayout(mAddHandleSILayout);	
 	
 }
@@ -420,7 +429,8 @@ void HighgenusMode::setupRindModelingScaling(){
 	mRindModelingScalingLayout->setHorizontalSpacing(1);
 
 	//scale factor - 0.00-10.00
-	rindModelingScalingSpinBox = createDoubleSpinBox(mRindModelingScalingLayout, rindModelingScalingLabel, tr("Scale"), 0, 10.0, 0.01, 0.9, 2, 0,0);	
+	rindModelingScalingLabel = new QLabel(this);
+	rindModelingScalingSpinBox = createDoubleSpinBox(mRindModelingScalingLayout, rindModelingScalingLabel, tr("Scale"), 0, 10.0, 0.01, 0.9, 3, 0,0);	
 	connect(rindModelingScalingSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeCrustScaleFactor(double)));
 	//symmetric weights checkbox
 	rindModelingScalingCleanupCheckBox = new QCheckBox(tr("Cleanup when peeling"),this);
@@ -428,13 +438,13 @@ void HighgenusMode::setupRindModelingScaling(){
 	connect(rindModelingScalingCleanupCheckBox, SIGNAL(stateChanged(int)), this, SLOT(toggleCrustCleanupFlag(int)));
 	mRindModelingScalingLayout->addWidget(rindModelingScalingCleanupCheckBox,1,0,1,2);
 	//create crust button
-	QPushButton *rindModelingScalingCreateCrustButton = new QPushButton("Create Crust", this);
+	rindModelingScalingCreateCrustButton = new QPushButton(tr("Create Crust"), this);
 	connect(rindModelingScalingCreateCrustButton, SIGNAL(clicked()), ((MainWindow*)mParent), SLOT(crustModeling4())); // ((MainWindow*)mParent), SLOT(crust_modeling1())); //crust_modeling3
 	mRindModelingScalingLayout->addWidget(rindModelingScalingCreateCrustButton,2,0,1,2);	
 	//set layout and add stretch
 	mRindModelingScalingLayout->setRowStretch(3,1);
 	mRindModelingScalingLayout->setColumnStretch(2,1);
-	mRindModelingScalingWidget->setWindowTitle("Rind Modeling (Scaling)");
+	mRindModelingScalingWidget->setWindowTitle(tr("Rind Modeling (Scaling)"));
 	mRindModelingScalingWidget->setLayout(mRindModelingScalingLayout);	
 }
 
@@ -446,7 +456,8 @@ void HighgenusMode::setupRindModelingThickness(){
 	mRindModelingThicknessLayout->setHorizontalSpacing(1);
 	
 	//thickness
-	rindModelingThicknessSpinBox = createDoubleSpinBox(mRindModelingThicknessLayout, rindModelingThicknessLabel, tr("Thickness:"), -1.0, 1.0, 0.01, 0.5, 2, 0,0);	
+	rindModelingThicknessLabel = new QLabel(this);
+	rindModelingThicknessSpinBox = createDoubleSpinBox(mRindModelingThicknessLayout, rindModelingThicknessLabel, tr("Thickness:"), -1.0, 1.0, 0.01, 0.5, 3, 0,0);	
 	connect(rindModelingThicknessSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeCrustThickness(double)));
 	//symmetric weights checkbox
 	rindModelingThicknessCleanupCheckBox = new QCheckBox(tr("Cleanup when peeling"),this);
@@ -454,13 +465,13 @@ void HighgenusMode::setupRindModelingThickness(){
 	connect(rindModelingThicknessCleanupCheckBox, SIGNAL(stateChanged(int)), this, SLOT(toggleCrustCleanupFlag(int)));
 	mRindModelingThicknessLayout->addWidget(rindModelingThicknessCleanupCheckBox, 1,0,1,2);
 	//create crust button
-	QPushButton *rindModelingThicknessCreateButton = new QPushButton("Create Crust", this);
+	rindModelingThicknessCreateButton = new QPushButton(tr("Create Crust"), this);
 	connect(rindModelingThicknessCreateButton, SIGNAL(clicked()), ((MainWindow*)mParent), SLOT(crustModeling3()));
 	mRindModelingThicknessLayout->addWidget(rindModelingThicknessCreateButton,2,0,1,2);	
 	//set layout and add stretch
 	mRindModelingThicknessLayout->setRowStretch(3,1);
 	mRindModelingThicknessLayout->setColumnStretch(2,1);
-	mRindModelingThicknessWidget->setWindowTitle("Rind Modeling (Thickness)");
+	mRindModelingThicknessWidget->setWindowTitle(tr("Rind Modeling (Thickness)"));
 	mRindModelingThicknessWidget->setLayout(mRindModelingThicknessLayout);
 }
 
@@ -471,16 +482,17 @@ void HighgenusMode::setupWireframeModeling(){
 	mWireframeModelingLayout->setVerticalSpacing(1);
 	mWireframeModelingLayout->setHorizontalSpacing(1);
 	//thickness
-	wireframeModelingThicknessSpinBox = createDoubleSpinBox(mWireframeModelingLayout, wireframeModelingThicknessLabel, tr("Thickness:"), 0.0, 1.0, 0.01, 0.25, 2, 0,0);	
+	wireframeModelingThicknessLabel = new QLabel(this);
+	wireframeModelingThicknessSpinBox = createDoubleSpinBox(mWireframeModelingLayout, wireframeModelingThicknessLabel, tr("Thickness:"), 0.0, 1.0, 0.01, 0.25, 3, 0,0);	
 	connect(wireframeModelingThicknessSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeWireframeThickness(double)));
 	//create wireframe button
-	QPushButton *wireframeModelingCreateButton = new QPushButton("Create Wireframe", this);
+	wireframeModelingCreateButton = new QPushButton(tr("Create Wireframe"), this);
 	connect(wireframeModelingCreateButton, SIGNAL(clicked()), ((MainWindow*)mParent), SLOT(makeWireframe()));
 	mWireframeModelingLayout->addWidget(wireframeModelingCreateButton,1,0,1,2);	
 	//set layout and add stretch
 	mWireframeModelingLayout->setRowStretch(2,1);
 	mWireframeModelingLayout->setColumnStretch(2,1);
-	mWireframeModelingWidget->setWindowTitle("Wireframe Modeling");
+	mWireframeModelingWidget->setWindowTitle(tr("Wireframe Modeling"));
 	mWireframeModelingWidget->setLayout(mWireframeModelingLayout);
 }
 
@@ -491,18 +503,20 @@ void HighgenusMode::setupWireframeModeling2(){
 	mWireframeModeling2Layout->setVerticalSpacing(1);
 	mWireframeModeling2Layout->setHorizontalSpacing(1);
 	//thickness
-	wireframeModeling2ThicknessSpinBox = createDoubleSpinBox(mWireframeModeling2Layout, wireframeModeling2ThicknessLabel, tr("Thickness:"), 0.0, 1.0, 0.01, 0.25, 2, 0,0);	
+	wireframeModeling2ThicknessLabel = new QLabel(this);
+	wireframeModeling2ThicknessSpinBox = createDoubleSpinBox(mWireframeModeling2Layout, wireframeModeling2ThicknessLabel, tr("Thickness:"), 0.0, 1.0, 0.01, 0.25, 3, 0,0);	
 	connect(wireframeModeling2ThicknessSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeWireframe2Thickness(double)));
-	wireframeModeling2WidthSpinBox = createDoubleSpinBox(mWireframeModeling2Layout, wireframeModeling2WidthLabel, tr("Width:"), 0.0, 1.0, 0.01, 0.25, 2, 1,0);	
+	wireframeModeling2WidthLabel = new QLabel(this);
+	wireframeModeling2WidthSpinBox = createDoubleSpinBox(mWireframeModeling2Layout, wireframeModeling2WidthLabel, tr("Width:"), 0.0, 1.0, 0.01, 0.25, 3, 1,0);	
 	connect(wireframeModeling2WidthSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeWireframe2Width(double)));
 	//create wireframe button
-	QPushButton *wireframeModeling2CreateButton = new QPushButton("Create Wireframe 2", this);
+	wireframeModeling2CreateButton = new QPushButton(tr("Create Wireframe 2"), this);
 	connect(wireframeModeling2CreateButton, SIGNAL(clicked()), ((MainWindow*)mParent), SLOT(makeWireframe2()));
 	mWireframeModeling2Layout->addWidget(wireframeModeling2CreateButton,2,0,1,2);	
 	//set layout and add stretch
 	mWireframeModeling2Layout->setRowStretch(3,1);
 	mWireframeModeling2Layout->setColumnStretch(2,1);
-	mWireframeModeling2Widget->setWindowTitle("Wireframe Modeling 2");
+	mWireframeModeling2Widget->setWindowTitle(tr("Wireframe Modeling 2"));
 	mWireframeModeling2Widget->setLayout(mWireframeModeling2Layout);
 }
 
@@ -514,19 +528,21 @@ void HighgenusMode::setupColumnModeling(){
 	mColumnModelingLayout->setHorizontalSpacing(1);
 	
 	//thickness
-	columnModelingThicknessSpinBox = createDoubleSpinBox(mColumnModelingLayout, columnModelingThicknessLabel, tr("Thickness:"), 0.0, 1.0, 0.01, 0.25, 2, 0,0);	
+	columnModelingThicknessLabel = new QLabel(this);
+	columnModelingThicknessSpinBox = createDoubleSpinBox(mColumnModelingLayout, columnModelingThicknessLabel, tr("Thickness:"), 0.0, 1.0, 0.01, 0.25, 3, 0,0);	
 	connect(columnModelingThicknessSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeColumnThickness(double)));
 	//number of segments
+	columnModelingNumSegmentsLabel = new QLabel(this);
 	columnModelingNumSegmentsSpinBox = createDoubleSpinBox(mColumnModelingLayout, columnModelingNumSegmentsLabel, tr("# Segments:"), 4.0, 100, 1, 4, 0, 1,0);	
 	connect(columnModelingNumSegmentsSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeColumnSegments(double)));
 	//create column button
-	QPushButton *columnModelingCreateButton = new QPushButton("Create Columns", this);
+	columnModelingCreateButton = new QPushButton(tr("Create Columns"), this);
 	connect(columnModelingCreateButton, SIGNAL(clicked()), ((MainWindow*)mParent), SLOT(makeWireframeWithColumns()));
 	mColumnModelingLayout->addWidget(columnModelingCreateButton,2,0,1,2);	
 	//set layout and add stretch
 	mColumnModelingLayout->setRowStretch(3,1);
 	mColumnModelingLayout->setColumnStretch(2,1);
-	mColumnModelingWidget->setWindowTitle("Column Modeling");
+	mColumnModelingWidget->setWindowTitle(tr("Column Modeling"));
 	mColumnModelingWidget->setLayout(mColumnModelingLayout);	
 }
 
@@ -537,13 +553,13 @@ void HighgenusMode::setupSierpinsky(){
 	mSierpinskyLayout->setVerticalSpacing(1);
 	mSierpinskyLayout->setHorizontalSpacing(1);	
 	//create column button
-	QPushButton *sierpinskyButton = new QPushButton("Create Sierpinsky\nTetrahedra", this);
+	sierpinskyButton = new QPushButton(tr("Create Sierpinsky\nTetrahedra"), this);
 	connect(sierpinskyButton, SIGNAL(clicked()), ((MainWindow*)mParent), SLOT(multiConnectMidpoints()));
 	mSierpinskyLayout->addWidget(sierpinskyButton,0,0);
 	
 	mSierpinskyLayout->setRowStretch(1,1);
 	mSierpinskyLayout->setColumnStretch(1,1);
-	mSierpinskyWidget->setWindowTitle("Sierpinsky Tetrahedra");
+	mSierpinskyWidget->setWindowTitle(tr("Sierpinsky Tetrahedra"));
 	mSierpinskyWidget->setLayout(mSierpinskyLayout);
 }
 
@@ -554,7 +570,7 @@ void HighgenusMode::setupMultiFaceHandle(){
 	mMultiFaceHandleLayout->setVerticalSpacing(1);
 	mMultiFaceHandleLayout->setHorizontalSpacing(1);
 	
-	QGroupBox *multiFaceAlgorithmGroupBox = new QGroupBox(tr("Use Convex Hull\nAlgorithm"));
+	multiFaceAlgorithmGroupBox = new QGroupBox(tr("Use Convex Hull\nAlgorithm"));
 	multiFaceAlgorithmGroupBox->setCheckable(true);
 	multiFaceAlgorithmGroupBox->setChecked(false);
 	
@@ -568,7 +584,7 @@ void HighgenusMode::setupMultiFaceHandle(){
 	          this, SLOT(changeMultiFaceAlgorithm(bool)));
 	
 	//scaling
-	multiFaceHandleScaleLabel = new QLabel( tr("Scale Factor:"));
+	multiFaceHandleScaleLabel = new QLabel(this);
 	multiFaceHandleScaleSpinBox = new QDoubleSpinBox;
 	multiFaceHandleScaleSpinBox->setRange(0.0,5.0);
 	multiFaceHandleScaleSpinBox->setSingleStep(0.01);
@@ -577,11 +593,12 @@ void HighgenusMode::setupMultiFaceHandle(){
 	multiFaceHandleScaleSpinBox->setMaximumSize(75,25);
 	mMultiFaceAlgorithmLayout->addWidget(multiFaceHandleScaleLabel,0,0);
 	mMultiFaceAlgorithmLayout->addWidget(multiFaceHandleScaleSpinBox,0,1);
-	// multiFaceHandleScaleSpinBox = createDoubleSpinBox(mMultiFaceAlgorithmLayout, multiFaceHandleScaleLabel, tr("Scale Factor:"), 0.0, 5.0, 0.01, 1.0, 2, 0,0);	
+	multiFaceHandleScaleLabel = new QLabel(this);
+	multiFaceHandleScaleSpinBox = createDoubleSpinBox(mMultiFaceAlgorithmLayout, multiFaceHandleScaleLabel, tr("Scale Factor:"), 0.0, 5.0, 0.01, 1.0, 3, 0,0);	
 	connect(multiFaceHandleScaleSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeMultiFaceHandleScaleFactor(double)));
 
 	//extrude distance
-	multiFaceHandleExtrudeDistanceLabel = new QLabel( tr("Extrude Dist.\nFactor:"));
+	multiFaceHandleExtrudeDistanceLabel = new QLabel(this);
 	multiFaceHandleExtrudeDistanceSpinBox = new QDoubleSpinBox;
 	multiFaceHandleExtrudeDistanceSpinBox->setRange(-2.0,2.0);
 	multiFaceHandleExtrudeDistanceSpinBox->setSingleStep(0.01);
@@ -590,7 +607,8 @@ void HighgenusMode::setupMultiFaceHandle(){
 	multiFaceHandleExtrudeDistanceSpinBox->setMaximumSize(75,25);
 	mMultiFaceAlgorithmLayout->addWidget(multiFaceHandleExtrudeDistanceLabel,1,0);
 	mMultiFaceAlgorithmLayout->addWidget(multiFaceHandleExtrudeDistanceSpinBox,1,1);
-	// multiFaceHandleExtrudeDistanceSpinBox = createDoubleSpinBox(mMultiFaceAlgorithmLayout, multiFaceHandleExtrudeDistanceLabel, tr("Extrude Dist.\nFactor:"), -2.0, 2.0, 0.1, 0.5, 1, 1,0);	
+	multiFaceHandleExtrudeDistanceLabel = new QLabel(this);
+	multiFaceHandleExtrudeDistanceSpinBox = createDoubleSpinBox(mMultiFaceAlgorithmLayout, multiFaceHandleExtrudeDistanceLabel, tr("Extrude Dist.\nFactor:"), -2.0, 2.0, 0.1, 0.5, 3, 1,0);	
 	connect(multiFaceHandleExtrudeDistanceSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeMultiFaceHandleExtrudeDist(double)));	
 
 	//use max. offsets
@@ -601,13 +619,13 @@ void HighgenusMode::setupMultiFaceHandle(){
 	
 	//add the groupbox to the multiface layout
 	mMultiFaceHandleLayout->addWidget(multiFaceAlgorithmGroupBox,0,0);
-	QPushButton *multiFaceHandleButton = new QPushButton("Connect Selected Faces", this);
+	multiFaceHandleButton = new QPushButton(tr("Connect Selected Faces"), this);
 	connect(multiFaceHandleButton, SIGNAL(clicked()), ((MainWindow*)mParent), SLOT(createMultiFaceHandle()));
 	mMultiFaceHandleLayout->addWidget(multiFaceHandleButton,1,0,1,2);
 	
 	mMultiFaceHandleLayout->setRowStretch(4,1);
 	mMultiFaceHandleLayout->setColumnStretch(2,1);
-	mMultiFaceHandleWidget->setWindowTitle("Multi-Face Handle");
+	mMultiFaceHandleWidget->setWindowTitle(tr("Multi-Face Handle"));
 	mMultiFaceHandleWidget->setLayout(mMultiFaceHandleLayout);
 }
 
@@ -659,23 +677,25 @@ void HighgenusMode::setupMengerSponge(){
 	mMengerSpongeLayout->setVerticalSpacing(1);
 	mMengerSpongeLayout->setHorizontalSpacing(1);	
 	//thickness
-	mengerSpongeThicknessSpinBox = createDoubleSpinBox(mMengerSpongeLayout, mengerSpongeThicknessLabel, tr("Thickness:"), 0.01, 1.0, 0.01, 0.67, 2, 0,0);	
+	mengerSpongeThicknessLabel = new QLabel(this);
+	mengerSpongeThicknessSpinBox = createDoubleSpinBox(mMengerSpongeLayout, mengerSpongeThicknessLabel, tr("Thickness:"), 0.01, 1.0, 0.01, 0.67, 3, 0,0);	
 	connect(mengerSpongeThicknessSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeMengerSpongeThickness(double)));
 	//threshold
-	mengerSpongeThresholdSpinBox = createDoubleSpinBox(mMengerSpongeLayout, mengerSpongeThresholdLabel, tr("Edge Collapse\nThreshold Factor:"), 0.0, 10.0, 0.1, 0.0, 1, 1,0);	
+	mengerSpongeThresholdLabel = new QLabel(this);
+	mengerSpongeThresholdSpinBox = createDoubleSpinBox(mMengerSpongeLayout, mengerSpongeThresholdLabel, tr("Edge Collapse\nThreshold Factor:"), 0.0, 10.0, 0.1, 0.0, 3, 1,0);	
 	connect(mengerSpongeThresholdSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeMengerSpongeCollapseThreshold(double)));
 	//fractional thickness checkbox
-	QCheckBox *mengerSpongFractionalThicknessCheckBox = new QCheckBox(tr("Fractional Thickness"),this);
+	mengerSpongFractionalThicknessCheckBox = new QCheckBox(tr("Fractional Thickness"),this);
 	connect(mengerSpongFractionalThicknessCheckBox, SIGNAL(stateChanged(int)), ((MainWindow*)mParent), SLOT(toggleMengerSpongeFractionalThicknessFlag(int)));
 	mMengerSpongeLayout->addWidget(mengerSpongFractionalThicknessCheckBox,2,0,1,2);
 	//create menger sponge button
-	QPushButton *mengerSpongeButton = new QPushButton("Create Menger Sponge", this);
+	mengerSpongeButton = new QPushButton(tr("Create Menger Sponge"), this);
 	connect(mengerSpongeButton, SIGNAL(clicked()), ((MainWindow*)mParent), SLOT(createSponge()));
 	mMengerSpongeLayout->addWidget(mengerSpongeButton,3,0,1,2);	
 	
 	mMengerSpongeLayout->setRowStretch(4,1);
 	mMengerSpongeLayout->setColumnStretch(2,1);
-	mMengerSpongeWidget->setWindowTitle("Menger Sponge");
+	mMengerSpongeWidget->setWindowTitle(tr("Menger Sponge"));
 	mMengerSpongeWidget->setLayout(mMengerSpongeLayout);
 }
 
@@ -684,43 +704,33 @@ void HighgenusMode::retranslateUi(){
 	mAddHoleHandleAction->setText(tr("Add Hole/Handle"));
 	mAddHoleHandleAction->setStatusTip(tr("Enter Add Hole/Handle Mode"));
 	mAddHoleHandleAction->setToolTip(tr("Add Hole/Handle Mode"));
-
 	mAddHoleHandleCVAction->setText(tr("Add Hole/Handle CV"));
 	mAddHoleHandleCVAction->setStatusTip(tr("Enter Add Hole/Handle CV Mode"));
 	mAddHoleHandleCVAction->setToolTip(tr("Add Hole/Handle CV Mode"));
-
 	mAddHandleSIAction->setText(tr("Add Handle SI"));
 	mAddHandleSIAction->setStatusTip(tr("Enter Add Handle (Shape Interpolation) Mode"));
 	mAddHandleSIAction->setToolTip(tr("Add Handle (Shape Interpolation) Mode"));
-
 	mRindModelingScalingAction->setText(tr("Rind Modeling Scaling"));
 	mRindModelingScalingAction->setStatusTip(tr("Enter Rind Modeling Scaling Mode"));
 	mRindModelingScalingAction->setToolTip(tr("Rind Modeling Scaling Mode"));
-
 	mRindModelingThicknessAction->setText(tr("Rind Modeling Thickness"));
 	mRindModelingThicknessAction->setStatusTip(tr("Enter Rind Modeling Thickness Mode"));
 	mRindModelingThicknessAction->setToolTip(tr("Rind Modeling Thickness Mode"));
-
 	mWireframeModelingAction->setText(tr("Wireframe Modeling"));
 	mWireframeModelingAction->setStatusTip(tr("Enter Wireframe Modeling Mode"));
 	mWireframeModelingAction->setToolTip(tr("Wireframe Modeling Mode"));
-
 	mWireframeModeling2Action->setText(tr("Wireframe Modeling 2"));
 	mWireframeModeling2Action->setStatusTip(tr("Enter Wireframe Modeling 2 Mode"));
 	mWireframeModeling2Action->setToolTip(tr("Wireframe Modeling 2 Mode"));
-
 	mColumnModelingAction->setText(tr("Column Modeling"));
 	mColumnModelingAction->setStatusTip(tr("Enter Column Modeling Mode"));
 	mColumnModelingAction->setToolTip(tr("Column Modeling Mode"));
-
 	mSierpinskyAction->setText(tr("Sierpinsky"));
 	mSierpinskyAction->setStatusTip(tr("Enter Sierpinsky Mode"));
 	mSierpinskyAction->setToolTip(tr("Sierpinsky Mode"));
-
 	mMultiFaceHandleAction->setText(tr("Multi-face Handle"));
 	mMultiFaceHandleAction->setStatusTip(tr("Enter Multi-face Handle Mode"));
 	mMultiFaceHandleAction->setToolTip(tr("Multi-face Handle Mode"));
-
 	mMengerSpongeAction->setText(tr("Menger Sponge"));
 	mMengerSpongeAction->setStatusTip(tr("Enter Menger Sponge Mode"));
 	mMengerSpongeAction->setToolTip(tr("Menger Sponge Mode"));
@@ -728,5 +738,51 @@ void HighgenusMode::retranslateUi(){
 	mHighgenusMenu->setTitle(tr("High Genus"));
 	
 	//!< \todo add buttons and spinbox labels to retranslate function for highgenusmode.cc
-	
+	addHoleHandleNumSegmentsLabel->setText(tr("# Segments"));
+	addHoleHandleNumSegmentsConnectLabel->setText(tr("# Segments to\nConnect (0=all)"));
+	mAddHoleHandleWidget->setWindowTitle(tr("Add Hole/Handle"));
+	addHoleHandleCVNumSegmentsLabel->setText(tr("# Segments"));
+	addHoleHandleCVNumSegmentsConnectLabel->setText(tr("# Segments to\nConnect (0=all)"));
+	mAddHoleHandleCVWidget->setWindowTitle(tr("Add Hole/Handle (Closest Vertex)"));
+	addHandleSINumSegmentsLabel->setText(tr("# Segments"));
+	addHandleSINumSegmentsConnectLabel->setText(tr("# Segments to\nConnect (0=all)"));
+	addHandleSIWeight1Label->setText(tr("Weight 1"));
+	addHandleSISymmetricWeightsCheckBox->setText(tr("Symmetric Weights"));
+	addHandleSIWeight2Label->setText(tr("Weight 2"));	
+	addHandleSITwistsConnectLabel->setText(tr("Extra Twists"));	
+	mAddHandleSIWidget->setWindowTitle(tr("Add Handle (Shape Interpolation)"));
+	rindModelingScalingLabel->setText(tr("Scale"));	
+	rindModelingScalingCleanupCheckBox->setText(tr("Cleanup when peeling"));
+	rindModelingScalingCreateCrustButton->setText(tr("Create Crust"));
+	mRindModelingScalingWidget->setWindowTitle(tr("Rind Modeling (Scaling)"));
+	rindModelingThicknessLabel->setText(tr("Thickness:"));	
+	rindModelingThicknessCleanupCheckBox->setText(tr("Cleanup when peeling"));
+	rindModelingThicknessCreateButton->setText(tr("Create Crust"));
+	mRindModelingThicknessWidget->setWindowTitle(tr("Rind Modeling (Thickness)"));
+	wireframeModelingThicknessLabel->setText(tr("Thickness:"));	
+	wireframeModelingCreateButton->setText(tr("Create Wireframe"));
+	mWireframeModelingWidget->setWindowTitle(tr("Wireframe Modeling"));
+	wireframeModeling2ThicknessLabel->setText(tr("Thickness:"));	
+	wireframeModeling2WidthLabel->setText(tr("Width:"));	
+	wireframeModeling2CreateButton->setText(tr("Create Wireframe 2"));
+	mWireframeModeling2Widget->setWindowTitle(tr("Wireframe Modeling 2"));
+	columnModelingThicknessLabel->setText(tr("Thickness:"));	
+	columnModelingNumSegmentsLabel->setText(tr("# Segments:"));	
+	columnModelingCreateButton->setText(tr("Create Columns"));
+	mColumnModelingWidget->setWindowTitle(tr("Column Modeling"));
+	sierpinskyButton->setText(tr("Create Sierpinsky\nTetrahedra"));
+	mSierpinskyWidget->setWindowTitle(tr("Sierpinsky Tetrahedra"));
+	multiFaceAlgorithmGroupBox->setTitle(tr("Use Convex Hull\nAlgorithm"));
+	multiFaceHandleScaleLabel->setText(tr("Scale Factor:"));
+	multiFaceHandleExtrudeDistanceLabel->setText(tr("Extrude Dist.\nFactor:"));
+	multiFaceHandleMaxOffsetsCheckBox->setText(tr("Use max offsets"));
+	multiFaceHandleButton->setText(tr("Connect Selected Faces"));
+	mMultiFaceHandleWidget->setWindowTitle(tr("Multi-Face Handle"));
+
+	mengerSpongeThicknessLabel->setText(tr("Thickness:"));	
+	mengerSpongeThresholdLabel->setText(tr("Edge Collapse\nThreshold Factor:"));	
+
+	mengerSpongFractionalThicknessCheckBox->setText(tr("Fractional Thickness"));
+	mengerSpongeButton->setText(tr("Create Menger Sponge"));
+	mMengerSpongeWidget->setWindowTitle(tr("Menger Sponge"));
 }

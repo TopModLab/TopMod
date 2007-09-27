@@ -259,7 +259,7 @@ void ConicalMode::setupCutbyEdge(){
 
 	//offset
 	cutbyEdgeOffsetLabel = new QLabel(this);
-	cutbyEdgeOffsetSpinBox = createDoubleSpinBox(mCutbyEdgeLayout, cutbyEdgeOffsetLabel, tr("Offset:"), 0.0, 2.0, 0.01, 0.25, 2, 0,0);
+	cutbyEdgeOffsetSpinBox = createDoubleSpinBox(mCutbyEdgeLayout, cutbyEdgeOffsetLabel, tr("Offset:"), 0.0, 2.0, 0.01, 0.25, 3, 0,0);
 	connect(cutbyEdgeOffsetSpinBox, SIGNAL(valueChanged(double)),this, SLOT(changeCutOffsetE(double)));
 
 	performCuttingEdgeButton = new QPushButton(tr("Perform Cutting"), this);
@@ -328,7 +328,7 @@ void ConicalMode::setupCutbyVertex(){
 
 	//offset
 	cutbyVertexOffsetLabel = new QLabel(this);
-	cutbyVertexOffsetSpinBox = createDoubleSpinBox(mCutbyVertexLayout, cutbyVertexOffsetLabel, tr("Offset:"), 0.0, 2.0, 0.01, 0.25, 2, 0,0);
+	cutbyVertexOffsetSpinBox = createDoubleSpinBox(mCutbyVertexLayout, cutbyVertexOffsetLabel, tr("Offset:"), 0.0, 2.0, 0.01, 0.25, 3, 0,0);
 	connect(cutbyVertexOffsetSpinBox, SIGNAL(valueChanged(double)),this, SLOT(changeCutOffsetV(double)));
 
 	performCuttingVertexButton = new QPushButton(tr("Perform Cutting"), this);
@@ -466,7 +466,7 @@ void ConicalMode::setupCutbyFace(){
 
 	//offset
 	cutbyFaceOffsetLabel = new QLabel(this);
-	cutbyFaceOffsetSpinBox = createDoubleSpinBox(mCutbyFaceLayout, cutbyFaceOffsetLabel, tr("Offset:"), 0.0, 2.0, 0.01, 0.25, 2, 0,0);
+	cutbyFaceOffsetSpinBox = createDoubleSpinBox(mCutbyFaceLayout, cutbyFaceOffsetLabel, tr("Offset:"), 0.0, 2.0, 0.01, 0.25, 3, 0,0);
 	connect(cutbyFaceOffsetSpinBox, SIGNAL(valueChanged(double)),this, SLOT(changeCutOffsetE(double)));
 
 	performCuttingFaceButton = new QPushButton(tr("Perform Cutting"), this);

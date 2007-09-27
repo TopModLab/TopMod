@@ -298,7 +298,49 @@ private:
 	QLabel *dooSabinBCNewScaleLabel;
 	QLabel *domeHeightLabel;
 	QLabel *domeScaleLabel;
-	
+
+	QCheckBox *dualFasterCheckBox;
+	QPushButton *dualCreateButton;
+	QPushButton *rootThreeCreateButton;
+	QPushButton *triangulateCreateButton;
+	QPushButton *dualVertexTruncationButton;
+	QPushButton *stellationButton;
+	QPushButton *starButton;
+	QPushButton *twelveSixFourButton;
+	QPushButton *honeycombButton;
+	QPushButton *vertexTruncationButton;
+	QPushButton *dualTwelveSixFourButton;
+	QPushButton *linearVertexCreateButton;
+	QPushButton *catmullClarkCreateButton;
+	QPushButton *stellateEdgeRemovalCreateButton;
+	QCheckBox *dooSabinCheckBox;
+	QPushButton *dooSabinCreateButton;
+	QPushButton *cornerCuttingCreateButton;
+	QPushButton *modifiedCornerCuttingCreateButton;
+	QPushButton *simplestCreateButton;
+	QPushButton *pentagonalizationCreateButton;
+	QPushButton *cubicPentagonalizationCreateButton;
+	QPushButton *dualPentagonalizationCreateButton;
+	QPushButton *loopStyleRemeshingButton;
+	QPushButton *loopSubdivisionCreateButton;
+	QPushButton *dualLoopStyleRemeshingButton;
+	QPushButton *dualLoopSubdivisionCreateButton;
+	QPushButton *globalExtrudeButton;
+	QPushButton *checkerboardCreateButton;
+	QPushButton *dualGlobalExtrudeButton;
+	QPushButton *dualCheckerboardCreateButton;
+	QPushButton *pentagonPreservingButton;
+	QPushButton *dualPentagonPreservingCreateButton;
+	QPushButton *dualLoopStyleRemeshingSixButton;
+	QPushButton *loopStyleRemeshingSixButton;
+	QPushButton *fractalButton;	
+	QPushButton *doubleStellateMiscButton;
+	QPushButton *dooSabinBCButton;
+	QPushButton *dooSabinBCNewButton;
+	QPushButton *domeButton;
+	QCheckBox *subdivideFaceCheckBox;		
+	QPushButton *subdivideFaceButton;
+		
 };
 
 #endif

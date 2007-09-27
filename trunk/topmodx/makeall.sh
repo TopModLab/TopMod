@@ -10,5 +10,9 @@ python dlfl_setup.py install
 # go back up 2 directory levels
 cd ../../
 
+# i18n stuff
+lupdate topmod.pro
+lrelease topmod.pro
+
 # build main project
 qmake && make

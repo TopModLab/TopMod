@@ -289,7 +289,7 @@ void BasicsMode::setupSubdivideEdge() {
 	// mSubdivideEdgeLayout->setMargin(0);
 	
 	//number of subdivisions spinbox
-	numSubdivsLabel = new QLabel(this);;
+	numSubdivsLabel = new QLabel(this);
 	numSubdivsSpinBox = createDoubleSpinBox(mSubdivideEdgeLayout, numSubdivsLabel, tr("# Subdivisions"), 1, 10, 1, 1, 0, 0,0);
 	connect(numSubdivsSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeNumSubDivs(double)));
 
@@ -339,32 +339,32 @@ void BasicsMode::setupTransforms(){
 	// transformLabel = new QLabel(tr("Translate:"));
 	// mTransformsLayout->addWidget(transformLabel,0,0,1,2);
 	
-	xPosLabel = new QLabel(this);;
-	xPosSpinBox = createDoubleSpinBox(mTransformsLayout, xPosLabel, tr("X-translate"), -100.0, 100.0, 0.5, 0.0, 1, 1,0);
+	xPosLabel = new QLabel(this);
+	xPosSpinBox = createDoubleSpinBox(mTransformsLayout, xPosLabel, tr("X-translate"), -100.0, 100.0, 0.5, 0.0, 3, 1,0);
 	connect(xPosSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(translatex(double)));
 	
-	yPosLabel = new QLabel(this);;
-	yPosSpinBox = createDoubleSpinBox(mTransformsLayout, yPosLabel, tr("Y-translate"), -100.0, 100.0, 0.5, 0.0, 1, 2,0);
+	yPosLabel = new QLabel(this);
+	yPosSpinBox = createDoubleSpinBox(mTransformsLayout, yPosLabel, tr("Y-translate"), -100.0, 100.0, 0.5, 0.0, 3, 2,0);
 	connect(yPosSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(translatey(double)));
 	
-	zPosLabel = new QLabel(this);;
-	zPosSpinBox = createDoubleSpinBox(mTransformsLayout, zPosLabel, tr("Z-translate"), -100.0, 100.0, 0.5, 0.0, 1, 3,0);
+	zPosLabel = new QLabel(this);
+	zPosSpinBox = createDoubleSpinBox(mTransformsLayout, zPosLabel, tr("Z-translate"), -100.0, 100.0, 0.5, 0.0, 3, 3,0);
 	connect(zPosSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(translatez(double)));
 	
 	// scaleLabel = new QLabel(this);(tr("Scale:"));
 	// mTransformsLayout->addWidget(scaleLabel,4,0,1,2);
 	
 	//x scale
-	xScaleLabel = new QLabel(this);;
-	xScaleSpinBox = createDoubleSpinBox(mTransformsLayout, xScaleLabel, tr("X-scale"), 0.1, 10.0, 0.1, 1.0, 1, 5,0);
+	xScaleLabel = new QLabel(this);
+	xScaleSpinBox = createDoubleSpinBox(mTransformsLayout, xScaleLabel, tr("X-scale"), 0.1, 10.0, 0.1, 1.0, 3, 5,0);
 	connect(xScaleSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(scalex(double)));
 
-	yScaleLabel = new QLabel(this);;
-	yScaleSpinBox = createDoubleSpinBox(mTransformsLayout, yScaleLabel, tr("Y-scale"), 0.1, 10.0, 0.1, 1.0, 1, 6,0);
+	yScaleLabel = new QLabel(this);
+	yScaleSpinBox = createDoubleSpinBox(mTransformsLayout, yScaleLabel, tr("Y-scale"), 0.1, 10.0, 0.1, 1.0, 3, 6,0);
 	connect(yScaleSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(scaley(double)));
 
- 	zScaleLabel = new QLabel(this);;
-	zScaleSpinBox = createDoubleSpinBox(mTransformsLayout, zScaleLabel, tr("Z-scale"), 0.1, 10.0, 0.1, 1.0, 1, 7,0);
+ 	zScaleLabel = new QLabel(this);
+	zScaleSpinBox = createDoubleSpinBox(mTransformsLayout, zScaleLabel, tr("Z-scale"), 0.1, 10.0, 0.1, 1.0, 3, 7,0);
 	connect(zScaleSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(scalez(double)));
 	
 	freezeTransformsButton = new QPushButton(tr("&Freeze Transforms"));
@@ -462,18 +462,18 @@ void BasicsMode::retranslateUi(){
 	noOptionsCollapseEdgeLabel->setText(tr("No Options for this tool."));
 	mCollapseEdgeWidget->setWindowTitle(tr("Collapse Edge"));
 	numSubdivsLabel->setText(tr("# Subdivisions"));
-	// mSubdivideEdgeWidget->setWindowTitle(tr("Subdivide Edge Mode"));
-	// noOptionsConnectEdgesLabel->setText(tr("No Options for this tool."));
-	// mConnectEdgesWidget->setWindowTitle(tr("Connect Edges"));
-	// noOptionsSpliceCornersLabel->setText(tr("No Options for this tool."));
-	// mSpliceCornersWidget->setWindowTitle(tr("Splice Corners"));
-	// xPosLabel->setText(tr("X-translate"));
-	// yPosLabel->setText(tr("Y-translate"));
-	// zPosLabel->setText(tr("Z-translate"));
-	// xScaleLabel->setText(tr("X-scale"));
-	// yScaleLabel->setText(tr("Y-scale"));
-	// zScaleLabel->setText(tr("Z-scale"));
-	// freezeTransformsButton->setText(tr("&Freeze Transforms"));
-	// mTransformsWidget->setWindowTitle(tr("Transforms Mode"));	
-	// mFaceAreaToleranceLabel->setText(tr("Face Area Sel.\nTolerance"));
+	mSubdivideEdgeWidget->setWindowTitle(tr("Subdivide Edge Mode"));
+	noOptionsConnectEdgesLabel->setText(tr("No Options for this tool."));
+	mConnectEdgesWidget->setWindowTitle(tr("Connect Edges"));
+	noOptionsSpliceCornersLabel->setText(tr("No Options for this tool."));
+	mSpliceCornersWidget->setWindowTitle(tr("Splice Corners"));
+	xPosLabel->setText(tr("X-translate"));
+	yPosLabel->setText(tr("Y-translate"));
+	zPosLabel->setText(tr("Z-translate"));
+	xScaleLabel->setText(tr("X-scale"));
+	yScaleLabel->setText(tr("Y-scale"));
+	zScaleLabel->setText(tr("Z-scale"));
+	freezeTransformsButton->setText(tr("&Freeze Transforms"));
+	mTransformsWidget->setWindowTitle(tr("Transforms Mode"));	
+	mFaceAreaToleranceLabel->setText(tr("Face Area Sel.\nTolerance"));
 }

@@ -543,6 +543,7 @@ private:
 	//top level and sublevel menus
 	QMenuBar *menuBar;														//!< the main menubar pointer to which all qmenu's will be added
 	QMenu *mFileMenu;															//!< the file menu which contains save, save as, quit etc...
+	QMenu *mExportMenu;
 	QMenu *mEditMenu;															//!< undo, redo, clear undo list, and also preferences (except on os/x)
 	QMenu *mDisplayMenu;													//!< all viewport display functionality (HUD, IDs, renderer, verts, faces, normals, etc...)
 	QMenu *mViewMenu;															//!< probably going to remove... but could contain choices for which view to use (persp or left / right /top/ bottom etc...)
@@ -1015,6 +1016,7 @@ public slots:
 	void changeDomeExtrudeLength(double value); // dave
 	void changeDomeExtrudeRotation(double value); // dave
 	void changeDomeExtrudeScale(double value); // dave
+	void changeDooSabinExtrudeTwist(double value); // dave
 	void toggleAccurateDualFlag(int state);
 
 	//right click menu support coming soon...
