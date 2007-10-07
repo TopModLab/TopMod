@@ -1,3 +1,36 @@
+/*
+*
+* ***** BEGIN GPL LICENSE BLOCK *****
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software  Foundation,
+* Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*
+* The Original Code is Copyright (C) 2005 by xxxxxxxxxxxxxx
+* All rights reserved.
+*
+* The Original Code is: all of this file.
+*
+* Contributor(s): none yet.
+*
+* ***** END GPL LICENSE BLOCK *****
+*
+* Short description of this file
+*
+* name of .hh file containing function prototypes
+*
+*/
+
 #include "GLWidget.hh"
 #include "DLFLSelection.hh"
 
@@ -315,8 +348,15 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	// setupViewport(width(), height());
 	glEnable(GL_DEPTH_TEST);
 	// Multiply by the transformation matrix. dave and stuart*
-	// Matrix4x4 m4 = inverse(viewport.apply_transform().matrix());
-	// viewport.apply_transform();
+	// glMatrixMode(GL_PROJECTION);
+	//   glLoadIdentity();
+	//   if ( pickmode ){
+	// 	gluPickMatrix(mousex, mousey, pickw, pickh, viewport);
+	// }
+	// gluPerspective(FOV, WinX/(float)WinY, nearplane, farplane);
+	// glMatrixMode(GL_MODELVIEW);
+	// glLoadIdentity( );
+	// SetCamera();
 	mCamera->SetProjection(width(),height());
 
 	// Draw the axes if required. Use thick lines
@@ -438,7 +478,55 @@ void GLWidget::paintEvent(QPaintEvent *event){
 	drawHUD(&painter);
 	drawSelectedIDs(&painter, &model[0][0], &proj[0][0], &view[0]);
 	drawIDs(&painter, &model[0][0], &proj[0][0], &view[0]); // draw vertex, edge and face ids
-	  
+	
+	
+	//try out some code to put an axis in the bottom left corner of the screen  
+	glViewport(10.0,10.0,50.0,50.0);
+	
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	
+	glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+	gluPerspective(10.0, 1.0, 1.0, 100);
+	// gluOrtho(-10.0, 10.0, -10, 10);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity( );
+	Vector3d t = normalized(mCamera->getEye() - mCamera->getCenter())*10.0;
+	gluLookAt(t[0], t[1], t[2],
+						//mCamera->getEye()[0],mCamera->getEye()[1],mCamera->getEye()[2],
+						// mCamera->getCenter()[0],mCamera->getCenter()[1],mCamera->getCenter()[2],
+						0.0,0.0,0.0,
+						mCamera->getUp()[0],mCamera->getUp()[1],mCamera->getUp()[2]);
+						// 0.0,1.0,0.0);
+	glDisable(GL_BLEND);
+	glLineWidth(1.5);
+	glBegin(GL_LINES);
+	glColor3f(1.0,0.25,0.25);                     // X Axis - Red
+	glVertex3f(0,0,0); glVertex3f(1,0,0);
+	glColor3f(0.25,1.0,0.25);                     // Z Axis - Green
+	glVertex3f(0,0,0); glVertex3f(0,0,1);
+	glColor3f(0.25,0.25,1.0);                     // Y Axis - Blue
+	glVertex3f(0,0,0); glVertex3f(0,1,0);
+	glEnd();
+	glLineWidth(3.0);
+	glEnable(GL_BLEND);																			// Enable Blending
+	
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(60.0f,(GLfloat)width()/(GLfloat)height(),0.1f,100.0f);
+	
+	glPopAttrib();
+  glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	// glTranslated(0.0, 0.0, -50.0);	
+  glPopMatrix();
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+	
 	painter.end();
 }
 
@@ -567,9 +655,9 @@ void GLWidget::drawHUD(QPainter *painter){
 		// painter->drawRoundRect(QRect(3.0,3.0,rectangle.width(),rectangle.height()),25,25);
 		painter->drawRect(rectangle);
 		painter->setPen(Qt::white);
-		painter->drawText(rectangle.left()+5, 										rectangle.top()+5,	r3.width(),	rectangle.height(),Qt::AlignLeft, s3);
-		painter->drawText(/*fm.width(s3)*/220, 										rectangle.top()+5, 	r1.width(), rectangle.height(),Qt::AlignLeft, s1);
-		painter->drawText(/*fm.width(s3)+fm.width(s1)*/400, 			rectangle.top()+5, 	r2.width(),	rectangle.height(),Qt::AlignLeft, s2);
+		painter->drawText(rectangle.left()+65, 										rectangle.top()+5,	r3.width(),	rectangle.height(),Qt::AlignLeft, s3);
+		painter->drawText(/*fm.width(s3)*/280, 										rectangle.top()+5, 	r1.width(), rectangle.height(),Qt::AlignLeft, s1);
+		painter->drawText(/*fm.width(s3)+fm.width(s1)*/460, 			rectangle.top()+5, 	r2.width(),	rectangle.height(),Qt::AlignLeft, s2);
 	}
 }
 

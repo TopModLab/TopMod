@@ -1,3 +1,36 @@
+/*
+*
+* ***** BEGIN GPL LICENSE BLOCK *****
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software  Foundation,
+* Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*
+* The Original Code is Copyright (C) 2005 by xxxxxxxxxxxxxx
+* All rights reserved.
+*
+* The Original Code is: all of this file.
+*
+* Contributor(s): none yet.
+*
+* ***** END GPL LICENSE BLOCK *****
+*
+* Short description of this file
+*
+* name of .hh file containing function prototypes
+*
+*/
+
 /****************************************************************************
  **
  **
@@ -2491,11 +2524,9 @@ void MainWindow::doSelection(int x, int y) {
 		//get one selected face
 		sfptr = active->selectFace(x,y);
 		if (sfptr && active->isSelected(sfptr) && QApplication::keyboardModifiers() == Qt::ControlModifier){
-			deselect_edges = true;
 			active->clearSelectedFace(sfptr);
 			num_sel_faces--;
 			getCheckerboardSelection(sfptr);
-			deselect_edges = false;
 		}
 		else if (sfptr && !active->isSelected(sfptr) ){
 			active->setSelectedFace(sfptr);
@@ -4715,8 +4746,6 @@ void MainWindow::switchBackView(){
 
 //recurse through selected faces to get a list of checkerboard selection for the entire object
 void MainWindow::getCheckerboardSelection(DLFLFacePtr fptr) {
-	// fparray.clear();
-	// sfptr = active->selectFace(x,y);
 	if (fptr){
 		int numShared = 0;
 		DLFLFacePtrArray fparray;
@@ -4804,16 +4833,10 @@ void MainWindow::getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr 
 	eptr->getFacePointers(fptr1,fptr2);
 	//check if the two faces are quads
 	if (fptr1 && fptr1->numFaceVertexes() == 4 && !(fptr1 == face_loop_marker) ){
-		// cout << select_face_loop << "\t" << !active->isSelected(fptr1) << std::endl;
-		if (/*select_face_loop &&*/ !active->isSelected(fptr1)){
-			// active->setSelectedFace(fptr1);
+		if (!active->isSelected(fptr1)){
 			active->setSelectedFace(num_sel_faces,fptr1);
 			num_sel_faces++;
 		}
-		/*else if (active->isSelected(fptr1)){
-			active->clearSelectedFace(fptr1);
-			num_sel_faces--;
-			}*/
 		fptr1->getEdges(edges);
 		idx =0;
 		for (it = edges.begin(); it != edges.end(); it++){
@@ -4824,15 +4847,10 @@ void MainWindow::getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr 
 		}//end for loop
 	}
 	if (fptr2 && fptr2->numFaceVertexes() == 4 && !(fptr2 == face_loop_marker) ){
-		if (/*select_face_loop &&*/!active->isSelected(fptr2)){
-			// active->setSelectedFace(fptr2);
+		if (!active->isSelected(fptr2)){
 			active->setSelectedFace(num_sel_faces,fptr2);
 			num_sel_faces++;
 		}
-		/*else if (active->isSelected(fptr2)){
-			active->clearSelectedFace(fptr2);
-			num_sel_faces--;				
-			}*/
 		fptr2->getEdges(edges);
 		idx =0;
 		for (it = edges.begin(); it != edges.end(); it++){
@@ -4842,7 +4860,6 @@ void MainWindow::getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr 
 			}
 			idx++;
 		}//end for loop
-		// }//end if fptr2	
 	}
 }
 
