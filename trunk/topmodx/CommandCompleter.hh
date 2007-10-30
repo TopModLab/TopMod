@@ -26,6 +26,8 @@
 * ***** END GPL LICENSE BLOCK *****
 */
 
+#ifdef QCOMPLETER
+
 #ifndef _COMMANDCOMPLETER_HH_
 #define _COMMANDCOMPLETER_HH_
 
@@ -91,3 +93,4 @@ public slots:
 };
 	
 #endif
+#endif //QCOMPLETER

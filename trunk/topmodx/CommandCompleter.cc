@@ -31,6 +31,8 @@
 *
 */
 
+#ifdef QCOMPLETER
+
 #include "CommandCompleter.hh"
 #include <QPixmap>
 #include <QBitmap>
@@ -90,3 +92,5 @@
 		// QShortcut *shortcut = new QShortcut(QKeySequence(tr("Enter")),this);
 		connect(mLineEdit, SIGNAL(editingFinished()), this, SLOT(accept()));
 	}
+
+#endif

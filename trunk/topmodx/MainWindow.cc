@@ -356,7 +356,9 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	mTexturingMode = new TexturingMode(this, sm, mActionListWidget);
 
 	
+	#ifdef QCOMPLETER
 	mCommandCompleter = new CommandCompleter(mActionListWidget, this);
+	#endif
 	createToolBars();
 	createMenus();
 	//initialize the help file...
@@ -494,13 +496,14 @@ void MainWindow::createActions() {
 	// mActionListWidget->addAction(mExitAct);
 	
 	//quick command quicksilver like interface
+	#ifdef QCOMPLETER
 	mQuickCommandAct = new QAction(tr("Quick Command"), this);
 	QShortcut *shortcut = new QShortcut(QKeySequence(Qt::Key_Space), this);
 	connect(shortcut, SIGNAL(activated()), this, SLOT(getCommand()));
 	mQuickCommandAct->setStatusTip(tr("Quick Command Access with Autocompletion"));
 	connect(mQuickCommandAct, SIGNAL(triggered()), this, SLOT(getCommand()));
 	// mActionListWidget->addAction(mQuickCommandAct);
-	
+	#endif
 	//Edit Menu Actions
 	mDeleteSelectedAct = new QAction(/*QIcon(":images/edit-undo.png"),*/ tr("&Delete Selected"), this);
 	sm->registerAction(mDeleteSelectedAct, "Edit Menu", "Del");
@@ -1498,7 +1501,9 @@ void MainWindow::createMenus(){
 	mToolsMenu->addMenu(mConicalMode->getMenu());
 	mToolsMenu->addMenu(mHighgenusMode->getMenu());
 	mToolsMenu->addMenu(mTexturingMode->getMenu());
+	#ifdef QCOMPLETER
 	mToolsMenu->addAction(mQuickCommandAct);
+	#endif
 	// mToolsMenu->addAction(mExtrudeMultipleAct);
 	mToolsMenu->addAction(mPerformExtrusionAct);
 	mToolsMenu->addAction(mSubdivideSelectedFacesAct);
@@ -5116,9 +5121,10 @@ void MainWindow::retranslateUi() {
 
 
 	//quick command quicksilver like interface
+	#ifdef QCOMPLETER
 	mQuickCommandAct->setText(tr("Quick Command"));
 	mQuickCommandAct->setStatusTip(tr("Quick Command Access with Autocompletion"));
-
+	#endif		
 	//Edit Menu Actions
 	mDeleteSelectedAct->setText(/*QIcon(":images/edit-undo.png"),*/ tr("&Delete Selected"));
 	mDeleteSelectedAct->setStatusTip(tr("Delete Selected"));

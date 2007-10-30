@@ -60,8 +60,10 @@
 #include "ConicalMode.hh"
 #include "TexturingMode.hh"
 
+#ifdef QCOMPLETER
 //new command auto completion interface - like quicksilver inside topmod
 #include "CommandCompleter.hh"
+#endif
 
 #include "DLFLLighting.hh"
 #include <DLFLObject.hh>
@@ -819,7 +821,9 @@ private:
 	TopModPreferences *mPreferencesDialog;
 	QAction *mPreferencesAct;
 	QSettings *mSettings;
+	#ifdef QCOMPLETER
 	CommandCompleter *mCommandCompleter;
+	#endif
 	QStringList mCommandList;
 			
 	//popup helper animations
