@@ -6,8 +6,12 @@ VERSION = 256# $$system(svn info -r HEAD . | grep 'Changed\ Rev' | cut -b 19-)
 	DEFINES += VER=\"$${VERSTR}\" # create a VER macro containing the version string
 #} 
 
-# main stuff
+#qt version 
+QTVERSION = $$[QT_VERSION]
+QT_VERSTR = '\\"$${QTVERSION}\\"'  # place quotes around the version string
+DEFINES += QT_VER=\"$${QT_VERSTR}\" # create a QT_VER macro containing the version string
 
+# main stuff
 QT += opengl xml
 CONFIG += qt release warn_off link_prl
 
@@ -15,6 +19,7 @@ CONFIG += qt release warn_off link_prl
 # or include them with CONFIG += 
 CONFIG -=  WITH_PYTHON WITH_SPACENAV WITH_VERSE
 CONFIG += WITH_PYTHON 
+CONFIG += QCOMPLETER
 # DEFINES += TOPMOD_VERSION 
 DEFINES -= GPU_OK
 
