@@ -1,5 +1,5 @@
 # version info : code from -- http://wiki.qtcentre.org/index.php?title=Version_numbering_using_QMake
-VERSION = 256# $$system(svn info -r HEAD . | grep 'Changed\ Rev' | cut -b 19-)
+VERSION = $$system(svn info -r HEAD . | grep 'Changed\ Rev' | cut -b 19-)
 #!isEmpty(VERSION){
 	VERSION = 2.$${VERSION}
 	VERSTR = '\\"$${VERSION}\\"'  # place quotes around the version string
@@ -19,7 +19,10 @@ CONFIG += qt release warn_off link_prl
 # or include them with CONFIG += 
 CONFIG -=  WITH_PYTHON WITH_SPACENAV WITH_VERSE
 CONFIG += WITH_PYTHON 
-CONFIG += QCOMPLETER
+
+# to include the popup command line interface leave the following line uncommented
+DEFINES *= QCOMPLETER
+
 # DEFINES += TOPMOD_VERSION 
 DEFINES -= GPU_OK
 
