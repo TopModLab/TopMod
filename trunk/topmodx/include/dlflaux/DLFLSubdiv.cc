@@ -796,7 +796,7 @@ namespace DLFL {
 		return true;
   }
 
-  void cornerCuttingSubdivide(DLFLObjectPtr obj) {
+  void cornerCuttingSubdivide(DLFLObjectPtr obj, float alpha) {
     // Corner-cutting subdivision scheme
     // Tension parameter is calculated based on number of vertices in face
 
@@ -839,12 +839,12 @@ namespace DLFL {
       new_vertex_coords.reserve(num_verts);
             
       // Compute new coordinates for the new polygon
-      double coef, alpha;
+			double coef;//,alpha;
       //alpha = 12.0/16.0;
       for (int i=0; i < num_verts; ++i) {
 				p.reset();
 				for (int j=0; j < num_verts; ++j) {
-					alpha = 0.25 + 5.0/(4.0*num_verts);
+					//alpha = 0.25 + 5.0/(4.0*num_verts);
 					if ( i == j ) coef = alpha;
 					else coef = (1.0 - alpha) * ( 3.0 + 2.0*cos(2.0*(i-j)*M_PI/num_verts) ) / (3.0*num_verts - 5.0);
 					p += coef*vertex_coords[j];
@@ -945,7 +945,7 @@ namespace DLFL {
     DLFLVertexPtr vp;
     Vector3dArray vertex_coords, new_vertex_coords;
     Vector3d p;
-    Vector3d v0, v1, v2, n1, n2, v0hat;
+    Vector3d v0, v1, v2, n1, n2, n3, v0hat;
     float n1n2,x,t;
     int num_old_faces, num_old_edges, num_old_verts;
     int num_faces, num_edges, num_verts;
@@ -986,12 +986,14 @@ namespace DLFL {
 					v1 = vertex_coords[i-1];
 				else 
 					v1 = vertex_coords[num_verts-1];
-				if 
-					( i < num_verts-1 ) v2 = vertex_coords[i+1];
+				if ( i < num_verts-1 ) 
+					v2 = vertex_coords[i+1];
 				else 
 					v2 = vertex_coords[0];
+				//if the length of v1-v2 i smaller than .001... 
+				//this is arbitrary and should probably be changed...
 				if ( norm(v1-v2) < 0.001 ) {
-					if ( i < num_verts-2 ) 
+					if ( i < num_verts-2 )
 						v2 = vertex_coords[i+2]; 
 					else if ( i == num_verts-1 ) 
 						v2 = vertex_coords[0]; 
@@ -1001,11 +1003,20 @@ namespace DLFL {
 				n1 = normalized(v1-v0);
 				n2 = normalized(v2-v0);
 				n1n2 = n1*n2;
-				x = sqrt(t*t/(1.0-n1n2*n1n2));
-				v0hat = x*(n1+n2) + v0;
-				p = v0hat;
-
-				new_vertex_coords.push_back(p);
+				std::cout << n1n2 << "\n";
+				if (n1n2 == -1){
+					n3 = normalized(fp->geomCentroid()-v0);
+					// x = t;
+					v0hat = t*(n3) + v0;
+					// p = v0hat;		
+					new_vertex_coords.push_back(v0hat);	
+				}
+				else {
+					x = sqrt(t*t/(1.0-n1n2*n1n2));
+					v0hat = x*(n1+n2) + v0;
+					p = v0hat;
+					new_vertex_coords.push_back(p);
+				}
       }
 
       obj->createFace(new_vertex_coords);

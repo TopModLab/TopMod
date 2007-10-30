@@ -309,6 +309,14 @@ void HighgenusMode::toggleCrustCleanupFlag(int state)
 	((MainWindow*)mParent)->toggleCrustCleanupFlag(state);
 }
 
+void HighgenusMode::toggleWireframeSplit(int state){
+	wireframeSplitCheckBox->setChecked(state);
+	wireframe2SplitCheckBox->setChecked(state);
+	
+	((MainWindow*)mParent)->toggleWireframeSplit(state);
+}
+
+
 QDoubleSpinBox *HighgenusMode::createDoubleSpinBox(QGridLayout *layout, QLabel *label, QString s, double low, double high, double step, double value, double decimals, int row, int col){
 	label->setText(s);
 	QDoubleSpinBox *spinbox = new QDoubleSpinBox(this);
@@ -504,6 +512,7 @@ void HighgenusMode::setupRindModelingThickness(){
 	mRindModelingThicknessWidget->setLayout(mRindModelingThicknessLayout);
 }
 
+
 void HighgenusMode::setupWireframeModeling(){
 	
 	mWireframeModelingLayout = new QGridLayout;
@@ -514,12 +523,19 @@ void HighgenusMode::setupWireframeModeling(){
 	wireframeModelingThicknessLabel = new QLabel(this);
 	wireframeModelingThicknessSpinBox = createDoubleSpinBox(mWireframeModelingLayout, wireframeModelingThicknessLabel, tr("Thickness:"), 0.0, 1.0, 0.01, 0.25, 3, 0,0);	
 	connect(wireframeModelingThicknessSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeWireframeThickness(double)));
+	
+	//split 2 valence checkbox
+	wireframeSplitCheckBox = new QCheckBox(tr("Split Valence-2 Vertices"),this);
+	wireframeSplitCheckBox->setChecked(Qt::Checked);
+	connect(wireframeSplitCheckBox, SIGNAL(stateChanged(int)), this, SLOT(toggleWireframeSplit(int)));
+	mWireframeModelingLayout->addWidget(wireframeSplitCheckBox,1,0,1,2);
+	
 	//create wireframe button
 	wireframeModelingCreateButton = new QPushButton(tr("Create Wireframe"), this);
 	connect(wireframeModelingCreateButton, SIGNAL(clicked()), ((MainWindow*)mParent), SLOT(makeWireframe()));
-	mWireframeModelingLayout->addWidget(wireframeModelingCreateButton,1,0,1,2);	
+	mWireframeModelingLayout->addWidget(wireframeModelingCreateButton,2,0,1,2);	
 	//set layout and add stretch
-	mWireframeModelingLayout->setRowStretch(2,1);
+	mWireframeModelingLayout->setRowStretch(3,1);
 	mWireframeModelingLayout->setColumnStretch(2,1);
 	mWireframeModelingWidget->setWindowTitle(tr("Wireframe Modeling"));
 	mWireframeModelingWidget->setLayout(mWireframeModelingLayout);
@@ -538,12 +554,19 @@ void HighgenusMode::setupWireframeModeling2(){
 	wireframeModeling2WidthLabel = new QLabel(this);
 	wireframeModeling2WidthSpinBox = createDoubleSpinBox(mWireframeModeling2Layout, wireframeModeling2WidthLabel, tr("Width:"), 0.0, 1.0, 0.01, 0.25, 3, 1,0);	
 	connect(wireframeModeling2WidthSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeWireframe2Width(double)));
+	
+	//split 2 valence checkbox
+	wireframe2SplitCheckBox = new QCheckBox(tr("Split Valence-2 Vertices"),this);
+	wireframe2SplitCheckBox->setChecked(Qt::Checked);
+	connect(wireframe2SplitCheckBox, SIGNAL(stateChanged(int)), this, SLOT(toggleWireframeSplit(int)));
+	mWireframeModeling2Layout->addWidget(wireframe2SplitCheckBox,2,0,1,2);
+	
 	//create wireframe button
 	wireframeModeling2CreateButton = new QPushButton(tr("Create Wireframe 2"), this);
 	connect(wireframeModeling2CreateButton, SIGNAL(clicked()), ((MainWindow*)mParent), SLOT(makeWireframe2()));
-	mWireframeModeling2Layout->addWidget(wireframeModeling2CreateButton,2,0,1,2);	
+	mWireframeModeling2Layout->addWidget(wireframeModeling2CreateButton,3,0,1,2);	
 	//set layout and add stretch
-	mWireframeModeling2Layout->setRowStretch(3,1);
+	mWireframeModeling2Layout->setRowStretch(4,1);
 	mWireframeModeling2Layout->setColumnStretch(2,1);
 	mWireframeModeling2Widget->setWindowTitle(tr("Wireframe Modeling 2"));
 	mWireframeModeling2Widget->setLayout(mWireframeModeling2Layout);

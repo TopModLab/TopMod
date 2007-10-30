@@ -110,6 +110,7 @@ public slots:
 	void changeMultiFaceAlgorithm(bool on);
 	void toggleMultiFaceHandleUseMaxOffsetFlag(int state);
 	void toggleSymmetricWeightsFlag(int state);
+	void toggleWireframeSplit(int state);
 	
 	void toggleCrustCleanupFlag(int state);
 	void numSegmentsConnectValueChanged(double value);
@@ -181,6 +182,10 @@ private:
 	QDoubleSpinBox *mengerSpongeThicknessSpinBox;
 	QDoubleSpinBox *mengerSpongeThresholdSpinBox;
 		
+	QCheckBox *wireframeSplitCheckBox;
+	QCheckBox *wireframe2SplitCheckBox;
+	
+	
 	QLabel *multiFaceHandleExtrudeDistanceLabel;
 	QLabel *multiFaceHandleScaleLabel;
 	QDoubleSpinBox *multiFaceHandleExtrudeDistanceSpinBox;

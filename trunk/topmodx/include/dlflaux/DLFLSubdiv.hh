@@ -45,7 +45,7 @@ namespace DLFL {
   bool dooSabinSubdivide(DLFLObjectPtr obj, bool check=true /*,QProgressDialog *progress = 0*/);
   void dooSabinSubdivideBC(DLFLObjectPtr obj, bool check=true);
   void dooSabinSubdivideBCNew(DLFLObjectPtr obj, double sf, double length);
-  void cornerCuttingSubdivide(DLFLObjectPtr obj);
+  void cornerCuttingSubdivide(DLFLObjectPtr obj, float alpha);
   void modifiedCornerCuttingSubdivide(DLFLObjectPtr obj, double thickness);
   void modifiedCornerCuttingSubdivide2(DLFLObjectPtr obj, double thickness);
   void root4Subdivide(DLFLObjectPtr obj, double a=0.0, double twist=0.0);  

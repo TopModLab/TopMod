@@ -923,10 +923,13 @@ void RemeshingMode::setupFourConversion(){
 	mCornerCuttingLayout->setVerticalSpacing(1);
 	mCornerCuttingLayout->setHorizontalSpacing(1);
 	// mCornerCuttingLayout->setMargin(0);
+	cornerCuttingAlphaLabel = new QLabel(this);
+	cornerCuttingAlphaSpinBox = createDoubleSpinBox(mCornerCuttingLayout, cornerCuttingAlphaLabel, tr("Alpha:"), 0.333, .999, 0.01, 0.5625, 3, 0,0);
+	connect(cornerCuttingAlphaSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent),SLOT(changeCornerCuttingAlpha(double)) );
 	cornerCuttingCreateButton = new QPushButton(tr("Perform Remeshing"), this);
 	connect(cornerCuttingCreateButton, SIGNAL(clicked()), ((MainWindow*)mParent),SLOT(performRemeshing()) );
-	mCornerCuttingLayout->addWidget(cornerCuttingCreateButton,0,0);
-	mCornerCuttingLayout->setRowStretch(1,1);
+	mCornerCuttingLayout->addWidget(cornerCuttingCreateButton,1,0,1,2);
+	mCornerCuttingLayout->setRowStretch(2,1);
 	mCornerCuttingLayout->setColumnStretch(2,1);
 	mCornerCuttingWidget->setWindowTitle(tr("Corner Cutting Remeshing"));
 	mCornerCuttingWidget->setLayout(mCornerCuttingLayout);

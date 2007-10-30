@@ -242,7 +242,21 @@ namespace DLFL {
 
   void DLFLVertex::getEdges(DLFLEdgePtrArray& edges) const {
     // Return edges in an DLFLEdgePtrArray
-		// if (fvpList ){
+		// int size;
+		// try {
+		// 	throw fvpList.size();
+		// }
+		// catch (char c){
+		// 	std::cout << c << " \t char exception\n";			
+		// }		
+		// catch (int cause){
+		// 	std::cout << cause << " \t int exception\n";			
+		// }
+		// catch (...){
+		// 	std::cout << "default exception\n";
+		// }
+
+		if (fvpList.size() > 0){
 	    edges.clear(); edges.reserve(fvpList.size());
 
 	    DLFLFaceVertexPtrList::const_iterator first, last;
@@ -252,7 +266,7 @@ namespace DLFL {
 	      fvp = (*first); ++first;
 	      edges.push_back(fvp->getEdgePtr());
 	    }
-		// }
+		}
   }
 
   DLFLEdgePtr DLFLVertex::getEdgeTo(DLFLVertexPtr vp) {

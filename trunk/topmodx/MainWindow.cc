@@ -118,6 +118,9 @@ bool MainWindow::crust_cleanup = true;
 double MainWindow::wireframe_thickness = 0.25;
 double MainWindow::wireframe2_thickness = 0.25;
 double MainWindow::wireframe2_width = 0.25;
+bool MainWindow::wireframe_split = true;
+double MainWindow::corner_cutting_alpha = 9.0/16.0;
+
 
 // Column modeling
 double MainWindow::column_thickness = 0.25;
@@ -388,6 +391,12 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 void MainWindow::createActions() {
 
 	//File Menu Actions
+	mNewFileAct = new QAction(/*QIcon(":images/folder.png"),*/tr("&New File..."), this);
+	sm->registerAction(mNewFileAct, "File Menu", "CTRL+N");
+	mNewFileAct->setStatusTip(tr("Open a blank file and clear the undo list"));
+	connect(mNewFileAct, SIGNAL(triggered()), this, SLOT(newFile()));
+	mActionListWidget->addAction(mNewFileAct);
+
 	mOpenAct = new QAction(QIcon(":images/folder.png"),tr("&Open..."), this);
 	sm->registerAction(mOpenAct, "File Menu", "CTRL+O");
 	mOpenAct->setStatusTip(tr("Open an existing file"));
@@ -828,6 +837,22 @@ void MainWindow::createActions() {
 	// makeObjectSphericalAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(makeObjectSphericalAct, SIGNAL(triggered()), this, SLOT(spheralizeObject()));
 	mActionListWidget->addAction(makeObjectSphericalAct);
+
+	mCleanup2gonsAct = new QAction(tr("Cleanup 2-gons"), this);
+	sm->registerAction(mCleanup2gonsAct, "Tools", "");
+	// mCleanup2gonsAct->setStatusTip(tr("Copy the current selection's contents to the "
+	connect(mCleanup2gonsAct, SIGNAL(triggered()), this, SLOT(cleanup2gons()));
+	mActionListWidget->addAction(mCleanup2gonsAct);
+
+	mCleanupWingedVerticesAct = new QAction(tr("Remove valence-2 vertices"), this);
+	sm->registerAction(mCleanupWingedVerticesAct, "Tools", "SHIFT+CTRL+V");
+	connect(mCleanupWingedVerticesAct, SIGNAL(triggered()), this, SLOT(cleanupWingedVertices()));
+	mActionListWidget->addAction(mCleanupWingedVerticesAct);
+
+	mSplitValence2VerticesAct = new QAction(tr("Split valence-2 vertices"), this);
+	sm->registerAction(mSplitValence2VerticesAct, "Tools", "");
+	connect(mSplitValence2VerticesAct, SIGNAL(triggered()), this, SLOT(splitValence2Vertices()));
+	mActionListWidget->addAction(mSplitValence2VerticesAct);
 
 	makeObjectSmoothAct = new QAction(tr("Make Object &Smooth"), this);
 	sm->registerAction(makeObjectSmoothAct, "Tools", "CTRL+M");
@@ -1298,9 +1323,23 @@ void MainWindow::createMenus(){
 	mFileMenu = new QMenu(tr("&File"));
 	menuBar->addMenu(mFileMenu);
 	mFileMenu->setTearOffEnabled(true);
+	
+	mNewMenu = new QMenu(tr("&New"));
+	mNewMenu->setTearOffEnabled(true);
+	mFileMenu->addMenu(mNewMenu);
+	mNewMenu->addAction(mNewFileAct);
+	mNewMenu->addAction(pCubeAct);
+	mNewMenu->addAction(pOctahedronAct);
+	mNewMenu->addAction(pTetrahedronAct);
+	mNewMenu->addAction(pDodecahedronAct);
+	mNewMenu->addAction(pIcosahedronAct);
+	mNewMenu->addAction(pSoccerBallAct);
+	mNewMenu->addAction(pGeodesicAct);
+	
 
 	mExportMenu = new QMenu(tr("&Export"));
 	mExportMenu->setIcon(QIcon(":images/document-save-as.png"));
+	// mFileMenu->addAction(mNewFileAct);
 	mFileMenu->addAction(mOpenAct);
 	mFileMenu->addAction(mSaveAct);
 	mFileMenu->addAction(mSaveAsAct);
@@ -1484,6 +1523,11 @@ void MainWindow::createMenus(){
 	mObjectMenu->addAction(planarizeAllFacesAct);
 	mObjectMenu->addAction(makeObjectSphericalAct);
 	mObjectMenu->addAction(makeObjectSmoothAct);
+	mObjectMenu->addSeparator();
+	mObjectMenu->addAction(mCleanupWingedVerticesAct);
+	mObjectMenu->addAction(mCleanup2gonsAct);
+	mObjectMenu->addAction(mSplitValence2VerticesAct);
+	mObjectMenu->addSeparator();
 	mObjectMenu->addAction(computeLightingAct);
 	mObjectMenu->addAction(computeNormalsAndLightingAct);
 	mObjectMenu->addAction(assignTextureCoordinatesAct);
@@ -1553,6 +1597,7 @@ void MainWindow::createToolBars() {
 	//mEditToolBar->setFloatable(true);
 	addToolBar(Qt::TopToolBarArea,mEditToolBar);
 	//mEditToolBar->setFloatable(true);
+	mEditToolBar->addAction(mNewFileAct);
 	mEditToolBar->addAction(mOpenAct);
 	mEditToolBar->addAction(mSaveAsAct);
 	mEditToolBar->addAction(mUndoAct);
@@ -1834,6 +1879,16 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 	else event->ignore();
 }
 
+void MainWindow::newFile(){
+	
+	if (maybeSave()){
+		clearUndoList();
+		object.destroy();
+		active->redraw();
+  	}
+	else return;
+}
+ 
 bool MainWindow::maybeSave() {
 	if (this->isModified()) {
 		int ret = QMessageBox::warning(this, tr("TopMod"),
@@ -5012,6 +5067,7 @@ void MainWindow::retranslateUi() {
 	mDisplayMenu->setTitle(tr("&Display"));
 	mRendererMenu->setTitle(tr("&Renderer"));
 	mShowIDsMenu->setTitle(tr("&Show IDs"));
+	mNewMenu->setTitle(tr("&New"));
 	mPrimitivesMenu->setTitle(tr("&Primitives"));
 	mSelectionMenu->setTitle(tr("&Selection"));
 	mToolsMenu->setTitle(tr("&Tools"));
@@ -5023,6 +5079,8 @@ void MainWindow::retranslateUi() {
 
 
 	//from creatActions()!
+	mNewFileAct->setText(tr("&New File..."));
+	mNewFileAct->setStatusTip(tr("Open a blank file and clear the undo list"));
 	mOpenAct->setText(tr("&Open..."));
 	mOpenAct->setStatusTip(tr("Open an existing file"));
 	mSaveAct->setText(tr("&Save"));
@@ -5145,6 +5203,9 @@ void MainWindow::retranslateUi() {
 	subdivideAllEdgesAct->setText(tr("Subdivide All &Edges"));
 	planarizeAllFacesAct->setText(tr("Planarize All &Faces"));
 	makeObjectSphericalAct->setText(tr("Make &Object Spherical"));
+	mCleanup2gonsAct->setText(tr("Cleanup 2-gons"));
+	mCleanupWingedVerticesAct->setText(tr("Remove valence-2 vertices"));
+	mSplitValence2VerticesAct->setText(tr("Split valence-2 vertices"));
 	makeObjectSmoothAct->setText(tr("Make Object &Smooth"));
 	mPerformCuttingAct->setText(tr("Perform Cutting"));
 	mPerformCuttingAct->setStatusTip(tr("Cut selected faces, edges, or vertices based on the current selection mask"));

@@ -103,52 +103,53 @@ namespace DLFL {
     Vector3d avenormal, newpos;
     double mod_thickness; // Modified thickness for uniform thickness shells
     int num_verts = 0;
+		//negative thickness
     if ( thickness < 0.0 ) {
       vl_first = obj->beginVertex();
       while ( num_verts < num_old_verts ) {
-	vp = (*vl_first); ++vl_first; ++num_verts;
+				vp = (*vl_first); ++vl_first; ++num_verts;
 
-	// If uniform thickness is required, adjust thickness appropriately
-	if ( uniform ) {
-	  avenormal = vp->getNormals(normals);
-	  mod_thickness = 0.0;
-	  for (int i=0; i < normals.size(); ++i)
-	    mod_thickness += thickness/(avenormal*normals[i]);
-	  mod_thickness /= normals.size();
-	} else {
-	  avenormal = vp->averageNormal();
-	  mod_thickness = thickness;
-	}
-	// Negative sign because thickness is negative and normal is outward
-	// Use the modified thickness
-	newpos = vp->coords - mod_thickness*avenormal;
-	vp->coords = newpos;
+				// If uniform thickness is required, adjust thickness appropriately
+				if ( uniform ) {
+				  avenormal = vp->getNormals(normals);
+				  mod_thickness = 0.0;
+				  for (int i=0; i < normals.size(); ++i)
+				    mod_thickness += thickness/(avenormal*normals[i]);
+				  mod_thickness /= normals.size();
+				} else {
+				  avenormal = vp->averageNormal();
+				  mod_thickness = thickness;
+				}
+				// Negative sign because thickness is negative and normal is outward
+				// Use the modified thickness
+				newpos = vp->coords - mod_thickness*avenormal;
+				vp->coords = newpos;
       }
-    } else {
+    }
+		//thickness > 0
+		else {
       vl_first = obj->beginVertex(); vl_last = obj->endVertex();
       advance(vl_first,num_old_verts);
       while ( vl_first != vl_last ) {
-	vp = (*vl_first); ++vl_first;
-
-	// If uniform thickness is required, adjust thickness appropriately
-	if ( uniform ) {
-	  avenormal = vp->getNormals(normals);
-	  mod_thickness = 0.0;
-	  for (int i=0; i < normals.size(); ++i)
-	    mod_thickness += thickness/(avenormal*normals[i]);
-	  mod_thickness /= normals.size();
-	}
-	else {
-	  avenormal = vp->averageNormal();
-	  mod_thickness = thickness;
-	}
-	// Positive sign because thickness is positive and normal is inward
-	// Use the modified thickness
-	newpos = vp->coords + mod_thickness*avenormal; 
-	vp->coords = newpos;
+				vp = (*vl_first); ++vl_first;
+				// If uniform thickness is required, adjust thickness appropriately
+				if ( uniform ) {
+				  avenormal = vp->getNormals(normals);
+				  mod_thickness = 0.0;
+				  for (int i=0; i < normals.size(); ++i)
+				    mod_thickness += thickness/(avenormal*normals[i]);
+				  mod_thickness /= normals.size();
+				}
+				else {
+				  avenormal = vp->averageNormal();
+				  mod_thickness = thickness;
+				}
+				// Positive sign because thickness is positive and normal is inward
+				// Use the modified thickness
+				newpos = vp->coords + mod_thickness*avenormal; 
+				vp->coords = newpos;
       }
     }
-
     // Find and store the min. id for the face list
     crust_min_face_id = (obj->firstFace())->getID();
   }
@@ -297,6 +298,9 @@ namespace DLFL {
 	}
 
   void createCrustForWireframe(DLFLObjectPtr obj, double thickness) {
+	
+		bool uniform = true;
+		
     if ( !isNonZero(thickness) ) return;
 
     // Clear the arrays used to store crust modeling information
@@ -339,23 +343,44 @@ namespace DLFL {
     // If thickness is negative move the old vertices outward
     // Otherwise move the new vertices inward
 
-    DLFLVertexPtrList::iterator vl_first, vl_first_old;
+    DLFLVertexPtrList::iterator vl_first, vl_first_old, vl_last;
     DLFLVertexPtr vp,vpNew;
     Vector3d normal, newpos;
-    int num_verts = 0;
+	  Vector3dArray normals;
+	  Vector3d avenormal;
+	  double mod_thickness; // Modified thickness for uniform thickness shells
+	  int num_verts = 0;
 
     if ( thickness < 0.0 ) {
-      cout<<"ERROR: Thickness should be positive"<<endl;
-      return;
+	    vl_first = obj->beginVertex();
+	    while ( num_verts < num_old_verts ) {
+					vp = (*vl_first); ++vl_first; ++num_verts;
+
+					// If uniform thickness is required, adjust thickness appropriately
+					if ( uniform ) {
+					  avenormal = vp->getNormals(normals);
+					  mod_thickness = 0.0;
+					  for (int i=0; i < normals.size(); ++i)
+					    mod_thickness += thickness/(avenormal*normals[i]);
+					  mod_thickness /= normals.size();
+					} else {
+					  avenormal = vp->averageNormal();
+					  mod_thickness = thickness;
+					}
+					// Negative sign because thickness is negative and normal is outward
+					// Use the modified thickness
+					newpos = vp->coords - mod_thickness*avenormal;
+					vp->coords = newpos;
+	    }
     }
     if ( thickness > 0.0 ) {
       vl_first = obj->beginVertex(); vl_first_old= obj->beginVertex();
       for (int i = 0; i < num_old_verts; i++) 
 				++vl_first_old;
-
-      while (  num_verts < num_old_verts) {
+				
+				      while (  num_verts < num_old_verts) {
 				vpNew = (*vl_first_old); vp = (*vl_first); ++vl_first; ++num_verts; ++vl_first_old;
-
+				
 				DLFLFaceVertexPtrList fvpList;
 				DLFLFaceVertexPtr fvp1,fvp2,fvp0, fvp3, fvp4, fvptemp, fvptemp1, fvptemp2;
 				DLFLFacePtr fphole, fp1, fp2, fp;
@@ -363,75 +388,97 @@ namespace DLFL {
 				Vector3d v0, v1, v2, v3, v4, n1, n2, n3 ,n4, ntemp;
 				DLFLFaceVertexPtrList fvplist;
 				fvplist=vp->getFaceVertexList();
-
+				
 				// get the face that has the current vertex as one of its vertices
 				// and is marked for making a hole
 				DLFLFaceVertexPtrList::iterator first = fvplist.begin(), last = fvplist.end();
 				while ( first != last ) {
 					fvptemp = (*first);
 					fp = fvptemp->getFacePtr();		
-
+				
 				 	if ( fp->getType() == FTHole ) {
 				   	fphole = fp; break;
 				 	}
 				 	++first;
 				}
 				fp = fphole;
-
+				
 				fvp0 = vp->getFaceVertexInFace(fp);
 				fvp1 = fvp0->next();
 				fvp2 = fvp0->prev();
-
+				
 				// get vertex pointers
-				//vp1 = fvp1->getVertexPtr(); vp2 = fvp2->getVertexPtr();
-
+				// vp1 = fvp1->getVertexPtr(); vp2 = fvp2->getVertexPtr();
+				
 				// Get the two edges originating from the present vertex
 				ep0 = fvp0->getEdgePtr(); ep1 = fvp2->getEdgePtr(); 
-
+				
 				// For the edge starting at v0 to wards v1 
 				ep0->getFacePointers(fp1,fp2);
-
+				
 				// get the face to NOT be holed
 				if ( fp1->getType() == FTHole ) fp = fp2;
 				else fp = fp1;
-	    
+					    
 				// get the three face vertices
 				fvptemp = vp->getFaceVertexInFace(fp);
 				fvptemp1 = fvptemp->next();
-
+				
 				// get the vertices of the other two vertices in the face
 				//vptemp1 = fvptemp1->getVertexPtr();
-
+				
 				fvp3 = fvptemp1;
-
+				
 				// For the edge starting at v1 towards v0
 				// Same as before after this
 				ep1->getFacePointers(fp1, fp2);
 				if ( fp1->getType() == FTHole ) fp = fp2;
 				else fp = fp1;
-
+				
 				fvptemp = vp->getFaceVertexInFace(fp);
 				fvptemp2 = fvptemp->prev();
-
+				
 				//vptemp2 = fvptemp2->getVertexPtr();
 				fvp4 = fvptemp2;
-
+				
 				// Get the vertex coordinates of the five face vertices found
 				v0 = fvp0->getVertexCoords();
 				v1 = fvp1->getVertexCoords();
 				v2 = fvp2->getVertexCoords();
 				v3 = fvp3->getVertexCoords();
 				v4 = fvp4->getVertexCoords();
-		
+						
 				n1 = normalized( (v1-v0) % (v3-v0) );
 				n2 = normalized( n1 % (v1-v0) );
 				n3 = normalized( (v2-v0)% ( v4-v0) );
 				n4 = normalized( (v2-v0) % n3 );
 				normal = normalized(n2 % n4); // normal is the direction in which the new_pos will lie.
-
+				
 				newpos = vpNew->coords - thickness*normal;
 				vpNew->coords = newpos;
-      }
+				      }
+				// vl_first = obj->beginVertex(); vl_last = obj->endVertex();
+				// 		    advance(vl_first,num_old_verts);
+				// 		    while ( vl_first != vl_last ) {
+				// 		vp = (*vl_first); ++vl_first;
+				// 		// If uniform thickness is required, adjust thickness appropriately
+				// 		if ( uniform ) {
+				// 		  avenormal = vp->getNormals(normals);
+				// 		  mod_thickness = 0.0;
+				// 		  for (int i=0; i < normals.size(); ++i)
+				// 		    mod_thickness += thickness/(avenormal*normals[i]);
+				// 		  mod_thickness /= normals.size();
+				// 		}
+				// 		else {
+				// 		  avenormal = vp->averageNormal();
+				// 		  mod_thickness = thickness;
+				// 		}
+				// 		// Positive sign because thickness is positive and normal is inward
+				// 		// Use the modified thickness
+				// 		newpos = vp->coords + mod_thickness*avenormal; 
+				// 		vp->coords = newpos;
+				// 		    }
+		    
     }
 
     // Find and store the min. id for the face list

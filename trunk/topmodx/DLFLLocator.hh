@@ -42,6 +42,8 @@ typedef vector<DLFLLocatorPtr> DLFLLocatorPtrArray; // brianb
 void erase_dlp(DLFLLocatorPtr lp);  // brianb
 // static DLFLLocatorPtrArray lparray;               // For selection  (brianb)
 
+// void makeLocatorUnique(DLFLLocatorPtr dlp);
+
 #include <DLFLVertex.hh>
 // #include "GLWidget.hh"
 
@@ -151,10 +153,7 @@ class DLFLLocator
          assignID();
        }
 
-     friend void makeLocatorUnique(DLFLLocatorPtr dlp)
-       {
-         dlp->assignID();
-       }
+			// friend void makeLocatorUnique(DLFLLocatorPtr dlp);
 
         //--- Query functions ---//
 
@@ -218,6 +217,11 @@ class DLFLLocator
 
      void render(void);
 };
+
+// friend void makeLocatorUnique(DLFLLocatorPtr dlp)
+//  {
+//    dlp->assignID();
+//  }
 
 #endif /* #ifndef _DLFL_LOCATOR_HH_ */
 

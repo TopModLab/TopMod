@@ -304,7 +304,9 @@ private:
 	QDoubleSpinBox *dooSabinBCNewLengthSpinBox;
 	QDoubleSpinBox *domeHeightSpinBox;
 	QDoubleSpinBox *domeScaleSpinBox;
+	QDoubleSpinBox *cornerCuttingAlphaSpinBox;
 
+	QLabel *cornerCuttingAlphaLabel;
 	QLabel *starLabel;
 	QLabel *twelveSixFourLabel;
 	QLabel *vertexTruncationLabel;

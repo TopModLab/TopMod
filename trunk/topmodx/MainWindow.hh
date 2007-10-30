@@ -296,6 +296,7 @@ class MainWindow : public QMainWindow {
 	//!< Split valence 2 vertices
 	static double vertex_split_offset; //!< Half of distance between new vertices
 
+
 	//!< Crust modeling
 	static double crust_thickness;              //!< Thickness of crust
 	static double crust_scale_factor; //!< Scale factor for making crust
@@ -305,6 +306,8 @@ class MainWindow : public QMainWindow {
 	static double wireframe_thickness; //!< Thickness of crust for wireframe
 	static double wireframe2_thickness; //!< depth of crust for wireframe2
 	static double wireframe2_width; //!< width of crust for wireframe2
+	static bool wireframe_split; //!< split valence-2 vertices or not?
+	static double corner_cutting_alpha;
 
 	//!< Column modeling
 	static double column_thickness; //!< Thickness of columns for column modeling
@@ -578,6 +581,7 @@ private:
 	QMenu *mShowIDsMenu;													//!< submenu of mDisplayMenu
 	QMenu *mRendererMenu;													//!< now a submenu of mDisplayMenu
 	QMenu *mPrimitivesMenu;												//!< stores actions for one-click loading of primitive objects
+	QMenu *mNewMenu;															//!< stores same actions as the primitives menu plus a "new file" command that loads a blank object
 	QMenu *mObjectMenu;														//!< \todo  needs to be removed. not necessary
 	QMenu *mSelectionMenu;												//!< all different selection options
 	QMenu *mSelectionMaskMenu;										//!< \todo  figure out how to integrate a selection mask functionality into the current implementation of mode switching in TopMod
@@ -595,7 +599,7 @@ private:
 	QMenu *mToolsMenu;
 
 	//File Menu Actions
-	QAction *mNewAct;
+	QAction *mNewFileAct;
 	QAction *mOpenAct;
 	QAction *mSaveAct;
 	QAction *mSavePatchesAct;
@@ -680,6 +684,9 @@ private:
 	QAction *subdivideAllEdgesAct;
 	QAction *planarizeAllFacesAct;
 	QAction *makeObjectSphericalAct;
+	QAction *mCleanup2gonsAct;
+	QAction *mCleanupWingedVerticesAct;
+	QAction *mSplitValence2VerticesAct;
 	QAction *makeObjectSmoothAct;
 	QAction *makeWireframeAct;
 	QAction *makeColumnsAct;
@@ -960,6 +967,7 @@ public slots:
 	//Basics Widget
 	void toggleDeleteEdgeCleanupFlag(int state);
 	void changeNumSubDivs(double value);
+	void changeCornerCuttingAlpha(double value);
 
 	void changeTileTexNum(double value);
 	void toggleUseQuadsFlag(int state);
@@ -982,6 +990,9 @@ public slots:
 	void changeExtrudeLength2Icosa(double value);
 	void changeExtrudeLength3Icosa(double value);
 	void changeExtrudeAngleIcosa(double value);
+
+	void changeValence2SplitOffset(double value);
+	void toggleWireframeSplit(int state);
 	
 	void changeNumSegments(double value);
 	void changeMaxSegments(double value);
@@ -1184,6 +1195,7 @@ public slots:
 	void triangulate();
 	void splitValence2Vertices();
 	void cleanupWingedVertices();
+	void cleanup2gons();
 	void createDual();
 	void crustModeling1();
 	void crustModeling2();
@@ -1220,6 +1232,7 @@ public slots:
 	void openFile(); 
 	void openFile(QString fileName);
 	bool saveFile(QString fileName);
+	void newFile();
 	bool saveFile(bool with_normals=false, bool with_tex_coords=false);
 	bool saveFileAs(bool with_normals=false, bool with_tex_coords=false);
 	void openFileOBJ();

@@ -430,6 +430,10 @@ void BasicsMode::setupSelectionOptions(){
 	mFaceAreaToleranceLabel = new QLabel(this);
 	mFaceAreaToleranceSpinBox = createDoubleSpinBox(mSelectionOptionsLayout, mFaceAreaToleranceLabel, tr("Face Area Sel.\nTolerance"), 0.0, 5.0, 0.001, 0.05, 3, 0,0);
 	connect(mFaceAreaToleranceSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeFaceAreaTolerance(double)));
+
+	mSplit2ValenceVertexOffsetLabel = new QLabel(this);
+	mSplit2ValenceVertexOffsetSpinBox = createDoubleSpinBox(mSelectionOptionsLayout, mSplit2ValenceVertexOffsetLabel, tr("Valence-2 Split\nOffset"), -0.1, 5.0, 0.001, -0.1, 3, 1,0);
+	connect(mSplit2ValenceVertexOffsetSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeValence2SplitOffset(double)));
 	
 	// yPosSpinBox = createDoubleSpinBox(mSelectionOptionsLayout, yPosLabel, tr("Y-translate"), -100.0, 100.0, 0.5, 0.0, 1, 2,0);
 	// connect(yPosSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(translatey(double)));
@@ -454,7 +458,7 @@ void BasicsMode::setupSelectionOptions(){
 	// connect(freezeTransformsButton, SIGNAL(clicked()), this, SLOT(freezeTransforms()));
 	// mSelectionOptionsLayout->addWidget(freezeTransformsButton,8,0,1,2);
 
-	mSelectionOptionsLayout->setRowStretch(1,1);
+	mSelectionOptionsLayout->setRowStretch(2,1);
 	mSelectionOptionsLayout->setColumnStretch(2,1);
 	mSelectionOptionsWidget->setWindowTitle(tr("Selection Options Mode"));
 	mSelectionOptionsWidget->setLayout(mSelectionOptionsLayout);	
@@ -509,4 +513,5 @@ void BasicsMode::retranslateUi(){
 	freezeTransformsButton->setText(tr("&Freeze Transforms"));
 	mTransformsWidget->setWindowTitle(tr("Transforms Mode"));	
 	mFaceAreaToleranceLabel->setText(tr("Face Area Sel.\nTolerance"));
+	mSplit2ValenceVertexOffsetLabel->setText(tr("Valence-2 Split\nOffset"));
 }

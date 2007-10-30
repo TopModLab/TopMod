@@ -137,6 +137,9 @@ private:
 	
 	QLabel *mFaceAreaToleranceLabel;
 	QDoubleSpinBox *mFaceAreaToleranceSpinBox;
+
+	QLabel *mSplit2ValenceVertexOffsetLabel;
+	QDoubleSpinBox *mSplit2ValenceVertexOffsetSpinBox;
 	
 public slots:
 	void freezeTransforms();

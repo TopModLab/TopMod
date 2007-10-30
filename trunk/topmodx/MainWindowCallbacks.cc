@@ -157,6 +157,14 @@ void MainWindow::setCommandCompleterIndexToggle(int value){
 }
 
 //dave
+void MainWindow::changeValence2SplitOffset(double value){
+	MainWindow::vertex_split_offset = value;
+}
+
+void MainWindow::changeCornerCuttingAlpha(double value){
+	MainWindow::corner_cutting_alpha = value;
+}
+
 void MainWindow::changeDomeExtrudeLength(double value)
 {
   MainWindow::domeExtrudeLength_factor = value;
@@ -347,6 +355,12 @@ void MainWindow::clear_selected(){
 	MainWindow::clearSelected();
 	redraw();
 }
+
+//dave
+void MainWindow::toggleWireframeSplit(int state) {
+	MainWindow::wireframe_split = bool(state);
+}
+
 
 // Basics.
 void MainWindow::toggleDeleteEdgeCleanupFlag(int state) {
@@ -936,7 +950,7 @@ void MainWindow::subdivideRoot4(void)                   // Root-4 subdivision
 void MainWindow::subdivideCornerCutting(void)   // Corner-cutting subdivision
 {
 	undoPush();
-	DLFL::cornerCuttingSubdivide(&object);
+	DLFL::cornerCuttingSubdivide(&object, MainWindow::corner_cutting_alpha);
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
@@ -1356,6 +1370,17 @@ void MainWindow::splitValence2Vertices(void)      // Split Valence 2 vertices
 	redraw();
 }
 
+void MainWindow::cleanup2gons(void)      // cleanup 2-gons
+{
+	undoPush();
+	setModified(true);
+	DLFL::cleanup2gons(&object);
+	active->recomputePatches();
+	active->recomputeNormals();
+	MainWindow::clearSelected();
+	redraw();
+}
+
 void MainWindow::cleanupWingedVertices(void)     // Remove valence 2 vertices
 {
 	undoPush();
@@ -1438,7 +1463,7 @@ void MainWindow::makeWireframe(void)                    // Create a wireframe
 {
 	undoPush();
 	setModified(true);
-	DLFL::makeWireframe(&object,MainWindow::wireframe_thickness);
+	DLFL::makeWireframe(&object,MainWindow::wireframe_thickness,MainWindow::wireframe_split);
 	active->recomputePatches();
 	active->recomputeNormals();
 	MainWindow::clearSelected();
@@ -1449,7 +1474,7 @@ void MainWindow::makeWireframe2() {// Create a wireframe // dave {
 	// vector<DLFLFacePtr>::iterator it;
 	undoPush();
 	setModified(true);
-	DLFL::makeWireframe2(&object,MainWindow::wireframe2_thickness, MainWindow::wireframe2_width);
+	DLFL::makeWireframe2(&object,MainWindow::wireframe2_thickness, MainWindow::wireframe2_width,MainWindow::wireframe_split);
 	// active->recomputePatches();
 	// active->recomputeNormals();
 	// if ( active->numSelectedFaces() >= 1 ) {

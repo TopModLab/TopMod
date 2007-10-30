@@ -139,34 +139,6 @@ public :
     }
     return patcharray.size( );
   }
-  /*
-    friend void tmpf_render(TMPatchFacePtr pfp) {
-    pfp->render();
-    }
-
-    friend void tmpf_outline(TMPatchFacePtr pfp) {
-    pfp->outline();
-    }
-
-    friend void tmpf_patch_boundary(TMPatchFacePtr pfp) {
-    pfp->patch_boundary();
-    }
-
-    friend void tmpf_face_boundary(TMPatchFacePtr pfp) {
-    pfp->face_boundary();
-    }
-
-    friend void tmpf_controlgrid(TMPatchFacePtr pfp) {
-    pfp->controlgrid();
-    }
-     
-    friend void tmpf_controlpoints(TMPatchFacePtr pfp) {
-    pfp->controlpoints();
-    }
-
-    friend void tmpf_render_normals(TMPatchFacePtr pfp) {
-    pfp->renderNormals();
-    }*/
 };
 
 #endif /* #ifndef _TM_PATCH_FACE_HH_ */
