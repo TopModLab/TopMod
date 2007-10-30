@@ -1116,4 +1116,26 @@ void createSponge( DLFLObjectPtr obj, double thickness, double collapse_threshol
 		// cleanup2gons(obj);
 }
 
+
+  bool less_than(const HalfEdgePair& hep1, const HalfEdgePair& hep2)
+  {
+    if ( hep1.mpdist < hep2.mpdist ) return true;
+    return false;
+  }
+
+  bool greater_than(const HalfEdgePair& hep1, const HalfEdgePair& hep2)
+  {
+    if ( hep1.mpdist > hep2.mpdist ) return true;
+    return false;
+  }
+
+  bool contains_connected(const HalfEdgePair& hep)
+  {
+    if ( hep.ep1 == HalfEdgePair::last_connected1 ||
+         hep.ep1 == HalfEdgePair::last_connected2 ||
+         hep.ep2 == HalfEdgePair::last_connected1 ||
+         hep.ep2 == HalfEdgePair::last_connected2 ) return true;
+    return false;
+  }
+
 } // end namespace

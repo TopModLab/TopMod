@@ -373,6 +373,18 @@ namespace DLFL {
 
   uint DLFLFaceVertex::getFaceID( ) const { return fpFPtr->getID(); }
 
+  void advance(DLFLFaceVertexPtr& fvp) 
+  {
+    fvp = fvp->fvpNext;
+  }
+
+  void backward(DLFLFaceVertexPtr& fvp)
+  {
+    fvp = fvp->fvpPrev;
+  }
+
+
+
   /*void DLFLFaceVertex::render( ) const
     {
     if ( vertex ) vertex->render();

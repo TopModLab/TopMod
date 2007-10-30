@@ -319,6 +319,7 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	//the main tool options DockWidget
 	mToolOptionsDockWidget = new QDockWidget(tr("Tool Options - Insert Edge"),this);
 	// mToolOptionsDockWidget->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable /* | QDockWidget::DockWidgetClosable*/);
+	
 	mToolOptionsDockWidget->setAllowedAreas(Qt::NoDockWidgetArea);
 	mToolOptionsStackedWidget = new QStackedWidget();
 	// mToolOptionsDockWidget->hide();
@@ -385,6 +386,8 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	setExtrusionMode(CubicalExtrude);
 	setMode(MainWindow::NormalMode);
 	
+	
+	// std::cout << QT_VER << "\n"; 
 
 }
 

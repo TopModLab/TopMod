@@ -129,20 +129,26 @@ namespace DLFL {
     }
 
     // Comparison between two HalfEdgePairs. Uses distance to determine relative ordering
+    friend bool less_than(const HalfEdgePair& hep1, const HalfEdgePair& hep2);
+/*
     friend bool less_than(const HalfEdgePair& hep1, const HalfEdgePair& hep2) {
       if ( hep1.mpdist < hep2.mpdist ) return true;
       return false;
     }
-
+*/
     // Comparison between two HalfEdgePairs. Uses distance to determine relative ordering
+    friend bool greater_than(const HalfEdgePair& hep1, const HalfEdgePair& hep2);
+/*
     friend bool greater_than(const HalfEdgePair& hep1, const HalfEdgePair& hep2) {
       if ( hep1.mpdist > hep2.mpdist ) return true;
       return false;
     }
-
+*/
     // Checks to see if given HalfEdgePair contains an edge which
     // was most recently connected. Uses the stored static variables
     // to do the comparison. Assumes variables have been set.
+    friend bool contains_connected(const HalfEdgePair& hep);
+/*
     friend bool contains_connected(const HalfEdgePair& hep) {
       if ( hep.ep1 == HalfEdgePair::last_connected1 ||
 	   hep.ep1 == HalfEdgePair::last_connected2 ||
@@ -150,6 +156,7 @@ namespace DLFL {
 	   hep.ep2 == HalfEdgePair::last_connected2 ) return true;
       return false;
     }
+*/
 
     void print(void) const {
       if ( ep1 && ep2 )
@@ -209,6 +216,10 @@ namespace DLFL {
   void multiConnectCrust( DLFLObjectPtr obj, double scale_factor=0.5 );
   void modifiedMultiConnectCrust(DLFLObjectPtr obj, double scale_factor=0.5 );
   void createSponge( DLFLObjectPtr obj, double thickness, double collapse_threshold_factor=0.0 );
+
+  bool less_than(const HalfEdgePair& hep1, const HalfEdgePair& hep2);
+  bool greater_than(const HalfEdgePair& hep1, const HalfEdgePair& hep2);
+  bool contains_connected(const HalfEdgePair& hep);
 
 } // end namespace
 

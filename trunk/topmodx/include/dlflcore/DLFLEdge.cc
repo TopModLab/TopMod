@@ -456,6 +456,16 @@ namespace DLFL {
   }
 
 
+  void resetEdgeType(DLFLEdgePtr dep) 
+  {
+    dep->resetType();
+  }
+
+  void makeEdgeUnique(DLFLEdgePtr dep) 
+  {
+    dep->makeUnique();
+  }
+
   // Edge normal. See comments in header file for details
   /*Vector3d DLFLEdge::getEdgeNormal(DLFLFaceVertexPtr fvptr) const
     {

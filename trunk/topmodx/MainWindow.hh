@@ -458,7 +458,8 @@ public :
 	/**
 	* \brief clears all currently selected vertices, edges, faces, whatever is selected
 	*/
-	void MainWindow::clearSelected()	{
+//	void MainWindow::clearSelected()	{
+	void clearSelected()	{
 		active->clearSelected();
 		MainWindow::clearNumSelected();
 	}
@@ -474,7 +475,8 @@ public :
 	/**
 	* \brief resets all subobject num_selected variables to 0
 	*/
-	static void MainWindow::clearNumSelected() {
+//	static void MainWindow::clearNumSelected() {
+	static void clearNumSelected() {
 		num_sel_verts = 0;
 		num_sel_edges = 0;
 		num_sel_faces = 0;

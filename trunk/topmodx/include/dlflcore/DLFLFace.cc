@@ -1250,4 +1250,15 @@ namespace DLFL {
 		return area;
 	}
 
+  void boundaryWalk(DLFLFacePtr faceptr) 
+  {
+    faceptr->boundaryWalk();
+  }
+
+  void boundaryWalk(const DLFLFace& face)
+  {
+    face.boundaryWalk();
+  }
+
+
 } // end namespace

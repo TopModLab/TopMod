@@ -269,15 +269,20 @@ namespace DLFL {
 
     /* Make given DLFLFaceVertexPtr point to the next DLFLFaceVertexPtr
      * Used in list traversal */
+    friend void advance(DLFLFaceVertexPtr& fvp);
+/*
     friend void advance(DLFLFaceVertexPtr& fvp) {
       fvp = fvp->fvpNext;
     };
-
+*/
     /* Make given DLFLFaceVertexPtr point to the previous DLFLFaceVertexPtr
      * Used in list traversal */
+    friend void backward(DLFLFaceVertexPtr& fvp);
+/*
     friend void backward(DLFLFaceVertexPtr& fvp) {
       fvp = fvp->fvpPrev;
     };
+*/
 
     void print(bool printadjacent = false) const;
 
@@ -336,6 +341,11 @@ namespace DLFL {
   
   bool areEqual(DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2);
   bool areEqual(const DLFLFaceVertex& fv1, const DLFLFaceVertex& fv2);
+
+  void advance(DLFLFaceVertexPtr& fvp);
+  void backward(DLFLFaceVertexPtr& fvp);
+
+
 
 } // end namespace
 

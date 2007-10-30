@@ -186,9 +186,13 @@ namespace DLFL {
       auxnormal.reset();
     }
            
+
+    friend void resetEdgeType(DLFLEdgePtr dep);
+/*
     friend void resetEdgeType(DLFLEdgePtr dep) {
       dep->resetType();
     }
+*/
 
     // Query functions
     DLFLFaceVertexPtr getFaceVertexPtr1(void) const {
@@ -319,9 +323,12 @@ namespace DLFL {
       assignID();
     }
 
+    friend void makeEdgeUnique(DLFLEdgePtr dep);
+/*
     friend void makeEdgeUnique(DLFLEdgePtr dep) {
       dep->makeUnique();
     }
+*/
 
   private :
      
@@ -383,6 +390,10 @@ namespace DLFL {
   };
 
   bool coFacial(DLFLEdgePtr ep1, DLFLEdgePtr ep2);
+  void resetEdgeType(DLFLEdgePtr dep);
+  void makeEdgeUnique(DLFLEdgePtr dep);
+
+
 
 } // end namespace
 

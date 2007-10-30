@@ -438,4 +438,42 @@ namespace DLFL {
     return retfvp;
   }
 
+  void makeVertexUnique(DLFLVertexPtr dvp)
+  {
+    dvp->assignID();
+  }
+
+  void resetVertexType(DLFLVertexPtr dvp)
+  {
+    dvp->resetType();
+  }
+
+  void vertexTrace(DLFLVertexPtr vertexptr)
+  {
+    vertexptr->vertexTrace();
+  }
+
+  void vertexTrace(const DLFLVertex& vertex)
+  {
+    vertex.vertexTrace();
+  }
+
+  istream& operator >> (istream& i, DLFLVertex& dv)
+  {
+    // Read x,y,z coordinates.
+    double x,y,z;
+    i >> x >> y >> z;
+    dv.coords.set(x,y,z);
+    return i;
+  }
+
+  ostream& operator << (ostream& o, const DLFLVertex& dv)
+  {
+    // Only coordinates are written.
+    double x,y,z;
+    dv.coords.get(x,y,z);
+    o << "v " << x << ' ' << y << ' ' << z << endl;
+    return o;
+  }
+
 } // end namespace

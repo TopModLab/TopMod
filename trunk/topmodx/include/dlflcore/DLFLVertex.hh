@@ -136,10 +136,12 @@ namespace DLFL {
       assignID();
     }
 
+    friend void makeVertexUnique(DLFLVertexPtr dvp);
+/*
     friend void makeVertexUnique(DLFLVertexPtr dvp) {
       dvp->assignID();
     }
-
+*/
     //--- Query functions ---//
 
     DLFLVertexType getType(void) const {
@@ -201,9 +203,12 @@ namespace DLFL {
     // Reset type of vertex, all face-vertices and edges connected to this vertex
     void resetTypeDeep(void);
 
+    friend void resetVertexType(DLFLVertexPtr dvp);
+/*
     friend void resetVertexType(DLFLVertexPtr dvp) {
       dvp->resetType();
     }
+*/
 
     void setFaceVertexList(const DLFLFaceVertexPtrList& list) {
       fvpList = list;
@@ -280,13 +285,18 @@ namespace DLFL {
 
     // DLFL Vertex Trace
     void vertexTrace(void) const;
+    friend void vertexTrace(DLFLVertexPtr vertexptr);
+/*
     friend void vertexTrace(DLFLVertexPtr vertexptr) {
       vertexptr->vertexTrace();
     }
-
+*/
+    friend void vertexTrace(const DLFLVertex& vertex);
+/*
     friend void vertexTrace(const DLFLVertex& vertex) {
       vertex.vertexTrace();
     }
+*/
 
     // Create an array of Edge's incident on this Vertex. The number of Edges
     // is returned. Memory will be allocated inside this function, which should
@@ -356,6 +366,8 @@ namespace DLFL {
 
     // Read a vertex from an input stream.
     // The 3 coordinates should be specified separated by spaces (as in OBJ format)
+    friend istream& operator >> (istream& i, DLFLVertex& dv);
+/*
     friend istream& operator >> (istream& i, DLFLVertex& dv) {
       // Read x,y,z coordinates.
       double x,y,z;
@@ -363,8 +375,10 @@ namespace DLFL {
       dv.coords.set(x,y,z);
       return i;
     }
-
+*/
     // Write a vertex to an output stream. Writes in OBJ format
+    friend ostream& operator << (ostream& o, const DLFLVertex& dv);
+/*
     friend ostream& operator << (ostream& o, const DLFLVertex& dv) {
       // Only coordinates are written.
       double x,y,z;
@@ -372,6 +386,8 @@ namespace DLFL {
       o << "v " << x << ' ' << y << ' ' << z << endl;
       return o;
     }
+*/
+
     /*
     // Do a glVertex on this point
     friend void glVertex(const DLFLVertex& dv) {
@@ -383,6 +399,15 @@ namespace DLFL {
     }
     */
   };
+
+  void makeVertexUnique(DLFLVertexPtr dvp);
+  void resetVertexType(DLFLVertexPtr dvp);
+  void vertexTrace(DLFLVertexPtr vertexptr);
+  void vertexTrace(const DLFLVertex& vertex);
+  istream& operator >> (istream& i, DLFLVertex& dv);
+  ostream& operator << (ostream& o, const DLFLVertex& dv);
+
+
 } // end namespace
 
 #endif /* _DLFL_VERTEX_HH_ */

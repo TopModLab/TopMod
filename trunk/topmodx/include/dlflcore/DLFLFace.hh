@@ -380,13 +380,18 @@ namespace DLFL {
       boundaryWalk();
     }
   
+    friend void boundaryWalk(DLFLFacePtr faceptr);
+/*
     friend void boundaryWalk(DLFLFacePtr faceptr) {
       faceptr->boundaryWalk();
     }
-
+*/
+    friend void boundaryWalk(const DLFLFace& face);
+/*
     friend void boundaryWalk(const DLFLFace& face) {
       face.boundaryWalk();
     }
+*/
      
     // For debugging
     void printPointers(void) const;
@@ -701,6 +706,10 @@ namespace DLFL {
 
     friend ostream& operator << (ostream& o, const DLFLFace& face);
   };
+
+  void boundaryWalk(DLFLFacePtr faceptr);
+  void boundaryWalk(const DLFLFace& face);
+
 
 } // end namespace
 
