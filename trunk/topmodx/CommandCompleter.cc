@@ -47,7 +47,12 @@
 	*/
 	CommandCompleter::CommandCompleter ( QWidget *m, QWidget * parent, Qt::WindowFlags f) : QDialog(parent, f) {
 		setSizeGripEnabled(false);
+		
+		#ifdef LINUX
+		setWindowFlags(Qt::Dialog);
+		#else
 		setWindowFlags(Qt::SplashScreen);
+		#endif
 		setModal(true);
 		//setWindowOpacity(1.0);
 		this->resize(341,134);
@@ -83,6 +88,8 @@
 		mModel = new QStringListModel(mWordList,mCompleter);
 		mCompleter->setModel(mModel);
 		mLineEdit->setCompleter(mCompleter);
+		
+		mLineEdit->setFocusPolicy(Qt::StrongFocus);
 		
 		QVBoxLayout *vbox = new QVBoxLayout(this);
 		vbox->setContentsMargins(60,40,60,50);

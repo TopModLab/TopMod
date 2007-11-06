@@ -123,7 +123,8 @@ macx {
 	CONFIG -= WITH_SPACENAV WITH_VERSE
 	QMAKE_LFLAGS += -L./lib
 	LIBS += -lvecmat -ldlflcore -ldlflaux
-
+	DEFINES *= LINUX
+	
 	CONFIG(WITH_PYTHON){
 		INCLUDEPATH += /usr/include/python2.5
 		LIBS += -lpython2.5 -L/usr/lib/python2.5/config

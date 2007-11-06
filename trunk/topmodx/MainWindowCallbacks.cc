@@ -1607,6 +1607,7 @@ void MainWindow::printFaceList(void)                       // Print face list
 void MainWindow::getCommand(){
 	#ifdef QCOMPLETER
 	int i = mCommandCompleter->exec();
+	mCommandCompleter->setFocus(Qt::PopupFocusReason);
 	// QMessageBox::about(this, tr("%1").arg(text),tr("%1").arg(mCommandList.indexOf(text)));
 	if (i > -1)
 		mActionListWidget->actions().at(i)->activate(QAction::Trigger);

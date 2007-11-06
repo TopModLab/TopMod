@@ -193,7 +193,7 @@ Offset</source>
 <context>
     <name>CommandCompleter</name>
     <message>
-        <location filename="../CommandCompleter.cc" line="59"/>
+        <location filename="../CommandCompleter.cc" line="64"/>
         <source>&lt;font color=&quot;white&quot;&gt;Type a command:&lt;/font&gt;</source>
         <translation type="unfinished"></translation>
     </message>
