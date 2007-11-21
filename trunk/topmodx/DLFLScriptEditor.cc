@@ -9,7 +9,7 @@
 #endif // Q_WS_MAC
 
 DLFLScriptEditor::DLFLScriptEditor( DLFLObjectPtr obj, QWidget *parent, Qt::WindowFlags f ) 
-	: QWidget(parent), dlfl_module(NULL),dlfl_dict(NULL),mEchoing(true),pathPython(""),addToPath(".") {
+	: QWidget(parent), dlfl_module(NULL),dlfl_dict(NULL),mEchoing(true),pathPython(""),mTabWidth(3),addToPath(".") {
 
 	setMinimumSize( 350, 200 );
 
@@ -18,6 +18,7 @@ DLFLScriptEditor::DLFLScriptEditor( DLFLObjectPtr obj, QWidget *parent, Qt::Wind
 	mHistoryBox->setTabChangesFocus(false);
   mCommandEdit = new Editor;
 	mCommandEdit->setTabChangesFocus(false);
+	mCommandEdit->setTabStopWidth( fontMetrics().width( " " ) * mTabWidth ); // req. width in pixels
 	
   QObject::connect(mCommandEdit, SIGNAL(ctrlReturnPressed()), this, SLOT(executeCommand()));
   QObject::connect( this, SIGNAL(addToHistory(const QString&)), mCommandEdit, SLOT(appendHistory(const QString&)) );
@@ -44,55 +45,80 @@ DLFLScriptEditor::DLFLScriptEditor( DLFLObjectPtr obj, QWidget *parent, Qt::Wind
 
   mHistoryBox->setReadOnly(true);
 
-  mHistoryBox->setTabStopWidth(25);
-  mCommandEdit->setTabStopWidth(25);
+  mHistoryBox->setTabStopWidth(fontMetrics().width( " " ) * mTabWidth);
+  mCommandEdit->setTabStopWidth(fontMetrics().width( " " ) * mTabWidth);
 
   pyhigh = new PythonHighlighter(mHistoryBox);
 
 	// Menu Actions
 	mMenuBar = new QMenuBar(this);
 	
-	scriptMenu = mMenuBar->addMenu(tr("&Script"));
-	mExecFile = new QAction(QIcon(":images/run_script.png"),tr("&Execute File"), this);
+	mScriptMenu = mMenuBar->addMenu(tr("&Script"));
+
+	mExecFile = new QAction(QIcon(":images/applications-system.png"),tr("&Execute File"), this);
 	mExecFile->setStatusTip(tr("Execute an existing Python script"));
 	connect(mExecFile, SIGNAL(triggered()), this, SLOT(execFile()));
-	scriptMenu->addAction(mExecFile);
+	mScriptMenu->addAction(mExecFile);
 
-	mOpenFile = new QAction(QIcon(":images/folder.png"),tr("&Open File"), this);
+	mOpenFile = new QAction(QIcon(":images/folder-open.png"),tr("&Open File"), this);
 	mOpenFile->setStatusTip(tr("Open the input window to a Python script"));
 	connect(mOpenFile, SIGNAL(triggered()), this, SLOT(openFile()));
-	scriptMenu->addAction(mOpenFile);
+	mScriptMenu->addAction(mOpenFile);
 
-	mSaveFile = new QAction(QIcon(":images/document-save.png"),tr("&Save File"), this);
+	mSaveFile = new QAction(QIcon(":images/document-save-as.png"),tr("&Save File"), this);
 	mSaveFile->setStatusTip(tr("Save the input window to a Python script"));
 	connect(mSaveFile, SIGNAL(triggered()), this, SLOT(saveFile()));
-	scriptMenu->addAction(mSaveFile);
+	mScriptMenu->addAction(mSaveFile);
 
-	mSaveOutput = new QAction(QIcon(":images/save.png"),tr("Save Out&put"), this);
+	mSaveOutput = new QAction(QIcon(":images/document-save-as.png"),tr("Save Out&put"), this);
 	mSaveOutput->setStatusTip(tr("Save the output window to a Python script"));
 	connect(mSaveOutput, SIGNAL(triggered()), this, SLOT(saveFile()));
-	scriptMenu->addAction(mSaveOutput);
+	mScriptMenu->addAction(mSaveOutput);
 
 	mClearHistory = new QAction(QIcon(":images/clear_scriptoutput.png"),tr("Clear &History"), this);
 	mClearHistory->setStatusTip(tr("Clears both output window and history"));
 	connect(mClearHistory, SIGNAL(triggered()), this, SLOT(clearHistory()));
-	scriptMenu->addAction(mClearHistory);
+	mScriptMenu->addAction(mClearHistory);
 
 	mClearInput = new QAction(QIcon(":images/clear_scriptinput.png"),tr("&Clear Input"), this);
 	mClearInput->setStatusTip(tr("Clears everythin in the input window"));
 	connect(mClearInput, SIGNAL(triggered()), this, SLOT(clearInput()));
-	scriptMenu->addAction(mClearInput);
+	mScriptMenu->addAction(mClearInput);
 	
-	mToggleEchoing = new QAction(QIcon(":images/placeholder.png"),tr("&Toggle Echoing"), this);
+	mToggleEchoing = new QAction(QIcon(":images/accessories-text-editor.png"),tr("&Toggle Echoing"), this);
 	mToggleEchoing->setStatusTip(tr("Turn on/off command echoing"));
 	connect(mToggleEchoing, SIGNAL(triggered()), this, SLOT(toggleEchoing()));
-	scriptMenu->addAction(mToggleEchoing);
+	mScriptMenu->addAction(mToggleEchoing);
+
+	mFormatMenu = mMenuBar->addMenu(tr("&Format"));
+
+	mConvertSpaces = new QAction(QIcon(":images/applications-system.png"),tr("&Convert Spaces To Tabs"), this);
+	mConvertSpaces->setStatusTip((tr("Convert each set of spaces into a TAB character")));
+	connect(mConvertSpaces, SIGNAL(triggered()), this, SLOT(spacesToTABs()));
+	mFormatMenu->addAction(mConvertSpaces);
+
+	mSetTabWidth = new QAction(QIcon(":images/applications-system.png"),tr("&Set Tab Width"), this);
+	mSetTabWidth->setStatusTip((tr("Will affect conversion of spaces to Tabs")));
+	connect(mSetTabWidth, SIGNAL(triggered()), this, SLOT(toggleTabWidthWidget()));
+	mSetTabWidth->setCheckable(true);
+	mSetTabWidth->setChecked(false);
+	mFormatMenu->addAction(mSetTabWidth);
+
+	mSetTabWidthWidget = new QSpinBox( this );
+	mSetTabWidthWidget->setMinimum(1);
+	mSetTabWidthWidget->setSingleStep(1);
+	mSetTabWidthWidget->setValue( mTabWidth );
+	mSetTabWidthWidget->setPrefix( "Tab Width: ");
+	mSetTabWidthWidget->setSuffix( " space(s)");
+	mSetTabWidthWidget->hide();
+	connect( mSetTabWidthWidget, SIGNAL(valueChanged(int)), this, SLOT(setTabWidth(int)) );
 
 	// Layout
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
 	mainLayout->setMenuBar(mMenuBar);
   mainLayout->addWidget(mHistoryBox);
   mainLayout->addWidget(mCommandEdit);
+	mainLayout->addWidget(mSetTabWidthWidget);
   setLayout(mainLayout);
 
 #ifdef Q_WS_MAC
@@ -161,7 +187,15 @@ void DLFLScriptEditor::executeCommand( ) {
 				if( si.endsWith(":") ) { 
 					// then it is a block statement
 					int j = i+1;
-					while( j < cmdList.size() && cmdList.at(j).startsWith("\t") ) {
+					while( j < cmdList.size() && (cmdList.at(j).startsWith("\t") || cmdList.at(j).startsWith(" ")) ) {
+						/*// If it begins with a space figure out if we're in the same indentation level
+						if( cmdList.at(j).startsWith(" ") ) {
+							QRegExp rx = QRegExp("(^[ ])([ ])*");
+							int pos = rx.indexIn( cmdList.at(j) );
+							QStringList list = rx.capturedTexts();
+							
+							}*/
+
 						// keep going until the tab indent level goes back out
 						QString sj = cmdList.at(j);
 						si += QString("\n")+sj;
@@ -439,6 +473,48 @@ void DLFLScriptEditor::retranslateUi(){
 	
 }
 
+void DLFLScriptEditor::spacesToTABs( ) {
+	// Grab the input
+  QString command = mCommandEdit->toPlainText();
+	// regex for set of spaces
+	QString rxs = QString("\n[ ]");//{") + QString().setNum(mTabWidth) + QString("})+");
+	QRegExp rx = QRegExp(rxs);
+
+	int pos = 0;
+	while( (pos = rx.indexIn(command, pos)) != -1 ) {
+		int spaces = 1;
+		QString tabs = QString("");
+		while( command.at(pos+1+spaces) == QChar(' ') ) {
+			spaces++;
+			if( spaces % 3 == 0 )
+				tabs += QString("\t");
+		}
+		command.replace( pos+1, spaces, tabs );
+		pos += rx.matchedLength();
+	}
+	mCommandEdit->setPlainText( command );
+}
+
+void DLFLScriptEditor::toggleTabWidthWidget( ) {
+	if( mSetTabWidthWidget->isVisible() ) {
+		mSetTabWidthWidget->hide();
+		mSetTabWidth->setChecked(false);
+	} else {
+		mSetTabWidthWidget->show();
+		mSetTabWidth->setChecked(true);
+	}
+}
+
+void DLFLScriptEditor::setTabWidth( int width ) {
+	mTabWidth = width; // width in spaces
+	mCommandEdit->setTabStopWidth( fontMetrics().width( " " ) * mTabWidth ); // req. width in pixels¯
+  mHistoryBox->setTabStopWidth(fontMetrics().width( " " ) * mTabWidth );
+	QString hist = mHistoryBox->toPlainText();
+	mHistoryBox->setPlainText(hist);
+	QString text = mCommandEdit->toPlainText();
+	mCommandEdit->setPlainText(text);
+}
+
 #endif // WITH_PYTHON
 /*
 *
@@ -463,7 +539,7 @@ void DLFLScriptEditor::retranslateUi(){
 *
 * The Original Code is: all of this file.
 *
-* Contributor(s): none yet.
+* Contributor(s): Stuart Tett.
 *
 * ***** END GPL LICENSE BLOCK *****
 *

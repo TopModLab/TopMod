@@ -21,7 +21,7 @@
 *
 * The Original Code is: all of this file.
 *
-* Contributor(s): none yet.
+* Contributor(s): Stuart Tett.
 *
 * ***** END GPL LICENSE BLOCK *****
 */
@@ -39,6 +39,7 @@
 #include <QMenuBar>
 #include <QToolBar>
 #include <QPushButton>
+#include <QSpinBox>
 #include <iostream>
 
 //class QLineEdit;
@@ -78,6 +79,7 @@ signals :
 private slots :
   void executeCommand( );
 	void echoCommand( QString cmd );
+	void toggleTabWidthWidget( );
 public slots :
   void loadObject( DLFLObject* obj, QString fileName );
 	void loadDLFLModule( QString newPath );
@@ -88,6 +90,9 @@ public slots :
 	void clearHistory( );
 	void clearInput( );
 	void toggleEchoing( );
+	// Run this function to convert spaces to TABs
+	void setTabWidth( int width );
+	void spacesToTABs( );
 private :
 	// The place where the user types the commands (multiline)
   Editor *mCommandEdit;
@@ -95,12 +100,16 @@ private :
   QTextEdit *mHistoryBox;
 	// The menubar with some options
 	QMenuBar *mMenuBar;
-	QMenu *scriptMenu;
+	QMenu *mScriptMenu;
 	QAction *mExecFile, *mOpenFile, *mSaveFile, *mSaveOutput;
 	QAction *mClearHistory;
 	QAction *mClearInput;
 	QAction *mToggleEchoing;
-	
+
+	// For Spaces to TABs conversion
+	QMenu *mFormatMenu;
+	QAction *mSetTabWidth;
+	QAction *mConvertSpaces;
 
   PythonHighlighter *pyhigh;
 
@@ -114,6 +123,11 @@ private :
 	bool mEchoing;
 
 	QString pathPython;
+
+	// The number of spaces equal to a TAB
+	// will get converted at the beginning of a line
+	int mTabWidth;
+	QSpinBox *mSetTabWidthWidget;
 
 public :
 	QString addToPath;

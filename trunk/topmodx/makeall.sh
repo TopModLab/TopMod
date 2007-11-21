@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # build libraries
 cd include && qmake && make
 

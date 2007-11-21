@@ -1091,7 +1091,7 @@ dlfl_subdivide(PyObject *self, PyObject *args) {
     return Py_None;
   }
 
-  int choiceSize = 26;
+  int choiceSize = 25;
   const char* choices[] = { "loop",
 														"checker",
 														"simplest",
@@ -1176,7 +1176,7 @@ dlfl_subdivide(PyObject *self, PyObject *args) {
       DLFL::dooSabinSubdivideBCNew( currObj, attrb1, attrb2 ); // no defaults
       break;
     case 10 : // corner-cut
-      DLFL::cornerCuttingSubdivide( currObj );
+      DLFL::cornerCuttingSubdivide( currObj, attrb1 );
       break;
     case 11 : // modified-corner-cut
       DLFL::modifiedCornerCuttingSubdivide( currObj, attrb1 );
