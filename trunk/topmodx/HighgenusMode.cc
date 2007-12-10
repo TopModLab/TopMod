@@ -344,10 +344,22 @@ void HighgenusMode::setupAddHoleHandle(){
 	connect(addHoleHandleNumSegmentsSpinBox, SIGNAL(valueChanged(double)), this, SLOT(numSegmentsValueChanged(double)));
 	
 	addHoleHandleNumSegmentsConnectLabel = new QLabel(this);
-	addHoleHandleNumSegmentsConnectSpinBox = createDoubleSpinBox(mAddHoleHandleLayout, addHoleHandleNumSegmentsConnectLabel, tr("# Segments to\nConnect (0=all)"), 0, 10, 1, 0, 0, 1,0);
+	addHoleHandleNumSegmentsConnectSpinBox = createDoubleSpinBox(mAddHoleHandleLayout, addHoleHandleNumSegmentsConnectLabel, tr("# Segments to\nConnect (-1=all)"), -1, 10, 1, -1, 0, 1,0);
 	connect(addHoleHandleNumSegmentsConnectSpinBox, SIGNAL(valueChanged(double)), this, SLOT(numSegmentsConnectValueChanged(double)));
+
+	addHoleHandlePinching = new QLabel(this);
+	addHoleHandlePinchingConnectSpinBox = createDoubleSpinBox(mAddHoleHandleLayout, addHoleHandlePinching, tr("Pinching"), -10, 10, 0.1, 1.0, 3, 2,0);	
+	connect(addHoleHandlePinchingConnectSpinBox, SIGNAL(valueChanged(double)), this, SLOT(changeHoleHandlePinch(double)));
+
+	addHoleHandlePinchingCenter = new QLabel(this);
+	addHoleHandlePinchingCenterConnectSpinBox = createDoubleSpinBox(mAddHoleHandleLayout, addHoleHandlePinchingCenter, tr("Pinch Center"), 0, 1, 0.1, 0.5, 3, 3,0);	
+	connect(addHoleHandlePinchingCenterConnectSpinBox, SIGNAL(valueChanged(double)), this, SLOT(changeHoleHandlePinchCenter(double)));
 	
-	mAddHoleHandleLayout->setRowStretch(2,1);
+	addHoleHandlePinchingWidth = new QLabel(this);
+	addHoleHandlePinchingWidthConnectSpinBox = createDoubleSpinBox(mAddHoleHandleLayout, addHoleHandlePinchingWidth, tr("Pinch Width"), 0.001, 10, 0.1, 1.0, 3, 4,0);	
+	connect(addHoleHandlePinchingWidthConnectSpinBox, SIGNAL(valueChanged(double)), this, SLOT(changeHoleHandlePinchWidth(double)));
+	
+	mAddHoleHandleLayout->setRowStretch(6,1);
 	mAddHoleHandleLayout->setColumnStretch(2,1);
 	mAddHoleHandleWidget->setWindowTitle(tr("Add Hole/Handle"));
 	mAddHoleHandleWidget->setLayout(mAddHoleHandleLayout);	
@@ -387,6 +399,22 @@ void HighgenusMode::numSegmentsConnectValueChanged(double value){
 	addHandleSINumSegmentsConnectSpinBox->setValue(value);	
 }
 
+//slot for change hold/handle pinch amount
+void HighgenusMode::changeHoleHandlePinch(double value){
+	
+	((MainWindow*)mParent)->changeHoleHandlePinchValue(value);
+}
+//slot for change hold/handle pinch amount
+void HighgenusMode::changeHoleHandlePinchCenter(double value){
+	
+	((MainWindow*)mParent)->changeHoleHandlePinchCenterValue(value);
+}
+//slot for change hold/handle pinch amount
+void HighgenusMode::changeHoleHandlePinchWidth(double value){
+	
+	((MainWindow*)mParent)->changeHoleHandlePinchWidthValue(value);
+}
+
 void HighgenusMode::setupAddHoleHandleCV(){
 	
 	mAddHoleHandleCVLayout = new QGridLayout;
@@ -399,7 +427,7 @@ void HighgenusMode::setupAddHoleHandleCV(){
 	connect(addHoleHandleCVNumSegmentsSpinBox, SIGNAL(valueChanged(double)), this, SLOT(numSegmentsValueChanged(double)));
 	
 	addHoleHandleCVNumSegmentsConnectLabel = new QLabel(this);
-	addHoleHandleCVNumSegmentsConnectSpinBox = createDoubleSpinBox(mAddHoleHandleCVLayout, addHoleHandleCVNumSegmentsConnectLabel, tr("# Segments to\nConnect (0=all)"), 0, 10, 1, 0, 0, 1,0);
+	addHoleHandleCVNumSegmentsConnectSpinBox = createDoubleSpinBox(mAddHoleHandleCVLayout, addHoleHandleCVNumSegmentsConnectLabel, tr("# Segments to\nConnect (-1=all)"), 0, 10, 1, -1, 0, 1,0);
 	connect(addHoleHandleNumSegmentsConnectSpinBox, SIGNAL(valueChanged(double)), this, SLOT(numSegmentsConnectValueChanged(double)));
 	
 	mAddHoleHandleCVLayout->setRowStretch(4,1);
@@ -421,7 +449,7 @@ void HighgenusMode::setupAddHandleSI(){
 	connect(addHandleSINumSegmentsSpinBox, SIGNAL(valueChanged(double)), this, SLOT(numSegmentsValueChanged(double)));
 	//number of segments to connect
 	addHandleSINumSegmentsConnectLabel = new QLabel(this);
-	addHandleSINumSegmentsConnectSpinBox = createDoubleSpinBox(mAddHandleSILayout, addHandleSINumSegmentsConnectLabel, tr("# Segments to\nConnect (0=all)"), 0, 10, 1, 0, 0, 1,0);
+	addHandleSINumSegmentsConnectSpinBox = createDoubleSpinBox(mAddHandleSILayout, addHandleSINumSegmentsConnectLabel, tr("# Segments to\nConnect (-1=all)"), 0, 10, 1, -1, 0, 1,0);
 	connect(addHoleHandleNumSegmentsConnectSpinBox, SIGNAL(valueChanged(double)), this, SLOT(numSegmentsConnectValueChanged(double)));
 	//weight 1
 	addHandleSIWeight1Label = new QLabel(this);
@@ -442,8 +470,24 @@ void HighgenusMode::setupAddHandleSI(){
 	addHandleSITwistsConnectLabel = new QLabel(this);
 	addHandleSITwistsConnectSpinBox = createDoubleSpinBox(mAddHandleSILayout, addHandleSITwistsConnectLabel, tr("Extra Twists"), 0, 100, 1, 0, 0, 5,0);	
 	connect(addHandleSITwistsConnectSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeExtraTwists(double)));
-	
-	mAddHandleSILayout->setRowStretch(6,1);
+
+	//pinching controls
+	addHandleSIPinchConnectLabel = new QLabel(this);
+	addHandleSIPinchConnectSpinBox = createDoubleSpinBox(mAddHandleSILayout, addHandleSIPinchConnectLabel, tr("Pinching"), -10, 10, 0.1, 1.0, 3, 6,0);	
+	connect(addHandleSIPinchConnectSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changePinch(double)));
+
+	//pinching center
+	addHandleSIPinchCenterConnectLabel = new QLabel(this);
+	addHandleSIPinchCenterConnectSpinBox = createDoubleSpinBox(mAddHandleSILayout, addHandleSIPinchCenterConnectLabel, tr("Pinch Center"), 0.001, 0.999, 0.05, 0.5, 3, 7,0);	
+	connect(addHandleSIPinchCenterConnectSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changePinchCenter(double)));
+
+	//bubble controls
+	addHandleSIBubbleConnectLabel = new QLabel(this);
+	addHandleSIBubbleConnectSpinBox = createDoubleSpinBox(mAddHandleSILayout, addHandleSIBubbleConnectLabel, tr("Pinch Width"), 0.001, 10.0, 0.1, 1.0, 3, 8,0);	
+	connect(addHandleSIBubbleConnectSpinBox, SIGNAL(valueChanged(double)), ((MainWindow*)mParent), SLOT(changeBubble(double)));
+		
+
+	mAddHandleSILayout->setRowStretch(8,1);
 	mAddHandleSILayout->setColumnStretch(2,1);
 	mAddHandleSIWidget->setWindowTitle(tr("Add Handle (Shape Interpolation)"));
 	mAddHandleSIWidget->setLayout(mAddHandleSILayout);	
@@ -791,13 +835,13 @@ void HighgenusMode::retranslateUi(){
 	
 	//!< \todo add buttons and spinbox labels to retranslate function for highgenusmode.cc
 	addHoleHandleNumSegmentsLabel->setText(tr("# Segments"));
-	addHoleHandleNumSegmentsConnectLabel->setText(tr("# Segments to\nConnect (0=all)"));
+	addHoleHandleNumSegmentsConnectLabel->setText(tr("# Segments to\nConnect (-1=all)"));
 	mAddHoleHandleWidget->setWindowTitle(tr("Add Hole/Handle"));
 	addHoleHandleCVNumSegmentsLabel->setText(tr("# Segments"));
-	addHoleHandleCVNumSegmentsConnectLabel->setText(tr("# Segments to\nConnect (0=all)"));
+	addHoleHandleCVNumSegmentsConnectLabel->setText(tr("# Segments to\nConnect (-1=all)"));
 	mAddHoleHandleCVWidget->setWindowTitle(tr("Add Hole/Handle (Closest Vertex)"));
 	addHandleSINumSegmentsLabel->setText(tr("# Segments"));
-	addHandleSINumSegmentsConnectLabel->setText(tr("# Segments to\nConnect (0=all)"));
+	addHandleSINumSegmentsConnectLabel->setText(tr("# Segments to\nConnect (-1=all)"));
 	addHandleSIWeight1Label->setText(tr("Weight 1"));
 	addHandleSISymmetricWeightsCheckBox->setText(tr("Symmetric Weights"));
 	addHandleSIWeight2Label->setText(tr("Weight 2"));	

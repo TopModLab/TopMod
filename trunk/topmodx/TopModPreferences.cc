@@ -173,9 +173,9 @@ void TopModPreferences::readSettings(){
 	mCoolLightColor = mSettings->value("CoolLightColor",mCoolLightColorDefault).value<QColor>();
 	mWarmLightColorDefault = QColor(255,250,226);
 	mWarmLightColor = mSettings->value("WarmLightColor",mWarmLightColorDefault).value<QColor>();
-	mWireframeColorDefault = QColor(0,0,0,127);
+	mWireframeColorDefault = QColor(0,0,0,255);
 	mWireframeColor = mSettings->value("WireframeColor", mWireframeColorDefault).value<QColor>();
-	mSilhouetteColorDefault = QColor(0,0,0,127);
+	mSilhouetteColorDefault = QColor(0,0,0,255);
 	mSilhouetteColor = mSettings->value("SilhouetteColor", mSilhouetteColorDefault).value<QColor>();
 	mPatchBoundaryColorDefault = QColor(0,0,0);
 	mPatchBoundaryColor = mSettings->value("PatchBoundaryColor", mPatchBoundaryColor).value<QColor>();

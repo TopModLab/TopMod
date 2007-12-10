@@ -1091,7 +1091,7 @@ dlfl_subdivide(PyObject *self, PyObject *args) {
     return Py_None;
   }
 
-  int choiceSize = 25;
+  int choiceSize = 26;
   const char* choices[] = { "loop",
 														"checker",
 														"simplest",

@@ -46,6 +46,10 @@ public:
 	~TopMod();
 	MainWindow *getMainWindow();
 	
+	// #ifdef __APPLE__
+	// bool macEventFilter( EventHandlerCallRef caller, EventRef event );
+	// #endif
+	
 protected:
 	bool event(QEvent *event);
 	

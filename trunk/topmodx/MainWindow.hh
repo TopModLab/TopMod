@@ -59,6 +59,7 @@
 #include "HighgenusMode.hh"
 #include "ConicalMode.hh"
 #include "TexturingMode.hh"
+#include "ExperimentalModes.hh"
 
 #ifdef QCOMPLETER
 //new command auto completion interface - like quicksilver inside topmod
@@ -75,6 +76,7 @@
 #include "include/TexturedRenderer.hh"
 #include "include/TexturedLitRenderer.hh"
 #include "include/PatchRenderer.hh"
+#include "include/ColorableRenderer.hh"
 #include "TopModPreferences.hh"
 
 // DLFLAux Library includes
@@ -100,6 +102,7 @@ class RemeshingMode;
 class ConicalMode;
 class HighgenusMode;
 class TexturingMode;
+class ExperimentalMode;
 #ifdef WITH_VERSE
 class VerseTopMod;
 #endif
@@ -174,7 +177,11 @@ class MainWindow : public QMainWindow {
 				SelectEdgeRing=85,			/**< select an edge ring. shift select for multiple. */
 				SelectFaceLoop=83,			/**< allows user to select one edge in the viewport and selects the corresponding face loop. shift select for multiple. */
 				SelectSimilar=84, 			/**< select all sub objects with the same number of verts edges or faces whatever... . */
-				SelectFacesByArea=856		 	/**< select all faces with the a similar surface area. */
+				SelectFacesByArea=856,	/**< select all faces with the a similar surface area. */
+				SelectFacesByColor=857,	/**< select all faces with the same color material. */
+				PaintFace=858,		 			/**< paint a face as you click. */
+				EyeDropper=859		 			/**< grab the color of the selected face. */
+
 			};
 
 			/**
@@ -263,6 +270,8 @@ class MainWindow : public QMainWindow {
 
 	// face area tolerance - dave
 	static float face_area_tolerance;
+	// face color tolerance - dave 11/07
+	static float face_color_tolerance;
 
 	// Edge deletion
 	static bool delete_edge_cleanup; //!< Flag for point-sphere cleanup after edge deletion
@@ -326,6 +335,15 @@ class MainWindow : public QMainWindow {
 	static double checkerboard_thickness; //!< Fractional thickness for checkerboard remeshing
 	static double modified_corner_cutting_thickness; //!< for modified corner cutting scheme same as Thickness of crust for wireframe
 
+	//added by Ryan
+	static double pinching_factor;		//!< scaling factor for pinched handles
+	static double pinch_center;			//!< 0 to 1, the parametric cetner of the pinching factor
+	static double bubble_factor;		//!< 0 to 0.5, the offset from the pinch center to the bezier control points
+
+	static double holeHandle_pinching_factor;		//!< scaling factor for pinched handles
+	static double holeHandle_pinch_center;
+	static double holeHandle_pinch_width;	
+	
 	//!< Added by Doug
 	static double star_offset; //!< Offset value for star subdivision
 	static double fractal_offset; //!< Offset value for fractal subdivision
@@ -378,6 +396,9 @@ class MainWindow : public QMainWindow {
 	static double extrude_bendB;
 
 	static int incremental_save_count;
+
+	//dave paint bucket tool - exp. 11.07
+	static QColor paint_bucket_color;
 	
 	QString curFile;
 	//document modified
@@ -415,6 +436,8 @@ protected :
 
 	StringStreamPtrList undoList;                 //!< List for Undo
 	StringStreamPtrList redoList;                 //!< List for Redo
+	StringStreamPtrList undoMtlList;                 //!< Mtl List for Undo
+	StringStreamPtrList redoMtlList;                 //!< Mtl List for Redo
 	int undolimit;                                //!< Limit for undo
 	bool useUndo;            											//!< Flag to indicate if undo will be used
 
@@ -536,6 +559,7 @@ protected:
 	static TexturedRendererPtr textured;          //!< Textured Renderer
 	static TexturedLitRendererPtr texturedlit; 		//!< Textured and Lit Renderer
 	static PatchRendererPtr patch;								//!< Bezier Patch Display
+	static ColorableRendererPtr colorable;				//!< face colors... new ... by dave... 11/07
 
 	BasicsMode *mBasicsMode;											//!< widget that holds all displayable option widgets for basic operating modes (InsertEdge, DeleteEdge, CollapseEdge, ConnectEdges, etc...)
 	ExtrusionsMode *mExtrusionsMode;								//!< widget that holds all displayable option widgets for the extrusion operation modes
@@ -543,6 +567,7 @@ protected:
 	RemeshingMode *mRemeshingMode;								//!< widget that holds all displayable option widgets for all remeshing modes
 	HighgenusMode *mHighgenusMode;								//!< high genus operation options (e.g. wireframe, sierpinsky, add handle)
 	TexturingMode *mTexturingMode;								//!< \todo  texturing mode widgets (not working at the moment)
+	ExperimentalMode *mExperimentalMode;					//!< experimental mode widgets like the new paint bucket tool dave 11.07
 
 	QShortcutManager *sm;													//!< Stuff for the shortcut manager test
 			
@@ -625,6 +650,8 @@ private:
 	QAction *mPerformRemeshingAct;
 	QAction *mPerformExtrusionAct;
 	QAction *mSubdivideSelectedFacesAct;
+	QAction *mPaintSelectedFacesAct;
+	QAction *mClearMaterialsAct;
 	QAction *mExtrudeMultipleAct; 					//!< temporary for now... not sure how to handle this in the future...
 	QAction *mQuickCommandAct;
 
@@ -674,6 +701,7 @@ private:
 	QAction *texturedRendererAct;
 	QAction *texturedLightedAct;
 	QAction *patchRendererAct;	
+	QAction *colorableRendererAct;	
 
 	//Primitives Menu Actions
 	QAction *pCubeAct;
@@ -716,6 +744,7 @@ private:
 	QAction *selectSimilarFacesAct;
 	QAction *mSelectSimilarAct;
 	QAction *selectFacesByAreaAct;
+	QAction *selectFacesByColorAct;
 	QAction *mSelectionWindowAct;
 	QAction *selectCheckerboardFacesAct;
 	QAction *selectAllAct;
@@ -780,6 +809,7 @@ private:
 	QAction *mConicalToolBarAct;
 	QAction *mHighgenusToolBarAct;
 	QAction *mTexturingToolBarAct;
+	QAction *mExperimentalToolBarAct;
 	QAction *mRemeshingToolBarAct;
 	QAction *mHideToolBarsAct;
 	QAction *mShowToolBarsAct;
@@ -796,6 +826,7 @@ private:
 	QToolBar *mConicalToolBar;
 	QToolBar *mHighgenusToolBar;
 	QToolBar *mTexturingToolBar;
+	QToolBar *mExperimentalToolBar;
 	QToolBar *mRemeshingToolBar;
 
 	//QActionGroups
@@ -869,6 +900,9 @@ private:
 	QPixmap viewportPixmap;
 	QPixmap appPixmap;
 	
+	//paint bucket tool dave //11.07
+	// QColor mPaintBucketColor;
+	
 public slots:
 
 	bool viewportScreenshot(); //!< take a screenshot of just the opengl viewport
@@ -931,6 +965,7 @@ public slots:
 	void useTexturedRenderer();
 	void useTexturedLitRenderer();
 	void usePatchRenderer();
+	void useColorableRenderer();
 
 	void select_vertex();
 	void select_multiple_vertices();
@@ -943,6 +978,7 @@ public slots:
 	void select_similar_faces();
 	void select_similar();
 	void select_faces_by_area();
+	void select_faces_by_color();
 	void selection_window();
 	void select_checkerboard_faces();
 	void select_edge();
@@ -967,6 +1003,10 @@ public slots:
 	void selectVerticesFromEdges();
 	void reorderSelectedFaces();
 
+	void setPaintBucketColor(QColor c);
+	void paintSelectedFaces();
+	void clearMaterials();
+	
 	void deleteSelected();																						//!< delete selected objects
 	void collapseSelectedEdges();																			//!< collapse selected edges
 
@@ -1008,7 +1048,15 @@ public slots:
 	void toggleSymmetricWeightsFlag(int state);
 	void changeWeight2(double value);
 	void changeExtraTwists(double value);
-
+	
+	//pinching
+	void changePinch(double value); //Ryan
+	void changePinchCenter(double value); //Ryan
+	void changeBubble(double value); //Ryan
+	void changeHoleHandlePinchValue(double value); //Ryan
+	void changeHoleHandlePinchCenterValue(double value); //Ryan
+	void changeHoleHandlePinchWidthValue(double value); //Ryan
+	
 	void changeCrustScaleFactor(double value);
 	void changeCrustThickness(double value);
 	void toggleCrustCleanupFlag(int state);
@@ -1091,18 +1139,9 @@ public slots:
 	void switchLeftView();
 	void switchFrontView();
 	void switchBackView();
-
-	// Read the DLFL object from a file
-	void readObject(const char * filename);
-	void readObjectQFile(QString file);
-	// Read the DLFL object from a file - use alternate OBJ reader for OBJ files
-	void readObjectAlt(const char * filename);
-	void readObjectOBJ(const char * filename);
-	void readObjectDLFL(const char * filename);
-	// Write the DLFL object to a file
-	void writeObject(const char * filename, bool with_normals=false, bool with_tex_coords=false);
-	void writeObjectOBJ(const char * filename, bool with_normals=false, bool with_tex_coords=false);
-	void writeObjectDLFL(const char * filename);
+	
+	// void writeObjectOBJ(const char * filename, bool with_normals=false, bool with_tex_coords=false);
+	// void writeObjectDLFL(const char * filename);
 	void setUndoLimit(int limit);
 	void toggleUndo();
 
@@ -1239,20 +1278,27 @@ public slots:
 	void openFile(QString fileName);
 	bool saveFile(QString fileName);
 	void newFile();
-	bool saveFile(bool with_normals=false, bool with_tex_coords=false);
-	bool saveFileAs(bool with_normals=false, bool with_tex_coords=false);
-	void openFileOBJ();
-	void saveFileOBJ(bool with_normals=false, bool with_tex_coords=false);
-	void openFileDLFL();
-	void saveFileDLFL();
+	bool saveFile(bool with_normals=true, bool with_tex_coords=true);
+	bool saveFileAs(bool with_normals=true, bool with_tex_coords=true);
+	void setCurrentFile(QString fileName);
+
+	// Read the DLFL object from a file
+	void readObject(const char * filename, const char *mtlfilename = NULL);
+	void readObjectQFile(QString file);
+	// Read the DLFL object from a file - use alternate OBJ reader for OBJ files
+	void readObjectAlt(const char * filename);
+	// Write the DLFL object to a file
+	void writeObject(const char * filename, const char *mtlfilename = NULL, bool with_normals=true, bool with_tex_coords=true);
+	void writeMTL(const char * filename);
+
+	//exporters
 	bool saveFileBezierOBJ( );
 	bool saveFileLG3d( );
 	bool saveFileLG3dSelected();
 	bool saveFileSTL( );
 	void writePatchOBJ(const char *filename);
 	void writeLG3d(const char *filename, bool selected = false);
-	void writeSTL(const char *filename);
-	void setCurrentFile(QString fileName);
+	void writeSTL(const char *filename);	
 
 	//primitive slot functions finally work
 	void loadCube();

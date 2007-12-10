@@ -48,7 +48,7 @@
 	CommandCompleter::CommandCompleter ( QWidget *m, QWidget * parent, Qt::WindowFlags f) : QDialog(parent, f) {
 		setSizeGripEnabled(false);
 		
-		#ifdef LINUX
+ 		#ifdef LINUX
 		setWindowFlags(Qt::Dialog);
 		#else
 		setWindowFlags(Qt::SplashScreen);

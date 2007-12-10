@@ -43,10 +43,11 @@ namespace DLFL {
   void connectFaces( DLFLObjectPtr obj, DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2);
   void dualConnectFaces( DLFLObjectPtr obj, DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2);
   void connectFaces( DLFLObjectPtr obj, DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2, 
-		     int numsegs, int maxconn = -1 );
+		     int numsegs, int maxconn = -1, double pinch=1, double pinchCenter=0.5, double bubble=1.0 );
   void connectFaces( DLFLObjectPtr obj, DLFLFacePtr fp1, DLFLFacePtr fp2, int numsegs = 1);
   void hermiteConnectFaces( DLFLObjectPtr obj, DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2,
-			    int numsegs, double wt1, double wt2, int maxconn=-1, int numtwists=0);
+			    int numsegs, double wt1, double wt2, int maxconn=-1, int numtwists=0,
+				double pinch=1, double pinchCenter=0.5, double bubble=1.0);
   void bezierConnectFaces( DLFLObjectPtr obj, DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2,
 			   int numsegs, double wt1, double wt2);
 } // end namespace

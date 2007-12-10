@@ -624,6 +624,7 @@ void GLWidget::drawHUD(QPainter *painter){
 		QString s1 = "Vertices: " + QString("%1").arg((uint)object->num_vertices()) +
 		 						"\nEdges: " + QString("%1").arg((uint)object->num_edges()) +
 								"\nFaces: " + QString("%1").arg((uint)object->num_faces()) +
+								"\nMaterials: " + QString("%1").arg((uint)object->num_materials()) +
 								"\nGenus: " + QString("%1").arg(object->genus());
 
 		QString s2 = "Sel. Vertices:" + QString("%1").arg(numSelectedVertices()) +
@@ -651,7 +652,7 @@ void GLWidget::drawHUD(QPainter *painter){
 		painter->setPen(Qt::NoPen);
 		QBrush brush = QBrush(QColor(0,0,0,127));
 		painter->setBrush(brush);
-		QRectF rectangle(0.0, height()-r1.height()*6, width(), height());
+		QRectF rectangle(0.0, height()-r1.height()*7, width(), height());
 		// painter->drawRoundRect(QRect(3.0,3.0,rectangle.width(),rectangle.height()),25,25);
 		painter->drawRect(rectangle);
 		painter->setPen(Qt::white);

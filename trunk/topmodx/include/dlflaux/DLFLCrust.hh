@@ -70,6 +70,7 @@ namespace DLFL {
 	void selectMatchingEdges(DLFLObjectPtr obj, DLFLEdgePtr eptr, DLFLEdgePtrArray &eparray);
 	void selectMatchingVertices(DLFLObjectPtr obj, DLFLVertexPtr vptr, DLFLVertexPtrArray &vparray);
 	void selectFacesByArea(DLFLObjectPtr obj, DLFLFacePtr fptr, DLFLFacePtrArray &fparray, float delta = 0.1);
+	void selectFacesByColor(DLFLObjectPtr obj, DLFLFacePtr fptr, DLFLFacePtrArray &fparray, float delta = 0.0);
   void punchHoles(DLFLObjectPtr obj);
   void makeWireframe(DLFLObjectPtr obj, double crust_thickness = 0.1, bool split = true );
   void makeWireframe2(DLFLObjectPtr obj, double crust_thickness = 0.1, double crust_width = 0.1, bool split = true );

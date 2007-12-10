@@ -866,11 +866,13 @@ namespace DLFL {
       collapseEdge(obj,ep);
   }
 
-  DLFLObjectPtr readObjectFile( char* filename ) {
+  DLFLObjectPtr readObjectFile( char* filename, char *mtlfilename ) {
     DLFLObjectPtr obj;
-    ifstream file;
+    ifstream file, mtlfile;
 
     file.open( filename );
+		mtlfile.open(mtlfilename);
+		
     if( !file ) {
       return NULL;
     }
@@ -880,10 +882,10 @@ namespace DLFL {
     char* ext = strrchr( filename, '.' );
 
     if( strcasecmp(ext,".obj") == 0 ) {
-      obj->readObject( file );
+      obj->readObject( file, mtlfile);
       obj->setFilename( filename );
     } else if( strcasecmp(ext,".dlfl") == 0 ) {
-      obj->readDLFL( file );
+      obj->readDLFL( file, mtlfile );
       obj->setFilename( filename );
     } else {
       delete obj;
@@ -893,24 +895,31 @@ namespace DLFL {
     obj->computeNormals( );
 
     file.close( );
+		mtlfile.close();
     return obj;
   }
 
-  bool writeObjectFile( DLFLObject *obj, char* filename ) {
-    ofstream file;
+  bool writeObjectFile( DLFLObject *obj, char* filename, char *mtlfilename ) {
+    ofstream file, mtlfile;
     if( filename == NULL )
       filename = obj->getFilename( );
+
     file.open( filename );
+
+		if (mtlfilename != NULL){
+			mtlfile.open(mtlfilename);
+		}
+
     if( !file )
       return false;
      
     char* ext = strrchr( filename, '.' );
     bool wrote = false;
     if( strcasecmp(ext,".obj") == 0 ) {
-      obj->writeObject( file, true, true );
+      obj->writeObject( file, mtlfile, true, true );
       //obj->setFilename( filename );
     } else if( strcasecmp(ext,".dlfl") == 0 ) {
-      obj->writeDLFL( file, false );
+      obj->writeDLFL( file, mtlfile, false );
       //obj->setFilename( filename );
     }	else if( strcasecmp(ext,".m") == 0 ) {
       obj->writeLG3d( file, false );
@@ -919,6 +928,10 @@ namespace DLFL {
       obj->writeSTL( file );
       //obj->setFilename( filename );
     }
+		if (mtlfilename != NULL){
+			mtlfile.close();
+		}
+		file.close();
     return wrote;
   }
 

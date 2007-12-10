@@ -70,7 +70,8 @@ public :
 
   bool useMaterial;
   bool useLighting;
-  bool useNormal;
+	bool useColorable;
+	bool useNormal;
   bool useTexture;
   bool useOutline;
 	bool drawWireframe;
@@ -93,8 +94,8 @@ private :
   //DLFLObjectPtr mObj;
 
   static GeometryRenderer *mInstance;
-  GeometryRenderer( bool gpu = false) : useMaterial(false), useLighting(false), 
-				       useNormal(false), useTexture(false), 
+  GeometryRenderer( bool gpu = false) : useMaterial(false), useColorable(false), useLighting(false), 
+				       useNormal(false), useTexture(false), antialiasing(false),
 							useOutline(false), drawFaceCentroids(false), drawVertices(false),
 							drawSilhouette(false),drawWireframe(true),
 				       drawFaceNormals(false), isReversed(false), useGPU(gpu) {

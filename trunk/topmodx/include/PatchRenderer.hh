@@ -143,6 +143,7 @@ public :
 
   virtual void setState( ) {
     gr->useLighting = false;
+		gr->useColorable = false; 
     gr->useOutline = true;
 		gr->useTexture = false;
 		gr->useMaterial = false;

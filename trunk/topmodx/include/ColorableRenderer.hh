@@ -26,47 +26,49 @@
 * ***** END GPL LICENSE BLOCK *****
 */
 
-#ifndef _NORMAL_RENDERER_H_
-#define _NORMAL_RENDERER_H_
+#ifndef _COLORABLE_RENDERER_HH_
+#define _COLORABLE_RENDERER_HH_
 
-/**
- * NormalRenderer
- * A renderer for DLFL objects, derived from DLFLRenderer
- * Renders with face-vertex wireframes with solid colors, no shading/materials/lighting
+/*
+  ColorableRenderer
+  A renderer for DLFL objects, derived from DLFLRenderer
+  Renders with face-vertex normals, with material colors
 */
 
 #include "../DLFLRenderer.hh"
 
-class NormalRenderer;
-typedef NormalRenderer *NormalRendererPtr;
+class ColorableRenderer;
+typedef ColorableRenderer * ColorableRendererPtr;
 
-class NormalRenderer : public DLFLRenderer {	
+class ColorableRenderer : public DLFLRenderer {
+
 public :
   /* Default constructor */
-  NormalRenderer() : DLFLRenderer() {
-  }
-	
-  NormalRenderer(QColor wc, double wt, QColor sc, double st, QColor vc, double vt, QColor fc, double ft, QColor nc, double nt)
-    : DLFLRenderer(wc, wt, sc, st, vc, vt, fc, ft, nc, nt) {
-  }
+  ColorableRenderer() : DLFLRenderer() { }
 
+  ColorableRenderer(QColor wc, double wt, QColor sc, double st, QColor vc, double vt)
+    {}//: DLFLRenderer(wc, wt, sc, st, vc, vt) { }
+	  
   /* Copy constructor */
-  NormalRenderer(const NormalRenderer& nr) : DLFLRenderer(nr) { }
+  ColorableRenderer(const ColorableRenderer& nr)
+    : DLFLRenderer(nr) { }
 
   /* Assignment operator */
-  NormalRenderer& operator = (const NormalRenderer& nr) {
+  ColorableRenderer& operator = (const ColorableRenderer& nr)	{
     DLFLRenderer::operator = (nr);
     return (*this);
   }
 
   /* Destructor */
-  virtual ~NormalRenderer() {}
+  virtual ~ColorableRenderer() {}
 
   /* Implement render function */
-  virtual int render(DLFLObjectPtr object)  {		
-    glEnable(GL_CULL_FACE);
+  virtual int render(DLFLObjectPtr object) {
+	
+   	glEnable(GL_CULL_FACE);
     setCulling();
     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+
 		glEnable(GL_BLEND);																			// Enable Blending
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);			// Type Of Blending To Use
 
@@ -75,24 +77,24 @@ public :
 			glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);									// Set Line Antialiasing
 		}
 		else {
-			glDisable( GL_LINE_SMOOTH );
+	    glDisable( GL_LINE_SMOOTH );
 		}
-    //glColor4f(mNormalColor.redF(),mNormalColor.greenF(),mNormalColor.blueF(),mNormalColor.alphaF());
-    //object->plainRender();
+    //object->renderFaces();
     gr->render( object );
-    drawOverlays(object);
+    drawOverlays( object );
     glDisable(GL_CULL_FACE);
     return 0;
+
   }
-	
-  virtual void setState( ) {
+
+  virtual void setState( ) { 
     gr->useLighting = false;
-		gr->useColorable = false; 
-    gr->useMaterial = true;
+		gr->useColorable = true;
+    gr->useMaterial = false;
     gr->useTexture = false;
     gr->useOutline = false;
   }
+
 };
 
-#endif /* #ifndef _NORMAL_RENDERER_HH_ */
-
+#endif /* #ifndef _COLORABLE_RENDERER_HH_ */

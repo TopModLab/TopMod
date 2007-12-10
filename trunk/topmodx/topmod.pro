@@ -13,7 +13,10 @@ DEFINES += QT_VER=\"$${QT_VERSTR}\" # create a QT_VER macro containing the versi
 
 # main stuff
 QT += opengl xml
-CONFIG += qt release warn_off link_prl
+CONFIG += qt debug warn_off link_prl
+
+QMAKE_CXXFLAGS_DEBUG += -pg
+QMAKE_LFLAGS_DEBUG += -pg
 
 # exclude verse python or spacenav drivers
 # or include them with CONFIG += 
@@ -150,8 +153,10 @@ macx {
 
 	CONFIG -= WITH_SPACENAV
 
-	INCLUDEPATH += C:/topmod/topmodx/lib
-	QMAKE_LFLAGS += -LC:/topmod/topmodx/lib
+	INCLUDEPATH += ./lib
+	QMAKE_LFLAGS += -L./lib
+	# INCLUDEPATH += C:/topmod/topmodx/lib
+	# QMAKE_LFLAGS += -LC:/topmod/topmodx/lib
 	LIBS += -lvecmat -ldlflcore -ldlflaux
 
 	CONFIG(WITH_PYTHON){
@@ -199,6 +204,7 @@ HEADERS += \
 	ConicalMode.hh \ 
 	HighgenusMode.hh \
 	TexturingMode.hh \
+	ExperimentalModes.hh \
 	DLFLSelection.hh \
 	Viewport.hh \
 	TMPatchFace.hh \
@@ -246,6 +252,7 @@ SOURCES += \
 	ConicalMode.cc \ 
 	HighgenusMode.cc \
 	TexturingMode.cc \
+	ExperimentalModes.cc \
 	DLFLLighting.cc \
 	DLFLRenderer.cc \
 	DLFLSelection.cc \

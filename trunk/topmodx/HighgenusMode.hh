@@ -126,6 +126,10 @@ public slots:
 	void triggerSierpinsky();
 	void triggerMultiFaceHandle();
 	void triggerMengerSponge();
+	
+	void changeHoleHandlePinch(double value);
+	void changeHoleHandlePinchCenter(double value);
+	void changeHoleHandlePinchWidth(double value);	
 
 private:
 	
@@ -134,6 +138,10 @@ private:
 
 	QLabel *addHoleHandleNumSegmentsConnectLabel;
 	QLabel *addHoleHandleNumSegmentsLabel;
+	QLabel *addHoleHandlePinching; //Ryan
+	QLabel *addHoleHandlePinchingCenter; //Ryan
+	QLabel *addHoleHandlePinchingWidth; //Ryan
+
 	QLabel *addHoleHandleCVNumSegmentsLabel;
 	QLabel *addHoleHandleCVNumSegmentsConnectLabel;
 	QLabel *addHandleSINumSegmentsLabel;
@@ -141,6 +149,7 @@ private:
 	QLabel *addHandleSIWeight1Label;
 	QLabel *addHandleSIWeight2Label;
 	QLabel *addHandleSITwistsConnectLabel;
+	QLabel *addHandleSIPinchConnectLabel; //Ryan
 	QLabel *rindModelingScalingLabel;
 	QLabel *rindModelingThicknessLabel;
 	QLabel *wireframeModelingThicknessLabel;
@@ -161,6 +170,11 @@ private:
 
 	QDoubleSpinBox *addHoleHandleNumSegmentsConnectSpinBox;
 	QDoubleSpinBox *addHoleHandleNumSegmentsSpinBox;
+	QDoubleSpinBox *addHoleHandlePinchingConnectSpinBox; //Ryan
+	QDoubleSpinBox *addHoleHandlePinchingCenterConnectSpinBox; //Ryan
+	QDoubleSpinBox *addHoleHandlePinchingWidthConnectSpinBox; //Ryan
+	QDoubleSpinBox *addHandleSIBubbleConnectSpinBox; //Ryan
+	QDoubleSpinBox *addHandleSIPinchCenterConnectSpinBox; //Ryan
 	
 	QDoubleSpinBox *addHoleHandleCVNumSegmentsSpinBox;
 	QDoubleSpinBox *addHoleHandleCVNumSegmentsConnectSpinBox;
@@ -171,6 +185,11 @@ private:
 	QDoubleSpinBox *addHandleSITwistsConnectSpinBox;
 	QDoubleSpinBox *addHandleSIWeight1SpinBox;
 	QDoubleSpinBox *addHandleSIWeight2SpinBox;
+	
+	QDoubleSpinBox *addHandleSIPinchConnectSpinBox;//ryan
+	QLabel *addHandleSIPinchCenterConnectLabel;//ryan
+	QLabel *addHandleSIBubbleConnectLabel;//ryan
+	
 	
 	QDoubleSpinBox *rindModelingScalingSpinBox;
 	QDoubleSpinBox *rindModelingThicknessSpinBox;

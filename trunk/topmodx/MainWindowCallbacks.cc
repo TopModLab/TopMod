@@ -108,6 +108,11 @@ void MainWindow::usePatchRenderer() {
 	redraw();
 }
 
+void MainWindow::useColorableRenderer() {
+	setRenderer(colorable);
+	redraw();
+}
+
 //preference functions for topmodpreferences - dave
 void MainWindow::setAutoSave(int value){
 	//start the timer if it's ON
@@ -261,6 +266,10 @@ void MainWindow::select_similar() {
 
 void MainWindow::select_faces_by_area() {
 	setMode(MainWindow::SelectFacesByArea);
+}
+
+void MainWindow::select_faces_by_color() {
+	setMode(MainWindow::SelectFacesByColor);
 }
 
 void MainWindow::selection_window() {
@@ -474,6 +483,27 @@ void MainWindow::changeExtraTwists(double value) {
 	MainWindow::num_extra_twists = (int)value;
 }
 
+//added by Ryan
+void MainWindow::changePinch(double value) {
+	MainWindow::pinching_factor = value;
+}
+void MainWindow::changePinchCenter(double value) {
+	MainWindow::pinch_center = value;
+}
+void MainWindow::changeBubble(double value) {
+	MainWindow::bubble_factor = value;
+}
+void MainWindow::changeHoleHandlePinchValue(double value) {
+	MainWindow::holeHandle_pinching_factor = value;
+}
+void MainWindow::changeHoleHandlePinchCenterValue(double value) {
+	MainWindow::holeHandle_pinch_center = value;
+}
+void MainWindow::changeHoleHandlePinchWidthValue(double value) {
+	MainWindow::holeHandle_pinch_width = value;
+}
+//end Ryan's stuff
+
 // Crust Modeling.
 void MainWindow::changeCrustScaleFactor(double value) {
 	MainWindow::crust_scale_factor = value;
@@ -658,6 +688,35 @@ void MainWindow::changeTiltPlane2(double value){
 
 }
 /* end ozgur */
+
+//dave 11.07
+void MainWindow::setPaintBucketColor(QColor c){
+	MainWindow::paint_bucket_color = c;
+}
+
+void MainWindow::paintSelectedFaces(){
+	//iterate through the selected faces and color them with object.addMaterial?
+	undoPush();
+	// DLFLFacePtrArray fparray;
+	// fparray.resize(active->numSelectedFaces());
+	for (int i=0; i < active->numSelectedFaces(); ++i)	{
+		active->getSelectedFace(i)->setMaterial(object.addMaterial(RGBColor(paint_bucket_color.redF(),paint_bucket_color.greenF(),paint_bucket_color.blueF())));
+	}
+	MainWindow::clearSelected();
+	active->recomputePatches();
+	active->recomputeNormals();
+	redraw();
+
+}
+
+void MainWindow::clearMaterials(){
+	undoPush();
+	object.clearMaterials();
+	active->recomputePatches();
+	active->recomputeNormals();
+	redraw();
+}
+
 
 // Geometric transformations
 void MainWindow::translatex(double x) {

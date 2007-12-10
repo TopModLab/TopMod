@@ -71,12 +71,14 @@ public :
     // Add a default material
     matl_list.push_back(new DLFLMaterial("default",0.5,0.5,0.5));
     mFilename = NULL;
+		mDirname = NULL;
   };
 
   /// Destructor
   ~DLFLObject( ) {
     clearLists();
     if( mFilename ) { delete [] mFilename; mFilename = NULL; }
+    if( mDirname ) { delete [] mDirname; mDirname = NULL; }
   };
 
 protected :
@@ -138,6 +140,7 @@ protected :
      
   uint uID;                                      // ID for this object
   char *mFilename;
+  char *mDirname;
   // Assign a unique ID for this instance
   void assignID( ) { uID = DLFLObject::newID(); };
 
@@ -314,12 +317,12 @@ public :
 
   void printFaceList( ) const {
     cout << "Face List" << endl;
-    /*
+    
     DLFLFacePtrList::const_iterator first = face_list.begin(), last = face_list.end();
     while ( first != last ) {
       cout << *(*first) << endl;
       ++first;
-      }*/
+      }
   };
      
   void printFaces( ) const {
@@ -419,9 +422,9 @@ public :
   void addFacePtr(DLFLFacePtr faceptr) {
     // Insert the pointer.
     // **** WARNING!!! **** Pointer will be freed when list is deleted
-    //if ( faceptr->material() == NULL )
+    if ( faceptr->material() == NULL )
       // If Face doesn't have a material assigned to it, assign the default material
-    faceptr->setMaterial(matl_list.front());
+	    faceptr->setMaterial(matl_list.front());
     face_list.push_back(faceptr);
 		faceMap[faceptr->getID()] = (unsigned int)faceptr;
   };
@@ -527,32 +530,100 @@ public :
   void boundaryWalk(uint face_index);
   void vertexTrace(uint vertex_index);
 
-  void readObject( istream& i );
+  void readObject( istream& i, istream &imtl = NULL );
   void readObjectAlt( istream& i );
-  void readDLFL( istream& i, bool clearold = true );
-  void writeObject( ostream& o, bool with_normals = false, bool with_tex_coords = false );
-  void writeDLFL(ostream& o, bool reverse_faces = false);
+  void readDLFL( istream& i, istream &imtl = NULL, bool clearold = true );
+	bool readMTL( istream &i);
+	bool writeMTL( ostream& o );
+	
+  void writeObject( ostream& o, ostream &omtl = NULL, bool with_normals = true, bool with_tex_coords = true );
+  void writeDLFL(ostream& o, ostream &omtl = NULL, bool reverse_faces = false);
   void writeSTL(ostream& o);
   void writeLG3d(ostream& o, bool select = false); //!< added by dave - for LiveGraphics3D support to embed 3d models into html
-  inline void setFilename( char *filename ) { 
-    if( mFilename) { delete [] mFilename; mFilename = NULL; }
-    mFilename = filename; 
+  inline void setFilename( const char *filename ) { 
+    // if( mFilename) { delete [] mFilename; mFilename = NULL; }
+    // mFilename = filename; 
+		 if ( filename ) {
+	      mFilename = new char[strlen(filename)+1]; strcpy(mFilename,filename);
+	    } else {
+	      mFilename = new char[8]; strcpy(mFilename,"default");
+	    }
   };
   inline char* getFilename( ) { return mFilename; }
   
+  inline void setDirname( const char *dirname ) { 
+		 if ( dirname ) {
+	      mDirname = new char[strlen(dirname)+1]; strcpy(mDirname,dirname);
+	    } else {
+	      mDirname = new char[3]; strcpy(mDirname,"$HOME");
+	    }
+  };
+
   DLFLMaterialPtr findMaterial( const RGBColor& color ) {
     DLFLMaterialPtr matl = NULL;
     DLFLMaterialPtrList::iterator first, last;
     first = matl_list.begin(); last = matl_list.end();
     while ( first != last ) {
       if ( (*first)->equals(color) ) {
-	matl = (*first); break;
+				matl = (*first); break;
       }
       ++first;
     }
 
     return matl;
   };
+
+  DLFLMaterialPtr findMaterial( const char *mtlname ) {
+    DLFLMaterialPtr matl = NULL;
+    DLFLMaterialPtrList::iterator first, last;
+    first = matl_list.begin(); last = matl_list.end();
+    while ( first != last ) {
+			if ( mtlname && !strcasecmp((*first)->name,mtlname) ) {
+				matl = (*first); break;
+      }
+      ++first;
+    }
+    return matl;
+  };
+
+	void clearMaterials(){
+		//iterate through faces...
+		// DLFLMaterialPtr mptr = new DLFLMaterial("default",0.5,0.5,0.5);
+		// setColor(RGBColor(0.5,0.5,0.5));
+		
+		DLFLFacePtrList::iterator ffirst=face_list.begin(), flast=face_list.end();
+    while ( ffirst != flast ) {
+      (*ffirst)->setMaterial(matl_list.front());
+			++ffirst;
+    }    
+		//clear materials
+		while (matl_list.size() > 1){
+			// if ( !( (*matl_list.back()) == mptr) ) {
+			matl_list.pop_back();
+			// }
+		}
+		//add the fresh blank gray material
+		// matl_list.push_back(mptr);
+	}
+
+	DLFLMaterialPtr addMaterial(RGBColor color){
+		//first search for the material to see if it exists already or not
+		char matl_name[10];
+		DLFLMaterialPtr mtl = findMaterial(color);
+		
+		// No matching material found
+		if ( mtl == NULL ) {
+			//add this as a new material
+			sprintf(matl_name,"material%d",matl_list.size());
+			matl_list.push_back(new DLFLMaterial(matl_name,color));
+			mtl = matl_list.back();
+			return mtl;
+		} 
+		else {
+			//it already exists... return it
+			return mtl;
+		}		
+	}
 
   void setColor( const RGBColor& col ) {
     // matl_list[0] is always the default material

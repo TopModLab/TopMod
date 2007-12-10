@@ -111,7 +111,8 @@ namespace DLFL {
   }
 
   void connectFaces( DLFLObjectPtr obj, DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2) {
-    // Connect two faces using repeated insertEdge operations
+ 
+	// Connect two faces using repeated insertEdge operations
     // The 2 corners have to belong to different faces
     if ( coFacial(fvptr1,fvptr2) ) return;
 
@@ -148,6 +149,7 @@ namespace DLFL {
 				done = true;
       }
     }
+		
   }
 
   void dualConnectFaces( DLFLObjectPtr obj, DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2) {
@@ -201,13 +203,14 @@ namespace DLFL {
 				done = true;
       }
     }
+
   }
 
+  //i'm pretty sure this is our guy
   void connectFaces( DLFLObjectPtr obj, DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2,
-										 int numsegs, int maxconn) {
+										 int numsegs, int maxconn, double pinch, double pinchCenter, double bubble) {
     // Connect 2 faces with multiple segments. Intermediate points are calculated
     // by linear interpolation between end points using number of segments
-
     if ( numsegs == 1 ) {
       connectFaces(obj,fvptr1,fvptr2);
       return;
@@ -230,6 +233,11 @@ namespace DLFL {
     f2->reverse(); f2->reorder(fvptr2);
 
     double t, dt = 1.0/double(numsegs);
+	
+	double pinch_scaling = 1;
+	double bubbleExp = (1/bubble);
+	double t2=0; double w0, w1, w2;
+	
     Vector3dArray verts;
     DLFLFacePtr nf2,nf3;
     DLFLFaceVertexPtr nfvp1,nfvp2,nfvp3;
@@ -237,6 +245,7 @@ namespace DLFL {
     DLFLMaterialPtr matl = f1->material();
     int numverts = verts1.size();
     int numconnected = 0;
+
 
     if ( maxconn == -1 ) maxconn = numsegs;
 
@@ -248,9 +257,33 @@ namespace DLFL {
       // Find linearly interpolated resolution parameters
       linearInterpolate(verts1,verts2,verts,t);
 
+	  //pinching factor
+	  //calculate t2 for bezier curve in pinching
+	  if(t <= pinchCenter) //use the bezier equation for the first portion of the handle
+	  {
+		t2 = (t/pinchCenter); //t2 goes from 0 to 1
+		t2 = pow(t2, bubbleExp); //the bubble factor affects the speed we travel on the bezier curve
+		w0 = (1-t2)*(1-t2); //weight 0
+		w1 = (2*(1-t2)*t2); //weight 1
+		w2 = t2*t2;			//weight 2
+		pinch_scaling = w0 + (w1 * pinch) + (w2 * pinch); //weighted sum
+	  }
+	  else //use the bezier equation for the second portion of the handle
+	  {
+		t2 = 1-((t-pinchCenter)/(1-pinchCenter)); //t2 goes from 0 to 1
+		t2 = pow(t2, bubbleExp); //the bubble factor affects the speed we travel on the bezier curve
+		w0 = (1-t2)*(1-t2); //weight 0
+		w1 = (2*(1-t2)*t2); //weight 1
+		w2 = t2*t2;			//weight 2
+		pinch_scaling = w0 + (w1 * pinch) + (w2 * pinch); //weighted sum
+	  }
+	  scale(verts,pinch_scaling);
+	  //translate(verts, Vector3d(0,1,0));
       // Create a new face using computed coordinates
       obj->createFace(verts,matl);
 
+
+	  
       // Get the pointers to the newly inserted faces
       rfirst = obj->rbeginFace();
       nf2 = (*rfirst); ++rfirst; nf3 = (*rfirst);
@@ -267,9 +300,11 @@ namespace DLFL {
       // Make nf3 be the new nf1
       nfvp1 = nfvp3;
     }
+
     // Make the last connection
     nf2 = f2; nfvp2 = fvptr2;
     if ( numconnected < maxconn ) connectFaces(obj,nfvp1,nfvp2);
+
   }
 
   void connectFaces( DLFLObjectPtr obj, DLFLFacePtr fp1, DLFLFacePtr fp2, int numsegs) {
@@ -283,7 +318,8 @@ namespace DLFL {
 
   void hermiteConnectFaces( DLFLObjectPtr obj, DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2,
 														int numsegs, double wt1, double wt2,
-														int maxconn, int numtwists) {
+														int maxconn, int numtwists,
+														double pinch, double pinchCenter, double bubble) {
     if ( numsegs == 1 ) {
       connectFaces(obj,fvptr1,fvptr2);
       return;
@@ -391,12 +427,39 @@ namespace DLFL {
     n1 *= wt1; n2 *= wt2;
     double curve_length = hermiteCurveLength(cen1,n1,cen2,n2,8*numsegs);
     double segment_length = curve_length / double(numsegs);
+
+	double pinch_scaling=1;
+	double bubbleExp = (1/bubble);
+	double t2=0; double w0, w1, w2;
+	
     t = 0.0; p = cen1; v = n1; dvdt = 6.0*(cen2-cen1) - 4.0*n1 - 2.0*n2;
 
+	// pinchCenter,  bubble
     for (int i=1; i < numsegs; ++i) {
-      //       dt = segment_length/(norm(v) + norm(dvdt)*t);
+      //dt = segment_length/(norm(v) + norm(dvdt)*t);
       t = double(i)*dt;
-
+	  
+	  //pinching factor
+	  //calculate t2 for bezier curve in pinching
+	  if(t <= pinchCenter) //use the bezier equation for the first portion of the handle
+	  {
+		t2 = (t/pinchCenter); //t2 goes from 0 to 1
+		t2 = pow(t2, bubbleExp); //the bubble factor affects the speed we travel on the bezier curve
+		w0 = (1-t2)*(1-t2); //weight 0
+		w1 = (2*(1-t2)*t2); //weight 1
+		w2 = t2*t2; //weight 2
+		pinch_scaling = w0 + (w1 * pinch) + (w2 * pinch); //weighted sum
+	  }
+	  else //use the bezier equation for the second portion of the handle
+	  {
+		t2 = 1-((t-pinchCenter)/(1-pinchCenter)); //t2 goes from 0 to 1
+		t2 = pow(t2, bubbleExp); //the bubble factor affects the speed we travel on the bezier curve
+		w0 = (1-t2)*(1-t2); //weight 0
+		w1 = (2*(1-t2)*t2); //weight 1
+		w2 = t2*t2; //weight 2
+		pinch_scaling = w0 + (w1 * pinch) + (w2 * pinch); //weighted sum
+	  }
+	  
       // Find linearly interpolated resolution parameters
       linearInterpolate(angle1,angle2,angle,t);
       linearInterpolate(distance1,distance2,distance,t);
@@ -412,6 +475,10 @@ namespace DLFL {
       // Do hermite interpolation on centroids and normals to find interpolated point and normal
       hermiteInterpolate(cen1,n1,cen2,n2,p,v,dvdt,t);
 
+	  //scale reconstructed polygon by pinching factor
+	  //pinch_scaling=(1-t)*(1-t) + pinch*2*(1-t)*t + t*t;
+	  scale(verts,pinch_scaling);
+	  
       // Rotate reconstructed polygon from rotation plane (XY plane) to plane with v as normal
       // Rotation is done around centroid of polygon
       rotate(verts,rotplane,v);
@@ -446,6 +513,7 @@ namespace DLFL {
 
   void bezierConnectFaces( DLFLObjectPtr obj, DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2,
 													 int numsegs, double wt1, double wt2) {
+
     // Do hermite interpolated handle. All vertices are interpolated using hermite interpolation
 
     // Reorder both faces so that they start at the selected corners
@@ -471,6 +539,8 @@ namespace DLFL {
 
     // Compute 3 intermediate vertices and create new faces
     double t, dt = 1.0/numsegs;
+	
+	
     Vector3dArray verts;
     Vector3d p,v,dvdt;
     int numverts = verts1.size();

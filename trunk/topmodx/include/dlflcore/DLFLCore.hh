@@ -133,8 +133,8 @@ namespace DLFL {
   
   /* Create a DLFL object from an input stream which should contain
    * an object in OBJ format */
-  DLFLObject* readObjectFile( char* filename );
-  bool writeObjectFile( DLFLObject *obj, char* filename = NULL );
+  DLFLObject* readObjectFile( char* filename, char *mtlfilename =NULL);
+  bool writeObjectFile( DLFLObject *obj, char* filename = NULL, char *mtlfilename=NULL );
 
 	/************************
 	 * Create/Remove Vertex *

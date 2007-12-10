@@ -117,6 +117,11 @@ void GeometryRenderer::renderFaceVertex( DLFLFaceVertexPtr dfv, bool useAttrs ) 
 			} else {
 				if( useLighting ) { glColor( dfv->color ); } // Actually means use lighting
 				if( useMaterial ) { glColor4dv(renderColor); }
+				if ( useColorable ) { 	
+					RGBColor rgb(dfv->getFacePtr()->material()->color );
+					// RGBColor rgb(renderColor[0], renderColor[1], renderColor[2] );
+					glColor4f( rgb.r, rgb.g, rgb.b, renderColor[3]);
+				}
 			}
 			if( useTexture ) { 
 				// std::cout <<"geomrend using texture!!!\n";

@@ -62,6 +62,7 @@ LitRendererPtr MainWindow::lit;                       //!< LitRenderer Pointer
 TexturedRendererPtr MainWindow::textured;          		//!< TexturedRenderer Pointer
 TexturedLitRendererPtr MainWindow::texturedlit; 			//!< TexturedLitRenderer Pointer
 PatchRendererPtr MainWindow::patch;		       					//!< PatchRenderer Pointer
+ColorableRendererPtr MainWindow::colorable;		       					//!< ColorableRenderer Pointer
 
 //-- Parameters used in various operations on the DLFL object --//
 //-- See header file for explanations --//
@@ -72,6 +73,8 @@ bool MainWindow::is_editing = false;
 
 //face area - dave
 float MainWindow::face_area_tolerance = 0.05;
+//face color tolerance
+float MainWindow::face_color_tolerance = 0.00;
 
 // Edge deletion
 bool MainWindow::delete_edge_cleanup = true;
@@ -141,6 +144,14 @@ double MainWindow::modified_corner_cutting_thickness = 0.25;
 double MainWindow::star_offset = 0.0;
 double MainWindow::fractal_offset = 1.0;
 
+//Added by Ryan
+double MainWindow::pinching_factor = 1;
+double MainWindow::pinch_center = 0.5;
+double MainWindow::bubble_factor = 1;
+double MainWindow::holeHandle_pinching_factor = 1;
+double MainWindow::holeHandle_pinch_center = 0.5;
+double MainWindow::holeHandle_pinch_width = 1;
+
 // Added by Eric
 double MainWindow::substellate_height = 0.0;
 double MainWindow::substellate_curve = 0.0;
@@ -209,11 +220,15 @@ DLFLEdgePtr MainWindow::edge_ring_start_edge = NULL;
 //incremental save...
 int MainWindow::incremental_save_count = 0;
 
+//paint bucket static color:
+QColor MainWindow::paint_bucket_color = QColor(0.5,0.5,0.5);
+
+
 /**
  * asdflkjasdf
  * asdfl;jkas;df
  **/
-MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(), redoList(), 
+MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(), undoMtlList(), redoList(), redoMtlList(), 
 																				 undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimitive(false), mSpinBoxMode(None) {
 																					
 																					
@@ -355,6 +370,7 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	mRemeshingMode = new RemeshingMode(this, sm, mActionListWidget);
 	mHighgenusMode = new HighgenusMode(this, sm, mActionListWidget);
 	mTexturingMode = new TexturingMode(this, sm, mActionListWidget);
+	mExperimentalMode = new ExperimentalMode(this, sm, mActionListWidget);
 
 	
 	#ifdef QCOMPLETER
@@ -772,6 +788,13 @@ void MainWindow::createActions() {
 	connect(patchRendererAct, SIGNAL(triggered()), this, SLOT(usePatchRenderer()));
 	mActionListWidget->addAction(patchRendererAct);
 
+	colorableRendererAct = new QAction(tr("&Colorable Renderer"), this);
+	colorableRendererAct->setCheckable(true);
+	sm->registerAction(colorableRendererAct, "Renderer Menu", "7");
+	colorableRendererAct->setStatusTip(tr("Switch the current renderer to Colorable"));
+	connect(colorableRendererAct, SIGNAL(triggered()), this, SLOT(useColorableRenderer()));
+	mActionListWidget->addAction(colorableRendererAct);
+
 	mRendererActionGroup = new QActionGroup(this);
 	mRendererActionGroup->setExclusive(true);
 	mRendererActionGroup->addAction(wireframeRendererAct);
@@ -780,6 +803,7 @@ void MainWindow::createActions() {
 	mRendererActionGroup->addAction(texturedRendererAct);
 	mRendererActionGroup->addAction(texturedLightedAct);
 	mRendererActionGroup->addAction(patchRendererAct);
+	mRendererActionGroup->addAction(colorableRendererAct);
 	lightedRendererAct->setChecked(true);
 
 	//PRIMITIVES MENU ACTIONS
@@ -981,6 +1005,11 @@ void MainWindow::createActions() {
 	sm->registerAction(selectFacesByAreaAct, "Selection", "CTRL+SHIFT+A");
 	connect( selectFacesByAreaAct , SIGNAL( triggered() ), this, SLOT( select_faces_by_area() ) );
 	mActionListWidget->addAction(selectFacesByAreaAct);
+
+	selectFacesByColorAct = new QAction(tr("Select Faces By Color"), this);
+	sm->registerAction(selectFacesByColorAct, "Selection", "CTRL+SHIFT+C");
+	connect( selectFacesByColorAct , SIGNAL( triggered() ), this, SLOT( select_faces_by_color() ) );
+	mActionListWidget->addAction(selectFacesByColorAct);
 
 	selectCheckerboardFacesAct = new QAction(tr("C&heckerboard Select Faces"), this);
 	sm->registerAction(selectCheckerboardFacesAct, "Selection", "SHIFT+K");
@@ -1227,6 +1256,18 @@ void MainWindow::createActions() {
 	mActionListWidget->addAction(mVerseKillServerAct);
 #endif
 
+	mPaintSelectedFacesAct = new QAction(tr("Paint Selected Faces"), this);
+	mPaintSelectedFacesAct->setStatusTip( tr("Paint all Selected Faces") );
+	connect(mPaintSelectedFacesAct, SIGNAL(triggered()), this, SLOT(paintSelectedFaces()));
+	sm->registerAction(mPaintSelectedFacesAct, "Tools Menu", "CTRL+SHIFT+B");
+	mActionListWidget->addAction(mPaintSelectedFacesAct);
+
+	mClearMaterialsAct = new QAction(tr("Clear Materials"), this);
+	mClearMaterialsAct->setStatusTip( tr("Clear Materials") );
+	connect(mClearMaterialsAct, SIGNAL(triggered()), this, SLOT(clearMaterials()));
+	sm->registerAction(mClearMaterialsAct, "Tools Menu", "CTRL+SHIFT+X");
+	mActionListWidget->addAction(mClearMaterialsAct);
+
 	mSubdivideSelectedFacesAct = new QAction(tr("Subdivide Selected Faces"), this);
 	mSubdivideSelectedFacesAct->setStatusTip( tr("Subdivide all Selected Faces") );
 	connect(mSubdivideSelectedFacesAct, SIGNAL(triggered()), this, SLOT(subdivideSelectedFaces()));
@@ -1420,6 +1461,7 @@ void MainWindow::createMenus(){
 	// texturedLightedAct->setEnabled(false);
 	mRendererMenu->addSeparator()->setText(tr("Special Mode??"));
 	mRendererMenu->addAction(patchRendererAct);
+	mRendererMenu->addAction(colorableRendererAct);
 	
 	mDisplayMenu->addAction(mPerspViewAct);
 	mDisplayMenu->addAction(showVerticesAct);
@@ -1485,6 +1527,7 @@ void MainWindow::createMenus(){
 	// mSelectionMenu->addAction(selectMultipleFacesAct);
 	// mSelectionMenu->addAction(selectSimilarFacesAct);
 	mSelectionMenu->addAction(selectFacesByAreaAct);
+	mSelectionMenu->addAction(selectFacesByColorAct);
 	mSelectionMenu->addAction(selectCheckerboardFacesAct);
 	mSelectionMenu->addAction(selectFacesFromEdgesAct);
 	mSelectionMenu->addAction(selectFacesFromVerticesAct);
@@ -1504,6 +1547,7 @@ void MainWindow::createMenus(){
 	mToolsMenu->addMenu(mConicalMode->getMenu());
 	mToolsMenu->addMenu(mHighgenusMode->getMenu());
 	mToolsMenu->addMenu(mTexturingMode->getMenu());
+	mToolsMenu->addMenu(mExperimentalMode->getMenu());
 	#ifdef QCOMPLETER
 	mToolsMenu->addAction(mQuickCommandAct);
 	#endif
@@ -1511,6 +1555,7 @@ void MainWindow::createMenus(){
 	mToolsMenu->addAction(mPerformExtrusionAct);
 	mToolsMenu->addAction(mSubdivideSelectedFacesAct);
 	mToolsMenu->addAction(mSubdivideSelectedEdgesAct);
+	mToolsMenu->addAction(mPaintSelectedFacesAct);
 	menuBar->addMenu(mToolsMenu);
 
 	mRemeshingMenu = mRemeshingMode->getMenu();
@@ -1536,6 +1581,7 @@ void MainWindow::createMenus(){
 	mObjectMenu->addAction(mCleanup2gonsAct);
 	mObjectMenu->addAction(mSplitValence2VerticesAct);
 	mObjectMenu->addSeparator();
+	mToolsMenu->addAction(mClearMaterialsAct);
 	mObjectMenu->addAction(computeLightingAct);
 	mObjectMenu->addAction(computeNormalsAndLightingAct);
 	mObjectMenu->addAction(assignTextureCoordinatesAct);
@@ -1570,6 +1616,7 @@ void MainWindow::createMenus(){
 	mWindowMenu->addAction(mConicalToolBarAct);
 	mWindowMenu->addAction(mHighgenusToolBarAct);
 	mWindowMenu->addAction(mTexturingToolBarAct);
+	mWindowMenu->addAction(mExperimentalToolBarAct);
 	mWindowMenu->addAction(mRemeshingToolBarAct);
 
 	mHelpMenu = new QMenu(tr("&Help"));
@@ -1659,6 +1706,11 @@ void MainWindow::createToolBars() {
 	addToolBar(Qt::TopToolBarArea,mHighgenusToolBar);
 	mHighgenusToolBar->setIconSize(QSize(32,32));
 
+	mExperimentalToolBar = new QToolBar(tr("Experimental Tools"),this);
+	//mHighgenusToolBar->setFloatable(true);
+	addToolBar(Qt::TopToolBarArea,mExperimentalToolBar);
+	mExperimentalToolBar->setIconSize(QSize(32,32));
+
 	mTexturingToolBar = new QToolBar(tr("Texturing Tools"),this);
 	//mTexturingToolBar->setFloatable(true);
 	addToolBar(Qt::TopToolBarArea,mTexturingToolBar);
@@ -1687,6 +1739,7 @@ void MainWindow::createToolBars() {
 
 	mHighgenusMode->addActions(mToolsActionGroup, mHighgenusToolBar, mToolOptionsStackedWidget);
 	mTexturingMode->addActions(mToolsActionGroup, mTexturingToolBar, mToolOptionsStackedWidget);
+	mExperimentalMode->addActions(mToolsActionGroup, mExperimentalToolBar, mToolOptionsStackedWidget);
 
 	//window menu toolbar display actions
 	mEditToolBarAct 					= mEditToolBar->toggleViewAction();         
@@ -1697,6 +1750,7 @@ void MainWindow::createToolBars() {
 	mConicalToolBarAct				= mConicalToolBar->toggleViewAction();
 	mHighgenusToolBarAct    	= mHighgenusToolBar->toggleViewAction();
 	mTexturingToolBarAct  	  = mTexturingToolBar->toggleViewAction();
+	mExperimentalToolBarAct  	= mExperimentalToolBar->toggleViewAction();
 	mRemeshingToolBarAct	    = mRemeshingToolBar->toggleViewAction();
 
 }
@@ -1843,6 +1897,7 @@ void MainWindow::showAllToolBars(){
 	mConicalToolBar->show();
 	mHighgenusToolBar->show();
 	mTexturingToolBar->show();
+	mExperimentalToolBar->show();
 	mRemeshingToolBar->show();
 	
 }
@@ -1856,6 +1911,7 @@ void MainWindow::hideAllToolBars(){
 	mConicalToolBar->hide();
 	mHighgenusToolBar->hide();
 	mTexturingToolBar->hide();
+	mExperimentalToolBar->hide();
 	mRemeshingToolBar->hide();
 	
 }
@@ -2046,6 +2102,7 @@ void MainWindow::createRenderers(){
 
 	patch = new PatchRenderer();
 	// patch->setRenderFlags(DLFLRenderer::ShowWireframe);
+	colorable = new ColorableRenderer();
 }
 void MainWindow::destroyRenderers(){
 	delete wired;
@@ -2054,6 +2111,7 @@ void MainWindow::destroyRenderers(){
 	delete textured;
 	delete texturedlit;
 	delete patch;
+	delete colorable;
 };
 
 void MainWindow::setUndoLimit(int limit) {
@@ -2384,6 +2442,8 @@ void MainWindow::doSelection(int x, int y) {
 	case CrustModeling :
 	case ConnectFaces :
 	case CutFace://ozgur
+	case PaintFace://dave
+	case EyeDropper://dave
 		if (QApplication::keyboardModifiers() != Qt::ShiftModifier){
 			active->clearSelectedFaces();
 		}	
@@ -2505,6 +2565,29 @@ void MainWindow::doSelection(int x, int y) {
 				DLFLFacePtrArray sfptrarray;
 				vector<DLFLFacePtr>::iterator it;
 				DLFL::selectFacesByArea(&object, sfptr, sfptrarray, MainWindow::face_area_tolerance);
+				for (it = sfptrarray.begin(); it != sfptrarray.end(); it++){
+					if (!active->isSelected(*it)){
+						active->setSelectedFace(*it);
+						num_sel_faces++;
+					}
+				}
+			}
+		active->redraw();
+		break;
+		case SelectFacesByColor :
+			//clear selection if shift isn't down
+			if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
+				active->clearSelectedFaces();
+			sfptr = active->selectFace(x,y);
+			if (sfptr){
+				if (!active->isSelected(sfptr)){
+					// active->setSelectedFace(num_sel_faces,sfptr);
+					active->setSelectedFace(sfptr);
+					num_sel_faces++;
+				}
+				DLFLFacePtrArray sfptrarray;
+				vector<DLFLFacePtr>::iterator it;
+				DLFL::selectFacesByColor(&object, sfptr, sfptrarray, MainWindow::face_color_tolerance);
 				for (it = sfptrarray.begin(); it != sfptrarray.end(); it++){
 					if (!active->isSelected(*it)){
 						active->setSelectedFace(*it);
@@ -2707,6 +2790,7 @@ void MainWindow::getRightClickMenu(){
 		break;
 		SelectFace :
 		mRightClickMenu->addAction(mSubdivideSelectedFacesAct);
+		mRightClickMenu->addAction(mPaintSelectedFacesAct);
 		break;
 		SelectCorner :
 		break;
@@ -2717,6 +2801,7 @@ void MainWindow::getRightClickMenu(){
 		break;
 		MultiSelectFace :
 		mRightClickMenu->addAction(mSubdivideSelectedFacesAct);
+		mRightClickMenu->addAction(mPaintSelectedFacesAct);
 		break;
 		MultiSelectCorner :
 		break;
@@ -2747,6 +2832,7 @@ void MainWindow::getRightClickMenu(){
 		ExtrudeFaceDome :
 		mRightClickMenu->addAction(mPerformExtrusionAct);
 		mRightClickMenu->addAction(mSubdivideSelectedFacesAct);
+		mRightClickMenu->addAction(mPaintSelectedFacesAct);
 		break;
 		ConnectFaceVertices :
 		ConnectFaces :
@@ -2789,8 +2875,10 @@ void MainWindow::getRightClickMenu(){
 		SelectFaceLoop :
 		// SelectSimilarFaces :
 		SelectFacesByArea:
+		SelectFacesByColor:
 		SelectCheckerboard :	
 		mRightClickMenu->addAction(mSubdivideSelectedFacesAct);
+		mRightClickMenu->addAction(mPaintSelectedFacesAct);
 		break;
 		
 		default:
@@ -2836,6 +2924,7 @@ void MainWindow::getRightClickMenu(){
 			// mRightClickMenu->addAction(selectMultipleFacesAct);
 			// mRightClickMenu->addAction(selectSimilarFacesAct);
 			mRightClickMenu->addAction(selectFacesByAreaAct);
+			mRightClickMenu->addAction(selectFacesByColorAct);
 			mRightClickMenu->addAction(selectCheckerboardFacesAct);
 			mRightClickMenu->addAction(selectEdgesFromFacesAct);			
 			mRightClickMenu->addAction(selectVerticesFromFacesAct);						
@@ -3019,6 +3108,33 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 					// 		// num_sel_faces = 0;
 					// 		redraw();
 					// 	}
+					break;
+					case PaintFace:
+					if ( active->numSelectedFaces() >= 1 ) {
+						DLFLFacePtr fp = active->getSelectedFace(0);
+						// first search for the material in the existing list
+						// DLFLMaterialPtr m = object.findMaterial(RGBColor(paint_bucket_color.redF(),paint_bucket_color.greenF(),paint_bucket_color.blueF() ));
+						fp->setMaterial(object.addMaterial(RGBColor(paint_bucket_color.redF(),paint_bucket_color.greenF(),paint_bucket_color.blueF())) );
+						// if ( m ){
+						// 	
+						// }
+						// else {
+						// 	
+						// }
+						active->clearSelectedFaces();
+						redraw();
+					}
+					break;
+					case EyeDropper:
+					if ( active->numSelectedFaces() >= 1 ) {
+						DLFLFacePtr fp = active->getSelectedFace(0);
+						//grab the color from the face... set it in the interface
+						setPaintBucketColor(QColor(fp->material()->color.r,fp->material()->color.g,fp->material()->color.b));
+						//set the color over in the experimental mode interface thing...
+						mExperimentalMode->setPaintBucketColor(QColor(fp->material()->color.r,fp->material()->color.g,fp->material()->color.b));
+						active->clearSelectedFaces();
+						redraw();
+					}
 					break;
 					case SelectSimilar :
 						if (selectionmask == MainWindow::MaskFaces){
@@ -3687,23 +3803,23 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
 
 void MainWindow::testConvexHull(void) {
 	// For testing convex hull subroutine
-	Vector3dArray vertices;
-	vertices.resize(8);
-	vertices[0].set(0,0,0);
-	vertices[1].set(0,10,0);
-	vertices[2].set(10,10,0);
-	vertices[3].set(10,0,0);
-	vertices[4].set(0,0,10);
-	vertices[5].set(0,10,10);
-	vertices[6].set(10,10,10);
-	vertices[7].set(10,0,10);
-	DLFLConvexHull convexhull;
-	convexhull.createHull(vertices);
-
-	ofstream file;
-	file.open("convexhull.dlfl");
-	convexhull.writeDLFL(file);
-	file.close();
+	// Vector3dArray vertices;
+	// vertices.resize(8);
+	// vertices[0].set(0,0,0);
+	// vertices[1].set(0,10,0);
+	// vertices[2].set(10,10,0);
+	// vertices[3].set(10,0,0);
+	// vertices[4].set(0,0,10);
+	// vertices[5].set(0,10,10);
+	// vertices[6].set(10,10,10);
+	// vertices[7].set(10,0,10);
+	// DLFLConvexHull convexhull;
+	// convexhull.createHull(vertices);
+	// 
+	// ofstream file;
+	// file.open("convexhull.dlfl");
+	// convexhull.writeDLFL(file);
+	// file.close();
 }
 
 void MainWindow::performRemeshing(void) {
@@ -3940,6 +4056,9 @@ void MainWindow::setMode(Mode m) {
 	case CrustModeling :
 	case CutFace :
 	case SelectFacesByArea:
+	case SelectFacesByColor:
+	case PaintFace:
+	case EyeDropper:
 		setSelectionMask(MainWindow::MaskFaces);
 		// MainWindow::num_sel_faces = 0;
 		break;
@@ -4270,16 +4389,17 @@ void MainWindow::setRemeshingScheme(RemeshingScheme scheme) {
 	active->setRemeshingSchemeString(s);
 }
 
-
 // Read the DLFL object from a file
-void MainWindow::readObject(const char * filename) {
+void MainWindow::readObject(const char * filename, const char *mtlfilename) {
 	active->clearSelected();
-	ifstream file;
+	ifstream file, mtlfile;
 	file.open(filename);
+	mtlfile.open(mtlfilename);
+		
 	if ( strstr(filename,".dlfl") || strstr(filename,".DLFL") )
-		object.readDLFL(file);
+		object.readDLFL(file, mtlfile);
 	else if ( strstr(filename,".obj") || strstr(filename,".OBJ") )
-		object.readObject(file);
+		object.readObject(file, mtlfile);
 	file.close();
 }
 
@@ -4293,11 +4413,14 @@ void MainWindow::readObjectQFile(QString filename) {
 	const char *filecontents = ba.data();
 	string str(filecontents);
 	istringstream filestring(str);
+	
+	ifstream mtlfile;
+	// mtlfile = 0;
 
 	if ( filename.indexOf(".dlfl") == filename.length()-4 || filename.indexOf(".dlfl") == filename.length()-4 )
-		object.readDLFL(filestring);
+		object.readDLFL(filestring, mtlfile);
 	else if ( filename.indexOf(".OBJ") == filename.length()-4 || filename.indexOf(".obj") == filename.length()-4 )
-		object.readObject(filestring);
+		object.readObject(filestring, mtlfile);
 	file.close();
 
 #ifdef WITH_PYTHON
@@ -4306,51 +4429,45 @@ void MainWindow::readObjectQFile(QString filename) {
 		emit loadedObject(obj,filename);
 #endif
 	active->createPatchObject( );
+	
+	// std::cout << "readObjectQFile end\n";
 }
 
 // Read the DLFL object from a file - use alternate OBJ reader for OBJ files
 void MainWindow::readObjectAlt(const char * filename) {
-	active->clearSelected();
-	ifstream file;
-	file.open(filename);
-	if ( strstr(filename,".dlfl") || strstr(filename,".DLFL") )
-		object.readDLFL(file);
-	else if ( strstr(filename,".obj") || strstr(filename,".OBJ") )
-		object.readObjectAlt(file);
-	file.close();
-}
-
-void MainWindow::readObjectOBJ(const char * filename) {
-	active->clearSelected();
-	ifstream file;
-	file.open(filename);
-	object.readObject(file);
-	file.close();
-}
-
-void MainWindow::readObjectDLFL(const char * filename) {
-	active->clearSelected();
-	ifstream file;
-	file.open(filename);
-	object.readDLFL(file);
-	file.close();
+	// active->clearSelected();
+	// ifstream file;
+	// file.open(filename);
+	// if ( strstr(filename,".dlfl") || strstr(filename,".DLFL") )
+	// 	object.readDLFL(file);
+	// else if ( strstr(filename,".obj") || strstr(filename,".OBJ") )
+	// 	object.readObjectAlt(file);
+	// file.close();
 }
 
 // Write the DLFL object to a file
-void MainWindow::writeObject(const char * filename, bool with_normals, bool with_tex_coords) {
+void MainWindow::writeObject(const char * filename, const char* mtlfilename, bool with_normals, bool with_tex_coords) {
 	ofstream file;
+	ofstream mtlfile;
 	file.open(filename);
+	mtlfile.open(mtlfilename);
+
+	std::cout << mtlfilename << " = mtlfilename in writeObject function\n";
+	
 	if ( strstr(filename,".dlfl") || strstr(filename,".DLFL") )
-		object.writeDLFL(file);
-	else if ( strstr(filename,".obj") || strstr(filename,".OBJ") )
-		object.writeObject(file,with_normals,with_tex_coords);
+		object.writeDLFL(file, mtlfile);
+	else if ( strstr(filename,".obj") || strstr(filename,".OBJ") ){
+		object.writeObject(file, mtlfile, with_normals,with_tex_coords);
+	}
 	file.close();
+	mtlfile.close();
 }
 
-void MainWindow::writeObjectOBJ(const char * filename, bool with_normals, bool with_tex_coords) {
+// Write the DLFL object to a file
+void MainWindow::writeMTL(const char * filename) {
 	ofstream file;
 	file.open(filename);
-	// object.writeObject(file,with_normals,with_tex_coords);
+	object.writeMTL(file);
 	file.close();
 }
 
@@ -4381,12 +4498,12 @@ void MainWindow::writeSTL( const char *filename) {
 	file.close();
 }
 
-void MainWindow::writeObjectDLFL(const char * filename) {
-	ofstream file;
-	file.open(filename);
-	object.writeDLFL(file);
-	file.close();
-}
+// void MainWindow::writeObjectDLFL(const char * filename) {
+// 	ofstream file;
+// 	file.open(filename);
+// 	object.writeDLFL(file);
+// 	file.close();
+// }
 
 // File handling
 void MainWindow::openFile(void) {
@@ -4402,7 +4519,20 @@ void MainWindow::openFile(void) {
 		const char *filename = ba.data();
 		mWasPrimitive = false;
 		mIsPrimitive = false;
-		readObject(filename);
+		
+		mSaveDirectory = QFileInfo(fileName).absoluteDir().absolutePath();
+		QByteArray ba2 = mSaveDirectory.toLatin1();
+		const char *dirname = ba2.data();
+		object.setDirname( dirname );
+
+		QString mtlfile = mSaveDirectory + "/" + QFileInfo(fileName).baseName() + ".mtl";
+		QByteArray ba3 = mtlfile.toLatin1();
+		const char *mtlfilename = ba3.data();
+		
+		setCurrentFile(fileName);	
+		std::cout << "filename for DLFL reading = " << filename << endl;
+		readObject(filename, mtlfilename);
+		
 #ifdef WITH_PYTHON
 		// Emit and send to python script editor
 		DLFLObjectPtr obj = &object;
@@ -4411,7 +4541,6 @@ void MainWindow::openFile(void) {
 #endif
 		active->recomputePatches();
 		active->recomputeNormals();
-		setCurrentFile(fileName);
 		active->redraw();
 	}
 }
@@ -4445,7 +4574,18 @@ bool MainWindow::saveFile(bool with_normals, bool with_tex_coords) {
 			QString fullpath = mSaveDirectory + "/" + curFileTemp;
 			QByteArray ba = fullpath.toLatin1();
 			const char *filename = ba.data();
-			writeObject(filename,with_normals,with_tex_coords);
+
+			//materials test dave 11.07
+			QString mtlFileName = fullpath;
+			mtlFileName.replace(QString(".obj"),QString(".mtl"),Qt::CaseInsensitive);
+			mtlFileName.replace(QString(".dlfl"),QString(".mtl"),Qt::CaseInsensitive);
+			QByteArray ba2 = mtlFileName.toLatin1();
+			const char *mtlfilename = ba2.data();
+			// writeMTL(mtlfilename);
+
+			writeObject(filename, mtlfilename, with_normals, with_tex_coords);
+			
+				
 			if (mIncrementalSave)
 				incremental_save_count++;
 			setModified(false);
@@ -4478,7 +4618,18 @@ bool MainWindow::saveFile(bool with_normals, bool with_tex_coords) {
 			
 				QByteArray ba = fileName.toLatin1();
 				const char *filename = ba.data();
-				writeObject(filename,with_normals,with_tex_coords);
+
+				//materials test dave 11.07
+				QString mtlFileName = fileName;
+				mtlFileName.replace(QString(".obj"),QString(".mtl"),Qt::CaseInsensitive);
+				mtlFileName.replace(QString(".dlfl"),QString(".mtl"),Qt::CaseInsensitive);
+				QByteArray ba2 = mtlFileName.toLatin1();
+				const char *mtlfilename = ba2.data();
+				// writeMTL(mtlfilename);
+
+				writeObject(filename, mtlfilename, with_normals,with_tex_coords);
+				
+				
 				if (mIncrementalSave)
 					incremental_save_count++;
 				setModified(false);
@@ -4518,7 +4669,17 @@ bool MainWindow::saveFileAs(bool with_normals, bool with_tex_coords) {
 				
 		QByteArray ba = fileName.toLatin1();
 		const char *filename = ba.data();
-		writeObject(filename,with_normals,with_tex_coords);
+
+		//materials test dave 11.07
+		QString mtlFileName = fileName;
+		mtlFileName.replace(QString(".obj"),QString(".mtl"),Qt::CaseInsensitive);
+		mtlFileName.replace(QString(".dlfl"),QString(".mtl"),Qt::CaseInsensitive);
+		QByteArray ba2 = mtlFileName.toLatin1();
+		const char *mtlfilename = ba2.data();
+		// writeMTL(mtlfilename);
+
+		writeObject(filename, mtlfilename, with_normals,with_tex_coords);
+
 		if (mIncrementalSave)
 			incremental_save_count++;
 		
@@ -4529,11 +4690,32 @@ bool MainWindow::saveFileAs(bool with_normals, bool with_tex_coords) {
 	return false;
 }
 
-void MainWindow::openFileOBJ(void) {	
+void MainWindow::setCurrentFile(QString fileName) {
+
+	curFile = QFileInfo(fileName).fileName();
+
+	//dir name for mtl loading...??? dave 11.07
+	QString dirName = QFileInfo(fileName).absolutePath();
+	QByteArray ba2 = dirName.toLatin1();
+	const char *dirname = ba2.data();
+	object.setDirname(dirname);
+
+	//base file name for the mtllib thing...
+	QString baseName = QFileInfo(fileName).baseName();
+	QByteArray ba = baseName.toLatin1();
+	const char *filename = ba.data();
+	object.setFilename(filename);
+
+	QString shownName;
+	if (curFile.isEmpty())
+		shownName = "untitled.obj";
+	else
+		shownName = curFile;
+
+	setWindowTitle( tr("%1[*] - %2").arg(shownName).arg(tr("TopMod")));
+	setModified(false);
 }
 
-void MainWindow::saveFileOBJ(bool with_normals, bool with_tex_coords) {
-}
 
 /* stuart - bezier export */
 bool MainWindow::saveFileBezierOBJ( ) {
@@ -4582,7 +4764,6 @@ bool MainWindow::saveFileLG3dSelected( ) {
 	}
 	return false;
 }
-
 
 /* dave - stl export */
 bool MainWindow::saveFileSTL( ) {
@@ -4647,29 +4828,6 @@ bool MainWindow::appScreenshot(){
 	}
 	return false;
 }
-void MainWindow::openFileDLFL(void) {
-}
-
-void MainWindow::saveFileDLFL(void) {
-
-}
-
-void MainWindow::setCurrentFile(QString fileName) {
-
-	curFile = QFileInfo(fileName).fileName();
-	QString shownName;
-	if (curFile.isEmpty())
-		shownName = "untitled.obj";
-	else
-		shownName = curFile;
-
-	setWindowTitle( tr("%1[*] - %2").arg(shownName).arg(tr("TopMod")));
-	setModified(false);
-}
-
-// void MainWindow::cleanupForExit(void) // Do memory cleanup if any before exit {
-// // Nothing to be done
-// }
 
 void MainWindow::loadCube(){	
 	if (isModified())
@@ -4679,6 +4837,18 @@ void MainWindow::loadCube(){
 	mWasPrimitive = true;
 	setCurrentFile(tr("cube.obj"));
 	readObjectQFile(":/cube.obj");
+	
+	
+	//iterate through faces and color them red... just to test the renderer out...
+	// DLFLFacePtrArray fparray;
+	// vector<DLFLFacePtr>::iterator it;
+	// object.getFaces(fparray);
+	// for ( it = fparray.begin(); it != fparray.end(); it++){
+	// 	(*it)->material()->setColor(1.0,0.0,0.0);
+	// }//end for loop
+	
+	
+	
 	//active->recomputePatches();
 	active->recomputeNormals();
 	active->redraw();
@@ -5056,6 +5226,7 @@ void MainWindow::retranslateUi() {
 	mTexturingMode->retranslateUi();
 	mHighgenusMode->retranslateUi();
 	mConicalMode->retranslateUi();
+	mExperimentalMode->retranslateUi();
 	
 	mStartupDialogDockWidget->setWindowTitle(tr("Learning Movies"));
 	mToolOptionsDockWidget->setWindowTitle(mToolOptionsDockWidget->windowTitle());
@@ -5192,6 +5363,8 @@ void MainWindow::retranslateUi() {
 	texturedLightedAct->setStatusTip(tr("Switch the current renderer to Textured Lit"));
 	patchRendererAct->setText(tr("&Patch Renderer"));
 	patchRendererAct->setStatusTip(tr("Switch the current renderer to Patch"));
+	colorableRendererAct->setText(tr("&Colorable Renderer"));
+	colorableRendererAct->setStatusTip(tr("Switch the current renderer to Colorable"));
 
 	//PRIMITIVES MENU ACTIONS
 	pCubeAct->setText(tr("&Cube"));
@@ -5247,6 +5420,7 @@ void MainWindow::retranslateUi() {
 	selectMultipleFacesAct->setText(tr("Select &Multiple Faces"));
 	selectSimilarFacesAct->setText(tr("Select &Similar Faces"));
 	selectFacesByAreaAct->setText(tr("Select Faces By Surf. Area"));
+	selectFacesByColorAct->setText(tr("Select Faces By Color"));
 	mSelectionWindowAct->setText(tr("Selection Window"));
 	selectCheckerboardFacesAct->setText(tr("C&heckerboard Select Faces"));
 	selectAllAct->setText(tr("Select &All"));
@@ -5306,6 +5480,10 @@ void MainWindow::retranslateUi() {
 
 	mSubdivideSelectedFacesAct->setText(tr("Subdivide Selected Faces"));
 	mSubdivideSelectedFacesAct->setStatusTip( tr("Subdivide all Selected Faces") );
+	mPaintSelectedFacesAct->setText(tr("Paint Selected Faces"));
+	mPaintSelectedFacesAct->setStatusTip( tr("Paint all Selected Faces") );
+	mClearMaterialsAct->setText(tr("Clear Materials"));
+	mClearMaterialsAct->setStatusTip( tr("Clear Materials") );
 	mSubdivideSelectedEdgesAct->setText(tr("Subdivide Selected Edges"));
 	mSubdivideSelectedEdgesAct->setStatusTip( tr("Subdivide all Selected Edges") );
 	mPerformRemeshingAct->setText(tr("Perform Remeshing"));
@@ -5348,6 +5526,7 @@ void MainWindow::retranslateUi() {
 	mHighgenusToolBar->setWindowTitle(tr("High Genus Tools"));
 	mTexturingToolBar->setWindowTitle(tr("Texturing Tools"));
 	mRemeshingToolBar->setWindowTitle(tr("Remeshing Tools"));
+	mExperimentalToolBar->setWindowTitle(tr("Experimental Tools"));
 
 	//createStartupDialog
 	mTutorialNavigationAct->setText(tr("Navigation Basics"));	

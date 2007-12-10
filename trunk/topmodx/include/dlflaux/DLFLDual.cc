@@ -76,16 +76,17 @@ namespace DLFL {
       DLFLFacePtr fp;
 
       Vector3d cen;
-      StringStream rw;
+      StringStream rw,mw;
+			obj->writeMTL(mw);
 
       // Traverse all faces, find centroid and output to stream
       // Also call makeUnique to ensure face ids are consecutive
       fl_first = obj->beginFace(); fl_last = obj->endFace();
       while( fl_first != fl_last ) {
-	fp = (*fl_first); ++fl_first;
-	fp->makeUnique();
-	cen = fp->geomCentroid();	   
-	rw << "v " << cen[0] << " " << cen[1] << " " << cen[2] << endl;
+				fp = (*fl_first); ++fl_first;
+				fp->makeUnique();
+				cen = fp->geomCentroid();	   
+				rw << "v " << cen[0] << " " << cen[1] << " " << cen[2] << endl;
       }
 
       // Get ID of first face to determine offset for index into vertex list
@@ -138,7 +139,7 @@ namespace DLFL {
       }
       rw << endl << endl;
       rw << flush;
-      obj->readObject(rw);
+      obj->readObject(rw,mw);
     }
   }
 

@@ -92,7 +92,7 @@ namespace DLFL {
     //TMPatchPtr         tmpp;                          // Pointer to the TMPatch corresponding to this corner
 
     void assignID( ) {
-      //uID = DLFLFaceVertex::newID();
+      // uID = DLFLFaceVertex::newID();
 			//std::cout << this;
 			uID = (unsigned int) this;
 			//std::cout << "->" << uID << std::endl;

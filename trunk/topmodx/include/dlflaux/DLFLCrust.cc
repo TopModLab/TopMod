@@ -67,14 +67,15 @@ namespace DLFL {
     crustfp2.resize(crust_num_old_faces,NULL);
   
     StringStream dlflstream; // Stream used to duplicate the object
+    StringStream mtlstream; // Stream used to duplicate the object
 
     // Write the object in DLFL format with the faces reversed
-    obj->writeDLFL(dlflstream,true);
+    obj->writeDLFL(dlflstream,mtlstream, true);
 
     int num_old_verts = obj->num_vertices();
 
     // Read back from the stream and append to existing object
-    obj->readDLFL(dlflstream,false);
+    obj->readDLFL(dlflstream,mtlstream, false);
 
     // Fill the arrays storing information for crust modeling
     // Since we are traversing the faces, also compute and store
@@ -173,9 +174,10 @@ namespace DLFL {
     crustfp2.resize(crust_num_old_faces,NULL);
   
     StringStream dlflstream; // Stream used to duplicate the object
+    StringStream mtlstream; // Stream used to duplicate the object
 
     // Write the object in DLFL format with the faces reversed
-    obj->writeDLFL(dlflstream,true);
+    obj->writeDLFL(dlflstream, mtlstream, true);
 
     int num_old_verts = 0;
     Vector3d objcen;
@@ -190,7 +192,7 @@ namespace DLFL {
     objcen /= num_old_verts;
 
     // Read back from the stream and append to existing object
-    obj->readDLFL(dlflstream,false);
+    obj->readDLFL(dlflstream, mtlstream, false);
 
     // Fill the arrays storing information for crust modeling
     DLFLFacePtrList::iterator fl_first, fl_last;
@@ -312,14 +314,15 @@ namespace DLFL {
     crustfp2.resize(crust_num_old_faces,NULL);
   
     StringStream dlflstream; // Stream used to duplicate the object
+    StringStream mtlstream; // Stream used to duplicate the object
 
     // Write the object in DLFL format with the faces reversed
-    obj->writeDLFL(dlflstream,true);
+    obj->writeDLFL(dlflstream,mtlstream, true);
 
     int num_old_verts = obj->num_vertices();
 
     // Read back from the stream and append to existing object
-    obj->readDLFL(dlflstream,false);
+    obj->readDLFL(dlflstream, mtlstream, false);
 
     // Fill the arrays storing information for crust modeling
     // Since we are traversing the faces, also compute and store
@@ -497,14 +500,15 @@ namespace DLFL {
     crustfp2.resize(crust_num_old_faces,NULL);
   
     StringStream dlflstream; // Stream used to duplicate the object
+    StringStream mtlstream; // Stream used to duplicate the object
 
     // Write the object in DLFL format with the faces reversed
-    obj->writeDLFL(dlflstream,true);
+    obj->writeDLFL(dlflstream,mtlstream, true);
 
     int num_old_verts = obj->num_vertices();
 
     // Read back from the stream and append to existing object
-    obj->readDLFL(dlflstream,false);
+    obj->readDLFL(dlflstream,mtlstream, false);
 
     // Fill the arrays storing information for crust modeling
     // Since we are traversing the faces, also compute and store
@@ -667,11 +671,12 @@ namespace DLFL {
     bool match,jointCreated,vertListSizeMatch,allFacesMatched;
     float dist1, dist, tolerence = 0.0001;
     StringStream dlflstream;
+    StringStream mtlstream;
 
-    obj->writeDLFL(dlflstream,false);
+    obj->writeDLFL(dlflstream,mtlstream,false);
 
     // Read back from the stream and append to existing object
-    obj->readDLFL(dlflstream,true);
+    obj->readDLFL(dlflstream,mtlstream, true);
 
     num_original_edges = obj->num_edges();
     edge_connect_normals.reserve(2*num_original_edges);
@@ -1115,6 +1120,17 @@ namespace DLFL {
 		float area = fptr->getArea();
 		while ( fl_first != fl_last )	{
 			if ( (*fl_first)->getArea() <= (area+delta) && (*fl_first)->getArea() >= (area-delta) ) fparray.push_back(*fl_first);
+			fl_first++;
+		}
+	}
+
+	void selectFacesByColor(DLFLObjectPtr obj, DLFLFacePtr fptr, DLFLFacePtrArray &fparray, float delta ){
+		//use delta later...
+		fparray.clear();
+		DLFLFacePtrList::iterator fl_first=obj->beginFace(), fl_last = obj->endFace();
+		DLFLMaterialPtr matl = fptr->material();
+		while ( fl_first != fl_last )	{
+			if ( (*fl_first)->material() == matl ) fparray.push_back(*fl_first);
 			fl_first++;
 		}
 	}
