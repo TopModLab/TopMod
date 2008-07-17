@@ -649,8 +649,6 @@ static PyObject *dlfl_walk(PyObject *self, PyObject *args) {
   vector<int> edges; // output: edges walked
   PyObject *vlist; // py output: verts walked
   PyObject *elist; // py output: edges walked
-	PyObject *vert; // for looping
-  PyObject *edge; // for looping
   
   if( !currObj )
     return NULL;
@@ -661,17 +659,17 @@ static PyObject *dlfl_walk(PyObject *self, PyObject *args) {
 
 	vlist = PyList_New(verts.size());
 	for( int i = 0; i < verts.size(); i++ ) {
-		vert = Py_BuildValue("i", verts[i]);
-		PyList_SetItem(vlist, i, vert);
+		PyList_SetItem(vlist, i, PyInt_FromLong(verts[i]));
 	}
   elist = PyList_New(edges.size());
   for( int i = 0; i < edges.size(); i++) {
-    edge = Py_BuildValue("i", edges[i]);
-    PyList_SetItem(elist, i, edge);
+    PyList_SetItem(elist, i, PyInt_FromLong(edges[i]));
   }
-  //Py_INCREF(vlist);
-  //Py_INCREF(elist);
-  return Py_BuildValue("OO", vlist, elist);
+
+  PyObject *ret = Py_BuildValue("OO", vlist, elist);
+  Py_DECREF(vlist);
+  Py_DECREF(elist);
+  return ret;
 }
 
 static PyObject *dlfl_next(PyObject *self, PyObject *args) {
