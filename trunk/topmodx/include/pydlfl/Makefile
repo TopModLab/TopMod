@@ -12,11 +12,11 @@ OS =  $(shell uname)
 
 dlfl:
 	@ echo Building DLFL Python Module...
-	@ python dlfl_setup.py build
+	@ python dlfl_setup.py build -c mingw32
 
 install:
 	@ echo Installing DLFL Python Module...
-	@ python dlfl_setup.py install
+	@ python dlfl_setup.py build -c mingw32 install
 
 bundle: dlfl
 	@ echo Installing PyDLFL into Mac Bundle...

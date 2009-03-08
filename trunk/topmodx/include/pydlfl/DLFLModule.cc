@@ -92,6 +92,7 @@ static PyObject *dlfl_restoreCorner(PyObject *self, PyObject *args);
 /* Info */
 static PyObject *dlfl_print_object(PyObject *self, PyObject *args);
 static PyObject *dlfl_vertexInfo(PyObject *self, PyObject *args);
+static PyObject *dlfl_vertexEdges(PyObject *self, PyObject *args);
 static PyObject *dlfl_edgeInfo(PyObject *self, PyObject *args);
 static PyObject *dlfl_faceInfo(PyObject *self, PyObject *args);
 static PyObject *dlfl_cornerInfo(PyObject *self, PyObject *args);
@@ -159,6 +160,7 @@ static PyMethodDef DLFLMethods[] = {
 	/* Info */
   {"printObject",   dlfl_print_object,   METH_VARARGS, "Print object information"},
   {"vertexInfo",    dlfl_vertexInfo,     METH_VARARGS, "Position,Valence,etc into dictionary"},
+  {"vertexEdges",    dlfl_vertexEdges,     METH_VARARGS, "List of Edges IDs"},
   {"edgeInfo",      dlfl_edgeInfo,       METH_VARARGS, "Midpoint,Verts,etc into dictionary"},
   {"faceInfo",      dlfl_faceInfo,       METH_VARARGS, "Centroid,Verts,etc into dictionary"},
 	{"cornerInfo",    dlfl_cornerInfo,     METH_VARARGS, "Face,Vertex,Edge,etc into dictionary"},
@@ -768,18 +770,21 @@ static PyObject *dlfl_vertexInfo(PyObject *self, PyObject *args) {
 	}
 
 	int id;
-		if( !PyArg_ParseTuple(args, "i", &id) )
-			return NULL;
-		DLFL::DLFLVertexPtr vp = currObj->findVertex(id);
-		if( !vp ) {
-			Py_INCREF(Py_None);
-			return Py_None;
-		}
-		const double *coords = (vp->getCoords()).getCArray();
-		int valence = vp->valence();
-		DLFL::DLFLVertexType vt = vp->getType();
-		char* type = new char[10];
-		switch( vt ) {
+	if( !PyArg_ParseTuple(args, "i", &id) )
+		return NULL;
+	DLFL::DLFLVertexPtr vp = currObj->findVertex(id);
+	
+	if( !vp ) {
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+
+	const double *coords = (vp->getCoords()).getCArray();
+	int valence = vp->valence();
+	DLFL::DLFLVertexType vt = vp->getType();
+	char* type = new char[10];
+
+	switch( vt ) {
 		case 0:
 			strcpy(type, "normal");
 			break;
@@ -811,17 +816,45 @@ static PyObject *dlfl_vertexInfo(PyObject *self, PyObject *args) {
 			strcpy(type, "wireSubIn");
 			break;
 		default :
-			strcpy(type, "normal");
-		}
+		strcpy(type, "normal");
+	}
 
-		PyObject *info = Py_BuildValue("{s:i,s:s,s:(ddd),s:i}", 
-												 "id", id,
-												 "type", type,
-												 "coords", coords[0], coords[1], coords[2],
-												 "valence", valence);
+	PyObject *info = Py_BuildValue("{s:i,s:s,s:(ddd),s:i}", 
+											 "id", id,
+											 "type", type,
+											 "coords", coords[0], coords[1], coords[2],
+											 "valence", valence);
 
-		delete [] type;
-		return info;
+	delete [] type;
+	return info;
+}
+
+static PyObject *dlfl_vertexEdges(PyObject *self, PyObject *args) {
+	if( !currObj ) {
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+
+	int id;
+	if( !PyArg_ParseTuple(args, "i", &id) )
+		return NULL;
+	DLFL::DLFLVertexPtr vp = currObj->findVertex(id);
+
+	if( !vp ) {
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+
+	PyObject *elist=0, *edge=0;
+    DLFL::DLFLEdgePtrArray epa;
+	vp->getEdges(epa);
+    elist = PyList_New(epa.size());
+    for( int i = 0; i < (int)epa.size(); i++ ) {
+      edge = Py_BuildValue("i", epa[i]->getID());
+      PyList_SetItem(elist, i, edge);
+    }
+	Py_INCREF(elist);
+	return elist;
 }
 
 static PyObject *dlfl_edgeInfo(PyObject *self, PyObject *args) { 
