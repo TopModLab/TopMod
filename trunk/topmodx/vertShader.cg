@@ -1,0 +1,140 @@
+struct vertin { 
+	float4 position     : POSITION;
+	float4 color        : COLOR0;
+	float2 uv 					: TEXCOORD0;
+	// float4 depthVal   	: TEXCOORD0; // value for depth comparison for shadow
+	float4 normal     	: NORMAL;
+}; 
+
+struct vertout { 
+	float4 position     : POSITION;
+	float4 color        : COLOR0;
+	float2 uv           : TEXCOORD0;
+	// float3 outPos       : TEXCOORD0;
+	// float4 depthVal 		: TEXCOORD0; // value for depth comparison for shadow
+};
+// vertout main(
+// 							float2 position : POSITION,
+// 							float3 color    : COLOR,
+// 							float2 texCoord : TEXCOORD0)
+// {
+//   vertout OUT;
+// 
+//   OUT.position = float4(position,0,1);
+//   OUT.color    = color;
+//   OUT.texCoord = texCoord;
+// 
+//   return OUT;	
+// }
+
+// float cosfactor(float3 p, float3 n) {
+// 	
+//     float3 vec(position-p); normalize(vec);
+//     Vector3d normal(n); normalize(normal);
+//     double cf = sqr((1.0 + vec*normal)/2.0);
+// 
+//     return cf;
+// }
+
+// float3 illuminate(float3 p, float3 n) {
+// 
+//     float3 vec(position-p); 
+// 		normalize(vec);
+//     float3 normal(n); 
+// 		normalize(normal);
+//     float cf = sqr((1.0 + vec*normal)/2.0);
+//     float3 color;
+//     
+//     color = (lightWarmColor*cf + lightCoolColor*(1.0-cf))*intensity;
+//     return color;
+//   }
+
+vertout main( 
+							vertin IN,
+						  out float4 camPos : TEXCOORD1,
+						  out float4 oPos   : TEXCOORD2,
+						  out float4 oNorm  : TEXCOORD3,
+						  out float4 lPos   : TEXCOORD4,
+						  uniform float4x4 camToWorld,
+						  uniform float4x4 camToWorldIT,
+						  uniform float4x4 worldToLight,
+							//from book
+							uniform float3 globalAmbient,
+							uniform float3 lightWarmColor,
+							uniform float3 lightCoolColor,
+							uniform float  lightIntensity,
+							uniform float4 lightPosition,
+							uniform float4 eyePosition,
+							uniform float3 basecolor,
+							uniform float3 Ka,
+							uniform float3 Kd,
+							uniform float3 Ks,
+							uniform float  shininess
+							) {
+	
+	vertout OUT;
+
+	// Transform the vertex position to Eye Space
+	float4x4 modelView = glstate.matrix.modelview[0];
+	float4x4 proj = glstate.matrix.projection;
+	oPos = mul( modelView, IN.position );
+	lPos = mul( modelView, lightPosition );
+	float4 mvPos = oPos;
+
+	float4x4 modelViewIT = glstate.matrix.invtrans.modelview[0];
+	oNorm = mul( modelViewIT, float4(IN.normal.xyz,0.0) );
+	oNorm = mul( camToWorldIT, oNorm );
+
+	// Transform the vertex position to light space
+	oPos = mul( camToWorld, oPos );
+	lPos = mul( camToWorld, lPos );
+	// lPos = mul( worldToLight, oPos );
+	// Transform Eye Position to World Space
+	camPos = eyePosition;
+
+	// OUT.depthVal = IN.depthVal;
+	
+	// Compute ambient term
+	float3 ambient = Ka * globalAmbient;	
+	// // Compute the diffuse term
+	float3 L = normalize(lPos.xyz - oPos.xyz);
+	// float diffuseLight = max(dot(oNorm.xyz, L), 0);
+	// float3 diffuse = Kd * lightWarmColor * diffuseLight;
+	// // Compute the specular term
+	// float3 V = normalize(eyePosition - oPos.xyz);
+	// float3 H = normalize(L + V);
+	// float specularLight = pow(max(dot(oNorm.xyz, H), 0), shininess);
+	// if (diffuseLight <= 0) specularLight = 0;
+	// float3 specular = Ks * lightWarmColor * specularLight;
+
+  float4 normal = oNorm; 
+	normalize(normal);
+  // double cf = sqr((1.0 + vec*normal)/2.0);
+
+  float cf = ((1.0 + dot(L,normal)/2.0));
+	cf *= cf;
+  
+  OUT.color.xyz = basecolor*(1.0-Kd) + (lightWarmColor*cf + lightCoolColor*(1.0-cf))*lightIntensity*Kd;
+	// OUT.color.x *= IN.color.x;
+	// OUT.color.y *= IN.color.y;
+	// OUT.color.z *= IN.color.z;
+
+  // Vector3d vec(position-p); normalize(vec);
+  // Vector3d normal(n); normalize(normal);
+  // double cf = sqr((1.0 + vec*normal)/2.0);
+	
+	// fvcolor = lightptr->illuminate(pos,normal)*Kd;
+  // fvcolor += (1.0-Kd)*basecolor;
+	
+
+	// OUT.color.xyz    = IN.color.xyz + ambient + diffuse + specular;
+	OUT.color.w = IN.color.w;
+
+	// OUT.color = IN.color;
+
+	// Now transform position to clip space
+	OUT.position = mul( proj, mvPos );
+	OUT.uv = IN.uv;
+	
+	return OUT;
+}

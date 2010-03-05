@@ -1,0 +1,66 @@
+// float4 main(float4 c : COLOR) : COLOR { return c; }
+
+struct fragin {
+  float4 color    : COLOR0;
+  float2 uv       : TEXCOORD0;
+	float4 position : POSITION;
+	// float3 normal 	: NORMAL;
+};
+
+struct fragout {
+  float4 color : COLOR;
+};
+
+// fragout main(float4 color : COLOR)
+// {
+//   fragout OUT;
+//   OUT.color = color;
+//   return OUT;
+// }
+
+float attenuation( float3 P, float3 L, float radius, float falloff ) {
+  // Spotlight Effect
+  float3 V = normalize( P - L );
+  float3 D = normalize( -L ); // origin is lookat
+  return 1.0f-smoothstep( cos(radians(radius-falloff)), cos(radians(radius)), dot( V, D ) );
+}
+
+fragout main(
+							fragin IN,
+				      in float3 camPos : TEXCOORD1,
+				      in float3 oPos   : TEXCOORD2,
+				      in float4 oNorm  : TEXCOORD3,
+				      in float4 lPos   : TEXCOORD4,
+				      uniform float attenDegrees) {
+
+	fragout OUT;
+
+  // oPosition = mul(modelViewProj, IN.position);
+  // objectPos = position.xyz;
+  // oNormal = normal;
+	// float4 surfColor, ambient, diffuse, specular;
+	
+	// surfColor = IN.color;
+	// diffuse = attenuation( oPos.xyz, lPos.xyz, 15, 90.0f );
+	// ambient = float4(0.5,0.5,0.5,1.0);// glstate.light[0].ambient;
+	// diffuse.a = ambient.a = surfColor.a = 1;
+	// OUT.color = surfColor * (diffuse + ambient);
+	OUT.color = IN.color;
+	
+	return OUT;
+}
+
+// // Compute the diffuse term
+// float3 L = normalize(lightPosition - P);
+// float diffuseLight = max(dot(N, L), 0);
+// float3 diffuse = Kd * lightColor * diffuseLight;
+// 
+// // Compute the specular term
+// float3 V = normalize(eyePosition - P);
+// float3 H = normalize(L + V);
+// float specularLight = pow(max(dot(N, H), 0), shininess);
+// if (diffuseLight <= 0) specularLight = 0;
+// float3 specular = Ks * lightColor * specularLight;
+// 
+// color.xyz = emissive + ambient + diffuse + specular;
+// color.w = 1;

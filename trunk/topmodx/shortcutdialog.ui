@@ -1,0 +1,39 @@
+<ui version="4.0" >
+ <class>ShortcutDialog</class>
+ <widget class="QWidget" name="ShortcutDialog" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>549</width>
+    <height>349</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Set shortcuts</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="spacing" >
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QTreeWidget" name="twShortcuts" >
+     <column>
+      <property name="text" >
+       <string>Action</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>Shortcut</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../images/Edyuk.qrc" />
+ </resources>
+ <connections/>
+</ui>

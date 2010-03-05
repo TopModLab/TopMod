@@ -1,0 +1,184 @@
+<html>
+<head><title>TopMod :: Python Command Reference</title>
+<link href="commands.css" rel="stylesheet" type="text/css"
+			title="Modern" media="all" />
+<script type="text/javascript">
+<!--
+		function load( ) {
+		 document.cmd_dd.cmd_list.selectedIndex = 0;
+		 document.cmd_dd.sect_list.selectedIndex = 0;
+		}
+
+		function goToCmd( ) {
+		  var w = document.cmd_dd.cmd_list.selectedIndex;
+		  var selected_text = '#' + document.cmd_dd.cmd_list.options[w].text;
+		  window.location.href = selected_text;
+		}
+
+		function goToSect( ) {
+		  var w = document.cmd_dd.sect_list.selectedIndex;
+		  var selected_text = '#' + document.cmd_dd.sect_list.options[w].value;
+		  window.location.hash = selected_text;
+		}
+-->
+</script>
+</head>
+<body onLoad="load();">
+<a name="commands"><h1><span id="topmod">TopMod</span><br/>Python Command Reference</h1></a>
+
+<form name="cmd_dd">
+<label>Sections:</label>
+<select name="sect_list" onChange="goToSect();">
+<option value="0"></option>
+<option value="obj">Object Management</option>
+<option value="core">Core Operations</option>
+<option value="aux">Auxiliary Operations</option>
+<option value="ids">Finding IDs</option>
+<option value="info">Object Information</option>
+<option value="xform">Transformations</option>
+</select>
+<label>Commands:</label>
+<select name="cmd_list" onChange="goToCmd();">
+<option value="0"></option>
+<option value="1">load</option>
+<option value="2">save</option>
+<option value="3">kill</option>
+<option value="4">switch</option>
+<option value="5">createVertex</option>
+<option value="6">removeVertex</option>
+<option value="7">insertEdge</option>
+<option value="8">deleteEdge</option>
+<option value="9">collapseEdge</option>
+<option value="10">subdivideEdge</option>
+<option value="11">extrude</option>
+<option value="12">subdivide</option>
+<option value="13">subdivideFace</option>
+<option value="13.5">subdivideFaces</option>
+<option value="14">dual</option>
+<option value="15">connectEdges</option>
+<option value="16">connectCorners</option>
+<option value="17">connectFaces</option>
+<option value="18">addHandle</option>
+<option value="19">rind</option>
+<option value="20">wireframe</option>
+<option value="21">column</option>
+<option value="22">createFace</option>
+<option value="34">faces</option>
+<option value="35">edges</option>
+<option value="36">verts</option>
+<option value="37">corners</option>
+<option value="38">walk</option>
+<option value="39">cornerWalk</option>
+<option value="40">printObject</option>
+<option value="41">vertexInfo</option>
+<option value="42">edgeInfo</option>
+<option value="43">faceInfo</option>
+<option value="44">cornerInfo</option>
+<option value="45">centroid</option>
+<option value="60">translate</option>
+<option value="61">scale</option>
+<option value="62">move</option>
+</select>
+</form>
+
+<a name="obj"><h2>Object Management</h2></a>
+<div class="command"><a name="load"><span class="fn">load</span>(<span class="args">filename</span>)</a><p class="description">Loads a file of either Wavefront OBJ (<tt>.obj</tt>) or DLFL (<tt>.dlfl</tt>) into the scene. The file data becomes the current object. The filetype is recognized by the extension. <b>Filename is given as a string</b> (e.g., "myfile.obj"). In the TopMod interface this replaces any current object loaded. In stand-alone, this pushes any current object onto the stack.</p><div class="result">Result:</div><div class="resultdesc">objectid</div></div>
+<div class="command"><a name="save"><span class="fn">save</span>(<span class="args">filename</span>)</a><p class="description">Saves a file of either Wavefront OBJ (<tt>.obj</tt>) or DLFL (<tt>.dlfl</tt>) from the current object. The filetype is recognized by the extension. <b>Filename is given as a string</b> (e.g., "myfile.obj").</p><div class="result">Result:</div><div class="resultdesc">wasSuccess</div></div>         
+<div class="command"><a name="kill"><span class="fn">kill</span>(<span class="args">objectid</span>)</a><p class="description">Kills or destroys the object represented by <i>objectid</i>. <b>This is disabled when using the TopMod interface!</b> It serves only when working in python standalone.</p><div class="result">Result:</div><div class="resultdesc">None</div></div>         
+<div class="command"><a name="switch"><span class="fn">switch</span>(<span class="args">objectid</span>)</a><p class="description">Switches the current object to the object represented by <i>objectid</i>. <b>This is disabled when using the TopMod interface!</b>. Since the interface currently only allows one object to be open at a time.</p><div class="result">Result:</div><div class="resultdesc">objectid</div></div>       
+<!--<div class="command"><a name="query"><span class="fn">query</span>(<span class="args">objectid</span>)</a><p class="description">qwerty</p><div class="result">Result:</div><div class="resultdesc">zxcv</div></div>-->
+<a name="core"><h2>Core Operations</h2></a>
+<div class="command"><a name="createVertex"><span class="fn">createVertex</span>(<span class="args">(x,y,z)</span>)</a><p class="description">Creates an isolated vertex with it's point-sphere at a position specified by a 3-tuple. No edge is created. An object can be created this way. This is one of the minimal operators.</p><div class="result">Result:</div><div class="resultdesc">(faceid,vertexid),objectid</div></div> 
+<div class="command"><a name="removeVertex"><span class="fn">removeVertex</span>(<span class="args">vertexid</span>)</a><p class="description">Removes/Deletes an isolated vertex and it's point-sphere. This is one of the minimal operators.</p><div class="result">Result:</div><div class="resultdesc">None</div></div> 
+<div class="command"><a name="insertEdge"><span class="fn">insertEdge</span>(<span class="args">(faceid,vertexid),(faceid,vertexid)</span>)</a><p class="description">Inserts an edge connecting two corners. Each corner is represented by a tuple: <i>(faceid,vertexid)</i>. When the new edge is created the input vertices become members of the same face. Since integers are immutable in Python, we must return these also.</p><div class="result">Result:</div><div class="resultdesc">edgeid,(faceid,vertexid),(faceid,vertexid),(faceid,vertexid),(faceid,vertexid)</div></div>   
+<div class="command"><a name="deleteEdge"><span class="fn">deleteEdge</span>(<span class="args">edgeid</span>)</a><p class="description">Deletes the edge represented by <i>edgeid</i>. When the edge is deleted then one face remains. If the deleted edge's sides belonged to two separate faces then the second one is deleted. A list (of size 1) with remaining face's ID is returned. Otherwise, if the deleted edge's sides belonged to the same face, then one new face is created. A list (of size 2) with the 2 face IDs is returned.</p><div class="result">Result:</div><div class="resultdesc">[faceid,...]</div></div>   
+<div class="command"><a name="collapseEdge"><span class="fn">collapseEdge</span>(<span class="args">edgeid</span>)</a><p class="description">Collapses the edge represented by <i>edgeid</i>.</p><div class="result">Result:</div><div class="resultdesc">vertexid</div></div> 
+<div class="command"><a name="subdivideEdge"><span class="fn">subdivideEdge</span>(<span class="args">[divisions,]edgeid</span>)</a><p class="description">Subdivides the edge represented by <i>edgeid</i>. By default it just subdivides it in half, but when given the optional argument <i>divisions</i> it subdivides the edge by that number. Then it returns a list of all the newly created vertices.</p><div class="result">Result:</div><div class="resultdesc">[vertexid,...]</div></div>
+<!--<a name="destroy"><h2>Destroy Data</h2></a>
+<div class="command"><a name="destroyVertex"><span class="fn">destroyVertex</span>(<span class="args">vertexid</span>)</a><p class="description">Destroys the vertex by removing it from the objects vertex list. This is useful for cleaning up for instance when doing a remeshing scheme and all old vertices should be deleted.</p><div class="result">Result:</div><div class="resultdesc">None</div></div>
+<div class="command"><a name="destroyEdge"><span class="fn">destroyEdge</span>(<span class="args">edgeid</span>)</a><p class="description">Destroys the edge by removing it from the objects edge list. This is useful for cleaning up for instance when doing a remeshing scheme and all old edges should be deleted.</p><div class="result">Result:</div><div class="resultdesc">None</div></div>
+<div class="command"><a name="destroyFace"><span class="fn">destroyFace</span>(<span class="args">faceid</span>)</a><p class="description">Destroys the face by removing it from the objects face list. This is useful for cleaning up for instance when doing a remeshing scheme and all old faces should be deleted.</p><div class="result">Result:</div><div class="resultdesc">None</div></div>-->
+<a name="aux"><h2>Auxiliary Operations</h2></a>
+<div class="command"><a name="extrude"><span class="fn">extrude</span>(<span class="args">type,faceid[,...]</span>)</a><p class="description">Extrudes a face with the type of extrusions specified by a string. Valid types include: <ul><li>"doo-sabin" <i class="opts">options: [distance, segments, rotation, scale]</i></li>
+			    <li>"dodeca" <i class="opts">options: [distance, segments, twist, scale, hexagonalize]</i></li>
+			    <li>"icosa" <i class="opts">options: [distance, segments, rotation, scale]</i></li>
+			    <li>"octa" <i class="opts">options: [distance, rotation, scale]</i></li>
+			    <li>"stellate" <i class="opts">options: [distance]</i></li>
+			    <li>"double-stellate" <i class="opts">options: [distance]</i></li>
+			    <li>"cubical" <i class="opts">options: [distance, segments, rotation, scale]</i></li></ul></p><div class="result">Result:</div><div class="resultdesc">faceid</div></div>      
+<div class="command"><a name="subdivide"><span class="fn">subdivide</span>(<span class="args">scheme[,...]</span>)</a><p class="description">Subdivides the current object with the specified scheme. Each scheme has a different set of optional arguments. Valid scheme names are:<ul><li>"loop"</li>
+			    <li>"checker" <i class="opts">options: [thickness=0.33]</i></li>
+			    <li>"simplest"</li>
+			    <li>"vertex-cut" <i class="opts">options: [offset=0.25]</i></li>
+			    <li>"pentagon" <i class="opts">options: [offset=0.0]</i></li>
+			    <li>"dual-pentagon" <i class="opts">options: [scale=0.75]</i></li>
+			    <li>"honeycomb"</li>
+			    <li>"doo-sabin" <i class="opts">options: [check=true]</i></li>
+			    <li>"doo-sabin-bc" <i class="opts">options: [check=true]</i></li>
+			    <li>"doo-sabin-bc-new" <i class="opts">options: [length]</i></li>
+			    <li>"corner-cut"</li>
+			    <li>"modified-corner-cut" <i class="opts">options: [thickness]</i></li>
+			    <li>"root4" <i class="opts">options: [a,twist]</i></li>
+			    <li>"catmull-clark"</li>
+			    <li>"star" <i class="opts">options: [offset=0.0]</i></li>
+			    <li>"sqrt3"</li>
+			    <li>"fractal" <i class="opts">options: [offset=1.0]</i></li>
+			    <li>"stellate"</li>
+			    <li>"double-stellate" <i class="opts">options: [offset,curve]</i></li>
+			    <li>"dome" <i class="opts">options: [length,scale]</i></li>
+			    <li>"dual-12.6.4" <i class="opts">options: [scale]</i></li>
+			    <li>"loop-style" <i class="opts">options: [length]</i></li>
+			    <li>"linear-vertex" <i class="opts">options: [usequads=true]</i></li></ul></p><div class="result">Result:</div><div class="resultdesc">None</div></div>    
+<div
+	 class="command"><a	name="subdivideFace"><span class="fn">subdivideFace</span>(<span class="args">faceid[,usequads]</span>)</a><p class="description">Subdivide a face into <i>n</i> faces (where <i>n</i> is the number of edges of the face). By default the new faces are quadralaterals, but if specified with <tt>False</tt>, then the new faces will be triangular.</p><div class="result">Result:</div><div class="resultdesc">None</div></div>   
+<div class="command"><a name="subdivideFaces"><span class="fn">subdivideFaces</span>(<span class="args">faceidList[,usequads]</span>)</a><p class="description">Subdivide faces in the list into <i>n</i> faces (where <i>n</i> is the number of edges of the face). By default the new faces are quadralaterals, but if specified with <tt>False</tt>, then the new faces will be triangular. If you want to do all faces you can also Use <a href="#subdivide" class="commandlink">subdivide("linear-vertex")</a></p><div class="result">Result:</div><div class="resultdesc">None</div></div>   
+<div class="command"><a name="dual"><span class="fn">dual</span>(<span class="args"></span>)</a><p class="description">Takes the dual of the current object.</p><div class="result">Result:</div><div class="resultdesc">None</div></div>
+<div class="command"><a name="connectEdges"><span class="fn">connectEdges</span>(<span class="args">(edgeid,faceid),(edgeid,faceid)[,loopCheck]</span>)</a><p class="description">Connect two half-edges with a face. If <tt>loopCheck</tt> is <tt>True</tt> then only connect if the edges are not adjacent to their corresponding faces.</p><div class="result">Result:</div><div class="resultdesc">None</div></div>         
+<div class="command"><a name="connectCorners"><span class="fn">connectCorners</span>(<span class="args">(faceid,vertexid),(faceid,vertexid)[,numsegs,maxconn,'dual']</span>)</a><p class="description">Connect two faces given a corner from each face. Uses repeated <a href="#insertEdge" class="commandlink">insertEdge</a> operations</p><div class="result">Result:</div><div class="resultdesc">None</div></div>
+<div class="command"><a name="connectFaces"><span class="fn">connectFaces</span>(<span class="args">faceid,faceid[,numsegs,maxconn]</span>)</a><p class="description">Connect two faces with multiple segments. Intermediate points are calculated by linear interpolation based on number of segments. Maximum connections should be set to -1 when connecting all is desired</p><div class="result">Result:</div><div class="resultdesc">None</div></div>
+<div class="command"><a name="addHandle"><span class="fn">addHandle</span>(<span class="args">interp,(faceid,vertexid),(faceid,vertexid),numsegs<br/><span class="indent">[,weight1,weight2,maxconn,numtwists]</span></span>)</a><p class="description">Create an interpolated handle. The option <tt>interp</tt> should be set to either "hermite" or "bezier" depending on the desired interpolation method. Setting the number of segments and playing with the weights and number of twists will yield different results.</p><div class="result">Result:</div><div class="resultdesc">None</div></div>
+<div class="command"><a name="rind"><span class="fn">rind</span>(<span class="args">facelist,useScaling,percent[,uniform]</span>)</a><p class="description">Create a rind model - create a crust then punch the specified faces. The percentage is a thickness parameter when useScaling is false, otherwise it is a scaling parameter.</p><div class="result">Result:</div><div class="resultdesc">None</div></div>
+<div class="command"><a name="wireframe"><span class="fn">wireframe</span>(<span class="args">[thicknes,split]</span>)</a><p class="description">Creates a solid wireframe from the object.</p><div class="result">Result:</div><div class="resultdesc">None</div></div>
+<div class="command"><a name="column"><span class="fn">column</span>(<span class="args">thickness,segments</span>)</a><p class="description">Creates a solid column wireframe from the object.</p><div class="result">Result:</div><div class="resultdesc">None</div></div>
+<a name="ids"><h2>Finding IDs</h2></a>
+<div class="command"><a name="faces"><span class="fn">faces</span>(<span class="args">[selected]</span>)</a><p class="description">Returns a tuple containing the ids of the faces. If selected is <tt>True</tt>, then only those faces selected are returned (this is the default in the TopMod interface), otherwise all the faces. Since selection is impossible in stand-alone, the default is all the faces.</p><div class="result">Result:</div><div class="resultdesc">(faceid,...)</div></div>        
+<div class="command"><a name="edges"><span class="fn">edges</span>(<span class="args">[selected]</span>)</a><p class="description">Returns a tuple containing the ids of the edges. If selected is <tt>True</tt>, then only those edges selected are returned (this is the default in the TopMod interface), otherwise all the edges. Since selection is impossible in stand-alone, the default is all the edges.</p><div class="result">Result:</div><div class="resultdesc">(edgeid,...)</div></div>        
+<div class="command"><a name="verts"><span class="fn">verts</span>(<span class="args">[selected]</span>)</a><p class="description">Returns a tuple containing the ids of the vertices. If selected is <tt>True</tt>, then only those vertices selected are returned (this is the default in the TopMod interface), otherwise all the vertices. Since selection is impossible in stand-alone, the default is all the vertices.</p><div class="result">Result:</div><div class="resultdesc">(vertexid,...)</div></div>        
+<div class="command"><a name="corners"><span class="fn">corners</span>(<span class="args">[selected]</span>)</a><p class="description">Returns a tuple containing 2-tuples with the ids of the faces and the ids of the vertices. If selected is <tt>True</tt>, then only those corners selected are returned (this is the default in the TopMod interface), otherwise all the corners. Since selection is impossible in stand-alone, the default is all the corners.</p><div class="result">Result:</div><div class="resultdesc">((faceid,vertexid),...)</div></div>    
+<div class="command"><a name="walk"><span class="fn">walk</span>(<span class="args">faceid</span>)</a><p class="description"><!--Prints out the-->This does a boundary walk around a face. The format looks like this: <div class="samp"><tt>DLFLFace faceid (numsides) : vertexid[backface]--(edgeid)-->...</tt>. It returns a list of vertices and a list of edges</div><p class="description">It continues until it walks through each side of the face.</p><div class="result">Result:</div><div class="resultdesc">vertexlist,edgelist</div></div>         
+<div class="command"><a name="cornerWalk"><span class="fn">cornerWalk</span>(<span class="args">faceid</span>)</a><p class="description">Performs the boundary walk as specified by the <a href="#walk" class="commandlink">walk</a> above, but instead of grabbing the vertices and edges walked, it returns the corners walked. This means the result will contain the tuples with the input faceid and each vertex.</p><div class="result">Result:</div><div class="resultdesc">[(faceid,vertexid),...]</div></div> 
+<a name="info"><h2>Object Information</h2></a>
+<div class="command"><a name="printObject"><span class="fn">printObject</span>(<span class="args"></span>)</a><p class="description">Print out object information to standard out. For example, a cube: <div class="samp"><pre>Number of vertices : 8
+Number of faces : 6
+Number of edges : 12
+Number of materials : 1
+Genus : 0</pre></div></p><div class="result">Result:</div><div class="resultdesc">None</div></div>  
+<div class="command"><a name="vertexInfo"><span class="fn">vertexInfo</span>(<span class="args">vertexid</span>)</a><p class="description">Store information about the vertex in a dictionary. The options can be accessed by there keys like this <tt>vertexInfo(vertexid)['coords']</tt>. Valid keys are:<ul><li>'id'</li>
+<li>'type'</li>
+<li>'coords'</li>
+<li>'valence'</li></ul></p><div class="result">Result:</div><div class="resultdesc">{'key': value}</div></div>   
+<div class="command"><a name="edgeInfo"><span class="fn">edgeInfo</span>(<span class="args">edgeid</span>)</a><p class="description">Store information about the edge in a dictionary. The options can be accessed by there keys like this <tt>edgeInfo(edgeid)['midpoint']</tt>. Valid keys are:<ul><li>'id'</li>
+<li>'type'</li>
+<li>'midpoint'</li>
+<li>'normal'</li>
+<li>'cornerA'</li>
+<li>'cornerB'</li>
+<li>'length'</li></ul></p><div class="result">Result:</div><div class="resultdesc">{'key': value}</div></div>     
+<div class="command"><a name="faceInfo"><span class="fn">faceInfo</span>(<span class="args">faceid</span>)</a><p class="description">Store information about the face in a dictionary. The options can be accessed by there keys like this <tt>faceInfo(faceid)['centroid']</tt>. Valid keys are:<ul><li>'id'</li>
+<li>'type'</li>
+<li>'centroid'</li>
+<li>'normal'</li>
+<li>'size'</li></ul></p><div class="result">Result:</div><div class="resultdesc">{'key': value}</div></div>
+<div class="command"><a name="cornerInfo"><span class="fn">cornerInfo</span>(<span class="args">(faceid,vertexid)</span>)</a><p class="description">Store information about the corner in a dictionary. The options can be accessed by there keys like this <tt>cornerInfo((faceid,vertexid))['type']</tt>. Valid keys are:<ul><li>'face'</li>
+<li>'vertex'</li>
+<li>'edge'</li>
+<li>'type'</li></ul></p><div class="result">Result:</div><div class="resultdesc">{'key': value}</div></div>
+<div class="command"><a name="centroid"><span class="fn">centroid</span>(<span class="args">vertexids</span>)</a><p class="description">Find the centroid of a given set of vertices.</p><div class="result">Result:</div><div class="resultdesc">centroid</div></div>     
+<a name="xform"><h2>Transformations</h2></a>
+<div class="command"><a name="translate"><span class="fn">translate</span>(<span class="args">x,y,z[,relative]</span>)</a><p class="description">Translate the current object to &lt;x y z&gt; if relative is <tt>False</tt>, otherwise translate by x, y &amp; z units. Relative is true by default.</p><div class="result">Result:</div><div class="resultdesc">None</div></div>    
+<div class="command"><a name="scale"><span class="fn">scale</span>(<span class="args">(x,y,z)</span>)</a><p class="description">Scale the current object to &lt;x y z&gt;.</p><div class="result">Result:</div><div class="resultdesc">None</div></div>
+<div class="command"><a name="move"><span class="fn">move</span>(<span class="args">vertexids,(x,y,z)[,relative]</span>)</a><p class="description">Takes a tuple containing every vertexid that is to be moved. Then translates either to &lt;x y z&gt; (absolute) or by x, y, &amp; z (relative). The default is relative.</p><div class="result">Result:</div><div class="resultdesc">None</div></div>
+<br/>
+<a href="#commands">Return To Top</a>       
+</body>
+</html>
