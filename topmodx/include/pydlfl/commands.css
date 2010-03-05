@@ -1,0 +1,87 @@
+body { 
+  font-family: Century Gothic, Sans-serif;
+}
+
+h1 { color: #454545; }
+h2 { color: #8a8a8a; font-style: italic; }
+
+div.command, form {  
+  background-color: #efefef;
+  width: 650px;
+  padding: 5px;
+  padding-left: 10px;
+  padding-right: 20px;
+  margin: 5px;
+  border: 1px dashed #8a8a8a;
+}
+
+.fn { 
+  font-weight: bold
+}
+
+.args { 
+  font-weight: normal; 
+  font-style: italic;
+}
+
+.indent { 
+  margin-left: 95px;
+}
+
+.description { 
+  font-size: 10pt;
+  margin-left: 30px;
+}
+
+#topmod { color: #004458; font-size: 50pt; }
+
+div.result { 
+  font-size: 11pt;
+  font-weight: bold;
+  color: #454545;
+}
+
+div.resultdesc { 
+  font-size: 10pt;
+  font-weight: normal;
+  font-style: italic;
+  margin-left: 30px;
+}
+
+ul { 
+  font-size: 10pt;
+}
+
+a.commandlink:link, a.commandlink:visited { 
+  color: black;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+a.commandlink:hover { 
+  color: black;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+div.samp { 
+  margin-left: 60px;
+}
+
+label { 
+  font-size: 11pt;
+  margin-right: 10px;
+}
+
+select { 
+  font-family: Century Gothic, Sans-Serif;
+  font-size: 10pt;
+  border: 1px solid black;
+  background-color: #9a9a9a;
+  margin-right: 30px;
+ }
+
+i.opts { 
+  font-size: 8pt;
+  margin-left: 10px;
+}
