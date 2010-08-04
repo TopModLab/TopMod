@@ -530,16 +530,16 @@ public :
   void boundaryWalk(uint face_index);
   void vertexTrace(uint vertex_index);
 
-  void readObject( istream& i, istream &imtl = NULL );
+  void readObject( istream& i, istream &imtl );
   void readObjectAlt( istream& i );
-  void readDLFL( istream& i, istream &imtl = NULL, bool clearold = true );
+  void readDLFL( istream& i, istream &imtl , bool clearold = true );
 	bool readMTL( istream &i);
-	bool writeMTL( ostream& o );
+	bool writeMTL( ostream& o )  const;
 	
-  void writeObject( ostream& o, ostream &omtl = NULL, bool with_normals = true, bool with_tex_coords = true );
-  void writeDLFL(ostream& o, ostream &omtl = NULL, bool reverse_faces = false);
-  void writeSTL(ostream& o);
-  void writeLG3d(ostream& o, bool select = false); //!< added by dave - for LiveGraphics3D support to embed 3d models into html
+  void writeObject( ostream& o, ostream &omtl , bool with_normals = true, bool with_tex_coords = true ) const;
+  void writeDLFL(ostream& o, ostream &omtl, bool reverse_faces = false) const;
+  void writeSTL(ostream& o) const;
+  void writeLG3d(ostream& o, bool select = false) const ; //!< added by dave - for LiveGraphics3D support to embed 3d models into html
   inline void setFilename( const char *filename ) { 
     // if( mFilename) { delete [] mFilename; mFilename = NULL; }
     // mFilename = filename; 

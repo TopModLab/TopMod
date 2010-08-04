@@ -55,7 +55,7 @@ namespace DLFL {
     for normal averaging.
   */
 
-  void createCrust(DLFLObjectPtr obj, double thickness, bool uniform) {
+  void createCrust(const DLFLObjectPtr obj, double thickness, bool uniform) {
     if ( !isNonZero(thickness) ) return;
 
     // Clear the arrays used to store crust modeling information

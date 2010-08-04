@@ -37,7 +37,7 @@
 
 namespace DLFL {
 
-  void createDual(DLFLObjectPtr obj, bool accurate) {
+  void createDual(const DLFLObjectPtr obj, bool accurate) {
     // Using "correct" methods seems to be VERY slow
     // We will use it only if we want accurate dual
     // Otherwise we will use old method
