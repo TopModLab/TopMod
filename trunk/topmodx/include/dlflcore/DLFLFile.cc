@@ -205,7 +205,7 @@ namespace DLFL {
 		// std::cout << "done reading obj\n;";
 	}
 
-	void DLFLObject::writeObject(ostream& o, ostream &omtl, bool with_normals, bool with_tex_coords) {
+	void DLFLObject::writeObject(ostream& o, ostream &omtl, bool with_normals, bool with_tex_coords) const {
 		//write mtl file
 		if (!omtl.fail())
 			writeMTL(omtl);
@@ -504,7 +504,7 @@ namespace DLFL {
 		// printEdgeList();
 	}
 
-	void DLFLObject::writeDLFL(ostream& o, ostream &omtl, bool reverse_faces) {
+	void DLFLObject::writeDLFL(ostream& o, ostream &omtl, bool reverse_faces) const {
 		//write the mtl file if it exists
 		if (!omtl.fail()){
 			// std::cout<<"mtl file did not fail.\n";
@@ -519,7 +519,7 @@ namespace DLFL {
 		// std::cout << "writing dlfl\t" << mFilename << "\n";
 		
 		// Write the vertex list next. Update the vertex index also
-		DLFLVertexPtrList::iterator vf = vertex_list.begin(), vl = vertex_list.end();
+		DLFLVertexPtrList::const_iterator vf = vertex_list.begin(), vl = vertex_list.end();
 		uint vindex = 0;
 		while ( vf != vl ) {
 			(*vf)->writeDLFL(o,vindex++);
@@ -528,7 +528,7 @@ namespace DLFL {
 		o << '#' << endl;
 
 		// Write the face vertices and update the face vertex index also
-		DLFLFacePtrList::iterator ff = face_list.begin(), fl = face_list.end();		
+		DLFLFacePtrList::const_iterator ff = face_list.begin(), fl = face_list.end();		
 		DLFLFacePtr fptr;
 		uint fvindex = 0;
 		while ( ff != fl ) {
@@ -549,7 +549,7 @@ namespace DLFL {
 		o << '#' << endl;
 
 		// Write the edge list
-		DLFLEdgePtrList::iterator ef = edge_list.begin(), el = edge_list.end();
+		DLFLEdgePtrList::const_iterator ef = edge_list.begin(), el = edge_list.end();
 		if ( reverse_faces ) {
 			while ( ef != el ) {
 				(*ef)->writeDLFLReverse(o);
@@ -619,7 +619,7 @@ namespace DLFL {
 		return true;
 	}
 	
-	bool DLFLObject::writeMTL( ostream& o ) {
+	bool DLFLObject::writeMTL( ostream& o ) const {
 
 		// newmtl blinn1SG
 		// illum 4
@@ -657,11 +657,11 @@ namespace DLFL {
 		
 	}
 
-	void DLFLObject::writeLG3d(ostream& o, bool selected) {
+	void DLFLObject::writeLG3d(ostream& o, bool selected) const {
 
 		Vector3dArray coords; int i=0, j=0;		
 		if (selected){
-			vector<DLFLFacePtr>::iterator ff = this->sel_fptr_array.begin(), 
+			vector<DLFLFacePtr>::const_iterator ff = this->sel_fptr_array.begin(), 
 																		fl = this->sel_fptr_array.end();
 			// Write the object in LG3d (*.m) format for use with the LiveGraphics3D live.jar java archive from Mathworld.com
 			o << "Graphics3D[{";
@@ -687,7 +687,7 @@ namespace DLFL {
 			
 		}
 		else {
-			DLFLFacePtrList::iterator ff, fl;
+			DLFLFacePtrList::const_iterator ff, fl;
 			ff = face_list.begin(); 
 			fl = face_list.end();
 			// Write the object in LG3d (*.m) format for use with the LiveGraphics3D live.jar java archive from Mathworld.com
@@ -714,7 +714,7 @@ namespace DLFL {
 		}
 	}
 	
-	void DLFLObject::writeSTL(ostream& o){		
+	void DLFLObject::writeSTL(ostream& o) const{		
 		// if(binary)
 		// {
 		// 	// Write Header
@@ -742,8 +742,8 @@ namespace DLFL {
 		// }
 		// else
 		// {
-			DLFLFacePtrList::iterator ff = face_list.begin(); 
-			DLFLFacePtrList::iterator fl = face_list.end();
+			DLFLFacePtrList::const_iterator ff = face_list.begin(); 
+			DLFLFacePtrList::const_iterator fl = face_list.end();
 			Vector3dArray coords; int i=0;
 			
 			o << "solid ascii\n";
