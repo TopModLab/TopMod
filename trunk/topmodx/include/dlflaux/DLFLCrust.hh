@@ -52,7 +52,7 @@ namespace DLFL {
     which means thickness at vertices will be adjusted to account
     for normal averaging.
   */
-  void createCrust(DLFLObjectPtr obj, double thickness, bool uniform = true);
+  void createCrust(const DLFLObjectPtr obj, double thickness, bool uniform = true);
 
   /*
     Create a crust for this object.
