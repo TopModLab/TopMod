@@ -56,15 +56,6 @@
  
    shift
  
- # i included this bit as to not damage any files if the user does not specify
- # anything to be done
- # just a safety measure
- 
-   if [ $# -lt 3 ] ; then
-	 echo "usage: renna r [expression] [replacement] files... "
-	 exit 0
-   fi
- 
  # remove other information
    OLD=$1 ; NEW=$2 ; shift ; shift
  
