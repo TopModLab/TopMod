@@ -32,7 +32,13 @@
 #ifdef WITH_PYTHON
 
 #undef slots
+#ifdef _DEBUG
+#undef _DEBUG
 #include <Python.h>
+#define _DEBUG
+#else
+#include <Python.h>
+#endif
 #define slots
 
 #include <QWidget>

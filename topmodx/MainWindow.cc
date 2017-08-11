@@ -53,7 +53,13 @@
 */
 
 #ifdef WITH_PYTHON
+#ifdef _DEBUG
+#undef _DEBUG
 #include <Python.h>
+#define _DEBUG
+#else
+#include <Python.h>
+#endif
 #endif
 
 WireframeRendererPtr MainWindow::wired;              	//!< WireframeRenderer Pointer
