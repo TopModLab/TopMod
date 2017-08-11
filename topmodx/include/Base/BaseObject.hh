@@ -40,12 +40,7 @@
 // BaseObject has no member data. It only has protected constructors (to prevent
 // instantiation), virtual destructors and an assignment operator
 
-#ifndef __GNUG__
-#include <bool.h>
-#include <iostream.h>
-#else
 #include <iostream>
-#endif
 
 #include <stdlib.h>
 

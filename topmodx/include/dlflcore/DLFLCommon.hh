@@ -37,9 +37,11 @@
 
 #include <vector>
 #include <list>
-#include <ext/hash_map>
+#include <unordered_set>
+#include <unordered_map>
 #include <algorithm>
 #include <iterator>
+
 #include <Vector2d.hh>
 #include <Vector3d.hh>
 #include <Matrix4x4.hh>
@@ -51,19 +53,11 @@
 
 // strstream is deprecated in the new standard.
 // The GNU compiler complies with this but the SGI compiler doesn't
-#ifdef __GNUG__
+
 #include <sstream>
 typedef stringstream StringStream;
-#else
-#include <strstream.h>
-typedef strstream StringStream;
-#endif
 
-#ifdef __GNUG__
 #include <fstream>
-#else
-#include <fstream.h>
-#endif
 
 // This is required if the standard versions of the STL header files are included
 using namespace std;
@@ -231,14 +225,8 @@ namespace DLFL {
   void clear(DLFLObjectPtrList& oplist);
   void clear(DLFLMaterialPtrList& mplist);
 
-  struct eqstr {
-    bool operator() ( int a, int b ) const {
-      return a == b;
-    }
-  };
-
-  typedef __gnu_cxx::hash<unsigned int> Hash;
-  typedef __gnu_cxx::hash_map<unsigned int, unsigned int, Hash, eqstr> HashMap;
+  typedef unordered_set<unsigned int> Hash;
+  typedef unordered_map<unsigned int, unsigned int> HashMap;
 
 } // end namespace
 

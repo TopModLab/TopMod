@@ -34,20 +34,11 @@
 
 // Miscellaneous functions for operating on IO streams in C++
 
-#ifndef __GNUG__
-#include <iostream.h>
-#include <iomanip.h>
-#include <ctype.h>
-#include <bool.h>
-#else
 #include <iostream>
 #include <iomanip>
 #include <ctype.h>
 
 using namespace std;
-
-#endif
-
 
 inline void removeWhiteSpace(istream& i)
 {

@@ -35,11 +35,7 @@
 // Frequently used operations defined as inline functions
 
 #include "Constants.hh"
-#include <math.h>
-
-#ifndef __GNUG__
-#include <bool.h>
-#endif
+#include <cmath>
 
 typedef unsigned int uint;
 
@@ -186,58 +182,6 @@ inline double cube(double x)
 }
 
 #endif // #ifndef _INLINE_MATH_
-
-
-
-//--- Min and Max subroutines ---//
-
-#ifndef _INLINE_MIN_MAX_
-
-#define _INLINE_MIN_MAX_
-
-inline int min(int x, int y)
-{
-  return ( (x < y) ? x : y );
-}
-
-inline int max(int x, int y)
-{
-  return ( (x > y) ? x : y );
-}
-
-inline uint min(uint x, uint y)
-{
-  return ( (x < y) ? x : y );
-}
-
-inline uint max(uint x, uint y)
-{
-  return ( (x > y) ? x : y );
-}
-
-inline float min(float x, float y)
-{
-  return ( (x < y) ? x : y );
-}
-
-inline float max(float x, float y)
-{
-  return ( (x > y) ? x : y );
-}
-
-inline double min(double x, double y)
-{
-  return ( (x < y) ? x : y );
-}
-
-inline double max(double x, double y)
-{
-  return ( (x > y) ? x : y );
-}
-
-#endif // #ifndef _INLINE_MIN_MAX_
-
-
 
 //--- Swap two numbers ---//
 
