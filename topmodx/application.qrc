@@ -30,15 +30,6 @@
 	<file>lang/topmod_fr.ts</file>
 	<file>lang/topmod_it.ts</file>
 	<file>lang/topmod_hi.ts</file>
-	
-	<file>lang/topmod_ca.qm</file>
-	<file>lang/topmod_en.qm</file>
-	<file>lang/topmod_es.qm</file>
-	<file>lang/topmod_de.qm</file>
-	<file>lang/topmod_tr.qm</file>
-	<file>lang/topmod_fr.qm</file>
-	<file>lang/topmod_it.qm</file>
-	<file>lang/topmod_hi.qm</file>
 
 	<file>qss/modo.qss</file>
 	<file>qss/default.qss</file>
@@ -129,12 +120,13 @@
 	<!-- <file>assistant.app</file> -->
 	<!--translation files (*.qm)-->
 	<file>lang/topmod_en.qm</file>
-	<file>lang/topmod_en_us.qm</file>
 	<file>lang/topmod_es.qm</file>
 	<file>lang/topmod_fr.qm</file>
 	<file>lang/topmod_it.qm</file>
 	<file>lang/topmod_de.qm</file>
 	<file>lang/topmod_tr.qm</file>
+	<file>lang/topmod_ca.qm</file>
+	<file>lang/topmod_hi.qm</file>
 	<file>images/commandcompleter.png</file>
 </qresource>
 </RCC>
