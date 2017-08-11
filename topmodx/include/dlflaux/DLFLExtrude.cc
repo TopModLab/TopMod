@@ -824,6 +824,7 @@ namespace DLFL {
 // 		}
 // 	*/
 // 		return retface;
+		return nullptr;
 	}
 
 	DLFLFacePtr extrudeFaceDodeca(DLFLObjectPtr obj, DLFLFacePtr fptr, double angle, double ex_dist1, double ex_dist2, double ex_dist3) {

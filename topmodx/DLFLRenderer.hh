@@ -220,7 +220,7 @@ public :
     Return value can be used for error reporting..
   */
   virtual int render(DLFLObjectPtr object) = 0;
-  virtual int render(TMPatchObjectPtr patchObject) { /* most renderers leave this blank*/ };
+  virtual int render(TMPatchObjectPtr patchObject) { return 0; };
   /*
     Perform any initializations required
   */
