@@ -43,11 +43,6 @@
 * \see DLFLSelection
 */
 
-extern DLFLEdgePtrArray DLFLObject::eparray;
-extern DLFLFacePtrArray DLFLObject::fparray;
-extern DLFLVertexPtrArray DLFLObject::vparray;
-extern DLFLFaceVertexPtrArray DLFLObject::fvparray;
-
 // Code for selection of vertices, edges and faces
 
 // Render the vertices for selection

@@ -41,6 +41,10 @@ namespace DLFL {
 
   uint DLFLObject::suLastID = 0;
   Transformation DLFLObject::tr;
+  DLFLVertexPtrArray DLFLObject::vparray;                // For selection
+  DLFLEdgePtrArray   DLFLObject::eparray;                // For selection
+  DLFLFacePtrArray   DLFLObject::fparray;                // For selection
+  DLFLFaceVertexPtrArray DLFLObject::fvparray;
 
   void DLFLObject::dump(ostream& o) const {
     o << "DLFLObject" << endl;
