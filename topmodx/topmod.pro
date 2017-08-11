@@ -1,10 +1,10 @@
 # version info : code from -- http://wiki.qtcentre.org/index.php?title=Version_numbering_using_QMake
-VERSION = $$system(svn info -r HEAD . | grep 'Changed\ Rev' | cut -b 19-)
+#VERSION = $$system(git log -1 --pretty=format:%H | cut -c 1-8)
 #!isEmpty(VERSION){
-	VERSION = 2.$${VERSION}
+	VERSION = $${VERSION}
 	VERSTR = '\\"$${VERSION}\\"'  # place quotes around the version string
 	DEFINES += VER=\"$${VERSTR}\" # create a VER macro containing the version string
-#} 
+#}
 
 #qt version 
 QTVERSION = $$[QT_VERSION]
@@ -15,12 +15,12 @@ DEFINES += QT_VER=\"$${QT_VERSTR}\" # create a QT_VER macro containing the versi
 QT += opengl xml
 CONFIG += qt debug warn_off link_prl
 
-QMAKE_CXXFLAGS_DEBUG += -pg
-QMAKE_LFLAGS_DEBUG += -pg
+#QMAKE_CXXFLAGS_DEBUG += -pg
+#QMAKE_LFLAGS_DEBUG += -pg
 
 # exclude verse python or spacenav drivers
 # or include them with CONFIG += 
-CONFIG -=  WITH_PYTHON WITH_SPACENAV WITH_VERSE
+CONFIG -= WITH_PYTHON WITH_SPACENAV WITH_VERSE
 CONFIG += WITH_PYTHON 
 
 # to include the popup command line interface leave the following line uncommented
@@ -44,16 +44,10 @@ CONFIG(debug, debug|release) {
 } else {
  TARGET = TopMod# -$${VERSION}
 }
-
-DEPENDPATH += \
-	   lang \
-	   include \
-	   include/Graphics \ 
-	   include/Light \
-	   include/vecmat \
-	   include/dlflcore \
-	   include/dlflaux \
-	   include/verse 
+CONFIG(debug)
+{
+CONFIG += console
+}
 
 INCLUDEPATH += \
 	    include \	      
@@ -110,7 +104,7 @@ macx {
 	QMAKE_LFLAGS += -L/usr/lib
 
 	CONFIG(WITH_PYTHON){
-		INCLUDEPATH += /Library/Frameworks/Python.framework/Versions/2.5/include/python2.5 
+		INCLUDEPATH += /Library/Frameworks/Python.framework/Versions/2.7/include/python2.7 
 		QMAKE_LFLAGS += -L/Library/Frameworks/Python.framework 
 		LIBS += -framework Python
 	}
@@ -129,8 +123,8 @@ macx {
 	DEFINES *= LINUX
 	
 	CONFIG(WITH_PYTHON){
-		INCLUDEPATH += /usr/include/python2.5
-		LIBS += -lpython2.5 -L/usr/lib/python2.5/config
+		INCLUDEPATH += /usr/include/python2.7
+		LIBS += -lpython2.7 -L/usr/lib/python2.7/config
 	}
 	CONFIG(WITH_SPACENAV){
 
@@ -147,23 +141,21 @@ macx {
 	} else {
 	 TARGET = TopMod# -$${VERSION}
 	}
+	CONFIG+=suppress_vcproj_warnings
 	
 	#application icon windows
 	RC_FILE = topmod.rc
 
 	CONFIG -= WITH_SPACENAV
 
-	INCLUDEPATH += ./lib
-	QMAKE_LFLAGS += -L./lib
-	# INCLUDEPATH += C:/topmod/topmodx/lib
-	# QMAKE_LFLAGS += -LC:/topmod/topmodx/lib
-	LIBS += -lvecmat -ldlflcore -ldlflaux
+	#QMAKE_LFLAGS += -L"$$PWD/lib"
+	LIBS += -L"$$PWD/lib" -lvecmat -ldlflcore -ldlflaux
+	LIBS += -lopengl32 -lglu32
 
 	CONFIG(WITH_PYTHON){
-	 INCLUDEPATH += C:/Python25/include
-	 QMAKE_LFLAGS += -LC:/Python25/libs
-
-	 LIBS += -lpython25
+	 INCLUDEPATH += "C:/Python27/include"
+	 QMAKE_LFLAGS += -L"C:/Python27/libs"
+	 LIBS += -L"C:/Python27/libs" python27.lib
 	}
 	CONFIG (GPU_OK){
 		
@@ -175,7 +167,6 @@ macx {
 		LIBS += -lverse
 		INCLUDEPATH += C:/verse/include
 		QMAKE_LFLAGS += -LC:/verse/lib
-
 	}
 }
 
@@ -194,8 +185,6 @@ HEADERS += \
 	qcumber.hh \
 	qshortcutdialog.hh \
 	qshortcutmanager.hh \
-	ui_shortcutdialog.h \
-	ui_stylesheeteditor.h \
 	editor.hh \
 	PythonHighlighter.hh \
 	BasicsMode.hh \
