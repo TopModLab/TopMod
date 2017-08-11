@@ -42,6 +42,9 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #else
+#ifdef _WIN32 || _WIN64
+#include <windows.h>
+#endif
 #include <GL/gl.h>
 #include <GL/glu.h>
 #endif
@@ -51,8 +54,6 @@
 #include <DollyControl.hh>
 #include <Transform.hh>
 #include <Camera.hh>
-
-// #include <QtGui>
 
 // Enumerations for the different views. The names imply looking from the corresponding
 // side. ie Front -> looking *from* front, Right -> looking *from* right

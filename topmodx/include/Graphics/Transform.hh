@@ -38,15 +38,7 @@
 #include "../vecmat/Matrix4x4.hh"
 #include "../vecmat/Quaternion.hh"
 #include <cmath>
-/*
-#ifdef __APPLE__
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-*/
+
 class Transformation;
 typedef Transformation * TransformationPtr;
 

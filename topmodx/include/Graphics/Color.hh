@@ -46,6 +46,9 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #else
+#ifdef _WIN32 || _WIN64
+#include <windows.h>
+#endif
 #include <GL/gl.h>
 #include <GL/glu.h>
 #endif
