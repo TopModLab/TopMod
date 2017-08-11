@@ -2108,7 +2108,7 @@ void MainWindow::shrinkSelection(){
 		//loop through selected vertices, get corresponding edges
 		svptrarr = active->getSelectedVertices();
 		if ( svptrarr.size() > 0 && svptrarr[0] ) {
-			bool deselectvertices[svptrarr.size()];
+			vector<bool> deselectvertices(svptrarr.size());
 			for(vit = svptrarr.begin(); vit != svptrarr.end(); vit++,i++){
 				deselectvertices[i] = false;
 				(*vit)->getEdges(septrarr);
@@ -2135,7 +2135,7 @@ void MainWindow::shrinkSelection(){
 		//loop through selected edges, get vertices, then get those edges
 		septrarr = active->getSelectedEdges();
 		if ( septrarr.size() > 0 && septrarr[0]) {
-			bool deselectedges[septrarr.size()];
+			vector<bool> deselectedges(septrarr.size());
 			for(eit = septrarr.begin(); eit != septrarr.end(); eit++,i++){
 				//get the 2 vertices for the current edge
 				(*eit)->getVertexPointers(vptr1,vptr2);
@@ -2166,7 +2166,7 @@ void MainWindow::shrinkSelection(){
 		//loop through selected faces
 		sfptrarr = active->getSelectedFaces();
 		if ( sfptrarr.size() > 0 && sfptrarr[0] ) {
-			bool deselectfaces[sfptrarr.size()];
+			vector<bool> deselectfaces(sfptrarr.size());
 			for(fit = sfptrarr.begin(); fit != sfptrarr.end(); fit++, i++){
 				//get the edges for the current face
 				(*fit)->getEdges(eptrarray);

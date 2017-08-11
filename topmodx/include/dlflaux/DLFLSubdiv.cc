@@ -1564,7 +1564,7 @@ namespace DLFL {
     numVect1 = obj->num_vertices();
     vl_first = obj->beginVertex();
 
-    Vector3d NormList[num_orig_faces];
+    vector<Vector3d> NormList(num_orig_faces);
 
     //Stellate each face
     while ( num_faces < num_old_faces ) {

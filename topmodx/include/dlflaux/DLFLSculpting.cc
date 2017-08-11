@@ -894,7 +894,7 @@ namespace DLFL {
 			//sort edge list from big to small
 			DLFLEdgePtr emax,e,etmp;
 			int size = edges.size();
-			DLFLEdgePtr sorted[size];
+			vector<DLFLEdgePtr> sorted(size);
 
 			for(int i=0;i<size;i++) 
 				sorted[i] = edges.at(i);

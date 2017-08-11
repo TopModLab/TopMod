@@ -1633,7 +1633,7 @@ namespace DLFL {
 	  double ddiv3 = d / 3.0;
 	  double stellate_amount;
 
-	  DLFLVertexPtr base_vps[face_sides];
+	  vector<DLFLVertexPtr> base_vps(face_sides);
 
 	  Vector3d center_sphere, center_sphere2;
 	  Vector3d center_normal;

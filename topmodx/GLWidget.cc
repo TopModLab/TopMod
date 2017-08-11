@@ -679,7 +679,7 @@ void GLWidget::drawIDs( QPainter *painter, const GLdouble *model, const GLdouble
   if( mShowVertexIDs ) {
     DLFLVertexPtrArray vparray;
     object->getVertices(vparray);
-    double vlsqr_array[vparray.size()];
+    vector<double> vlsqr_array(vparray.size());
     count = 0;
     DLFLVertexPtrArray::iterator it;
     for( it = vparray.begin(); it != vparray.end(); it++) {
@@ -717,7 +717,7 @@ void GLWidget::drawIDs( QPainter *painter, const GLdouble *model, const GLdouble
   if( mShowEdgeIDs ) {
     DLFLEdgePtrArray eparray;
     object->getEdges(eparray);
-    double elsqr_array[eparray.size()];
+    vector<double> elsqr_array(eparray.size());
     count = 0;
     DLFLEdgePtrArray::iterator it;
     for( it = eparray.begin(); it != eparray.end(); it++) {
@@ -755,7 +755,7 @@ void GLWidget::drawIDs( QPainter *painter, const GLdouble *model, const GLdouble
   if( mShowFaceIDs ) {
     DLFLFacePtrArray fparray;
     object->getFaces(fparray);
-    double flsqr_array[fparray.size()];
+    vector<double> flsqr_array(fparray.size());
     count = 0;
     DLFLFacePtrArray::iterator it;
     for( it = fparray.begin(); it != fparray.end(); it++) {
