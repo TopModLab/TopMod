@@ -155,6 +155,17 @@ inline bool readTillFloat(istream& i)
   return false;
 }
 
+inline int strcasecmp(const char *a, const char *b) {
+  int ca, cb;
+  do {
+     ca = (unsigned char) *a++;
+     cb = (unsigned char) *b++;
+     ca = tolower(toupper(ca));
+     cb = tolower(toupper(cb));
+   } while (ca == cb && ca != '\0');
+   return ca - cb;
+}
+
 #endif // #ifndef _STREAMIO_HH_
 
 // $Log: StreamIO.hh,v $
