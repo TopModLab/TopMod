@@ -208,12 +208,12 @@ class Vector3d : public BaseObject
 #endif
 
         // Element access operator - doesn't check for valid indices
-     double& operator [] (uint index)
+     double& operator [] (size_t index)
        {
          return elem[index];
        }
 
-     double operator [] (uint index) const
+     double operator [] (size_t index) const
        {
          return elem[index];
        }

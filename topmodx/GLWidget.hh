@@ -310,13 +310,12 @@ public :
 
 	void selectInverseVertices(){
 		DLFLVertexPtrArray vparray;
-		vector<DLFLVertexPtr>::iterator it;
 		object->getVertices(vparray);
-		for (it = vparray.begin(); it != vparray.end(); it++){
-			if (!isSelected(*it)){
-				addToSelection(*it);
+		for (DLFLVertexPtr itPtr : vparray) {
+			if (!isSelected(itPtr)){
+				addToSelection(itPtr);
 			}
-			else clearSelectedVertex(*it);
+			else clearSelectedVertex(itPtr);
 		}
 		repaint();
 	}

@@ -156,7 +156,7 @@ namespace DLFL {
 				// Create a new DLFLFace
 				newfptr = new DLFLFace;
 				// Read a face specification
-				c = i.peek(); 
+				c = i.peek();
 				while ( c != '\n' ) {
 					int v,vt,vn;
 					i >> v; vt = -1; vn = -1; c = i.peek();
@@ -201,7 +201,7 @@ namespace DLFL {
 		updateEdgeList();
 		// update all the FacePtr fields for the FaceVertexes through the Faces
 		updateFaceList();
-		
+
 		// std::cout << "done reading obj\n;";
 	}
 
