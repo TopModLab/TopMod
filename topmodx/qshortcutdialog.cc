@@ -500,8 +500,8 @@ void QShortcutDialog::exec()
 		if ( cxt.isEmpty() || i->isEmpty() )
 			continue;
 		
-		QString name = cxt.takeAt(cxt.count() - 1),
-				shortcut = i->at(0)->shortcut();
+		QString name = cxt.takeAt(cxt.count() - 1);
+		QString shortcut = i->at(0)->shortcut().toString();
 		
 		QList<QTreeWidgetItem*> l;
 		l = twShortcuts->findItems(cxt.at(0), Qt::MatchExactly, 0);

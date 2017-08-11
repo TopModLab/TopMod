@@ -31,9 +31,9 @@
 *
 */
 
-#include <QtGui>
-
 #include "ExperimentalModes.hh"
+
+#include <QtGui>
 
 /*!
 	\ingroup gui
@@ -136,7 +136,7 @@ QPushButton* ExperimentalMode::addColorPreference(QLabel *label, QString text, Q
 
 void ExperimentalMode::setupPaintBucket(){
 	
-	colorPickerStyle = new QPlastiqueStyle;
+	colorPickerStyle = QStyleFactory::create("Fusion");
 	
 	mPaintBucketLayout = new QGridLayout;
 	mPaintBucketLayout->setVerticalSpacing(1);

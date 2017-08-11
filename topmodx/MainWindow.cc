@@ -4413,7 +4413,7 @@ void MainWindow::readObject(const char * filename, const char *mtlfilename) {
 void MainWindow::readObjectQFile(QString filename) {
 	active->clearSelected();
 	QFile file(filename);
-	file.open(QIODevice::ReadOnly);
+	file.open(QIODevice::ReadOnly | QIODevice::Text);
 
 	QByteArray ba = file.readAll();
 	const char *filecontents = ba.data();
@@ -4809,7 +4809,7 @@ bool MainWindow::viewportScreenshot( ) {
 																									.arg(format),
 																									0, QFileDialog::DontUseSheet);
 	if (!fileName.isEmpty()){
-		image.save(fileName, format.toAscii());
+		image.save(fileName, format.toLatin1());
 		return true;
 	}
 	return false;
@@ -4829,13 +4829,13 @@ bool MainWindow::appScreenshot(){
 																									.arg(format),
 																									0, QFileDialog::DontUseSheet);
 	if (!fileName.isEmpty()){
-		appPixmap.save(fileName, format.toAscii());
+		appPixmap.save(fileName, format.toLatin1());
 		return true;
 	}
 	return false;
 }
 
-void MainWindow::loadCube(){	
+void MainWindow::loadCube(){
 	if (isModified())
 		undoPush();
 	setModified(false);
@@ -4843,7 +4843,6 @@ void MainWindow::loadCube(){
 	mWasPrimitive = true;
 	setCurrentFile(tr("cube.obj"));
 	readObjectQFile(":/cube.obj");
-	
 	
 	//iterate through faces and color them red... just to test the renderer out...
 	// DLFLFacePtrArray fparray;

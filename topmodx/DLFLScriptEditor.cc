@@ -3,6 +3,9 @@
 #include "DLFLScriptEditor.hh"
 
 #include <QtGui>
+#include <QVBoxLayout>
+#include <QFileDialog>
+#include <QScrollBar>
 
 #ifdef Q_WS_MAC
 #include <CoreFoundation/CFBundle.h>

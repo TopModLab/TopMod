@@ -458,7 +458,7 @@ void TopModPreferences::setupMain(){
 	// mShowStartupDialogAtStartupCheckBox->setChecked(mShowStartupDialogAtStartup);
 	// connect(mShowStartupDialogAtStartupCheckBox,SIGNAL(stateChanged(int)),this,SLOT(setShowStartupDialogAtStartup(int)));
 	
-	QStyle* colorPickerStyle = new QPlastiqueStyle;
+	QStyle* colorPickerStyle = QStyleFactory::create("Fusion");
 	QPalette p;
 
 	//camera nearplane
@@ -557,7 +557,7 @@ void TopModPreferences::setupColors(){
 	//layout for colors tab page
 	QGridLayout *mColorsLayout = new QGridLayout;
 	//style for the color
-	QStyle* colorPickerStyle = new QPlastiqueStyle;
+	QStyle* colorPickerStyle = QStyleFactory::create("Fusion");
 	QPalette p;
 
 	//viewport background color
