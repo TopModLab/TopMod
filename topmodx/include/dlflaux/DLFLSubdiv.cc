@@ -762,7 +762,10 @@ namespace DLFL {
     }
 
     // Go through eplist1,fplist1 and eplist2,fplist2 and connect corresponding half-edges
-    DLFLFacePtr fp1, fp2, tfp1, tfp2;
+	DLFLFacePtr fp1 = nullptr;
+	DLFLFacePtr fp2 = nullptr;
+	DLFLFacePtr tfp1 = nullptr;
+	DLFLFacePtr tfp2 = nullptr;
     for (int i=0; i < num_old_edges; ++i) {
 			//progress bar stuff - dave
 			// if (progress){
@@ -908,7 +911,10 @@ namespace DLFL {
     }
 
     // Go through eplist1,fplist1 and eplist2,fplist2 and connect corresponding half-edges
-    DLFLFacePtr fp1, fp2, tfp1, tfp2;
+	DLFLFacePtr fp1 = nullptr;
+	DLFLFacePtr fp2 = nullptr;
+	DLFLFacePtr tfp1 = nullptr;
+	DLFLFacePtr tfp2 = nullptr;
     for (int i=0; i < num_old_edges; ++i) {
       if ( eplist1[i] != NULL && eplist2[i] != NULL ) {
 				// Find the faces adjacent to the edges which are of type FTNew
@@ -1083,7 +1089,10 @@ namespace DLFL {
     }
 
     // Go through eplist1,fplist1 and eplist2,fplist2 and connect corresponding half-edges
-    DLFLFacePtr fp1, fp2, tfp1, tfp2;
+	DLFLFacePtr fp1 = nullptr;
+	DLFLFacePtr fp2 = nullptr;
+	DLFLFacePtr tfp1 = nullptr;
+	DLFLFacePtr tfp2 = nullptr;
     for (int i=0; i < num_old_edges; ++i) {
       if ( eplist1[i] != NULL && eplist2[i] != NULL ) {
 				// Find the faces adjacent to the edges which are of type FTNew
@@ -1113,11 +1122,16 @@ namespace DLFL {
     DLFLFacePtrList::iterator fl_first, fl_last , fl_last_hole;
     DLFLEdgePtrList::iterator el_first, el_last;
     DLFLVertexPtrList::iterator vl_first, vl_last;
-    DLFLFacePtr fp, ifp;
+	DLFLFacePtr fp = nullptr;
+	DLFLFacePtr ifp = nullptr;
     DLFLEdgePtrArray eplist1, eplist2; // List of edges to be connected
-    DLFLFaceVertexPtr fvp1, fvp2, head1, head2;
-    DLFLEdgePtr ep, iep;
-    DLFLVertexPtr vp;
+	DLFLFaceVertexPtr fvp1 = nullptr;
+	DLFLFaceVertexPtr fvp2 = nullptr;
+	DLFLFaceVertexPtr head1 = nullptr;
+	DLFLFaceVertexPtr head2 = nullptr;
+	DLFLEdgePtr ep = nullptr;
+	DLFLEdgePtr	iep = nullptr;
+    DLFLVertexPtr vp = nullptr;
     Vector3dArray vertex_coords, new_vertex_coords;
     Vector3d p;
     Vector3d v0, v1, v2, n1, n2, v0hat;
@@ -1249,7 +1263,10 @@ namespace DLFL {
     }
 
     // Go through eplist1,fplist1 and eplist2,fplist2 and connect corresponding half-edges
-    DLFLFacePtr fp1, fp2, tfp1, tfp2;
+	DLFLFacePtr fp1 = nullptr;
+	DLFLFacePtr fp2 = nullptr;
+	DLFLFacePtr tfp1 = nullptr;
+	DLFLFacePtr tfp2 = nullptr;
     for (int i=0; i < num_old_edges; ++i) {
       if ( eplist1[i] != NULL && eplist2[i] != NULL ) {
 				// Find the faces adjacent to the edges which are of type FTNew
@@ -1331,7 +1348,8 @@ namespace DLFL {
 
     // Go through list of faces to be connected and make the connections
     int numconn = oldfaces.size();
-    DLFLFacePtr oldface=NULL, newface=NULL;
+	DLFLFacePtr oldface = nullptr;
+	DLFLFacePtr newface = nullptr;
     for (int i=0; i < numconn; ++i) {
       oldface = oldfaces[i]; newface = newfaces[i];
        
@@ -1347,7 +1365,7 @@ namespace DLFL {
     // Go through the obj->num_edges and delete all the old edges
     int count=0;
     DLFLEdgePtrList::iterator el_first, el_last;
-    DLFLEdgePtr eptr = NULL;
+    DLFLEdgePtr eptr = nullptr;
     el_first = obj->beginEdge(); el_last = obj->endEdge();
   
     while ( el_first != el_last ) {
@@ -2002,7 +2020,10 @@ namespace DLFL {
     }
 	
     // Go through eplist1,fplist1 and eplist2,fplist2 and connect corresponding half-edges
-    DLFLFacePtr fp1, fp2, tfp1, tfp2;
+	DLFLFacePtr fp1 = nullptr;
+	DLFLFacePtr fp2 = nullptr;
+	DLFLFacePtr tfp1 = nullptr;
+	DLFLFacePtr tfp2 = nullptr;
     for (int i=0; i < num_old_edges; ++i) {
       if ( eplist1[i] != NULL && eplist2[i] != NULL ) {
 				eplist1[i]->getFacePointers(tfp1,tfp2);

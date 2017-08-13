@@ -564,7 +564,7 @@ namespace DLFL {
 		}
 
 		o << '#' << endl;
-		DLFLMaterialPtr mptr;
+		DLFLMaterialPtr mptr = nullptr;
 		// TODO: Check why ff will be the end of face_list
 		if (ff != fl) {
 			mptr = (*ff)->material();

@@ -993,9 +993,10 @@ void createSponge( DLFLObjectPtr obj, double thickness, double collapse_threshol
 		// After doing that, find edges which do not connect to the points created
 		// by trisection and delete them
 	DLFLVertexPtrList::iterator vfirst, vlast;
-	DLFLVertexPtr vp, ovp;
+	DLFLVertexPtr vp = nullptr;
+	DLFLVertexPtr ovp = nullptr;
 	DLFLFaceVertexPtrArray fvparray;
-	DLFLFaceVertexPtr fvp;
+	DLFLFaceVertexPtr fvp = nullptr;
 	DLFLEdgePtrArray eparray;
 	count = 0;
 	vfirst = obj->beginVertex(); vlast = obj->endVertex();
@@ -1021,7 +1022,10 @@ void createSponge( DLFLObjectPtr obj, double thickness, double collapse_threshol
 
 		// Go through eplist1 and eplist2 and connect corresponding half-edges
 		// The correct half-edge is determined by the type tag which was set previously
-	DLFLFacePtr fp1, fp2, tfp1, tfp2;
+	DLFLFacePtr fp1 = nullptr;
+	DLFLFacePtr fp2 = nullptr;
+	DLFLFacePtr tfp1 = nullptr;
+	DLFLFacePtr tfp2 = nullptr;
 	for (int i=0; i < num_old_edges; ++i) {
 		if ( eplist1[i] != NULL && eplist2[i] != NULL ) {
 	// Find the faces adjacent to the edges which are of type FTNew

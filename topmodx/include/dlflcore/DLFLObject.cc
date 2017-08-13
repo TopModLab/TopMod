@@ -187,10 +187,12 @@ namespace DLFL {
     // vertices and share the same edges, but will have opposite rotation orders.
     // This essentially creates a 2 manifold with 2 faces with no volume.
     int numverts = verts.size();
-    DLFLFacePtr newface1, newface2;
-    DLFLVertexPtr vptr, tempvptr;
+	DLFLFacePtr newface1 = nullptr;
+	DLFLFacePtr newface2 = nullptr;
+	DLFLVertexPtr vptr = nullptr;
+	DLFLVertexPtr tempvptr = nullptr;
     DLFLFaceVertex fv;
-    DLFLFaceVertexPtr fvptr;
+    DLFLFaceVertexPtr fvptr = nullptr;
 
     if ( matl == NULL ) matl = firstMaterial();
   
@@ -440,10 +442,11 @@ namespace DLFL {
   DLFLFaceVertexPtr DLFLObject::findFaceVertex(const uint fvid) {
     // Find a face vertex with the given face vertex id. Return NULL if none exists
     DLFLFacePtrList::iterator first = face_list.begin(), last = face_list.end();
-    DLFLFaceVertexPtr sel,tmp = NULL;
+	DLFLFaceVertexPtr sel = nullptr;
+	DLFLFaceVertexPtr tmp = nullptr;
     while ( first != last ) {
 			tmp = (*first)->findFaceVertexByID(fvid);
-			if( tmp != NULL ) {
+			if( tmp != nullptr ) {
 				sel = tmp; 
 				//break;
 			}

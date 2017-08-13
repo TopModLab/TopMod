@@ -385,8 +385,18 @@ namespace DLFL {
 				vpNew = (*vl_first_old); vp = (*vl_first); ++vl_first; ++num_verts; ++vl_first_old;
 				
 				DLFLFaceVertexPtrList fvpList;
-				DLFLFaceVertexPtr fvp1,fvp2,fvp0, fvp3, fvp4, fvptemp, fvptemp1, fvptemp2;
-				DLFLFacePtr fphole, fp1, fp2, fp;
+				DLFLFaceVertexPtr fvp1 = nullptr;
+				DLFLFaceVertexPtr fvp2 = nullptr;
+				DLFLFaceVertexPtr fvp0 = nullptr;
+				DLFLFaceVertexPtr fvp3 = nullptr;
+				DLFLFaceVertexPtr fvp4 = nullptr;
+				DLFLFaceVertexPtr fvptemp = nullptr;
+				DLFLFaceVertexPtr fvptemp1 = nullptr;
+				DLFLFaceVertexPtr fvptemp2 = nullptr;
+				DLFLFacePtr fphole = nullptr;
+				DLFLFacePtr fp1 = nullptr;
+				DLFLFacePtr fp2 = nullptr;
+				DLFLFacePtr fp = nullptr;
 				DLFLEdgePtr ep1, ep0;
 				Vector3d v0, v1, v2, v3, v4, n1, n2, n3 ,n4, ntemp;
 				DLFLFaceVertexPtrList fvplist;
@@ -550,9 +560,20 @@ namespace DLFL {
 				vpNew = (*vl_first_old); vp = (*vl_first); ++vl_first; ++num_verts; ++vl_first_old;
 
 				DLFLFaceVertexPtrList fvpList;
-				DLFLFaceVertexPtr fvp1,fvp2,fvp0, fvp3, fvp4, fvptemp, fvptemp1, fvptemp2;
-				DLFLFacePtr fphole, fp1, fp2, fp;
-				DLFLEdgePtr ep1, ep0;
+				DLFLFaceVertexPtr fvp1 = nullptr;
+				DLFLFaceVertexPtr fvp2 = nullptr;
+				DLFLFaceVertexPtr fvp0 = nullptr;
+				DLFLFaceVertexPtr fvp3 = nullptr;
+				DLFLFaceVertexPtr fvp4 = nullptr;
+				DLFLFaceVertexPtr fvptemp = nullptr;
+				DLFLFaceVertexPtr fvptemp1 = nullptr;
+				DLFLFaceVertexPtr fvptemp2 = nullptr;
+				DLFLFacePtr fphole = nullptr;
+				DLFLFacePtr fp1 = nullptr;
+				DLFLFacePtr fp2 = nullptr;
+				DLFLFacePtr fp = nullptr;
+				DLFLEdgePtr ep1 = nullptr;
+				DLFLEdgePtr ep0 = nullptr;
 				Vector3d v0, v1, v2, v3, v4, n1, n2, n3 ,n4, ntemp;
 				DLFLFaceVertexPtrList fvplist;
 				fvplist=vp->getFaceVertexList();
@@ -654,10 +675,25 @@ namespace DLFL {
     DLFLFacePtrList::iterator fl_first, fl_last;
     DLFLVertexPtrList::iterator vl_first, vl_last, vl_tempLast;
 
-    DLFLEdgePtr eptr = NULL,eptr_temp1,eptr_temp2, ep_temp;
-    DLFLVertexPtr  vp,newvptr,temp_vptr,VListPtr, vp1, vp2;
-    DLFLFacePtr tmpfptr1, fp1_temp, fp2_temp,tmpfptr2,valOneFace;
-    DLFLFaceVertexPtr tmpfvptr, tmp_ch_fvp, dirFvp1,dirFvp2;
+	DLFLEdgePtr eptr = nullptr;
+	DLFLEdgePtr eptr_temp1 = nullptr;
+	DLFLEdgePtr eptr_temp2 = nullptr;
+	DLFLEdgePtr ep_temp = nullptr;
+	DLFLVertexPtr vp = nullptr;
+	DLFLVertexPtr newvptr = nullptr;
+	DLFLVertexPtr temp_vptr = nullptr;
+	DLFLVertexPtr VListPtr = nullptr;
+	DLFLVertexPtr vp1 = nullptr;
+	DLFLVertexPtr vp2 = nullptr;
+	DLFLFacePtr tmpfptr1 = nullptr;
+	DLFLFacePtr fp1_temp = nullptr;
+	DLFLFacePtr fp2_temp = nullptr;
+	DLFLFacePtr tmpfptr2 = nullptr;
+	DLFLFacePtr valOneFace = nullptr;
+	DLFLFaceVertexPtr tmpfvptr = nullptr;
+	DLFLFaceVertexPtr tmp_ch_fvp = nullptr;
+	DLFLFaceVertexPtr dirFvp1 = nullptr;
+	DLFLFaceVertexPtr dirFvp2 = nullptr;
 
     Vector3d edgeVector, xyz, dir, edgeVec1, edgeVec2, axis,start_point,faceNormal, P0,P1,P2, normal;
     Vector3dArray vertlist, edge_connect_normals,temp_vertlist, temp_chface_vertlist;
@@ -807,7 +843,7 @@ namespace DLFL {
       DLFLConvexHull convexhull;
       DLFLFacePtrArray chfparray;
       DLFLVertexPtrArray vparray, vparrayOrdered;
-      DLFLFacePtr chfp; 
+      DLFLFacePtr chfp = nullptr; 
       Vector3d sfpn, chfpn;
       DLFLFaceVertexPtrArray corners;
       IntArray matched_face_indx;
@@ -965,7 +1001,7 @@ namespace DLFL {
 	  double eLen = 999999;
 	  int eInd, Cindex1, Cindex2;
 	  bool doSimilar;
-	  DLFLEdgePtr eMinPtr;
+	  DLFLEdgePtr eMinPtr = nullptr;
 
 	  eLen = 999999;
 	  for (int i = 0; i < vparrayOrdered.size(); i++) {

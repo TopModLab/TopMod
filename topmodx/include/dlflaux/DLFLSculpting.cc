@@ -573,7 +573,8 @@ namespace DLFL {
 				norms[cutcount] = fp->computeNormal();
 				locs[cutcount] = mid;
 				float dmax = -999;
-				DLFLVertexPtr vp,svp;
+				DLFLVertexPtr vp = nullptr;
+				DLFLVertexPtr svp = nullptr;
 				for(int j=0;j<fverts.size();j++){
 					DLFLVertexPtr vp = fverts.at(j);
 					float d = norms[cutcount]*(vp->getCoords() - mid);
@@ -678,7 +679,8 @@ namespace DLFL {
 					norms[cutcount] = (*fit)->computeNormal();
 					locs[cutcount] = mid;
 					float dmax = -999;
-					DLFLVertexPtr vp,svp;
+					DLFLVertexPtr vp = nullptr;
+					DLFLVertexPtr svp = nullptr;
 					for(int j=0;j<fverts.size();j++){
 						DLFLVertexPtr vp = fverts.at(j);
 						float d = norms[cutcount]*(vp->getCoords() - mid);
