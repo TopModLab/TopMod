@@ -76,9 +76,18 @@ DLFLLocatorPtrArray GLWidget::sel_lptr_array;
 // if (!cx->format().stereo())
 // exit(0); // could not create stereo context
 
-GLWidget::GLWidget(int w, int h, DLFLRendererPtr rp, QColor color, QColor vcolor, DLFLObjectPtr op, const QGLFormat & format, QWidget * parent ) 
-  : 	QGLWidget(format, parent, NULL), /*viewport(w,h,v),*/ object(op), patchObject(NULL), renderer(rp), renderObject(true),
-	mRenderColor(color), mViewportColor(vcolor),/*grid(ZX,20.0,10),*/ showgrid(false), showaxes(false), mUseGPU(false), mAntialiasing(true) { 
+GLWidget::GLWidget(
+	int w, int h,
+	DLFLRendererPtr rp,
+	QColor color, QColor vcolor,
+	DLFLObjectPtr op,
+	const QGLFormat & format,
+	QWidget * parent )
+	: QGLWidget(format, parent, nullptr)
+	, /*viewport(w,h,v),*/ object(op), patchObject(nullptr)
+	, renderer(rp), renderObject(true)
+	, mRenderColor(color), mViewportColor(vcolor)/*,grid(ZX,20.0,10)*/
+	, showgrid(false), showaxes(false), mUseGPU(false), mAntialiasing(true) { 
   mParent = parent;
   // Vector3d neweye = eye - center;
   // double eyedist = norm(neweye);
