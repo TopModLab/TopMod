@@ -347,6 +347,27 @@
     <ClInclude Include="GeneratedFiles\ui_stylesheeteditor.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\NormalRenderer.hh">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PatchRenderer.hh">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ShadedRenderer.hh">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TexturedLitRenderer.hh">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TexturedRenderer.hh">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WireframeRenderer.hh">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LitRenderer.hh">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="application.qrc">

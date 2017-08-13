@@ -263,6 +263,13 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB "-I." "-I.\include" "-I.\include\Graphics" "-I.\include\Light" "-I.\include\vecmat" "-I.\include\dlflcore" "-I.\include\dlflaux" "-I.\include\verse" "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml"</Command>
     </CustomBuild>
+    <ClInclude Include="include\LitRenderer.hh" />
+    <ClInclude Include="include\NormalRenderer.hh" />
+    <ClInclude Include="include\PatchRenderer.hh" />
+    <ClInclude Include="include\ShadedRenderer.hh" />
+    <ClInclude Include="include\TexturedLitRenderer.hh" />
+    <ClInclude Include="include\TexturedRenderer.hh" />
+    <ClInclude Include="include\WireframeRenderer.hh" />
     <ClInclude Include="qcumber.hh" />
     <CustomBuild Include="qshortcutdialog.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
