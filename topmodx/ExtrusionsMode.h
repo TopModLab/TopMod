@@ -37,33 +37,72 @@
 #include <QWidget>
 
 /*!
-	\file ExtrusionsMode.hh
-	\brief Definition of the ExtrusionsMode class
-	
-	\see ExtrusionsMode
+\file ExtrusionsMode.hh
+\brief Definition of the ExtrusionsMode class
+
+\see ExtrusionsMode
 */
 
-#include "MainWindow.hh"
+#include "MainWindow.h"
 
 class MainWindow;
 
-class ExtrusionsMode : public QWidget {
+class ExtrusionsMode : public QWidget
+{
 	Q_OBJECT
 
 public:
-	ExtrusionsMode(QWidget *parent , QShortcutManager *sm, QWidget *actionList);
+	ExtrusionsMode(QWidget *parent, QShortcutManager *sm, QWidget *actionList);
 	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
 	QMenu* getMenu();
 	void retranslateUi();
-	
+
+protected:
+	void setupDooSabinExtrude();
+	void setupCubicalExtrude();
+	void setupDodecahedralExtrude();
+	void setupIcosahedralExtrude();
+	void setupOctahedralExtrude();
+	void setupStellateExtrude();
+	void setupDoubleStellateExtrude();
+	void setupDomeExtrude();
+	QDoubleSpinBox *createDoubleSpinBox(
+		QGridLayout *layout, QLabel *label, QString s,
+		double low, double high, double step, double value, double decimals,
+		int row, int col);
+
+public slots:
+	void setLength(double value);
+	void setLength1(double value);
+	void setLength2(double value);
+	void setLength3(double value);
+	void setAngle(double value);
+	void setLength1Icosa(double value);
+	void setLength2Icosa(double value);
+	void setLength3Icosa(double value);
+	void setAngleIcosa(double value);
+	void setRotation(double value);
+	void setSegments(double value);
+	void setScale(double value);
+
+	void triggerDooSabinExtrude();
+	void triggerCubicalExtrude();
+	void triggerDodecahedralExtrude();
+	void triggerIcosahedralExtrude();
+	void triggerOctahedralExtrude();
+	void triggerStellateExtrude();
+	void triggerDoubleStellateExtrude();
+	void triggerDomeExtrude();
+
+public:
 	QAction *mDooSabinExtrudeAction;
 	QAction *mCubicalExtrudeAction;
 	QAction *mDodecahedralExtrudeAction;
 	QAction *mIcosahedralExtrudeAction;
 	QAction *mOctahedralExtrudeAction;
 	QAction *mStellateExtrudeAction;
-	QAction *mDoubleStellateExtrudeAction;	
-	QAction *mDomeExtrudeAction;	
+	QAction *mDoubleStellateExtrudeAction;
+	QAction *mDomeExtrudeAction;
 
 	QWidget *mDooSabinExtrudeWidget;
 	QWidget *mCubicalExtrudeWidget;
@@ -73,16 +112,16 @@ public:
 	QWidget *mStellateExtrudeWidget;
 	QWidget *mDoubleStellateExtrudeWidget;
 	QWidget *mDomeExtrudeWidget;
-	
+
 	QGridLayout *mDooSabinExtrudeLayout;
 	QGridLayout *mCubicalExtrudeLayout;
 	QGridLayout *mDodecahedralExtrudeLayout;
 	QGridLayout *mIcosahedralExtrudeLayout;
 	QGridLayout *mOctahedralExtrudeLayout;
-	QGridLayout *mStellateExtrudeLayout; 
+	QGridLayout *mStellateExtrudeLayout;
 	QGridLayout *mDoubleStellateExtrudeLayout;
 	QGridLayout *mDomeExtrudeLayout;
-	
+
 	QWidget *mParent;
 	QMenu *mExtrusionMenu;
 
@@ -95,7 +134,7 @@ public:
 	QDoubleSpinBox *dooSabinScaleSpinBox;
 	QLabel *dooSabinSegmentsLabel;
 	QDoubleSpinBox *dooSabinSegmentsSpinBox;
-	
+
 	//cubic extrude
 	QLabel *cubicalLengthLabel;
 	QDoubleSpinBox *cubicalLengthSpinBox;
@@ -105,7 +144,7 @@ public:
 	QDoubleSpinBox *cubicalScaleSpinBox;
 	QLabel *cubicalSegmentsLabel;
 	QDoubleSpinBox *cubicalSegmentsSpinBox;
-	
+
 	//dodecahedral extrude
 	QLabel *dodecahedralLengthLabel;
 	QDoubleSpinBox *dodecahedralLengthSpinBox;
@@ -122,7 +161,7 @@ public:
 	QLabel *dodecahedralSegmentsLabel;
 	QDoubleSpinBox *dodecahedralSegmentsSpinBox;
 	QCheckBox *hexagonalizeCheckBox;
-		
+
 	//icosahedral extrude
 	QLabel *icosahedralLengthLabel;
 	QDoubleSpinBox *icosahedralLengthSpinBox;
@@ -138,8 +177,8 @@ public:
 	QDoubleSpinBox *icosahedralLength3SpinBox;
 	QLabel *icosahedralAngleLabel;
 	QDoubleSpinBox *icosahedralAngleSpinBox;
-	
-	
+
+
 	//octahedral extrude
 	QLabel *octahedralLengthLabel;
 	QDoubleSpinBox *octahedralLengthSpinBox;
@@ -150,17 +189,17 @@ public:
 	QLabel *octahedralSegmentsLabel;
 	QDoubleSpinBox *octahedralSegmentsSpinBox;
 	QCheckBox *meshFlatEdgesCheckBox;
-	
+
 	//stellate extrude
 	QHBoxLayout *stellateLengthLayout;
 	QLabel *stellateLengthLabel;
 	QDoubleSpinBox *stellateLengthSpinBox;
-	
+
 	//double stellate
 	QHBoxLayout *doubleStellateLengthLayout;
 	QLabel *doubleStellateLengthLabel;
 	QDoubleSpinBox *doubleStellateLengthSpinBox;
-	
+
 	//dome extrude
 	QLabel *domeHeightLabel;
 	QLabel *domeRotationLabel;
@@ -168,7 +207,7 @@ public:
 	QDoubleSpinBox *domeHeightSpinBox;
 	QDoubleSpinBox *domeRotationSpinBox;
 	QDoubleSpinBox *domeScaleSpinBox;
-	
+
 	QPushButton *performDooSabinExtrusionButton;
 	QPushButton *performCubicalExtrusionButton;
 	QPushButton *performDodecahedralExtrusionButton;
@@ -177,43 +216,7 @@ public:
 	QPushButton *performStellateExtrusionButton;
 	QPushButton *performDoubleStellateExtrusionButton;
 	QPushButton *domeButton;
-	
-protected:
-	void setupDooSabinExtrude();
-	void setupCubicalExtrude();
-	void setupDodecahedralExtrude();
-	void setupIcosahedralExtrude();
-	void setupOctahedralExtrude();
-	void setupStellateExtrude();
-	void setupDoubleStellateExtrude();
-	void setupDomeExtrude();
-	QDoubleSpinBox *createDoubleSpinBox(QGridLayout *layout, QLabel *label, QString s, double low, double high, double step, double value, double decimals, int row, int col);
-	
-	
-public slots:
 
-	void setLength(double value);
-	void setLength1(double value);
-	void setLength2(double value);
-	void setLength3(double value);
-	void setAngle(double value);
-	void setLength1Icosa(double value);
-	void setLength2Icosa(double value);
-	void setLength3Icosa(double value);
-	void setAngleIcosa(double value);
-	void setRotation(double value);
-	void setSegments(double value);
-	void setScale(double value);
-	
-	void triggerDooSabinExtrude();
-	void triggerCubicalExtrude();
-	void triggerDodecahedralExtrude();
-	void triggerIcosahedralExtrude();
-	void triggerOctahedralExtrude();
-	void triggerStellateExtrude();
-	void triggerDoubleStellateExtrude();	
-	void triggerDomeExtrude();	
-	
 };
 
 #endif

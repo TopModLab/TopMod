@@ -36,146 +36,164 @@
 #include "DLFLFace.hh"
 #include <Graphics/Color.hh>
 
-namespace DLFL {
+namespace DLFL
+{
 
-class DLFLMaterial {
-public :
+class DLFLMaterial
+{
+public:
+	// Default, 1 and 2 arg constructors
+	DLFLMaterial(const char * n, const RGBColor& c = RGBColor(0))
+		: name(nullptr), color(c), faces(), Ka(0.1), Kd(0.3), Ks(0.8)
+	{
+		if (n)
+		{
+			name = new char[strlen(n) + 1]; strcpy(name, n);
+		}
+		else
+		{
+			name = new char[8]; strcpy(name, "default");
+		}
+	}
 
-  char *          name;                     // Name of material
-  RGBColor        color;                    // Material diffuse color
-  DLFLFacePtrList faces;                    // Pointers to faces using this material
-  double          Ka;                       // Ambient coefficient
-  double          Kd;                       // Diffuse coefficient
-  double          Ks;                       // Specular coefficient
+	DLFLMaterial(const char * n, double r, double g, double b)
+		: name(nullptr), color(r, g, b), faces(), Ka(0.1), Kd(0.3), Ks(0.8)
+	{
+		if (n)
+		{
+			name = new char[strlen(n) + 1]; strcpy(name, n);
+		}
+		else
+		{
+			name = new char[8]; strcpy(name, "default");
+		}
+	}
 
-public :
+	DLFLMaterial(const DLFLMaterial& mat)
+		: name(nullptr), color(mat.color), faces(mat.faces), Ka(mat.Ka), Kd(mat.Kd), Ks(mat.Ks)
+	{
+		name = new char[strlen(mat.name) + 1]; strcpy(name, mat.name);
+	}
 
-  // Default, 1 and 2 arg constructors
-  DLFLMaterial(const char * n, const RGBColor& c = RGBColor(0))
-    : name(NULL), color(c), faces(), Ka(0.1), Kd(0.3), Ks(0.8) {
-    if ( n ) {
-      name = new char[strlen(n)+1]; strcpy(name,n);
-    } else {
-      name = new char[8]; strcpy(name,"default");
-    }
-  }
+	~DLFLMaterial()
+	{
+		faces.clear();
+		delete[] name;
+	}
 
-  DLFLMaterial(const char * n, double r, double g, double b)
-    : name(NULL), color(r,g,b), faces(), Ka(0.1), Kd(0.3), Ks(0.8) {
-    if ( n ) {
-      name = new char[strlen(n)+1]; strcpy(name,n);
-    } else {
-      name = new char[8]; strcpy(name,"default");
-    }
-  }
+	DLFLMaterial& operator = (const DLFLMaterial& mat)
+	{
+		delete[] name; name = nullptr;
+		name = new char[strlen(mat.name) + 1]; strcpy(name, mat.name);
+		color = mat.color; faces = mat.faces; Ka = mat.Ka; Kd = mat.Kd; Ks = mat.Ks;
+		return (*this);
+	}
 
-  DLFLMaterial(const DLFLMaterial& mat)
-    : name(NULL), color(mat.color), faces(mat.faces), Ka(mat.Ka), Kd(mat.Kd), Ks(mat.Ks) {
-    name = new char[strlen(mat.name)+1]; strcpy(name,mat.name);
-  }
+	DLFLMaterialPtr copy(void) const
+	{
+		DLFLMaterialPtr mpcopy = new DLFLMaterial(*this);
+		return mpcopy;
+	}
 
-  ~DLFLMaterial() {
-    faces.clear();
-    delete [] name;
-  }
+	//--- Member functions ---//
 
-  DLFLMaterial& operator = (const DLFLMaterial& mat) {
-    delete [] name; name = NULL;
-    name = new char[strlen(mat.name)+1]; strcpy(name,mat.name);
-    color = mat.color; faces = mat.faces; Ka = mat.Ka; Kd = mat.Kd; Ks = mat.Ks;
-    return (*this);
-  }
+	void setColor(const RGBColor& c)
+	{
+		color = c;
+	}
 
-  DLFLMaterialPtr copy(void) const
-  {
-    DLFLMaterialPtr mpcopy = new DLFLMaterial(*this);
-    return mpcopy;
-  }
+	void setColor(double r, double g, double b)
+	{
+		color.set(r, g, b);
+	}
 
-  //--- Member functions ---//
+	void setName(const char * n)
+	{
+		if (n)
+		{
+			delete[] name; name = nullptr;
+			name = new char[strlen(n)]; strcpy(name, n);
+		}
+	}
 
-  void setColor(const RGBColor& c) {
-    color = c;
-  }
+	void addFace(DLFLFacePtr faceptr)
+	{
+		faces.push_back(faceptr);
+	}
 
-  void setColor(double r, double g, double b) {
-    color.set(r,g,b);
-  }
+	void deleteFace(DLFLFacePtr faceptr)
+	{
+		if (faces.size() > 0)
+			faces.remove(faceptr);
+	}
 
-  void setName(const char * n) {
-    if ( n ) {
-      delete [] name; name = NULL;
-      name = new char[strlen(n)]; strcpy(name,n);
-    }
-  }
+	uint numFaces(void) const
+	{
+		return faces.size();
+	}
 
-  void addFace(DLFLFacePtr faceptr) {
-    faces.push_back(faceptr);
-  }
+	// Check if material color is same as given color
+	bool operator == (const RGBColor& c) const
+	{
+		return (color == c);
+	}
 
-  void deleteFace(DLFLFacePtr faceptr) {
-    if( faces.size() > 0 )
-      faces.remove(faceptr);
-  }
+	// Same as above, but function form
+	bool equals(const RGBColor& c) const
+	{
+		return (color == c);
+	}
 
-  uint numFaces(void) const
-  {
-    return faces.size();
-  }
+	// Check if material name is same as given string
+	bool operator == (const char * n) const
+	{
+		if (n && !strcasecmp(name, n)) return true;
+		return false;
+	}
 
-  // Check if material color is same as given color
-  bool operator == (const RGBColor& c) const
-  {
-    return (color == c);
-  }
+	// Same as above but function form
+	bool equals(const char * n) const
+	{
+		if (n && !strcasecmp(name, n)) return true;
+		return false;
+	}
 
-  // Same as above, but function form
-  bool equals(const RGBColor& c) const
-  {
-    return (color == c);
-  }
+	// Compare 2 materials - check both name and color
+	bool operator == (const DLFLMaterial& mat) const
+	{
+		if ((color == mat.color) &&
+			!strcasecmp(name, mat.name)) return true;
+		return false;
+	}
 
-  // Check if material name is same as given string
-  bool operator == (const char * n) const
-  {
-    if ( n && !strcasecmp(name,n) ) return true;
-    return false;
-  }
+	// Same as above but function form
+	bool equals(const DLFLMaterial& mat) const
+	{
+		if ((color == mat.color) &&
+			!strcasecmp(name, mat.name)) return true;
+		return false;
+	}
 
-  // Same as above but function form
-  bool equals(const char * n) const
-  {
-    if ( n && !strcasecmp(name,n) ) return true;
-    return false;
-  }
+	/*friend ostream& operator << (ostream& o, const DLFLMaterial& mat) {
+	o << "Material : " << mat.name << ' ' << mat.color << ", "
+	<< mat.faces.size() << " faces" << endl;
+	DLFLFacePtrList :: const_iterator first, last;
+	first = mat.faces.begin(); last = mat.faces.end();
+	while ( first != last ) {
+	o << *(*first) << endl;
+	++first;
+	}
+	return o;
+	};*/
 
-  // Compare 2 materials - check both name and color
-  bool operator == (const DLFLMaterial& mat) const
-  {
-    if ( (color == mat.color) &&
-	 !strcasecmp(name,mat.name) ) return true;
-    return false;
-  }
+public:
+	char *name;					// Name of material
+	RGBColor color;				// Material diffuse color
+	DLFLFacePtrList faces;		// Pointers to faces using this material
+	double Ka;					// Ambient coefficient
+	double Kd;					// Diffuse coefficient
+	double Ks;					// Specular coefficient
 
-  // Same as above but function form
-  bool equals(const DLFLMaterial& mat) const
-  {
-    if ( (color == mat.color) &&
-	 !strcasecmp(name,mat.name) ) return true;
-    return false;
-  }
-
-  /*friend ostream& operator << (ostream& o, const DLFLMaterial& mat) {
-    o << "Material : " << mat.name << ' ' << mat.color << ", "
-      << mat.faces.size() << " faces" << endl;
-    DLFLFacePtrList :: const_iterator first, last;
-    first = mat.faces.begin(); last = mat.faces.end();
-    while ( first != last ) {
-      o << *(*first) << endl;
-      ++first;
-    }
-    return o;
-    };*/
 };
 
 } // end namespace

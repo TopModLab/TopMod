@@ -40,12 +40,7 @@
 // BaseObject has no member data. It only has protected constructors (to prevent
 // instantiation), virtual destructors and an assignment operator
 
-#ifndef __GNUG__
-#include <bool.h>
-#include <iostream.h>
-#else
 #include <iostream>
-#endif
 
 #include <stdlib.h>
 
@@ -54,44 +49,44 @@ typedef BaseObject * BaseObjectPtr;
 
 class BaseObject
 {
-  protected :
+protected:
 
-        // Default constructor - protected to prevent instantiation
-     BaseObject()
-       {
-            // Nothing to do
-       }
+	// Default constructor - protected to prevent instantiation
+	BaseObject()
+	{
+		// Nothing to do
+	}
 
-        // Copy constructor - protected to prevent instantiation
-     BaseObject(const BaseObject&)
-       {
-            // Nothing to do
-       }
-     
-  public :
+	// Copy constructor - protected to prevent instantiation
+	BaseObject(const BaseObject&)
+	{
+		// Nothing to do
+	}
 
-        // Assignment operator
-     BaseObject& operator = (const BaseObject&)
-       {
-            // Nothing to do
+public:
 
-         return *this;
-       }
+	// Assignment operator
+	BaseObject& operator = (const BaseObject&)
+	{
+		// Nothing to do
 
-        // Destructor
-     virtual ~BaseObject()
-       {
-            // Nothing to do
-       }
+		return *this;
+	}
 
-        // Derived class should give a meaningful implementation
-        // for the following functions.
-        // Classes such as List which use BaseObject pointers
-        // will use these functions, for memory management
-        // These functions may be made pure virtual later
-     
-        // Make a copy of the BaseObject and return a pointer to the new one
-     virtual BaseObjectPtr copy(void) const = 0;
+	// Destructor
+	virtual ~BaseObject()
+	{
+		// Nothing to do
+	}
+
+	// Derived class should give a meaningful implementation
+	// for the following functions.
+	// Classes such as List which use BaseObject pointers
+	// will use these functions, for memory management
+	// These functions may be made pure virtual later
+
+	// Make a copy of the BaseObject and return a pointer to the new one
+	virtual BaseObjectPtr copy(void) const = 0;
 };
 
 // A reference class for use in container classes
@@ -99,71 +94,74 @@ class BaseObject
 
 class BaseObjectReference
 {
-  protected :
+protected:
 
-     BaseObjectPtr referent;                           // What does this object refer to?
-     bool          owner;                              // Does this object owns the referent?
+	BaseObjectPtr referent;                           // What does this object refer to?
+	bool          owner;                              // Does this object owns the referent?
 
-  public :
+public:
 
-        //--- Constructors ---//
+	//--- Constructors ---//
 
-     BaseObjectReference()
-       : referent(NULL), owner(true)
-       {}
+	BaseObjectReference()
+		: referent(nullptr), owner(true)
+	{
+	}
 
-     BaseObjectReference(const BaseObject& obj)
-       : referent(obj.copy()), owner(true)
-       {}
+	BaseObjectReference(const BaseObject& obj)
+		: referent(obj.copy()), owner(true)
+	{
+	}
 
-     BaseObjectReference(BaseObjectPtr obj)
-       : referent(obj), owner(false)
-       {}
+	BaseObjectReference(BaseObjectPtr obj)
+		: referent(obj), owner(false)
+	{
+	}
 
-     BaseObjectReference(const BaseObjectReference& ref)
-       : referent(ref.referent), owner(ref.owner)
-       {
-         if ( owner && ref.referent ) referent = ref.referent->copy();
-       }
+	BaseObjectReference(const BaseObjectReference& ref)
+		: referent(ref.referent), owner(ref.owner)
+	{
+		if (owner && ref.referent) referent = ref.referent->copy();
+	}
 
-        //--- Destructor ---//
+	//--- Destructor ---//
 
-     ~BaseObjectReference()
-       {
-         if ( owner ) delete referent;
-       }
+	~BaseObjectReference()
+	{
+		if (owner) delete referent;
+	}
 
-        //--- Assignment operator ---//
+	//--- Assignment operator ---//
 
-     BaseObjectReference& operator = (const BaseObjectReference& ref)
-       {
-         if ( owner ) delete referent;
-         owner = true;
-         if ( ref.referent ) referent = ref.referent->copy();
-         return (*this);
-       }
+	BaseObjectReference& operator = (const BaseObjectReference& ref)
+	{
+		if (owner) delete referent;
+		owner = true;
+		if (ref.referent) referent = ref.referent->copy();
+		return (*this);
+	}
 
-        //--- Operators ---//
+	//--- Operators ---//
 
-     BaseObjectPtr operator -> () const
-       {
-         return referent;
-       }
+	BaseObjectPtr operator -> () const
+	{
+		return referent;
+	}
 
-     operator BaseObject& () const
-       {
-         return *referent;
-       }
+	operator BaseObject& () const
+	{
+		return *referent;
+	}
 
-     operator BaseObject * () const
-       {
-         return referent;
-       }
+	operator BaseObject * () const
+	{
+		return referent;
+	}
 
-     BaseObject& operator * () const
-       {
-         return *referent;
-       }
+	BaseObject& operator * () const
+	{
+		return *referent;
+	}
 };
 
 #endif // #ifndef _OBJECT_HH_

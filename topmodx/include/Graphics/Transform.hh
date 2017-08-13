@@ -38,53 +38,41 @@
 #include "../vecmat/Matrix4x4.hh"
 #include "../vecmat/Quaternion.hh"
 #include <cmath>
-/*
-#ifdef __APPLE__
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-*/
+
 class Transformation;
-typedef Transformation * TransformationPtr;
+typedef Transformation *TransformationPtr;
 
 class Transformation
 {
-	public :
+public:
+	// Default constructor
+	Transformation() : transform()
+	{
+	}
 
-	Matrix4x4 transform;                              // Combined transformation matrix
+	// Copy constructor
+	Transformation(const Transformation& tr) : transform(tr.transform)
+	{
+	}
 
-	public :
+	// Construct from a matrix
+	Transformation(const Matrix4x4& mat) : transform(mat)
+	{
+	}
 
-				// Default constructor
-	Transformation()
-		: transform()
-		{}
-
-				// Copy constructor
-	Transformation(const Transformation& tr)
-		: transform(tr.transform)
-		{}
-
-				// Construct from a matrix
-	Transformation(const Matrix4x4& mat)
-		: transform(mat)
-		{}
-
-				// Destructor
+	// Destructor
 	~Transformation()
-		{}
+	{
+	}
 
-				// Assignment operator
+	// Assignment operator
 	Transformation& operator = (const Transformation& tr)
 	{
 		transform = tr.transform;
 		return (*this);
 	}
 
-				// Static functions to compute translation, rotation and scaling matrices
+	// Static functions to compute translation, rotation and scaling matrices
 	static Matrix4x4 translation(const Vector3d& t)
 	{
 		Matrix4x4 transmat;
@@ -107,10 +95,10 @@ class Transformation
 	{
 		Matrix4x4 rotmat;
 		double ct = cos(angle), st = sin(angle);
-		rotmat[0].set( 1,  0,  0, 0);
-		rotmat[1].set( 0, ct,-st, 0);
-		rotmat[2].set( 0, st, ct, 0);
-		rotmat[3].set( 0,  0,  0, 1);
+		rotmat[0].set(1, 0, 0, 0);
+		rotmat[1].set(0, ct, -st, 0);
+		rotmat[2].set(0, st, ct, 0);
+		rotmat[3].set(0, 0, 0, 1);
 		return rotmat;
 	}
 
@@ -118,10 +106,10 @@ class Transformation
 	{
 		Matrix4x4 rotmat;
 		double ct = cos(angle), st = sin(angle);
-		rotmat[0].set( ct, 0, st, 0);
-		rotmat[1].set(  0, 1,  0, 0);
+		rotmat[0].set(ct, 0, st, 0);
+		rotmat[1].set(0, 1, 0, 0);
 		rotmat[2].set(-st, 0, ct, 0);
-		rotmat[3].set(  0, 0,  0, 1);
+		rotmat[3].set(0, 0, 0, 1);
 		return rotmat;
 	}
 
@@ -129,10 +117,10 @@ class Transformation
 	{
 		Matrix4x4 rotmat;
 		double ct = cos(angle), st = sin(angle);
-		rotmat[0].set( ct,-st, 0, 0);
-		rotmat[1].set( st, ct, 0, 0);
-		rotmat[2].set(  0,  0, 1, 0);
-		rotmat[3].set(  0,  0, 0, 1);
+		rotmat[0].set(ct, -st, 0, 0);
+		rotmat[1].set(st, ct, 0, 0);
+		rotmat[2].set(0, 0, 1, 0);
+		rotmat[3].set(0, 0, 0, 1);
 		return rotmat;
 	}
 
@@ -154,7 +142,7 @@ class Transformation
 		return scmat;
 	}
 
-				// Compute the matrix equivalent to gluLookAt for given eye, center and upvector
+	// Compute the matrix equivalent to gluLookAt for given eye, center and upvector
 	static Matrix4x4 lookat(const Vector3d& eye, const Vector3d& center, const Vector3d& up)
 	{
 		Matrix4x4 lmat;
@@ -170,9 +158,9 @@ class Transformation
 		return lmat;
 	}
 
-				// Combining two transformations/transformation and matrix
+	// Combining two transformations/transformation and matrix
 
-				// Post-multiply with given transformation/matrix
+	// Post-multiply with given transformation/matrix
 	void operator *= (const Transformation& tr)
 	{
 		transform *= tr.transform;
@@ -183,9 +171,9 @@ class Transformation
 		transform *= mat;
 	}
 
-				// Pre-multiply with given transformation/matrix
-				// The operator chosen is not the most intuitive, but the only one that makes
-				// some kind of sense
+	// Pre-multiply with given transformation/matrix
+	// The operator chosen is not the most intuitive, but the only one that makes
+	// some kind of sense
 	void operator /= (const Transformation& tr)
 	{
 		transform = tr.transform * transform;
@@ -219,97 +207,98 @@ class Transformation
 
 	void invert(void)
 	{
-						// Invert the transformation matrix
+		// Invert the transformation matrix
 		transform.invert();
 	}
-	
+
 	// Apply the transformation matrix to a vector
-	Vector3d applyTo(const Vector3d& vec) {
+	Vector3d applyTo(const Vector3d& vec)
+	{
 		return transform*vec;
 	}
 
 	// Apply transformations - pre-multiply by corresponding transformation matrices
 	void translate(const Vector3d& t)
 	{
-		transform = Transformation :: translation(t) * transform;
+		transform = Transformation::translation(t) * transform;
 	}
 
 	void translate(double tx, double ty, double tz)
 	{
-		transform = Transformation :: translation(tx,ty,tz) * transform;
+		transform = Transformation::translation(tx, ty, tz) * transform;
 	}
 
 	void rotateX(double angle)
 	{
-		transform = Transformation :: rotationX(angle) * transform;
+		transform = Transformation::rotationX(angle) * transform;
 	}
 
 	void rotateY(double angle)
 	{
-		transform = Transformation :: rotationY(angle) * transform;
+		transform = Transformation::rotationY(angle) * transform;
 	}
 
 	void rotateZ(double angle)
 	{
-		transform = Transformation :: rotationZ(angle) * transform;
+		transform = Transformation::rotationZ(angle) * transform;
 	}
 
 	void rotate(const Quaternion& quat)
 	{
-						// Rotate according to the rotation specified by the quaternion
+		// Rotate according to the rotation specified by the quaternion
 		transform = quat.toMatrix4() * transform;
 	}
 
 	void scale(const Vector3d& s)
 	{
-		transform = Transformation :: scaling(s) * transform;
+		transform = Transformation::scaling(s) * transform;
 	}
 
 	void scale(double sx, double sy, double sz)
 	{
-		transform = Transformation :: scaling(sx,sy,sz) * transform;
+		transform = Transformation::scaling(sx, sy, sz) * transform;
 	}
 
-				// Apply transformations - post-multiply
+	// Apply transformations - post-multiply
 	void post_translate(const Vector3d& t)
 	{
-		transform *= Transformation :: translation(t);
+		transform *= Transformation::translation(t);
 	}
 
 	void post_translate(double tx, double ty, double tz)
 	{
-		transform *= Transformation :: translation(tx,ty,tz);
+		transform *= Transformation::translation(tx, ty, tz);
 	}
 
 	void post_rotateX(double angle)
 	{
-		transform *= Transformation :: rotationX(angle);
+		transform *= Transformation::rotationX(angle);
 	}
 
 	void post_rotateY(double angle)
 	{
-		transform *= Transformation :: rotationY(angle);
+		transform *= Transformation::rotationY(angle);
 	}
 
 	void post_rotateZ(double angle)
 	{
-		transform *= Transformation :: rotationZ(angle);
+		transform *= Transformation::rotationZ(angle);
 	}
 
 	void post_rotate(const Quaternion& quat)
 	{
-						// Rotate according to the rotation specified by the quaternion
+		// Rotate according to the rotation specified by the quaternion
 		transform *= quat.toMatrix4();
 	}
 
 	void post_scale(const Vector3d& s)
 	{
-		transform *= Transformation :: scaling(s);
+		transform *= Transformation::scaling(s);
 	}
 
 	void post_scale(double sx, double sy, double sz)
 	{
-		transform *= Transformation :: scaling(sx,sy,sz);
+		transform *= Transformation::scaling(sx, sy, sz);
 	}
 
 	// Apply the transformation in OpenGL. Calls only glMultMatrix
@@ -320,7 +309,8 @@ class Transformation
 		//glMultMatrixd(mat);
 	}
 
-	void fillArrayColumnMajor( double mat[] ) {
+	void fillArrayColumnMajor(double mat[])
+	{
 		transform.fillArrayColumnMajor(mat);
 	}
 
@@ -330,17 +320,21 @@ class Transformation
 		return transform;
 	}
 
-				// Reset the transformation matrix
+	// Reset the transformation matrix
 	void reset(void)
 	{
 		transform.reset();
 	}
 
-				// Set the transformation matrix
+	// Set the transformation matrix
 	void set(const Matrix4x4 mat)
 	{
 		transform = mat;
 	}
+public:
+	// Combined transformation matrix
+	Matrix4x4 transform;
+
 };
 
 #endif /* #ifndef _TRANSFORM_HH_ */

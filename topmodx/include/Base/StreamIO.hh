@@ -34,134 +34,138 @@
 
 // Miscellaneous functions for operating on IO streams in C++
 
-#ifndef __GNUG__
-#include <iostream.h>
-#include <iomanip.h>
-#include <ctype.h>
-#include <bool.h>
-#else
 #include <iostream>
 #include <iomanip>
 #include <ctype.h>
 
 using namespace std;
 
-#endif
-
-
 inline void removeWhiteSpace(istream& i)
 {
-  char c;
+	char c;
 
-  while ( i )
-     {
-       i.get(c);
-       if ( c != ' ' && c != '\t' && c != '\n' )
-          {
-            i.putback(c);
-            break;
-          }
-     }
+	while (i)
+	{
+		i.get(c);
+		if (c != ' ' && c != '\t' && c != '\n')
+		{
+			i.putback(c);
+			break;
+		}
+	}
 }
 
 inline void removeSpaces(istream& i)
 {
-  char c;
+	char c;
 
-  while ( i )
-     {
-       i.get(c);
-       if ( c != ' ' )
-          {
-            i.putback(c);
-            break;
-          }
-     }
+	while (i)
+	{
+		i.get(c);
+		if (c != ' ')
+		{
+			i.putback(c);
+			break;
+		}
+	}
 }
 
 inline void removeSpacesAndTabs(istream& i)
 {
-  char c;
+	char c;
 
-  while ( i )
-     {
-       i.get(c);
-       if ( c != ' ' && c != '\t' )
-          {
-            i.putback(c);
-            break;
-          }
-     }
+	while (i)
+	{
+		i.get(c);
+		if (c != ' ' && c != '\t')
+		{
+			i.putback(c);
+			break;
+		}
+	}
 }
 
 inline bool readTillEOL(istream& i)
 {
-     // Read till newline character occurs or EOF is reached
-     // newline character is also read from the stream
-     // Returns false if EOF is reached before EOL, true otherwise
-  char c;
+	// Read till newline character occurs or EOF is reached
+	// newline character is also read from the stream
+	// Returns false if EOF is reached before EOL, true otherwise
+	char c;
 
-  i.get(c);
-  while ( i && c != '\n' )
-     i.get(c);
-  if ( c == '\n' ) return true;
-  return false;
+	i.get(c);
+	while (i && c != '\n')
+		i.get(c);
+	if (c == '\n') return true;
+	return false;
 }
 
 inline bool readTill(istream& i, char c)
 {
-     // Read till specified character occurs or EOL/EOF is reached
-     // Specified character is left in the stream
-     // If EOF/EOL occurs before c, returns false, true otherwise
-  char ic = i.peek();
-  while ( i && ic != c && ic != '\n' )
-     {
-       i.get(ic); ic = i.peek();
-     }
-  if ( ic == c ) return true;
-  return false;
+	// Read till specified character occurs or EOL/EOF is reached
+	// Specified character is left in the stream
+	// If EOF/EOL occurs before c, returns false, true otherwise
+	char ic = i.peek();
+	while (i && ic != c && ic != '\n')
+	{
+		i.get(ic); ic = i.peek();
+	}
+	if (ic == c) return true;
+	return false;
 }
 
 inline bool readTillNumeric(istream& i)
 {
-     // Read till a numeric digit (0-9) occurs or EOL/EOF is reached
-     // If EOL/EOF is reached before a digit occurs, returns false
-     // and leaves the EOL/EOF character in i. If a digit is reached
-     // returns true and leaves the digit in i
-  char ic = i.peek();
-  while ( i && !isdigit(ic) && ic != '\n' )
-     {
-       i.get(ic); ic = i.peek();
-     }
-  if ( isdigit(ic) ) return true;
-  return false;
+	// Read till a numeric digit (0-9) occurs or EOL/EOF is reached
+	// If EOL/EOF is reached before a digit occurs, returns false
+	// and leaves the EOL/EOF character in i. If a digit is reached
+	// returns true and leaves the digit in i
+	char ic = i.peek();
+	while (i && !isdigit(ic) && ic != '\n')
+	{
+		i.get(ic); ic = i.peek();
+	}
+	if (isdigit(ic)) return true;
+	return false;
 }
 
 inline bool readTillDigit(istream& i)
 {
-     // Read till a digit or plus/minus sign occurs or EOL/EOF is reached
-     // If EOL/EOF is reached before a digit occurs, returns false
-     // and leaves the EOL/EOF character in i. If a digit is reached
-     // returns true and leaves the digit in i
-  char ic = i.peek();
-  while ( i && !isdigit(ic) && ic != '+' && ic != '-' && ic != '\n' )
-     {
-       i.get(ic); ic = i.peek();
-     }
-  if ( isdigit(ic) || ic == '+' || ic == '-' ) return true;
-  return false;
+	// Read till a digit or plus/minus sign occurs or EOL/EOF is reached
+	// If EOL/EOF is reached before a digit occurs, returns false
+	// and leaves the EOL/EOF character in i. If a digit is reached
+	// returns true and leaves the digit in i
+	char ic = i.peek();
+	while (i && !isdigit(ic) && ic != '+' && ic != '-' && ic != '\n')
+	{
+		i.get(ic); ic = i.peek();
+	}
+	if (isdigit(ic) || ic == '+' || ic == '-') return true;
+	return false;
 }
 
 inline bool readTillFloat(istream& i)
 {
-     // Same as previous subroutine, except that '.' is also allowed
-  char ic = i.peek();
-  while ( i && !isdigit(ic) && ic != '+' && ic != '-' && ic != '.' && ic != '\n' )
-     {
-       i.get(ic); ic = i.peek();
-     }
-  if ( isdigit(ic) || ic == '+' || ic == '-' || ic == '.' ) return true;
-  return false;
+	// Same as previous subroutine, except that '.' is also allowed
+	char ic = i.peek();
+	while (i && !isdigit(ic) && ic != '+' && ic != '-' && ic != '.' && ic != '\n')
+	{
+		i.get(ic); ic = i.peek();
+	}
+	if (isdigit(ic) || ic == '+' || ic == '-' || ic == '.') return true;
+	return false;
+}
+
+inline int strcasecmp(const char *a, const char *b)
+{
+	int ca, cb;
+	do
+	{
+		ca = (unsigned char)*a++;
+		cb = (unsigned char)*b++;
+		ca = tolower(toupper(ca));
+		cb = tolower(toupper(cb));
+	} while (ca == cb && ca != '\0');
+	return ca - cb;
 }
 
 #endif // #ifndef _STREAMIO_HH_

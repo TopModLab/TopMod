@@ -14,29 +14,29 @@
 #define _QCUMBER_H_
 
 #ifdef _QCUMBER_BUILD_
-	#if (defined(QT_DLL) || defined(QT_SHARED)) && !defined(QT_PLUGIN)
-		#define QCUMBER_EXPORT Q_DECL_EXPORT
-	#else
-		#define QCUMBER_EXPORT Q_DECL_IMPORT
-	#endif
+#if (defined(QT_DLL) || defined(QT_SHARED)) && !defined(QT_PLUGIN)
+#define QCUMBER_EXPORT Q_DECL_EXPORT
 #else
-		#define QCUMBER_EXPORT 
+#define QCUMBER_EXPORT Q_DECL_IMPORT
+#endif
+#else
+#define QCUMBER_EXPORT
 #endif
 
 #include <QEvent>
 
 namespace QCumber
 {
-	enum Events
-	{
-		FirstEvent = QEvent::User + 100,
-		
-		SystemRequestEvent = FirstEvent,
-		CustomRequestEvent,
-		
-		LastEvent
-	};
-	
+enum Events
+{
+	FirstEvent = QEvent::User + 100,
+
+	SystemRequestEvent = FirstEvent,
+	CustomRequestEvent,
+
+	LastEvent
+};
+
 }
 
 #endif // _QCUMBER_H_

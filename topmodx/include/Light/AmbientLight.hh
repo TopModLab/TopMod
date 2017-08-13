@@ -38,77 +38,77 @@
 #include "Light.hh"
 
 class AmbientLight;
-typedef AmbientLight * AmbientLightPtr;
+typedef AmbientLight *AmbientLightPtr;
 
 class AmbientLight : public Light
 {
-  public :
+public:
+	// Default constructor
+	AmbientLight() : Light()
+	{
+	}
 
-        // Default constructor
-     AmbientLight()
-       : Light()
-       {}
+	// 1 argument constructor - specifies color
+	AmbientLight(const RGBColor& col) : Light(col)
+	{
+	}
 
-        // 1 argument constructor - specifies color
-     AmbientLight(const RGBColor& col)
-       : Light(col)
-       {}
+	// Copy constructur
+	AmbientLight(const AmbientLight& al) : Light(al)
+	{
+	}
 
-        // Copy constructur
-     AmbientLight(const AmbientLight& al)
-       : Light(al)
-       {}
+	// Destructor
+	~AmbientLight()
+	{
+	}
 
-        // Destructor
-     ~AmbientLight()
-       {}
+	// Assignment operator
+	AmbientLight& operator = (const AmbientLight& al)
+	{
+		Light::operator = (al);
+		return (*this);
+	}
 
-        // Assignment operator
-     AmbientLight& operator = (const AmbientLight& al)
-       {
-         Light :: operator = (al);
-         return (*this);
-       }
+	// Make a copy
+	virtual BaseObjectPtr copy(void) const
+	{
+		AmbientLightPtr newal = new AmbientLight(*this);
+		return newal;
+	}
 
-        // Make a copy
-     virtual BaseObjectPtr copy(void) const
-       {
-         AmbientLightPtr newal = new AmbientLight(*this);
-         return newal;
-       }
+	// Type of light
+	virtual LightType type(void) const
+	{
+		return Ambient;
+	}
 
-        // Type of light
-     virtual LightType type(void) const
-       {
-         return Ambient;
-       }
+	// Does this light illuminate given point? AmbientLight always does
+	virtual bool illuminates(const Vector3d&) const
+	{
+		return true;
+	}
 
-        // Does this light illuminate given point? AmbientLight always does
-     virtual bool illuminates(const Vector3d&) const
-       {
-         return true;
-       }
+	// Compute the cosine factor. This is independent point/normal
+	// 0.5 since we want a equal mix of warm and cool colors
+	virtual double cosfactor(const Vector3d&, const Vector3d&) const
+	{
+		return 0.5;
+	}
 
-        // Compute the cosine factor. This is independent point/normal
-        // 0.5 since we want a equal mix of warm and cool colors
-     virtual double cosfactor(const Vector3d&, const Vector3d&) const
-       {
-         return 0.5;
-       }
-     
-        // Illuminate a given point with a given normal using this light and return color
-     virtual RGBColor illuminate(const Vector3d&, const Vector3d&) const
-       {
-         if ( state == false ) return RGBColor(0);
-         return RGBColor((warmcolor.color+coolcolor.color)*(0.5*intensity));
-       }
+	// Illuminate a given point with a given normal using this light and return color
+	virtual RGBColor illuminate(const Vector3d&, const Vector3d&) const
+	{
+		if (state == false) return RGBColor(0);
+		return RGBColor((warmcolor.color + coolcolor.color)*(0.5*intensity));
+	}
 
-        // Same as above but with specular lighting also
-     virtual RGBColor illuminate(const Vector3d&, const Vector3d&, const Vector3d&) const
-       {
-         if ( state == false ) return RGBColor(0);
-         return RGBColor((warmcolor.color+coolcolor.color)*(0.5*intensity));
-       }
+	// Same as above but with specular lighting also
+	virtual RGBColor illuminate(const Vector3d&, const Vector3d&, const Vector3d&) const
+	{
+		if (state == false) return RGBColor(0);
+		return RGBColor((warmcolor.color + coolcolor.color)*(0.5*intensity));
+	}
 };
 
 #endif /* #ifndef _AMBIENT_LIGHT_HH_ */

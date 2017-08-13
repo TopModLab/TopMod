@@ -40,394 +40,403 @@
 
 class Quaternion : public BaseObject
 {
-  protected :
+public:
 
-     Vector3d   v3Vec;                                 // Vector component
-     double     dScalar;                               // Scalar component
+	// Default constructor - create an identity quaternion
+	Quaternion()
+		: BaseObject(), v3Vec(), dScalar(1.0)
+	{
+	}
 
-  public :
+	// Construct from a vector. Scalar is set to 0
+	Quaternion(const Vector3d& vec)
+		: BaseObject(), v3Vec(vec), dScalar(0.0)
+	{
+	}
 
-        // Default constructor - create an identity quaternion
-     Quaternion()
-       : BaseObject(), v3Vec(), dScalar(1.0)
-       {}
+	// Constructor from a vector and a scalar
+	Quaternion(const Vector3d& vec, double scalar)
+		: BaseObject(), v3Vec(vec), dScalar(scalar)
+	{
+	}
 
-        // Construct from a vector. Scalar is set to 0
-     Quaternion(const Vector3d& vec)
-       : BaseObject(), v3Vec(vec), dScalar(0.0)
-       {}
+	// Same as above, but with reverse order
+	Quaternion(double scalar, const Vector3d& vec)
+		: BaseObject(), v3Vec(vec), dScalar(scalar)
+	{
+	}
 
-        // Constructor from a vector and a scalar
-     Quaternion(const Vector3d& vec, double scalar)
-       : BaseObject(), v3Vec(vec), dScalar(scalar)
-       {}
+	// Construct from 3/4 individual values. Scalar is set to 0 by default
+	Quaternion(double x, double y, double z, double scalar = 0.0)
+		: BaseObject(), v3Vec(x, y, z), dScalar(scalar)
+	{
+	}
 
-        // Same as above, but with reverse order
-     Quaternion(double scalar, const Vector3d& vec)
-       : BaseObject(), v3Vec(vec), dScalar(scalar)
-       {}
+	// Copy constructor
+	Quaternion(const Quaternion& quat)
+		: BaseObject(quat), v3Vec(quat.v3Vec), dScalar(quat.dScalar)
+	{
+	}
 
-        // Construct from 3/4 individual values. Scalar is set to 0 by default
-     Quaternion(double x, double y, double z, double scalar=0.0)
-       : BaseObject(), v3Vec(x,y,z), dScalar(scalar)
-       {}
+	// Destructor
+	~Quaternion()
+	{
+	}
 
-        // Copy constructor
-     Quaternion(const Quaternion& quat)
-       : BaseObject(quat), v3Vec(quat.v3Vec), dScalar(quat.dScalar)
-       {}
+	// Assignment operator
+	Quaternion& operator = (const Quaternion& quat)
+	{
+		BaseObject :: operator = (quat);
+		v3Vec = quat.v3Vec; dScalar = quat.dScalar;
+		return (*this);
+	}
 
-        // Destructor
-     ~Quaternion()
-       {}
+	// Assignment from Vector3d
+	Quaternion& operator = (const Vector3d& vec)
+	{
+		v3Vec = vec; dScalar = 0.0;
+		return (*this);
+	}
 
-        // Assignment operator
-     Quaternion& operator = (const Quaternion& quat)
-       {
-         BaseObject :: operator = (quat);
-         v3Vec = quat.v3Vec; dScalar = quat.dScalar;
-         return (*this);
-       }
+	// Set the vector and scalar parts of the quaternion
+	void set(const Vector3d& vec, double scalar = 0.0)
+	{
+		v3Vec = vec; dScalar = scalar;
+	}
 
-        // Assignment from Vector3d
-     Quaternion& operator = (const Vector3d& vec)
-       {
-         v3Vec = vec; dScalar = 0.0;
-         return (*this);
-       }
-     
-        // Set the vector and scalar parts of the quaternion
-     void set(const Vector3d& vec, double scalar=0.0)
-       {
-         v3Vec = vec; dScalar = scalar;
-       }
+	void set(double x, double y, double z, double scalar = 0.0)
+	{
+		v3Vec.set(x, y, z); dScalar = scalar;
+	}
 
-     void set(double x, double y, double z, double scalar=0.0)
-       {
-         v3Vec.set(x,y,z); dScalar = scalar;
-       }
+	// Reset the quaternion to its default state - identity
+	void reset(void)
+	{
+		v3Vec.reset(); dScalar = 1.0;
+	}
 
-        // Reset the quaternion to its default state - identity
-     void reset(void)
-       {
-         v3Vec.reset(); dScalar = 1.0;
-       }
-     
-        // Make a copy of the object
-        // implement BaseObject class pure virtual function
-     virtual BaseObject * copy(void) const
-       {
-         Quaternion * quat = new Quaternion(*this);
-         return quat;
-       }
+	// Make a copy of the object
+	// implement BaseObject class pure virtual function
+	virtual BaseObject * copy(void) const
+	{
+		Quaternion * quat = new Quaternion(*this);
+		return quat;
+	}
 
-        // Access the elements of the quaternion. Indices start at 0 and the
-        // scalar is at index=3
-     double& operator [] (uint index)
-       {
-         if ( index == 3 ) return dScalar;
-         return v3Vec[index];
-       }
-     
-     double operator [] (uint index) const
-       {
-         if ( index == 3 ) return dScalar;
-         return v3Vec[index];
-       }
+	// Access the elements of the quaternion. Indices start at 0 and the
+	// scalar is at index=3
+	double& operator [] (uint index)
+	{
+		if (index == 3) return dScalar;
+		return v3Vec[index];
+	}
 
-        // Class member functions which return the identity quaternion
-        // Identity quaternion is with the all vector components=0 and scalar=1
-     static Quaternion identity(void)
-       {
-         Quaternion ident;  // Default constructor creates an identity quaternion
-         return ident;
-       }
-     
-     static Quaternion I(void)
-       {
-         Quaternion ident;  // Default constructor creates an identity quaternion
-         return ident;
-       }
+	double operator [] (uint index) const
+	{
+		if (index == 3) return dScalar;
+		return v3Vec[index];
+	}
 
-        //--- Arithmetic assignment operators ---//
+	// Class member functions which return the identity quaternion
+	// Identity quaternion is with the all vector components=0 and scalar=1
+	static Quaternion identity(void)
+	{
+		Quaternion ident;  // Default constructor creates an identity quaternion
+		return ident;
+	}
 
-     void operator += (const Quaternion& quat)
-       {
-         dScalar += quat.dScalar;
-         v3Vec += quat.v3Vec;
-       }
-     
-     void operator -= (const Quaternion& quat)
-       {
-         dScalar -= quat.dScalar;
-         v3Vec -= quat.v3Vec;
-       }
-     
-     void operator *= (const Quaternion& quat)
-       {
-         Vector3d v;
-         double s;
+	static Quaternion I(void)
+	{
+		Quaternion ident;  // Default constructor creates an identity quaternion
+		return ident;
+	}
 
-         s = dScalar*quat.dScalar - v3Vec*quat.v3Vec;
-         v = quat.v3Vec*dScalar + v3Vec*quat.dScalar + v3Vec % quat.v3Vec;
+	//--- Arithmetic assignment operators ---//
 
-         dScalar = s; v3Vec = v;
-       }
+	void operator += (const Quaternion& quat)
+	{
+		dScalar += quat.dScalar;
+		v3Vec += quat.v3Vec;
+	}
 
-     void operator *= (const Vector3d& vec)
-       {
-         Quaternion v2q(vec);
+	void operator -= (const Quaternion& quat)
+	{
+		dScalar -= quat.dScalar;
+		v3Vec -= quat.v3Vec;
+	}
 
-         this->operator *= (v2q);
-       }
-     
-     void operator *= (double scalar)
-       {
-         dScalar *= scalar;
-         v3Vec *= scalar;
-       }
-     
-     void operator /= (double scalar)
-       {
-         dScalar /= scalar;
-         v3Vec /= scalar;
-       }
+	void operator *= (const Quaternion& quat)
+	{
+		Vector3d v;
+		double s;
 
-        // Arithmetic operators and various other functions, implemented as friend functions
+		s = dScalar*quat.dScalar - v3Vec*quat.v3Vec;
+		v = quat.v3Vec*dScalar + v3Vec*quat.dScalar + v3Vec % quat.v3Vec;
 
-        // Square of the length of a quaternion
-     friend double lengthsqr(const Quaternion& quat)
-       {
-         double lensqr = quat.v3Vec*quat.v3Vec + quat.dScalar*quat.dScalar;
-         return lensqr;
-       }
-     
-        // Length of a quaternion
-     friend double length(const Quaternion& quat)
-       {
-         return sqrt(lengthsqr(quat));
-       }
+		dScalar = s; v3Vec = v;
+	}
 
-        // For consistency define norm and normsqr also
-     friend double normsqr(const Quaternion& quat)
-       {
-         return lengthsqr(quat);
-       }
+	void operator *= (const Vector3d& vec)
+	{
+		Quaternion v2q(vec);
 
-     friend double norm(const Quaternion& quat)
-       {
-         return length(quat);
-       }
+		this->operator *= (v2q);
+	}
 
-        // Compute conjugate of this quaternion which -v,s
-     friend Quaternion conjugate(const Quaternion& quat)
-       {
-         return Quaternion(-quat.v3Vec,quat.dScalar);
-       }
-     
-        // Normalize a quaternion - make it a unit quaternion
-        // Returns the original length of the quaternion
-        // If length is 0, nothing is changed
-     friend double normalize(Quaternion& quat)
-       {
-         double len = length(quat);
-         if ( isNonZero(len) == true )
-            quat /= len;
-         return len;
-       }
+	void operator *= (double scalar)
+	{
+		dScalar *= scalar;
+		v3Vec *= scalar;
+	}
 
-     friend Quaternion normalized(const Quaternion& quat)
-       {
-         Quaternion unitq = quat;
-         normalize(unitq);
-         return unitq;
-       }
+	void operator /= (double scalar)
+	{
+		dScalar /= scalar;
+		v3Vec /= scalar;
+	}
 
-        // Arithmetic operators
+	// Arithmetic operators and various other functions, implemented as friend functions
 
-        // Negation
-     friend Quaternion operator - (const Quaternion& q)
-       {
-         Quaternion neg(-q.dScalar, -q.v3Vec);
-         return neg;
-       }
-     
-     friend Quaternion operator + (const Quaternion& q1, const Quaternion& q2)
-       {
-         Quaternion sum = q1;
-         sum += q2;
-         return sum;
-       }
+	// Square of the length of a quaternion
+	friend double lengthsqr(const Quaternion& quat)
+	{
+		double lensqr = quat.v3Vec*quat.v3Vec + quat.dScalar*quat.dScalar;
+		return lensqr;
+	}
 
-     friend Quaternion operator - (const Quaternion& q1, const Quaternion& q2)
-       {
-         Quaternion diff = q1;
-         diff -= q2;
-         return diff;
-       }
+	// Length of a quaternion
+	friend double length(const Quaternion& quat)
+	{
+		return sqrt(lengthsqr(quat));
+	}
 
-        // Post-multiplication by a scalar
-     friend Quaternion operator * (const Quaternion& q, double scalar)
-       {
-         Quaternion prod = q;
-         prod *= scalar;
-         return prod;
-       }
+	// For consistency define norm and normsqr also
+	friend double normsqr(const Quaternion& quat)
+	{
+		return lengthsqr(quat);
+	}
 
-        // Pre-multiplication by a scalara
-     friend Quaternion operator * (double scalar, const Quaternion& q)
-       {
-         Quaternion prod = q;
-         prod *= scalar;
-         return prod;
-       }
+	friend double norm(const Quaternion& quat)
+	{
+		return length(quat);
+	}
 
-        // Division by a scalar
-     friend Quaternion operator / (const Quaternion& q, double scalar)
-       {
-         Quaternion quot = q;
-         quot /= scalar;
-         return quot;
-       }
+	// Compute conjugate of this quaternion which -v,s
+	friend Quaternion conjugate(const Quaternion& quat)
+	{
+		return Quaternion(-quat.v3Vec, quat.dScalar);
+	}
 
-        // Multiplication of 2 quaternions
-     friend Quaternion operator * (const Quaternion& q1, const Quaternion& q2)
-       {
-         Quaternion prod = q1;
-         prod *= q2;
-         return prod;
-       }
+	// Normalize a quaternion - make it a unit quaternion
+	// Returns the original length of the quaternion
+	// If length is 0, nothing is changed
+	friend double normalize(Quaternion& quat)
+	{
+		double len = length(quat);
+		if (isNonZero(len) == true)
+			quat /= len;
+		return len;
+	}
 
-        // Post-multiplication of a quaternion by a Vector3d
-        // Same as above, except Vector3d is promoted to quaternion with scalar value 0.0
-     friend Quaternion operator * (const Quaternion& q, const Vector3d& v)
-       {
-         Quaternion prod = q;
-         prod *= v;
-         return prod;
-       }
-     
-        // Pre-multiplication of a quaternion by a Vector3d
-     friend Quaternion operator * (const Vector3d& v, const Quaternion& q)
-       {
-         Quaternion prod(v);
-         prod *= q;
-         return prod;
-       }
+	friend Quaternion normalized(const Quaternion& quat)
+	{
+		Quaternion unitq = quat;
+		normalize(unitq);
+		return unitq;
+	}
 
-        // Convert to a rotation matrix. Assumes that quaternion has been normalized
-     Matrix3_3 toMatrix(void) const
-       {
-         Matrix3_3 mat;
-         double x,y,z,s;
+	// Arithmetic operators
 
-         v3Vec.get(x,y,z); s = dScalar;
+	// Negation
+	friend Quaternion operator - (const Quaternion& q)
+	{
+		Quaternion neg(-q.dScalar, -q.v3Vec);
+		return neg;
+	}
 
-         mat[0].set( 1.0 - 2.0*(y*y + z*z), 2.0*(x*y - s*z), 2.0*(x*z + s*y) );
-         mat[1].set( 2.0*(x*y + s*z), 1.0 - 2.0*(x*x + z*z), 2.0*(y*z - s*x) );
-         mat[2].set( 2.0*(x*z - s*y), 2.0*(y*z + s*x), 1.0 - 2.0*(x*x + y*y) );
+	friend Quaternion operator + (const Quaternion& q1, const Quaternion& q2)
+	{
+		Quaternion sum = q1;
+		sum += q2;
+		return sum;
+	}
 
-         return mat;
-       }
+	friend Quaternion operator - (const Quaternion& q1, const Quaternion& q2)
+	{
+		Quaternion diff = q1;
+		diff -= q2;
+		return diff;
+	}
 
-     Matrix4_4 toMatrix4(void) const
-       {
-         Matrix4_4 mat4 = toMatrix();
-         mat4[3][3] = 1.0;
-         return mat4;
-       }
+	// Post-multiplication by a scalar
+	friend Quaternion operator * (const Quaternion& q, double scalar)
+	{
+		Quaternion prod = q;
+		prod *= scalar;
+		return prod;
+	}
 
-     void toMatrix(double array[16]) const
-       {
-            // Similar to toMatrix4, but fills a given array of 16 elements with the
-            // rotation matrix corresponding to this quaternion in column major form
-         Matrix4_4 mat4 = toMatrix4();
-         mat4.fillArrayColumnMajor(array);
-       }
-     
-     friend Matrix3_3 toMatrix(const Quaternion& quat)
-       {
-         return quat.toMatrix();
-       }
+	// Pre-multiplication by a scalara
+	friend Quaternion operator * (double scalar, const Quaternion& q)
+	{
+		Quaternion prod = q;
+		prod *= scalar;
+		return prod;
+	}
 
-     friend Matrix4_4 toMatrix4(const Quaternion& quat)
-       {
-         return quat.toMatrix4();
-       }
-     
-        //--- Conversion to and from axis and angle ---//
-        //--- All angles are specified in radians ---//
+	// Division by a scalar
+	friend Quaternion operator / (const Quaternion& q, double scalar)
+	{
+		Quaternion quot = q;
+		quot /= scalar;
+		return quot;
+	}
 
-        // Get the angle of rotation. Returns value between 0 and PI
-     double getAngle(void) const
-       {
-         return 2.0 * acos(dScalar);
-       }
-     
-        // Get the angle of rotation. Returns value between 0 and PI
-        // Computes angle after normalizing the quaternion
-     friend double getAngle(const Quaternion& quat)
-       {
-            // Make the quaternion a unit quaternion first
-         Quaternion nq = normalized(quat);
+	// Multiplication of 2 quaternions
+	friend Quaternion operator * (const Quaternion& q1, const Quaternion& q2)
+	{
+		Quaternion prod = q1;
+		prod *= q2;
+		return prod;
+	}
 
-         return nq.getAngle();
-       }
-     
-        // Get the axis of rotation. Returns unit axis
-     friend Vector3d getAxis(const Quaternion& quat)
-       {
-            // Make the quaternion a unit quaternion first
-         Quaternion nq = normalized(quat);
-         
-         Vector3d axis = normalized(nq.v3Vec);
-         return axis;
-       }
-     
-        // Get the axis and angle.
-     void getAxisAndAngle(Vector3d& axis, double& theta) const
-       {
-         Quaternion nq = normalized(*this);
+	// Post-multiplication of a quaternion by a Vector3d
+	// Same as above, except Vector3d is promoted to quaternion with scalar value 0.0
+	friend Quaternion operator * (const Quaternion& q, const Vector3d& v)
+	{
+		Quaternion prod = q;
+		prod *= v;
+		return prod;
+	}
 
-         theta = 2.0 * acos(nq.dScalar);
-         axis = normalized(nq.v3Vec);
-       }
+	// Pre-multiplication of a quaternion by a Vector3d
+	friend Quaternion operator * (const Vector3d& v, const Quaternion& q)
+	{
+		Quaternion prod(v);
+		prod *= q;
+		return prod;
+	}
 
-        // Set the axis and angle.
-     void setAxisAndAngle(const Vector3d& axis, double theta)
-       {
-         dScalar = cos(theta/2.0);
-         v3Vec = normalized(axis);
-         v3Vec *= sin(theta/2.0);
-       }
+	// Convert to a rotation matrix. Assumes that quaternion has been normalized
+	Matrix3_3 toMatrix(void) const
+	{
+		Matrix3_3 mat;
+		double x, y, z, s;
 
-        // Change the angle to a new value. Use same axis as before
-     void setAngle(double theta)
-       {
-         dScalar = cos(theta/2.0);
-         normalize(v3Vec);
-         v3Vec *= sin(theta/2.0);
-       }
+		v3Vec.get(x, y, z); s = dScalar;
 
-        // Scale the angle by the given scale factor
-     void scaleAngle(double scale_factor)
-       {
-         setAngle(getAngle()*scale_factor);
-       }
-     
-        //--- Insertion and extraction operators ---//
-     friend ostream& operator << (ostream& o, const Quaternion& quat)
-       {
-         o << "{ " << quat.v3Vec << "," << quat.dScalar << " }";
-         return o;
-       }
+		mat[0].set(1.0 - 2.0*(y*y + z*z), 2.0*(x*y - s*z), 2.0*(x*z + s*y));
+		mat[1].set(2.0*(x*y + s*z), 1.0 - 2.0*(x*x + z*z), 2.0*(y*z - s*x));
+		mat[2].set(2.0*(x*z - s*y), 2.0*(y*z + s*x), 1.0 - 2.0*(x*x + y*y));
 
-     friend istream& operator >> (istream& i, Quaternion& quat)
-       {
-         char c;
-         i >> c >> quat.v3Vec >> c >> quat.dScalar >> c;
-         return i;
-       }
+		return mat;
+	}
+
+	Matrix4_4 toMatrix4(void) const
+	{
+		Matrix4_4 mat4 = toMatrix();
+		mat4[3][3] = 1.0;
+		return mat4;
+	}
+
+	void toMatrix(double array[16]) const
+	{
+		// Similar to toMatrix4, but fills a given array of 16 elements with the
+		// rotation matrix corresponding to this quaternion in column major form
+		Matrix4_4 mat4 = toMatrix4();
+		mat4.fillArrayColumnMajor(array);
+	}
+
+	friend Matrix3_3 toMatrix(const Quaternion& quat)
+	{
+		return quat.toMatrix();
+	}
+
+	friend Matrix4_4 toMatrix4(const Quaternion& quat)
+	{
+		return quat.toMatrix4();
+	}
+
+	//--- Conversion to and from axis and angle ---//
+	//--- All angles are specified in radians ---//
+
+	// Get the angle of rotation. Returns value between 0 and PI
+	double getAngle(void) const
+	{
+		return 2.0 * acos(dScalar);
+	}
+
+	// Get the angle of rotation. Returns value between 0 and PI
+	// Computes angle after normalizing the quaternion
+	friend double getAngle(const Quaternion& quat)
+	{
+		// Make the quaternion a unit quaternion first
+		Quaternion nq = normalized(quat);
+
+		return nq.getAngle();
+	}
+
+	// Get the axis of rotation. Returns unit axis
+	friend Vector3d getAxis(const Quaternion& quat)
+	{
+		// Make the quaternion a unit quaternion first
+		Quaternion nq = normalized(quat);
+
+		Vector3d axis = normalized(nq.v3Vec);
+		return axis;
+	}
+
+	// Get the axis and angle.
+	void getAxisAndAngle(Vector3d& axis, double& theta) const
+	{
+		Quaternion nq = normalized(*this);
+
+		theta = 2.0 * acos(nq.dScalar);
+		axis = normalized(nq.v3Vec);
+	}
+
+	// Set the axis and angle.
+	void setAxisAndAngle(const Vector3d& axis, double theta)
+	{
+		dScalar = cos(theta / 2.0);
+		v3Vec = normalized(axis);
+		v3Vec *= sin(theta / 2.0);
+	}
+
+	// Change the angle to a new value. Use same axis as before
+	void setAngle(double theta)
+	{
+		dScalar = cos(theta / 2.0);
+		normalize(v3Vec);
+		v3Vec *= sin(theta / 2.0);
+	}
+
+	// Scale the angle by the given scale factor
+	void scaleAngle(double scale_factor)
+	{
+		setAngle(getAngle()*scale_factor);
+	}
+
+	//--- Insertion and extraction operators ---//
+	friend ostream& operator << (ostream& o, const Quaternion& quat)
+	{
+		o << "{ " << quat.v3Vec << "," << quat.dScalar << " }";
+		return o;
+	}
+
+	friend istream& operator >> (istream& i, Quaternion& quat)
+	{
+		char c;
+		i >> c >> quat.v3Vec >> c >> quat.dScalar >> c;
+		return i;
+	}
+
+protected:
+	// Vector component
+	Vector3d v3Vec;
+	// Scalar component
+	double dScalar;
+
 };
 
 #endif /* #ifndef _QUATERNION_HH_ */

@@ -38,49 +38,60 @@
 #include "../DLFLRenderer.hh"
 
 class ShadedRenderer;
-typedef ShadedRenderer * ShadedRendererPtr;
+typedef ShadedRenderer *ShadedRendererPtr;
 
-class ShadedRenderer : public DLFLRenderer {
+class ShadedRenderer : public DLFLRenderer
+{
 
-public :
-  /* Default constructor */
-  ShadedRenderer() : DLFLRenderer() { }
+public:
+	/* Default constructor */
+	ShadedRenderer() : DLFLRenderer() {}
 
-  ShadedRenderer(QColor wc, double wt, QColor sc, double st, QColor vc, double vt)
-    : DLFLRenderer(wc, wt, sc, st, vc, vt) { }
-	
-  /* Copy constructor */
-  ShadedRenderer(const ShadedRenderer& nr)
-    : DLFLRenderer(nr) { }
+	ShadedRenderer(
+		QColor wc, double wt,
+		QColor sc, double st,
+		QColor vc, double vt)
+		: DLFLRenderer(wc, wt, sc, st, vc, vt)
+	{
+	}
 
-  /* Assignment operator */
-  ShadedRenderer& operator = (const ShadedRenderer& nr)	{
-    DLFLRenderer::operator = (nr);
-    return (*this);
-  }
+	/* Copy constructor */
+	ShadedRenderer(const ShadedRenderer& nr)
+		: DLFLRenderer(nr)
+	{
+	}
 
-  /* Destructor */
-  virtual ~ShadedRenderer() {}
+	/* Assignment operator */
+	ShadedRenderer& operator = (const ShadedRenderer& nr)
+	{
+		DLFLRenderer::operator = (nr);
+		return (*this);
+	}
 
-  /* Implement render function */
-  virtual int render(DLFLObjectPtr object) {
-    glEnable(GL_CULL_FACE);
-    setCulling();
-    glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-    gr->render( object );
-    //object->render();
-    drawOverlays(object);
-    glDisable(GL_CULL_FACE);
-    return 0;
-  }
+	/* Destructor */
+	virtual ~ShadedRenderer() {}
 
-  virtual void setState( ) { 
-    gr->useLighting = false;
-		gr->useColorable = false; 
-    gr->useMaterial = true;
-    gr->useTexture = false;
-    gr->useOutline = false;
-  }
+	/* Implement render function */
+	virtual int render(DLFLObjectPtr object)
+	{
+		glEnable(GL_CULL_FACE);
+		setCulling();
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		gr->render(object);
+		//object->render();
+		drawOverlays(object);
+		glDisable(GL_CULL_FACE);
+		return 0;
+	}
+
+	virtual void setState()
+	{
+		gr->useLighting = false;
+		gr->useColorable = false;
+		gr->useMaterial = true;
+		gr->useTexture = false;
+		gr->useOutline = false;
+	}
 
 };
 

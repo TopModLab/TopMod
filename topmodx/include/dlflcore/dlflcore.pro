@@ -41,6 +41,6 @@ SOURCES += \
 	DLFLFace.cc \
 	DLFLFaceVertex.cc \
 	DLFLFile.cc \
-        DLFLFileAlt.cc \
+	DLFLFileAlt.cc \
 	DLFLObject.cc \
 	DLFLVertex.cc

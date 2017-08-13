@@ -40,60 +40,69 @@
 class ColorableRenderer;
 typedef ColorableRenderer * ColorableRendererPtr;
 
-class ColorableRenderer : public DLFLRenderer {
+class ColorableRenderer : public DLFLRenderer
+{
 
-public :
-  /* Default constructor */
-  ColorableRenderer() : DLFLRenderer() { }
+public:
+	/* Default constructor */
+	ColorableRenderer() : DLFLRenderer() {}
 
-  ColorableRenderer(QColor wc, double wt, QColor sc, double st, QColor vc, double vt)
-    {}//: DLFLRenderer(wc, wt, sc, st, vc, vt) { }
-	  
-  /* Copy constructor */
-  ColorableRenderer(const ColorableRenderer& nr)
-    : DLFLRenderer(nr) { }
+	ColorableRenderer(QColor wc, double wt, QColor sc, double st, QColor vc, double vt)
+	{
+	}//: DLFLRenderer(wc, wt, sc, st, vc, vt) { }
 
-  /* Assignment operator */
-  ColorableRenderer& operator = (const ColorableRenderer& nr)	{
-    DLFLRenderer::operator = (nr);
-    return (*this);
-  }
+	 /* Copy constructor */
+	ColorableRenderer(const ColorableRenderer& nr)
+		: DLFLRenderer(nr)
+	{
+	}
 
-  /* Destructor */
-  virtual ~ColorableRenderer() {}
+	/* Assignment operator */
+	ColorableRenderer& operator = (const ColorableRenderer& nr)
+	{
+		DLFLRenderer::operator = (nr);
+		return (*this);
+	}
 
-  /* Implement render function */
-  virtual int render(DLFLObjectPtr object) {
-	
-   	glEnable(GL_CULL_FACE);
-    setCulling();
-    glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+	/* Destructor */
+	virtual ~ColorableRenderer() {}
+
+	/* Implement render function */
+	virtual int render(DLFLObjectPtr object)
+	{
+
+		glEnable(GL_CULL_FACE);
+		setCulling();
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		glEnable(GL_BLEND);																			// Enable Blending
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);			// Type Of Blending To Use
 
-		if (DLFLRenderer::antialiasing){
-	    glEnable( GL_LINE_SMOOTH );
+		if (DLFLRenderer::sAntialiasing)
+		{
+			glEnable(GL_LINE_SMOOTH);
 			glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);									// Set Line Antialiasing
 		}
-		else {
-	    glDisable( GL_LINE_SMOOTH );
+		else
+		{
+			glDisable(GL_LINE_SMOOTH);
 		}
-    //object->renderFaces();
-    gr->render( object );
-    drawOverlays( object );
-    glDisable(GL_CULL_FACE);
-    return 0;
+		//object->renderFaces();
+		gr->render(object);
+		drawOverlays(object);
+		glDisable(GL_CULL_FACE);
+		return 0;
 
-  }
+	}
 
-  virtual void setState( ) { 
-    gr->useLighting = false;
+	virtual void setState()
+	{
+		gr->useLighting = false;
 		gr->useColorable = true;
-    gr->useMaterial = false;
-    gr->useTexture = false;
-    gr->useOutline = false;
-  }
+		gr->useMaterial = false;
+		gr->useTexture = false;
+		gr->useOutline = false;
+	}
 
 };
 

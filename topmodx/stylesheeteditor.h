@@ -26,33 +26,30 @@
 * ***** END GPL LICENSE BLOCK *****
 */
 
-#ifndef _TOPMOD_H
-#define _TOPMOD_H
+#ifndef STYLESHEETEDITOR_H
+#define STYLESHEETEDITOR_H
 
-#include <QApplication>
-#include <QEvent>
-// 
-#include "MainWindow.hh"
+#include <QDialog>
 
-class TopMod : public QApplication {
+#include "ui_stylesheeteditor.h"
+
+class StyleSheetEditor : public QWidget
+{
 	Q_OBJECT
 
-private:
-		MainWindow *mainWindow;
-		// void loadFile(const QString &fileName);
-
 public:
-	TopMod( int & argc, char ** argv, bool GUIenabled );
-	~TopMod();
-	MainWindow *getMainWindow();
-	
-	// #ifdef __APPLE__
-	// bool macEventFilter( EventHandlerCallRef caller, EventRef event );
-	// #endif
-	
-protected:
-	bool event(QEvent *event);
-	
+	StyleSheetEditor(QWidget *parent = 0);
+
+	private slots:
+	void on_styleCombo_activated(const QString &styleName);
+	void on_styleSheetCombo_activated(const QString &styleSheetName);
+	void on_styleTextEdit_textChanged();
+	void on_applyButton_clicked();
+
+private:
+	void loadStyleSheet(const QString &sheetName);
+
+	Ui::StyleSheetEditor ui;
 };
 
 #endif

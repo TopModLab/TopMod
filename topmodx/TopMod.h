@@ -26,40 +26,37 @@
 * ***** END GPL LICENSE BLOCK *****
 */
 
-#ifndef _PYTHON_HIGHLIGHTER_H_
-#define _PYTHON_HIGHLIGHTER_H_
+#ifndef _TOPMOD_H
+#define _TOPMOD_H
 
-#include <QSyntaxHighlighter>
-#include <QTextEdit>
-#include <QVector>
+#include <QApplication>
+#include <QEvent>
+//
+#include "MainWindow.h"
 
-class PythonHighlighter : public QSyntaxHighlighter {
- Q_OBJECT
+class TopMod : public QApplication
+{
+	Q_OBJECT
 
- public :
-  PythonHighlighter(QTextEdit *parent = 0);
-  ~PythonHighlighter();
+public:
+	TopMod(int & argc, char ** argv, bool GUIenabled);
+	~TopMod();
 
- protected :
-  void highlightBlock(const QString &text);
-  void compilePattern( );
+	MainWindow *getMainWindow();
 
-private :
-  QVector<QRegExp> pythonPatterns;
-  QRegExp stringPattern;
-  QRegExp commentPattern;
-  QRegExp functionPattern;
-  QRegExp tuplePattern;
-  QRegExp promptPattern;
+//#ifdef __APPLE__
+	// bool macEventFilter( EventHandlerCallRef caller, EventRef event );
+//#endif
 
-  QStringList pythonKeywords;
+protected:
+	bool event(QEvent *event);
 
-  QTextCharFormat pythonFormat;
-  QTextCharFormat commentFormat;
-  QTextCharFormat stringFormat;
-  QTextCharFormat functionFormat;
-  QTextCharFormat tupleFormat;
-  QTextCharFormat promptFormat;
+private:
+	// void loadFile(const QString &fileName);
+
+private:
+	MainWindow *mainWindow;
+
 };
 
-#endif // _PYTHON_HIGHLIGHTER_H_
+#endif

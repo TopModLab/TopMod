@@ -41,11 +41,11 @@
 /*!
 	\file BasicsMode.hh
 	\brief Definition of the BasicsMode class
-	
+
 	\see BasicsMode
 */
 
-#include "MainWindow.hh"
+#include "MainWindow.h"
 
 class MainWindow;
 
@@ -57,37 +57,37 @@ class QLabel;
 
 class BasicsMode : public QWidget {
 	Q_OBJECT
-	
+
 public:
 	BasicsMode(QWidget *parent, QShortcutManager *sm, QWidget *actionList);
 	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
 	QMenu* getMenu();
 	void retranslateUi();
-	
+
 	QAction *mInsertEdgeAction;
-	QAction *mDeleteEdgeAction;	
-	QAction *mCollapseEdgeAction;	
-	QAction *mSubdivideEdgeAction;	
-	QAction *mConnectEdgesAction;	
+	QAction *mDeleteEdgeAction;
+	QAction *mCollapseEdgeAction;
+	QAction *mSubdivideEdgeAction;
+	QAction *mConnectEdgesAction;
 	QAction *mSpliceCornersAction;
 	QAction *mTransformsAction;
 	QAction *mSelectionOptionsAction;
-	
+
 	QWidget *mInsertEdgeWidget;
 	QWidget *mDeleteEdgeWidget;
 	QWidget *mCollapseEdgeWidget;
-	QWidget *mSubdivideEdgeWidget; 
+	QWidget *mSubdivideEdgeWidget;
 	QWidget *mConnectEdgesWidget;
-	QWidget *mSpliceCornersWidget; 
-	QWidget *mTransformsWidget;	
-	QWidget *mSelectionOptionsWidget;	
-	
+	QWidget *mSpliceCornersWidget;
+	QWidget *mTransformsWidget;
+	QWidget *mSelectionOptionsWidget;
+
 	QGridLayout *mInsertEdgeLayout;
 	QGridLayout *mDeleteEdgeLayout;
 	QGridLayout *mCollapseEdgeLayout;
-	QGridLayout *mSubdivideEdgeLayout; 
+	QGridLayout *mSubdivideEdgeLayout;
 	QGridLayout *mConnectEdgesLayout;
-	QGridLayout *mSpliceCornersLayout; 
+	QGridLayout *mSpliceCornersLayout;
 	QGridLayout *mTransformsLayout;
 	QGridLayout *mSelectionOptionsLayout;
 
@@ -101,32 +101,32 @@ protected:
 	void setupTransforms();
 	void setupSelectionOptions();
 	QDoubleSpinBox *createDoubleSpinBox(QGridLayout *layout, QLabel *label, QString s, double low, double high, double step, double value, double decimals, int row, int col);
-	
+
 
 private:
-	
+
 	QWidget *mParent;
-	QMenu *mBasicsMenu;	
-	
+	QMenu *mBasicsMenu;
+
 	QLabel *numSubdivsLabel;
 	QDoubleSpinBox *numSubdivsSpinBox;
 	QLabel *transformLabel;
 	QLabel *xPosLabel;
 	QLabel *yPosLabel;
-	QLabel *zPosLabel;	
+	QLabel *zPosLabel;
 	QLabel *scaleLabel;
 	QLabel *xScaleLabel;
 	QLabel *yScaleLabel;
 	QLabel *zScaleLabel;
-	
+
 	QLabel *noOptionsInsertEdgeLabel;
 	QCheckBox *cleanupDeleteEdgeCheckBox;
 	QLabel *noOptionsCollapseEdgeLabel;
 	QLabel *noOptionsConnectEdgesLabel;
 	QLabel *noOptionsSpliceCornersLabel;
-	
+
 	QPushButton *freezeTransformsButton;
-	
+
 	//transform spinboxes
 	QDoubleSpinBox *xScaleSpinBox;
 	QDoubleSpinBox *yScaleSpinBox;
@@ -134,16 +134,16 @@ private:
 	QDoubleSpinBox *xPosSpinBox;
 	QDoubleSpinBox *yPosSpinBox;
 	QDoubleSpinBox *zPosSpinBox;
-	
+
 	QLabel *mFaceAreaToleranceLabel;
 	QDoubleSpinBox *mFaceAreaToleranceSpinBox;
 
 	QLabel *mSplit2ValenceVertexOffsetLabel;
 	QDoubleSpinBox *mSplit2ValenceVertexOffsetSpinBox;
-	
+
 public slots:
 	void freezeTransforms();
-		
+
 	void triggerInsertEdge();
 	void triggerDeleteEdge();
 	void triggerCollapseEdge();

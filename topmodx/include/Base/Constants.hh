@@ -23,6 +23,14 @@
 #define DBL_INF 1.0e100
 #endif
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846   // pi
+#endif
+
+#ifndef M_SQRT1_2
+#define M_SQRT1_2  0.707106781186547524401  // 1/sqrt(2)
+#endif
+
 #endif // #ifndef _CONSTANTS_HH_
 
 // $Log: Constants.hh,v $

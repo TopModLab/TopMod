@@ -26,29 +26,41 @@
 * ***** END GPL LICENSE BLOCK *****
 */
 
-#ifndef STYLESHEETEDITOR_H
-#define STYLESHEETEDITOR_H
+#ifndef _PYTHON_HIGHLIGHTER_H_
+#define _PYTHON_HIGHLIGHTER_H_
 
-#include <QDialog>
+#include <QSyntaxHighlighter>
+#include <QTextEdit>
+#include <QVector>
 
-#include "ui_stylesheeteditor.h"
-
-class StyleSheetEditor : public QWidget {
-Q_OBJECT
+class PythonHighlighter : public QSyntaxHighlighter
+{
+	Q_OBJECT
 
 public:
-  StyleSheetEditor(QWidget *parent = 0);
+	PythonHighlighter(QTextEdit *parent = 0);
+	~PythonHighlighter();
 
-private slots:
-  void on_styleCombo_activated(const QString &styleName);
-  void on_styleSheetCombo_activated(const QString &styleSheetName);
-  void on_styleTextEdit_textChanged();
-  void on_applyButton_clicked();
-  
+protected:
+	void highlightBlock(const QString &text);
+	void compilePattern();
+
 private:
-  void loadStyleSheet(const QString &sheetName);
+	QVector<QRegExp> pythonPatterns;
+	QRegExp stringPattern;
+	QRegExp commentPattern;
+	QRegExp functionPattern;
+	QRegExp tuplePattern;
+	QRegExp promptPattern;
 
-  Ui::StyleSheetEditor ui;
+	QStringList pythonKeywords;
+
+	QTextCharFormat pythonFormat;
+	QTextCharFormat commentFormat;
+	QTextCharFormat stringFormat;
+	QTextCharFormat functionFormat;
+	QTextCharFormat tupleFormat;
+	QTextCharFormat promptFormat;
 };
 
-#endif
+#endif // _PYTHON_HIGHLIGHTER_H_

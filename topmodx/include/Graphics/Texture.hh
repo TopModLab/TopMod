@@ -43,6 +43,9 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #else
+#ifdef _WIN32 || _WIN64
+#include <windows.h>
+#endif
 #include <GL/gl.h>
 #include <GL/glu.h>
 #endif
@@ -52,128 +55,133 @@ typedef Texture * TexturePtr;
 
 class Texture
 {
-  protected :
+public:
+	Texture() : pixels(nullptr), dims()
+	{
+	}
 
-     unsigned char * pixels;                           // Pixels in image
-     iflSize         dims;                             // Image dimensions
+	Texture(const char * imagefile)
+		: pixels(nullptr), dims()
+	{
+		readTexture(imagefile);
+	}
 
-        // Read the image from the given file
-     void readTexture(const char * imagefile)
-       {
-         if ( imagefile )
-            {
-              iflStatus status;
-              iflFile * image = iflFile::open(imagefile,O_RDONLY, &status);
-              if ( status == iflOKAY )
-                 {
-                   image->getDimensions(dims);
-                   pixels = new unsigned char [dims.y*dims.x*dims.c];
+	Texture(const Texture& tex)
+		: pixels(nullptr), dims(tex.dims)
+	{
+		if (tex.pixels)
+		{
+			pixels = new unsigned char[dims.y*dims.x*dims.c];
+			unsigned char * source, *dest;
+			source = tex.pixels; dest = pixels;
+			for (int i = 0; i < dims.y*dims.x*dims.c; ++i)
+			{
+				*dest = *source;
+				dest++; source++;
+			}
+		}
+	}
 
-                   iflConfig config(iflUChar,iflInterleaved,0,NULL,0,iflLowerLeftOrigin);
-                   status = image->getTile(0,0,0,dims.x,dims.y,1,pixels,&config);
-                   if ( status != iflOKAY )
-                      {
-                           // reset to initial state
-                        delete [] pixels; pixels = NULL;
-                        dims = iflSize();
-                      }
-                   image->close();
-                 }
-            }
-       }
+	~Texture()
+	{
+		delete[] pixels;
+	}
 
-  public :
+	void operator = (const Texture& tex)
+	{
+		reset(); dims = tex.dims;
+		if (tex.pixels)
+		{
+			pixels = new unsigned char[dims.y*dims.x*dims.c];
+			unsigned char * source, *dest;
+			source = tex.pixels; dest = pixels;
+			for (int i = 0; i < dims.y*dims.x*dims.c; ++i)
+			{
+				*dest = *source;
+				dest++; source++;
+			}
+		}
+	}
 
-     Texture()
-       : pixels(NULL), dims()
-       {}
+	// Delete existing texture stuff
+	void reset(void)
+	{
+		delete[] pixels; pixels = nullptr;
+		dims = iflSize();
+	}
 
-     Texture(const char * imagefile)
-       : pixels(NULL), dims()
-       {
-         readTexture(imagefile);
-       }
+	void readFrom(const char * imagefile)             // Read texture from a given file
+	{
+		reset();
+		readTexture(imagefile);
+	}
 
-     Texture(const Texture& tex)
-       : pixels(NULL), dims(tex.dims)
-       {
-         if (tex.pixels)
-            {
-              pixels = new unsigned char [dims.y*dims.x*dims.c];
-              unsigned char * source, * dest;
-              source = tex.pixels; dest = pixels;
-              for (int i=0; i < dims.y*dims.x*dims.c; ++i)
-                 {
-                   *dest = *source;
-                   dest++; source++;
-                 }
-            }
-       }
+	bool isValid(void) const                          // Does this object have image data?
+	{
+		return (pixels != nullptr);
+	}
 
-     ~Texture()
-       {
-         delete [] pixels;
-       }
+	friend void glTexture(const Texture& tex)
+	{
+		// Do a glTexImage2D using the given texture
+		if (tex.pixels)
+		{
+			if (tex.dims.c == 1)
+				glTexImage2D(
+					GL_TEXTURE_2D, 0, GL_LUMINANCE, tex.dims.x, tex.dims.y, 0,
+					GL_LUMINANCE, GL_UNSIGNED_BYTE, tex.pixels);
+			else if (tex.dims.c == 2)
+				glTexImage2D(
+					GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, tex.dims.x, tex.dims.y, 0,
+					GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, tex.pixels);
+			else if (tex.dims.c == 3)
+				glTexImage2D(
+					GL_TEXTURE_2D, 0, GL_RGB, tex.dims.x, tex.dims.y, 0,
+					GL_RGB, GL_UNSIGNED_BYTE, tex.pixels);
+			else if (tex.dims.c == 4)
+				glTexImage2D(
+					GL_TEXTURE_2D, 0, GL_RGBA, tex.dims.x, tex.dims.y, 0,
+					GL_RGBA, GL_UNSIGNED_BYTE, tex.pixels);
+		}
+	}
 
-     void operator = (const Texture& tex)
-       {
-         reset(); dims = tex.dims;
-         if (tex.pixels)
-            {
-              pixels = new unsigned char [dims.y*dims.x*dims.c];
-              unsigned char * source, * dest;
-              source = tex.pixels; dest = pixels;
-              for (int i=0; i < dims.y*dims.x*dims.c; ++i)
-                 {
-                   *dest = *source;
-                   dest++; source++;
-                 }
-            }
-       }
+	friend void glTexImage2D(const Texture& tex)       // For consistency in notation
+	{
+		glTexture(tex);
+	}
 
-        // Delete existing texture stuff
-     void reset(void)
-       {
-         delete [] pixels; pixels = NULL;
-         dims = iflSize();
-       }
+protected:
+	// Read the image from the given file
+	void readTexture(const char * imagefile);
 
-     void readFrom(const char * imagefile)             // Read texture from a given file
-       {
-         reset();
-         readTexture(imagefile);
-       }
-
-     bool isValid(void) const                          // Does this object have image data?
-       {
-         return ( pixels != NULL );
-       }
-
-     friend void glTexture(const Texture& tex)
-       {
-            // Do a glTexImage2D using the given texture
-         if ( tex.pixels )
-            {
-              if ( tex.dims.c == 1 )
-                 glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, tex.dims.x, tex.dims.y, 0,
-                              GL_LUMINANCE, GL_UNSIGNED_BYTE, tex.pixels);
-              else if ( tex.dims.c == 2 )
-                 glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, tex.dims.x, tex.dims.y, 0,
-                              GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, tex.pixels);
-              else if ( tex.dims.c == 3 )
-                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex.dims.x, tex.dims.y, 0,
-                              GL_RGB, GL_UNSIGNED_BYTE, tex.pixels);
-              else if ( tex.dims.c == 4 )
-                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex.dims.x, tex.dims.y, 0,
-                              GL_RGBA, GL_UNSIGNED_BYTE, tex.pixels);
-            }
-       }
-
-     friend void glTexImage2D(const Texture& tex)       // For consistency in notation
-       {
-         glTexture(tex);
-       }
+protected:
+	unsigned char *pixels;			// Pixels in image
+	iflSize dims;					// Image dimensions
 };
+
+void Texture::readTexture(const char * imagefile)
+{
+	if (imagefile)
+	{
+		iflStatus status;
+		iflFile * image = iflFile::open(imagefile, O_RDONLY, &status);
+		if (status == iflOKAY)
+		{
+			image->getDimensions(dims);
+			pixels = new unsigned char[dims.y*dims.x*dims.c];
+
+			iflConfig config(iflUChar, iflInterleaved, 0, nullptr, 0, iflLowerLeftOrigin);
+			status = image->getTile(0, 0, 0, dims.x, dims.y, 1, pixels, &config);
+			if (status != iflOKAY)
+			{
+				// reset to initial state
+				delete[] pixels; pixels = nullptr;
+				dims = iflSize();
+			}
+			image->close();
+		}
+	}
+}
 
 #endif /* #ifndef _TEXTURE_HH_ */
 

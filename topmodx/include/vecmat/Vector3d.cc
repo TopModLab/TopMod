@@ -39,14 +39,14 @@
 #include "Vector2d.hh"
 #include "Vector4d.hh"
 
-void Vector3d :: copyFrom(const Vector2d& vec)
+void Vector3d::copyFrom(const Vector2d& vec)
 {
-  elem[0] = vec[0]; elem[1] = vec[1]; elem[2] = 0.0;
+	elem[0] = vec[0]; elem[1] = vec[1]; elem[2] = 0.0;
 }
 
-void Vector3d :: copyFrom(const Vector4d& vec)
+void Vector3d::copyFrom(const Vector4d& vec)
 {
-  elem[0] = vec[0]; elem[1] = vec[1]; elem[2] = vec[2];
+	elem[0] = vec[0]; elem[1] = vec[1]; elem[2] = vec[2];
 }
 
 /*
