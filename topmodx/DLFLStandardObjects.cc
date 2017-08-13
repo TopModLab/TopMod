@@ -60,7 +60,7 @@ static mstriplet msfilled[20] = {
   
 
    // Create a unit cube centered at origin
-DLFLObjectPtr DLFLObject :: makeUnitCube(void)
+DLFLObjectPtr DLFLObject::makeUnitCube(void)
 {
   DLFLObjectPtr unitcube = new DLFLObject();
   Vector3dArray verts;
@@ -95,7 +95,7 @@ DLFLObjectPtr DLFLObject :: makeUnitCube(void)
 }
 
    // Create a cube of specified edge length centered at origin
-DLFLObjectPtr DLFLObject :: makeUnitCube(double edgelength)
+DLFLObjectPtr DLFLObject::makeUnitCube(double edgelength)
 {
   DLFLObjectPtr unitcube = new DLFLObject();
   Vector3dArray verts;
@@ -130,7 +130,7 @@ DLFLObjectPtr DLFLObject :: makeUnitCube(double edgelength)
 }
 
    // Create a tetrahedron with edge length = 1 and centered at origin
-DLFLObjectPtr DLFLObject :: makeUnitTetrahedron(void)
+DLFLObjectPtr DLFLObject::makeUnitTetrahedron(void)
 {
   DLFLObjectPtr unittetra = new DLFLObject();
   Vector3dArray verts;
@@ -162,7 +162,7 @@ DLFLObjectPtr DLFLObject :: makeUnitTetrahedron(void)
 }
 
    // Create a level 1 Menger sponge using unit cubes
-DLFLObjectPtr DLFLObject :: makeMengerSponge(void)
+DLFLObjectPtr DLFLObject::makeMengerSponge(void)
 {
   DLFLObjectPtr mengersponge = new DLFLObject();
 
@@ -193,7 +193,7 @@ DLFLObjectPtr DLFLObject :: makeMengerSponge(void)
 }
 
    // Create a level 1 Menger sponge using cubes of specified length
-DLFLObjectPtr DLFLObject :: makeMengerSponge(double edgelength)
+DLFLObjectPtr DLFLObject::makeMengerSponge(double edgelength)
 {
   DLFLObjectPtr mengersponge = new DLFLObject();
 
@@ -227,7 +227,7 @@ DLFLObjectPtr DLFLObject :: makeMengerSponge(double edgelength)
 
    // Create a specified level Menger sponge using cubes of unit length
    // This is a recursive function
-DLFLObjectPtr DLFLObject :: makeMengerSponge(int level)
+DLFLObjectPtr DLFLObject::makeMengerSponge(int level)
 {
   if ( level < 1 ) return NULL;
   if ( level == 1 ) return makeMengerSponge();
@@ -265,7 +265,7 @@ DLFLObjectPtr DLFLObject :: makeMengerSponge(int level)
 }
 
    // Create a Sierpinski tetrahedron with smallest edge length = 1 and centered at origin
-DLFLObjectPtr DLFLObject :: makeSierpinskiTetrahedron(int level)
+DLFLObjectPtr DLFLObject::makeSierpinskiTetrahedron(int level)
 {
   if ( level < 0 ) return NULL;
   if ( level == 0 ) return makeUnitTetrahedron();

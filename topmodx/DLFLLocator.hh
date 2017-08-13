@@ -80,7 +80,7 @@ class DLFLLocator
         // Assign a unique ID for this instance
      void assignID(void)
        {
-         uID = DLFLLocator :: newID();
+         uID = DLFLLocator::newID();
        }
 
   public :

@@ -103,7 +103,7 @@ class Light : public BaseObject
         // Assignment operator
      Light& operator = (const Light& light)
        {
-         BaseObject :: operator = (light);
+         BaseObject::operator = (light);
          position = light.position;
          warmcolor = light.warmcolor; coolcolor = light.coolcolor;
          intensity = light.intensity; state = light.state;

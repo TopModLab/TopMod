@@ -223,27 +223,27 @@ class Transformation
 	// Apply transformations - pre-multiply by corresponding transformation matrices
 	void translate(const Vector3d& t)
 	{
-		transform = Transformation :: translation(t) * transform;
+		transform = Transformation::translation(t) * transform;
 	}
 
 	void translate(double tx, double ty, double tz)
 	{
-		transform = Transformation :: translation(tx,ty,tz) * transform;
+		transform = Transformation::translation(tx,ty,tz) * transform;
 	}
 
 	void rotateX(double angle)
 	{
-		transform = Transformation :: rotationX(angle) * transform;
+		transform = Transformation::rotationX(angle) * transform;
 	}
 
 	void rotateY(double angle)
 	{
-		transform = Transformation :: rotationY(angle) * transform;
+		transform = Transformation::rotationY(angle) * transform;
 	}
 
 	void rotateZ(double angle)
 	{
-		transform = Transformation :: rotationZ(angle) * transform;
+		transform = Transformation::rotationZ(angle) * transform;
 	}
 
 	void rotate(const Quaternion& quat)
@@ -254,38 +254,38 @@ class Transformation
 
 	void scale(const Vector3d& s)
 	{
-		transform = Transformation :: scaling(s) * transform;
+		transform = Transformation::scaling(s) * transform;
 	}
 
 	void scale(double sx, double sy, double sz)
 	{
-		transform = Transformation :: scaling(sx,sy,sz) * transform;
+		transform = Transformation::scaling(sx,sy,sz) * transform;
 	}
 
 				// Apply transformations - post-multiply
 	void post_translate(const Vector3d& t)
 	{
-		transform *= Transformation :: translation(t);
+		transform *= Transformation::translation(t);
 	}
 
 	void post_translate(double tx, double ty, double tz)
 	{
-		transform *= Transformation :: translation(tx,ty,tz);
+		transform *= Transformation::translation(tx,ty,tz);
 	}
 
 	void post_rotateX(double angle)
 	{
-		transform *= Transformation :: rotationX(angle);
+		transform *= Transformation::rotationX(angle);
 	}
 
 	void post_rotateY(double angle)
 	{
-		transform *= Transformation :: rotationY(angle);
+		transform *= Transformation::rotationY(angle);
 	}
 
 	void post_rotateZ(double angle)
 	{
-		transform *= Transformation :: rotationZ(angle);
+		transform *= Transformation::rotationZ(angle);
 	}
 
 	void post_rotate(const Quaternion& quat)
@@ -296,12 +296,12 @@ class Transformation
 
 	void post_scale(const Vector3d& s)
 	{
-		transform *= Transformation :: scaling(s);
+		transform *= Transformation::scaling(s);
 	}
 
 	void post_scale(double sx, double sy, double sz)
 	{
-		transform *= Transformation :: scaling(sx,sy,sz);
+		transform *= Transformation::scaling(sx,sy,sz);
 	}
 
 	// Apply the transformation in OpenGL. Calls only glMultMatrix

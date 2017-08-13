@@ -76,7 +76,7 @@ class SpotLight : public Light
         // Assignment operator
      SpotLight& operator = (const SpotLight& sl)
        {
-         Light :: operator = (sl); radius = sl.radius; cutoff = sl.cutoff;
+         Light::operator = (sl); radius = sl.radius; cutoff = sl.cutoff;
          return (*this);
        }
 

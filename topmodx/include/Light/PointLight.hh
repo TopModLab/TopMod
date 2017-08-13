@@ -66,7 +66,7 @@ class PointLight : public Light
         // Assignment operator
      PointLight& operator = (const PointLight& pl)
        {
-         Light :: operator = (pl);
+         Light::operator = (pl);
          return (*this);
        }
 

@@ -113,7 +113,7 @@ class RGBColor : public BaseObject
         // Assignment operator
      RGBColor& operator = (const RGBColor& col)
        {
-         BaseObject :: operator = (col);
+         BaseObject::operator = (col);
          color = col.color;
          return (*this);
        }

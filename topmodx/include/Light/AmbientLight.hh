@@ -66,7 +66,7 @@ class AmbientLight : public Light
         // Assignment operator
      AmbientLight& operator = (const AmbientLight& al)
        {
-         Light :: operator = (al);
+         Light::operator = (al);
          return (*this);
        }
 

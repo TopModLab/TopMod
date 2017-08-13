@@ -63,7 +63,7 @@ void MainWindow::load_texture() {
 	}
 }
 
-// void DLFLAppWindow :: load_texture(Fl_Menu_*, void*)
+// void DLFLAppWindow::load_texture(Fl_Menu_*, void*)
 // {
 //   char * texfile = fl_file_chooser("Load Texture","*.{jpg,png}","");
 //   if ( texfile != NULL )
@@ -72,7 +72,7 @@ void MainWindow::load_texture() {
 //        texturedlit->setTexture(texfile);
 //        mainWindowPtr->getActive()->valid(0); // To ensure new texture is loaded into OpenGL
 //        mainWindowPtr->redraw();
-//        Fl :: focus(mainWindowPtr);
+//        Fl::focus(mainWindowPtr);
 //      }
 // }
 
