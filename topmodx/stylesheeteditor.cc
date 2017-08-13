@@ -33,7 +33,7 @@
 
 #include <QtGui>
 #include <QStyleFactory>
-#include "stylesheeteditor.hh"
+#include "stylesheeteditor.h"
 
  StyleSheetEditor::StyleSheetEditor(QWidget *parent)
      : QWidget(parent)

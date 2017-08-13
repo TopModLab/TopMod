@@ -31,7 +31,7 @@
  *
  */
 
-#include "GLWidget.hh"
+#include "GLWidget.h"
 #include "DLFLSelection.hh"
 
 /*!

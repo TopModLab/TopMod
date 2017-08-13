@@ -41,7 +41,7 @@
 	\see HighgenusMode
 */
 
-#include "MainWindow.hh"
+#include "MainWindow.h"
 class MainWindow;
 
 class HighgenusMode : public QWidget {

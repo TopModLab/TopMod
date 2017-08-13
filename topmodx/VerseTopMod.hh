@@ -39,7 +39,7 @@
 #include <QProcess>
 #include <QTimer>
 
-#include "MainWindow.hh"
+#include "MainWindow.h"
 #include "TKE_verse.h"
 #include "TIF_verse.h"
 #include "TKE_global.h"

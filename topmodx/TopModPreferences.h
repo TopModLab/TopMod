@@ -46,9 +46,9 @@
 #include <QDoubleSpinBox>
 #include <QLabel>
 
-#include "MainWindow.hh"
-#include "qshortcutdialog.hh"
-#include "qshortcutmanager.hh"
+#include "MainWindow.h"
+#include "qshortcutdialog.h"
+#include "qshortcutmanager.h"
 
 class QShortcutDialog;
 class QShortcutManager;

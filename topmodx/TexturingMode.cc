@@ -37,7 +37,7 @@
  ****************************************************************************/
 #include <QtGui>
 
-#include "TexturingMode.hh"
+#include "TexturingMode.h"
 
 /*!
 	\ingroup gui

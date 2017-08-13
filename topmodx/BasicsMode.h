@@ -45,7 +45,7 @@
 	\see BasicsMode
 */
 
-#include "MainWindow.hh"
+#include "MainWindow.h"
 
 class MainWindow;
 

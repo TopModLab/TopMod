@@ -33,7 +33,7 @@
 
 #include <QtGui>
 
-#include "RemeshingMode.hh"
+#include "RemeshingMode.h"
 
 /*!
 	\ingroup gui

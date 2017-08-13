@@ -34,9 +34,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "stylesheeteditor.hh"
-#include "qshortcutmanager.hh"
-#include "qshortcutdialog.hh"
+#include "stylesheeteditor.h"
+#include "qshortcutmanager.h"
+#include "qshortcutdialog.h"
 #include "DLFLScriptEditor.hh"
 #include "VerseTopMod.hh"
 
@@ -50,16 +50,16 @@
 #include <QStyleOptionMenuItem>
 //#include <QAssistantClient>
 #include <QPen>
-#include "GLWidget.hh"
+#include "GLWidget.h"
 
 //the six modes are now separated into separate classes
-#include "BasicsMode.hh"
-#include "ExtrusionsMode.hh"
-#include "RemeshingMode.hh"
-#include "HighgenusMode.hh"
-#include "ConicalMode.hh"
-#include "TexturingMode.hh"
-#include "ExperimentalModes.hh"
+#include "BasicsMode.h"
+#include "ExtrusionsMode.h"
+#include "RemeshingMode.h"
+#include "HighgenusMode.h"
+#include "ConicalMode.h"
+#include "TexturingMode.h"
+#include "ExperimentalModes.h"
 
 #ifdef QCOMPLETER
 //new command auto completion interface - like quicksilver inside topmod
@@ -77,7 +77,7 @@
 #include "include/TexturedLitRenderer.hh"
 #include "include/PatchRenderer.hh"
 #include "include/ColorableRenderer.hh"
-#include "TopModPreferences.hh"
+#include "TopModPreferences.h"
 
 // DLFLAux Library includes
 #include <DLFLCast.hh>

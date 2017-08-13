@@ -45,7 +45,7 @@ void erase_dlp(DLFLLocatorPtr lp);  // brianb
 // void makeLocatorUnique(DLFLLocatorPtr dlp);
 
 #include <DLFLVertex.hh>
-// #include "GLWidget.hh"
+// #include "GLWidget.h"
 
 using namespace DLFL;
 

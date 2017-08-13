@@ -58,8 +58,8 @@
 #include <QFileOpenEvent>
 // #include <QWaitCondition>
 
-#include "MainWindow.hh"
-#include "TopMod.hh"
+#include "MainWindow.h"
+#include "TopMod.h"
 
 #define max(a, b)   (((a) < (b)) ? (b) : (a))
 #define min(x1,x2) ((x1)<(x2)?(x1):(x2))

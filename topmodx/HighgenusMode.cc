@@ -33,7 +33,7 @@
 
 #include <QtGui>
 
-#include "HighgenusMode.hh"
+#include "HighgenusMode.h"
 
 /*!
 	\ingroup gui

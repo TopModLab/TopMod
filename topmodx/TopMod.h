@@ -32,7 +32,7 @@
 #include <QApplication>
 #include <QEvent>
 // 
-#include "MainWindow.hh"
+#include "MainWindow.h"
 
 class TopMod : public QApplication {
 	Q_OBJECT

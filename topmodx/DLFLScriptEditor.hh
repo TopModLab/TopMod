@@ -53,9 +53,9 @@ class QTextEdit;
 class QProcess;
 
 #include <DLFLObject.hh>
-#include "editor.hh"
+#include "editor.h"
 
-#include "PythonHighlighter.hh"
+#include "PythonHighlighter.h"
 
 using namespace DLFL;
 

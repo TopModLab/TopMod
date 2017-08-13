@@ -39,7 +39,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "VerseTopMod.hh"
+#include "VerseTopMod.h"
 
 // /* A callback for connection acception: will be called when server accepts this client. */
 // void callback_accept_connect(void *user, uint32 avatar, void *address, void *connection, uint8 *host_id) {

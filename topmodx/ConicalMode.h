@@ -40,7 +40,7 @@
 #include <QStackedWidget>
 #include <QComboBox>
 
-#include "MainWindow.hh"
+#include "MainWindow.h"
 
 class MainWindow;
 

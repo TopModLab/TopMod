@@ -47,7 +47,7 @@
 	\see TexturingMode
 */
 
-#include "MainWindow.hh"
+#include "MainWindow.h"
 class MainWindow;
 
 class TexturingMode : public QWidget {

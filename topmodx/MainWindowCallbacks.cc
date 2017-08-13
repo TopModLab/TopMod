@@ -36,7 +36,7 @@
 // Definitions for callback functions in the MainWindow class
 // All these are static methods
 
-#include "MainWindow.hh"
+#include "MainWindow.h"
 
 void MainWindow::load_texture() {
 	QString fileName = QFileDialog::getOpenFileName(this,

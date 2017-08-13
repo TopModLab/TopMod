@@ -38,7 +38,7 @@
 #include <QPushButton>
 #include <QGridLayout>
 
-#include "MainWindow.hh"
+#include "MainWindow.h"
 
 class MainWindow;
 

@@ -37,7 +37,7 @@
  ****************************************************************************/
 #include <QtGui>
 
-#include "BasicsMode.hh"
+#include "BasicsMode.h"
 
 /*!
 	\ingroup gui

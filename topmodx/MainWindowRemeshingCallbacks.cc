@@ -31,7 +31,7 @@
 *
 */
 
-#include "MainWindow.hh"
+#include "MainWindow.h"
 
 // Controls for remeshing schemes
 void MainWindow::toggleDooSabinEdgeFlag(int state)

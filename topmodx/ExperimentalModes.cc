@@ -31,7 +31,7 @@
 *
 */
 
-#include "ExperimentalModes.hh"
+#include "ExperimentalModes.h"
 
 #include <QtGui>
 

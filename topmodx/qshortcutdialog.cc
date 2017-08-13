@@ -51,9 +51,9 @@
 **
 ****************************************************************************/
 
-#include "qshortcutdialog.hh"
+#include "qshortcutdialog.h"
 
-#include "qshortcutmanager.hh"
+#include "qshortcutmanager.h"
 
 /*!
 	\file qshortcutdialog.cpp

@@ -33,7 +33,7 @@
 
 /* $Id: DLFLUndo.cc,v 4.1 2004/02/24 20:41:44 vinod Exp $ */
 
-#include "MainWindow.hh"
+#include "MainWindow.h"
 
 //-- Subroutines dealing with undo and redo for DLFLWindow --//
 

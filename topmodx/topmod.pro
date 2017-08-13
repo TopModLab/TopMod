@@ -177,30 +177,30 @@ HEADERS += \
 	TdxDeviceWrappers.hh \
 	CommandCompleter.hh \
 	DLFLLocator.hh \
-	GLWidget.hh \
-	TopMod.hh \
-	MainWindow.hh \
+	GLWidget.h \
+	TopMod.h \
+	MainWindow.h \
 	GeometryRenderer.hh \
 	DLFLLighting.hh \	
 	qcumber.hh \
-	qshortcutdialog.hh \
-	qshortcutmanager.hh \
-	editor.hh \
-	PythonHighlighter.hh \
-	BasicsMode.hh \
-	ExtrusionsMode.hh \ 
-	RemeshingMode.hh \
-	ConicalMode.hh \ 
-	HighgenusMode.hh \
-	TexturingMode.hh \
-	ExperimentalModes.hh \
+	qshortcutdialog.h \
+	qshortcutmanager.h \
+	editor.h \
+	PythonHighlighter.h \
+	BasicsMode.h \
+	ExtrusionsMode.h \ 
+	RemeshingMode.h \
+	ConicalMode.h \ 
+	HighgenusMode.h \
+	TexturingMode.h \
+	ExperimentalModes.h \
 	DLFLSelection.hh \
 	Viewport.hh \
 	TMPatchFace.hh \
 	TMPatchObject.hh \
 	TMPatch.hh \
 	DLFLRenderer.hh \
-	stylesheeteditor.hh \
+	stylesheeteditor.h \
 	include/Base/BaseObject.hh \
 	include/Base/Constants.hh \
 	include/Base/Inlines.hh \
