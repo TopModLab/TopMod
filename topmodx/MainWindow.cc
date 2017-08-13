@@ -338,14 +338,11 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 
 	//Tool options dockwidget must be initialized before setting up the actions
 	//the main tool options DockWidget
-	mToolOptionsDockWidget = new QDockWidget(tr("Tool Options - Insert Edge"),this);
-	// mToolOptionsDockWidget->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable /* | QDockWidget::DockWidgetClosable*/);
-	
-	mToolOptionsDockWidget->setAllowedAreas(Qt::NoDockWidgetArea);
+	mToolOptionsDockWidget = new QDockWidget(tr("Tool Options - Insert Edge"), this);
+	mToolOptionsDockWidget->setAllowedAreas(Qt::RightDockWidgetArea);
 	mToolOptionsStackedWidget = new QStackedWidget();
-	// mToolOptionsDockWidget->hide();
 	mToolOptionsDockWidget->setWidget(mToolOptionsStackedWidget);
-	mToolOptionsDockWidget->setFloating(true);
+	//mToolOptionsDockWidget->setFloating(true);
 	// mToolOptionsDockWidget->move(width() , 150);
 	// mToolOptionsTitleBarLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	// mToolOptionsTitleBarWidget = new QWidget;
@@ -353,8 +350,7 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	// mToolOptionsDockWidget->setTitleBarWidget(mToolOptionsTitleBarWidget);
 	// mToolOptionsDockWidget->titleBarWidget()->setContentsMargins(0,0,0,0);
 	// mToolOptionsDockWidget->move(0,22);
-	// mToolOptionsDockWidget->setWindowTitle("Insert Edge Mode");
-	// addDockWidget(Qt::TopDockWidgetArea, mToolOptionsDockWidget);
+	addDockWidget(Qt::RightDockWidgetArea, mToolOptionsDockWidget);
 	
 	//animated help dockwidget
 	initializeAnimatedHelp();
