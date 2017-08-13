@@ -40,9 +40,13 @@ using namespace DLFL;
 	\see MainWindow
 */
 
-void renderVerticesForSelect( DLFLObjectPtr obj ); 		//!< Render the vertices for selection
-void renderEdgesForSelect( DLFLObjectPtr obj );				//!< Render the edges for selection
-void renderFacesForSelect( DLFLObjectPtr obj );				//!< Render the faces for selection
-void renderFaceVerticesForSelect( DLFLFacePtr fp );		//!< Render the face vertices of a face for selection
+//!< Render the vertices for selection
+void renderVerticesForSelect(DLFLObjectPtr obj);
+//!< Render the edges for selection
+void renderEdgesForSelect(DLFLObjectPtr obj);
+//!< Render the faces for selection
+void renderFacesForSelect(DLFLObjectPtr obj);
+//!< Render the face vertices of a face for selection
+void renderFaceVerticesForSelect(DLFLFacePtr fp);
 
 #endif // _DLFLSELECTION_H_
