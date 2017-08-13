@@ -58,189 +58,194 @@ typedef RGBColor * RGBColorPtr;
 
 class RGBColor : public BaseObject
 {
-  public :
+public:
+	// Clamp components to [0,1]
+	void clamp(void)
+	{
+		if (r > 1.0) r = 1.0;
+		else if (r < 0.0) r = 0.0;
 
-        // NOTE: Order Dependency. The line defining color *MUST* be before the line
-        // defining r,g,b
-     Vector3d color;                                   // Vector used to store the color
-     double &r,&g,&b;                                  // References to the 3 components
+		if (g > 1.0) g = 1.0;
+		else if (g < 0.0) g = 0.0;
 
-  public :
+		if (b > 1.0) b = 1.0;
+		else if (b < 0.0) b = 0.0;
+	}
 
-     void clamp(void)                                  // Clamp components to [0,1]
-       {
-         if ( r > 1.0 ) r = 1.0;
-         else if ( r < 0.0 ) r = 0.0;
+public:
+	// Default constructor
+	RGBColor()
+		: BaseObject(), color(), r(color[0]), g(color[1]), b(color[2])
+	{
+	}
 
-         if ( g > 1.0 ) g = 1.0;
-         else if ( g < 0.0 ) g = 0.0;
+	// 1-arg constructor
+	RGBColor(const Vector3d& col)
+		: BaseObject(), color(col), r(color[0]), g(color[1]), b(color[2])
+	{
+	}
 
-         if ( b > 1.0 ) b = 1.0;
-         else if ( b < 0.0 ) b = 0.0;
-       }
+	// 1-arg constructor, gray value
+	RGBColor(double gray)
+		: BaseObject(), color(gray), r(color[0]), g(color[1]), b(color[2])
+	{
+	}
 
-  public :
-     
-        // Default constructor
-     RGBColor()
-       : BaseObject(), color(), r(color[0]), g(color[1]), b(color[2])
-       {}
+	// 3-arg constructor
+	RGBColor(double red, double green, double blue)
+		: BaseObject(), color(red, green, blue), r(color[0]), g(color[1]), b(color[2])
+	{
+	}
 
-        // 1-arg constructor
-     RGBColor(const Vector3d& col)
-       : BaseObject(), color(col), r(color[0]), g(color[1]), b(color[2])
-       {}
+	// Copy constructor
+	RGBColor(const RGBColor& col)
+		: BaseObject(col), color(col.color), r(color[0]), g(color[1]), b(color[2])
+	{
+	}
 
-        // 1-arg constructor, gray value
-     RGBColor(double gray)
-       : BaseObject(), color(gray), r(color[0]), g(color[1]), b(color[2])
-       {}
-     
-        // 3-arg constructor
-     RGBColor(double red, double green, double blue)
-       : BaseObject(), color(red,green,blue), r(color[0]), g(color[1]), b(color[2])
-       {}
-     
-        // Copy constructor
-     RGBColor(const RGBColor& col)
-       : BaseObject(col), color(col.color), r(color[0]), g(color[1]), b(color[2])
-       {}
+	// Destructor
+	~RGBColor()
+	{
+	}
 
-        // Destructor
-     ~RGBColor()
-       {}
+	// Assignment operator
+	RGBColor& operator = (const RGBColor& col)
+	{
+		BaseObject::operator = (col);
+		color = col.color;
+		return (*this);
+	}
 
-        // Assignment operator
-     RGBColor& operator = (const RGBColor& col)
-       {
-         BaseObject::operator = (col);
-         color = col.color;
-         return (*this);
-       }
+	// Assignment from a Vector3d
+	RGBColor& operator = (const Vector3d& col)
+	{
+		color = col;
+		return (*this);
+	}
 
-        // Assignment from a Vector3d
-     RGBColor& operator = (const Vector3d& col)
-       {
-         color = col;
-         return (*this);
-       }
+	// Assignment from a scalar - gray value
+	RGBColor& operator = (double gray)
+	{
+		color = gray;
+		return (*this);
+	}
 
-        // Assignment from a scalar - gray value
-     RGBColor& operator = (double gray)
-       {
-         color = gray;
-         return (*this);
-       }
+	// Make a copy
+	BaseObjectPtr copy(void) const
+	{
+		RGBColorPtr newcol = new RGBColor(*this);
+		return newcol;
+	}
 
-        // Make a copy
-     BaseObjectPtr copy(void) const
-       {
-         RGBColorPtr newcol = new RGBColor(*this);
-         return newcol;
-       }
+	void set(double red, double green, double blue)
+	{
+		color.set(red, green, blue);
+	}
 
-     void set(double red, double green, double blue)
-       {
-         color.set(red,green,blue);
-       }
+	// Comparison
+	bool operator == (const RGBColor& c) const
+	{
+		if (Abs(r - c.r) < 1.0e-3 &&
+			Abs(g - c.g) < 1.0e-3 &&
+			Abs(b - c.b) < 1.0e-3) return true;
+		return false;
+	}
 
-        // Comparison
-     bool operator == (const RGBColor& c) const
-       {
-         if ( Abs(r-c.r) < 1.0e-3 &&
-              Abs(g-c.g) < 1.0e-3 &&
-              Abs(b-c.b) < 1.0e-3 ) return true;
-         return false;
-       }
+	bool operator != (const RGBColor& c) const
+	{
+		return !(operator == (c));
+	}
 
-     bool operator != (const RGBColor& c) const
-       {
-         return !(operator == (c));
-       }
+	// Arithmetic-assignment operators
+	// These operators don't clamp the values. User has to do them explicitly
+	void operator += (const RGBColor& c)
+	{
+		color += c.color;
+	}
 
-        // Arithmetic-assignment operators
-        // These operators don't clamp the values. User has to do them explicitly
-     void operator += (const RGBColor& c)
-       {
-         color += c.color;
-       }
+	void operator -= (const RGBColor& c)
+	{
+		color -= c.color;
+	}
 
-     void operator -= (const RGBColor& c)
-       {
-         color -= c.color;
-       }
+	void operator *= (double scalar)
+	{
+		color *= scalar;
+	}
 
-     void operator *= (double scalar)
-       {
-         color *= scalar;
-       }
+	void operator /= (double scalar)
+	{
+		color /= scalar;
+	}
 
-     void operator /= (double scalar)
-       {
-         color /= scalar;
-       }
-     
-        // Arithmetic operators
-     RGBColor operator + (const RGBColor& c) const
-       {
-         RGBColor sum(*this); sum += c;
-         return sum;
-       }
-       
-     RGBColor operator - (const RGBColor& c) const
-       {
-         RGBColor diff(*this); diff -= c;
-         return diff;
-       }
-       
-     RGBColor operator * (double scalar) const
-       {
-         RGBColor prod(*this); prod *= scalar;
-         return prod;
-       }
+	// Arithmetic operators
+	RGBColor operator + (const RGBColor& c) const
+	{
+		RGBColor sum(*this); sum += c;
+		return sum;
+	}
 
-     friend RGBColor operator * (double scalar, const RGBColor& col)
-       {
-         RGBColor prod(col); prod *= scalar;
-         return prod;
-       }
+	RGBColor operator - (const RGBColor& c) const
+	{
+		RGBColor diff(*this); diff -= c;
+		return diff;
+	}
 
-     friend RGBColor product(const RGBColor& col1, const RGBColor& col2)
-       {
-         RGBColor prod(product(col1.color,col2.color));
-         return prod;
-       }
-     
-     RGBColor operator / (double scalar) const
-       {
-         RGBColor quot(*this); quot /= scalar;
-         return quot;
-       }
+	RGBColor operator * (double scalar) const
+	{
+		RGBColor prod(*this); prod *= scalar;
+		return prod;
+	}
 
-        // Luminanace = sum of components
-     friend double luminance(const RGBColor& c)
-       {
-         return (c.r+c.g+c.b);
-       }
+	friend RGBColor operator * (double scalar, const RGBColor& col)
+	{
+		RGBColor prod(col); prod *= scalar;
+		return prod;
+	}
 
-        // I/O stream operators
-     friend ostream& operator << (ostream& o, const RGBColor& c)
-       {
-         o << "(" << c.r << "," << c.g << "," << c.b << ")";
-         return o;
-       }
+	friend RGBColor product(const RGBColor& col1, const RGBColor& col2)
+	{
+		RGBColor prod(product(col1.color, col2.color));
+		return prod;
+	}
 
-     friend istream& operator >> (istream& i, RGBColor& c)
-       {
-         i >> c.color;
-         return i;
-       }
+	RGBColor operator / (double scalar) const
+	{
+		RGBColor quot(*this); quot /= scalar;
+		return quot;
+	}
 
-        // Overload OpenGL color function
-     friend void glColor(const RGBColor& c)
-       {
-         glColor3d(c.r,c.g,c.b);
-       }
+	// Luminanace = sum of components
+	friend double luminance(const RGBColor& c)
+	{
+		return (c.r + c.g + c.b);
+	}
+
+	// I/O stream operators
+	friend ostream& operator << (ostream& o, const RGBColor& c)
+	{
+		o << "(" << c.r << "," << c.g << "," << c.b << ")";
+		return o;
+	}
+
+	friend istream& operator >> (istream& i, RGBColor& c)
+	{
+		i >> c.color;
+		return i;
+	}
+
+	// Overload OpenGL color function
+	friend void glColor(const RGBColor& c)
+	{
+		glColor3d(c.r, c.g, c.b);
+	}
+
+public:
+	// NOTE: Order Dependency. The line defining color *MUST* be before the line
+	// defining r,g,b
+	Vector3d color;			// Vector used to store the color
+	double &r, &g, &b;		// References to the 3 components
+
 };
 
 #endif /* #ifndef _COLOR_HH_ */
