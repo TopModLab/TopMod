@@ -125,146 +125,152 @@ using namespace DLFL;
 class MainWindow : public QMainWindow {
 	Q_OBJECT
 
-	public:
+public:
 
-		/** 
-		* Enumerations for the various operating modes. 
-		*/
-		enum Mode	{
-				NormalMode=0, 					/**< normal mode. does not allow any selection in the viewport. */
-				SelectVertex=1, 				/**< select one vertex. */
-				SelectEdge=2, 					/**< select one edge. */
-				SelectFace=3, 					/**< select one face. */
-				SelectCorner=4, 		/**< select one corner, which requires selection of a face and a vertex. */
-				MultiSelectVertex=5,		/**< select multiple vertices. */
-				MultiSelectEdge=6,			/**< select multiple edges. */
-				MultiSelectFace=7,			/**< . */
-				MultiSelectCorner=8,/**< . */
-				SelectCheckerboard=9, 	/**< select alternating faces forming a checkerboard pattern. works well after Doo Sabin Remeshing. */
-				SelectionWindow=10, 		/**< crossing window selection  - dave. */
-				InsertEdge=11,					/**< insert edge. */
-				DeleteEdge=12,					/**< delete an edge. */
-				SubdivideEdge=13,				/**< subdivide an edge into n segments. */
-				CollapseEdge=14,				/**< collapse an edge. */
-				SpliceCorners=15,				/**< select two corners and collapse the face in between. */
-				ConnectEdges=21,				/**< connect two half-edges. */
-				ExtrudeFace=31,					/**< cubical extrusion. */
-				ExtrudeFaceDS=32,				/**< doo sabin extrusion. */
-				ExtrudeDualFace=33,			/**< dual of cubical extrusion. */
-				ExtrudeFaceDodeca=34,		/**< dodecahedral extrusion. */
-				ExtrudeFaceIcosa=35,		/**< icosahedral extrusion. */
-				ExtrudeMultipleFaces=36,/**< cubical extrusion for multiple faces at once. */
-				StellateFace=41,				/**< stellate extrusion. */
-				DoubleStellateFace = 42,/**< double stellate extrusion. */
-				ExtrudeFaceDome = 43,   /**< dome extrusion. dave */
-				ConnectFaceVertices=51,	/**< add . */
-				ConnectFaces=52,				/**< add hole/handle operation. */
-				BezierConnectFaces=53,	/**< add handle operation. */
-				HermiteConnectFaces=54,	/**< add handle operation. */
-				ReorderFace=61,					/**< reorders the corners of a face. */
-				SubdivideFace=62,				/**< subdivides a face into n faces. */
-				CrustModeling=71,				/**< create a crust of the current model and poke holes in it. */
-				CutEdge=200,						/**< // ozgur. */
-				CutVertex=201,					/**< // ozgur. */
-				CutEdgeandVertex = 202,	/**< // ozgur. */
-				CutFace = 203,					/**< // ozgur. */
-				TruncateEdge=204,				/**< // ozgur. */
-				MarkEdge=206,						/**< // ozgur. */
-				MarkVertex=207,					/**< // ozgur. */
-				ConvexHullMode=301,			/**< create a convex hull or dual convex hull // ozgur. */
-				EditVertex=81,					/**< select and move individual vertices // brianb. */
-				SelectEdgeLoop=82,			/**< select an edge loop. shift select for multiple. */
-				SelectEdgeRing=85,			/**< select an edge ring. shift select for multiple. */
-				SelectFaceLoop=83,			/**< allows user to select one edge in the viewport and selects the corresponding face loop. shift select for multiple. */
-				SelectSimilar=84, 			/**< select all sub objects with the same number of verts edges or faces whatever... . */
-				SelectFacesByArea=856,	/**< select all faces with the a similar surface area. */
-				SelectFacesByColor=857,	/**< select all faces with the same color material. */
-				PaintFace=858,		 			/**< paint a face as you click. */
-				EyeDropper=859		 			/**< grab the color of the selected face. */
+	/**
+	* Enumerations for the various operating modes.
+	*/
+	enum Mode
+	{
+		NormalMode = 0, 					/**< normal mode. does not allow any selection in the viewport. */
+		SelectVertex = 1, 				/**< select one vertex. */
+		SelectEdge = 2, 					/**< select one edge. */
+		SelectFace = 3, 					/**< select one face. */
+		SelectCorner = 4, 		/**< select one corner, which requires selection of a face and a vertex. */
+		MultiSelectVertex = 5,		/**< select multiple vertices. */
+		MultiSelectEdge = 6,			/**< select multiple edges. */
+		MultiSelectFace = 7,			/**< . */
+		MultiSelectCorner = 8,/**< . */
+		SelectCheckerboard = 9, 	/**< select alternating faces forming a checkerboard pattern. works well after Doo Sabin Remeshing. */
+		SelectionWindow = 10, 		/**< crossing window selection  - dave. */
+		InsertEdge = 11,					/**< insert edge. */
+		DeleteEdge = 12,					/**< delete an edge. */
+		SubdivideEdge = 13,				/**< subdivide an edge into n segments. */
+		CollapseEdge = 14,				/**< collapse an edge. */
+		SpliceCorners = 15,				/**< select two corners and collapse the face in between. */
+		ConnectEdges = 21,				/**< connect two half-edges. */
+		ExtrudeFace = 31,					/**< cubical extrusion. */
+		ExtrudeFaceDS = 32,				/**< doo sabin extrusion. */
+		ExtrudeDualFace = 33,			/**< dual of cubical extrusion. */
+		ExtrudeFaceDodeca = 34,		/**< dodecahedral extrusion. */
+		ExtrudeFaceIcosa = 35,		/**< icosahedral extrusion. */
+		ExtrudeMultipleFaces = 36,/**< cubical extrusion for multiple faces at once. */
+		StellateFace = 41,				/**< stellate extrusion. */
+		DoubleStellateFace = 42,/**< double stellate extrusion. */
+		ExtrudeFaceDome = 43,   /**< dome extrusion. dave */
+		ConnectFaceVertices = 51,	/**< add . */
+		ConnectFaces = 52,				/**< add hole/handle operation. */
+		BezierConnectFaces = 53,	/**< add handle operation. */
+		HermiteConnectFaces = 54,	/**< add handle operation. */
+		ReorderFace = 61,					/**< reorders the corners of a face. */
+		SubdivideFace = 62,				/**< subdivides a face into n faces. */
+		CrustModeling = 71,				/**< create a crust of the current model and poke holes in it. */
+		CutEdge = 200,						/**< // ozgur. */
+		CutVertex = 201,					/**< // ozgur. */
+		CutEdgeandVertex = 202,	/**< // ozgur. */
+		CutFace = 203,					/**< // ozgur. */
+		TruncateEdge = 204,				/**< // ozgur. */
+		MarkEdge = 206,						/**< // ozgur. */
+		MarkVertex = 207,					/**< // ozgur. */
+		ConvexHullMode = 301,			/**< create a convex hull or dual convex hull // ozgur. */
+		EditVertex = 81,					/**< select and move individual vertices // brianb. */
+		SelectEdgeLoop = 82,			/**< select an edge loop. shift select for multiple. */
+		SelectEdgeRing = 85,			/**< select an edge ring. shift select for multiple. */
+		SelectFaceLoop = 83,			/**< allows user to select one edge in the viewport and selects the corresponding face loop. shift select for multiple. */
+		SelectSimilar = 84, 			/**< select all sub objects with the same number of verts edges or faces whatever... . */
+		SelectFacesByArea = 856,	/**< select all faces with the a similar surface area. */
+		SelectFacesByColor = 857,	/**< select all faces with the same color material. */
+		PaintFace = 858,		 			/**< paint a face as you click. */
+		EyeDropper = 859		 			/**< grab the color of the selected face. */
 
-			};
+	};
 
-			/**
-			* Enumerations for Selection Masking (e.g. vertices, faces, edges, face-vertices, and eventually objects... ?)
-			*/
-			enum SelectionMask { 
-				MaskObject=0,
-				MaskVertices,
-				MaskEdges,
-				MaskFaces,
-				MaskCorners,
-				MaskNone
-			};
-			
-			/**
-			* Enumerations for Extrusion operatoers
-			*/
-			enum ExtrusionMode {
-				CubicalExtrude,
-				DooSabinExtrude,
-				DodecahedralExtrude,
-				IcosahedralExtrude,
-				OctahedralExtrude, //!< also called dual
-				StellateExtrude,
-				DoubleStellateExtrude,
-				DomeExtrude			
-			};
+	/**
+	* Enumerations for Selection Masking (e.g. vertices, faces, edges, face-vertices, and eventually objects... ?)
+	*/
+	enum SelectionMask
+	{
+		MaskObject = 0,
+		MaskVertices,
+		MaskEdges,
+		MaskFaces,
+		MaskCorners,
+		MaskNone
+	};
 
-				// Enumerations for various multi-face-handle algorithms
-			enum MFHAlgo { 
-				ConvexHull=0,
-				ClosestEdge=1 
-			};
+	/**
+	* Enumerations for Extrusion operatoers
+	*/
+	enum ExtrusionMode
+	{
+		CubicalExtrude,
+		DooSabinExtrude,
+		DodecahedralExtrude,
+		IcosahedralExtrude,
+		OctahedralExtrude, //!< also called dual
+		StellateExtrude,
+		DoubleStellateExtrude,
+		DomeExtrude
+	};
 
-			enum RemeshingScheme {
-				Dual=0,															/**< . */
-				Root3=10,														/**< . */
-				Triangulate=15,											/**< . */
-				DualVertexTrunc=11,									/**< . */
-				GlobalStellate=12, 									/**< . */
-				Star=13, 														/**< . */
-				Generic1264=14,											/**< . */
-				Honeycomb=20, 											/**< . */
-				VertexTrunc=21, 										/**< . */
-				DualGeneric1264=22,									/**< . */
-				LinearVertexInsertion=30, 					/**< . */
-				CatmullClark=31, 										/**< . */
-				ModifiedStellate=32,								/**< . */
-				DooSabin=40, 												/**< . */
-				CornerCutting=41, 									/**< . */
-				ModifiedCornerCutting=43, 					/**< . */
-				Simplest=42,												/**< . */
-				Pentagonal=50, 											/**< . */
-				CubicPentagonal=51, 								/**< . */
-				DualPentagonal=52,									/**< . */
-				LoopStyle=60, 											/**< . */
-				Loop=61, 														/**< . */
-				Root4=62, 													/**< . */
-				DualLoop=63,												/**< . */
-				GlobalCubicExtrude=70, 							/**< . */
-				CheckerBoard=71,										/**< . */
-				DualGlobalCubicExtrude=80, 					/**< . */
-				DualCheckerBoard=81,								/**< . */
-				PentagonPreserving=90, 							/**< . */
-				DualPentagonPreserving=91,					/**< . */
-				HexagonPreserving=100, 							/**< . */
-				DualHexagonPreserving=101,					/**< . */
-				Fractal=110,	 											/**< . */
-				ModifiedDoubleStellate=111, 				/**< . */
-				Dome=112, 													/**< . */
-				DooSabinBC=113, 										/**< . */
-				DooSabinBCNew=114										/**< . */
-				};
-				
-				enum SpinBoxMode { 
-					One=1,														/**< the first spinbox in the current option panel will be controlled by the Y key. */
-					Two, 															/**< the second spinbox in the current option panel will be controlled by the U key. */
-					Three, 														/**< the third spinbox in the current option panel will be controlled by the I key. */
-					Four, 														/**< the fourth spinbox in the current option panel will be controlled by the O key. */
-					Five, 														/**< the fifth spinbox in the current option panel will be controlled by the P key. */
-					Six, 															/**< the sixth spinbox in the current option panel will be controlled by the [ key. */
-					None  														/**< no spinbox is being manipulated */
-				};
+	// Enumerations for various multi-face-handle algorithms
+	enum MFHAlgo
+	{
+		ConvexHull = 0,
+		ClosestEdge = 1
+	};
+
+	enum RemeshingScheme
+	{
+		Dual = 0,									/**< . */
+		Root3 = 10,									/**< . */
+		Triangulate = 15,							/**< . */
+		DualVertexTrunc = 11,						/**< . */
+		GlobalStellate = 12, 						/**< . */
+		Star = 13, 									/**< . */
+		Generic1264 = 14,							/**< . */
+		Honeycomb = 20, 							/**< . */
+		VertexTrunc = 21, 							/**< . */
+		DualGeneric1264 = 22,						/**< . */
+		LinearVertexInsertion = 30, 				/**< . */
+		CatmullClark = 31, 							/**< . */
+		ModifiedStellate = 32,						/**< . */
+		DooSabin = 40, 								/**< . */
+		CornerCutting = 41, 						/**< . */
+		ModifiedCornerCutting = 43, 				/**< . */
+		Simplest = 42,								/**< . */
+		Pentagonal = 50, 							/**< . */
+		CubicPentagonal = 51, 						/**< . */
+		DualPentagonal = 52,						/**< . */
+		LoopStyle = 60, 							/**< . */
+		Loop = 61, 									/**< . */
+		Root4 = 62, 								/**< . */
+		DualLoop = 63,								/**< . */
+		GlobalCubicExtrude = 70, 					/**< . */
+		CheckerBoard = 71,							/**< . */
+		DualGlobalCubicExtrude = 80, 				/**< . */
+		DualCheckerBoard = 81,						/**< . */
+		PentagonPreserving = 90, 					/**< . */
+		DualPentagonPreserving = 91,				/**< . */
+		HexagonPreserving = 100, 					/**< . */
+		DualHexagonPreserving = 101,				/**< . */
+		Fractal = 110,	 							/**< . */
+		ModifiedDoubleStellate = 111, 				/**< . */
+		Dome = 112, 								/**< . */
+		DooSabinBC = 113, 							/**< . */
+		DooSabinBCNew = 114							/**< . */
+	};
+
+	enum SpinBoxMode
+	{
+		One = 1,	/**< the first spinbox in the current option panel will be controlled by the Y key. */
+		Two,		/**< the second spinbox in the current option panel will be controlled by the U key. */
+		Three,		/**< the third spinbox in the current option panel will be controlled by the I key. */
+		Four,		/**< the fourth spinbox in the current option panel will be controlled by the O key. */
+		Five,		/**< the fifth spinbox in the current option panel will be controlled by the P key. */
+		Six,		/**< the sixth spinbox in the current option panel will be controlled by the [ key. */
+		None		/**< no spinbox is being manipulated */
+	};
 
 	//-- Parameters used in various operations on the DLFL object --//
 
