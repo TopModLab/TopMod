@@ -682,21 +682,17 @@ public :
 		return NULL;
 	}
 
-	DLFLFacePtrArray getSelectedFaces() {
-		return object->sel_fptr_array;
-	}
+	DLFLFacePtrArray& getSelectedFaces() { return object->sel_fptr_array; }
+	const DLFLFacePtrArray& getSelectedFaces() const { return object->sel_fptr_array; }
 
-	DLFLVertexPtrArray getSelectedVertices() {
-		return object->sel_vptr_array;
-	}
+	DLFLVertexPtrArray& getSelectedVertices() { return object->sel_vptr_array; }
+	const DLFLVertexPtrArray& getSelectedVertices() const { return object->sel_vptr_array; }
 
-	DLFLEdgePtrArray getSelectedEdges() {
-		return object->sel_eptr_array;
-	}
+	DLFLEdgePtrArray& getSelectedEdges() { return object->sel_eptr_array; }
+	const DLFLEdgePtrArray& getSelectedEdges() const { return object->sel_eptr_array; }
 
-	DLFLFaceVertexPtrArray getSelectedCorners() {
-		return object->sel_fvptr_array;
-	}
+	DLFLFaceVertexPtrArray& getSelectedCorners() { return object->sel_fvptr_array; }
+	const DLFLFaceVertexPtrArray& getSelectedCorners() const { return object->sel_fvptr_array; }
 
 	DLFLFaceVertexPtr getSelectedFaceVertex(int index) {
 		if ( (uint) index < object->sel_fvptr_array.size() ) return object->sel_fvptr_array[index];
