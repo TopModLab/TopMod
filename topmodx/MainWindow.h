@@ -263,13 +263,13 @@ public:
 
 	enum SpinBoxMode
 	{
-		One = 1,	/**< the first spinbox in the current option panel will be controlled by the Y key. */
-		Two,		/**< the second spinbox in the current option panel will be controlled by the U key. */
-		Three,		/**< the third spinbox in the current option panel will be controlled by the I key. */
-		Four,		/**< the fourth spinbox in the current option panel will be controlled by the O key. */
-		Five,		/**< the fifth spinbox in the current option panel will be controlled by the P key. */
-		Six,		/**< the sixth spinbox in the current option panel will be controlled by the [ key. */
-		None		/**< no spinbox is being manipulated */
+		eFirstSpinBox = 0,	/**< the first spinbox in the current option panel will be controlled by the Y key. */
+		eSecondSpinBox,		/**< the second spinbox in the current option panel will be controlled by the U key. */
+		eThirdSpinBox,		/**< the third spinbox in the current option panel will be controlled by the I key. */
+		eFourthSpinBox,		/**< the fourth spinbox in the current option panel will be controlled by the O key. */
+		eFifthSpinBox,		/**< the fifth spinbox in the current option panel will be controlled by the P key. */
+		eSixthSpinBox,		/**< the sixth spinbox in the current option panel will be controlled by the [ key. */
+		eInvalidSpinBox		/**< no spinbox is being manipulated */
 	};
 
 	//-- Parameters used in various operations on the DLFL object --//
@@ -531,7 +531,10 @@ public :
 	/**
 	* \brief this will store pointers to the current mode's spinboxes so we can do keyboard interaction with them
 	*/
-	void setSpinBoxes(QDoubleSpinBox *one=0,QDoubleSpinBox *two=0,QDoubleSpinBox *three=0,QDoubleSpinBox *four=0,QDoubleSpinBox *five=0,QDoubleSpinBox *six=0 );
+	void setSpinBoxes(
+		QDoubleSpinBox *one = nullptr, QDoubleSpinBox *two = nullptr,
+		QDoubleSpinBox *three = nullptr, QDoubleSpinBox *four = nullptr,
+		QDoubleSpinBox *five = nullptr, QDoubleSpinBox *six = nullptr);
 
 #ifdef WITH_PYTHON
 	DLFLScriptEditor *mScriptEditor;							//!< ScriptEditor Object by Stuart
@@ -873,7 +876,7 @@ private:
 	QDockWidget *mAnimatedHelpDockWidget;
 	QAction *mShowAnimatedHelpAct;
 			
-	QDoubleSpinBox *mSpinBoxOne,*mSpinBoxTwo,*mSpinBoxThree,*mSpinBoxFour,*mSpinBoxFive,*mSpinBoxSix;
+	std::array<QDoubleSpinBox*, 6> mSpinBoxes = {};
 			
 	//startup dialog actions for loading movies
 	QAction *mTutorialNavigationAct;

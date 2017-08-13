@@ -35,10 +35,11 @@
 
 // Common includes, definitions and declarations for DLFL
 
-#include <vector>
+#include <array>
 #include <list>
 #include <unordered_set>
 #include <unordered_map>
+#include <vector>
 #include <algorithm>
 #include <iterator>
 

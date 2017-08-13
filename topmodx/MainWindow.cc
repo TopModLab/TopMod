@@ -235,7 +235,7 @@ QColor MainWindow::paint_bucket_color = QColor(0.5,0.5,0.5);
  * asdfl;jkas;df
  **/
 MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(), undoMtlList(), redoList(), redoMtlList(), 
-																				 undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimitive(false), mSpinBoxMode(None) {
+																				 undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimitive(false), mSpinBoxMode(eInvalidSpinBox) {
 																					
 																					
 	// i18n stuff
@@ -3019,72 +3019,67 @@ void MainWindow::getRightClickMenu(){
 }
 
 
-void MainWindow::mouseMoveEvent(QMouseEvent *event) {
-	// if (active->isBrushVisible()) active->redraw();
-	if ( mode != NormalMode && event->buttons() == Qt::LeftButton)
-		// doSelection(event->x(),this->size().height()-event->y() );
-		doDrag(event->x(),this->size().height()-mStatusBar->height()-event->y() );
-	// else if ( event->buttons() == Qt::RightButton && QApplication::keyboardModifiers() == Qt::ShiftModifier){
-	// 	// event->ignore();
-	// 	setBrushSize(mBrushSize+event->x()-mBrushStartX);
-	// }
-	else if (mSpinBoxMode != None){
-		double d = (event->x()-mStartDragX)/20;
-		switch(mSpinBoxMode){
-		case One: if (mSpinBoxOne!=0) mSpinBoxOne->setValue(mSpinBoxOne->value()+d);
-			break;
-		case Two: if (mSpinBoxTwo!=0) mSpinBoxTwo->setValue(mSpinBoxTwo->value()+d);
-			break;
-		case Three: if (mSpinBoxThree!=0) mSpinBoxThree->setValue(mSpinBoxThree->value()+d);
-			break;
-		case Four: if (mSpinBoxFour!=0) mSpinBoxFour->setValue(mSpinBoxFour->value()+d);
-			break;
-		case Five: if (mSpinBoxFive!=0) mSpinBoxFive->setValue(mSpinBoxFive->value()+d);
-			break;
-		case Six: if (mSpinBoxSix!=0) mSpinBoxSix->setValue(mSpinBoxSix->value()+d);
-			break;
-		default:
-			break;
-		};
+void MainWindow::mouseMoveEvent(QMouseEvent *event)
+{
+	if (mode != NormalMode && event->buttons() == Qt::LeftButton)
+	{
+		doDrag(event->x(), this->size().height() - mStatusBar->height() - event->y());
 	}
-	
-	else event->ignore();
+	else if (mSpinBoxMode != eInvalidSpinBox)
+	{
+		double d = (event->x()-mStartDragX)/20;
+		if (mSpinBoxes[mSpinBoxMode] != nullptr)
+		{
+			mSpinBoxes[mSpinBoxMode]->setValue(mSpinBoxes[mSpinBoxMode]->value() + d);
+		}
+	}
+	else
+	{
+		event->ignore();
+	}
 }
 
 //if the user holds down certain keys, allow them to
 //change various properties in the scene
-void MainWindow::keyPressEvent(QKeyEvent *event){
-		
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
 	mStartDragX = mapFromGlobal(QCursor::pos()).x();
 	mStartDragY = mapFromGlobal(QCursor::pos()).y();
-	
-	switch (event->key()){
-	case Qt::Key_Y : mSpinBoxMode = One;
+
+	switch (event->key())
+	{
+	case Qt::Key_Y:
+		mSpinBoxMode = eFirstSpinBox;
 		break;
-	case Qt::Key_U : mSpinBoxMode = Two;
+	case Qt::Key_U:
+		mSpinBoxMode = eSecondSpinBox;
 		break;
-	case Qt::Key_I : mSpinBoxMode = Three;
+	case Qt::Key_I:
+		mSpinBoxMode = eThirdSpinBox;
 		break;
-	case Qt::Key_O : mSpinBoxMode = Four;
+	case Qt::Key_O:
+		mSpinBoxMode = eFourthSpinBox;
 		break;
-	case Qt::Key_P : mSpinBoxMode = Five;
+	case Qt::Key_P:
+		mSpinBoxMode = eFifthSpinBox;
 		break;
-	default : mSpinBoxMode = None;
+	default:
+		mSpinBoxMode = eInvalidSpinBox;
 		break;
-	};
+	}
 }
 
-void MainWindow::keyReleaseEvent(QKeyEvent *event){
-	mSpinBoxMode = None;
+void MainWindow::keyReleaseEvent(QKeyEvent *event)
+{
+	mSpinBoxMode = eInvalidSpinBox;
 }
 
-void MainWindow::setSpinBoxes(QDoubleSpinBox *one,QDoubleSpinBox *two,QDoubleSpinBox *three,QDoubleSpinBox *four,QDoubleSpinBox *five,QDoubleSpinBox *six ){
-	mSpinBoxOne = one;
-	mSpinBoxTwo = two;
-	mSpinBoxThree = three;
-	mSpinBoxFour = four;
-	mSpinBoxFive = five;
-	mSpinBoxSix = six;
+void MainWindow::setSpinBoxes(
+	QDoubleSpinBox *one, QDoubleSpinBox *two,
+	QDoubleSpinBox *three, QDoubleSpinBox *four,
+	QDoubleSpinBox *five, QDoubleSpinBox *six)
+{
+	mSpinBoxes = { one, two, three, four, five, six };
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
