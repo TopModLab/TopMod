@@ -1,0 +1,415 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>moc;h;cpp</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Source Files\include">
+      <UniqueIdentifier>{d80f9e14-dbf5-4bef-bceb-e6f97ca07763}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Base">
+      <UniqueIdentifier>{8f802ddd-3fa3-49f6-aab3-7cd65fd8098c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics">
+      <UniqueIdentifier>{008f8f7a-ef35-4e55-8914-0efb401517cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include">
+      <UniqueIdentifier>{028b6a82-a726-40bd-915e-da7d9e0bd4df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Light">
+      <UniqueIdentifier>{18b793ae-791c-4b74-a7ad-9693af8088f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Generated Files\Debug">
+      <UniqueIdentifier>{deedbcb1-fef6-44b7-8328-5801e34f6e98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Generated Files\Release">
+      <UniqueIdentifier>{6ec50b37-52bb-4d7c-8d46-fc1901b7c9be}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="include\Camera3.cc">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="CgData.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandCompleter.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConicalMode.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DLFLLighting.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DLFLLocator.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DLFLRenderer.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DLFLScriptEditor.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DLFLSelection.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DLFLUndo.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="editor.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExperimentalModes.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExtrusionsMode.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryRenderer.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HighgenusMode.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MainWindow.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MainWindowCallbacks.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MainWindowRemeshingCallbacks.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PythonHighlighter.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qshortcutdialog.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qshortcutmanager.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RemeshingMode.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stylesheeteditor.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TdxDeviceWrappers.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TexturingMode.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TMPatchFace.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TMPatchObject.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TopMod.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TopModPreferences.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VerseTopMod.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_application.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GLWidget.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicsMode.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_BasicsMode.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_BasicsMode.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_MainWindow.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_MainWindow.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_ConicalMode.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_ConicalMode.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_ExtrusionsMode.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_ExtrusionsMode.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_HighgenusMode.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_HighgenusMode.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_RemeshingMode.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_RemeshingMode.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_TexturingMode.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_TexturingMode.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_ExperimentalModes.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_ExperimentalModes.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_editor.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_editor.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_GLWidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_GLWidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_PythonHighlighter.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_PythonHighlighter.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_TopModPreferences.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_TopModPreferences.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_qshortcutdialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_qshortcutdialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_qshortcutmanager.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_qshortcutmanager.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_stylesheeteditor.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_stylesheeteditor.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_TopMod.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_TopMod.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Base\BaseObject.hh">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Base\Constants.hh">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Base\Inlines.hh">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Base\StreamIO.hh">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Graphics\Camera.hh">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Graphics\Color.hh">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Graphics\Grid.hh">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Graphics\Texture.hh">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Graphics\Transform.hh">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Graphics\VecMatGL.hh">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Camera3.hh">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Light\AmbientLight.hh">
+      <Filter>Header Files\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Light\Light.hh">
+      <Filter>Header Files\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Light\PointLight.hh">
+      <Filter>Header Files\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Light\SpotLight.hh">
+      <Filter>Header Files\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="CgData.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandCompleter.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DLFLLighting.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DLFLLocator.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DLFLRenderer.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DLFLScriptEditor.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DLFLSelection.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryRenderer.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="qcumber.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TdxDeviceWrappers.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TMPatch.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TMPatchFace.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TMPatchObject.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VerseTopMod.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Viewport.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_shortcutdialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_stylesheeteditor.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="shortcutdialog.ui">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="stylesheeteditor.ui">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="application.qrc">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="BasicsMode.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="MainWindow.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="ConicalMode.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="ExtrusionsMode.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="HighgenusMode.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="RemeshingMode.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="TexturingMode.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="ExperimentalModes.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="editor.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GLWidget.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="PythonHighlighter.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="TopModPreferences.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="qshortcutdialog.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="qshortcutmanager.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="stylesheeteditor.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="TopMod.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="topmod.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
