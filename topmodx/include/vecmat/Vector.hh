@@ -53,7 +53,7 @@ class Vector4d;
 
 // Function prototypes
 
-   // Cross products for 2d and 3d Vectors
+// Cross products for 2d and 3d Vectors
 Vector3d operator % (const Vector2d& vec1, const Vector2d& vec2);
 Vector3d operator % (const Vector3d& vec1, const Vector2d& vec2);
 Vector3d operator % (const Vector2d& vec1, const Vector3d& vec2);

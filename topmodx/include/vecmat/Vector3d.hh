@@ -49,359 +49,361 @@ typedef Vector3d * Vector3dPtr;
 
 class Vector3d : public BaseObject
 {
-  protected :
+protected:
 
-     double elem[3];                                   // 3 elements of the vector
+	double elem[3];                                   // 3 elements of the vector
 
-        // Initialize the elements from a Vector2d or Vector4d
-     void copyFrom(const Vector2d& vec);
-     void copyFrom(const Vector4d& vec);
+													  // Initialize the elements from a Vector2d or Vector4d
+	void copyFrom(const Vector2d& vec);
+	void copyFrom(const Vector4d& vec);
 
-  public :
+public:
 
-        // Default constructor
-     Vector3d()
-       : BaseObject()
-       {
-         elem[0] = elem[1] = elem[2] = 0.0;
-       }
+	// Default constructor
+	Vector3d()
+		: BaseObject()
+	{
+		elem[0] = elem[1] = elem[2] = 0.0;
+	}
 
-        // 1 argument constructor - intialize all elements with given value
-     Vector3d(double val)
-       : BaseObject()
-       {
-         elem[0] = elem[1] = elem[2] = val;
-       }
-     
-        // 1 argument constructor - initialize with given array
-        // Assumes array has atleast 3 elements
-     Vector3d(double * arr)
-       : BaseObject()
-       {
-         elem[0] = arr[0]; elem[1] = arr[1]; elem[2] = arr[2];
-       }
+	// 1 argument constructor - initialize all elements with given value
+	Vector3d(double val)
+		: BaseObject()
+	{
+		elem[0] = elem[1] = elem[2] = val;
+	}
 
-        // 3 argument constructor
-     Vector3d(double val1, double val2, double val3=0.0)
-       : BaseObject()
-       {
-         elem[0] = val1; elem[1] = val2; elem[2] = val3;
-       }
-     
-        // Copy constructor
-     Vector3d(const Vector3d& vec)
-       : BaseObject(vec)
-       {
-         elem[0] = vec.elem[0]; elem[1] = vec.elem[1]; elem[2] = vec.elem[2];
-       }
+	// 1 argument constructor - initialize with given array
+	// Assumes array has at least 3 elements
+	Vector3d(double * arr)
+		: BaseObject()
+	{
+		elem[0] = arr[0]; elem[1] = arr[1]; elem[2] = arr[2];
+	}
 
-        // Construct from a Vector2d - third element is set to 0
-     Vector3d(const Vector2d& vec)
-       : BaseObject()
-       {
-         copyFrom(vec);
-       }
-     
-        // Construct from a Vector4d - copies first 3 elements
-     Vector3d(const Vector4d& vec)
-       : BaseObject()
-       {
-         copyFrom(vec);
-       }
-     
-        // Destructor - does nothing
-     virtual ~Vector3d()
-       {}
+	// 3 argument constructor
+	Vector3d(double val1, double val2, double val3 = 0.0)
+		: BaseObject()
+	{
+		elem[0] = val1; elem[1] = val2; elem[2] = val3;
+	}
 
-        // Assignment operator
-     Vector3d& operator = (const Vector3d& vec)
-       {
-         elem[0] = vec.elem[0]; elem[1] = vec.elem[1]; elem[2] = vec.elem[2];
-         return (*this);
-       }
+	// Copy constructor
+	Vector3d(const Vector3d& vec)
+		: BaseObject(vec)
+	{
+		elem[0] = vec.elem[0]; elem[1] = vec.elem[1]; elem[2] = vec.elem[2];
+	}
 
-        // Assignment from a scalar - all elements are set to the scalar value
-     Vector3d& operator = (double scalar)
-       {
-         elem[0] = elem[1] = elem[2] = scalar;
-         return (*this);
-       }
+	// Construct from a Vector2d - third element is set to 0
+	Vector3d(const Vector2d& vec)
+		: BaseObject()
+	{
+		copyFrom(vec);
+	}
 
-        // Assignment from a Vector2d - third element set to 0
-     Vector3d& operator = (const Vector2d& vec)
-       {
-         copyFrom(vec);
-         return (*this);
-       }
+	// Construct from a Vector4d - copies first 3 elements
+	Vector3d(const Vector4d& vec)
+		: BaseObject()
+	{
+		copyFrom(vec);
+	}
 
-        // Assignment from a Vector4d - copies first 3 elements
-     Vector3d& operator = (const Vector4d& vec)
-       {
-         copyFrom(vec);
-         return (*this);
-       }
+	// Destructor - does nothing
+	virtual ~Vector3d()
+	{
+	}
 
-        // Make a copy of the object
-        // implement BaseObject class pure virtual function
-     virtual BaseObjectPtr copy(void) const
-       {
-         Vector3dPtr vec = new Vector3d(*this);
-         return vec;
-       }
+	// Assignment operator
+	Vector3d& operator = (const Vector3d& vec)
+	{
+		elem[0] = vec.elem[0]; elem[1] = vec.elem[1]; elem[2] = vec.elem[2];
+		return (*this);
+	}
 
-        // Set elements of vector to given values
-     void set(double v1, double v2, double v3)
-       {
-         elem[0] = v1; elem[1] = v2; elem[2] = v3;
-       }
+	// Assignment from a scalar - all elements are set to the scalar value
+	Vector3d& operator = (double scalar)
+	{
+		elem[0] = elem[1] = elem[2] = scalar;
+		return (*this);
+	}
 
-     void set(double val)
-       {
-         elem[0] = elem[1] = elem[2] = val;
-       }
-     
-        // Set elements of vector to default values
-     void reset(void)
-       {
-         set(0.0);
-       }
-     
-        // Get the elements of vector into given values
-     void get(double& v1, double& v2, double& v3) const
-       {
-         v1 = elem[0]; v2 = elem[1]; v3 = elem[2];
-       }
-     
-        // Get the vector as a C array (double *)
-     const double * getCArray(void) const
-       {
-         return (const double *)elem;
-       }
-     
-     double * getCArray(void)
-       {
-         return (double *)elem;
-       }
-     
-        // Fill a 2D array with elements of the vector
-     void fillArray(double arr[3]) const
-       {
-         arr[0] = elem[0]; arr[1] = elem[1]; arr[2] = elem[2];
-       }
+	// Assignment from a Vector2d - third element set to 0
+	Vector3d& operator = (const Vector2d& vec)
+	{
+		copyFrom(vec);
+		return (*this);
+	}
 
-			double lengthsqr(){
-				return elem[0]*elem[0] + elem[1]*elem[1] + elem[2]*elem[2];
-			}
+	// Assignment from a Vector4d - copies first 3 elements
+	Vector3d& operator = (const Vector4d& vec)
+	{
+		copyFrom(vec);
+		return (*this);
+	}
 
-#ifndef __GNUG__     
-        /* GCC 3.0 and later have problems with having this and the [] operator */
-        // Pointer cast operator
-     operator const double * (void) const
-       {
-         return (const double *)elem;
-       }
+	// Make a copy of the object
+	// implement BaseObject class pure virtual function
+	virtual BaseObjectPtr copy(void) const
+	{
+		Vector3dPtr vec = new Vector3d(*this);
+		return vec;
+	}
 
-     operator double * (void)
-       {
-         return (double *)elem;
-       }
+	// Set elements of vector to given values
+	void set(double v1, double v2, double v3)
+	{
+		elem[0] = v1; elem[1] = v2; elem[2] = v3;
+	}
+
+	void set(double val)
+	{
+		elem[0] = elem[1] = elem[2] = val;
+	}
+
+	// Set elements of vector to default values
+	void reset(void)
+	{
+		set(0.0);
+	}
+
+	// Get the elements of vector into given values
+	void get(double& v1, double& v2, double& v3) const
+	{
+		v1 = elem[0]; v2 = elem[1]; v3 = elem[2];
+	}
+
+	// Get the vector as a C array (double *)
+	const double * getCArray(void) const
+	{
+		return (const double *)elem;
+	}
+
+	double * getCArray(void)
+	{
+		return (double *)elem;
+	}
+
+	// Fill a 2D array with elements of the vector
+	void fillArray(double arr[3]) const
+	{
+		arr[0] = elem[0]; arr[1] = elem[1]; arr[2] = elem[2];
+	}
+
+	double lengthsqr()
+	{
+		return elem[0] * elem[0] + elem[1] * elem[1] + elem[2] * elem[2];
+	}
+
+#ifndef __GNUG__
+	/* GCC 3.0 and later have problems with having this and the [] operator */
+	// Pointer cast operator
+	operator const double * (void) const
+	{
+		return (const double *)elem;
+	}
+
+	operator double * (void)
+	{
+		return (double *)elem;
+	}
 #endif
 
-        // Element access operator - doesn't check for valid indices
-     double& operator [] (size_t index)
-       {
-         return elem[index];
-       }
+	// Element access operator - doesn't check for valid indices
+	double& operator [] (size_t index)
+	{
+		return elem[index];
+	}
 
-     double operator [] (size_t index) const
-       {
-         return elem[index];
-       }
+	double operator [] (size_t index) const
+	{
+		return elem[index];
+	}
 
-        // Arithmetic operators
-     void operator += (const Vector3d& vec)            // Additive-assignment
-       {
-         elem[0] += vec.elem[0]; elem[1] += vec.elem[1]; elem[2] += vec.elem[2];
-       }
+	// Arithmetic operators
+	void operator += (const Vector3d& vec)            // Additive-assignment
+	{
+		elem[0] += vec.elem[0]; elem[1] += vec.elem[1]; elem[2] += vec.elem[2];
+	}
 
-     void operator -= (const Vector3d& vec)            // Subtractive-assignment
-       {
-         elem[0] -= vec.elem[0]; elem[1] -= vec.elem[1]; elem[2] -= vec.elem[2];
-       }
+	void operator -= (const Vector3d& vec)            // Subtractive-assignment
+	{
+		elem[0] -= vec.elem[0]; elem[1] -= vec.elem[1]; elem[2] -= vec.elem[2];
+	}
 
-     void operator *= (double scalar)                  // Multiplicative-assignment (scalar)
-       {
-         elem[0] *= scalar; elem[1] *= scalar; elem[2] *= scalar;
-       }
-     
-     void operator /= (double scalar)                  // Divisive-assignment (scalar)
-       {
-         elem[0] /= scalar; elem[1] /= scalar; elem[2] /= scalar;
-       }
-     
-     Vector3d operator + (const Vector3d& vec) const   // Addition
-       {
-         Vector3d sum(*this);
-         sum += vec;
-         return sum;
-       }
+	void operator *= (double scalar)                  // Multiplicative-assignment (scalar)
+	{
+		elem[0] *= scalar; elem[1] *= scalar; elem[2] *= scalar;
+	}
 
-     Vector3d operator - (const Vector3d& vec) const   // Subtraction
-       {
-         Vector3d diff(*this);
-         diff -= vec;
-         return diff;
-       }
+	void operator /= (double scalar)                  // Divisive-assignment (scalar)
+	{
+		elem[0] /= scalar; elem[1] /= scalar; elem[2] /= scalar;
+	}
 
-     double operator * (const Vector3d& vec) const     // Multiplication - dot product
-       {
-         double dotprod = elem[0]*vec.elem[0] + elem[1]*vec.elem[1] + elem[2]*vec.elem[2];
-         return dotprod;
-       }
+	Vector3d operator + (const Vector3d& vec) const   // Addition
+	{
+		Vector3d sum(*this);
+		sum += vec;
+		return sum;
+	}
 
-     Vector3d operator % (const Vector3d& vec) const   // Multiplication - cross product
-       {
-         Vector3d crossp;
+	Vector3d operator - (const Vector3d& vec) const   // Subtraction
+	{
+		Vector3d diff(*this);
+		diff -= vec;
+		return diff;
+	}
 
-         crossp.elem[0] = elem[1]*vec.elem[2] - elem[2]*vec.elem[1];
-         crossp.elem[1] = elem[2]*vec.elem[0] - elem[0]*vec.elem[2];
-         crossp.elem[2] = elem[0]*vec.elem[1] - elem[1]*vec.elem[0];
+	double operator * (const Vector3d& vec) const     // Multiplication - dot product
+	{
+		double dotprod = elem[0] * vec.elem[0] + elem[1] * vec.elem[1] + elem[2] * vec.elem[2];
+		return dotprod;
+	}
 
-         return crossp;
-       }
-     
-        // Operators defined as friend's
-     friend Vector3d operator - (const Vector3d& vec)  // Negation
-       {
-         Vector3d negv(-vec.elem[0],-vec.elem[1],-vec.elem[2]);
-         return negv;
-       }
+	Vector3d operator % (const Vector3d& vec) const   // Multiplication - cross product
+	{
+		Vector3d crossp;
 
-     friend Vector3d operator * (double scalar, const Vector3d& vec) // Pre-multiply by scalar
-       {
-         Vector3d prod(vec);
+		crossp.elem[0] = elem[1] * vec.elem[2] - elem[2] * vec.elem[1];
+		crossp.elem[1] = elem[2] * vec.elem[0] - elem[0] * vec.elem[2];
+		crossp.elem[2] = elem[0] * vec.elem[1] - elem[1] * vec.elem[0];
 
-         prod *= scalar;
-         return prod;
-       }
+		return crossp;
+	}
 
-     friend Vector3d operator * (const Vector3d& vec, double scalar) // Post-multiply by scalar
-       {
-         Vector3d prod(vec);
+	// Operators defined as friend's
+	friend Vector3d operator - (const Vector3d& vec)  // Negation
+	{
+		Vector3d negv(-vec.elem[0], -vec.elem[1], -vec.elem[2]);
+		return negv;
+	}
 
-         prod *= scalar;
-         return prod;
-       }
+	friend Vector3d operator * (double scalar, const Vector3d& vec) // Pre-multiply by scalar
+	{
+		Vector3d prod(vec);
 
-     friend Vector3d operator / (const Vector3d& vec, double scalar) // Divide by scalar
-       {
-         Vector3d prod(vec);
+		prod *= scalar;
+		return prod;
+	}
 
-         prod /= scalar;
-         return prod;
-       }
+	friend Vector3d operator * (const Vector3d& vec, double scalar) // Post-multiply by scalar
+	{
+		Vector3d prod(vec);
 
-     friend Vector3d product(const Vector3d& vec1, const Vector3d& vec2) // Elem-by-elem product
-       {
-         Vector3d prod(vec1[0]*vec2[0],vec1[1]*vec2[1],vec1[2]*vec2[2]);
+		prod *= scalar;
+		return prod;
+	}
 
-         return prod;
-       }
-     
-        // Boolean operators
-     
-     bool operator == (const Vector3d& vec) const      // Equality 
-       {
-         if ( (fabs(elem[0]-vec.elem[0]) > ZERO) ||
-              (fabs(elem[1]-vec.elem[1]) > ZERO) ||
-              (fabs(elem[2]-vec.elem[2]) > ZERO) )
-            return false;
-         return true;
-       }
+	friend Vector3d operator / (const Vector3d& vec, double scalar) // Divide by scalar
+	{
+		Vector3d prod(vec);
 
-     bool operator != (const Vector3d& vec) const      // Inequality
-       {
-         return !( (*this) == vec );
-       }
+		prod /= scalar;
+		return prod;
+	}
 
-        // Other functions
-     
-     friend double normsqr(const Vector3d& vec)        // Square of norm of the vector
-       {
-         double nsq = sqr(vec.elem[0]) + sqr(vec.elem[1]) + sqr(vec.elem[2]);
-         return nsq;
-       }
-     
-     friend double norm(const Vector3d& vec)           // Norm of the vector
-       {
-         return sqrt(normsqr(vec));
-       }
+	friend Vector3d product(const Vector3d& vec1, const Vector3d& vec2) // Elem-by-elem product
+	{
+		Vector3d prod(vec1[0] * vec2[0], vec1[1] * vec2[1], vec1[2] * vec2[2]);
 
-     friend double normalize(Vector3d& vec)            // Normalize. Returns previous norm
-       {
-         double n = norm(vec);
-         if ( !areEqual(n,1.0) && (isNonZero(n) == true) ) vec /= n;
-         return n;
-       }
+		return prod;
+	}
 
-     friend Vector3d normalized(const Vector3d& vec)   // Return normalized vector
-       {
-         Vector3d nvec(vec);
-         normalize(nvec);
-         return nvec;
-       }
-     
-     friend void swap(Vector3d& vec1, Vector3d& vec2)  // Swap elements of 2 Vector3ds
-       {
-         swap(vec1.elem[0],vec2.elem[0]);
-         swap(vec1.elem[1],vec2.elem[1]);
-         swap(vec1.elem[2],vec2.elem[2]);
-       }
+	// Boolean operators
 
-        // I/O Stream operators
+	bool operator == (const Vector3d& vec) const      // Equality
+	{
+		if ((fabs(elem[0] - vec.elem[0]) > ZERO) ||
+			(fabs(elem[1] - vec.elem[1]) > ZERO) ||
+			(fabs(elem[2] - vec.elem[2]) > ZERO))
+			return false;
+		return true;
+	}
 
-     friend istream& operator >> (istream& i, Vector3d& vec) // Extraction operator
-       {
-            // Separating character can be anything
-            // If only 1 number is there in the input stream before reaching EOL
-            // both elements are set to that number.
-            // If only 2 numbers are there, third element is set to 0
-            // If EOL is reached before reading a number, vec is not changed
-            // Caveat: Separator char need not be the same between each element
-         removeWhiteSpace(i);
-         if ( readTillFloat(i) )
-            {
-              i >> vec.elem[0];
-              if ( readTillFloat(i) )
-                 {
-                   i >> vec.elem[1];
-                   if ( readTillFloat(i) ) i >> vec.elem[2];
-                   else                    vec.elem[2] = 0.0;
-                 }
-              else
-                 vec.elem[2] = vec.elem[1] = vec.elem[0];
-            }
-         return i;
-       }
+	bool operator != (const Vector3d& vec) const      // Inequality
+	{
+		return !((*this) == vec);
+	}
 
-     friend ostream& operator << (ostream& o, const Vector3d& vec) // Insertion operator
-       {
-            // User can set precision from 0 to 6
-         o << setiosflags(ios::fixed) << setiosflags(ios::showpoint);
+	// Other functions
 
-         int oldprec = o.precision();
-         if ( oldprec < 0 ) o << setprecision(0);
-         if ( oldprec > 6 ) o << setprecision(6);
+	friend double normsqr(const Vector3d& vec)        // Square of norm of the vector
+	{
+		double nsq = sqr(vec.elem[0]) + sqr(vec.elem[1]) + sqr(vec.elem[2]);
+		return nsq;
+	}
 
-         o << "["
-           << vec.elem[0] << " "
-           << vec.elem[1] << " "
-           << vec.elem[2]
-           << "]";
-         
-         o << setprecision(oldprec);
-         return o;
-       }
+	friend double norm(const Vector3d& vec)           // Norm of the vector
+	{
+		return sqrt(normsqr(vec));
+	}
+
+	friend double normalize(Vector3d& vec)            // Normalize. Returns previous norm
+	{
+		double n = norm(vec);
+		if (!areEqual(n, 1.0) && (isNonZero(n) == true)) vec /= n;
+		return n;
+	}
+
+	friend Vector3d normalized(const Vector3d& vec)   // Return normalized vector
+	{
+		Vector3d nvec(vec);
+		normalize(nvec);
+		return nvec;
+	}
+
+	friend void swap(Vector3d& vec1, Vector3d& vec2)  // Swap elements of 2 Vector3ds
+	{
+		swap(vec1.elem[0], vec2.elem[0]);
+		swap(vec1.elem[1], vec2.elem[1]);
+		swap(vec1.elem[2], vec2.elem[2]);
+	}
+
+	// I/O Stream operators
+
+	friend istream& operator >> (istream& i, Vector3d& vec) // Extraction operator
+	{
+		// Separating character can be anything
+		// If only 1 number is there in the input stream before reaching EOL
+		// both elements are set to that number.
+		// If only 2 numbers are there, third element is set to 0
+		// If EOL is reached before reading a number, vec is not changed
+		// Caveat: Separator char need not be the same between each element
+		removeWhiteSpace(i);
+		if (readTillFloat(i))
+		{
+			i >> vec.elem[0];
+			if (readTillFloat(i))
+			{
+				i >> vec.elem[1];
+				if (readTillFloat(i)) i >> vec.elem[2];
+				else                    vec.elem[2] = 0.0;
+			}
+			else
+				vec.elem[2] = vec.elem[1] = vec.elem[0];
+		}
+		return i;
+	}
+
+	friend ostream& operator << (ostream& o, const Vector3d& vec) // Insertion operator
+	{
+		// User can set precision from 0 to 6
+		o << setiosflags(ios::fixed) << setiosflags(ios::showpoint);
+
+		int oldprec = o.precision();
+		if (oldprec < 0) o << setprecision(0);
+		if (oldprec > 6) o << setprecision(6);
+
+		o << "["
+			<< vec.elem[0] << " "
+			<< vec.elem[1] << " "
+			<< vec.elem[2]
+			<< "]";
+
+		o << setprecision(oldprec);
+		return o;
+	}
 };
 
 #endif // #ifndef _VECTOR_3D_HH_

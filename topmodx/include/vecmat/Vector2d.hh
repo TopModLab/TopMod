@@ -45,338 +45,334 @@
 #include "Vector.hh"
 
 class Vector2d;
-typedef Vector2d * Vector2dPtr;
+typedef Vector2d *Vector2dPtr;
 
 class Vector2d : public BaseObject
 {
-  protected :
 
-     double elem[2];                                   // 2 elements of the vector
+public:
+	// Default constructor
+	Vector2d() : BaseObject()
+	{
+		elem[0] = elem[1] = 0.0;
+	}
 
-        // Initialize the elements from a Vector3d or Vector4d
-     void copyFrom(const Vector3d& vec);
-     void copyFrom(const Vector4d& vec);
+	// 1 argument constructor - intialize all elements with given value
+	Vector2d(double val) : BaseObject()
+	{
+		elem[0] = elem[1] = val;
+	}
 
-  public :
+	// 1 argument constructor - initialize with given array
+	// Assumes array has atleast 2 elements
+	Vector2d(double * arr) : BaseObject()
+	{
+		elem[0] = arr[0]; elem[1] = arr[1];
+	}
 
-        // Default constructor
-     Vector2d()
-       : BaseObject()
-       {
-         elem[0] = elem[1] = 0.0;
-       }
+	// 2 argument constructor
+	Vector2d(double val1, double val2) : BaseObject()
+	{
+		elem[0] = val1; elem[1] = val2;
+	}
 
-        // 1 argument constructor - intialize all elements with given value
-     Vector2d(double val)
-       : BaseObject()
-       {
-         elem[0] = elem[1] = val;
-       }
-     
-        // 1 argument constructor - initialize with given array
-        // Assumes array has atleast 2 elements
-     Vector2d(double * arr)
-       : BaseObject()
-       {
-         elem[0] = arr[0]; elem[1] = arr[1];
-       }
+	// Copy constructor
+	Vector2d(const Vector2d& vec) : BaseObject(vec)
+	{
+		elem[0] = vec.elem[0]; elem[1] = vec.elem[1];
+	}
 
-        // 2 argument constructor
-     Vector2d(double val1, double val2)
-       : BaseObject()
-       {
-         elem[0] = val1; elem[1] = val2;
-       }
-     
-        // Copy constructor
-     Vector2d(const Vector2d& vec)
-       : BaseObject(vec)
-       {
-         elem[0] = vec.elem[0]; elem[1] = vec.elem[1];
-       }
+	// Construct from a Vector3d - copies first 2 elements
+	Vector2d(const Vector3d& vec) : BaseObject()
+	{
+		copyFrom(vec);
+	}
 
-        // Construct from a Vector3d - copies first 2 elements
-     Vector2d(const Vector3d& vec)
-       : BaseObject()
-       {
-         copyFrom(vec);
-       }
-     
-        // Construct from a Vector4d - copies first 2 elements
-     Vector2d(const Vector4d& vec)
-       : BaseObject()
-       {
-         copyFrom(vec);
-       }
-     
-        // Destructor - does nothing
-     virtual ~Vector2d()
-       {}
+	// Construct from a Vector4d - copies first 2 elements
+	Vector2d(const Vector4d& vec) : BaseObject()
+	{
+		copyFrom(vec);
+	}
 
-        // Assignment operator
-     Vector2d& operator = (const Vector2d& vec)
-       {
-         elem[0] = vec.elem[0]; elem[1] = vec.elem[1];
-         return (*this);
-       }
+	// Destructor - does nothing
+	virtual ~Vector2d()
+	{
+	}
 
-        // Assignment from a scalar - both elements are set to the scalar value
-     Vector2d& operator = (double scalar)
-       {
-         elem[0] = elem[1] = scalar;
-         return (*this);
-       }
+	// Assignment operator
+	Vector2d& operator = (const Vector2d& vec)
+	{
+		elem[0] = vec.elem[0]; elem[1] = vec.elem[1];
+		return (*this);
+	}
 
-        // Assignment from a Vector3d - copies first 2 elements
-     Vector2d& operator = (const Vector3d& vec)
-       {
-         copyFrom(vec);
-         return (*this);
-       }
+	// Assignment from a scalar - both elements are set to the scalar value
+	Vector2d& operator = (double scalar)
+	{
+		elem[0] = elem[1] = scalar;
+		return (*this);
+	}
 
-        // Assignment from a Vector4d - copies first 2 elements
-     Vector2d& operator = (const Vector4d& vec)
-       {
-         copyFrom(vec);
-         return (*this);
-       }
+	// Assignment from a Vector3d - copies first 2 elements
+	Vector2d& operator = (const Vector3d& vec)
+	{
+		copyFrom(vec);
+		return (*this);
+	}
 
-        // Make a copy of the object
-        // implement BaseObject class pure virtual function
-     virtual BaseObjectPtr copy(void) const
-       {
-         Vector2dPtr vec = new Vector2d(*this);
-         return vec;
-       }
+	// Assignment from a Vector4d - copies first 2 elements
+	Vector2d& operator = (const Vector4d& vec)
+	{
+		copyFrom(vec);
+		return (*this);
+	}
 
-        // Set elements of vector to given values
-     void set(double v1, double v2)
-       {
-         elem[0] = v1; elem[1] = v2;
-       }
+	// Make a copy of the object
+	// implement BaseObject class pure virtual function
+	virtual BaseObjectPtr copy(void) const
+	{
+		Vector2dPtr vec = new Vector2d(*this);
+		return vec;
+	}
 
-     void set(double val)
-       {
-         elem[0] = elem[1] = val;
-       }
-     
-        // Set elements of vector to default values
-     void reset(void)
-       {
-         set(0.0);
-       }
-     
-        // Get the elements of vector into given values
-     void get(double& v1, double& v2) const
-       {
-         v1 = elem[0]; v2 = elem[1];
-       }
-     
-        // Get the vector as a C array (double *)
-     const double * getCArray(void) const
-       {
-         return (const double *)elem;
-       }
-     
-     double * getCArray(void)
-       {
-         return (double *)elem;
-       }
-     
-        // Fill a 2D array with elements of the vector
-     void fillArray(double arr[2]) const
-       {
-         arr[0] = elem[0]; arr[1] = elem[1];
-       }
+	// Set elements of vector to given values
+	void set(double v1, double v2)
+	{
+		elem[0] = v1; elem[1] = v2;
+	}
+
+	void set(double val)
+	{
+		elem[0] = elem[1] = val;
+	}
+
+	// Set elements of vector to default values
+	void reset(void)
+	{
+		set(0.0);
+	}
+
+	// Get the elements of vector into given values
+	void get(double& v1, double& v2) const
+	{
+		v1 = elem[0]; v2 = elem[1];
+	}
+
+	// Get the vector as a C array (double *)
+	const double * getCArray(void) const
+	{
+		return (const double *)elem;
+	}
+
+	double * getCArray(void)
+	{
+		return (double *)elem;
+	}
+
+	// Fill a 2D array with elements of the vector
+	void fillArray(double arr[2]) const
+	{
+		arr[0] = elem[0]; arr[1] = elem[1];
+	}
 
 #ifndef __GNUG__
-        /* GCC 3.0 and later have problems with having this and the [] operator */
-        // Pointer cast operator
-     operator const double * (void) const
-       {
-         return (const double *)elem;
-       }
+	/* GCC 3.0 and later have problems with having this and the [] operator */
+	// Pointer cast operator
+	operator const double * (void) const
+	{
+		return (const double *)elem;
+	}
 
-     operator double * (void)
-       {
-         return (double *)elem;
-       }
+	operator double * (void)
+	{
+		return (double *)elem;
+	}
 #endif
 
-        // Element access operator - doesn't check for valid indices
-     double& operator [] (uint index)
-       {
-         return elem[index];
-       }
+	// Element access operator - doesn't check for valid indices
+	double& operator [] (uint index)
+	{
+		return elem[index];
+	}
 
-     double operator [] (uint index) const
-       {
-         return elem[index];
-       }
+	double operator [] (uint index) const
+	{
+		return elem[index];
+	}
 
-        // Arithmetic operators
-     void operator += (const Vector2d& vec)            // Additive-assignment
-       {
-         elem[0] += vec.elem[0]; elem[1] += vec.elem[1];
-       }
+	// Arithmetic operators
+	void operator += (const Vector2d& vec)            // Additive-assignment
+	{
+		elem[0] += vec.elem[0]; elem[1] += vec.elem[1];
+	}
 
-     void operator -= (const Vector2d& vec)            // Subtractive-assignment
-       {
-         elem[0] -= vec.elem[0]; elem[1] -= vec.elem[1];
-       }
+	void operator -= (const Vector2d& vec)            // Subtractive-assignment
+	{
+		elem[0] -= vec.elem[0]; elem[1] -= vec.elem[1];
+	}
 
-     void operator *= (double scalar)                  // Multiplicative-assignment (scalar)
-       {
-         elem[0] *= scalar; elem[1] *= scalar;
-       }
-     
-     void operator /= (double scalar)                  // Divisive-assignment (scalar)
-       {
-         elem[0] /= scalar; elem[1] /= scalar;
-       }
-     
-     Vector2d operator + (const Vector2d& vec) const   // Addition
-       {
-         Vector2d sum(*this);
-         sum += vec;
-         return sum;
-       }
+	void operator *= (double scalar)                  // Multiplicative-assignment (scalar)
+	{
+		elem[0] *= scalar; elem[1] *= scalar;
+	}
 
-     Vector2d operator - (const Vector2d& vec) const   // Subtraction
-       {
-         Vector2d diff(*this);
-         diff -= vec;
-         return diff;
-       }
+	void operator /= (double scalar)                  // Divisive-assignment (scalar)
+	{
+		elem[0] /= scalar; elem[1] /= scalar;
+	}
 
-     double operator * (const Vector2d& vec) const     // Multiplication - dot product
-       {
-         double dotprod = elem[0]*vec.elem[0] + elem[1]*vec.elem[1];
-         return dotprod;
-       }
+	Vector2d operator + (const Vector2d& vec) const   // Addition
+	{
+		Vector2d sum(*this);
+		sum += vec;
+		return sum;
+	}
 
-        // Operators defined as friend's
-     friend Vector2d operator - (const Vector2d& vec)  // Negation
-       {
-         Vector2d negv(-vec.elem[0],-vec.elem[1]);
-         return negv;
-       }
+	Vector2d operator - (const Vector2d& vec) const   // Subtraction
+	{
+		Vector2d diff(*this);
+		diff -= vec;
+		return diff;
+	}
 
-     friend Vector2d operator * (double scalar, const Vector2d& vec) // Pre-multiply by scalar
-       {
-         Vector2d prod(vec);
+	double operator * (const Vector2d& vec) const     // Multiplication - dot product
+	{
+		double dotprod = elem[0] * vec.elem[0] + elem[1] * vec.elem[1];
+		return dotprod;
+	}
 
-         prod *= scalar;
-         return prod;
-       }
+	// Operators defined as friend's
+	friend Vector2d operator - (const Vector2d& vec)  // Negation
+	{
+		Vector2d negv(-vec.elem[0], -vec.elem[1]);
+		return negv;
+	}
 
-     friend Vector2d operator * (const Vector2d& vec, double scalar) // Post-multiply by scalar
-       {
-         Vector2d prod(vec);
+	friend Vector2d operator * (double scalar, const Vector2d& vec) // Pre-multiply by scalar
+	{
+		Vector2d prod(vec);
 
-         prod *= scalar;
-         return prod;
-       }
+		prod *= scalar;
+		return prod;
+	}
 
-     friend Vector2d operator / (const Vector2d& vec, double scalar) // Divide by scalar
-       {
-         Vector2d prod(vec);
+	friend Vector2d operator * (const Vector2d& vec, double scalar) // Post-multiply by scalar
+	{
+		Vector2d prod(vec);
 
-         prod /= scalar;
-         return prod;
-       }
+		prod *= scalar;
+		return prod;
+	}
 
-     friend Vector2d product(const Vector2d& vec1, const Vector2d& vec2) // Elem-by-elem product
-       {
-         Vector2d prod(vec1[0]*vec2[0],vec1[1]*vec2[1]);
+	friend Vector2d operator / (const Vector2d& vec, double scalar) // Divide by scalar
+	{
+		Vector2d prod(vec);
 
-         return prod;
-       }
-     
-        // Boolean operators
-     
-     bool operator == (const Vector2d& vec) const      // Equality 
-       {
-         if ( (fabs(elem[0]-vec.elem[0]) > ZERO) ||
-              (fabs(elem[1]-vec.elem[1]) > ZERO) )
-            return false;
-         return true;
-       }
+		prod /= scalar;
+		return prod;
+	}
 
-     bool operator != (const Vector2d& vec) const      // Inequality
-       {
-         return !( (*this) == vec );
-       }
+	friend Vector2d product(const Vector2d& vec1, const Vector2d& vec2) // Elem-by-elem product
+	{
+		Vector2d prod(vec1[0] * vec2[0], vec1[1] * vec2[1]);
 
-        // Other functions
-     
-     friend double normsqr(const Vector2d& vec)        // Square of norm of the vector
-       {
-         double nsq = sqr(vec.elem[0]) + sqr(vec.elem[1]);
-         return nsq;
-       }
-     
-     friend double norm(const Vector2d& vec)           // Norm of the vector
-       {
-         return sqrt(normsqr(vec));
-       }
+		return prod;
+	}
 
-     friend double normalize(Vector2d& vec)            // Normalize. Returns previous norm
-       {
-         double n = norm(vec);
-         if ( !areEqual(n,1.0) && (isNonZero(n) == true) ) vec /= n;
-         return n;
-       }
+	// Boolean operators
 
-     friend Vector2d normalized(const Vector2d& vec)   // Return normalized vector
-       {
-         Vector2d nvec(vec);
-         normalize(nvec);
-         return nvec;
-       }
-     
-     friend void swap(Vector2d& vec1, Vector2d& vec2)  // Swap elements of 2 Vector2ds
-       {
-         swap(vec1.elem[0],vec2.elem[0]);
-         swap(vec1.elem[1],vec2.elem[1]);
-       }
+	bool operator == (const Vector2d& vec) const      // Equality
+	{
+		if ((fabs(elem[0] - vec.elem[0]) > ZERO) ||
+			(fabs(elem[1] - vec.elem[1]) > ZERO))
+			return false;
+		return true;
+	}
 
-        // I/O Stream operators
+	bool operator != (const Vector2d& vec) const      // Inequality
+	{
+		return !((*this) == vec);
+	}
 
-     friend istream& operator >> (istream& i, Vector2d& vec) // Extraction operator
-       {
-            // Separating character can be anything
-            // If only 1 number is there in the input stream before reaching EOL
-            // both elements are set to that number
-            // If EOL is reached before reading a number, vec is not changed
-            // Caveat: Separator char need not be the same between each element
-         removeWhiteSpace(i);
-         if ( readTillFloat(i) )
-            {
-              i >> vec.elem[0];
-              if ( readTillFloat(i) ) i >> vec.elem[1];
-              else                    vec.elem[1] = vec.elem[0];
-            }
-         return i;
-       }
+	// Other functions
 
-     friend ostream& operator << (ostream& o, const Vector2d& vec) // Insertion operator
-       {
-            // User can set precision from 0 to 6
-         o << setiosflags(ios::fixed) << setiosflags(ios::showpoint);
+	friend double normsqr(const Vector2d& vec)        // Square of norm of the vector
+	{
+		double nsq = sqr(vec.elem[0]) + sqr(vec.elem[1]);
+		return nsq;
+	}
 
-         int oldprec = o.precision();
-         if ( oldprec < 0 ) o << setprecision(0);
-         if ( oldprec > 6 ) o << setprecision(6);
+	friend double norm(const Vector2d& vec)           // Norm of the vector
+	{
+		return sqrt(normsqr(vec));
+	}
 
-         o << "["
-           << vec.elem[0] << ' '
-           << vec.elem[1]
-           << "]";
-         
-         o << setprecision(oldprec);
-         return o;
-       }
+	friend double normalize(Vector2d& vec)            // Normalize. Returns previous norm
+	{
+		double n = norm(vec);
+		if (!areEqual(n, 1.0) && (isNonZero(n) == true)) vec /= n;
+		return n;
+	}
+
+	friend Vector2d normalized(const Vector2d& vec)   // Return normalized vector
+	{
+		Vector2d nvec(vec);
+		normalize(nvec);
+		return nvec;
+	}
+
+	friend void swap(Vector2d& vec1, Vector2d& vec2)  // Swap elements of 2 Vector2ds
+	{
+		swap(vec1.elem[0], vec2.elem[0]);
+		swap(vec1.elem[1], vec2.elem[1]);
+	}
+
+	// I/O Stream operators
+
+	friend istream& operator >> (istream& i, Vector2d& vec) // Extraction operator
+	{
+		// Separating character can be anything
+		// If only 1 number is there in the input stream before reaching EOL
+		// both elements are set to that number
+		// If EOL is reached before reading a number, vec is not changed
+		// Caveat: Separator char need not be the same between each element
+		removeWhiteSpace(i);
+		if (readTillFloat(i))
+		{
+			i >> vec.elem[0];
+			if (readTillFloat(i)) i >> vec.elem[1];
+			else                    vec.elem[1] = vec.elem[0];
+		}
+		return i;
+	}
+
+	friend ostream& operator << (ostream& o, const Vector2d& vec) // Insertion operator
+	{
+		// User can set precision from 0 to 6
+		o << setiosflags(ios::fixed) << setiosflags(ios::showpoint);
+
+		int oldprec = o.precision();
+		if (oldprec < 0) o << setprecision(0);
+		if (oldprec > 6) o << setprecision(6);
+
+		o << "["
+			<< vec.elem[0] << ' '
+			<< vec.elem[1]
+			<< "]";
+
+		o << setprecision(oldprec);
+		return o;
+	}
+
+protected:
+	// Initialize the elements from a Vector3d or Vector4d
+	void copyFrom(const Vector3d& vec);
+	void copyFrom(const Vector4d& vec);
+
+protected:
+	// 2 elements of the vector
+	double elem[2];
+
 };
 
 #endif // #ifndef _VECTOR_2D_HH_
