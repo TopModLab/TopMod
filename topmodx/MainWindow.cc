@@ -2015,7 +2015,16 @@ void MainWindow::openFile(QString fileName){
 }
 
 void MainWindow::about() {
-	QString s = QString("TopMod Topological Mesh Modeler v%1 <br /><a href=\"http://www.topmod3d.org/\">TopMod Home Page</a><br /><a href=\"http://code.google.com/p/topmod/downloads/list\">Check for Updates.</a>").arg(VER);
+	//TODO: Define version number in a header file
+#ifndef VER
+#define VER "3.0.0"
+#endif // VER
+
+	QString s = QString(
+		"TopMod Topological Mesh Modeler v%1 <br />" \
+		"<a href=\"http://www.topmod3d.org/\">TopMod Home Page</a><br />" \
+		"<a href=\"https://github.com/TopModLab/TopMod/releases\">" \
+		"Check for Updates.</a>").arg(VER);
 	QMessageBox::about(this, tr("About TopMod"), s);
 }
 
