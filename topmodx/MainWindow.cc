@@ -35,7 +35,7 @@
  **
  **
  ****************************************************************************/
- 
+
 #include <QtGui>
 #include <QtOpenGL>
 #include "MainWindow.h"
@@ -43,12 +43,12 @@
 /*!
 	\ingroup gui
 	@{
-	
+
 	\class MainWindow
 	\brief The Main Window of the application.
-	
-	\note 
-	
+
+	\note
+
 	\see MainWindow
 */
 
@@ -62,218 +62,219 @@
 #endif
 #endif
 
-WireframeRendererPtr MainWindow::wired;              	//!< WireframeRenderer Pointer
-NormalRendererPtr MainWindow::normal;                	//!< NormalRenderer Pointer
-LitRendererPtr MainWindow::lit;                       //!< LitRenderer Pointer
-TexturedRendererPtr MainWindow::textured;          		//!< TexturedRenderer Pointer
-TexturedLitRendererPtr MainWindow::texturedlit; 			//!< TexturedLitRenderer Pointer
-PatchRendererPtr MainWindow::patch;		       					//!< PatchRenderer Pointer
-ColorableRendererPtr MainWindow::colorable;		       					//!< ColorableRenderer Pointer
+WireframeRendererPtr MainWindow::sWiredRenderer;				//!< WireframeRenderer Pointer
+NormalRendererPtr MainWindow::sNormalRenderer;				//!< NormalRenderer Pointer
+LitRendererPtr MainWindow::sLitRenderer;						//!< LitRenderer Pointer
+TexturedRendererPtr MainWindow::sTexturedRenderer;			//!< TexturedRenderer Pointer
+TexturedLitRendererPtr MainWindow::sTexturedLitRenderer;		//!< TexturedLitRenderer Pointer
+PatchRendererPtr MainWindow::sPatchRenderer;					//!< PatchRenderer Pointer
+ColorableRendererPtr MainWindow::sColorableRendererr;			//!< ColorableRenderer Pointer
 
 //-- Parameters used in various operations on the DLFL object --//
 //-- See header file for explanations --//
 
-int MainWindow::drag_startx = 0;
-int MainWindow::drag_starty = 0;
-bool MainWindow::is_editing = false;
+int MainWindow::sDragStartX = 0;
+int MainWindow::sDragStartY = 0;
+bool MainWindow::sIsEditing = false;
 
 //face area - dave
-float MainWindow::face_area_tolerance = 0.05;
+float MainWindow::sFaceAreaTolerance = 0.05;
 //face color tolerance
-float MainWindow::face_color_tolerance = 0.00;
+float MainWindow::sFaceColorTolerance = 0.00;
 
 // Edge deletion
-bool MainWindow::delete_edge_cleanup = true;
+bool MainWindow::sDeleteEdgeCleanup = true;
 
 // Handles
-int MainWindow::num_segments = 10;
-int MainWindow::max_segments = -1;
-bool MainWindow::symmetric_weights = true;
-double MainWindow::nwt1 = 25.0;
-double MainWindow::nwt2 = 25.0;
-int MainWindow::num_extra_twists = 0;
+int MainWindow::sNumSegments = 10;
+int MainWindow::sMaxSegments = -1;
+bool MainWindow::sSymmetricWeights = true;
+double MainWindow::sFaceNormalWeight1 = 25.0;
+double MainWindow::sFaceNormalWeight2 = 25.0;
+int MainWindow::sNumExtraTwists = 0;
 
 // Extrusions
-double MainWindow::extrude_dist = 2.0;
-double MainWindow::extrude_rot = 0.0;
-double MainWindow::extrude_scale = 1.0;
-double MainWindow::extrude_angle = 40.0;
-double MainWindow::extrude_length1 = 0.5;
-double MainWindow::extrude_length2 = 1.0;
-double MainWindow::extrude_length3 = 1.0;
-double MainWindow::extrude_angle_icosa = 50.0;
-double MainWindow::extrude_length1_icosa = 0.5;
-double MainWindow::extrude_length2_icosa = 0.7;
-double MainWindow::extrude_length3_icosa = 0.8;
-int MainWindow::num_extrusions = 1;
-double MainWindow::ds_ex_twist = 0.0;
-bool MainWindow::dual_mesh_edges_check = false;
-bool MainWindow::hexagonalize_dodeca_extrude = false;
-double MainWindow::extrude_bendT = 0;
-double MainWindow::extrude_bendB = 0;
+double MainWindow::sExtrudeDist = 2.0;
+double MainWindow::sExtrudeRot = 0.0;
+double MainWindow::sExtrudeScale = 1.0;
+double MainWindow::sExtrudeAngle = 40.0;
+double MainWindow::sExtrudeLength1 = 0.5;
+double MainWindow::sExtrudeLength2 = 1.0;
+double MainWindow::sExtrudeLength3 = 1.0;
+double MainWindow::sExtrudeAngle_iCosA = 50.0;
+double MainWindow::sExtrudeLength1_iCosA = 0.5;
+double MainWindow::sExtrudeLength2_iCosA = 0.7;
+double MainWindow::sExtrudeLength3_iCosA = 0.8;
+int MainWindow::sNumExtrusions = 1;
+double MainWindow::sDooSabinExtrusionTwist = 0.0;
+bool MainWindow::sDualMeshEdgesCheck = false;
+bool MainWindow::sHexagonalizeDodecaExtrude = false;
+double MainWindow::sExtrudeBendT = 0;
+double MainWindow::sExtrudeBendB = 0;
 
 // Edge subdivision
-int MainWindow::num_e_subdivs = 2;
+int MainWindow::sNumEdgeSubdiv = 2;
 
 // Split valence 2 vertices
-double MainWindow::vertex_split_offset=-0.1;
+double MainWindow::sVertexSplitOffset=-0.1;
 
 // Crust modeling
-double MainWindow::crust_thickness = 0.5;
-double MainWindow::crust_scale_factor = 0.9;
-bool MainWindow::crust_cleanup = true;
+double MainWindow::sCrustThickness = 0.5;
+double MainWindow::sCrustScaleFactor = 0.9;
+bool MainWindow::sCrustCleanup = true;
 
 // Wireframe modeling
-double MainWindow::wireframe_thickness = 0.25;
-double MainWindow::wireframe2_thickness = 0.25;
-double MainWindow::wireframe2_width = 0.25;
-bool MainWindow::wireframe_split = true;
-double MainWindow::corner_cutting_alpha = 9.0/16.0;
+double MainWindow::sWireframeThickness = 0.25;
+double MainWindow::sWireframe2Thickness = 0.25;
+double MainWindow::sWireframe2Width = 0.25;
+bool MainWindow::sWireframeSplit = true;
+double MainWindow::sCornerCuttingAlpha = 9.0/16.0;
 
 
 // Column modeling
-double MainWindow::column_thickness = 0.25;
-int MainWindow::column_segments = 4;
+double MainWindow::sColumnThickness = 0.25;
+int MainWindow::sColumnSegments = 4;
 
 // Subdivision
-double MainWindow::twist_factor = 0.0;
-double MainWindow::weight_factor = 0.0;
-bool MainWindow::doo_sabin_check = true;
-double MainWindow::vertex_cutting_offset = 0.25;
-double MainWindow::pentagonal_offset = 0.0;
-double MainWindow::pentagonal_scale = 0.75;
-bool MainWindow::accurate_dual = true;
-double MainWindow::checkerboard_thickness = 0.33;
-double MainWindow::modified_corner_cutting_thickness = 0.25;
+double MainWindow::sTwistFactor = 0.0;
+double MainWindow::sWeightFactor = 0.0;
+bool MainWindow::sDooSabinCheck = true;
+double MainWindow::sVertexCuttingOffset = 0.25;
+double MainWindow::sPentagonalOffset = 0.0;
+double MainWindow::sPentagonalScale = 0.75;
+bool MainWindow::sAccurateDual = true;
+double MainWindow::sCheckerboardThickness = 0.33;
+double MainWindow::sModifiedCornerCuttingThickness = 0.25;
 
 // Added by Doug
-double MainWindow::star_offset = 0.0;
-double MainWindow::fractal_offset = 1.0;
+double MainWindow::sStarOffset = 0.0;
+double MainWindow::sFractalOffset = 1.0;
 
 //Added by Ryan
-double MainWindow::pinching_factor = 1;
-double MainWindow::pinch_center = 0.5;
-double MainWindow::bubble_factor = 1;
-double MainWindow::holeHandle_pinching_factor = 1;
-double MainWindow::holeHandle_pinch_center = 0.5;
-double MainWindow::holeHandle_pinch_width = 1;
+double MainWindow::sPinchingFactor = 1;
+double MainWindow::sPinchCenter = 0.5;
+double MainWindow::sBubbleFactor = 1;
+double MainWindow::sHoleHandlePinchingFactor = 1;
+double MainWindow::sHoleHandlePinchCenter = 0.5;
+double MainWindow::sHoleHandlePinchWidth = 1;
 
 // Added by Eric
-double MainWindow::substellate_height = 0.0;
-double MainWindow::substellate_curve = 0.0;
+double MainWindow::sSubstellateHeight = 0.0;
+double MainWindow::sSubstellateCurve = 0.0;
 
 // Added by bei&cansin dec 09
-double MainWindow::domeLength_factor = 1.0 ;
-double MainWindow::domeScale_factor = 1.0  ;
-double MainWindow::dual1264_scale_factor = 0.7 ;
+double MainWindow::sDomeLengthFactor = 1.0 ;
+double MainWindow::sDomeScaleFactor = 1.0  ;
+double MainWindow::sDual1264ScaleFactor = 0.7 ;
 
 //dave
 // double MainWindow::dooSabinExtrudeTwist_factor = 0.0 ;
-double MainWindow::domeExtrudeLength_factor = 1.0 ;
-double MainWindow::domeExtrudeScale_factor = 1.0  ;
-double MainWindow::domeExtrudeRotation_factor = 0.0  ;
+double MainWindow::sDomeExtrudeLengthFactor = 1.0 ;
+double MainWindow::sDomeExtrudeScaleFactor = 1.0  ;
+double MainWindow::sDomeExtrudeRotationFactor = 0.0  ;
 
 // Added by bei dec 11
-double MainWindow::dooSabinBCnewScale_factor = 1.0;
-double MainWindow::dooSabinBCnewLength_factor = 1.0;
+double MainWindow::sDooSabinBCnewScaleFactor = 1.0;
+double MainWindow::sDooSabinBCnewLengthFactor = 1.0;
 
 // Added by bei 12-11-03
-double MainWindow::loopLength_factor = 1.0;
+double MainWindow::sLoopLengthFactor = 1.0;
 
 // Face subdivision
-bool MainWindow::use_quads = true;
+bool MainWindow::sUseQuads = true;
 
 // Tile texturing
-int MainWindow::tile_tex_n = 2;
+int MainWindow::sTileTexSize = 2;
 
 // Multi-face handles
-MainWindow::MFHAlgo MainWindow::mfh_algo = MainWindow::ConvexHull;
-double MainWindow::mfh_scale_factor = 1.0;
-double MainWindow::mfh_extrude_dist = 0.5;
-bool MainWindow::mfh_use_max_offsets = false;
-double MainWindow::mfh_min_adj_factor = 0.01;
-bool MainWindow::mfh_make_connections = true;
+MainWindow::MFHAlgo MainWindow::sMfhAlgorithm = MainWindow::ConvexHull;
+double MainWindow::sMfhScaleFactor = 1.0;
+double MainWindow::sMfhExtrudeDist = 0.5;
+bool MainWindow::sMfhUseMaxOffsets = false;
+double MainWindow::sMfhMinAdjFactor = 0.01;
+bool MainWindow::sMfhMakeConnections = true;
 
 // Menger Sponge creation
-double MainWindow::sponge_thickness = 0.67; // Thickness for Menger Sponge
-double MainWindow::sponge_collapse_threshold = 0.0; // Threshold factor for edge collapse
-bool MainWindow::sponge_fractional_thickness = false; // Thickness is fractional
+double MainWindow::sSpongeThickness = 0.67; // Thickness for Menger Sponge
+double MainWindow::sSpongeCollapseThreshold = 0.0; // Threshold factor for edge collapse
+bool MainWindow::sSpongeFractionalThickness = false; // Thickness is fractional
 
 //conical sculpting initialization from ozgur
-double MainWindow::cutOffsetE_factor = 0.25;
-double MainWindow::cutOffsetV_factor = 0.25;
-double MainWindow::pnormalBendS_factor = 0;
-double MainWindow::pnormalBendT_factor = 0;
-bool   MainWindow::global_cut = false;
-int    MainWindow::numberofPeels = 90;
-bool   MainWindow::selected_cut=true;
+double MainWindow::sCutOffsetEdgeFactor = 0.25;
+double MainWindow::sCutOffsetVertFactor = 0.25;
+double MainWindow::sPNormalBendS_Factor = 0;
+double MainWindow::sPNormalBendT_Factor = 0;
+bool MainWindow::sGlobalCut = false;
+int MainWindow::sNumOfPeels = 90;
+bool MainWindow::sSelectedCut=true;
 
 //-- Selection count, used as index into selection lists --//
-int MainWindow::num_sel_verts = 0;
-int MainWindow::num_sel_edges = 0;
-int MainWindow::num_sel_faces = 0;
-int MainWindow::num_sel_faceverts = 0;
+int MainWindow::sNumSelVerts = 0;
+int MainWindow::sNumSelEdges = 0;
+int MainWindow::sNumSelFaces = 0;
+int MainWindow::sNumSelFaceVerts = 0;
 
-bool MainWindow::deselect_verts = false;
-bool MainWindow::deselect_edges = false;
-bool MainWindow::deselect_faces = false;
-bool MainWindow::deselect_faceverts = false;
+bool MainWindow::sDeselectVerts = false;
+bool MainWindow::sDeselectEdges = false;
+bool MainWindow::sDeselectFaces = false;
+bool MainWindow::sDeselectFaceVerts = false;
 
-// for face loop selection 
-DLFLEdgePtr MainWindow::face_loop_start_edge = nullptr;
-DLFLEdgePtr MainWindow::edge_ring_start_edge = nullptr;
+// for face loop selection
+DLFLEdgePtr MainWindow::sFaceLoopStartEdge = nullptr;
+DLFLEdgePtr MainWindow::sEdgeRingStartEdge = nullptr;
 
 //incremental save...
-int MainWindow::incremental_save_count = 0;
+int MainWindow::sIncrementalSaveCount = 0;
 
 //paint bucket static color:
-QColor MainWindow::paint_bucket_color = QColor(0.5,0.5,0.5);
-
+QColor MainWindow::sPaintBucketColor = QColor(0.5,0.5,0.5);
 
 /**
  * asdflkjasdf
  * asdfl;jkas;df
  **/
-MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(), undoMtlList(), redoList(), redoMtlList(), 
-																				 undolimit(20), useUndo(true), mIsModified(false), mIsPrimitive(false), mWasPrimitive(false), mSpinBoxMode(eInvalidSpinBox) {
-																					
-																					
+MainWindow::MainWindow(char *filename)
+	: mObject(), mOperationMode(NormalMode)
+	, mUndoList(), mUndoMtlList(), mRedoList(), mRedoMtlList()
+	, mUndoLimit(20), mUseUndo(true)
+	, mIsModified(false), mIsPrimitive(false), mWasPrimitive(false)
+	, mSpinBoxMode(eInvalidSpinBox)
+{
 	// i18n stuff
-	translator_es = new QTranslator(this);
-	translator_fr = new QTranslator(this);
-	translator_de = new QTranslator(this);
-	translator_tr = new QTranslator(this);
-	translator_it = new QTranslator(this);
-	translator_hi = new QTranslator(this);
-	translator_ca = new QTranslator(this);
+	mTranslator_es = new QTranslator(this);
+	mTranslator_fr = new QTranslator(this);
+	mTranslator_de = new QTranslator(this);
+	mTranslator_tr = new QTranslator(this);
+	mTranslator_it = new QTranslator(this);
+	mTranslator_hi = new QTranslator(this);
+	mTranslator_ca = new QTranslator(this);
 
 	//for auto save
 	//auto save timer // and connect it to the saveFile slot
 	mAutoSaveTimer = new QTimer(this);
 	connect(mAutoSaveTimer, SIGNAL(timeout()), this, SLOT(saveFile(/*normals and texture options should go here... eventually*/)));
 
-	//QSettings Path for windows     
-	#ifdef WIN32 
+	//QSettings Path for windows
+#ifdef WIN32
 	QSettings::setPath(QSettings::IniFormat,QSettings::UserScope,QString("%APPDATA%"));
-	#endif
-	
+#endif
 
-	// #ifdef __APPLE__
+//#ifdef __APPLE__
 	//mac icon
 	this->setWindowIcon(QIcon(":/images/topmod.png"));
-  // #endif
+//#endif
 	//initialize the OpenGL Window GLWidget
 	QGLFormat fmt;
 	//initialize renderer
 	createRenderers();
 	setMouseTracking(true);
 
-	active = new GLWidget(500,600, lit, QColor(255,255,255,255),QColor(255,255,255,255) , &object, fmt, this);
-	// active->switchTo(VPPersp);	
-	setRenderer(lit);
-	active->redraw();
-	active->setMinimumSize(400,400);
-	active->setFocusPolicy(Qt::StrongFocus);
+	mActiveViewport = new GLWidget(500,600, sLitRenderer, QColor(255,255,255,255),QColor(255,255,255,255) , &mObject, fmt, this);
+	// active->switchTo(VPPersp);
+	setRenderer(sLitRenderer);
+	mActiveViewport->redraw();
+	mActiveViewport->setMinimumSize(400,400);
+	mActiveViewport->setFocusPolicy(Qt::StrongFocus);
 	setFocusPolicy(Qt::StrongFocus);
 	// active->setResizeEnabled(true);
 	//status bar
@@ -284,7 +285,7 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	setWindowFlags(Qt::Window);
 	setWindowTitle(tr("newfile[*] - TopMod"));
 	setCurrentFile("untitled");
-	// cWidget = new QWidget( );	
+	// cWidget = new QWidget();
 	// QWidget *shwidget = new QWidget;
 	// QVBoxLayout *vblayout = new QVBoxLayout;
 	// vblayout->addWidget(active);
@@ -297,7 +298,7 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	// layout->setMargin(0);
 	// vblayout->setMargin(0);
 	// cWidget->setLayout( layout );
-	setCentralWidget( active);
+	setCentralWidget(mActiveViewport);
 	//store user's desktop size
 	QWidget *d = QApplication::desktop();
 	int w=d->width();  // returns screen width
@@ -305,9 +306,9 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 
 #ifdef WITH_PYTHON
 	//the script editor widget will be placed into a QDockWidget
-	//and will be dockable in the top and bottom sections of the main window	
+	//and will be dockable in the top and bottom sections of the main window
 	mScriptEditorDockWidget = new QDockWidget(tr("Script Editor"), this);
-	mScriptEditor = new DLFLScriptEditor( &object, mScriptEditorDockWidget );
+	mScriptEditor = new DLFLScriptEditor( &mObject, mScriptEditorDockWidget );
 	mScriptEditorDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
 	mScriptEditorDockWidget->setWidget(mScriptEditor);
 	addDockWidget(Qt::BottomDockWidgetArea, mScriptEditorDockWidget);
@@ -342,7 +343,6 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	mToolOptionsDockWidget->setAllowedAreas(Qt::RightDockWidgetArea);
 	mToolOptionsStackedWidget = new QStackedWidget();
 	mToolOptionsDockWidget->setWidget(mToolOptionsStackedWidget);
-	//mToolOptionsDockWidget->setFloating(true);
 	// mToolOptionsDockWidget->move(width() , 150);
 	// mToolOptionsTitleBarLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 	// mToolOptionsTitleBarWidget = new QWidget;
@@ -351,12 +351,12 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	// mToolOptionsDockWidget->titleBarWidget()->setContentsMargins(0,0,0,0);
 	// mToolOptionsDockWidget->move(0,22);
 	addDockWidget(Qt::RightDockWidgetArea, mToolOptionsDockWidget);
-	
+
 	//animated help dockwidget
 	initializeAnimatedHelp();
-	
+
 	//make a new instance of QShortcutManager
-	sm = new QShortcutManager();
+	mShortcutManager = new QShortcutManager();
 	mActionModel = new QStandardItemModel();
 	mActionListWidget = new QWidget;
 
@@ -366,15 +366,15 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	createActions();
 
 	//instantiate toolbars
-	mBasicsMode = new BasicsMode(this, sm, mActionListWidget);
-	mExtrusionsMode = new ExtrusionsMode(this, sm, mActionListWidget );
-	mConicalMode = new ConicalMode(this, sm);
-	mRemeshingMode = new RemeshingMode(this, sm, mActionListWidget);
-	mHighgenusMode = new HighgenusMode(this, sm, mActionListWidget);
-	mTexturingMode = new TexturingMode(this, sm, mActionListWidget);
-	mExperimentalMode = new ExperimentalMode(this, sm, mActionListWidget);
+	mBasicsMode = new BasicsMode(this, mShortcutManager, mActionListWidget);
+	mExtrusionsMode = new ExtrusionsMode(this, mShortcutManager, mActionListWidget );
+	mConicalMode = new ConicalMode(this, mShortcutManager);
+	mRemeshingMode = new RemeshingMode(this, mShortcutManager, mActionListWidget);
+	mHighgenusMode = new HighgenusMode(this, mShortcutManager, mActionListWidget);
+	mTexturingMode = new TexturingMode(this, mShortcutManager, mActionListWidget);
+	mExperimentalMode = new ExperimentalMode(this, mShortcutManager, mActionListWidget);
 
-	
+
 	#ifdef QCOMPLETER
 	mCommandCompleter = new CommandCompleter(mActionListWidget, this);
 	#endif
@@ -386,27 +386,25 @@ MainWindow::MainWindow(char *filename) : object(), mode(NormalMode), undoList(),
 	mStyleSheetEditor = new StyleSheetEditor;
 	//preference dialog
 	mSettings = new QSettings("TopMod");
-	mPreferencesDialog = new TopModPreferences(mSettings, mStyleSheetEditor, sm, this);	
-	
+	mPreferencesDialog = new TopModPreferences(mSettings, mStyleSheetEditor, mShortcutManager, this);
+
 	// //testing shortcut context
 	// for (int i = 0; i < mActionListWidget->actions().count(); i++){
 	// 	mActionListWidget->actions().at(i)->setShortcutContext(Qt::WidgetShortcut);
 	// }
-	
+
 	//reposition floating windows:
 	// mToolOptionsDockWidget->setGeometry(10 + this->x()/*this->active->width()-mToolOptionsDockWidget->width()*/,this->y()+150,mToolOptionsDockWidget->width(),mToolOptionsDockWidget->height());
 	// mToolOptionsDockWidget->setFixedSize(mToolOptionsDockWidget->width(),mToolOptionsDockWidget->height());
-	
+
 	//must happen after preference file is loaded
 	createStartupDialog();
-	
+
 	retranslateUi();
 	setExtrusionMode(CubicalExtrude);
 	setMode(MainWindow::NormalMode);
-	
-	
-	// std::cout << QT_VER << "\n"; 
 
+	// std::cout << QT_VER << "\n";
 }
 
 // void MainWindow::setToolOptionsPo
@@ -415,190 +413,197 @@ void MainWindow::createActions() {
 
 	//File Menu Actions
 	mNewFileAct = new QAction(/*QIcon(":images/folder.png"),*/tr("&New File..."), this);
-	sm->registerAction(mNewFileAct, "File Menu", "CTRL+N");
+	mShortcutManager->registerAction(mNewFileAct, "File Menu", "CTRL+N");
 	mNewFileAct->setStatusTip(tr("Open a blank file and clear the undo list"));
 	connect(mNewFileAct, SIGNAL(triggered()), this, SLOT(newFile()));
 	mActionListWidget->addAction(mNewFileAct);
 
-	mOpenAct = new QAction(QIcon(":images/folder.png"),tr("&Open..."), this);
-	sm->registerAction(mOpenAct, "File Menu", "CTRL+O");
+	mOpenAct = new QAction(QIcon(":images/folder.png"), tr("&Open..."), this);
+	mShortcutManager->registerAction(mOpenAct, "File Menu", "CTRL+O");
 	mOpenAct->setStatusTip(tr("Open an existing file"));
 	connect(mOpenAct, SIGNAL(triggered()), this, SLOT(openFile()));
 	mActionListWidget->addAction(mOpenAct);
-	
-	mSaveAct = new QAction(QIcon(":images/document-save.png"),tr("&Save"), this);
-	sm->registerAction(mSaveAct, "File Menu", "CTRL+S");
+
+	mSaveAct = new QAction(QIcon(":images/document-save.png"), tr("&Save"), this);
+	mShortcutManager->registerAction(mSaveAct, "File Menu", "CTRL+S");
 	mSaveAct->setStatusTip(tr("Save the document to disk"));
 	connect(mSaveAct, SIGNAL(triggered()), this, SLOT(saveFile()));
 	mActionListWidget->addAction(mSaveAct);
 
-	mSaveAsAct = new QAction(QIcon(":images/document-save-as.png"),tr("Save &As..."), this);
-	sm->registerAction(mSaveAsAct, "File Menu", "CTRL+SHIFT+S");
+	mSaveAsAct = new QAction(QIcon(":images/document-save-as.png"), tr("Save &As..."), this);
+	mShortcutManager->registerAction(mSaveAsAct, "File Menu", "CTRL+SHIFT+S");
 	mSaveAsAct->setStatusTip(tr("Save the document under a new name"));
 	connect(mSaveAsAct, SIGNAL(triggered()), this, SLOT(saveFileAs()));
 	mActionListWidget->addAction(mSaveAsAct);
 
-	mSavePatchesAct = new QAction(QIcon(":images/saveas.png"),tr("Save &Patch OBJ..."), this);
-	sm->registerAction(mSavePatchesAct, "File Menu", "");
+	mSavePatchesAct = new QAction(QIcon(":images/saveas.png"), tr("Save &Patch OBJ..."), this);
+	mShortcutManager->registerAction(mSavePatchesAct, "File Menu", "");
 	mSavePatchesAct->setStatusTip(tr("Save a bezier patch .obj file"));
 	connect(mSavePatchesAct, SIGNAL(triggered()), this, SLOT(saveFileBezierOBJ()));
 	mActionListWidget->addAction(mSavePatchesAct);
 
-	mSaveLG3dAct = new QAction(QIcon(":images/saveas.png"),tr("Export LiveGrahpics3D..."), this);
-	sm->registerAction(mSaveLG3dAct, "File Menu", "CTRL+ALT+S");
-	mSaveLG3dAct->setStatusTip(tr("Export a LiveGraphics3D (*.m) file for embedding into the TopMod Wiki, Warning: you cannot import this file back into TopMod"));
+	mSaveLG3dAct = new QAction(QIcon(":images/saveas.png"), tr("Export LiveGrahpics3D..."), this);
+	mShortcutManager->registerAction(mSaveLG3dAct, "File Menu", "CTRL+ALT+S");
+	mSaveLG3dAct->setStatusTip(tr(
+		"Export a LiveGraphics3D (*.m) file for embedding into the TopMod Wiki, "\
+		"Warning: you cannot import this file back into TopMod"));
 	connect(mSaveLG3dAct, SIGNAL(triggered()), this, SLOT(saveFileLG3d()));
 	mActionListWidget->addAction(mSaveLG3dAct);
 
-	mSaveLG3dSelectedAct = new QAction(QIcon(":images/saveas.png"),tr("Export LG3d (Sel. Faces)..."), this);
-	sm->registerAction(mSaveLG3dSelectedAct, "File Menu", "");
-	mSaveLG3dSelectedAct->setStatusTip(tr("Export a LiveGraphics3D (*.m) of the current selected faces file for embedding into the TopMod Wiki, Warning: you cannot import this file back into TopMod"));
+	mSaveLG3dSelectedAct = new QAction(
+		QIcon(":images/saveas.png"), tr("Export LG3d (Sel. Faces)..."), this);
+	mShortcutManager->registerAction(mSaveLG3dSelectedAct, "File Menu", "");
+	mSaveLG3dSelectedAct->setStatusTip(tr(
+		"Export a LiveGraphics3D (*.m) of the current selected faces file for embedding into the TopMod Wiki, "\
+		"Warning: you cannot import this file back into TopMod"));
 	connect(mSaveLG3dSelectedAct, SIGNAL(triggered()), this, SLOT(saveFileLG3dSelected()));
 	mActionListWidget->addAction(mSaveLG3dSelectedAct);
 
-	mExportSTLAct = new QAction(QIcon(":images/saveas.png"),tr("Export STL..."), this);
-	sm->registerAction(mExportSTLAct, "File Menu", "CTRL+ALT+SHIFT+S");
-	mExportSTLAct->setStatusTip(tr("Export a stereolithography (*.stl) file for use with various rapid prototyping software and hardware"));
+	mExportSTLAct = new QAction(QIcon(":images/saveas.png"), tr("Export STL..."), this);
+	mShortcutManager->registerAction(mExportSTLAct, "File Menu", "CTRL+ALT+SHIFT+S");
+	mExportSTLAct->setStatusTip(tr(
+		"Export a stereolithography (*.stl) file for use "\
+		"with various rapid prototyping software and hardware"));
 	connect(mExportSTLAct, SIGNAL(triggered()), this, SLOT(saveFileSTL()));
 	mActionListWidget->addAction(mExportSTLAct);
 
-	mScreenshotViewportAct = new QAction(QIcon(":images/camera-photo.png"),tr("Save Viewport Screenshot..."), this);
-	sm->registerAction(mScreenshotViewportAct, "File Menu", "0");
+	mScreenshotViewportAct = new QAction(
+		QIcon(":images/camera-photo.png"), tr("Save Viewport Screenshot..."), this);
+	mShortcutManager->registerAction(mScreenshotViewportAct, "File Menu", "0");
 	mScreenshotViewportAct->setStatusTip(tr("Save a screenshot of the contents of the OpenGL viewport (*.png)"));
 	connect(mScreenshotViewportAct, SIGNAL(triggered()), this, SLOT(viewportScreenshot()));
 	mActionListWidget->addAction(mScreenshotViewportAct);
 
-	mScreenshotAppAct = new QAction(QIcon(":images/image-x-generic.png"),tr("Save App Screenshot..."), this);
-	sm->registerAction(mScreenshotAppAct, "File Menu", "9");
+	mScreenshotAppAct = new QAction(QIcon(":images/image-x-generic.png"), tr("Save App Screenshot..."), this);
+	mShortcutManager->registerAction(mScreenshotAppAct, "File Menu", "9");
 	mScreenshotAppAct->setStatusTip(tr("Save a screenshot of the entire main application window (*.png)"));
 	connect(mScreenshotAppAct, SIGNAL(triggered()), this, SLOT(appScreenshot()));
 	mActionListWidget->addAction(mScreenshotAppAct);
 
-	loadTextureAct = new QAction(tr("Load &Texture..."), this);
-	sm->registerAction(loadTextureAct, "File Menu", "CTRL+L");
-	loadTextureAct->setStatusTip(tr("Load Texture from file"));
-	connect(loadTextureAct, SIGNAL(triggered()), this, SLOT(load_texture()));
-	mActionListWidget->addAction(loadTextureAct);
+	mLoadTextureAct = new QAction(tr("Load &Texture..."), this);
+	mShortcutManager->registerAction(mLoadTextureAct, "File Menu", "CTRL+L");
+	mLoadTextureAct->setStatusTip(tr("Load Texture from file"));
+	connect(mLoadTextureAct, SIGNAL(triggered()), this, SLOT(load_texture()));
+	mActionListWidget->addAction(mLoadTextureAct);
 
-	printInfoAct = new QAction(tr("Print &Information"), this);
-	sm->registerAction(printInfoAct, "File Menu", "P");
-	printInfoAct->setStatusTip(tr("Print Information to the console"));
-	connect(printInfoAct, SIGNAL(triggered()), this, SLOT(printSummary()));
-	mActionListWidget->addAction(printInfoAct);
+	mPrintInfoAct = new QAction(tr("Print &Information"), this);
+	mShortcutManager->registerAction(mPrintInfoAct, "File Menu", "P");
+	mPrintInfoAct->setStatusTip(tr("Print Information to the console"));
+	connect(mPrintInfoAct, SIGNAL(triggered()), this, SLOT(printSummary()));
+	mActionListWidget->addAction(mPrintInfoAct);
 
-	printFaceListAct = new QAction(tr("Print &Face List"), this);
-	sm->registerAction(printFaceListAct, "File Menu", "CTRL+ALT+P");
-	printFaceListAct->setStatusTip(tr("Print Face List to the console"));
+	mPrintFaceListAct = new QAction(tr("Print &Face List"), this);
+	mShortcutManager->registerAction(mPrintFaceListAct, "File Menu", "CTRL+ALT+P");
+	mPrintFaceListAct->setStatusTip(tr("Print Face List to the console"));
 	// connect(printFaceListAct, SIGNAL(triggered()), this, SLOT(saveAs()));
-	mActionListWidget->addAction(printFaceListAct);
+	mActionListWidget->addAction(mPrintFaceListAct);
 
-	printVertexListAct = new QAction(tr("Print &Vertex List"), this);
-	sm->registerAction(printVertexListAct, "File Menu", "CTRL+SHIFT+P");
-	printVertexListAct->setStatusTip(tr("Save the document under a new name"));
+	mPrintVertexListAct = new QAction(tr("Print &Vertex List"), this);
+	mShortcutManager->registerAction(mPrintVertexListAct, "File Menu", "CTRL+SHIFT+P");
+	mPrintVertexListAct->setStatusTip(tr("Save the document under a new name"));
 	// connect(printVertexListAct, SIGNAL(triggered()), this, SLOT(saveAs()));
-	mActionListWidget->addAction(printVertexListAct);
+	mActionListWidget->addAction(mPrintVertexListAct);
 
-	printEdgeListAct = new QAction(tr("Print &Edge List"), this);
-	sm->registerAction(printEdgeListAct, "File Menu", "CTRL+ALT+SHIFT+P");
-	printEdgeListAct->setStatusTip(tr("Print Edge list to the console"));
+	mPrintEdgeListAct = new QAction(tr("Print &Edge List"), this);
+	mShortcutManager->registerAction(mPrintEdgeListAct, "File Menu", "CTRL+ALT+SHIFT+P");
+	mPrintEdgeListAct->setStatusTip(tr("Print Edge list to the console"));
 	// connect(printEdgeListAct, SIGNAL(triggered()), this, SLOT(saveAs()));
-	mActionListWidget->addAction(printEdgeListAct);
+	mActionListWidget->addAction(mPrintEdgeListAct);
 
 	mPrintCVListAct = new QAction(tr("Print &CV List"), this);
-	sm->registerAction(mPrintCVListAct, "File Menu", "");
+	mShortcutManager->registerAction(mPrintCVListAct, "File Menu", "");
 	mPrintCVListAct->setStatusTip(tr("Print CV list to the console"));
 	// connect(mPrintCVListAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 	mActionListWidget->addAction(mPrintCVListAct);
 
 	mExitAct = new QAction(tr("E&xit"), this);
-	sm->registerAction(mExitAct, "File Menu", "CTRL+Q");
+	mShortcutManager->registerAction(mExitAct, "File Menu", "CTRL+Q");
 	mExitAct->setStatusTip(tr("Exit the application"));
 	connect(mExitAct, SIGNAL(triggered()), this, SLOT(close()));
 	// mActionListWidget->addAction(mExitAct);
-	
+
 	//quick command quicksilver like interface
-	#ifdef QCOMPLETER
+#ifdef QCOMPLETER
 	mQuickCommandAct = new QAction(tr("Quick Command"), this);
 	QShortcut *shortcut = new QShortcut(QKeySequence(Qt::Key_Space), this);
 	connect(shortcut, SIGNAL(activated()), this, SLOT(getCommand()));
 	mQuickCommandAct->setStatusTip(tr("Quick Command Access with Autocompletion"));
 	connect(mQuickCommandAct, SIGNAL(triggered()), this, SLOT(getCommand()));
 	// mActionListWidget->addAction(mQuickCommandAct);
-	#endif
+#endif
 	//Edit Menu Actions
 	mDeleteSelectedAct = new QAction(/*QIcon(":images/edit-undo.png"),*/ tr("&Delete Selected"), this);
-	sm->registerAction(mDeleteSelectedAct, "Edit Menu", "Del");
+	mShortcutManager->registerAction(mDeleteSelectedAct, "Edit Menu", "Del");
 	mDeleteSelectedAct->setStatusTip(tr("Delete Selected"));
 	connect(mDeleteSelectedAct, SIGNAL(triggered()), this, SLOT(deleteSelected()));
 	mActionListWidget->addAction(mDeleteSelectedAct);
 
 	mUndoAct = new QAction(QIcon(":images/edit-undo.png"), tr("&Undo"), this);
-	sm->registerAction(mUndoAct, "Edit Menu", "CTRL+Z");
+	mShortcutManager->registerAction(mUndoAct, "Edit Menu", "CTRL+Z");
 	mUndoAct->setStatusTip(tr("Undo the last operation"));
 	connect(mUndoAct, SIGNAL(triggered()), this, SLOT(undo()));
 	mActionListWidget->addAction(mUndoAct);
 
 	mRedoAct = new QAction(QIcon(":images/edit-redo.png"), tr("&Redo"), this);
-	sm->registerAction(mRedoAct, "Edit Menu", "CTRL+SHIFT+Z");
+	mShortcutManager->registerAction(mRedoAct, "Edit Menu", "CTRL+SHIFT+Z");
 	mRedoAct->setStatusTip(tr("Redo the last operation"));
 	connect(mRedoAct, SIGNAL(triggered()), this, SLOT(redo()));
 	mActionListWidget->addAction(mRedoAct);
 
 	mClearUndoListAct = new QAction(tr("&Clear Undo List"), this);
-	sm->registerAction(mClearUndoListAct, "Edit Menu", "CTRL+SHIFT+Z");
+	mShortcutManager->registerAction(mClearUndoListAct, "Edit Menu", "CTRL+SHIFT+Z");
 	mClearUndoListAct->setStatusTip(tr("Clear the Undo List to free up some memory"));
 	connect(mClearUndoListAct, SIGNAL(triggered()), this, SLOT(clearUndoList()));
 	mActionListWidget->addAction(mClearUndoListAct);
 
 	//View Menu Actions
-	mPerspViewAct = new QAction( tr("&Reset Camera"), this);
-	sm->registerAction(mPerspViewAct, "View Menu", "F");
+	mPerspViewAct = new QAction(tr("&Reset Camera"), this);
+	mShortcutManager->registerAction(mPerspViewAct, "View Menu", "F");
 	mPerspViewAct->setStatusTip(tr("Reset Camera Position to default"));
 	connect(mPerspViewAct, SIGNAL(triggered()), this, SLOT(switchPerspView()));
 	mActionListWidget->addAction(mPerspViewAct);
 
-
-	mZoomInAct = new QAction( tr("Zoom In"), this);
-	sm->registerAction(mZoomInAct, "Display", "ALT+=");
+	mZoomInAct = new QAction(tr("Zoom In"), this);
+	mShortcutManager->registerAction(mZoomInAct, "Display", "ALT+=");
 	mZoomInAct->setStatusTip(tr("Zoom in on the Model"));
-	connect(mZoomInAct, SIGNAL(triggered()), active, SLOT(zoomIn()));
+	connect(mZoomInAct, SIGNAL(triggered()), mActiveViewport, SLOT(zoomIn()));
 	// mActionListWidget->addAction(mZoomInAct);
 
-	mZoomOutAct = new QAction( tr("Zoom Out"), this);
-	sm->registerAction(mZoomOutAct, "Display", "ALT+-");
+	mZoomOutAct = new QAction(tr("Zoom Out"), this);
+	mShortcutManager->registerAction(mZoomOutAct, "Display", "ALT+-");
 	mZoomOutAct->setStatusTip(tr("Zoom in on the Model"));
-	connect(mZoomOutAct, SIGNAL(triggered()), active, SLOT(zoomOut()));
+	connect(mZoomOutAct, SIGNAL(triggered()), mActiveViewport, SLOT(zoomOut()));
 
 	// mTopViewAct = new QAction( tr("&Top View"), this);
 	// sm->registerAction(mTopViewAct, "View Menu", "");
 	// mTopViewAct->setStatusTip(tr("Switch to Top View"));
 	// connect(mTopViewAct, SIGNAL(triggered()), this, SLOT(switchTopView()));
 	// // mActionListWidget->addAction(mTopViewAct);
-	// 
+	//
 	// mBottomViewAct = new QAction( tr("&Bottom View"), this);
 	// sm->registerAction(mBottomViewAct, "View Menu", "");
 	// mBottomViewAct->setStatusTip(tr("Switch to Bottom View"));
 	// connect(mBottomViewAct, SIGNAL(triggered()), this, SLOT(switchBottomView()));
 	// // mActionListWidget->addAction(mBottomViewAct);
-	// 
+	//
 	// mFrontViewAct = new QAction( tr("&Front View"), this);
 	// sm->registerAction(mFrontViewAct, "View Menu", "");
 	// mFrontViewAct->setStatusTip(tr("Switch to Front View"));
 	// connect(mFrontViewAct, SIGNAL(triggered()), this, SLOT(switchFrontView()));
 	// // mActionListWidget->addAction(mFrontViewAct);
-	// 
+	//
 	// mBackViewAct = new QAction( tr("B&ack View"), this);
 	// sm->registerAction(mBackViewAct, "View Menu", "");
 	// mBackViewAct->setStatusTip(tr("Switch to Back View"));
 	// connect(mBackViewAct, SIGNAL(triggered()), this, SLOT(switchBackView()));
 	// // mActionListWidget->addAction(mBackViewAct);
-	// 
+	//
 	// mLeftViewAct = new QAction( tr("&Left View"), this);
 	// sm->registerAction(mLeftViewAct, "View Menu", "");
 	// mLeftViewAct->setStatusTip(tr("Switch to Left View"));
 	// connect(mLeftViewAct, SIGNAL(triggered()), this, SLOT(switchLeftView()));
 	// // mActionListWidget->addAction(mLeftViewAct);
-	// 
+	//
 	// mRightViewAct = new QAction( tr("&Right View"), this);
 	// sm->registerAction(mRightViewAct, "View Menu", "");
 	// mRightViewAct->setStatusTip(tr("Switch to Right View"));
@@ -606,110 +611,110 @@ void MainWindow::createActions() {
 	// // mActionListWidget->addAction(mRightViewAct);
 
 	//Display Menu Actions
-	mFullscreenAct = new QAction(QIcon(":images/view-fullscreen.png"),tr("&Full Screen"), this);
+	mFullscreenAct = new QAction(QIcon(":images/view-fullscreen.png"), tr("&Full Screen"), this);
 	mFullscreenAct->setCheckable(true);
-	sm->registerAction( mFullscreenAct, "Display Menu", "ALT+F");
+	mShortcutManager->registerAction(mFullscreenAct, "Display Menu", "ALT+F");
 	mFullscreenAct->setStatusTip(tr("Toggle Full Screen"));
-	connect(mFullscreenAct, SIGNAL(triggered()), this, SLOT(toggleFullScreen()) );
+	connect(mFullscreenAct, SIGNAL(triggered()), this, SLOT(toggleFullScreen()));
 	mActionListWidget->addAction(mFullscreenAct);
 
-	showVerticesAct = new QAction(tr("Show &Vertices"), this);
-	showVerticesAct->setCheckable(true);
-	sm->registerAction(showVerticesAct, "Display Menu", "V");
-	connect(showVerticesAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleVertices()));
-	mActionListWidget->addAction(showVerticesAct);
+	mShowVerticesAct = new QAction(tr("Show &Vertices"), this);
+	mShowVerticesAct->setCheckable(true);
+	mShortcutManager->registerAction(mShowVerticesAct, "Display Menu", "V");
+	connect(mShowVerticesAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleVertices()));
+	mActionListWidget->addAction(mShowVerticesAct);
 
 	mShowFaceIDsAct = new QAction(tr("Show &Face IDs"), this);
 	mShowFaceIDsAct->setCheckable(true);
-	sm->registerAction(mShowFaceIDsAct, "Display Menu", "CTRL+F");
+	mShortcutManager->registerAction(mShowFaceIDsAct, "Display Menu", "CTRL+F");
 	connect(mShowFaceIDsAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleFaceIDs()));
 	mActionListWidget->addAction(mShowFaceIDsAct);
 
 	mShowEdgeIDsAct = new QAction(tr("Show &Edge IDs"), this);
 	mShowEdgeIDsAct->setCheckable(true);
-	sm->registerAction(mShowEdgeIDsAct, "Display Menu", "CTRL+E");
+	mShortcutManager->registerAction(mShowEdgeIDsAct, "Display Menu", "CTRL+E");
 	connect(mShowEdgeIDsAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleEdgeIDs()));
 	mActionListWidget->addAction(mShowEdgeIDsAct);
 
 	mShowVertexIDsAct = new QAction(tr("Show &Vertex IDs"), this);
 	mShowVertexIDsAct->setCheckable(true);
-	sm->registerAction(mShowVertexIDsAct, "Display Menu", "CTRL+V");
+	mShortcutManager->registerAction(mShowVertexIDsAct, "Display Menu", "CTRL+V");
 	connect(mShowVertexIDsAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleVertexIDs()));
 	mActionListWidget->addAction(mShowVertexIDsAct);
 
 	mShowSelectedIDsAct = new QAction(tr("Show &Selected IDs"), this);
 	mShowSelectedIDsAct->setCheckable(true);
-	sm->registerAction(mShowSelectedIDsAct, "Display Menu", "SHIFT+D");
+	mShortcutManager->registerAction(mShowSelectedIDsAct, "Display Menu", "SHIFT+D");
 	connect(mShowSelectedIDsAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleSelectedIDs()));
 	mActionListWidget->addAction(mShowSelectedIDsAct);
 
-	showSilhouetteAct = new QAction(tr("Show &Silhouette"), this);
-	showSilhouetteAct->setCheckable(true);
-	sm->registerAction(showSilhouetteAct, "Display Menu", "S" );
-	connect(showSilhouetteAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleSilhouette()));
-	mActionListWidget->addAction(showSilhouetteAct);
+	mShowSilhouetteAct = new QAction(tr("Show &Silhouette"), this);
+	mShowSilhouetteAct->setCheckable(true);
+	mShortcutManager->registerAction(mShowSilhouetteAct, "Display Menu", "S");
+	connect(mShowSilhouetteAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleSilhouette()));
+	mActionListWidget->addAction(mShowSilhouetteAct);
 
-	showWireframeAct = new QAction(tr("Show &Wireframe"), this);
-	showWireframeAct->setCheckable(true);
-	showWireframeAct->setChecked(true);
-	sm->registerAction(showWireframeAct, "Display Menu", "W");
-	connect(showWireframeAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleWireframe()));
-	mActionListWidget->addAction(showWireframeAct);
+	mShowWireframeAct = new QAction(tr("Show &Wireframe"), this);
+	mShowWireframeAct->setCheckable(true);
+	mShowWireframeAct->setChecked(true);
+	mShortcutManager->registerAction(mShowWireframeAct, "Display Menu", "W");
+	connect(mShowWireframeAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleWireframe()));
+	mActionListWidget->addAction(mShowWireframeAct);
 
-	showCoordinateAxesAct = new QAction(tr("Show &Coordinate Axes"), this);
-	showCoordinateAxesAct->setCheckable(true);
-	sm->registerAction(showCoordinateAxesAct, "Display Menu", "X");
-	connect(showCoordinateAxesAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleAxes()));
-	mActionListWidget->addAction(showCoordinateAxesAct);
+	mShowCoordinateAxesAct = new QAction(tr("Show &Coordinate Axes"), this);
+	mShowCoordinateAxesAct->setCheckable(true);
+	mShortcutManager->registerAction(mShowCoordinateAxesAct, "Display Menu", "X");
+	connect(mShowCoordinateAxesAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleAxes()));
+	mActionListWidget->addAction(mShowCoordinateAxesAct);
 
-	objectOrientationAct = new QAction(tr("Reverse Object"), this);
-	objectOrientationAct->setCheckable(true);
-	sm->registerAction(objectOrientationAct, "Display Menu", "R");
-	connect(objectOrientationAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleObjectOrientation()));
-	mActionListWidget->addAction(objectOrientationAct);
+	mObjectOrientationAct = new QAction(tr("Reverse Object"), this);
+	mObjectOrientationAct->setCheckable(true);
+	mShortcutManager->registerAction(mObjectOrientationAct, "Display Menu", "R");
+	connect(mObjectOrientationAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleObjectOrientation()));
+	mActionListWidget->addAction(mObjectOrientationAct);
 
 	mShowNormalsAct = new QAction(tr("Show &Normals"), this);
 	mShowNormalsAct->setCheckable(true);
-	sm->registerAction(mShowNormalsAct, "Display Menu", "N");
+	mShortcutManager->registerAction(mShowNormalsAct, "Display Menu", "N");
 	connect(mShowNormalsAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleNormals()));
 	mActionListWidget->addAction(mShowNormalsAct);
 
 	mShowFaceCentroidsAct = new QAction(tr("Show &Face Centroids"), this);
 	mShowFaceCentroidsAct->setCheckable(true);
-	sm->registerAction(mShowFaceCentroidsAct, "Display Menu", "C");
+	mShortcutManager->registerAction(mShowFaceCentroidsAct, "Display Menu", "C");
 	// objectOrienationAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(mShowFaceCentroidsAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleFaceCentroids()));
 	mActionListWidget->addAction(mShowFaceCentroidsAct);
 
-	showGridAct = new QAction(tr("Show &Grid"), this);
-	showGridAct->setCheckable(true);
-	showGridAct->setEnabled(false);
-	sm->registerAction(showGridAct, "Display Menu", "G");
+	mShowGridAct = new QAction(tr("Show &Grid"), this);
+	mShowGridAct->setCheckable(true);
+	mShowGridAct->setEnabled(false);
+	mShortcutManager->registerAction(mShowGridAct, "Display Menu", "G");
 	// showGridAct->setStatusTip(tr("Copy the current selection's contents to the "
-	connect(showGridAct, SIGNAL(triggered()), getActive(), SLOT(toggleGrid()));
-	mActionListWidget->addAction(showGridAct);
+	connect(mShowGridAct, SIGNAL(triggered()), getActive(), SLOT(toggleGrid()));
+	mActionListWidget->addAction(mShowGridAct);
 
-	showHUDAct = new QAction(tr("Show &Heads Up Display"), this);
-	showHUDAct->setCheckable(true);
-	sm->registerAction(showHUDAct, "Display Menu", "H");
-	showHUDAct->setStatusTip(tr("Show the Heads Up Display"));
-	connect(showHUDAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleHUD()));
-	mActionListWidget->addAction(showHUDAct);
+	mShowHUDAct = new QAction(tr("Show &Heads Up Display"), this);
+	mShowHUDAct->setCheckable(true);
+	mShortcutManager->registerAction(mShowHUDAct, "Display Menu", "H");
+	mShowHUDAct->setStatusTip(tr("Show the Heads Up Display"));
+	connect(mShowHUDAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleHUD()));
+	mActionListWidget->addAction(mShowHUDAct);
 
-	#ifdef GPU_OK
+#ifdef GPU_OK
 	mUseGPUAct = new QAction(tr("&Use GPU Shading"), this);
 	mUseGPUAct->setCheckable(true);
-	mUseGPUAct->setChecked(true);	
-	sm->registerAction(mUseGPUAct, "Display Menu", "L");
+	mUseGPUAct->setChecked(true);
+	mShortcutManager->registerAction(mUseGPUAct, "Display Menu", "L");
 	mUseGPUAct->setStatusTip(tr("Use GPU Shading"));
 	connect(mUseGPUAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleGPU()));
 	mActionListWidget->addAction(mUseGPUAct);
-	#endif
-	
+#endif
+
 	mAntialiasingAct = new QAction(tr("Toggle &Antialiasing"), this);
 	mAntialiasingAct->setCheckable(true);
-	mAntialiasingAct->setChecked(false);	
-	sm->registerAction(mAntialiasingAct, "Display Menu", "K");
+	mAntialiasingAct->setChecked(false);
+	mShortcutManager->registerAction(mAntialiasingAct, "Display Menu", "K");
 	mAntialiasingAct->setStatusTip(tr("Toggle Antialiasing"));
 	connect(mAntialiasingAct, SIGNAL(triggered()), this->getActive(), SLOT(toggleAntialiasing()));
 	mActionListWidget->addAction(mAntialiasingAct);
@@ -717,7 +722,7 @@ void MainWindow::createActions() {
 #ifdef WITH_PYTHON
 	mShowScriptEditorAct = mScriptEditorDockWidget->toggleViewAction();//new QAction(tr("Show Script &Editor"), this);
 	mShowScriptEditorAct->setStatusTip( tr("Show the script editor to execute DLFL commands") );
-	sm->registerAction(mShowScriptEditorAct, "Window Menu", "SHIFT+CTRL+E");
+	mShortcutManager->registerAction(mShowScriptEditorAct, "Window Menu", "SHIFT+CTRL+E");
 	mActionListWidget->addAction(mShowScriptEditorAct);
 #endif
 
@@ -726,421 +731,421 @@ void MainWindow::createActions() {
 	// mShowVerseDialogAct->setText(// true);
 	mShowVerseDialogAct->setStatusTip( tr("Show the verse dialog to view verse server connection status") );
 	// connect(mShowVerseDialogAct, SIGNAL(triggered()), this, SLOT(showHideVerseDialog()));
-	sm->registerAction(mShowVerseDialogAct, "Window Menu", "SHIFT+CTRL+V");
+	mShortcutManager->registerAction(mShowVerseDialogAct, "Window Menu", "SHIFT+CTRL+V");
 	mActionListWidget->addAction(mShowVerseDialogAct);
-#endif	
+#endif
 
 	mShowToolOptionsAct = mToolOptionsDockWidget->toggleViewAction();
-	mShowToolOptionsAct->setStatusTip( tr("Show the tool options window") );
-	sm->registerAction(mShowToolOptionsAct, "Window Menu", "O");
+	mShowToolOptionsAct->setStatusTip(tr("Show the tool options window"));
+	mShortcutManager->registerAction(mShowToolOptionsAct, "Window Menu", "O");
 	mActionListWidget->addAction(mShowToolOptionsAct);
 
 	mShowStartupDialogAct = mStartupDialogDockWidget->toggleViewAction();
-	mShowStartupDialogAct->setStatusTip( tr("Show the startup screen with links to video tutorials") );
-	sm->registerAction(mShowStartupDialogAct, "Window Menu", "");
+	mShowStartupDialogAct->setStatusTip(tr("Show the startup screen with links to video tutorials"));
+	mShortcutManager->registerAction(mShowStartupDialogAct, "Window Menu", "");
 	mActionListWidget->addAction(mShowStartupDialogAct);
-	
+
 	mShowAnimatedHelpAct = mAnimatedHelpDockWidget->toggleViewAction();// new QAction(tr("Show Animated Hel&p"), this);
-	// mShowAnimatedHelpAct->setCheckable(true);
-	mShowAnimatedHelpAct->setStatusTip( tr("Show/Hide the animated help window") );
+																	   // mShowAnimatedHelpAct->setCheckable(true);
+	mShowAnimatedHelpAct->setStatusTip(tr("Show/Hide the animated help window"));
 	// connect(mShowAnimatedHelpAct, SIGNAL(triggered()), this, SLOT(showHideAnimatedHelp()));
-	sm->registerAction(mShowAnimatedHelpAct, "Window Menu", "SHIFT+H");
+	mShortcutManager->registerAction(mShowAnimatedHelpAct, "Window Menu", "SHIFT+H");
 	mActionListWidget->addAction(mShowAnimatedHelpAct);
 
-		//Renderer Menu Actions
-	wireframeRendererAct = new QAction(tr("&Wireframe Renderer"), this);
-	wireframeRendererAct->setCheckable(true);
-	sm->registerAction(wireframeRendererAct, "Renderer Menu", "1");
-	wireframeRendererAct->setStatusTip(tr("Switch the current renderer to Wireframe"));
-	connect(wireframeRendererAct, SIGNAL(triggered()), this, SLOT(useWireframeRenderer()));	
-	mActionListWidget->addAction(wireframeRendererAct);
+	//Renderer Menu Actions
+	mWireframeRendererAct = new QAction(tr("&Wireframe Renderer"), this);
+	mWireframeRendererAct->setCheckable(true);
+	mShortcutManager->registerAction(mWireframeRendererAct, "Renderer Menu", "1");
+	mWireframeRendererAct->setStatusTip(tr("Switch the current renderer to Wireframe"));
+	connect(mWireframeRendererAct, SIGNAL(triggered()), this, SLOT(useWireframeRenderer()));
+	mActionListWidget->addAction(mWireframeRendererAct);
 
-	normalRendererAct = new QAction(tr("&Normal Renderer"), this);
-	normalRendererAct->setCheckable(true);
-	sm->registerAction(normalRendererAct, "Renderer Menu", "2");
-	normalRendererAct->setStatusTip(tr("Switch the current renderer to Normal"));
-	connect(normalRendererAct, SIGNAL(triggered()), this, SLOT(useNormalRenderer()));
-	mActionListWidget->addAction(normalRendererAct);
+	mNormalRendererAct = new QAction(tr("&Normal Renderer"), this);
+	mNormalRendererAct->setCheckable(true);
+	mShortcutManager->registerAction(mNormalRendererAct, "Renderer Menu", "2");
+	mNormalRendererAct->setStatusTip(tr("Switch the current renderer to Normal"));
+	connect(mNormalRendererAct, SIGNAL(triggered()), this, SLOT(useNormalRenderer()));
+	mActionListWidget->addAction(mNormalRendererAct);
 
-	lightedRendererAct = new QAction(tr("&Lighted Renderer"), this);
-	lightedRendererAct->setCheckable(true);
-	sm->registerAction(lightedRendererAct, "Renderer Menu", "3");
-	lightedRendererAct->setStatusTip(tr("Switch the current renderer to Lighted"));
-	connect(lightedRendererAct, SIGNAL(triggered()), this, SLOT(useLightedRenderer()));
-	mActionListWidget->addAction(lightedRendererAct);
+	mLightedRendererAct = new QAction(tr("&Lighted Renderer"), this);
+	mLightedRendererAct->setCheckable(true);
+	mShortcutManager->registerAction(mLightedRendererAct, "Renderer Menu", "3");
+	mLightedRendererAct->setStatusTip(tr("Switch the current renderer to Lighted"));
+	connect(mLightedRendererAct, SIGNAL(triggered()), this, SLOT(useLightedRenderer()));
+	mActionListWidget->addAction(mLightedRendererAct);
 
-	texturedRendererAct = new QAction(tr("&Textured Renderer"), this);
-	texturedRendererAct->setCheckable(true);
-	sm->registerAction(texturedRendererAct, "Renderer Menu", "4");
-	texturedRendererAct->setStatusTip(tr("Switch the current renderer to Textured"));
-	connect(texturedRendererAct, SIGNAL(triggered()), this, SLOT(useTexturedRenderer()));
-	mActionListWidget->addAction(texturedRendererAct);
+	mTexturedRendererAct = new QAction(tr("&Textured Renderer"), this);
+	mTexturedRendererAct->setCheckable(true);
+	mShortcutManager->registerAction(mTexturedRendererAct, "Renderer Menu", "4");
+	mTexturedRendererAct->setStatusTip(tr("Switch the current renderer to Textured"));
+	connect(mTexturedRendererAct, SIGNAL(triggered()), this, SLOT(useTexturedRenderer()));
+	mActionListWidget->addAction(mTexturedRendererAct);
 
-	texturedLightedAct = new QAction(tr("Te&xtured Lighted Renderer"), this);
-	texturedLightedAct->setCheckable(true);
-	sm->registerAction(texturedLightedAct, "Renderer Menu", "5");
-	texturedLightedAct->setStatusTip(tr("Switch the current renderer to Textured Lit"));
-	connect(texturedLightedAct, SIGNAL(triggered()), this, SLOT(useTexturedLitRenderer()));
-	mActionListWidget->addAction(texturedLightedAct);
+	mTexturedLightedAct = new QAction(tr("Te&xtured Lighted Renderer"), this);
+	mTexturedLightedAct->setCheckable(true);
+	mShortcutManager->registerAction(mTexturedLightedAct, "Renderer Menu", "5");
+	mTexturedLightedAct->setStatusTip(tr("Switch the current renderer to Textured Lit"));
+	connect(mTexturedLightedAct, SIGNAL(triggered()), this, SLOT(useTexturedLitRenderer()));
+	mActionListWidget->addAction(mTexturedLightedAct);
 
-	patchRendererAct = new QAction(tr("&Patch Renderer"), this);
-	patchRendererAct->setCheckable(true);
-	sm->registerAction(patchRendererAct, "Renderer Menu", "6");
-	patchRendererAct->setStatusTip(tr("Switch the current renderer to Patch"));
-	connect(patchRendererAct, SIGNAL(triggered()), this, SLOT(usePatchRenderer()));
-	mActionListWidget->addAction(patchRendererAct);
+	mPatchRendererAct = new QAction(tr("&Patch Renderer"), this);
+	mPatchRendererAct->setCheckable(true);
+	mShortcutManager->registerAction(mPatchRendererAct, "Renderer Menu", "6");
+	mPatchRendererAct->setStatusTip(tr("Switch the current renderer to Patch"));
+	connect(mPatchRendererAct, SIGNAL(triggered()), this, SLOT(usePatchRenderer()));
+	mActionListWidget->addAction(mPatchRendererAct);
 
-	colorableRendererAct = new QAction(tr("&Colorable Renderer"), this);
-	colorableRendererAct->setCheckable(true);
-	sm->registerAction(colorableRendererAct, "Renderer Menu", "7");
-	colorableRendererAct->setStatusTip(tr("Switch the current renderer to Colorable"));
-	connect(colorableRendererAct, SIGNAL(triggered()), this, SLOT(useColorableRenderer()));
-	mActionListWidget->addAction(colorableRendererAct);
+	mColorableRendererAct = new QAction(tr("&Colorable Renderer"), this);
+	mColorableRendererAct->setCheckable(true);
+	mShortcutManager->registerAction(mColorableRendererAct, "Renderer Menu", "7");
+	mColorableRendererAct->setStatusTip(tr("Switch the current renderer to Colorable"));
+	connect(mColorableRendererAct, SIGNAL(triggered()), this, SLOT(useColorableRenderer()));
+	mActionListWidget->addAction(mColorableRendererAct);
 
 	mRendererActionGroup = new QActionGroup(this);
 	mRendererActionGroup->setExclusive(true);
-	mRendererActionGroup->addAction(wireframeRendererAct);
-	mRendererActionGroup->addAction(normalRendererAct);
-	mRendererActionGroup->addAction(lightedRendererAct);
-	mRendererActionGroup->addAction(texturedRendererAct);
-	mRendererActionGroup->addAction(texturedLightedAct);
-	mRendererActionGroup->addAction(patchRendererAct);
-	mRendererActionGroup->addAction(colorableRendererAct);
-	lightedRendererAct->setChecked(true);
+	mRendererActionGroup->addAction(mWireframeRendererAct);
+	mRendererActionGroup->addAction(mNormalRendererAct);
+	mRendererActionGroup->addAction(mLightedRendererAct);
+	mRendererActionGroup->addAction(mTexturedRendererAct);
+	mRendererActionGroup->addAction(mTexturedLightedAct);
+	mRendererActionGroup->addAction(mPatchRendererAct);
+	mRendererActionGroup->addAction(mColorableRendererAct);
+	mLightedRendererAct->setChecked(true);
 
 	//PRIMITIVES MENU ACTIONS
-	pCubeAct = new QAction(QIcon(":/images/prim_cube.png"), tr("&Cube"), this);
-	sm->registerAction(pCubeAct, "Primitives Menu", "CTRL+1");
-	pCubeAct->setStatusTip(tr("Load a Cube"));
-	connect(pCubeAct, SIGNAL(triggered()), this, SLOT(loadCube()));
-	mActionListWidget->addAction(pCubeAct);
+	mPrimCubeAct = new QAction(QIcon(":/images/prim_cube.png"), tr("&Cube"), this);
+	mShortcutManager->registerAction(mPrimCubeAct, "Primitives Menu", "CTRL+1");
+	mPrimCubeAct->setStatusTip(tr("Load a Cube"));
+	connect(mPrimCubeAct, SIGNAL(triggered()), this, SLOT(loadCube()));
+	mActionListWidget->addAction(mPrimCubeAct);
 
-	pOctahedronAct = new QAction(QIcon(":/images/prim_octahedron.png"), tr("&Octahedron"), this);
-	sm->registerAction(pOctahedronAct, "Primitives Menu", "CTRL+2");
-	pOctahedronAct->setStatusTip(tr("Load an octahedron"));
-	connect(pOctahedronAct, SIGNAL(triggered()), this, SLOT(loadOctahedron()));
-	mActionListWidget->addAction(pOctahedronAct);
+	mPrimOctahedronAct = new QAction(QIcon(":/images/prim_octahedron.png"), tr("&Octahedron"), this);
+	mShortcutManager->registerAction(mPrimOctahedronAct, "Primitives Menu", "CTRL+2");
+	mPrimOctahedronAct->setStatusTip(tr("Load an octahedron"));
+	connect(mPrimOctahedronAct, SIGNAL(triggered()), this, SLOT(loadOctahedron()));
+	mActionListWidget->addAction(mPrimOctahedronAct);
 
-	pTetrahedronAct = new QAction(QIcon(":/images/prim_tetrahedron.png"), tr("&Tetrahedron"), this);
-	sm->registerAction(pTetrahedronAct, "Primitives Menu", "CTRL+3");
-	pTetrahedronAct->setStatusTip(tr("Load a tetrahedron"));
-	connect(pTetrahedronAct, SIGNAL(triggered()), this, SLOT(loadTetrahedron()));
-	mActionListWidget->addAction(pTetrahedronAct);
+	mPrimTetrahedronAct = new QAction(QIcon(":/images/prim_tetrahedron.png"), tr("&Tetrahedron"), this);
+	mShortcutManager->registerAction(mPrimTetrahedronAct, "Primitives Menu", "CTRL+3");
+	mPrimTetrahedronAct->setStatusTip(tr("Load a tetrahedron"));
+	connect(mPrimTetrahedronAct, SIGNAL(triggered()), this, SLOT(loadTetrahedron()));
+	mActionListWidget->addAction(mPrimTetrahedronAct);
 
-	pDodecahedronAct = new QAction(QIcon(":/images/prim_dodecahedron.png"), tr("&Dodecahedron"), this);
-	sm->registerAction(pDodecahedronAct, "Primitives Menu", "CTRL+4");
-	pDodecahedronAct->setStatusTip(tr("Load a dodecahedron"));
-	connect(pDodecahedronAct, SIGNAL(triggered()), this, SLOT(loadDodecahedron()));
-	mActionListWidget->addAction(pDodecahedronAct);
+	mPrimDodecahedronAct = new QAction(QIcon(":/images/prim_dodecahedron.png"), tr("&Dodecahedron"), this);
+	mShortcutManager->registerAction(mPrimDodecahedronAct, "Primitives Menu", "CTRL+4");
+	mPrimDodecahedronAct->setStatusTip(tr("Load a dodecahedron"));
+	connect(mPrimDodecahedronAct, SIGNAL(triggered()), this, SLOT(loadDodecahedron()));
+	mActionListWidget->addAction(mPrimDodecahedronAct);
 
-	pIcosahedronAct = new QAction(QIcon(":/images/prim_icosahedron.png"), tr("&Icosahedron"), this);
-	sm->registerAction(pIcosahedronAct, "Primitives Menu", "CTRL+5");
-	pIcosahedronAct->setStatusTip(tr("Load an icosahedron"));
-	connect(pIcosahedronAct, SIGNAL(triggered()), this, SLOT(loadIcosahedron()));
-	mActionListWidget->addAction(pIcosahedronAct);
+	mPrimIcosahedronAct = new QAction(QIcon(":/images/prim_icosahedron.png"), tr("&Icosahedron"), this);
+	mShortcutManager->registerAction(mPrimIcosahedronAct, "Primitives Menu", "CTRL+5");
+	mPrimIcosahedronAct->setStatusTip(tr("Load an icosahedron"));
+	connect(mPrimIcosahedronAct, SIGNAL(triggered()), this, SLOT(loadIcosahedron()));
+	mActionListWidget->addAction(mPrimIcosahedronAct);
 
-	pSoccerBallAct = new QAction(QIcon(":/images/prim_soccerball.png"), tr("&Soccer ball"), this);
-	sm->registerAction(pSoccerBallAct, "Primitives Menu", "CTRL+6");
-	pSoccerBallAct->setStatusTip(tr("Load a soccer ball"));
-	connect(pSoccerBallAct, SIGNAL(triggered()), this, SLOT(loadSoccerball()));
-	mActionListWidget->addAction(pSoccerBallAct);
+	mPrimSoccerBallAct = new QAction(QIcon(":/images/prim_soccerball.png"), tr("&Soccer ball"), this);
+	mShortcutManager->registerAction(mPrimSoccerBallAct, "Primitives Menu", "CTRL+6");
+	mPrimSoccerBallAct->setStatusTip(tr("Load a soccer ball"));
+	connect(mPrimSoccerBallAct, SIGNAL(triggered()), this, SLOT(loadSoccerball()));
+	mActionListWidget->addAction(mPrimSoccerBallAct);
 
-	pGeodesicAct = new QAction(QIcon(":/images/prim_geodesic.png"), tr("&Geodesic Dome"), this);
-	sm->registerAction(pGeodesicAct, "Primitives Menu", "CTRL+7");
-	pGeodesicAct->setStatusTip(tr("Load a geodesic dome"));
-	connect(pGeodesicAct, SIGNAL(triggered()), this, SLOT(loadGeodesic()));
-	mActionListWidget->addAction(pGeodesicAct);
+	mPrimGeodesicAct = new QAction(QIcon(":/images/prim_geodesic.png"), tr("&Geodesic Dome"), this);
+	mShortcutManager->registerAction(mPrimGeodesicAct, "Primitives Menu", "CTRL+7");
+	mPrimGeodesicAct->setStatusTip(tr("Load a geodesic dome"));
+	connect(mPrimGeodesicAct, SIGNAL(triggered()), this, SLOT(loadGeodesic()));
+	mActionListWidget->addAction(mPrimGeodesicAct);
 
 	//Object Menu Actions
-	subdivideAllEdgesAct = new QAction(tr("Subdivide All &Edges"), this);
-	sm->registerAction(subdivideAllEdgesAct, "Tools", "CTRL+D");
+	mSubdivideAllEdgesAct = new QAction(tr("Subdivide All &Edges"), this);
+	mShortcutManager->registerAction(mSubdivideAllEdgesAct, "Tools", "CTRL+D");
 	// subdivideAllEdgesAct->setStatusTip(tr("Copy the current selection's contents to the "
-	connect(subdivideAllEdgesAct, SIGNAL(triggered()), this, SLOT(subdivideAllEdges()));
-	mActionListWidget->addAction(subdivideAllEdgesAct);
+	connect(mSubdivideAllEdgesAct, SIGNAL(triggered()), this, SLOT(subdivideAllEdges()));
+	mActionListWidget->addAction(mSubdivideAllEdgesAct);
 
-	planarizeAllFacesAct = new QAction(tr("Planarize All &Faces"), this);
-	sm->registerAction(planarizeAllFacesAct, "Tools", "CTRL+P");
+	mPlanarizeAllFacesAct = new QAction(tr("Planarize All &Faces"), this);
+	mShortcutManager->registerAction(mPlanarizeAllFacesAct, "Tools", "CTRL+P");
 	// planarizeAllFacesAct->setStatusTip(tr("Copy the current selection's contents to the "
-	connect(planarizeAllFacesAct, SIGNAL(triggered()), this, SLOT(planarizeFaces()));
-	mActionListWidget->addAction(planarizeAllFacesAct);
+	connect(mPlanarizeAllFacesAct, SIGNAL(triggered()), this, SLOT(planarizeFaces()));
+	mActionListWidget->addAction(mPlanarizeAllFacesAct);
 
 	makeObjectSphericalAct = new QAction(tr("Make &Object Spherical"), this);
-	sm->registerAction(makeObjectSphericalAct, "Tools", "CTRL+H");
+	mShortcutManager->registerAction(makeObjectSphericalAct, "Tools", "CTRL+H");
 	// makeObjectSphericalAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(makeObjectSphericalAct, SIGNAL(triggered()), this, SLOT(spheralizeObject()));
 	mActionListWidget->addAction(makeObjectSphericalAct);
 
 	mCleanup2gonsAct = new QAction(tr("Cleanup 2-gons"), this);
-	sm->registerAction(mCleanup2gonsAct, "Tools", "");
+	mShortcutManager->registerAction(mCleanup2gonsAct, "Tools", "");
 	// mCleanup2gonsAct->setStatusTip(tr("Copy the current selection's contents to the "
 	connect(mCleanup2gonsAct, SIGNAL(triggered()), this, SLOT(cleanup2gons()));
 	mActionListWidget->addAction(mCleanup2gonsAct);
 
 	mCleanupWingedVerticesAct = new QAction(tr("Remove valence-2 vertices"), this);
-	sm->registerAction(mCleanupWingedVerticesAct, "Tools", "SHIFT+CTRL+V");
+	mShortcutManager->registerAction(mCleanupWingedVerticesAct, "Tools", "SHIFT+CTRL+V");
 	connect(mCleanupWingedVerticesAct, SIGNAL(triggered()), this, SLOT(cleanupWingedVertices()));
 	mActionListWidget->addAction(mCleanupWingedVerticesAct);
 
 	mSplitValence2VerticesAct = new QAction(tr("Split valence-2 vertices"), this);
-	sm->registerAction(mSplitValence2VerticesAct, "Tools", "");
+	mShortcutManager->registerAction(mSplitValence2VerticesAct, "Tools", "");
 	connect(mSplitValence2VerticesAct, SIGNAL(triggered()), this, SLOT(splitValence2Vertices()));
 	mActionListWidget->addAction(mSplitValence2VerticesAct);
 
-	makeObjectSmoothAct = new QAction(tr("Make Object &Smooth"), this);
-	sm->registerAction(makeObjectSmoothAct, "Tools", "CTRL+M");
+	mMakeObjectSmoothAct = new QAction(tr("Make Object &Smooth"), this);
+	mShortcutManager->registerAction(mMakeObjectSmoothAct, "Tools", "CTRL+M");
 	// makeObjectSmoothAct->setStatusTip(tr("Copy the current selection's contents to the "
-	connect(makeObjectSmoothAct, SIGNAL(triggered()), this, SLOT(smoothMesh()));
-	mActionListWidget->addAction(makeObjectSmoothAct);
+	connect(mMakeObjectSmoothAct, SIGNAL(triggered()), this, SLOT(smoothMesh()));
+	mActionListWidget->addAction(mMakeObjectSmoothAct);
 
 	mPerformCuttingAct = new QAction(tr("Perform Cutting"), this);
-	sm->registerAction(mPerformCuttingAct, "Tools", "CTRL+T");
+	mShortcutManager->registerAction(mPerformCuttingAct, "Tools", "CTRL+T");
 	mPerformCuttingAct->setStatusTip(tr("Cut selected faces, edges, or vertices based on the current selection mask"));
 	connect(mPerformCuttingAct, SIGNAL(triggered()), this, SLOT(performCutting()));
 	mActionListWidget->addAction(mPerformCuttingAct);
 
-	createCrustScalingAct = new QAction(tr("&Create Crust (Scaling)"), this);
-	sm->registerAction(createCrustScalingAct, "Tools", "CTRL+ALT+C");
-	createCrustScalingAct->setStatusTip(tr("Create a crust using the currently selected faces with scaling mode"));
-	connect(createCrustScalingAct, SIGNAL(triggered()), this, SLOT(crustModeling4()));
-	mActionListWidget->addAction(createCrustScalingAct);
+	mCreateCrustScalingAct = new QAction(tr("&Create Crust (Scaling)"), this);
+	mShortcutManager->registerAction(mCreateCrustScalingAct, "Tools", "CTRL+ALT+C");
+	mCreateCrustScalingAct->setStatusTip(tr("Create a crust using the currently selected faces with scaling mode"));
+	connect(mCreateCrustScalingAct, SIGNAL(triggered()), this, SLOT(crustModeling4()));
+	mActionListWidget->addAction(mCreateCrustScalingAct);
 
-	createCrustThicknessAct = new QAction(tr("Create Crust (&Thickness)"), this);
-	sm->registerAction(createCrustThicknessAct, "Tools", "CTRL+C");
-	createCrustThicknessAct->setStatusTip(tr("Create a crust using the currently selected faces with thickness mode"));
-	connect(createCrustThicknessAct, SIGNAL(triggered()), this, SLOT(crustModeling3()));
-	mActionListWidget->addAction(createCrustThicknessAct);
+	mCreateCrustThicknessAct = new QAction(tr("Create Crust (&Thickness)"), this);
+	mShortcutManager->registerAction(mCreateCrustThicknessAct, "Tools", "CTRL+C");
+	mCreateCrustThicknessAct->setStatusTip(tr("Create a crust using the currently selected faces with thickness mode"));
+	connect(mCreateCrustThicknessAct, SIGNAL(triggered()), this, SLOT(crustModeling3()));
+	mActionListWidget->addAction(mCreateCrustThicknessAct);
 
-	makeWireframeAct = new QAction(tr("Create Wireframe"), this);
-	sm->registerAction(makeWireframeAct, "Tools", "CTRL+W");
-	makeWireframeAct->setStatusTip(tr("Create a wireframe model using the current options"));
-	connect(makeWireframeAct, SIGNAL(triggered()), this, SLOT(makeWireframe()));
-	mActionListWidget->addAction(makeWireframeAct);
+	mMakeWireframeAct = new QAction(tr("Create Wireframe"), this);
+	mShortcutManager->registerAction(mMakeWireframeAct, "Tools", "CTRL+W");
+	mMakeWireframeAct->setStatusTip(tr("Create a wireframe model using the current options"));
+	connect(mMakeWireframeAct, SIGNAL(triggered()), this, SLOT(makeWireframe()));
+	mActionListWidget->addAction(mMakeWireframeAct);
 
-	makeColumnsAct = new QAction(tr("Create Columns"), this);
-	sm->registerAction(makeColumnsAct, "Tools", "CTRL+ALT+W");
-	makeColumnsAct->setStatusTip(tr("Create a column model using the current options"));
-	connect(makeColumnsAct, SIGNAL(triggered()), this, SLOT(makeWireframeWithColumns()));
-	mActionListWidget->addAction(makeColumnsAct);
+	mMakeColumnsAct = new QAction(tr("Create Columns"), this);
+	mShortcutManager->registerAction(mMakeColumnsAct, "Tools", "CTRL+ALT+W");
+	mMakeColumnsAct->setStatusTip(tr("Create a column model using the current options"));
+	connect(mMakeColumnsAct, SIGNAL(triggered()), this, SLOT(makeWireframeWithColumns()));
+	mActionListWidget->addAction(mMakeColumnsAct);
 
-	makeSierpinskiAct = new QAction(tr("Create Sierpinski"), this);
-	sm->registerAction(makeSierpinskiAct, "Tools", "CTRL+K");
-	makeSierpinskiAct->setStatusTip(tr("Create a sierpinski tetrahedra"));
-	connect(makeSierpinskiAct, SIGNAL(triggered()), this, SLOT(multiConnectMidpoints()));
-	mActionListWidget->addAction(makeSierpinskiAct);
+	mMakeSierpinskiAct = new QAction(tr("Create Sierpinski"), this);
+	mShortcutManager->registerAction(mMakeSierpinskiAct, "Tools", "CTRL+K");
+	mMakeSierpinskiAct->setStatusTip(tr("Create a sierpinski tetrahedra"));
+	connect(mMakeSierpinskiAct, SIGNAL(triggered()), this, SLOT(multiConnectMidpoints()));
+	mActionListWidget->addAction(mMakeSierpinskiAct);
 
-	computeLightingAct = new QAction(tr("Compute &Lighting"), this);
-	sm->registerAction(computeLightingAct, "Tools", "");
+	mComputeLightingAct = new QAction(tr("Compute &Lighting"), this);
+	mShortcutManager->registerAction(mComputeLightingAct, "Tools", "");
 	// computeLightingAct->setStatusTip(tr("Copy the current selection's contents to the "
-	connect(computeLightingAct, SIGNAL(triggered()), getActive(), SLOT(recomputeLighting()));
-	mActionListWidget->addAction(computeLightingAct);
+	connect(mComputeLightingAct, SIGNAL(triggered()), getActive(), SLOT(recomputeLighting()));
+	mActionListWidget->addAction(mComputeLightingAct);
 
-	computeNormalsAndLightingAct = new QAction(tr("Compute &Normals and Lighting"), this);
-	sm->registerAction(computeNormalsAndLightingAct, "Tools", "");
+	mComputeNormalsAndLightingAct = new QAction(tr("Compute &Normals and Lighting"), this);
+	mShortcutManager->registerAction(mComputeNormalsAndLightingAct, "Tools", "");
 	// computeNormalsAndLightingAct->setStatusTip(tr("Copy the current selection's contents to the "
-	connect(computeNormalsAndLightingAct, SIGNAL(triggered()), getActive(), SLOT(recomputeNormals()));
-	mActionListWidget->addAction(computeNormalsAndLightingAct);
+	connect(mComputeNormalsAndLightingAct, SIGNAL(triggered()), getActive(), SLOT(recomputeNormals()));
+	mActionListWidget->addAction(mComputeNormalsAndLightingAct);
 
-	assignTextureCoordinatesAct = new QAction(tr("Assign &Texture Coordinates"), this);
-	sm->registerAction(assignTextureCoordinatesAct, "Tools", "");
+	mAssignTextureCoordinatesAct = new QAction(tr("Assign &Texture Coordinates"), this);
+	mShortcutManager->registerAction(mAssignTextureCoordinatesAct, "Tools", "");
 	// assignTextureCoordinatesAct->setStatusTip(tr("Copy the current selection's contents to the "
-	connect(assignTextureCoordinatesAct, SIGNAL(triggered()), this, SLOT(assignTileTexCoords()));
-	mActionListWidget->addAction(assignTextureCoordinatesAct);
+	connect(mAssignTextureCoordinatesAct, SIGNAL(triggered()), this, SLOT(assignTileTexCoords()));
+	mActionListWidget->addAction(mAssignTextureCoordinatesAct);
 
 	// //SELECTION MENU ACTIONS
 	mSelectionWindowAct = new QAction(tr("Selection Window"), this);
-	sm->registerAction(mSelectionWindowAct, "Selection", "SHIFT+W");
-	connect( mSelectionWindowAct , SIGNAL( triggered() ), this, SLOT( selection_window() ) );
+	mShortcutManager->registerAction(mSelectionWindowAct, "Selection", "SHIFT+W");
+	connect(mSelectionWindowAct, SIGNAL(triggered()), this, SLOT(selection_window()));
 	mActionListWidget->addAction(mSelectionWindowAct);
-	
-	selectVertexAct = new QAction(tr("Select &Vertex"), this);
-	sm->registerAction(selectVertexAct, "Selection", "");
-	selectVertexAct->setStatusTip(tr("Select a Vertex"));
-	connect(selectVertexAct, SIGNAL(triggered()), this, SLOT(select_vertex()));
-	mActionListWidget->addAction(selectVertexAct);
 
-	selectMultipleVerticesAct = new QAction(tr("Select Multiple Vertices"), this);
-	sm->registerAction(selectMultipleVerticesAct, "Selection", "");
-	selectMultipleVerticesAct->setStatusTip(tr("Select multiple vertices"));
-	connect(selectMultipleVerticesAct, SIGNAL(triggered()), this, SLOT(select_multiple_vertices()));
-	mActionListWidget->addAction(selectMultipleVerticesAct);
+	mSelectVertexAct = new QAction(tr("Select &Vertex"), this);
+	mShortcutManager->registerAction(mSelectVertexAct, "Selection", "");
+	mSelectVertexAct->setStatusTip(tr("Select a Vertex"));
+	connect(mSelectVertexAct, SIGNAL(triggered()), this, SLOT(select_vertex()));
+	mActionListWidget->addAction(mSelectVertexAct);
+
+	mSelectMultipleVerticesAct = new QAction(tr("Select Multiple Vertices"), this);
+	mShortcutManager->registerAction(mSelectMultipleVerticesAct, "Selection", "");
+	mSelectMultipleVerticesAct->setStatusTip(tr("Select multiple vertices"));
+	connect(mSelectMultipleVerticesAct, SIGNAL(triggered()), this, SLOT(select_multiple_vertices()));
+	mActionListWidget->addAction(mSelectMultipleVerticesAct);
 
 	mSelectMultipleAct = new QAction(tr("Select Multiple"), this);
-	sm->registerAction(mSelectMultipleAct, "Selection", "SHIFT+M");
+	mShortcutManager->registerAction(mSelectMultipleAct, "Selection", "SHIFT+M");
 	mSelectMultipleAct->setStatusTip(tr("Select multiple"));
 	connect(mSelectMultipleAct, SIGNAL(triggered()), this, SLOT(select_multiple()));
 	mActionListWidget->addAction(mSelectMultipleAct);
 
 	mEditVertexAct = new QAction(tr("Edit Verte&x"), this);
-	sm->registerAction(mEditVertexAct, "Selection", "");
+	mShortcutManager->registerAction(mEditVertexAct, "Selection", "");
 	mEditVertexAct->setStatusTip(tr("Select and Move Vertices one at a time."));
 	connect(mEditVertexAct, SIGNAL(triggered()), this, SLOT(edit_vertex()));
 	mActionListWidget->addAction(mEditVertexAct);
 
-	selectFaceAct = new QAction(tr("Select &Face"), this);
-	sm->registerAction(selectFaceAct, "Selection", "");
-	selectFaceAct->setStatusTip(tr("Select One Face. Just for practice. :)"));
-	connect(selectFaceAct, SIGNAL(triggered()), this, SLOT(select_face() ) );
-	mActionListWidget->addAction(selectFaceAct);
+	mSelectFaceAct = new QAction(tr("Select &Face"), this);
+	mShortcutManager->registerAction(mSelectFaceAct, "Selection", "");
+	mSelectFaceAct->setStatusTip(tr("Select One Face. Just for practice. :)"));
+	connect(mSelectFaceAct, SIGNAL(triggered()), this, SLOT(select_face()));
+	mActionListWidget->addAction(mSelectFaceAct);
 
-	selectFaceLoopAct = new QAction(tr("Select Face Loo&p"), this);
-	sm->registerAction(selectFaceLoopAct, "Selection", "SHIFT+P");
-	selectFaceLoopAct->setStatusTip(tr("Select a Face Loop."));
-	connect(selectFaceLoopAct, SIGNAL(triggered()), this, SLOT(select_face_loop() ) );
-	mActionListWidget->addAction(selectFaceLoopAct);
+	mSelectFaceLoopAct = new QAction(tr("Select Face Loo&p"), this);
+	mShortcutManager->registerAction(mSelectFaceLoopAct, "Selection", "SHIFT+P");
+	mSelectFaceLoopAct->setStatusTip(tr("Select a Face Loop."));
+	connect(mSelectFaceLoopAct, SIGNAL(triggered()), this, SLOT(select_face_loop()));
+	mActionListWidget->addAction(mSelectFaceLoopAct);
 
-	selectMultipleFacesAct = new QAction(tr("Select &Multiple Faces"), this);
-	sm->registerAction(selectMultipleFacesAct, "Selection", "");
-	connect( selectMultipleFacesAct , SIGNAL( triggered() ), this, SLOT( select_multiple_faces() ) );
-	mActionListWidget->addAction(selectMultipleFacesAct);
+	mSelectMultipleFacesAct = new QAction(tr("Select &Multiple Faces"), this);
+	mShortcutManager->registerAction(mSelectMultipleFacesAct, "Selection", "");
+	connect(mSelectMultipleFacesAct, SIGNAL(triggered()), this, SLOT(select_multiple_faces()));
+	mActionListWidget->addAction(mSelectMultipleFacesAct);
 
-	selectSimilarFacesAct = new QAction(tr("Select &Similar Faces"), this);
-	sm->registerAction(selectSimilarFacesAct, "Selection", "SHIFT+G");
-	connect( selectSimilarFacesAct , SIGNAL( triggered() ), this, SLOT( select_similar_faces() ) );
-	mActionListWidget->addAction(selectSimilarFacesAct);
+	mSelectSimilarFacesAct = new QAction(tr("Select &Similar Faces"), this);
+	mShortcutManager->registerAction(mSelectSimilarFacesAct, "Selection", "SHIFT+G");
+	connect(mSelectSimilarFacesAct, SIGNAL(triggered()), this, SLOT(select_similar_faces()));
+	mActionListWidget->addAction(mSelectSimilarFacesAct);
 
 	mSelectSimilarAct = new QAction(tr("Select Similar"), this);
-	sm->registerAction(mSelectSimilarAct, "Selection", "SHIFT+S");
-	connect( mSelectSimilarAct , SIGNAL( triggered() ), this, SLOT( select_similar() ) );
+	mShortcutManager->registerAction(mSelectSimilarAct, "Selection", "SHIFT+S");
+	connect(mSelectSimilarAct, SIGNAL(triggered()), this, SLOT(select_similar()));
 	mActionListWidget->addAction(mSelectSimilarAct);
 
-	selectFacesByAreaAct = new QAction(tr("Select Faces By Surf. Area"), this);
-	sm->registerAction(selectFacesByAreaAct, "Selection", "CTRL+SHIFT+A");
-	connect( selectFacesByAreaAct , SIGNAL( triggered() ), this, SLOT( select_faces_by_area() ) );
-	mActionListWidget->addAction(selectFacesByAreaAct);
+	mSelectFacesByAreaAct = new QAction(tr("Select Faces By Surf. Area"), this);
+	mShortcutManager->registerAction(mSelectFacesByAreaAct, "Selection", "CTRL+SHIFT+A");
+	connect(mSelectFacesByAreaAct, SIGNAL(triggered()), this, SLOT(select_faces_by_area()));
+	mActionListWidget->addAction(mSelectFacesByAreaAct);
 
-	selectFacesByColorAct = new QAction(tr("Select Faces By Color"), this);
-	sm->registerAction(selectFacesByColorAct, "Selection", "CTRL+SHIFT+C");
-	connect( selectFacesByColorAct , SIGNAL( triggered() ), this, SLOT( select_faces_by_color() ) );
-	mActionListWidget->addAction(selectFacesByColorAct);
+	mSelectFacesByColorAct = new QAction(tr("Select Faces By Color"), this);
+	mShortcutManager->registerAction(mSelectFacesByColorAct, "Selection", "CTRL+SHIFT+C");
+	connect(mSelectFacesByColorAct, SIGNAL(triggered()), this, SLOT(select_faces_by_color()));
+	mActionListWidget->addAction(mSelectFacesByColorAct);
 
-	selectCheckerboardFacesAct = new QAction(tr("C&heckerboard Select Faces"), this);
-	sm->registerAction(selectCheckerboardFacesAct, "Selection", "SHIFT+K");
-	connect( selectCheckerboardFacesAct , SIGNAL( triggered() ), this, SLOT( select_checkerboard_faces() ) );
-	mActionListWidget->addAction(selectCheckerboardFacesAct);
+	mSelectCheckerboardFacesAct = new QAction(tr("C&heckerboard Select Faces"), this);
+	mShortcutManager->registerAction(mSelectCheckerboardFacesAct, "Selection", "SHIFT+K");
+	connect(mSelectCheckerboardFacesAct, SIGNAL(triggered()), this, SLOT(select_checkerboard_faces()));
+	mActionListWidget->addAction(mSelectCheckerboardFacesAct);
 
-	selectAllAct = new QAction(tr("Select &All"), this);
-	sm->registerAction(selectAllAct, "Selection", "CTRL+A");
-	connect( selectAllAct , SIGNAL( triggered() ), this, SLOT( selectAll() ) );
-	mActionListWidget->addAction(selectAllAct);
+	mSelectAllAct = new QAction(tr("Select &All"), this);
+	mShortcutManager->registerAction(mSelectAllAct, "Selection", "CTRL+A");
+	connect(mSelectAllAct, SIGNAL(triggered()), this, SLOT(selectAll()));
+	mActionListWidget->addAction(mSelectAllAct);
 
 	mGrowSelectionAct = new QAction(tr("Grow Selection"), this);
-	sm->registerAction(mGrowSelectionAct, "Selection", "=");
-	connect( mGrowSelectionAct , SIGNAL( triggered() ), this, SLOT( growSelection() ) );
+	mShortcutManager->registerAction(mGrowSelectionAct, "Selection", "=");
+	connect(mGrowSelectionAct, SIGNAL(triggered()), this, SLOT(growSelection()));
 	mActionListWidget->addAction(mGrowSelectionAct);
 
 	mShrinkSelectionAct = new QAction(tr("Shrink Selection"), this);
-	sm->registerAction(mShrinkSelectionAct, "Selection", "-");
-	connect( mShrinkSelectionAct , SIGNAL( triggered() ), this, SLOT( shrinkSelection() ) );
+	mShortcutManager->registerAction(mShrinkSelectionAct, "Selection", "-");
+	connect(mShrinkSelectionAct, SIGNAL(triggered()), this, SLOT(shrinkSelection()));
 	mActionListWidget->addAction(mShrinkSelectionAct);
 
-	selectInverseAct = new QAction(tr("Select &Inverse"), this);
-	sm->registerAction(selectInverseAct, "Selection", "CTRL+I");
-	connect( selectInverseAct , SIGNAL( triggered() ), this, SLOT( selectInverse() ) );
-	mActionListWidget->addAction(selectInverseAct);
+	mSelectInverseAct = new QAction(tr("Select &Inverse"), this);
+	mShortcutManager->registerAction(mSelectInverseAct, "Selection", "CTRL+I");
+	connect(mSelectInverseAct, SIGNAL(triggered()), this, SLOT(selectInverse()));
+	mActionListWidget->addAction(mSelectInverseAct);
 
-	selectEdgeAct = new QAction(tr("Select &Edge"), this);
-	sm->registerAction(selectEdgeAct, "Selection", "");
-	selectEdgeAct->setStatusTip(tr("Select one Edge"));
-	connect( selectEdgeAct , SIGNAL( triggered() ), this,SLOT( select_edge() ) );
-	mActionListWidget->addAction(selectEdgeAct);
+	mSelectEdgeAct = new QAction(tr("Select &Edge"), this);
+	mShortcutManager->registerAction(mSelectEdgeAct, "Selection", "");
+	mSelectEdgeAct->setStatusTip(tr("Select one Edge"));
+	connect(mSelectEdgeAct, SIGNAL(triggered()), this, SLOT(select_edge()));
+	mActionListWidget->addAction(mSelectEdgeAct);
 
-	selectMultipleEdgesAct = new QAction(tr("Select Multiple Edges"), this);
-	sm->registerAction(selectMultipleEdgesAct, "Selection", "");
-	selectMultipleEdgesAct->setStatusTip(tr("Select multiple edges"));
-	connect( selectMultipleEdgesAct , SIGNAL( triggered() ), this,SLOT( select_multiple_edges() ) );
-	mActionListWidget->addAction(selectMultipleEdgesAct);
-	
+	mSelectMultipleEdgesAct = new QAction(tr("Select Multiple Edges"), this);
+	mShortcutManager->registerAction(mSelectMultipleEdgesAct, "Selection", "");
+	mSelectMultipleEdgesAct->setStatusTip(tr("Select multiple edges"));
+	connect(mSelectMultipleEdgesAct, SIGNAL(triggered()), this, SLOT(select_multiple_edges()));
+	mActionListWidget->addAction(mSelectMultipleEdgesAct);
+
 	mCollapseSelectedEdgesAct = new QAction(tr("Collapse Selected Edges"), this);
-	sm->registerAction(mCollapseSelectedEdgesAct, "Edit Menu", "ALT+C");
+	mShortcutManager->registerAction(mCollapseSelectedEdgesAct, "Edit Menu", "ALT+C");
 	mCollapseSelectedEdgesAct->setStatusTip(tr("Collapse Selected Edges"));
 	connect(mCollapseSelectedEdgesAct, SIGNAL(triggered()), this, SLOT(collapseSelectedEdges()));
 	mActionListWidget->addAction(mCollapseSelectedEdgesAct);
 
-	selectEdgeLoopAct = new QAction(tr("Select Edge &Loop"), this);
-	sm->registerAction(selectEdgeLoopAct, "Selection", "SHIFT+L");
-	selectEdgeLoopAct->setStatusTip(tr("Select an Edge Loop"));
-	connect( selectEdgeLoopAct , SIGNAL( triggered() ), this,SLOT( select_edge_loop() ) );
-	mActionListWidget->addAction(selectEdgeLoopAct);
+	mSelectEdgeLoopAct = new QAction(tr("Select Edge &Loop"), this);
+	mShortcutManager->registerAction(mSelectEdgeLoopAct, "Selection", "SHIFT+L");
+	mSelectEdgeLoopAct->setStatusTip(tr("Select an Edge Loop"));
+	connect(mSelectEdgeLoopAct, SIGNAL(triggered()), this, SLOT(select_edge_loop()));
+	mActionListWidget->addAction(mSelectEdgeLoopAct);
 
-	selectEdgeRingAct = new QAction(tr("Select Edge &Ring"), this);
-	sm->registerAction(selectEdgeRingAct, "Selection", "SHIFT+R");
-	selectEdgeRingAct->setStatusTip(tr("Select an edge ring."));
-	connect(selectEdgeRingAct, SIGNAL(triggered()), this, SLOT(select_edge_ring() ) );
-	mActionListWidget->addAction(selectEdgeRingAct);
+	mSelectEdgeRingAct = new QAction(tr("Select Edge &Ring"), this);
+	mShortcutManager->registerAction(mSelectEdgeRingAct, "Selection", "SHIFT+R");
+	mSelectEdgeRingAct->setStatusTip(tr("Select an edge ring."));
+	connect(mSelectEdgeRingAct, SIGNAL(triggered()), this, SLOT(select_edge_ring()));
+	mActionListWidget->addAction(mSelectEdgeRingAct);
 
-	selectCornerAct = new QAction(tr("Select &Corner"), this);
-	sm->registerAction(selectCornerAct, "Selection", "SHIFT+C");
-	selectCornerAct->setStatusTip(tr("Select a Corner"));
-	connect( selectCornerAct , SIGNAL( triggered() ), this, SLOT( select_corner() ) );
-	mActionListWidget->addAction(selectCornerAct);
+	mSelectCornerAct = new QAction(tr("Select &Corner"), this);
+	mShortcutManager->registerAction(mSelectCornerAct, "Selection", "SHIFT+C");
+	mSelectCornerAct->setStatusTip(tr("Select a Corner"));
+	connect(mSelectCornerAct, SIGNAL(triggered()), this, SLOT(select_corner()));
+	mActionListWidget->addAction(mSelectCornerAct);
 
-	exitSelectionModeAct = new QAction(tr("E&xit Selection Mode"), this);
-	sm->registerAction(exitSelectionModeAct, "Selection", "SHIFT+X");
-	connect( exitSelectionModeAct , SIGNAL( triggered() ), this, SLOT( exit_selection_mode() ) );
-	mActionListWidget->addAction(exitSelectionModeAct);
+	mExitSelectionModeAct = new QAction(tr("E&xit Selection Mode"), this);
+	mShortcutManager->registerAction(mExitSelectionModeAct, "Selection", "SHIFT+X");
+	connect(mExitSelectionModeAct, SIGNAL(triggered()), this, SLOT(exit_selection_mode()));
+	mActionListWidget->addAction(mExitSelectionModeAct);
 
-	clearSelectedModeAct = new QAction(tr("&Clear Selected"), this);
-	sm->registerAction(clearSelectedModeAct, "Selection", "Escape");
-	connect( clearSelectedModeAct , SIGNAL( triggered() ), this, SLOT( clear_selected() ) );
-	mActionListWidget->addAction(clearSelectedModeAct);
+	mClearSelectedModeAct = new QAction(tr("&Clear Selected"), this);
+	mShortcutManager->registerAction(mClearSelectedModeAct, "Selection", "Escape");
+	connect(mClearSelectedModeAct, SIGNAL(triggered()), this, SLOT(clear_selected()));
+	mActionListWidget->addAction(mClearSelectedModeAct);
 
-	selectEdgesFromFacesAct = new QAction(tr("Select Edges from Faces"), this);
-	sm->registerAction(selectEdgesFromFacesAct, "Selection", "");
-	connect( selectEdgesFromFacesAct , SIGNAL( triggered() ), this, SLOT( selectEdgesFromFaces() ) );
-	mActionListWidget->addAction(selectEdgesFromFacesAct);
-	
-	selectEdgesFromVerticesAct = new QAction(tr("Select Edges from Vertices"), this);
-	sm->registerAction(selectEdgesFromVerticesAct, "Selection", "");
-	connect( selectEdgesFromVerticesAct , SIGNAL( triggered() ), this, SLOT( selectEdgesFromVertices() ) );
-	mActionListWidget->addAction(selectEdgesFromVerticesAct);
-	
-	selectFacesFromEdgesAct = new QAction(tr("Select Faces from Edges"), this);
-	sm->registerAction(selectFacesFromEdgesAct, "Selection", "");
-	connect( selectFacesFromEdgesAct , SIGNAL( triggered() ), this, SLOT( selectFacesFromEdges() ) );
-	mActionListWidget->addAction(selectFacesFromEdgesAct);
-	
-	selectFacesFromVerticesAct = new QAction(tr("Select Faces from Vertices"), this);
-	sm->registerAction(selectFacesFromVerticesAct, "Selection", "");
-	connect( selectFacesFromVerticesAct , SIGNAL( triggered() ), this, SLOT( selectFacesFromVertices() ) );
-	mActionListWidget->addAction(selectFacesFromVerticesAct);
-	
-	selectVerticesFromEdgesAct = new QAction(tr("Select Vertices from Edges"), this);
-	sm->registerAction(selectVerticesFromEdgesAct, "Selection", "");
-	connect( selectVerticesFromEdgesAct , SIGNAL( triggered() ), this, SLOT( selectVerticesFromEdges() ) );
-	mActionListWidget->addAction(selectVerticesFromEdgesAct);
-	
-	selectVerticesFromFacesAct = new QAction(tr("Select Vertices from Faces"), this);
-	sm->registerAction(selectVerticesFromFacesAct, "Selection", "");
-	connect( selectVerticesFromFacesAct , SIGNAL( triggered() ), this, SLOT( selectVerticesFromFaces() ) );
-	mActionListWidget->addAction(selectVerticesFromFacesAct);
+	mSelectEdgesFromFacesAct = new QAction(tr("Select Edges from Faces"), this);
+	mShortcutManager->registerAction(mSelectEdgesFromFacesAct, "Selection", "");
+	connect(mSelectEdgesFromFacesAct, SIGNAL(triggered()), this, SLOT(selectEdgesFromFaces()));
+	mActionListWidget->addAction(mSelectEdgesFromFacesAct);
+
+	mSelectEdgesFromVerticesAct = new QAction(tr("Select Edges from Vertices"), this);
+	mShortcutManager->registerAction(mSelectEdgesFromVerticesAct, "Selection", "");
+	connect(mSelectEdgesFromVerticesAct, SIGNAL(triggered()), this, SLOT(selectEdgesFromVertices()));
+	mActionListWidget->addAction(mSelectEdgesFromVerticesAct);
+
+	mSelectFacesFromEdgesAct = new QAction(tr("Select Faces from Edges"), this);
+	mShortcutManager->registerAction(mSelectFacesFromEdgesAct, "Selection", "");
+	connect(mSelectFacesFromEdgesAct, SIGNAL(triggered()), this, SLOT(selectFacesFromEdges()));
+	mActionListWidget->addAction(mSelectFacesFromEdgesAct);
+
+	mSelectFacesFromVerticesAct = new QAction(tr("Select Faces from Vertices"), this);
+	mShortcutManager->registerAction(mSelectFacesFromVerticesAct, "Selection", "");
+	connect(mSelectFacesFromVerticesAct, SIGNAL(triggered()), this, SLOT(selectFacesFromVertices()));
+	mActionListWidget->addAction(mSelectFacesFromVerticesAct);
+
+	mSelectVerticesFromEdgesAct = new QAction(tr("Select Vertices from Edges"), this);
+	mShortcutManager->registerAction(mSelectVerticesFromEdgesAct, "Selection", "");
+	connect(mSelectVerticesFromEdgesAct, SIGNAL(triggered()), this, SLOT(selectVerticesFromEdges()));
+	mActionListWidget->addAction(mSelectVerticesFromEdgesAct);
+
+	mSelectVerticesFromFacesAct = new QAction(tr("Select Vertices from Faces"), this);
+	mShortcutManager->registerAction(mSelectVerticesFromFacesAct, "Selection", "");
+	connect(mSelectVerticesFromFacesAct, SIGNAL(triggered()), this, SLOT(selectVerticesFromFaces()));
+	mActionListWidget->addAction(mSelectVerticesFromFacesAct);
 
 	//selection masks
 	mSelectVerticesMaskAct = new QAction(QIcon(":images/selection-mask-vertices.png"), tr("Select &Vertices"), this);
 	mSelectVerticesMaskAct->setCheckable(true);
-	sm->registerAction(mSelectVerticesMaskAct, "Selection", "SHIFT+V");
+	mShortcutManager->registerAction(mSelectVerticesMaskAct, "Selection", "SHIFT+V");
 	mSelectVerticesMaskAct->setStatusTip(tr("Select by Component type: Vertices"));
-	connect( mSelectVerticesMaskAct , SIGNAL( triggered() ), this, SLOT( selectionMaskVertices() ) );
+	connect(mSelectVerticesMaskAct, SIGNAL(triggered()), this, SLOT(selectionMaskVertices()));
 	mActionListWidget->addAction(mSelectVerticesMaskAct);
 
 	mSelectEdgesMaskAct = new QAction(QIcon(":images/selection-mask-edges.png"), tr("Select &Edges"), this);
 	mSelectEdgesMaskAct->setCheckable(true);
-	sm->registerAction(mSelectEdgesMaskAct, "Selection", "SHIFT+E");
+	mShortcutManager->registerAction(mSelectEdgesMaskAct, "Selection", "SHIFT+E");
 	mSelectEdgesMaskAct->setStatusTip(tr("Select by Component type: Edges"));
-	connect( mSelectEdgesMaskAct , SIGNAL( triggered() ), this, SLOT( selectionMaskEdges() ) );
+	connect(mSelectEdgesMaskAct, SIGNAL(triggered()), this, SLOT(selectionMaskEdges()));
 	mActionListWidget->addAction(mSelectEdgesMaskAct);
 
 	mSelectFacesMaskAct = new QAction(QIcon(":images/selection-mask-faces.png"), tr("Select &Faces"), this);
 	mSelectFacesMaskAct->setCheckable(true);
-	sm->registerAction(mSelectFacesMaskAct, "Selection", "SHIFT+F");
+	mShortcutManager->registerAction(mSelectFacesMaskAct, "Selection", "SHIFT+F");
 	mSelectFacesMaskAct->setStatusTip(tr("Select by Component type: Faces"));
-	connect( mSelectFacesMaskAct , SIGNAL( triggered() ), this, SLOT( selectionMaskFaces() ) );
+	connect(mSelectFacesMaskAct, SIGNAL(triggered()), this, SLOT(selectionMaskFaces()));
 	mActionListWidget->addAction(mSelectFacesMaskAct);
 
 	mSelectCornersMaskAct = new QAction(QIcon(":images/selection-mask-corners.png"), tr("Select &Corner"), this);
 	mSelectCornersMaskAct->setCheckable(true);
-	sm->registerAction(mSelectCornersMaskAct, "Selection", "");
+	mShortcutManager->registerAction(mSelectCornersMaskAct, "Selection", "");
 	mSelectCornersMaskAct->setStatusTip(tr("Select by Component type: Corners"));
-	connect( mSelectCornersMaskAct , SIGNAL( triggered() ), this, SLOT( selectionMaskCorners() ) );
+	connect(mSelectCornersMaskAct, SIGNAL(triggered()), this, SLOT(selectionMaskCorners()));
 	mActionListWidget->addAction(mSelectCornersMaskAct);
 
 	mSelectionMaskActionGroup = new QActionGroup(this);
@@ -1151,240 +1156,238 @@ void MainWindow::createActions() {
 	mSelectionMaskActionGroup->addAction(mSelectCornersMaskAct);
 	// mSelectCornersMaskAct->setChecked(true);
 
-	//SETTINGS ACTIONS	
+	//SETTINGS ACTIONS
 	mPreferencesAct = new QAction(QIcon(":images/preferences-system.png"), tr("&Preferences"), this);
-	sm->registerAction(mPreferencesAct, "Settings", "CTRL+,");
+	mShortcutManager->registerAction(mPreferencesAct, "Settings", "CTRL+,");
 	mPreferencesAct->setStatusTip(tr("Open the Preferences Dialog"));
-	connect(mPreferencesAct, SIGNAL(triggered()), this, SLOT(openPreferences()));	
+	connect(mPreferencesAct, SIGNAL(triggered()), this, SLOT(openPreferences()));
 	mActionListWidget->addAction(mPreferencesAct);
 
 	//LANGUAGE MENU BAR ACTIONS
-	englishAct = new QAction(tr("English"),this);
-	englishAct->setCheckable(true);
-	connect( englishAct , SIGNAL( triggered() ), this, SLOT  ( setLanguageEnglish() ) );
-	sm->registerAction(englishAct, "Languages", "CTRL+ALT+1");
-	mActionListWidget->addAction(englishAct);
+	mEnglishAct = new QAction(tr("English"), this);
+	mEnglishAct->setCheckable(true);
+	connect(mEnglishAct, SIGNAL(triggered()), this, SLOT(setLanguageEnglish()));
+	mShortcutManager->registerAction(mEnglishAct, "Languages", "CTRL+ALT+1");
+	mActionListWidget->addAction(mEnglishAct);
 
-	spanishAct = new QAction(tr("Spanish"),this);
-	spanishAct->setCheckable(true);
-	connect( spanishAct , SIGNAL( triggered() ), this, SLOT  ( setLanguageSpanish() ) );
-	sm->registerAction(spanishAct, "Languages", "CTRL+ALT+2");
-	mActionListWidget->addAction(spanishAct);
+	mSpanishAct = new QAction(tr("Spanish"), this);
+	mSpanishAct->setCheckable(true);
+	connect(mSpanishAct, SIGNAL(triggered()), this, SLOT(setLanguageSpanish()));
+	mShortcutManager->registerAction(mSpanishAct, "Languages", "CTRL+ALT+2");
+	mActionListWidget->addAction(mSpanishAct);
 
-	germanAct = new QAction(tr("German"),this);
-	germanAct->setCheckable(true);
-	connect( germanAct , SIGNAL( triggered() ), this, SLOT  ( setLanguageGerman() ) );
-	sm->registerAction(germanAct, "Languages", "CTRL+ALT+3");
-	mActionListWidget->addAction(germanAct);
+	mGermanAct = new QAction(tr("German"), this);
+	mGermanAct->setCheckable(true);
+	connect(mGermanAct, SIGNAL(triggered()), this, SLOT(setLanguageGerman()));
+	mShortcutManager->registerAction(mGermanAct, "Languages", "CTRL+ALT+3");
+	mActionListWidget->addAction(mGermanAct);
 
-	frenchAct = new QAction(tr("French"),this);
-	frenchAct->setCheckable(true);
-	connect( frenchAct , SIGNAL( triggered() ), this, SLOT  ( setLanguageFrench() ) );
-	sm->registerAction(frenchAct, "Languages", "CTRL+ALT+4");
-	mActionListWidget->addAction(frenchAct);
-	
-	italianAct = new QAction(tr("Italian"),this);
-	italianAct->setCheckable(true);
-	connect( italianAct , SIGNAL( triggered() ), this, SLOT  ( setLanguageItalian() ) );
-	sm->registerAction(italianAct, "Languages", "CTRL+ALT+5");
-	mActionListWidget->addAction(italianAct);
+	mFrenchAct = new QAction(tr("French"), this);
+	mFrenchAct->setCheckable(true);
+	connect(mFrenchAct, SIGNAL(triggered()), this, SLOT(setLanguageFrench()));
+	mShortcutManager->registerAction(mFrenchAct, "Languages", "CTRL+ALT+4");
+	mActionListWidget->addAction(mFrenchAct);
 
-	turkishAct = new QAction(tr("Turkish"),this);
-	turkishAct->setCheckable(true);
-	connect( turkishAct , SIGNAL( triggered() ), this, SLOT  ( setLanguageTurkish() ) );
-	sm->registerAction(turkishAct, "Languages", "CTRL+ALT+6");
-	mActionListWidget->addAction(turkishAct);
+	mItalianAct = new QAction(tr("Italian"), this);
+	mItalianAct->setCheckable(true);
+	connect(mItalianAct, SIGNAL(triggered()), this, SLOT(setLanguageItalian()));
+	mShortcutManager->registerAction(mItalianAct, "Languages", "CTRL+ALT+5");
+	mActionListWidget->addAction(mItalianAct);
 
-	catalanAct = new QAction(tr("Catalan"),this);
-	catalanAct->setCheckable(true);
-	connect( catalanAct , SIGNAL( triggered() ), this, SLOT  ( setLanguageCatalan() ) );
-	sm->registerAction(catalanAct, "Languages", "CTRL+ALT+7");
-	mActionListWidget->addAction(catalanAct);
+	mTurkishAct = new QAction(tr("Turkish"), this);
+	mTurkishAct->setCheckable(true);
+	connect(mTurkishAct, SIGNAL(triggered()), this, SLOT(setLanguageTurkish()));
+	mShortcutManager->registerAction(mTurkishAct, "Languages", "CTRL+ALT+6");
+	mActionListWidget->addAction(mTurkishAct);
 
-	hindiAct = new QAction(tr("Hindi"),this);
-	hindiAct->setCheckable(true);
-	connect( hindiAct , SIGNAL( triggered() ), this, SLOT  ( setLanguageHindi() ) );
-	sm->registerAction(hindiAct, "Languages", "CTRL+ALT+8");
-	mActionListWidget->addAction(hindiAct);
-	
+	mCatalanAct = new QAction(tr("Catalan"), this);
+	mCatalanAct->setCheckable(true);
+	connect(mCatalanAct, SIGNAL(triggered()), this, SLOT(setLanguageCatalan()));
+	mShortcutManager->registerAction(mCatalanAct, "Languages", "CTRL+ALT+7");
+	mActionListWidget->addAction(mCatalanAct);
+
+	mHindiAct = new QAction(tr("Hindi"), this);
+	mHindiAct->setCheckable(true);
+	connect(mHindiAct, SIGNAL(triggered()), this, SLOT(setLanguageHindi()));
+	mShortcutManager->registerAction(mHindiAct, "Languages", "CTRL+ALT+8");
+	mActionListWidget->addAction(mHindiAct);
+
 	mLanguageActionGroup = new QActionGroup(this);
 	mLanguageActionGroup->setExclusive(true);
-	mLanguageActionGroup->addAction(englishAct);
-	mLanguageActionGroup->addAction(spanishAct);
-	mLanguageActionGroup->addAction(germanAct);
-	mLanguageActionGroup->addAction(frenchAct);
-	mLanguageActionGroup->addAction(italianAct);
-	mLanguageActionGroup->addAction(turkishAct);
-	mLanguageActionGroup->addAction(catalanAct);
-	mLanguageActionGroup->addAction(hindiAct);
-	englishAct->setChecked(true);
+	mLanguageActionGroup->addAction(mEnglishAct);
+	mLanguageActionGroup->addAction(mSpanishAct);
+	mLanguageActionGroup->addAction(mGermanAct);
+	mLanguageActionGroup->addAction(mFrenchAct);
+	mLanguageActionGroup->addAction(mItalianAct);
+	mLanguageActionGroup->addAction(mTurkishAct);
+	mLanguageActionGroup->addAction(mCatalanAct);
+	mLanguageActionGroup->addAction(mHindiAct);
+	mEnglishAct->setChecked(true);
 
 #ifdef WITH_VERSE
 	//verse menu actions
 	mVerseConnectLocalhostAct = new QAction(tr("Connect to localhost..."), this);
 	mVerseConnectLocalhostAct->setStatusTip( tr("Connect to localhost") );
 	connect(mVerseConnectLocalhostAct, SIGNAL(triggered()), mVerseDialog, SLOT(connectLocalhost()));
-	sm->registerAction(mVerseConnectLocalhostAct, "Verse Menu", "");
+	mShortcutManager->registerAction(mVerseConnectLocalhostAct, "Verse Menu", "");
 	mActionListWidget->addAction(mVerseConnectLocalhostAct);
 
 	mVerseConnectAct = new QAction(tr("Connect to host..."), this);
 	mVerseConnectAct->setStatusTip( tr("Connect to host...") );
 	connect(mVerseConnectAct, SIGNAL(triggered()), mVerseDialog, SLOT(connectHost()));
-	sm->registerAction(mVerseConnectAct, "Verse Menu", "");
+	mShortcutManager->registerAction(mVerseConnectAct, "Verse Menu", "");
 	mActionListWidget->addAction(mVerseConnectAct);
 
 	mVerseDisconnectAct = new QAction(tr("Disconnect session"), this);
 	mVerseDisconnectAct->setStatusTip( tr("Disconnect Verse Session") );
 	connect(mVerseDisconnectAct, SIGNAL(triggered()), mVerseDialog, SLOT(disconnectHost()));
-	sm->registerAction(mVerseDisconnectAct, "Verse Menu", "");
+	mShortcutManager->registerAction(mVerseDisconnectAct, "Verse Menu", "");
 	mActionListWidget->addAction(mVerseDisconnectAct);
 
 	mVerseDisconnectAllAct = new QAction(tr("Disconnect All Sessions"), this);
 	mVerseDisconnectAllAct->setStatusTip( tr("Disconnect All Sessions") );
 	connect(mVerseDisconnectAllAct, SIGNAL(triggered()), mVerseDialog, SLOT(disconnectAll()));
-	sm->registerAction(mVerseDisconnectAllAct, "Verse Menu", "");
+	mShortcutManager->registerAction(mVerseDisconnectAllAct, "Verse Menu", "");
 	mActionListWidget->addAction(mVerseDisconnectAllAct);
 
 	mVerseStartServerAct = new QAction(tr("Start Verse Server"), this);
 	mVerseStartServerAct->setStatusTip( tr("Disconnect All Nodes") );
 	connect(mVerseStartServerAct, SIGNAL(triggered()), mVerseDialog, SLOT(startServer()));
-	sm->registerAction(mVerseStartServerAct, "Verse Menu", "");
+	mShortcutManager->registerAction(mVerseStartServerAct, "Verse Menu", "");
 	mActionListWidget->addAction(mVerseStartServerAct);
 
 	mVerseKillServerAct = new QAction(tr("Kill Verse Server"), this);
 	mVerseKillServerAct->setStatusTip( tr("Kill the Local Verse server process") );
 	connect(mVerseKillServerAct, SIGNAL(triggered()), mVerseDialog, SLOT(killServer()));
-	sm->registerAction(mVerseKillServerAct, "Verse Menu", "");
+	mShortcutManager->registerAction(mVerseKillServerAct, "Verse Menu", "");
 	mActionListWidget->addAction(mVerseKillServerAct);
 #endif
 
 	mPaintSelectedFacesAct = new QAction(tr("Paint Selected Faces"), this);
-	mPaintSelectedFacesAct->setStatusTip( tr("Paint all Selected Faces") );
+	mPaintSelectedFacesAct->setStatusTip(tr("Paint all Selected Faces"));
 	connect(mPaintSelectedFacesAct, SIGNAL(triggered()), this, SLOT(paintSelectedFaces()));
-	sm->registerAction(mPaintSelectedFacesAct, "Tools Menu", "CTRL+SHIFT+B");
+	mShortcutManager->registerAction(mPaintSelectedFacesAct, "Tools Menu", "CTRL+SHIFT+B");
 	mActionListWidget->addAction(mPaintSelectedFacesAct);
 
 	mClearMaterialsAct = new QAction(tr("Clear Materials"), this);
-	mClearMaterialsAct->setStatusTip( tr("Clear Materials") );
+	mClearMaterialsAct->setStatusTip(tr("Clear Materials"));
 	connect(mClearMaterialsAct, SIGNAL(triggered()), this, SLOT(clearMaterials()));
-	sm->registerAction(mClearMaterialsAct, "Tools Menu", "CTRL+SHIFT+X");
+	mShortcutManager->registerAction(mClearMaterialsAct, "Tools Menu", "CTRL+SHIFT+X");
 	mActionListWidget->addAction(mClearMaterialsAct);
 
 	mSubdivideSelectedFacesAct = new QAction(tr("Subdivide Selected Faces"), this);
-	mSubdivideSelectedFacesAct->setStatusTip( tr("Subdivide all Selected Faces") );
+	mSubdivideSelectedFacesAct->setStatusTip(tr("Subdivide all Selected Faces"));
 	connect(mSubdivideSelectedFacesAct, SIGNAL(triggered()), this, SLOT(subdivideSelectedFaces()));
-	sm->registerAction(mSubdivideSelectedFacesAct, "Tools Menu", "CTRL+B");
+	mShortcutManager->registerAction(mSubdivideSelectedFacesAct, "Tools Menu", "CTRL+B");
 	mActionListWidget->addAction(mSubdivideSelectedFacesAct);
 
 	mSubdivideSelectedEdgesAct = new QAction(tr("Subdivide Selected Edges"), this);
-	mSubdivideSelectedEdgesAct->setStatusTip( tr("Subdivide all Selected Edges") );
+	mSubdivideSelectedEdgesAct->setStatusTip(tr("Subdivide all Selected Edges"));
 	connect(mSubdivideSelectedEdgesAct, SIGNAL(triggered()), this, SLOT(subdivideSelectedEdges()));
-	sm->registerAction(mSubdivideSelectedEdgesAct, "Tools Menu", "CTRL+SHIFT+E");
+	mShortcutManager->registerAction(mSubdivideSelectedEdgesAct, "Tools Menu", "CTRL+SHIFT+E");
 	mActionListWidget->addAction(mSubdivideSelectedEdgesAct);
-	
+
 	mPerformRemeshingAct = new QAction(tr("Perform Remeshing"), this);
-	mPerformRemeshingAct->setStatusTip( tr("Perform the current remeshing scheme") );
+	mPerformRemeshingAct->setStatusTip(tr("Perform the current remeshing scheme"));
 	connect(mPerformRemeshingAct, SIGNAL(triggered()), this, SLOT(performRemeshing()));
-	sm->registerAction(mPerformRemeshingAct, "Remeshing Menu", "CTRL+R");
+	mShortcutManager->registerAction(mPerformRemeshingAct, "Remeshing Menu", "CTRL+R");
 	mActionListWidget->addAction(mPerformRemeshingAct);
 
 	mPerformExtrusionAct = new QAction(tr("Perform Extrusion"), this);
-	mPerformExtrusionAct->setStatusTip( tr("Perform the current extrusion operator on the selected faces") );
+	mPerformExtrusionAct->setStatusTip(tr("Perform the current extrusion operator on the selected faces"));
 	connect(mPerformExtrusionAct, SIGNAL(triggered()), this, SLOT(performExtrusion()));
-	sm->registerAction(mPerformExtrusionAct, "Tools Menu", "CTRL+X");
+	mShortcutManager->registerAction(mPerformExtrusionAct, "Tools Menu", "CTRL+X");
 	mActionListWidget->addAction(mPerformExtrusionAct);
 
 	mExtrudeMultipleAct = new QAction(tr("Extrude Multiple Faces"), this);
 	mExtrudeMultipleAct->setCheckable(true);
 	mExtrudeMultipleAct->setChecked(false);
-	mExtrudeMultipleAct->setStatusTip( tr("Check this if you want to be able to select multiple faces and then hit CTRL+X to extrude the selected faces") );
+	mExtrudeMultipleAct->setStatusTip(tr("Check this if you want to be able to select multiple faces and then hit CTRL+X to extrude the selected faces"));
 	// connect(mExtrudeMultipleAct, SIGNAL(triggered()), this, SLOT(performExtrusion()));
-	sm->registerAction(mExtrudeMultipleAct, "Tools Menu", "M");
+	mShortcutManager->registerAction(mExtrudeMultipleAct, "Tools Menu", "M");
 	mActionListWidget->addAction(mExtrudeMultipleAct);
 
 	//help menu actions
-	mHelpAct = new QAction(QIcon(":images/applications-internet.png"),tr("&Online User Manual"), this);
-	mHelpAct->setStatusTip( tr("View the User Manual on the TopMod Wiki") );
+	mHelpAct = new QAction(QIcon(":images/applications-internet.png"), tr("&Online User Manual"), this);
+	mHelpAct->setStatusTip(tr("View the User Manual on the TopMod Wiki"));
 	connect(mHelpAct, SIGNAL(triggered()), this, SLOT(help()));
-	sm->registerAction(mHelpAct, "Help Menu", "F1");
+	mShortcutManager->registerAction(mHelpAct, "Help Menu", "F1");
 	mActionListWidget->addAction(mHelpAct);
 
-	mVideoTutorialsAct = new QAction(QIcon(":images/applications-internet.png"),tr("&TopMod Video Tutorials on blip.tv"), this);
-	mVideoTutorialsAct->setStatusTip( tr("Go to http://topmod.blip.tv") );
+	mVideoTutorialsAct = new QAction(QIcon(":images/applications-internet.png"), tr("&TopMod Video Tutorials on blip.tv"), this);
+	mVideoTutorialsAct->setStatusTip(tr("Go to http://topmod.blip.tv"));
 	connect(mVideoTutorialsAct, SIGNAL(triggered()), this, SLOT(topModBlip()));
-	sm->registerAction(mVideoTutorialsAct, "Help Menu", "");
+	mShortcutManager->registerAction(mVideoTutorialsAct, "Help Menu", "");
 	mActionListWidget->addAction(mVideoTutorialsAct);
-	
-	mTopModWebAct = new QAction(QIcon(":images/applications-internet.png"),tr("&TopMod on the Web"), this);
-	mTopModWebAct->setStatusTip( tr("Go to the TopMod web page") );
+
+	mTopModWebAct = new QAction(QIcon(":images/applications-internet.png"), tr("&TopMod on the Web"), this);
+	mTopModWebAct->setStatusTip(tr("Go to the TopMod web page"));
 	connect(mTopModWebAct, SIGNAL(triggered()), this, SLOT(topModWeb()));
-	sm->registerAction(mTopModWebAct, "Help Menu", "");
+	mShortcutManager->registerAction(mTopModWebAct, "Help Menu", "");
 	mActionListWidget->addAction(mTopModWebAct);
 
-	mTopModResearchAct = new QAction(QIcon(":images/applications-internet.png"),tr("&TopMod Research Papers"), this);
-	mTopModResearchAct->setStatusTip( tr("Go to the TopMod Research web page") );
+	mTopModResearchAct = new QAction(QIcon(":images/applications-internet.png"), tr("&TopMod Research Papers"), this);
+	mTopModResearchAct->setStatusTip(tr("Go to the TopMod Research web page"));
 	connect(mTopModResearchAct, SIGNAL(triggered()), this, SLOT(topModResearch()));
-	sm->registerAction(mTopModResearchAct, "Help Menu", "");
+	mShortcutManager->registerAction(mTopModResearchAct, "Help Menu", "");
 	mActionListWidget->addAction(mTopModResearchAct);
 
-	mCheckForUpdatesAct = new QAction(QIcon(":images/applications-internet.png"),tr("&Check for Updates"), this);
-	mCheckForUpdatesAct->setStatusTip( tr("Check for updates to TopMod Online") );
+	mCheckForUpdatesAct = new QAction(QIcon(":images/applications-internet.png"), tr("&Check for Updates"), this);
+	mCheckForUpdatesAct->setStatusTip(tr("Check for updates to TopMod Online"));
 	connect(mCheckForUpdatesAct, SIGNAL(triggered()), this, SLOT(checkForUpdates()));
-	sm->registerAction(mCheckForUpdatesAct, "Help Menu", "");
+	mShortcutManager->registerAction(mCheckForUpdatesAct, "Help Menu", "");
 	mActionListWidget->addAction(mCheckForUpdatesAct);
 
 	mAboutAct = new QAction(tr("&About TopMod"), this);
-	mAboutAct->setStatusTip( tr("About TopMod") );
+	mAboutAct->setStatusTip(tr("About TopMod"));
 	connect(mAboutAct, SIGNAL(triggered()), this, SLOT(about()));
-	sm->registerAction(mAboutAct, "Help Menu", "");
+	mShortcutManager->registerAction(mAboutAct, "Help Menu", "");
 	mActionListWidget->addAction(mAboutAct);
 
 	mAboutQtAct = new QAction(tr("About &Qt"), this);
-	mAboutQtAct->setStatusTip( tr("About Qt") );
+	mAboutQtAct->setStatusTip(tr("About Qt"));
 	connect(mAboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
-	sm->registerAction(mAboutQtAct, "Help Menu", "");
+	mShortcutManager->registerAction(mAboutQtAct, "Help Menu", "");
 	mActionListWidget->addAction(mAboutQtAct);
-	
+
 	mHideToolBarsAct = new QAction(tr("Hide All ToolBars"), this);
-	mHideToolBarsAct->setStatusTip( tr("Hide All ToolBars") );
+	mHideToolBarsAct->setStatusTip(tr("Hide All ToolBars"));
 	connect(mHideToolBarsAct, SIGNAL(triggered()), this, SLOT(hideAllToolBars()));
-	sm->registerAction(mHideToolBarsAct, "Window Menu", "T");
+	mShortcutManager->registerAction(mHideToolBarsAct, "Window Menu", "T");
 	mActionListWidget->addAction(mHideToolBarsAct);
 
 	mShowToolBarsAct = new QAction(tr("Show All ToolBars"), this);
-	mShowToolBarsAct->setStatusTip( tr("Show All ToolBars") );
+	mShowToolBarsAct->setStatusTip(tr("Show All ToolBars"));
 	connect(mShowToolBarsAct, SIGNAL(triggered()), this, SLOT(showAllToolBars()));
-	sm->registerAction(mShowToolBarsAct, "Window Menu", "SHIFT+T");
+	mShortcutManager->registerAction(mShowToolBarsAct, "Window Menu", "SHIFT+T");
 	mActionListWidget->addAction(mShowToolBarsAct);
-
 }
 
 void MainWindow::createMenus(){
 #ifdef __APPLE__
-	menuBar = new QMenuBar(0);
-	setMenuBar(menuBar);
+	mMenuBar = new QMenuBar(0);
+	setMenuBar(mMenuBar);
 	// setUnifiedTitleAndToolBarOnMac(true);
 #else
-	menuBar = new QMenuBar(this);
-	setMenuBar(menuBar);
+	mMenuBar = new QMenuBar(this);
+	setMenuBar(mMenuBar);
 #endif
 
 	mFileMenu = new QMenu(tr("&File"));
-	menuBar->addMenu(mFileMenu);
+	mMenuBar->addMenu(mFileMenu);
 	mFileMenu->setTearOffEnabled(true);
-	
+
 	mNewMenu = new QMenu(tr("&New"));
 	mNewMenu->setTearOffEnabled(true);
 	mFileMenu->addMenu(mNewMenu);
 	mNewMenu->addAction(mNewFileAct);
-	mNewMenu->addAction(pCubeAct);
-	mNewMenu->addAction(pOctahedronAct);
-	mNewMenu->addAction(pTetrahedronAct);
-	mNewMenu->addAction(pDodecahedronAct);
-	mNewMenu->addAction(pIcosahedronAct);
-	mNewMenu->addAction(pSoccerBallAct);
-	mNewMenu->addAction(pGeodesicAct);
-	
+	mNewMenu->addAction(mPrimCubeAct);
+	mNewMenu->addAction(mPrimOctahedronAct);
+	mNewMenu->addAction(mPrimTetrahedronAct);
+	mNewMenu->addAction(mPrimDodecahedronAct);
+	mNewMenu->addAction(mPrimIcosahedronAct);
+	mNewMenu->addAction(mPrimSoccerBallAct);
+	mNewMenu->addAction(mPrimGeodesicAct);
 
 	mExportMenu = new QMenu(tr("&Export"));
 	mExportMenu->setIcon(QIcon(":images/document-save-as.png"));
@@ -1414,7 +1417,7 @@ void MainWindow::createMenus(){
 	// mVerseMenu->addAction(mVerseDisconnectAllAct);
 #endif
 	mFileMenu->addSeparator();
-	mFileMenu->addAction(loadTextureAct);
+	mFileMenu->addAction(mLoadTextureAct);
 	// mFileMenu->addAction(printInfoAct);
 	// mFileMenu->addAction(printFaceListAct);
 	// mFileMenu->addAction(printVertexListAct);
@@ -1424,9 +1427,9 @@ void MainWindow::createMenus(){
 	mFileMenu->addAction(mExitAct);
 
 	mEditMenu = new QMenu(tr("&Edit"));
-	menuBar->addMenu(mEditMenu);
+	mMenuBar->addMenu(mEditMenu);
 	mEditMenu->addAction(mDeleteSelectedAct);
-	mEditMenu->addSeparator();	
+	mEditMenu->addSeparator();
 	mEditMenu->addAction(mUndoAct);
 	mEditMenu->addAction(mRedoAct);
 	mEditMenu->setTearOffEnabled(true);
@@ -1448,25 +1451,25 @@ void MainWindow::createMenus(){
 
 	mDisplayMenu = new QMenu(tr("&Display"));
 	mDisplayMenu->setTearOffEnabled(true);
-	menuBar->addMenu(mDisplayMenu);
+	mMenuBar->addMenu(mDisplayMenu);
 	//this is now a submenu of Display to make everything on the menu bar more compact
 	mRendererMenu = new QMenu(tr("&Renderer"));
 	mRendererMenu->setTearOffEnabled(true);
 	// menuBar->addMenu(rendererMenu);
 	mDisplayMenu->addMenu(mRendererMenu);
-	mRendererMenu->addAction(wireframeRendererAct);
-	mRendererMenu->addAction(normalRendererAct);
-	mRendererMenu->addAction(lightedRendererAct);
-	mRendererMenu->addAction(texturedRendererAct);
+	mRendererMenu->addAction(mWireframeRendererAct);
+	mRendererMenu->addAction(mNormalRendererAct);
+	mRendererMenu->addAction(mLightedRendererAct);
+	mRendererMenu->addAction(mTexturedRendererAct);
 	// texturedRendererAct->setEnabled(false);
-	mRendererMenu->addAction(texturedLightedAct);
+	mRendererMenu->addAction(mTexturedLightedAct);
 	// texturedLightedAct->setEnabled(false);
 	mRendererMenu->addSeparator()->setText(tr("Special Mode??"));
-	mRendererMenu->addAction(patchRendererAct);
-	mRendererMenu->addAction(colorableRendererAct);
-	
+	mRendererMenu->addAction(mPatchRendererAct);
+	mRendererMenu->addAction(mColorableRendererAct);
+
 	mDisplayMenu->addAction(mPerspViewAct);
-	mDisplayMenu->addAction(showVerticesAct);
+	mDisplayMenu->addAction(mShowVerticesAct);
 	//ID display submenu
 	mShowIDsMenu = new QMenu(tr("&Show IDs"));
 	mDisplayMenu->addMenu(mShowIDsMenu);
@@ -1476,16 +1479,16 @@ void MainWindow::createMenus(){
 	mShowIDsMenu->addAction(mShowVertexIDsAct);
 	mShowIDsMenu->addAction(mShowSelectedIDsAct);
 	//more view options
-	mDisplayMenu->addAction(showSilhouetteAct);
-	mDisplayMenu->addAction(showWireframeAct);
-	mDisplayMenu->addAction(showCoordinateAxesAct);
-	// mDisplayMenu->addAction(showGridAct); //removed for now 
-	mDisplayMenu->addAction(showHUDAct);
+	mDisplayMenu->addAction(mShowSilhouetteAct);
+	mDisplayMenu->addAction(mShowWireframeAct);
+	mDisplayMenu->addAction(mShowCoordinateAxesAct);
+	// mDisplayMenu->addAction(showGridAct); //removed for now
+	mDisplayMenu->addAction(mShowHUDAct);
 	#ifdef GPU_OK
 	mDisplayMenu->addAction(mUseGPUAct);
 	#endif
 	mDisplayMenu->addAction(mAntialiasingAct);
-	mDisplayMenu->addAction(objectOrientationAct);
+	mDisplayMenu->addAction(mObjectOrientationAct);
 	mDisplayMenu->addAction(mShowNormalsAct);
 	mDisplayMenu->addAction(mShowFaceCentroidsAct);
 	mDisplayMenu->addAction(mFullscreenAct);
@@ -1494,54 +1497,54 @@ void MainWindow::createMenus(){
 
 	mPrimitivesMenu = new QMenu(tr("&Primitives"));
 	mPrimitivesMenu->setTearOffEnabled(true);
-	menuBar->addMenu(mPrimitivesMenu);
-	mPrimitivesMenu->addAction(pCubeAct);
-	mPrimitivesMenu->addAction(pOctahedronAct);
-	mPrimitivesMenu->addAction(pTetrahedronAct);
-	mPrimitivesMenu->addAction(pDodecahedronAct);
-	mPrimitivesMenu->addAction(pIcosahedronAct);
-	mPrimitivesMenu->addAction(pSoccerBallAct);
-	mPrimitivesMenu->addAction(pGeodesicAct);
+	mMenuBar->addMenu(mPrimitivesMenu);
+	mPrimitivesMenu->addAction(mPrimCubeAct);
+	mPrimitivesMenu->addAction(mPrimOctahedronAct);
+	mPrimitivesMenu->addAction(mPrimTetrahedronAct);
+	mPrimitivesMenu->addAction(mPrimDodecahedronAct);
+	mPrimitivesMenu->addAction(mPrimIcosahedronAct);
+	mPrimitivesMenu->addAction(mPrimSoccerBallAct);
+	mPrimitivesMenu->addAction(mPrimGeodesicAct);
 
 	mSelectionMenu = new QMenu(tr("&Selection"));
-	menuBar->addMenu(mSelectionMenu);
-	mSelectionMenu->addAction(selectAllAct);
-	mSelectionMenu->addAction(selectInverseAct);
+	mMenuBar->addMenu(mSelectionMenu);
+	mSelectionMenu->addAction(mSelectAllAct);
+	mSelectionMenu->addAction(mSelectInverseAct);
 	mSelectionMenu->addAction(mSelectMultipleAct);
 	mSelectionMenu->addAction(mSelectSimilarAct);
 	mSelectionMenu->addAction(mSelectionWindowAct);
 	mSelectionMenu->addAction(mGrowSelectionAct);
 	mSelectionMenu->addAction(mShrinkSelectionAct);
 	// mSelectionMenu->addAction(exitSelectionModeAct);
-	mSelectionMenu->addAction(clearSelectedModeAct);
+	mSelectionMenu->addAction(mClearSelectedModeAct);
 	mSelectionMenu->addSeparator();
 	// mSelectionMenu->addAction(selectEdgeAct);
 	// mSelectionMenu->addAction(selectMultipleEdgesAct);
-	mSelectionMenu->addAction(selectEdgeLoopAct);
-	mSelectionMenu->addAction(selectEdgeRingAct);
-	// mSelectionMenu->addAction(mCollapseSelectedEdgesAct);	
+	mSelectionMenu->addAction(mSelectEdgeLoopAct);
+	mSelectionMenu->addAction(mSelectEdgeRingAct);
+	// mSelectionMenu->addAction(mCollapseSelectedEdgesAct);
 	// mSelectionMenu->addAction(mSubdivideSelectedEdgesAct);
-	mSelectionMenu->addAction(selectEdgesFromFacesAct);
-	mSelectionMenu->addAction(selectEdgesFromVerticesAct);
+	mSelectionMenu->addAction(mSelectEdgesFromFacesAct);
+	mSelectionMenu->addAction(mSelectEdgesFromVerticesAct);
 	mSelectionMenu->addSeparator();
 	// mSelectionMenu->addAction(selectFaceAct);
-	mSelectionMenu->addAction(selectFaceLoopAct);
+	mSelectionMenu->addAction(mSelectFaceLoopAct);
 	// mSelectionMenu->addAction(selectMultipleFacesAct);
 	// mSelectionMenu->addAction(selectSimilarFacesAct);
-	mSelectionMenu->addAction(selectFacesByAreaAct);
-	mSelectionMenu->addAction(selectFacesByColorAct);
-	mSelectionMenu->addAction(selectCheckerboardFacesAct);
-	mSelectionMenu->addAction(selectFacesFromEdgesAct);
-	mSelectionMenu->addAction(selectFacesFromVerticesAct);
+	mSelectionMenu->addAction(mSelectFacesByAreaAct);
+	mSelectionMenu->addAction(mSelectFacesByColorAct);
+	mSelectionMenu->addAction(mSelectCheckerboardFacesAct);
+	mSelectionMenu->addAction(mSelectFacesFromEdgesAct);
+	mSelectionMenu->addAction(mSelectFacesFromVerticesAct);
 	mSelectionMenu->addSeparator();
 	// mSelectionMenu->addAction(selectVertexAct);
 	// mSelectionMenu->addAction(selectMultipleVerticesAct);
 	mSelectionMenu->addAction(mEditVertexAct);
-	mSelectionMenu->addAction(selectVerticesFromFacesAct);
-	mSelectionMenu->addAction(selectVerticesFromEdgesAct);
+	mSelectionMenu->addAction(mSelectVerticesFromFacesAct);
+	mSelectionMenu->addAction(mSelectVerticesFromEdgesAct);
 	// mSelectionMenu->addAction(selectCornerAct);
 	// mSelectionMenu->addSeparator();
-	
+
 	mToolsMenu = new QMenu(tr("&Tools"));
 	mToolsMenu->setTearOffEnabled(true);
 	mToolsMenu->addMenu(mBasicsMode->getMenu());
@@ -1558,35 +1561,35 @@ void MainWindow::createMenus(){
 	mToolsMenu->addAction(mSubdivideSelectedFacesAct);
 	mToolsMenu->addAction(mSubdivideSelectedEdgesAct);
 	mToolsMenu->addAction(mPaintSelectedFacesAct);
-	menuBar->addMenu(mToolsMenu);
+	mMenuBar->addMenu(mToolsMenu);
 
 	mRemeshingMenu = mRemeshingMode->getMenu();
 	mRemeshingMenu->addAction(mPerformRemeshingAct);
 	mRemeshingMenu->setTearOffEnabled(true);
-	menuBar->addMenu(mRemeshingMenu);		
+	mMenuBar->addMenu(mRemeshingMenu);
 
 	mObjectMenu = new QMenu(tr("&Object"));
 	mObjectMenu->setTearOffEnabled(true);
 	mToolsMenu->addMenu(mObjectMenu);
-	mObjectMenu->addAction(makeWireframeAct);
-	mObjectMenu->addAction(makeColumnsAct);
-	mObjectMenu->addAction(makeSierpinskiAct);
-	mObjectMenu->addAction(createCrustThicknessAct);
-	mObjectMenu->addAction(createCrustScalingAct);
+	mObjectMenu->addAction(mMakeWireframeAct);
+	mObjectMenu->addAction(mMakeColumnsAct);
+	mObjectMenu->addAction(mMakeSierpinskiAct);
+	mObjectMenu->addAction(mCreateCrustThicknessAct);
+	mObjectMenu->addAction(mCreateCrustScalingAct);
 	mObjectMenu->addAction(mPerformCuttingAct);
-	mObjectMenu->addAction(subdivideAllEdgesAct);
-	mObjectMenu->addAction(planarizeAllFacesAct);
+	mObjectMenu->addAction(mSubdivideAllEdgesAct);
+	mObjectMenu->addAction(mPlanarizeAllFacesAct);
 	mObjectMenu->addAction(makeObjectSphericalAct);
-	mObjectMenu->addAction(makeObjectSmoothAct);
+	mObjectMenu->addAction(mMakeObjectSmoothAct);
 	mObjectMenu->addSeparator();
 	mObjectMenu->addAction(mCleanupWingedVerticesAct);
 	mObjectMenu->addAction(mCleanup2gonsAct);
 	mObjectMenu->addAction(mSplitValence2VerticesAct);
 	mObjectMenu->addSeparator();
 	mToolsMenu->addAction(mClearMaterialsAct);
-	mObjectMenu->addAction(computeLightingAct);
-	mObjectMenu->addAction(computeNormalsAndLightingAct);
-	mObjectMenu->addAction(assignTextureCoordinatesAct);
+	mObjectMenu->addAction(mComputeLightingAct);
+	mObjectMenu->addAction(mComputeNormalsAndLightingAct);
+	mObjectMenu->addAction(mAssignTextureCoordinatesAct);
 
 	//selection Masks (vertices / edges / faces / face-vertices)
 	mSelectionMaskMenu = new QMenu(tr("Selection &Masks"));
@@ -1597,7 +1600,7 @@ void MainWindow::createMenus(){
 	mSelectionMaskMenu->addAction(mSelectCornersMaskAct);
 
 	mWindowMenu = new QMenu(tr("&Window"));
-	menuBar->addMenu(mWindowMenu);
+	mMenuBar->addMenu(mWindowMenu);
 	mWindowMenu->addAction(mShowStartupDialogAct);
 	mWindowMenu->addAction(mShowToolOptionsAct);
 	#ifdef WITH_PYTHON
@@ -1622,7 +1625,7 @@ void MainWindow::createMenus(){
 	mWindowMenu->addAction(mRemeshingToolBarAct);
 
 	mHelpMenu = new QMenu(tr("&Help"));
-	menuBar->addMenu(mHelpMenu);
+	mMenuBar->addMenu(mHelpMenu);
 	mHelpMenu->addAction(mHelpAct);
 	mHelpMenu->addAction(mCheckForUpdatesAct);
 	mHelpMenu->addAction(mTopModWebAct);
@@ -1632,18 +1635,18 @@ void MainWindow::createMenus(){
 	mLanguageMenu = new QMenu(tr("&Language"));
 	// mLanguageMenu->setTearOffEnabled(true);
 	mHelpMenu->addMenu(mLanguageMenu);
-	mLanguageMenu->addAction(englishAct);
-	mLanguageMenu->addAction(spanishAct);
-	mLanguageMenu->addAction(germanAct);
-	mLanguageMenu->addAction(frenchAct);
-	mLanguageMenu->addAction(italianAct);
-	mLanguageMenu->addAction(turkishAct);
-	mLanguageMenu->addAction(catalanAct);
-	mLanguageMenu->addAction(hindiAct);
+	mLanguageMenu->addAction(mEnglishAct);
+	mLanguageMenu->addAction(mSpanishAct);
+	mLanguageMenu->addAction(mGermanAct);
+	mLanguageMenu->addAction(mFrenchAct);
+	mLanguageMenu->addAction(mItalianAct);
+	mLanguageMenu->addAction(mTurkishAct);
+	mLanguageMenu->addAction(mCatalanAct);
+	mLanguageMenu->addAction(mHindiAct);
 	mHelpMenu->addSeparator();
 	mHelpMenu->addAction(mAboutAct);
 	mHelpMenu->addAction(mAboutQtAct);
-		
+
 	mRightClickMenu = new QMenu();
 
 }
@@ -1660,7 +1663,7 @@ void MainWindow::createToolBars() {
 	mEditToolBar->addAction(mUndoAct);
 	mEditToolBar->addAction(mRedoAct);
 	mEditToolBar->addAction(mScreenshotViewportAct);
-	mEditToolBar->addAction(mScreenshotAppAct);	
+	mEditToolBar->addAction(mScreenshotAppAct);
 	mEditToolBar->setIconSize(QSize(32,32));
 
 	//selection masks toolbar
@@ -1678,13 +1681,13 @@ void MainWindow::createToolBars() {
 	//mPrimitivesToolBar->setFloatable(true);
 	addToolBar(Qt::TopToolBarArea,mPrimitivesToolBar);
 	mPrimitivesToolBar->setIconSize(QSize(32,32));
-	mPrimitivesToolBar->addAction(pCubeAct);
-	mPrimitivesToolBar->addAction(pOctahedronAct);
-	mPrimitivesToolBar->addAction(pTetrahedronAct);
-	mPrimitivesToolBar->addAction(pDodecahedronAct);
-	mPrimitivesToolBar->addAction(pIcosahedronAct);
-	mPrimitivesToolBar->addAction(pSoccerBallAct);
-	mPrimitivesToolBar->addAction(pGeodesicAct);
+	mPrimitivesToolBar->addAction(mPrimCubeAct);
+	mPrimitivesToolBar->addAction(mPrimOctahedronAct);
+	mPrimitivesToolBar->addAction(mPrimTetrahedronAct);
+	mPrimitivesToolBar->addAction(mPrimDodecahedronAct);
+	mPrimitivesToolBar->addAction(mPrimIcosahedronAct);
+	mPrimitivesToolBar->addAction(mPrimSoccerBallAct);
+	mPrimitivesToolBar->addAction(mPrimGeodesicAct);
 
 	//basic tools - six buttons
 	mToolsToolBar = new QToolBar(tr("Tools"),this);
@@ -1732,7 +1735,7 @@ void MainWindow::createToolBars() {
 	mToolsActionGroup = new QActionGroup(this);
 	mToolsActionGroup->setExclusive(true);
 
-	mBasicsMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);	
+	mBasicsMode->addActions(mToolsActionGroup, mToolsToolBar, mToolOptionsStackedWidget);
 	mExtrusionsMode->addActions(mToolsActionGroup, mExtrusionToolBar, mToolOptionsStackedWidget);
 	mConicalMode->addActions(mToolsActionGroup, mConicalToolBar, mToolOptionsStackedWidget);
 
@@ -1744,27 +1747,27 @@ void MainWindow::createToolBars() {
 	mExperimentalMode->addActions(mToolsActionGroup, mExperimentalToolBar, mToolOptionsStackedWidget);
 
 	//window menu toolbar display actions
-	mEditToolBarAct 					= mEditToolBar->toggleViewAction();         
-	mSelectionMaskToolBarAct 	= mSelectionMaskToolBar->toggleViewAction();
-	mPrimitivesToolBarAct     = mPrimitivesToolBar->toggleViewAction();
-	mToolsToolBarAct				 	= mToolsToolBar->toggleViewAction();
-	mExtrusionToolBarAct 			= mExtrusionToolBar->toggleViewAction();
-	mConicalToolBarAct				= mConicalToolBar->toggleViewAction();
-	mHighgenusToolBarAct    	= mHighgenusToolBar->toggleViewAction();
-	mTexturingToolBarAct  	  = mTexturingToolBar->toggleViewAction();
-	mExperimentalToolBarAct  	= mExperimentalToolBar->toggleViewAction();
-	mRemeshingToolBarAct	    = mRemeshingToolBar->toggleViewAction();
+	mEditToolBarAct = mEditToolBar->toggleViewAction();
+	mSelectionMaskToolBarAct = mSelectionMaskToolBar->toggleViewAction();
+	mPrimitivesToolBarAct = mPrimitivesToolBar->toggleViewAction();
+	mToolsToolBarAct = mToolsToolBar->toggleViewAction();
+	mExtrusionToolBarAct = mExtrusionToolBar->toggleViewAction();
+	mConicalToolBarAct = mConicalToolBar->toggleViewAction();
+	mHighgenusToolBarAct = mHighgenusToolBar->toggleViewAction();
+	mTexturingToolBarAct = mTexturingToolBar->toggleViewAction();
+	mExperimentalToolBarAct = mExperimentalToolBar->toggleViewAction();
+	mRemeshingToolBarAct = mRemeshingToolBar->toggleViewAction();
 
 }
 
 void MainWindow::createStartupDialog(){
-	
+
 	//startup screen - links to video tutorials and free quicktime download
 
 	// mStartupDialogDockWidget->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable /* | QDockWidget::DockWidgetClosable*/);
 	mStartupDialogDockWidget->setAllowedAreas(Qt::NoDockWidgetArea);
 	mStartupDialogDockWidget->hide();
-	
+
 	mStartupDialogWidget = new QWidget;
 	mStartupDialogLayout = new QGridLayout;
 
@@ -1777,7 +1780,7 @@ void MainWindow::createStartupDialog(){
 	mTutorialNavigationButton->setDefaultAction(mTutorialNavigationAct);
 	mTutorialNavigationButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 	mStartupDialogLayout->addWidget(mTutorialNavigationButton,1,0);
-	
+
 	mTutorialInterfaceAct = new QAction(QIcon(":/images/tutorial_02.png"),tr("Interface Basics"), this);
 	connect(mTutorialInterfaceAct, SIGNAL(triggered()), this, SLOT(loadInterfaceTutorial()));
 	mTutorialInterfaceButton = new QToolButton;
@@ -1831,25 +1834,29 @@ void MainWindow::createStartupDialog(){
 	mTutorialTexturingButton->setDefaultAction(mTutorialTexturingAct);
 	mTutorialTexturingButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 	mStartupDialogLayout->addWidget(mTutorialTexturingButton,3,1);
-	
+
 	//show on startup? checkbox
 	mShowStartupDialogAtStartupCheckBox = new QCheckBox(tr("Show this dialog at startup"));
 	mShowStartupDialogAtStartupCheckBox->setChecked(mShowStartupDialogAtStartup);
-	connect(mShowStartupDialogAtStartupCheckBox,SIGNAL(stateChanged(int)),this,SLOT(setShowStartupDialogAtStartup(int)));
+	connect(mShowStartupDialogAtStartupCheckBox, SIGNAL(stateChanged(int)), this, SLOT(setShowStartupDialogAtStartup(int)));
 	mStartupDialogLayout->addWidget(mShowStartupDialogAtStartupCheckBox,5,0);
-	
+
 	//download quicktime link label
-	quicktimeLabel = new QLabel(tr("Quicktime 7.2 or greater recommended."));
-	downloadQuicktimeLabel = new QLabel(tr("<h5>Quicktime 7.2 or greater recommended.<br /><a href=\"http://apple.com/quicktime/\">Download now.</a></h5>"));
-	downloadQuicktimeLabel->setOpenExternalLinks(true);
-	mStartupDialogLayout->addWidget(downloadQuicktimeLabel,5,1, Qt::AlignRight);
-		
+	mQuickTimeLabel = new QLabel(tr("Quicktime 7.2 or greater recommended."));
+	mDownloadQuickTimeLabel = new QLabel(tr(
+		"<h5>Quicktime 7.2 or greater recommended.<br />"\
+		"<a href=\"http://apple.com/quicktime/\">Download now.</a></h5>"));
+	mDownloadQuickTimeLabel->setOpenExternalLinks(true);
+	mStartupDialogLayout->addWidget(mDownloadQuickTimeLabel,5,1, Qt::AlignRight);
+
 	mStartupDialogLayout->setColumnStretch(2,1);
 	mStartupDialogLayout->setRowStretch(6,1);
 	mStartupDialogWidget->setLayout(mStartupDialogLayout);
 	mStartupDialogDockWidget->setWidget(mStartupDialogWidget);
 	mStartupDialogDockWidget->setFloating(true);
-	mStartupDialogDockWidget->move(this->width()/2 + this->x() - mStartupDialogDockWidget->width()/2, this->y() + height()/2 - mStartupDialogDockWidget->height()/2);
+	mStartupDialogDockWidget->move(
+		this->width() / 2 + this->x() - mStartupDialogDockWidget->width() / 2,
+		this->y() + height() / 2 - mStartupDialogDockWidget->height() / 2);
 	if (!mShowStartupDialogAtStartup)
 		mStartupDialogDockWidget->hide();
 }
@@ -1901,7 +1908,7 @@ void MainWindow::showAllToolBars(){
 	mTexturingToolBar->show();
 	mExperimentalToolBar->show();
 	mRemeshingToolBar->show();
-	
+
 }
 
 void MainWindow::hideAllToolBars(){
@@ -1915,10 +1922,11 @@ void MainWindow::hideAllToolBars(){
 	mTexturingToolBar->hide();
 	mExperimentalToolBar->hide();
 	mRemeshingToolBar->hide();
-	
+
 }
 
-void MainWindow::setToolOptions(QWidget *optionsWidget) {
+void MainWindow::setToolOptions(QWidget *optionsWidget)
+{
 	mToolOptionsDockWidget->setWindowTitle(tr("Tool Options - ") + optionsWidget->windowTitle());
 	mToolOptionsStackedWidget->setCurrentWidget(optionsWidget);
 	// show or hide the dockwidget options
@@ -1928,41 +1936,51 @@ void MainWindow::setToolOptions(QWidget *optionsWidget) {
 		// mToolOptionsDockWidget->hide();
 }
 
-void MainWindow::createStatusBar() {
+void MainWindow::createStatusBar()
+{
 	statusBar()->showMessage(tr("Welcome to TopMod"));
 }
 
-void MainWindow::closeEvent(QCloseEvent *event) {
-//close the help file if it's open... not sure this is necessary
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+	//close the help file if it's open... not sure this is necessary
 	// if (mAssistantClient)
 	// 	mAssistantClient->closeAssistant();
 
 	mPreferencesDialog->saveSettings();
-	
-	if (maybeSave()) {	
+
+	if (maybeSave())
+	{
 		event->accept();
-	} 
+	}
 	else event->ignore();
 }
 
-void MainWindow::newFile(){
-	
-	if (maybeSave()){
+void MainWindow::newFile()
+{
+	if (maybeSave())
+	{
 		clearUndoList();
-		object.destroy();
-		active->redraw();
-  	}
-	else return;
+		mObject.destroy();
+		mActiveViewport->redraw();
+	}
+	else
+	{
+		return;
+	}
 }
- 
-bool MainWindow::maybeSave() {
-	if (this->isModified()) {
-		int ret = QMessageBox::warning(this, tr("TopMod"),
-																	 tr("The document has been modified.\n"
-																			"Do you want to save your changes?"),
-																	 QMessageBox::Yes | QMessageBox::Default,
-																	 QMessageBox::No,
-																	 QMessageBox::Cancel | QMessageBox::Escape);
+
+bool MainWindow::maybeSave()
+{
+	if (this->isModified())
+	{
+		int ret = QMessageBox::warning(
+			this, tr("TopMod"),
+			tr("The document has been modified.\nDo you want to save your changes?"),
+			QMessageBox::Yes | QMessageBox::Default,
+			QMessageBox::No,
+			QMessageBox::Cancel | QMessageBox::Escape);
+
 		if (ret == QMessageBox::Yes)
 			return this->saveFile();
 		else if (ret == QMessageBox::Cancel)
@@ -1971,20 +1989,22 @@ bool MainWindow::maybeSave() {
 	return true;
 }
 
-void MainWindow::loadFile(QString fileName) {
+void MainWindow::loadFile(QString fileName)
+{
 	openFile(fileName);
 	this->setCurrentFile(fileName);
 	statusBar()->showMessage(tr("File loaded"), 2000);
 }
 
-
-bool MainWindow::saveFile(QString fileName) {
+bool MainWindow::saveFile(const QString &fileName)
+{
 	this->setCurrentFile(fileName);
 	statusBar()->showMessage(tr("File saved"), 2000);
 	return true;
 }
 
-void MainWindow::openFile(QString fileName){
+void MainWindow::openFile(const QString &fileName)
+{
 	QFile file(fileName);
 	file.open(QIODevice::ReadOnly);
 	QFileInfo info(file);
@@ -1992,26 +2012,28 @@ void MainWindow::openFile(QString fileName){
 	const char *filename = ba.data();
 	mWasPrimitive = false;
 	mIsPrimitive = false;
-	if (!curFile.isEmpty()){
+	if (!mCurFilename.isEmpty())
+	{
 		undoPush();
 		setModified(false);
 	}
 
 	readObject(filename);
 #ifdef WITH_PYTHON
-	DLFLObjectPtr obj = &object;
-	if( obj )
-		emit loadedObject(obj,fileName);
+	DLFLObjectPtr obj = &mObject;
+	if (obj)
+		emit loadedObject(obj, fileName);
 #endif
-	active->createPatchObject( );
-	active->recomputePatches();
-	active->recomputeNormals();
+	mActiveViewport->createPatchObject();
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	setCurrentFile(fileName);
-	active->redraw();
+	mActiveViewport->redraw();
 }
 
-void MainWindow::about() {
-	//TODO: Define version number in a header file
+void MainWindow::about()
+{
+//TODO: Define version number in a header file
 #ifndef VER
 #define VER "3.0.0"
 #endif // VER
@@ -2024,122 +2046,141 @@ void MainWindow::about() {
 	QMessageBox::about(this, tr("About TopMod"), s);
 }
 
-void MainWindow::initializeHelp(){
-	// mAssistantClient = new QAssistantClient(QLibraryInfo::location(QLibraryInfo::BinariesPath), this);
-	//   QStringList arguments;
-	//   arguments << "-profile" << QString("userdoc") + QDir::separator() + QString("topmod.adp");
-	//   mAssistantClient->setArguments(arguments);
+void MainWindow::initializeHelp()
+{
+// mAssistantClient = new QAssistantClient(QLibraryInfo::location(QLibraryInfo::BinariesPath), this);
+//   QStringList arguments;
+//   arguments << "-profile" << QString("userdoc") + QDir::separator() + QString("topmod.adp");
+//   mAssistantClient->setArguments(arguments);
 }
 
-/** 
-* \brief show the help file in the QAssistant help file viewer 
+/**
+* \brief show the help file in the QAssistant help file viewer
 */
-void MainWindow::help() {
-	// mAssistantClient->openAssistant();//showPage(QString("userdoc/index.html"));
+void MainWindow::help()
+{
+// mAssistantClient->openAssistant();//showPage(QString("userdoc/index.html"));
 	QDesktopServices::openUrl(QUrl("http://www.topmod3d.org/wiki"));
 }
 
 /**
 * \brief will eventually check for updates on the TopMod website and download the necessary files
 */
-void MainWindow::checkForUpdates(){
+void MainWindow::checkForUpdates()
+{
 	QDesktopServices::openUrl(QUrl("http://code.google.com/p/topmod/downloads/list"));
 }
 
 /**
 * \brief opens the current TopMod homepage in the user's default web browser
 */
-void MainWindow::topModWeb(){
+void MainWindow::topModWeb()
+{
 	QDesktopServices::openUrl(QUrl("http://www.topmod3d.org/"));
 }
 
-void MainWindow::topModBlip(){
+void MainWindow::topModBlip()
+{
 	QDesktopServices::openUrl(QUrl("http://topmod.blip.tv/"));
 }
 
-void MainWindow::topModResearch(){
+void MainWindow::topModResearch()
+{
 	QDesktopServices::openUrl(QUrl("http://www.topmod3d.org/wiki/index.php?title=Research"));
 }
 
-void MainWindow::documentWasModified() {
+void MainWindow::documentWasModified()
+{
 	setWindowModified(this->isModified());
 }
 
-void MainWindow::on_editStyleAction_triggered() {
+void MainWindow::on_editStyleAction_triggered()
+{
 	mStyleSheetEditor->show();
 	mStyleSheetEditor->activateWindow();
 }
 
-void MainWindow::openPreferences() {
+void MainWindow::openPreferences()
+{
 	mPreferencesDialog->display();
 }
 
 #ifdef WITH_VERSE
-void MainWindow::verseConnected(){
+void MainWindow::verseConnected()
+{
 	mVerseMenu->insertAction(mVerseConnectLocalhostAct, mVerseDisconnectAct);
 	mVerseMenu->removeAction(mVerseConnectLocalhostAct);
 	mVerseMenu->removeAction(mVerseConnectAct);
 }
-void MainWindow::verseDisconnected(){
-	mVerseMenu->insertAction(mVerseDisconnectAct,mVerseConnectLocalhostAct);
-	mVerseMenu->insertAction(mVerseDisconnectAct,mVerseConnectAct);
+void MainWindow::verseDisconnected()
+{
+	mVerseMenu->insertAction(mVerseDisconnectAct, mVerseConnectLocalhostAct);
+	mVerseMenu->insertAction(mVerseDisconnectAct, mVerseConnectAct);
 	mVerseMenu->removeAction(mVerseDisconnectAct);
 }
-void MainWindow::verseStarted(){
+void MainWindow::verseStarted()
+{
 	mVerseMenu->insertAction(mVerseStartServerAct, mVerseKillServerAct);
-	mVerseMenu->removeAction(mVerseStartServerAct);	
+	mVerseMenu->removeAction(mVerseStartServerAct);
 }
-void MainWindow::verseKilled(){
+void MainWindow::verseKilled()
+{
 	mVerseMenu->insertAction(mVerseKillServerAct, mVerseStartServerAct);
-	mVerseMenu->removeAction(mVerseKillServerAct);		
+	mVerseMenu->removeAction(mVerseKillServerAct);
 }
 #endif
 
-void MainWindow::createRenderers(){
-	wired = new WireframeRenderer();
+void MainWindow::createRenderers()
+{
+	sWiredRenderer = new WireframeRenderer();
 	// wired->setRenderFlags(DLFLRenderer::ShowWireframe);
 
-	normal = new NormalRenderer();
+	sNormalRenderer = new NormalRenderer();
 	// normal->setRenderFlags(DLFLRenderer::ShowWireframe);
 
-	lit = new LitRenderer();
+	sLitRenderer = new LitRenderer();
 	// lit->setRenderFlags(DLFLRenderer::ShowWireframe);
 
-	textured = new TexturedRenderer();
+	sTexturedRenderer = new TexturedRenderer();
 	// textured->setRenderFlags(DLFLRenderer::ShowWireframe);
 
-	texturedlit = new TexturedLitRenderer();
+	sTexturedLitRenderer = new TexturedLitRenderer();
 	// texturedlit->setRenderFlags(DLFLRenderer::ShowWireframe);
 
-	patch = new PatchRenderer();
+	sPatchRenderer = new PatchRenderer();
 	// patch->setRenderFlags(DLFLRenderer::ShowWireframe);
-	colorable = new ColorableRenderer();
-}
-void MainWindow::destroyRenderers(){
-	delete wired;
-	delete normal;
-	delete lit;
-	delete textured;
-	delete texturedlit;
-	delete patch;
-	delete colorable;
-};
-
-void MainWindow::setUndoLimit(int limit) {
-	undolimit = limit;
+	sColorableRendererr = new ColorableRenderer();
 }
 
-void MainWindow::toggleUndo(void) {
-	if ( useUndo ) useUndo = false;
-	else useUndo = true;
+void MainWindow::destroyRenderers()
+{
+	delete sWiredRenderer;
+	delete sNormalRenderer;
+	delete sLitRenderer;
+	delete sTexturedRenderer;
+	delete sTexturedLitRenderer;
+	delete sPatchRenderer;
+	delete sColorableRendererr;
 }
 
-void MainWindow::doDrag(int x, int y) { // brianb
+void MainWindow::setUndoLimit(int limit)
+{
+	mUndoLimit = limit;
+}
+
+void MainWindow::toggleUndo(void)
+{
+	if (mUseUndo) mUseUndo = false;
+	else mUseUndo = true;
+}
+
+void MainWindow::doDrag(int x, int y) // brianb
+{
 	int drag_endx = x;
 	int drag_endy = y;
 
 	GLdouble obj_world[3];  // Object world coordinates
-	GLdouble obj_window[3]; // Object window coordinates 
+	GLdouble obj_window[3]; // Object window coordinates
 	GLdouble ms_window[3];  // Mouse start drag window
 	GLdouble ms_world[3];   // Mouse start drag world
 	GLdouble me_window[3];  // Mouse end drag window
@@ -2151,18 +2192,18 @@ void MainWindow::doDrag(int x, int y) { // brianb
 	DLFLVertexPtr vptr;
 	// Viewport* viewp;
 
-	switch (mode)
+	switch (mOperationMode)
 	{
 	case EditVertex:
 	{
 		if (GLWidget::numSelectedLocators() > 0)
 		{
-			if (!is_editing)
+			if (!sIsEditing)
 			{
 				undoPush();
-				is_editing = true;
+				sIsEditing = true;
 			}
-			vptr = active->getLocatorPtr()->getActiveVertex();
+			vptr = mActiveViewport->getLocatorPtr()->getActiveVertex();
 
 			// Save previous transformations
 			glMatrixMode(GL_PROJECTION);
@@ -2190,7 +2231,7 @@ void MainWindow::doDrag(int x, int y) { // brianb
 					   &obj_window[0], &obj_window[1], &obj_window[2]);
 
 			// Set start and end window coordinates using depth coordinate found above
-			ms_window[0] = drag_startx;  ms_window[1] = drag_starty;  ms_window[2] = obj_window[2];
+			ms_window[0] = sDragStartX;  ms_window[1] = sDragStartY;  ms_window[2] = obj_window[2];
 			me_window[0] = drag_endx;    me_window[1] = drag_endy;    me_window[2] = obj_window[2];
 
 			// Unproject start drag window coordinates to world coordinates
@@ -2204,7 +2245,7 @@ void MainWindow::doDrag(int x, int y) { // brianb
 						 &me_world[0], &me_world[1], &me_world[2]);
 
 			// Switch on locked axis and update object world position
-			switch (active->getLocatorPtr()->getSelectedAxis())
+			switch (mActiveViewport->getLocatorPtr()->getSelectedAxis())
 			{
 			case 0: // X-axis
 				obj_world[0] = obj_world[0] + me_world[0] - ms_world[0];
@@ -2245,66 +2286,66 @@ void MainWindow::doDrag(int x, int y) { // brianb
 		// std::cout << "masking!\n";
 
 		//draw the window with qPainter
-		active->showSelectionWindow();
-		active->setSelectionWindowStartX(drag_startx);// mapFromGlobal(QCursor::pos()).x());
-		active->setSelectionWindowStartY(drag_starty);// mapFromGlobal(QCursor::pos()).y());
+		mActiveViewport->showSelectionWindow();
+		mActiveViewport->setSelectionWindowStartX(sDragStartX);// mapFromGlobal(QCursor::pos()).x());
+		mActiveViewport->setSelectionWindowStartY(sDragStartY);// mapFromGlobal(QCursor::pos()).y());
 		//find center of rectangle
 		// int w = abs(mapFromGlobal(QCursor::pos()).x()-drag_startx);
 		// int h =	abs(mapFromGlobal(QCursor::pos()).y()-(active->height()-drag_starty));
 
-		int w = max(1, abs(x - drag_startx));
-		int h = max(1, abs(y - drag_starty));
+		int w = max(1, abs(x - sDragStartX));
+		int h = max(1, abs(y - sDragStartY));
 
 		// int cx = (w)/2+drag_startx;
 		// //invert this???
 		// int cy = (h)/2+(active->height()-drag_starty);
 
-		int cx = (x + drag_startx) / 2;
-		int cy = (y + drag_starty) / 2;
+		int cx = (x + sDragStartX) / 2;
+		int cy = (y + sDragStartY) / 2;
 
-		// cout << "cx = " << cx << "\t\tcy = " << cy << "\t\tw = " << w << "\t\th = " << h << "\n"; 
+		// cout << "cx = " << cx << "\t\tcy = " << cy << "\t\tw = " << w << "\t\th = " << h << "\n";
 
-		if (selectionmask == MainWindow::MaskVertices)
+		if (mSelectionMask == MainWindow::MaskVertices)
 		{
-			DLFLVertexPtrArray svptrarr = active->selectVertices(cx, cy, w, h);
+			DLFLVertexPtrArray svptrarr = mActiveViewport->selectVertices(cx, cy, w, h);
 			for (auto svPtr : svptrarr)
 			{
-				if (!active->isSelected(svPtr))
+				if (!mActiveViewport->isSelected(svPtr))
 				{
-					active->setSelectedVertex(svPtr);
-					num_sel_verts++;
+					mActiveViewport->setSelectedVertex(svPtr);
+					sNumSelVerts++;
 				}
 			}
-			active->redraw();
+			mActiveViewport->redraw();
 		}
-		else if (selectionmask == MainWindow::MaskEdges)
+		else if (mSelectionMask == MainWindow::MaskEdges)
 		{
-			DLFLEdgePtrArray septrarr = active->selectEdges(cx, cy, w, h);
+			DLFLEdgePtrArray septrarr = mActiveViewport->selectEdges(cx, cy, w, h);
 			for (auto sePtr : septrarr)
 			{
-				if (!active->isSelected(sePtr))
+				if (!mActiveViewport->isSelected(sePtr))
 				{
-					active->setSelectedEdge(sePtr);
-					num_sel_edges++;
+					mActiveViewport->setSelectedEdge(sePtr);
+					sNumSelEdges++;
 				}
 			}
-			active->redraw();
+			mActiveViewport->redraw();
 		}
-		else if (selectionmask == MainWindow::MaskFaces)
+		else if (mSelectionMask == MainWindow::MaskFaces)
 		{
 			// std::cout << "faces!\n";
-			DLFLFacePtrArray sfptrarr = active->selectFaces(cx, cy, w, h);
+			DLFLFacePtrArray sfptrarr = mActiveViewport->selectFaces(cx, cy, w, h);
 			for (auto sfPtr : sfptrarr)
 			{
-				if (!active->isSelected(sfPtr))
+				if (!mActiveViewport->isSelected(sfPtr))
 				{
-					active->setSelectedFace(sfPtr);
-					num_sel_faces++;
+					mActiveViewport->setSelectedFace(sfPtr);
+					sNumSelFaces++;
 				}
 			}
-			active->redraw();
+			mActiveViewport->redraw();
 		}
-		else if (selectionmask == MainWindow::MaskCorners)
+		else if (mSelectionMask == MainWindow::MaskCorners)
 		{
 
 		}
@@ -2319,37 +2360,38 @@ void MainWindow::doDrag(int x, int y) { // brianb
 }// brianb
 
 // Do selection of various entities depending on current mode
-void MainWindow::doSelection(int x, int y) {
+void MainWindow::doSelection(int x, int y)
+{
 	DLFLVertexPtr selectedVertPtr = nullptr;
 	DLFLEdgePtr selectedEdgePtr = nullptr;
 	DLFLFacePtr selectedFacePtr = nullptr;
 	DLFLFaceVertexPtr selectedFaceVertPtr = nullptr;
 	DLFLLocatorPtr selectedLocatorPtr = nullptr; // brianb
 
-	switch (mode)
+	switch (mOperationMode)
 	{
 	case EditVertex:     // brianb
 	{
-		selectedLocatorPtr = active->getLocatorPtr();
-		selectedVertPtr = active->getLocatorPtr()->getActiveVertex();
+		selectedLocatorPtr = mActiveViewport->getLocatorPtr();
+		selectedVertPtr = mActiveViewport->getLocatorPtr()->getActiveVertex();
 		if (selectedVertPtr == nullptr)
 		{
-			selectedVertPtr = active->selectVertex(x, y);
+			selectedVertPtr = mActiveViewport->selectVertex(x, y);
 			selectedLocatorPtr->setActiveVertex(selectedVertPtr);
 		}
 		// Test for locater selection
 		if (selectedLocatorPtr->getActiveVertex() != nullptr)
 		{
-			selectedLocatorPtr = active->selectLocator(x, y);
+			selectedLocatorPtr = mActiveViewport->selectLocator(x, y);
 			if (selectedLocatorPtr != nullptr)
 			{
-				active->setSelectedLocator(0, selectedLocatorPtr);
+				mActiveViewport->setSelectedLocator(0, selectedLocatorPtr);
 				startDrag(x, y);
 			}
 			else
 			{
-				active->getLocatorPtr()->setActiveVertex(nullptr);
-				active->clearSelectedLocators();
+				mActiveViewport->getLocatorPtr()->setActiveVertex(nullptr);
+				mActiveViewport->clearSelectedLocators();
 			}
 		}
 		break;
@@ -2359,31 +2401,31 @@ void MainWindow::doSelection(int x, int y) {
 	case CutVertex://ozgur
 		if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
 		{
-			active->clearSelectedVertices();
+			mActiveViewport->clearSelectedVertices();
 		}
-		selectedVertPtr = active->selectVertex(x, y);
-		active->setSelectedVertex(selectedVertPtr);
+		selectedVertPtr = mActiveViewport->selectVertex(x, y);
+		mActiveViewport->setSelectedVertex(selectedVertPtr);
 		break;
 	case MultiSelectVertex:
-		selectedVertPtr = active->selectVertex(x, y);
+		selectedVertPtr = mActiveViewport->selectVertex(x, y);
 		if (QApplication::keyboardModifiers() == Qt::ControlModifier)
 		{
-			if (active->isSelected(selectedVertPtr))
+			if (mActiveViewport->isSelected(selectedVertPtr))
 			{
-				active->clearSelectedVertex(selectedVertPtr);
-				num_sel_verts--;
+				mActiveViewport->clearSelectedVertex(selectedVertPtr);
+				sNumSelVerts--;
 			}
-			active->redraw();
+			mActiveViewport->redraw();
 		}
 		else
 		{
-			selectedVertPtr = active->selectVertex(x, y);
-			if (!active->isSelected(selectedVertPtr))
+			selectedVertPtr = mActiveViewport->selectVertex(x, y);
+			if (!mActiveViewport->isSelected(selectedVertPtr))
 			{
-				active->setSelectedVertex(selectedVertPtr);
-				num_sel_verts++;
+				mActiveViewport->setSelectedVertex(selectedVertPtr);
+				sNumSelVerts++;
 			}
-			active->redraw();
+			mActiveViewport->redraw();
 		}
 		// svptr = active->selectVertex(x,y);
 		// if ( !active->isSelected(svptr) )
@@ -2398,38 +2440,38 @@ void MainWindow::doSelection(int x, int y) {
 	case MarkEdge://ozgur
 		if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
 		{
-			active->clearSelectedEdges();
+			mActiveViewport->clearSelectedEdges();
 		}
-		selectedEdgePtr = active->selectEdge(x, y);
-		active->setSelectedEdge(selectedEdgePtr);
+		selectedEdgePtr = mActiveViewport->selectEdge(x, y);
+		mActiveViewport->setSelectedEdge(selectedEdgePtr);
 		// cout << "x = " << x << "\t\ty = " << y << "\n";
 		break;
 	case CutEdgeandVertex://ozgur
-		selectedEdgePtr = active->selectEdge(x, y);
-		selectedVertPtr = active->selectVertex(x, y);
-		active->setSelectedEdge(selectedEdgePtr);
-		active->setSelectedVertex(selectedVertPtr);
+		selectedEdgePtr = mActiveViewport->selectEdge(x, y);
+		selectedVertPtr = mActiveViewport->selectVertex(x, y);
+		mActiveViewport->setSelectedEdge(selectedEdgePtr);
+		mActiveViewport->setSelectedVertex(selectedVertPtr);
 		break;
 	case MultiSelectEdge:
-		selectedEdgePtr = active->selectEdge(x, y);
+		selectedEdgePtr = mActiveViewport->selectEdge(x, y);
 		if (QApplication::keyboardModifiers() == Qt::ControlModifier)
 		{
-			if (active->isSelected(selectedEdgePtr))
+			if (mActiveViewport->isSelected(selectedEdgePtr))
 			{
-				active->clearSelectedEdge(selectedEdgePtr);
-				num_sel_edges--;
+				mActiveViewport->clearSelectedEdge(selectedEdgePtr);
+				sNumSelEdges--;
 			}
-			active->redraw();
+			mActiveViewport->redraw();
 		}
 		else
 		{
-			selectedEdgePtr = active->selectEdge(x, y);
-			if (!active->isSelected(selectedEdgePtr))
+			selectedEdgePtr = mActiveViewport->selectEdge(x, y);
+			if (!mActiveViewport->isSelected(selectedEdgePtr))
 			{
-				active->setSelectedEdge(selectedEdgePtr);
-				num_sel_edges++;
+				mActiveViewport->setSelectedEdge(selectedEdgePtr);
+				sNumSelEdges++;
 			}
-			active->redraw();
+			mActiveViewport->redraw();
 		}
 		// septr = active->selectEdge(x,y);
 		// if ( !active->isSelected(septr) )
@@ -2438,25 +2480,27 @@ void MainWindow::doSelection(int x, int y) {
 	case SelectEdgeLoop:
 		if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
 		{
-			active->clearSelectedEdges();
+			mActiveViewport->clearSelectedEdges();
 		}
-		selectedEdgePtr = active->selectEdge(x, y);
-		if (selectedEdgePtr && QApplication::keyboardModifiers() == Qt::ControlModifier && active->isSelected(selectedEdgePtr))
+		selectedEdgePtr = mActiveViewport->selectEdge(x, y);
+		if (selectedEdgePtr &&
+			QApplication::keyboardModifiers() == Qt::ControlModifier &&
+			mActiveViewport->isSelected(selectedEdgePtr))
 		{
-			deselect_edges = true;
-			active->clearSelectedEdge(selectedEdgePtr);
-			num_sel_edges--;
+			sDeselectEdges = true;
+			mActiveViewport->clearSelectedEdge(selectedEdgePtr);
+			sNumSelEdges--;
 			getEdgeLoopSelection(selectedEdgePtr);
-			deselect_edges = false;
+			sDeselectEdges = false;
 		}
-		else if (selectedEdgePtr && !active->isSelected(selectedEdgePtr))
+		else if (selectedEdgePtr && !mActiveViewport->isSelected(selectedEdgePtr))
 		{
 			// active->setSelectedEdge(num_sel_edges,septr);
-			active->setSelectedEdge(selectedEdgePtr);
-			num_sel_edges++;
+			mActiveViewport->setSelectedEdge(selectedEdgePtr);
+			sNumSelEdges++;
 			getEdgeLoopSelection(selectedEdgePtr);
 		}
-		active->redraw();
+		mActiveViewport->redraw();
 		break;
 	case SelectFace:
 	case CrustModeling:
@@ -2467,11 +2511,11 @@ void MainWindow::doSelection(int x, int y) {
 	{
 		if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
 		{
-			active->clearSelectedFaces();
+			mActiveViewport->clearSelectedFaces();
 		}
-		selectedFacePtr = active->selectFace(x, y);
+		selectedFacePtr = mActiveViewport->selectFace(x, y);
 		// active->setSelectedFace(num_sel_faces,sfptr);
-		active->setSelectedFace(selectedFacePtr);
+		mActiveViewport->setSelectedFace(selectedFacePtr);
 		break;
 		// case SelectSimilarFaces :
 		// 	//clear selection if shift isn't down
@@ -2500,31 +2544,31 @@ void MainWindow::doSelection(int x, int y) {
 	{
 		// std::cout << active->getSelectionMaskString() << " = select similar\n";
 
-		switch (selectionmask)
+		switch (mSelectionMask)
 		{
 		case MaskFaces:
 		{
 			// std::cout<< "Mask faces select sim\n";
 			//clear selection if shift isn't down
 			if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
-				active->clearSelectedFaces();
-			selectedFacePtr = active->selectFace(x, y);
+				mActiveViewport->clearSelectedFaces();
+			selectedFacePtr = mActiveViewport->selectFace(x, y);
 			if (selectedFacePtr)
 			{
-				if (!active->isSelected(selectedFacePtr))
+				if (!mActiveViewport->isSelected(selectedFacePtr))
 				{
 					// active->setSelectedFace(num_sel_faces,sfptr);
-					active->setSelectedFace(selectedFacePtr);
-					num_sel_faces++;
+					mActiveViewport->setSelectedFace(selectedFacePtr);
+					sNumSelFaces++;
 				}
 				DLFLFacePtrArray sfptrarray;
-				DLFL::selectMatchingFaces(&object, selectedFacePtr, sfptrarray);
+				DLFL::selectMatchingFaces(&mObject, selectedFacePtr, sfptrarray);
 				for (auto sfPtr : sfptrarray)
 				{
-					if (!active->isSelected(sfPtr))
+					if (!mActiveViewport->isSelected(sfPtr))
 					{
-						active->setSelectedFace(sfPtr);
-						num_sel_faces++;
+						mActiveViewport->setSelectedFace(sfPtr);
+						sNumSelFaces++;
 					}
 				}
 			}
@@ -2534,23 +2578,23 @@ void MainWindow::doSelection(int x, int y) {
 		{
 			//clear selection if shift isn't down
 			if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
-				active->clearSelectedEdges();
-			selectedEdgePtr = active->selectEdge(x, y);
+				mActiveViewport->clearSelectedEdges();
+			selectedEdgePtr = mActiveViewport->selectEdge(x, y);
 			if (selectedEdgePtr)
 			{
-				if (!active->isSelected(selectedEdgePtr))
+				if (!mActiveViewport->isSelected(selectedEdgePtr))
 				{
-					active->setSelectedEdge(selectedEdgePtr);
-					num_sel_edges++;
+					mActiveViewport->setSelectedEdge(selectedEdgePtr);
+					sNumSelEdges++;
 				}
 				DLFLEdgePtrArray septrarray;
-				DLFL::selectMatchingEdges(&object, selectedEdgePtr, septrarray);
+				DLFL::selectMatchingEdges(&mObject, selectedEdgePtr, septrarray);
 				for (auto sePtr : septrarray)
 				{
-					if (!active->isSelected(sePtr))
+					if (!mActiveViewport->isSelected(sePtr))
 					{
-						active->setSelectedEdge(sePtr);
-						num_sel_edges++;
+						mActiveViewport->setSelectedEdge(sePtr);
+						sNumSelEdges++;
 					}
 				}
 			}
@@ -2560,27 +2604,27 @@ void MainWindow::doSelection(int x, int y) {
 		{
 			//clear selection if shift isn't down
 			if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
-				active->clearSelectedVertices();
-			selectedVertPtr = active->selectVertex(x, y);
+				mActiveViewport->clearSelectedVertices();
+			selectedVertPtr = mActiveViewport->selectVertex(x, y);
 			if (selectedVertPtr)
 			{
-				if (!active->isSelected(selectedVertPtr))
+				if (!mActiveViewport->isSelected(selectedVertPtr))
 				{
-					active->setSelectedVertex(selectedVertPtr);
-					num_sel_verts++;
+					mActiveViewport->setSelectedVertex(selectedVertPtr);
+					sNumSelVerts++;
 				}
 				DLFLVertexPtrArray svptrarray;
-				DLFL::selectMatchingVertices(&object, selectedVertPtr, svptrarray);
+				DLFL::selectMatchingVertices(&mObject, selectedVertPtr, svptrarray);
 				for (auto svPtr : svptrarray)
 				{
-					if (!active->isSelected(svPtr))
+					if (!mActiveViewport->isSelected(svPtr))
 					{
-						active->setSelectedVertex(svPtr);
-						num_sel_verts++;
+						mActiveViewport->setSelectedVertex(svPtr);
+						sNumSelVerts++;
 					}
 				}
 			}
-			active->redraw();
+			mActiveViewport->redraw();
 			break;
 		}
 		default:
@@ -2592,104 +2636,104 @@ void MainWindow::doSelection(int x, int y) {
 	{
 		//clear selection if shift isn't down
 		if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
-			active->clearSelectedFaces();
-		selectedFacePtr = active->selectFace(x, y);
+			mActiveViewport->clearSelectedFaces();
+		selectedFacePtr = mActiveViewport->selectFace(x, y);
 		if (selectedFacePtr)
 		{
-			if (!active->isSelected(selectedFacePtr))
+			if (!mActiveViewport->isSelected(selectedFacePtr))
 			{
 				// active->setSelectedFace(num_sel_faces,sfptr);
-				active->setSelectedFace(selectedFacePtr);
-				num_sel_faces++;
+				mActiveViewport->setSelectedFace(selectedFacePtr);
+				sNumSelFaces++;
 			}
 			DLFLFacePtrArray sfptrarray;
-			DLFL::selectFacesByArea(&object, selectedFacePtr, sfptrarray, MainWindow::face_area_tolerance);
+			DLFL::selectFacesByArea(&mObject, selectedFacePtr, sfptrarray, MainWindow::sFaceAreaTolerance);
 			for (auto sfPtr : sfptrarray)
 			{
-				if (!active->isSelected(sfPtr))
+				if (!mActiveViewport->isSelected(sfPtr))
 				{
-					active->setSelectedFace(sfPtr);
-					num_sel_faces++;
+					mActiveViewport->setSelectedFace(sfPtr);
+					sNumSelFaces++;
 				}
 			}
 		}
-		active->redraw();
+		mActiveViewport->redraw();
 		break;
 	}
 	case SelectFacesByColor:
 	{
 		//clear selection if shift isn't down
 		if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
-			active->clearSelectedFaces();
-		selectedFacePtr = active->selectFace(x, y);
+			mActiveViewport->clearSelectedFaces();
+		selectedFacePtr = mActiveViewport->selectFace(x, y);
 		if (selectedFacePtr)
 		{
-			if (!active->isSelected(selectedFacePtr))
+			if (!mActiveViewport->isSelected(selectedFacePtr))
 			{
 				// active->setSelectedFace(num_sel_faces,sfptr);
-				active->setSelectedFace(selectedFacePtr);
-				num_sel_faces++;
+				mActiveViewport->setSelectedFace(selectedFacePtr);
+				sNumSelFaces++;
 			}
 			DLFLFacePtrArray sfptrarray;
-			DLFL::selectFacesByColor(&object, selectedFacePtr, sfptrarray, MainWindow::face_color_tolerance);
+			DLFL::selectFacesByColor(&mObject, selectedFacePtr, sfptrarray, MainWindow::sFaceColorTolerance);
 			for (auto sfPtr : sfptrarray)
 			{
-				if (!active->isSelected(sfPtr))
+				if (!mActiveViewport->isSelected(sfPtr))
 				{
-					active->setSelectedFace(sfPtr);
-					num_sel_faces++;
+					mActiveViewport->setSelectedFace(sfPtr);
+					sNumSelFaces++;
 				}
 			}
 		}
-		active->redraw();
+		mActiveViewport->redraw();
 		break;
 	}
 	case SelectFaceLoop:
 	{
 		if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
 		{
-			active->clearSelectedFaces();
+			mActiveViewport->clearSelectedFaces();
 		}
-		selectedEdgePtr = active->selectEdge(x, y);
-		active->setSelectedEdge(selectedEdgePtr);
+		selectedEdgePtr = mActiveViewport->selectEdge(x, y);
+		mActiveViewport->setSelectedEdge(selectedEdgePtr);
 		if (selectedEdgePtr)
 		{
 			if (QApplication::keyboardModifiers() == Qt::ControlModifier)
 			{ // deselect
-				face_loop_start_edge = selectedEdgePtr;
+				sFaceLoopStartEdge = selectedEdgePtr;
 				getFaceLoopSelection(selectedEdgePtr, true, nullptr, false);
 			}
 			else
 			{ //select
-				face_loop_start_edge = selectedEdgePtr;
+				sFaceLoopStartEdge = selectedEdgePtr;
 				getFaceLoopSelection(selectedEdgePtr, true, nullptr, true);
 			}
 		}
-		active->redraw();
+		mActiveViewport->redraw();
 		break;
 	}
 	case SelectEdgeRing:
 	{
 		if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
 		{
-			active->clearSelectedEdges();
+			mActiveViewport->clearSelectedEdges();
 		}
-		selectedEdgePtr = active->selectEdge(x, y);
-		active->setSelectedEdge(selectedEdgePtr);
+		selectedEdgePtr = mActiveViewport->selectEdge(x, y);
+		mActiveViewport->setSelectedEdge(selectedEdgePtr);
 		if (selectedEdgePtr)
 		{
 			if (QApplication::keyboardModifiers() == Qt::ControlModifier)
 			{ // deselect
-				edge_ring_start_edge = selectedEdgePtr;
+				sEdgeRingStartEdge = selectedEdgePtr;
 				getEdgeRingSelection(selectedEdgePtr, true, nullptr, false);
 			}
 			else
 			{ //select
-				edge_ring_start_edge = selectedEdgePtr;
+				sEdgeRingStartEdge = selectedEdgePtr;
 				getEdgeRingSelection(selectedEdgePtr, true, nullptr, true);
 			}
 		}
-		active->redraw();
+		mActiveViewport->redraw();
 		break;
 	}
 	case ExtrudeFace:
@@ -2704,25 +2748,25 @@ void MainWindow::doSelection(int x, int y) {
 	case MultiSelectFace:
 	case SubdivideFace:
 	{
-		selectedFacePtr = active->selectFace(x, y);
+		selectedFacePtr = mActiveViewport->selectFace(x, y);
 		if (QApplication::keyboardModifiers() == Qt::ControlModifier)
 		{
-			if (active->isSelected(selectedFacePtr))
+			if (mActiveViewport->isSelected(selectedFacePtr))
 			{
-				active->clearSelectedFace(selectedFacePtr);
-				num_sel_faces--;
+				mActiveViewport->clearSelectedFace(selectedFacePtr);
+				sNumSelFaces--;
 			}
-			active->redraw();
+			mActiveViewport->redraw();
 		}
 		else
 		{
-			selectedFacePtr = active->selectFace(x, y);
-			if (!active->isSelected(selectedFacePtr))
+			selectedFacePtr = mActiveViewport->selectFace(x, y);
+			if (!mActiveViewport->isSelected(selectedFacePtr))
 			{
-				active->setSelectedFace(num_sel_faces, selectedFacePtr);
-				num_sel_faces++;
+				mActiveViewport->setSelectedFace(sNumSelFaces, selectedFacePtr);
+				sNumSelFaces++;
 			}
-			active->redraw();
+			mActiveViewport->redraw();
 		}
 		break;
 	}
@@ -2730,23 +2774,25 @@ void MainWindow::doSelection(int x, int y) {
 	{
 		if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
 		{
-			active->clearSelectedFaces();
+			mActiveViewport->clearSelectedFaces();
 		}
 		//get one selected face
-		selectedFacePtr = active->selectFace(x, y);
-		if (selectedFacePtr && active->isSelected(selectedFacePtr) && QApplication::keyboardModifiers() == Qt::ControlModifier)
+		selectedFacePtr = mActiveViewport->selectFace(x, y);
+		if (selectedFacePtr &&
+			mActiveViewport->isSelected(selectedFacePtr) &&
+			QApplication::keyboardModifiers() == Qt::ControlModifier)
 		{
-			active->clearSelectedFace(selectedFacePtr);
-			num_sel_faces--;
+			mActiveViewport->clearSelectedFace(selectedFacePtr);
+			sNumSelFaces--;
 			getCheckerboardSelection(selectedFacePtr);
 		}
-		else if (selectedFacePtr && !active->isSelected(selectedFacePtr))
+		else if (selectedFacePtr && !mActiveViewport->isSelected(selectedFacePtr))
 		{
-			active->setSelectedFace(selectedFacePtr);
-			num_sel_faces++;
+			mActiveViewport->setSelectedFace(selectedFacePtr);
+			sNumSelFaces++;
 			getCheckerboardSelection(selectedFacePtr);
 		}
-		active->redraw();
+		mActiveViewport->redraw();
 		break;
 	}
 	case SelectCorner:
@@ -2757,35 +2803,35 @@ void MainWindow::doSelection(int x, int y) {
 	case BezierConnectFaces:
 	case HermiteConnectFaces:
 	{
-		selectedFacePtr = active->selectFace(x, y);
-		active->setSelectedFace(num_sel_faces, selectedFacePtr);
+		selectedFacePtr = mActiveViewport->selectFace(x, y);
+		mActiveViewport->setSelectedFace(sNumSelFaces, selectedFacePtr);
 		if (selectedFacePtr)
 		{
-			selectedFaceVertPtr = active->selectFaceVertex(selectedFacePtr, x, y);
-			active->setSelectedFaceVertex(num_sel_faceverts, selectedFaceVertPtr);
+			selectedFaceVertPtr = mActiveViewport->selectFaceVertex(selectedFacePtr, x, y);
+			mActiveViewport->setSelectedFaceVertex(sNumSelFaceVerts, selectedFaceVertPtr);
 		}
 		break;
 	}
 	case MultiSelectCorner:
 	{
-		selectedFacePtr = active->selectFace(x, y);
-		active->setSelectedFace(selectedFacePtr);
+		selectedFacePtr = mActiveViewport->selectFace(x, y);
+		mActiveViewport->setSelectedFace(selectedFacePtr);
 		if (selectedFacePtr)
 		{
-			selectedFaceVertPtr = active->selectFaceVertex(selectedFacePtr, x, y);
-			if (!active->isSelected(selectedFaceVertPtr))
-				active->setSelectedFaceVertex(selectedFaceVertPtr);
+			selectedFaceVertPtr = mActiveViewport->selectFaceVertex(selectedFacePtr, x, y);
+			if (!mActiveViewport->isSelected(selectedFaceVertPtr))
+				mActiveViewport->setSelectedFaceVertex(selectedFaceVertPtr);
 		}
 		break;
 	}
 	case ConnectEdges:
 	{
-		selectedFacePtr = active->selectFace(x, y);
-		active->setSelectedFace(num_sel_faces, selectedFacePtr);
+		selectedFacePtr = mActiveViewport->selectFace(x, y);
+		mActiveViewport->setSelectedFace(sNumSelFaces, selectedFacePtr);
 		if (selectedFacePtr)
 		{
-			selectedEdgePtr = active->selectEdge(x, y);
-			active->setSelectedEdge(num_sel_edges, selectedEdgePtr);
+			selectedEdgePtr = mActiveViewport->selectEdge(x, y);
+			mActiveViewport->setSelectedEdge(sNumSelEdges, selectedEdgePtr);
 		}
 		break;
 	}
@@ -2793,43 +2839,44 @@ void MainWindow::doSelection(int x, int y) {
 	{
 		if (QApplication::keyboardModifiers() != Qt::ShiftModifier)
 		{
-			active->clearSelectedEdges();
-			active->clearSelectedVertices();
-			active->clearSelectedFaces();
+			mActiveViewport->clearSelectedEdges();
+			mActiveViewport->clearSelectedVertices();
+			mActiveViewport->clearSelectedFaces();
 		}
 		startDrag(x, y);
 
 		break;
 	}
-	};
+	}
 	redraw();
 	// if ( svptr != nullptr || septr != nullptr || sfptr != nullptr ) redraw();
 }
 
-void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
-	// QMessageBox::about(this,tr("mimetype"),tr("%1").arg(event->mimeData()->formats().join(",")));
-	// if (event->mimeData()->hasFormat("text/uri-list"))
-	// 	event->acceptProposedAction();
+void MainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+	/*QMessageBox::about(this,tr("mimetype"),tr("%1").arg(event->mimeData()->formats().join(",")));
+	if (event->mimeData()->hasFormat("text/uri-list"))
+	event->acceptProposedAction();*/
 }
 
-void MainWindow::dropEvent(QDropEvent *event) {
-	//textBrowser->setPlainText(event->mimeData()->text());
-	//mimeTypeCombo->clear();
-	//mimeTypeCombo->addItems(event->mimeData()->formats());
-	// QMessageBox::about(this,tr("mimetype"),tr("%1").arg(event->mimeData()->data("text/uri-list").data));
+void MainWindow::dropEvent(QDropEvent *event)
+{
+	/*textBrowser->setPlainText(event->mimeData()->text());
+	mimeTypeCombo->clear();
+	mimeTypeCombo->addItems(event->mimeData()->formats());
+	QMessageBox::about(this, tr("mimetype"), tr("%1").arg(event->mimeData()->data("text/uri-list").data));
 
-	// event->acceptProposedAction();
+	event->acceptProposedAction();*/
 }
 
 // Handle keyboard and mouse events
-void MainWindow::mousePressEvent(QMouseEvent *event) {
-
+void MainWindow::mousePressEvent(QMouseEvent *event)
+{
 	//experimental for crossing window selection
-	// if (event->buttons() == Qt::LeftButton && mode == SelectionWindow){
-		
-	// }
-	if ( event->buttons() == Qt::LeftButton && mode != NormalMode ){
-		doSelection(event->x(),height()-mStatusBar->height()-event->y());
+	// if (event->buttons() == Qt::LeftButton && mode == SelectionWindow) {}
+	if (event->buttons() == Qt::LeftButton && mOperationMode != NormalMode)
+	{
+		doSelection(event->x(), height() - mStatusBar->height() - event->y());
 	}
 	// else if ( event->buttons() == Qt::RightButton && QApplication::keyboardModifiers() == Qt::ShiftModifier){
 	// 	// event->ignore();
@@ -2837,179 +2884,186 @@ void MainWindow::mousePressEvent(QMouseEvent *event) {
 	// 	mBrushStartX = event->x();
 	// 	// mBrushStartY = event->y();
 	// }
-	else if (event->buttons() == Qt::RightButton){
+	else if (event->buttons() == Qt::RightButton)
+	{
 		getRightClickMenu();
 		mRightClickMenu->popup(mapToGlobal(event->pos()));
 	}
-	else event->ignore();
+	else
+	{
+		event->ignore();
+	}
 }
 
 /**
 * \brief load custom right click menu options based on the current mode of operation
-* 
+*
 */
-void MainWindow::getRightClickMenu(){
+void MainWindow::getRightClickMenu()
+{
 	mRightClickMenu->clear();
 	//add generic items for now to test it out
-	
-	switch (mode){
-		NormalMode :
-		// mRightClickMenu->addAction(createWireframeAct);
+
+	switch (mOperationMode)
+	{
+	case NormalMode:
+	// mRightClickMenu->addAction(createWireframeAct);
 		break;
-		SelectVertex :
+	case SelectVertex:
 		break;
-		SelectEdge :
+	case SelectEdge:
 		mRightClickMenu->addAction(mSubdivideSelectedEdgesAct);
 		break;
-		SelectFace :
+	case SelectFace:
 		mRightClickMenu->addAction(mSubdivideSelectedFacesAct);
 		mRightClickMenu->addAction(mPaintSelectedFacesAct);
 		break;
-		SelectCorner :
+	case SelectCorner:
 		break;
-		MultiSelectVertex :
+	case MultiSelectVertex:
 		break;
-		MultiSelectEdge :
+	case MultiSelectEdge:
 		mRightClickMenu->addAction(mSubdivideSelectedEdgesAct);
 		break;
-		MultiSelectFace :
+	case MultiSelectFace:
 		mRightClickMenu->addAction(mSubdivideSelectedFacesAct);
 		mRightClickMenu->addAction(mPaintSelectedFacesAct);
 		break;
-		MultiSelectCorner :
+	case MultiSelectCorner:
 		break;
-		InsertEdge :
+	case InsertEdge:
 		break;
-		DeleteEdge :
+	case DeleteEdge:
 		break;
-		SubdivideEdge :
+	case SubdivideEdge:
 		break;
-		CollapseEdge :
+	case CollapseEdge:
 		mRightClickMenu->addAction(mSubdivideSelectedEdgesAct);
 		mRightClickMenu->addAction(mCollapseSelectedEdgesAct);
 		break;
-		SpliceCorners :
+	case SpliceCorners:
 		break;
-		ConnectEdges :
+	case ConnectEdges:
 		mRightClickMenu->addAction(mSubdivideSelectedEdgesAct);
 		mRightClickMenu->addAction(mCollapseSelectedEdgesAct);
 		break;
-		ExtrudeFace :
-		ExtrudeFaceDS :
-		ExtrudeDualFace :
-		ExtrudeFaceDodeca :
-		ExtrudeFaceIcosa :
-		ExtrudeMultipleFaces :
-		StellateFace :
-		DoubleStellateFace  :
-		ExtrudeFaceDome :
+	case ExtrudeFace:
+	case ExtrudeFaceDS:
+	case ExtrudeDualFace:
+	case ExtrudeFaceDodeca:
+	case ExtrudeFaceIcosa:
+	case ExtrudeMultipleFaces:
+	case StellateFace:
+	case DoubleStellateFace:
+	case ExtrudeFaceDome:
 		mRightClickMenu->addAction(mPerformExtrusionAct);
 		mRightClickMenu->addAction(mSubdivideSelectedFacesAct);
 		mRightClickMenu->addAction(mPaintSelectedFacesAct);
 		break;
-		ConnectFaceVertices :
-		ConnectFaces :
-		BezierConnectFaces :
-		HermiteConnectFaces :
+	case ConnectFaceVertices:
+	case ConnectFaces:
+	case BezierConnectFaces:
+	case HermiteConnectFaces:
 		mRightClickMenu->addMenu(mHighgenusMode->getMenu());
 		break;
-		ReorderFace :
+	case ReorderFace:
 		break;
-		SubdivideFace :
+	case SubdivideFace:
 		mRightClickMenu->addAction(mSubdivideSelectedFacesAct);
 		break;
-		CrustModeling :
-		mRightClickMenu->addAction(createCrustThicknessAct);
-		mRightClickMenu->addAction(createCrustScalingAct);
+	case CrustModeling:
+		mRightClickMenu->addAction(mCreateCrustThicknessAct);
+		mRightClickMenu->addAction(mCreateCrustScalingAct);
 		mRightClickMenu->addSeparator();
 		break;
-		CutEdge :
-		CutVertex :
-		CutFace  :
+	case CutEdge:
+	case CutVertex:
+	case CutFace:
 		mRightClickMenu->addAction(mPerformCuttingAct);
 		mRightClickMenu->addSeparator();
 		break;
-		TruncateEdge :
+	case TruncateEdge:
 		break;
-		MarkEdge :
+	case MarkEdge:
 		break;
-		MarkVertex :
+	case MarkVertex:
 		break;
-		ConvexHullMode :
+	case ConvexHullMode:
 		break;
-		EditVertex :
+	case EditVertex:
 		break;
-		SelectEdgeLoop :
-		SelectEdgeRing :
+	case SelectEdgeLoop:
+	case SelectEdgeRing:
 		mRightClickMenu->addAction(mSubdivideSelectedEdgesAct);
 		mRightClickMenu->addAction(mCollapseSelectedEdgesAct);
 		// mRightClickMenu->addAction(mDeleteSelectedAct);
 		break;
-		SelectFaceLoop :
-		// SelectSimilarFaces :
-		SelectFacesByArea:
-		SelectFacesByColor:
-		SelectCheckerboard :	
+	case SelectFaceLoop:
+	// SelectSimilarFaces :
+	case SelectFacesByArea:
+	case SelectFacesByColor:
+	case SelectCheckerboard:
 		mRightClickMenu->addAction(mSubdivideSelectedFacesAct);
 		mRightClickMenu->addAction(mPaintSelectedFacesAct);
 		break;
-		
-		default:
+
+	default:
 		break;
-	};
-	
+	}
+
 	mRightClickMenu->addSeparator();
-	mRightClickMenu->addAction(selectAllAct);
-	mRightClickMenu->addAction(selectInverseAct);
+	mRightClickMenu->addAction(mSelectAllAct);
+	mRightClickMenu->addAction(mSelectInverseAct);
 	mRightClickMenu->addAction(mSelectMultipleAct);
 	mRightClickMenu->addAction(mSelectSimilarAct);
-	mRightClickMenu->addAction(mSelectionWindowAct);	
+	mRightClickMenu->addAction(mSelectionWindowAct);
 	mRightClickMenu->addAction(mGrowSelectionAct);
 	mRightClickMenu->addAction(mShrinkSelectionAct);
-	mRightClickMenu->addAction(clearSelectedModeAct);		
+	mRightClickMenu->addAction(mClearSelectedModeAct);
 	mRightClickMenu->addSeparator();
-	
-	switch (selectionmask){
-		case MaskVertices:
-			mRightClickMenu->addAction(mDeleteSelectedAct);
-			// mRightClickMenu->addAction(selectVertexAct);
-			// mRightClickMenu->addAction(selectMultipleVerticesAct);
-			mRightClickMenu->addAction(mEditVertexAct);
-			// mRightClickMenu->addAction(mEditVertexAct);
-			mRightClickMenu->addAction(selectEdgesFromVerticesAct);			
-			mRightClickMenu->addAction(selectFacesFromVerticesAct);			
+
+	switch (mSelectionMask)
+	{
+	case MaskVertices:
+		mRightClickMenu->addAction(mDeleteSelectedAct);
+		// mRightClickMenu->addAction(selectVertexAct);
+		// mRightClickMenu->addAction(selectMultipleVerticesAct);
+		mRightClickMenu->addAction(mEditVertexAct);
+		// mRightClickMenu->addAction(mEditVertexAct);
+		mRightClickMenu->addAction(mSelectEdgesFromVerticesAct);
+		mRightClickMenu->addAction(mSelectFacesFromVerticesAct);
 		break;
-		case MaskEdges: 
-			mRightClickMenu->addAction(mDeleteSelectedAct);
-			mRightClickMenu->addAction(mCollapseSelectedEdgesAct);
-			mRightClickMenu->addSeparator();
-			// mRightClickMenu->addAction(selectEdgeAct);
-			// mRightClickMenu->addAction(selectMultipleEdgesAct);
-			mRightClickMenu->addAction(selectEdgeLoopAct);
-			mRightClickMenu->addAction(selectEdgeRingAct);
-			mRightClickMenu->addAction(selectVerticesFromEdgesAct);			
-			mRightClickMenu->addAction(selectFacesFromEdgesAct);			
+	case MaskEdges:
+		mRightClickMenu->addAction(mDeleteSelectedAct);
+		mRightClickMenu->addAction(mCollapseSelectedEdgesAct);
+		mRightClickMenu->addSeparator();
+		// mRightClickMenu->addAction(selectEdgeAct);
+		// mRightClickMenu->addAction(selectMultipleEdgesAct);
+		mRightClickMenu->addAction(mSelectEdgeLoopAct);
+		mRightClickMenu->addAction(mSelectEdgeRingAct);
+		mRightClickMenu->addAction(mSelectVerticesFromEdgesAct);
+		mRightClickMenu->addAction(mSelectFacesFromEdgesAct);
 		break;
-		case MaskFaces://face stuff
-			// mRightClickMenu->addAction(mDeleteSelectedAct);
-			// mRightClickMenu->addAction(selectFaceAct);
-			mRightClickMenu->addAction(selectFaceLoopAct);
-			// mRightClickMenu->addAction(selectMultipleFacesAct);
-			// mRightClickMenu->addAction(selectSimilarFacesAct);
-			mRightClickMenu->addAction(selectFacesByAreaAct);
-			mRightClickMenu->addAction(selectFacesByColorAct);
-			mRightClickMenu->addAction(selectCheckerboardFacesAct);
-			mRightClickMenu->addAction(selectEdgesFromFacesAct);			
-			mRightClickMenu->addAction(selectVerticesFromFacesAct);						
+	case MaskFaces: //face stuff
+		// mRightClickMenu->addAction(mDeleteSelectedAct);
+		// mRightClickMenu->addAction(selectFaceAct);
+		mRightClickMenu->addAction(mSelectFaceLoopAct);
+		// mRightClickMenu->addAction(selectMultipleFacesAct);
+		// mRightClickMenu->addAction(selectSimilarFacesAct);
+		mRightClickMenu->addAction(mSelectFacesByAreaAct);
+		mRightClickMenu->addAction(mSelectFacesByColorAct);
+		mRightClickMenu->addAction(mSelectCheckerboardFacesAct);
+		mRightClickMenu->addAction(mSelectEdgesFromFacesAct);
+		mRightClickMenu->addAction(mSelectVerticesFromFacesAct);
 		break;
-		case MaskCorners:
-			// mRightClickMenu->addAction(mDeleteSelectedAct);
-			// mRightClickMenu->addAction(// selectCornerAct);
+	case MaskCorners:
+		// mRightClickMenu->addAction(mDeleteSelectedAct);
+		// mRightClickMenu->addAction(// selectCornerAct);
 		break;
-		default:
+	default:
 		break;
-	};
-	
+	}
+
 	// mRightClickMenu->addSeparator();
 	// mRightClickMenu->addAction(mEditVertexAct);
 	mRightClickMenu->addSeparator();
@@ -3021,17 +3075,16 @@ void MainWindow::getRightClickMenu(){
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event)
 {
-	if (mode != NormalMode && event->buttons() == Qt::LeftButton)
+	// if (active->isBrushVisible()) active->redraw();
+	if (mOperationMode != NormalMode && event->buttons() == Qt::LeftButton)
 	{
+		// doSelection(event->x(),this->size().height()-event->y() );
 		doDrag(event->x(), this->size().height() - mStatusBar->height() - event->y());
 	}
-	else if (mSpinBoxMode != eInvalidSpinBox)
+	else if (mSpinBoxMode < eInvalidSpinBox && mSpinBoxes[mSpinBoxMode] != nullptr)
 	{
-		double d = (event->x()-mStartDragX)/20;
-		if (mSpinBoxes[mSpinBoxMode] != nullptr)
-		{
-			mSpinBoxes[mSpinBoxMode]->setValue(mSpinBoxes[mSpinBoxMode]->value() + d);
-		}
+		double d = (event->x() - mStartDragX) / 20;
+		mSpinBoxes[mSpinBoxMode]->setValue(mSpinBoxes[mSpinBoxMode]->value() + d);
 	}
 	else
 	{
@@ -3082,793 +3135,812 @@ void MainWindow::setSpinBoxes(
 	mSpinBoxes = { one, two, three, four, five, six };
 }
 
-void MainWindow::mouseReleaseEvent(QMouseEvent *event)  {
+void MainWindow::mouseReleaseEvent(QMouseEvent *event)
+{
 	QString cmd;
 	// The mouse was dragged or released
 	// Send this event to the subroutine handling the current event, if any
 	// If we are not currently doing anything, nothing will happen
 	// If ALT key is pressed we are mainpulating the view which is handled by the viewport
-	if ( mode != NormalMode )
+	if (mOperationMode != NormalMode)
+	{
+		switch (mOperationMode)
 		{
-			switch ( mode )
+		case EditVertex:       // brianb
+			sIsEditing = false;
+			if (mActiveViewport->numSelectedVertices() > 0)
+			{
+				DLFLVertexPtr vp = mActiveViewport->getSelectedVertex(0);
+				vp->print();
+				// active->clearSelectedVertices();
+				// num_sel_verts = 0;
+				redraw();
+			}
+			break;
+		case SelectVertex:
+
+			if (mActiveViewport->numSelectedVertices() > 0)
+			{
+				// DLFLVertexPtr vp = active->getSelectedVertex(0);
+				// vp->print();
+				// active->clearSelectedVertices();
+				// num_sel_verts = 0;
+				// redraw();
+			}
+			break;
+		case SelectEdge:
+		case CutEdge:
+			// if ( active->numSelectedEdges() > 0 ) {
+				// DLFLEdgePtr septr = active->getSelectedEdge(0);
+				// if (septr) {
+					//septr->print();
+					//num_sel_edges = 0;
+				// }
+				// active->clearSelectedEdges();
+				// redraw();
+			// }
+			break;
+		case SelectEdgeLoop:
+			if (mActiveViewport->numSelectedEdges() > 0)
+			{
+				DLFLEdgePtr septr = mActiveViewport->getSelectedEdge(0);
+				if (septr)
+					getEdgeLoopSelection(septr);
+			}
+			// active->clearSelectedEdges();
+			mActiveViewport->redraw();
+			break;
+		case SelectEdgeRing:
+			if (mActiveViewport->numSelectedEdges() > 0)
+			{
+				DLFLEdgePtr septr = mActiveViewport->getSelectedEdge(0);
+				if (septr)
 				{
-				case EditVertex :       // brianb
-					is_editing = false;
-					if ( active->numSelectedVertices() >= 1 )	{
-						DLFLVertexPtr vp = active->getSelectedVertex(0);
-						vp->print();
-						// active->clearSelectedVertices();
-						// num_sel_verts = 0;
-						redraw();
+					if (QApplication::keyboardModifiers() == Qt::ControlModifier)
+					{ // deselect
+						sEdgeRingStartEdge = septr;
+						getEdgeRingSelection(septr, true, nullptr, false);
 					}
-					break;
-				case SelectVertex :
-					
-					if ( active->numSelectedVertices() >= 1 )
-						{
-							// DLFLVertexPtr vp = active->getSelectedVertex(0);
-							// vp->print();
-							// active->clearSelectedVertices();
-							// num_sel_verts = 0;
-							// redraw();
-						}
-					break;
-				case SelectEdge :
-				case CutEdge:
-					// if ( active->numSelectedEdges() >= 1 ) {
-						// DLFLEdgePtr septr = active->getSelectedEdge(0);
-						// if (septr) {
-							//septr->print();
-							//num_sel_edges = 0;
-						// }
-						// active->clearSelectedEdges();
-						// redraw();
-					// }
-					break;
-				case SelectEdgeLoop:
-					if ( active->numSelectedEdges() >= 1 ){
-						DLFLEdgePtr septr = active->getSelectedEdge(0);
-						if (septr)
-							getEdgeLoopSelection(septr);
+					else
+					{ //select
+						sEdgeRingStartEdge = septr;
+						getEdgeRingSelection(septr, true, nullptr, true);
 					}
-					// active->clearSelectedEdges();
-					active->redraw();			
-					break;
-				case SelectEdgeRing:
-					if ( active->numSelectedEdges() >= 1 ){
-						DLFLEdgePtr septr = active->getSelectedEdge(0);
-						if (septr){
-							if (QApplication::keyboardModifiers() == Qt::ControlModifier){ // deselect
-								edge_ring_start_edge = septr;
-								getEdgeRingSelection(septr, true, nullptr, false);
-							}
-							else { //select
-								edge_ring_start_edge = septr;
-								getEdgeRingSelection(septr, true, nullptr, true);
-							}
-						}
+				}
+			}
+			mActiveViewport->redraw();
+			break;
+		case SelectFaceLoop:
+			if (mActiveViewport->numSelectedEdges() > 0)
+			{
+				DLFLEdgePtr septr = mActiveViewport->getSelectedEdge(0);
+				if (septr)
+				{
+					if (QApplication::keyboardModifiers() == Qt::ControlModifier)
+					{ // deselect
+						sFaceLoopStartEdge = septr;
+						getFaceLoopSelection(septr, true, nullptr, false);
 					}
-					active->redraw();
-					break;
-				case SelectFaceLoop:
-					if ( active->numSelectedEdges() >= 1 ){
-						DLFLEdgePtr septr = active->getSelectedEdge(0);
-						if (septr){
-							if (QApplication::keyboardModifiers() == Qt::ControlModifier){ // deselect
-								face_loop_start_edge = septr;
-								getFaceLoopSelection(septr, true, nullptr, false);
-							}
-							else { //select
-								face_loop_start_edge = septr;
-								getFaceLoopSelection(septr, true, nullptr, true);
-							}
-						}
+					else
+					{ //select
+						sFaceLoopStartEdge = septr;
+						getFaceLoopSelection(septr, true, nullptr, true);
 					}
-					active->clearSelectedEdges();
-					active->redraw();
-					break;
-				case SelectFace :
-					// if ( active->numSelectedFaces() >= 1 )
-					// 	{
-					// 		DLFLFacePtr fp = active->getSelectedFace(0);
-					// 		// fp->print();
-					// 		// active->clearSelectedFaces();
-					// 		// num_sel_faces = 0;
-					// 		redraw();
-					// 	}
-					break;
-					case PaintFace:
-					if ( active->numSelectedFaces() >= 1 ) {
-						DLFLFacePtr fp = active->getSelectedFace(0);
-						// first search for the material in the existing list
-						// DLFLMaterialPtr m = object.findMaterial(RGBColor(paint_bucket_color.redF(),paint_bucket_color.greenF(),paint_bucket_color.blueF() ));
-						fp->setMaterial(object.addMaterial(RGBColor(paint_bucket_color.redF(),paint_bucket_color.greenF(),paint_bucket_color.blueF())) );
-						// if ( m ){
-						// 	
-						// }
-						// else {
-						// 	
-						// }
-						active->clearSelectedFaces();
-						redraw();
-					}
-					break;
-					case EyeDropper:
-					if ( active->numSelectedFaces() >= 1 ) {
-						DLFLFacePtr fp = active->getSelectedFace(0);
-						//grab the color from the face... set it in the interface
-						setPaintBucketColor(QColor(fp->material()->color.r,fp->material()->color.g,fp->material()->color.b));
-						//set the color over in the experimental mode interface thing...
-						mExperimentalMode->setPaintBucketColor(QColor(fp->material()->color.r,fp->material()->color.g,fp->material()->color.b));
-						active->clearSelectedFaces();
-						redraw();
-					}
-					break;
-					case SelectSimilar :
-						if (selectionmask == MainWindow::MaskFaces){
-							// cout << "select similar faces mouse release\n";
-							if ( active->numSelectedFaces() >= 1 ){
-								DLFLFacePtr selectedFacePtr = active->getSelectedFace(0);
-								if (selectedFacePtr){
-									DLFLFacePtrArray sfptrarray;
-									DLFL::selectMatchingFaces(&object, selectedFacePtr, sfptrarray);
-									for (auto sfPtr : sfptrarray)
-									{
-										if (!active->isSelected(sfPtr)){
-											active->setSelectedFace(sfPtr);
-											num_sel_faces++;
-										}
-									}
-								}
-							}
-						} else if (selectionmask == MainWindow::MaskEdges){
-							if ( active->numSelectedEdges() >= 1 ){
-								DLFLEdgePtr selectedEdgePtr = active->getSelectedEdge(0);
-								if (selectedEdgePtr){
-									DLFLEdgePtrArray septrarray;
-									DLFL::selectMatchingEdges(&object, selectedEdgePtr, septrarray);
-									for (auto sePtr : septrarray)
-									{
-										if (!active->isSelected(sePtr)){
-											active->setSelectedEdge(sePtr);
-											num_sel_edges++;
-										}
-									}
-								}
-							}
-						} else if (selectionmask == MainWindow::MaskVertices){
-							if ( active->numSelectedVertices() >= 1 ){
-								DLFLVertexPtr svptr = active->getSelectedVertex(0);
-								if (svptr){
-									if (!active->isSelected(svptr)){
-										active->setSelectedVertex(svptr);
-										num_sel_verts++;
-									}
-									DLFLVertexPtrArray svptrarray;
-									DLFL::selectMatchingVertices(&object, svptr, svptrarray);
-									for (auto svPtr : svptrarray)
-									{
-										if (!active->isSelected(svPtr)){
-											active->setSelectedVertex(svPtr);
-											num_sel_verts++;
-										}
-									}
-								}
-							}
-						}
-						redraw();
-						break;
-						case SelectFacesByArea :
-							if ( active->numSelectedFaces() >= 1 ){
-								DLFLFacePtr sfptr = active->getSelectedFace(0);
-								if (sfptr){
-									DLFLFacePtrArray sfptrarray;
-									DLFL::selectFacesByArea(&object, sfptr, sfptrarray, MainWindow::face_area_tolerance);
-									for (auto sfPtr : sfptrarray)
-									{
-										if (!active->isSelected(sfPtr)){
-											active->setSelectedFace(sfPtr);
-											num_sel_faces++;
-										}
-									}
-									redraw();
-								}
-							}
-							break;
-				case SelectCorner :
-					if ( active->numSelectedCorners() >= 1 )
+				}
+			}
+			mActiveViewport->clearSelectedEdges();
+			mActiveViewport->redraw();
+			break;
+		case SelectFace:
+			// if ( active->numSelectedFaces() > 0 )
+			// 	{
+			// 		DLFLFacePtr fp = active->getSelectedFace(0);
+			// 		// fp->print();
+			// 		// active->clearSelectedFaces();
+			// 		// num_sel_faces = 0;
+			// 		redraw();
+			// 	}
+			break;
+		case PaintFace:
+			if (mActiveViewport->numSelectedFaces() > 0)
+			{
+				DLFLFacePtr fp = mActiveViewport->getSelectedFace(0);
+				// first search for the material in the existing list
+				// DLFLMaterialPtr m = object.findMaterial(RGBColor(paint_bucket_color.redF(),paint_bucket_color.greenF(),paint_bucket_color.blueF() ));
+				fp->setMaterial(mObject.addMaterial(RGBColor(sPaintBucketColor.redF(), sPaintBucketColor.greenF(), sPaintBucketColor.blueF())));
+				// if ( m ){
+				//
+				// }
+				// else {
+				//
+				// }
+				mActiveViewport->clearSelectedFaces();
+				redraw();
+			}
+			break;
+		case EyeDropper:
+			if (mActiveViewport->numSelectedFaces() > 0)
+			{
+				DLFLFacePtr fp = mActiveViewport->getSelectedFace(0);
+				//grab the color from the face... set it in the interface
+				setPaintBucketColor(QColor(fp->material()->color.r, fp->material()->color.g, fp->material()->color.b));
+				//set the color over in the experimental mode interface thing...
+				mExperimentalMode->setPaintBucketColor(QColor(fp->material()->color.r, fp->material()->color.g, fp->material()->color.b));
+				mActiveViewport->clearSelectedFaces();
+				redraw();
+			}
+			break;
+		case SelectSimilar:
+			if (mSelectionMask == MainWindow::MaskFaces)
+			{
+				// cout << "select similar faces mouse release\n";
+				if (mActiveViewport->numSelectedFaces() > 0)
+				{
+					DLFLFacePtr selectedFacePtr = mActiveViewport->getSelectedFace(0);
+					if (selectedFacePtr)
+					{
+						DLFLFacePtrArray sfptrarray;
+						DLFL::selectMatchingFaces(&mObject, selectedFacePtr, sfptrarray);
+						for (auto sfPtr : sfptrarray)
 						{
-							DLFLFaceVertexPtr fvp = active->getSelectedFaceVertex(0);
-							fvp->print();
-							active->clearSelectedCorners();
-							active->clearSelectedFaces();
-							num_sel_faceverts = 0; // num_sel_faces = 0;
-							redraw();
-						}
-					break;
-				case InsertEdge :
-				// std::cout << "/ners = "<<active->numSelectedCorners() << "\n";
-					if ( active->numSelectedCorners() >= 2 )
-						{
-							DLFLFaceVertexPtr sfvptr1, sfvptr2;
-							sfvptr1 = active->getSelectedFaceVertex(0);
-							sfvptr2 = active->getSelectedFaceVertex(1);
-							if ( sfvptr1 && sfvptr2 )
-								{
-									DLFLMaterialPtr mptr = sfvptr1->getFacePtr()->material();
-									undoPush();
-									setModified(true);
-#if WITH_PYTHON
-									cmd = QString( "insertEdge((" );
-									cmd += QString().setNum(sfvptr1->getFaceID()) + QString(",");
-									cmd += QString().setNum(sfvptr1->getVertexID()) + QString("),(");
-									cmd += QString().setNum(sfvptr2->getFaceID()) + QString(",");
-									cmd += QString().setNum(sfvptr2->getVertexID()) + QString("))");
-									emit echoCommand(cmd);
-									if( Py_IsInitialized() ) {
-										PyRun_SimpleString( "from dlfl import *");
-										PyRun_SimpleString( cmd.toLocal8Bit().constData() );
-									}
-#else
-									DLFL::insertEdge(&object,sfvptr1,sfvptr2,false,mptr);
-#endif
-									active->clearSelectedFaces();
-									active->clearSelectedCorners();
-									num_sel_faceverts = 0; // num_sel_faces = 0;
-									active->recomputePatches();
-									active->recomputeNormals();
-									redraw();   
-								}
-						}
-					else if ( active->numSelectedCorners() == 1 )
-						{
-							num_sel_faceverts=1; num_sel_faces=1;
-						}
-					break;
-				case DeleteEdge :
-					if ( active->numSelectedEdges() >= 1 )
-						{
-							DLFLEdgePtr septr = active->getSelectedEdge(0);
-							if ( septr )
-								{
-									undoPush();
-									setModified(true);
-#if WITH_PYTHON
-									cmd = QString( "deleteEdge(" );
-									cmd += QString().setNum(septr->getID()) + QString(")");
-									emit echoCommand(cmd);
-#endif
-									DLFL::deleteEdge( &object, septr, MainWindow::delete_edge_cleanup);
-									active->recomputePatches();
-									active->recomputeNormals();
-								}
-							active->clearSelectedEdges();
-							redraw();
-						}
-					break;
-				case SubdivideEdge :
-					if ( active->numSelectedEdges() >= 1 )
-						{
-							DLFLEdgePtr septr = active->getSelectedEdge(0);
-							if ( septr )
-								{
-									undoPush();
-									setModified(true);
-#if WITH_PYTHON
-									cmd = QString( "subdivideEdge(" );
-									cmd += QString().setNum(septr->getID()) + QString(")");
-									emit echoCommand(cmd);
-#endif
-									DLFL::subdivideEdge(&object, num_e_subdivs,septr);
-									active->recomputePatches();
-									active->recomputeNormals();
-								}
-							active->clearSelectedEdges();
-							redraw();
-						}
-					break;
-				case CollapseEdge :
-					if ( active->numSelectedEdges() >= 1 )
-						{
-							DLFLEdgePtr septr = active->getSelectedEdge(0);
-							if ( septr )
-								{
-									undoPush();
-									setModified(true);
-#if WITH_PYTHON
-									cmd = QString( "collapseEdge(" );
-									cmd += QString().setNum(septr->getID()) + QString(")");
-									emit echoCommand(cmd);
-#endif
-									DLFL::collapseEdge(&object,septr);
-									active->recomputePatches();
-									active->recomputeNormals();
-								}
-							active->clearSelectedEdges();
-							redraw();
-						}
-					break;
-				case SpliceCorners :
-					if ( active->numSelectedCorners() >= 2 )
-						{
-							DLFLFaceVertexPtr sfvptr1, sfvptr2;
-							sfvptr1 = active->getSelectedFaceVertex(0);
-							sfvptr2 = active->getSelectedFaceVertex(1);
-							if ( sfvptr1 && sfvptr2 )
-								{
-									DLFLMaterialPtr mptr = sfvptr1->getFacePtr()->material();
-									undoPush();
-									setModified(true);
-									//object.spliceCorners(sfvptr1,sfvptr2);
-									DLFL::spliceCorners(&object,sfvptr1,sfvptr2);
-									active->clearSelectedFaces();
-									active->clearSelectedCorners();
-									num_sel_faceverts = 0; num_sel_faces = 0;
-									active->recomputePatches();
-									active->recomputeNormals();
-									redraw();   
-								}
-						}
-					else if ( active->numSelectedCorners() == 1 )
-						{
-							num_sel_faceverts=1; num_sel_faces=1;
-						}
-					break;
-				case ConnectFaces :
-					if ( active->numSelectedFaces() >= 2 )
-						{
-							DLFLFacePtr sfptr1, sfptr2;
-							sfptr1 = active->getSelectedFace(0);
-							sfptr2 = active->getSelectedFace(1);
-							if ( sfptr1 && sfptr2 )
-								{
-									undoPush();
-									setModified(true);
-									DLFL::connectFaces(&object,sfptr1,sfptr2,num_segments);
-									active->recomputePatches();
-									active->recomputeNormals();
-									active->clearSelectedFaces();
-									redraw();   
-								}
-						}
-					else if ( active->numSelectedFaces() == 1 )
-						{
-							num_sel_faces = 1;
-						}
-					break;
-				case ConnectFaceVertices :
-					if ( active->numSelectedCorners() >= 2 )
-						{
-							DLFLFaceVertexPtr sfvptr1, sfvptr2;
-							sfvptr1 = active->getSelectedFaceVertex(0);
-							sfvptr2 = active->getSelectedFaceVertex(1);
-							if ( sfvptr1 && sfvptr2 )
-								{
-									undoPush();
-									setModified(true);
-									DLFL::connectFaces(&object,sfvptr1,sfvptr2,num_segments, max_segments);
-									active->clearSelectedFaces();
-									active->clearSelectedCorners();
-									num_sel_faceverts = 0; num_sel_faces = 0;
-									active->recomputePatches();
-									active->recomputeNormals();
-									redraw();   
-								}
-						}
-					else if ( active->numSelectedCorners() == 1 )
-						{
-							num_sel_faceverts = 1; num_sel_faces = 1;
-						}
-					break;
-				case ConnectEdges :
-					if ( active->numSelectedEdges() >= 2 )
-						{
-							DLFLEdgePtr septr1, septr2;
-							DLFLFacePtr sfptr1, sfptr2;
-							septr1 = active->getSelectedEdge(0);
-							septr2 = active->getSelectedEdge(1);
-							sfptr1 = active->getSelectedFace(0);
-							sfptr2 = active->getSelectedFace(1);
-							if ( septr1 && septr2 )
-								{
-									undoPush();
-									setModified(true);
-									DLFL::connectEdges(&object,septr1,sfptr1,septr2,sfptr2);
-									active->clearSelectedEdges();
-									active->clearSelectedFaces();
-									num_sel_edges = 0; num_sel_faces = 0;
-									redraw();   
-								}
-						}
-					else if ( active->numSelectedEdges() == 1 )
-						{
-							num_sel_edges = 1; num_sel_faces = 1;
-						}
-					break;
-				case ExtrudeFace :
-				if (mSingleClickExtrude){
-					if ( active->numSelectedFaces() >= 1 )
-						{
-							DLFLFacePtr sfptr = active->getSelectedFace(0);
-							if ( sfptr )
-								{
-									undoPush();
-									setModified(true);
-									DLFL::extrudeFace(&object,sfptr,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
-									active->recomputePatches();
-									active->recomputeNormals();
-								}
-							active->clearSelectedFaces();
-							redraw();
-						}
-					}
-					break;
-				case ExtrudeMultipleFaces :
-					// if (!mExtrudeMultipleAct->isChecked()){
-					// 	if ( active->numSelectedFaces() >= 1 )
-					// 		{
-					// 			DLFLFacePtrArray sfptrarr = active->getSelectedFaces();
-					// 			if ( sfptrarr[0] )
-					// 				{
-					// 					undoPush();
-					// 					setModified(true);
-					// 					for(auto sfPtr : sfptrarr) {
-					// 						DLFL::extrudeFace(&object,sfPtr,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
-					// 					}
-					// 					active->recomputePatches();
-					// 					active->recomputeNormals();						
-					// 				}
-					// 			active->clearSelectedFaces();
-					// 			redraw();
-					// 		}
-					// 	}
-					break;
-				case ExtrudeFaceDS :
-				if (mSingleClickExtrude){
-					if ( active->numSelectedFaces() >= 1 )
-						{
-							DLFLFacePtr sfptr = active->getSelectedFace(0);
-							if ( sfptr )
-								{
-									undoPush();
-									setModified(true);
-									DLFL::extrudeFaceDS(&object,sfptr,extrude_dist,num_extrusions, ds_ex_twist,extrude_scale);
-									active->recomputePatches();
-									active->recomputeNormals();
-								}
-							active->clearSelectedFaces();
-							redraw();
-						}
-					}
-					break;
-				case ExtrudeDualFace :
-				if (mSingleClickExtrude){
-					if ( active->numSelectedFaces() >= 1 )
-						{
-							DLFLFacePtr sfptr = active->getSelectedFace(0);
-							if ( sfptr )
-								{
-									undoPush();
-									setModified(true);
-									DLFL::extrudeDualFace(&object,sfptr,extrude_dist,num_extrusions, extrude_rot,extrude_scale, dual_mesh_edges_check);
-									active->recomputePatches();
-									active->recomputeNormals();
-								}
-							active->clearSelectedFaces();
-							redraw();
-						}
-					}
-					break;
-				case ExtrudeFaceDodeca :
-				if (mSingleClickExtrude){
-					if ( active->numSelectedFaces() >= 1 )
-						{
-							DLFLFacePtr sfptr = active->getSelectedFace(0);
-							if ( sfptr )
-								{
-									undoPush();
-									setModified(true);
-									DLFL::extrudeFaceDodeca(&object,sfptr,extrude_angle,num_extrusions, extrude_length1,extrude_length2,extrude_length3, hexagonalize_dodeca_extrude);							
-									// DLFL::extrudeFaceDodeca(&object,sfptr,extrude_dist,num_extrusions, ds_ex_twist,extrude_scale, hexagonalize_dodeca_extrude);
-									active->recomputePatches();
-									active->recomputeNormals();
-								}
-							active->clearSelectedFaces();
-							redraw();
-						}
-					}
-					break;
-				case ExtrudeFaceIcosa :
-				if (mSingleClickExtrude){
-					if ( active->numSelectedFaces() >= 1 )
-						{
-							DLFLFacePtr sfptr = active->getSelectedFace(0);
-							if ( sfptr )
-								{
-									undoPush();
-									setModified(true);
-									DLFL::extrudeFaceIcosa(&object, sfptr, extrude_angle_icosa, num_extrusions, extrude_length1_icosa,extrude_length2_icosa,extrude_length3_icosa);
-									// DLFL::extrudeFaceIcosa(&object,sfptr,extrude_dist,num_extrusions, ds_ex_twist,extrude_scale);
-									active->recomputePatches();
-									active->recomputeNormals();
-								}
-							active->clearSelectedFaces();
-							redraw();
-						}
-					}
-					break;
-				case StellateFace :
-				if (mSingleClickExtrude){
-					if ( active->numSelectedFaces() >= 1 )
-						{
-							DLFLFacePtr sfptr = active->getSelectedFace(0);
-							if ( sfptr )
-								{
-									undoPush();
-									setModified(true);
-									DLFL::stellateFace(&object,sfptr,extrude_dist);
-									active->recomputePatches();
-									active->recomputeNormals();
-								}
-							active->clearSelectedFaces();
-							redraw();
-						}
-					}
-					break;
-				case DoubleStellateFace :
-				if (mSingleClickExtrude){
-					if ( active->numSelectedFaces() >= 1 )
-						{
-							DLFLFacePtr sfptr = active->getSelectedFace(0);
-							if ( sfptr )
-								{
-									undoPush();
-									setModified(true);
-									DLFL::doubleStellateFace(&object,sfptr,extrude_dist);
-									active->recomputePatches();
-									active->recomputeNormals();
-								}
-							active->clearSelectedFaces();
-							redraw();
-						}
-					}
-					break;
-					case ExtrudeFaceDome :
-					if (mSingleClickExtrude){
-						if ( active->numSelectedFaces() >= 1 )
+							if (!mActiveViewport->isSelected(sfPtr))
 							{
-								DLFLFacePtr sfptr = active->getSelectedFace(0);
-								if ( sfptr )
-									{
-										undoPush();
-										setModified(true);
-										DLFL::extrudeFaceDome(&object,sfptr,extrude_dist,extrude_rot,extrude_scale);
-										active->recomputePatches();
-										active->recomputeNormals();
-									}
-								active->clearSelectedFaces();
-								redraw();
+								mActiveViewport->setSelectedFace(sfPtr);
+								sNumSelFaces++;
 							}
 						}
-						break;
-				case CrustModeling :
-					if ( active->numSelectedFaces() >= 1 )
+					}
+				}
+			}
+			else if (mSelectionMask == MainWindow::MaskEdges)
+			{
+				if (mActiveViewport->numSelectedEdges() > 0)
+				{
+					DLFLEdgePtr selectedEdgePtr = mActiveViewport->getSelectedEdge(0);
+					if (selectedEdgePtr)
+					{
+						DLFLEdgePtrArray septrarray;
+						DLFL::selectMatchingEdges(&mObject, selectedEdgePtr, septrarray);
+						for (auto sePtr : septrarray)
 						{
-							DLFLFacePtr sfptr = active->getSelectedFace(0);
-							if ( sfptr )
-								{
-									// No undo for hole punching in crust modeling mode
-									// because the ids in the recreated object
-									// will be different
-									if ( QApplication::keyboardModifiers() == Qt::ShiftModifier )
-										{
-											DLFL::tagMatchingFaces(&object,sfptr);
-											DLFL::punchHoles(&object);
-											active->recomputePatches();
-											active->recomputeNormals();
-										}
-									else
-										DLFL::cmMakeHole(&object,sfptr,crust_cleanup);
-									//                                                  active->recomputeNormals();
-								}
-							active->clearSelectedFaces();
-							redraw();
-						}
-					break;
-				case BezierConnectFaces :
-					if ( active->numSelectedCorners() >= 2 )
-						{
-							DLFLFaceVertexPtr sfvptr1, sfvptr2;
-							sfvptr1 = active->getSelectedFaceVertex(0);
-							sfvptr2 = active->getSelectedFaceVertex(1);
-							if ( sfvptr1 && sfvptr2 )
-								{
-									undoPush();
-									setModified(true);
-									DLFL::bezierConnectFaces(&object,sfvptr1,sfvptr2,
-																					 num_segments,nwt1,nwt2);
-									active->clearSelectedFaces();
-									active->clearSelectedCorners();
-									num_sel_faceverts = 0; num_sel_faces = 0;
-									active->recomputePatches();
-									active->recomputeNormals();
-									redraw();   
-								}
-						}
-					else if ( active->numSelectedCorners() == 1 )
-						{
-							num_sel_faceverts = 1; num_sel_faces = 1;
-						}
-					break;
-				case HermiteConnectFaces :
-					if ( active->numSelectedCorners() >= 2 )
-						{
-							DLFLFaceVertexPtr sfvptr1, sfvptr2;
-							sfvptr1 = active->getSelectedFaceVertex(0);
-							sfvptr2 = active->getSelectedFaceVertex(1);
-							if ( sfvptr1 && sfvptr2 )
-								{
-									undoPush();
-									setModified(true);
-									if ( symmetric_weights )
-										DLFL::hermiteConnectFaces(&object,sfvptr1,sfvptr2,
-																							num_segments,nwt1,nwt1,
-																							max_segments,num_extra_twists);
-									else
-										DLFL::hermiteConnectFaces(&object,sfvptr1,sfvptr2,
-																							num_segments,nwt1,nwt2,
-																							max_segments,num_extra_twists);
-									active->clearSelectedFaces();
-									active->clearSelectedCorners();
-									num_sel_faceverts = 0; num_sel_faces = 0;
-									active->recomputePatches();
-									active->recomputeNormals();
-									redraw();
-								}
-						}
-					else if ( active->numSelectedCorners() == 1 )
-						{
-							num_sel_faceverts = 1; num_sel_faces = 1;
-						}
-					break;
-				case ReorderFace :
-					if ( active->numSelectedCorners() >= 1 )
-						{
-							DLFLFaceVertexPtr sfvptr = active->getSelectedFaceVertex(0);
-							if ( sfvptr ) sfvptr->getFacePtr()->reorder(sfvptr);
-							redraw();
-						}
-					break;
-				case SubdivideFace :
-				case MultiSelectFace :
-					// num_sel_faces++;
-					break;
-				case MultiSelectEdge :
-					break;
-				case MultiSelectVertex :
-					break;
-				case MultiSelectCorner :
-					break;
-					//from ozgur
-				// case CutEdge :
-					// if ( active->numSelectedEdges() >= 1 )
-					// 	{
-					// 		DLFLEdgePtr septr = active->getSelectedEdge(0);
-					// 		if ( septr )
-					// 			{
-					// 				undoPush();
-					// 				septr->ismarked = 1- septr->ismarked;
-					// 				// DLFL::cutEdge( &object, septr, peelDistance_factor,pnormalBendS_factor,pnormalBendT_factor, peel_all_edges);
-					// 			}
-					// 		active->clearSelectedEdges();
-					// 		redraw();
-					// 	}
-					// break;
-				case TruncateEdge :
-					if ( active->numSelectedEdges() >= 1 )
-						{
-							DLFLEdgePtr septr = active->getSelectedEdge(0);
-							if ( septr )
-								{
-									undoPush();
-									septr->ismarked = 1- septr->ismarked;
-									// DLFL::cutEdge( &object, septr, peelDistance_factor,pnormalBendS_factor,pnormalBendT_factor, peel_all_edges);
-								}
-							active->clearSelectedEdges();
-							redraw();
-						}
-					break;
-				case CutVertex :
-					if ( active->numSelectedVertices() >= 1 )
-						{
-							DLFLVertexPtr svptr = active->getSelectedVertex(0);
-							if ( svptr )
-								{
-									undoPush();
-									svptr->ismarked = 1 - svptr->ismarked;
-								}
-							// active->clearSelectedVertices();
-							redraw();
-						}
-					break;
-
-				case CutEdgeandVertex :
-					if ( active->numSelectedEdges() >= 1 )
-						{	
-							if ( active->numSelectedEdges() >= 1 ) {
-								DLFLVertexPtr svptr = active->getSelectedVertex(0);
-								DLFLEdgePtr septr = active->getSelectedEdge(0);
-								if ( septr ) {
-									if (svptr) {
-										undoPush();
-										septr->ismarked = 1- septr->ismarked;
-										// DLFL::cutEdge( &object, septr, peelDistance_factor,pnormalBendS_factor,pnormalBendT_factor, peel_all_edges);
-									}
-								}
-								active->clearSelectedEdges();
-								active->clearSelectedVertices();
-								redraw();
+							if (!mActiveViewport->isSelected(sePtr))
+							{
+								mActiveViewport->setSelectedEdge(sePtr);
+								sNumSelEdges++;
 							}
 						}
-					break;
-				case MarkEdge:
-					if ( active->numSelectedEdges() >= 1 )
+					}
+				}
+			}
+			else if (mSelectionMask == MainWindow::MaskVertices)
+			{
+				if (mActiveViewport->numSelectedVertices() > 0)
+				{
+					DLFLVertexPtr svptr = mActiveViewport->getSelectedVertex(0);
+					if (svptr)
+					{
+						if (!mActiveViewport->isSelected(svptr))
 						{
-							DLFLEdgePtr septr = active->getSelectedEdge(0);
-							if ( septr )
-								{
-									undoPush();
-									septr->ismarked = 1- septr->ismarked;
-								}
-							active->clearSelectedEdges();
-							redraw();
+							mActiveViewport->setSelectedVertex(svptr);
+							sNumSelVerts++;
 						}
-					break;
-
-				case MarkVertex :
-					if ( active->numSelectedVertices() >= 1 )
+						DLFLVertexPtrArray svptrarray;
+						DLFL::selectMatchingVertices(&mObject, svptr, svptrarray);
+						for (auto svPtr : svptrarray)
 						{
-							DLFLVertexPtr svptr = active->getSelectedVertex(0);
-							if ( svptr )
-								{
-									undoPush();
-									svptr->ismarked = 1 - svptr->ismarked;
-								}
-							active->clearSelectedVertices();
-							redraw();
+							if (!mActiveViewport->isSelected(svPtr))
+							{
+								mActiveViewport->setSelectedVertex(svPtr);
+								sNumSelVerts++;
+							}
 						}
-					break;
+					}
+				}
+			}
+			redraw();
+			break;
+		case SelectFacesByArea:
+			if (mActiveViewport->numSelectedFaces() > 0)
+			{
+				DLFLFacePtr sfptr = mActiveViewport->getSelectedFace(0);
+				if (sfptr)
+				{
+					DLFLFacePtrArray sfptrarray;
+					DLFL::selectFacesByArea(&mObject, sfptr, sfptrarray, MainWindow::sFaceAreaTolerance);
+					for (auto sfPtr : sfptrarray)
+					{
+						if (!mActiveViewport->isSelected(sfPtr))
+						{
+							mActiveViewport->setSelectedFace(sfPtr);
+							sNumSelFaces++;
+						}
+					}
+					redraw();
+				}
+			}
+			break;
+		case SelectCorner:
+			if (mActiveViewport->numSelectedCorners() > 0)
+			{
+				DLFLFaceVertexPtr fvp = mActiveViewport->getSelectedFaceVertex(0);
+				fvp->print();
+				mActiveViewport->clearSelectedCorners();
+				mActiveViewport->clearSelectedFaces();
+				sNumSelFaceVerts = 0; // num_sel_faces = 0;
+				redraw();
+			}
+			break;
+		case InsertEdge:
+		// std::cout << "/ners = "<<active->numSelectedCorners() << "\n";
+			if (mActiveViewport->numSelectedCorners() >= 2)
+			{
+				DLFLFaceVertexPtr sfvptr1, sfvptr2;
+				sfvptr1 = mActiveViewport->getSelectedFaceVertex(0);
+				sfvptr2 = mActiveViewport->getSelectedFaceVertex(1);
+				if (sfvptr1 && sfvptr2)
+				{
+					DLFLMaterialPtr mptr = sfvptr1->getFacePtr()->material();
+					undoPush();
+					setModified(true);
+#if WITH_PYTHON
+					cmd = QString("insertEdge((");
+					cmd += QString().setNum(sfvptr1->getFaceID()) + QString(",");
+					cmd += QString().setNum(sfvptr1->getVertexID()) + QString("),(");
+					cmd += QString().setNum(sfvptr2->getFaceID()) + QString(",");
+					cmd += QString().setNum(sfvptr2->getVertexID()) + QString("))");
+					emit echoCommand(cmd);
+					if (Py_IsInitialized())
+					{
+						PyRun_SimpleString("from dlfl import *");
+						PyRun_SimpleString(cmd.toLocal8Bit().constData());
+					}
+#else
+					DLFL::insertEdge(&mObject, sfvptr1, sfvptr2, false, mptr);
+#endif
+					mActiveViewport->clearSelectedFaces();
+					mActiveViewport->clearSelectedCorners();
+					sNumSelFaceVerts = 0; // num_sel_faces = 0;
+					mActiveViewport->recomputePatches();
+					mActiveViewport->recomputeNormals();
+					redraw();
+				}
+			}
+			else if (mActiveViewport->numSelectedCorners() == 1)
+			{
+				sNumSelFaceVerts = 1; sNumSelFaces = 1;
+			}
+			break;
+		case DeleteEdge:
+			if (mActiveViewport->numSelectedEdges() > 0)
+			{
+				DLFLEdgePtr septr = mActiveViewport->getSelectedEdge(0);
+				if (septr)
+				{
+					undoPush();
+					setModified(true);
+#if WITH_PYTHON
+					cmd = QString("deleteEdge(");
+					cmd += QString().setNum(septr->getID()) + QString(")");
+					emit echoCommand(cmd);
+#endif
+					DLFL::deleteEdge(&mObject, septr, MainWindow::sDeleteEdgeCleanup);
+					mActiveViewport->recomputePatches();
+					mActiveViewport->recomputeNormals();
+				}
+				mActiveViewport->clearSelectedEdges();
+				redraw();
+			}
+			break;
+		case SubdivideEdge:
+			if (mActiveViewport->numSelectedEdges() > 0)
+			{
+				DLFLEdgePtr septr = mActiveViewport->getSelectedEdge(0);
+				if (septr)
+				{
+					undoPush();
+					setModified(true);
+#if WITH_PYTHON
+					cmd = QString("subdivideEdge(");
+					cmd += QString().setNum(septr->getID()) + QString(")");
+					emit echoCommand(cmd);
+#endif
+					DLFL::subdivideEdge(&mObject, sNumEdgeSubdiv, septr);
+					mActiveViewport->recomputePatches();
+					mActiveViewport->recomputeNormals();
+				}
+				mActiveViewport->clearSelectedEdges();
+				redraw();
+			}
+			break;
+		case CollapseEdge:
+			if (mActiveViewport->numSelectedEdges() > 0)
+			{
+				DLFLEdgePtr septr = mActiveViewport->getSelectedEdge(0);
+				if (septr)
+				{
+					undoPush();
+					setModified(true);
+#if WITH_PYTHON
+					cmd = QString("collapseEdge(");
+					cmd += QString().setNum(septr->getID()) + QString(")");
+					emit echoCommand(cmd);
+#endif
+					DLFL::collapseEdge(&mObject, septr);
+					mActiveViewport->recomputePatches();
+					mActiveViewport->recomputeNormals();
+				}
+				mActiveViewport->clearSelectedEdges();
+				redraw();
+			}
+			break;
+		case SpliceCorners:
+			if (mActiveViewport->numSelectedCorners() >= 2)
+			{
+				DLFLFaceVertexPtr sfvptr1, sfvptr2;
+				sfvptr1 = mActiveViewport->getSelectedFaceVertex(0);
+				sfvptr2 = mActiveViewport->getSelectedFaceVertex(1);
+				if (sfvptr1 && sfvptr2)
+				{
+					DLFLMaterialPtr mptr = sfvptr1->getFacePtr()->material();
+					undoPush();
+					setModified(true);
+					//object.spliceCorners(sfvptr1,sfvptr2);
+					DLFL::spliceCorners(&mObject, sfvptr1, sfvptr2);
+					mActiveViewport->clearSelectedFaces();
+					mActiveViewport->clearSelectedCorners();
+					sNumSelFaceVerts = 0; sNumSelFaces = 0;
+					mActiveViewport->recomputePatches();
+					mActiveViewport->recomputeNormals();
+					redraw();
+				}
+			}
+			else if (mActiveViewport->numSelectedCorners() == 1)
+			{
+				sNumSelFaceVerts = 1; sNumSelFaces = 1;
+			}
+			break;
+		case ConnectFaces:
+			if (mActiveViewport->numSelectedFaces() >= 2)
+			{
+				DLFLFacePtr sfptr1, sfptr2;
+				sfptr1 = mActiveViewport->getSelectedFace(0);
+				sfptr2 = mActiveViewport->getSelectedFace(1);
+				if (sfptr1 && sfptr2)
+				{
+					undoPush();
+					setModified(true);
+					DLFL::connectFaces(&mObject, sfptr1, sfptr2, sNumSegments);
+					mActiveViewport->recomputePatches();
+					mActiveViewport->recomputeNormals();
+					mActiveViewport->clearSelectedFaces();
+					redraw();
+				}
+			}
+			else if (mActiveViewport->numSelectedFaces() == 1)
+			{
+				sNumSelFaces = 1;
+			}
+			break;
+		case ConnectFaceVertices:
+			if (mActiveViewport->numSelectedCorners() >= 2)
+			{
+				DLFLFaceVertexPtr sfvptr1, sfvptr2;
+				sfvptr1 = mActiveViewport->getSelectedFaceVertex(0);
+				sfvptr2 = mActiveViewport->getSelectedFaceVertex(1);
+				if (sfvptr1 && sfvptr2)
+				{
+					undoPush();
+					setModified(true);
+					DLFL::connectFaces(&mObject, sfvptr1, sfvptr2, sNumSegments, sMaxSegments);
+					mActiveViewport->clearSelectedFaces();
+					mActiveViewport->clearSelectedCorners();
+					sNumSelFaceVerts = 0; sNumSelFaces = 0;
+					mActiveViewport->recomputePatches();
+					mActiveViewport->recomputeNormals();
+					redraw();
+				}
+			}
+			else if (mActiveViewport->numSelectedCorners() == 1)
+			{
+				sNumSelFaceVerts = 1; sNumSelFaces = 1;
+			}
+			break;
+		case ConnectEdges:
+			if (mActiveViewport->numSelectedEdges() >= 2)
+			{
+				DLFLEdgePtr septr1, septr2;
+				DLFLFacePtr sfptr1, sfptr2;
+				septr1 = mActiveViewport->getSelectedEdge(0);
+				septr2 = mActiveViewport->getSelectedEdge(1);
+				sfptr1 = mActiveViewport->getSelectedFace(0);
+				sfptr2 = mActiveViewport->getSelectedFace(1);
+				if (septr1 && septr2)
+				{
+					undoPush();
+					setModified(true);
+					DLFL::connectEdges(&mObject, septr1, sfptr1, septr2, sfptr2);
+					mActiveViewport->clearSelectedEdges();
+					mActiveViewport->clearSelectedFaces();
+					sNumSelEdges = 0; sNumSelFaces = 0;
+					redraw();
+				}
+			}
+			else if (mActiveViewport->numSelectedEdges() == 1)
+			{
+				sNumSelEdges = 1; sNumSelFaces = 1;
+			}
+			break;
+		case ExtrudeFace:
+			if (mSingleClickExtrude)
+			{
+				if (mActiveViewport->numSelectedFaces() > 0)
+				{
+					DLFLFacePtr sfptr = mActiveViewport->getSelectedFace(0);
+					if (sfptr)
+					{
+						undoPush();
+						setModified(true);
+						DLFL::extrudeFace(&mObject, sfptr, sExtrudeDist, sNumExtrusions, sExtrudeRot, sExtrudeScale);
+						mActiveViewport->recomputePatches();
+						mActiveViewport->recomputeNormals();
+					}
+					mActiveViewport->clearSelectedFaces();
+					redraw();
+				}
+			}
+			break;
+		case ExtrudeMultipleFaces:
+			// if (!mExtrudeMultipleAct->isChecked()){
+			// 	if ( active->numSelectedFaces() > 0)
+			// 		{
+			// 			DLFLFacePtrArray sfptrarr = active->getSelectedFaces();
+			// 			if ( sfptrarr[0] )
+			// 				{
+			// 					undoPush();
+			// 					setModified(true);
+			// 					for(auto sfPtr : sfptrarr) {
+			// 						DLFL::extrudeFace(&object,sfPtr,extrude_dist,num_extrusions,extrude_rot,extrude_scale);
+			// 					}
+			// 					active->recomputePatches();
+			// 					active->recomputeNormals();
+			// 				}
+			// 			active->clearSelectedFaces();
+			// 			redraw();
+			// 		}
+			// 	}
+			break;
+		case ExtrudeFaceDS:
+			if (mSingleClickExtrude && mActiveViewport->numSelectedFaces() > 0)
+			{
+				DLFLFacePtr sfptr = mActiveViewport->getSelectedFace(0);
+				if (sfptr)
+				{
+					undoPush();
+					setModified(true);
+					DLFL::extrudeFaceDS(&mObject, sfptr, sExtrudeDist, sNumExtrusions, sDooSabinExtrusionTwist, sExtrudeScale);
+					mActiveViewport->recomputePatches();
+					mActiveViewport->recomputeNormals();
+				}
+				mActiveViewport->clearSelectedFaces();
+				redraw();
+			}
+			break;
+		case ExtrudeDualFace:
+			if (mSingleClickExtrude && mActiveViewport->numSelectedFaces() > 0)
+			{
+				DLFLFacePtr sfptr = mActiveViewport->getSelectedFace(0);
+				if (sfptr)
+				{
+					undoPush();
+					setModified(true);
+					DLFL::extrudeDualFace(&mObject, sfptr, sExtrudeDist, sNumExtrusions, sExtrudeRot, sExtrudeScale, sDualMeshEdgesCheck);
+					mActiveViewport->recomputePatches();
+					mActiveViewport->recomputeNormals();
+				}
+				mActiveViewport->clearSelectedFaces();
+				redraw();
+			}
+			break;
+		case ExtrudeFaceDodeca:
+			if (mSingleClickExtrude && mActiveViewport->numSelectedFaces() > 0)
+			{
+				DLFLFacePtr sfptr = mActiveViewport->getSelectedFace(0);
+				if (sfptr)
+				{
+					undoPush();
+					setModified(true);
+					DLFL::extrudeFaceDodeca(
+						&mObject, sfptr, sExtrudeAngle, sNumExtrusions,
+						sExtrudeLength1, sExtrudeLength2, sExtrudeLength3,
+						sHexagonalizeDodecaExtrude);
+					// DLFL::extrudeFaceDodeca(&object,sfptr,extrude_dist,num_extrusions, ds_ex_twist,extrude_scale, hexagonalize_dodeca_extrude);
+					mActiveViewport->recomputePatches();
+					mActiveViewport->recomputeNormals();
+				}
+				mActiveViewport->clearSelectedFaces();
+				redraw();
 
-				case CutFace :
-					// if ( active->numSelectedFaces() >= 1 )
-					// 	{
-					// 		DLFLFacePtr sfptr = active->getSelectedFace(0);
-					// 		if ( sfptr )
-					// 			{
-					// 				undoPush();
-					// 				sfptr->ismarked = 1 - sfptr->ismarked;
-					// 			}
-					// 		active->clearSelectedFaces();
-					// 		redraw();
-					// 	}
-					break;
-					case SelectionWindow:
-						active->hideSelectionWindow();
-					
-					break;
-				}//end switch (mode)
+			}
+			break;
+		case ExtrudeFaceIcosa:
+			if (mSingleClickExtrude && mActiveViewport->numSelectedFaces() > 0)
+			{
+				DLFLFacePtr sfptr = mActiveViewport->getSelectedFace(0);
+				if (sfptr)
+				{
+					undoPush();
+					setModified(true);
+					DLFL::extrudeFaceIcosa(&mObject, sfptr, sExtrudeAngle_iCosA, sNumExtrusions, sExtrudeLength1_iCosA, sExtrudeLength2_iCosA, sExtrudeLength3_iCosA);
+					// DLFL::extrudeFaceIcosa(&object,sfptr,extrude_dist,num_extrusions, ds_ex_twist,extrude_scale);
+					mActiveViewport->recomputePatches();
+					mActiveViewport->recomputeNormals();
+				}
+				mActiveViewport->clearSelectedFaces();
+				redraw();
+			}
+			break;
+		case StellateFace:
+			if (mSingleClickExtrude && mActiveViewport->numSelectedFaces() > 0)
+			{
+				DLFLFacePtr sfptr = mActiveViewport->getSelectedFace(0);
+				if (sfptr)
+				{
+					undoPush();
+					setModified(true);
+					DLFL::stellateFace(&mObject, sfptr, sExtrudeDist);
+					mActiveViewport->recomputePatches();
+					mActiveViewport->recomputeNormals();
+				}
+				mActiveViewport->clearSelectedFaces();
+				redraw();
+			}
+			break;
+		case DoubleStellateFace:
+			if (mSingleClickExtrude && mActiveViewport->numSelectedFaces() > 0)
+			{
+				DLFLFacePtr sfptr = mActiveViewport->getSelectedFace(0);
+				if (sfptr)
+				{
+					undoPush();
+					setModified(true);
+					DLFL::doubleStellateFace(&mObject, sfptr, sExtrudeDist);
+					mActiveViewport->recomputePatches();
+					mActiveViewport->recomputeNormals();
+				}
+				mActiveViewport->clearSelectedFaces();
+				redraw();
+			}
+			break;
+		case ExtrudeFaceDome:
+			if (mSingleClickExtrude && mActiveViewport->numSelectedFaces() > 0)
+			{
+				DLFLFacePtr sfptr = mActiveViewport->getSelectedFace(0);
+				if (sfptr)
+				{
+					undoPush();
+					setModified(true);
+					DLFL::extrudeFaceDome(&mObject, sfptr, sExtrudeDist, sExtrudeRot, sExtrudeScale);
+					mActiveViewport->recomputePatches();
+					mActiveViewport->recomputeNormals();
+				}
+				mActiveViewport->clearSelectedFaces();
+				redraw();
+			}
+			break;
+		case CrustModeling:
+			if (mActiveViewport->numSelectedFaces() > 0)
+			{
+				DLFLFacePtr sfptr = mActiveViewport->getSelectedFace(0);
+				if (sfptr)
+				{
+					// No undo for hole punching in crust modeling mode
+					// because the ids in the recreated object
+					// will be different
+					if (QApplication::keyboardModifiers() == Qt::ShiftModifier)
+					{
+						DLFL::tagMatchingFaces(&mObject, sfptr);
+						DLFL::punchHoles(&mObject);
+						mActiveViewport->recomputePatches();
+						mActiveViewport->recomputeNormals();
+					}
+					else
+						DLFL::cmMakeHole(&mObject, sfptr, sCrustCleanup);
+					// active->recomputeNormals();
+				}
+				mActiveViewport->clearSelectedFaces();
+				redraw();
+			}
+			break;
+		case BezierConnectFaces:
+			if (mActiveViewport->numSelectedCorners() >= 2)
+			{
+				DLFLFaceVertexPtr sfvptr1 = mActiveViewport->getSelectedFaceVertex(0);
+				DLFLFaceVertexPtr sfvptr2 = mActiveViewport->getSelectedFaceVertex(1);
+				if (sfvptr1 != nullptr && sfvptr2 != nullptr)
+				{
+					undoPush();
+					setModified(true);
+					DLFL::bezierConnectFaces(
+						&mObject, sfvptr1, sfvptr2, sNumSegments, sFaceNormalWeight1, sFaceNormalWeight2);
+					mActiveViewport->clearSelectedFaces();
+					mActiveViewport->clearSelectedCorners();
+					sNumSelFaceVerts = 0; sNumSelFaces = 0;
+					mActiveViewport->recomputePatches();
+					mActiveViewport->recomputeNormals();
+					redraw();
+				}
+			}
+			else if (mActiveViewport->numSelectedCorners() == 1)
+			{
+				sNumSelFaceVerts = 1; sNumSelFaces = 1;
+			}
+			break;
+		case HermiteConnectFaces:
+			if (mActiveViewport->numSelectedCorners() >= 2)
+			{
+				DLFLFaceVertexPtr sfvptr1, sfvptr2;
+				sfvptr1 = mActiveViewport->getSelectedFaceVertex(0);
+				sfvptr2 = mActiveViewport->getSelectedFaceVertex(1);
+				if (sfvptr1 && sfvptr2)
+				{
+					undoPush();
+					setModified(true);
+					if (sSymmetricWeights)
+						DLFL::hermiteConnectFaces(&mObject, sfvptr1, sfvptr2,
+												  sNumSegments, sFaceNormalWeight1, sFaceNormalWeight1,
+												  sMaxSegments, sNumExtraTwists);
+					else
+						DLFL::hermiteConnectFaces(&mObject, sfvptr1, sfvptr2,
+												  sNumSegments, sFaceNormalWeight1, sFaceNormalWeight2,
+												  sMaxSegments, sNumExtraTwists);
+					mActiveViewport->clearSelectedFaces();
+					mActiveViewport->clearSelectedCorners();
+					sNumSelFaceVerts = 0; sNumSelFaces = 0;
+					mActiveViewport->recomputePatches();
+					mActiveViewport->recomputeNormals();
+					redraw();
+				}
+			}
+			else if (mActiveViewport->numSelectedCorners() == 1)
+			{
+				sNumSelFaceVerts = 1; sNumSelFaces = 1;
+			}
+			break;
+		case ReorderFace:
+			if (mActiveViewport->numSelectedCorners() > 0)
+			{
+				DLFLFaceVertexPtr sfvptr = mActiveViewport->getSelectedFaceVertex(0);
+				if (sfvptr) sfvptr->getFacePtr()->reorder(sfvptr);
+				redraw();
+			}
+			break;
+		case SubdivideFace:
+		case MultiSelectFace:
+			// num_sel_faces++;
+			break;
+		case MultiSelectEdge:
+			break;
+		case MultiSelectVertex:
+			break;
+		case MultiSelectCorner:
+			break;
+			//from ozgur
+		// case CutEdge :
+			// if ( active->numSelectedEdges() > 0 )
+			// 	{
+			// 		DLFLEdgePtr septr = active->getSelectedEdge(0);
+			// 		if ( septr )
+			// 			{
+			// 				undoPush();
+			// 				septr->ismarked = 1- septr->ismarked;
+			// 				// DLFL::cutEdge( &object, septr, peelDistance_factor,pnormalBendS_factor,pnormalBendT_factor, peel_all_edges);
+			// 			}
+			// 		active->clearSelectedEdges();
+			// 		redraw();
+			// 	}
+			// break;
+		case TruncateEdge:
+			if (mActiveViewport->numSelectedEdges() > 0)
+			{
+				DLFLEdgePtr septr = mActiveViewport->getSelectedEdge(0);
+				if (septr)
+				{
+					undoPush();
+					septr->ismarked = 1 - septr->ismarked;
+					// DLFL::cutEdge( &object, septr, peelDistance_factor,pnormalBendS_factor,pnormalBendT_factor, peel_all_edges);
+				}
+				mActiveViewport->clearSelectedEdges();
+				redraw();
+			}
+			break;
+		case CutVertex:
+			if (mActiveViewport->numSelectedVertices() > 0)
+			{
+				DLFLVertexPtr svptr = mActiveViewport->getSelectedVertex(0);
+				if (svptr)
+				{
+					undoPush();
+					svptr->ismarked = 1 - svptr->ismarked;
+				}
+			// active->clearSelectedVertices();
+				redraw();
+			}
+			break;
+		case CutEdgeandVertex:
+			if (mActiveViewport->numSelectedVertices() > 0 &&
+				mActiveViewport->numSelectedEdges() > 0)
+			{
+				DLFLVertexPtr svptr = mActiveViewport->getSelectedVertex(0);
+				DLFLEdgePtr septr = mActiveViewport->getSelectedEdge(0);
+				if (septr)
+				{
+					if (svptr)
+					{
+						undoPush();
+						septr->ismarked = 1 - septr->ismarked;
+						// DLFL::cutEdge( &object, septr, peelDistance_factor,pnormalBendS_factor,pnormalBendT_factor, peel_all_edges);
+					}
+				}
+				mActiveViewport->clearSelectedEdges();
+				mActiveViewport->clearSelectedVertices();
+				redraw();
+			}
+			break;
+		case MarkEdge:
+			if (mActiveViewport->numSelectedEdges() > 0)
+			{
+				DLFLEdgePtr septr = mActiveViewport->getSelectedEdge(0);
+				if (septr)
+				{
+					undoPush();
+					septr->ismarked = 1 - septr->ismarked;
+				}
+				mActiveViewport->clearSelectedEdges();
+				redraw();
+			}
+			break;
+		case MarkVertex:
+			if (mActiveViewport->numSelectedVertices() > 0)
+			{
+				DLFLVertexPtr svptr = mActiveViewport->getSelectedVertex(0);
+				if (svptr)
+				{
+					undoPush();
+					svptr->ismarked = 1 - svptr->ismarked;
+				}
+				mActiveViewport->clearSelectedVertices();
+				redraw();
+			}
+			break;
+		case CutFace:
+			// if ( active->numSelectedFaces() > 0 )
+			// 	{
+			// 		DLFLFacePtr sfptr = active->getSelectedFace(0);
+			// 		if ( sfptr )
+			// 			{
+			// 				undoPush();
+			// 				sfptr->ismarked = 1 - sfptr->ismarked;
+			// 			}
+			// 		active->clearSelectedFaces();
+			// 		redraw();
+			// 	}
+			break;
+		case SelectionWindow:
+			mActiveViewport->hideSelectionWindow();
 
-		}//end if (mode != NormalMode)
-	// else if ( event->buttons() == Qt::RightButton && QApplication::keyboardModifiers() == Qt::ShiftModifier){
-	// 	// event->ignore();
-	// 	mBrushStartX = 0;
-	// 	// mBrushStartY = 0;
-	// }
-	else event->ignore();
+			break;
+		}//end switch (mode)
+
+	}
+	else
+	{
+		event->ignore();
+	}
 }//end function mousereleaseevent
 
 
-void MainWindow::testConvexHull(void) {
+void MainWindow::testConvexHull(void)
+{
 	// For testing convex hull subroutine
 	// Vector3dArray vertices;
 	// vertices.resize(8);
@@ -3882,256 +3954,263 @@ void MainWindow::testConvexHull(void) {
 	// vertices[7].set(10,0,10);
 	// DLFLConvexHull convexhull;
 	// convexhull.createHull(vertices);
-	// 
+	//
 	// ofstream file;
 	// file.open("convexhull.dlfl");
 	// convexhull.writeDLFL(file);
 	// file.close();
 }
 
-void MainWindow::performRemeshing(void) {
+void MainWindow::performRemeshing(void)
+{
 	setModified(true);
 
-	switch ( remeshingscheme )
-		{
-		case Dual :
-			createDual();
-			break;
-		case Root3 :
-			subdivideRoot3();
-			break;
-		case Triangulate :
-			triangulate();
-			break;
-		case DualVertexTrunc :
-			subdivideSqrt3();
-			break;
-		case GlobalStellate :
-			globalStellate();
-			break;
-		case Star :
-			subdivideStar();
-			break;
-		case Generic1264 :
-			subdivide1264();
-			break;
-		case Honeycomb :
-			subdivideHoneycomb();
-			break;
-		case VertexTrunc :
-			subdivideVertexCutting();
-			break;
-		case DualGeneric1264 :
-			subdivideDual1264();
-			break;
-		case LinearVertexInsertion :
-			subdivideLinearVertexInsertion();
-			break;
-		case CatmullClark :
-			subdivideCatmullClark();
-			break;
-		case ModifiedStellate :
-			subStellate1();
-			break;
-		case DooSabin :
-			subdivideDooSabin();
-			break;
-		case CornerCutting :
-				subdivideCornerCutting();
-				break;
-		case ModifiedCornerCutting :
-			subdivideModifiedCornerCutting();
-			break;
-		case Simplest :
-			subdivideSimplest();
-			break;
-		case Pentagonal :
-			subdividePentagonal();
-			break;
-		case CubicPentagonal :
-			subdivideCubicPentagonal();
-			break;
-		case DualPentagonal :
-			subdivideDualPentagonal();
-			break;
-		case LoopStyle :
-			subdivideLoopStyle();
-			break;
-		case Loop :
-			subdivideLoop();
-			break;
-		case Root4 :
-			subdivideRoot4();
-			break;
-		case DualLoop :
-			subdivideDualLoop();
-			break;
-		case GlobalCubicExtrude :
-			// cout << "NOT YET IMPLEMENTED!!!" << endl;
-			break;
-		case CheckerBoard :
-			subdivideCheckerBoard();
-			break;
-		case DualGlobalCubicExtrude :
-			// cout << "NOT YET IMPLEMENTED!!!" << endl;
-			break;
-		case DualCheckerBoard :
-			subdivideDualCheckerBoard();
-			break;
-		case PentagonPreserving :
-			subdividePentagonPreserving();
-			break;
-		case DualPentagonPreserving :
-			subdivideDualPentagonPreserving();
-			break;
-		case HexagonPreserving :
-			subdivideRoot4();
-			break;
-		case DualHexagonPreserving :
-			subdivideDualHexagonPreserving();
-			break;
-		case Fractal :
-			subdivideFractal();
-			break;
-		case ModifiedDoubleStellate :
-			subStellate2();
-			break;
-		case Dome :
-			subdivideDome();
-			break;
-		case DooSabinBC :
-			subdivideDooSabinBC();
-			break;
-		case DooSabinBCNew :
-			subdivideDooSabinBCNew();
-			break;
-		}
-	setMode(mode);
+	switch (mRemeshingScheme)
+	{
+	case Dual:
+		createDual();
+		break;
+	case Root3:
+		subdivideRoot3();
+		break;
+	case Triangulate:
+		triangulate();
+		break;
+	case DualVertexTrunc:
+		subdivideSqrt3();
+		break;
+	case GlobalStellate:
+		globalStellate();
+		break;
+	case Star:
+		subdivideStar();
+		break;
+	case Generic1264:
+		subdivide1264();
+		break;
+	case Honeycomb:
+		subdivideHoneycomb();
+		break;
+	case VertexTrunc:
+		subdivideVertexCutting();
+		break;
+	case DualGeneric1264:
+		subdivideDual1264();
+		break;
+	case LinearVertexInsertion:
+		subdivideLinearVertexInsertion();
+		break;
+	case CatmullClark:
+		subdivideCatmullClark();
+		break;
+	case ModifiedStellate:
+		subStellate1();
+		break;
+	case DooSabin:
+		subdivideDooSabin();
+		break;
+	case CornerCutting:
+		subdivideCornerCutting();
+		break;
+	case ModifiedCornerCutting:
+		subdivideModifiedCornerCutting();
+		break;
+	case Simplest:
+		subdivideSimplest();
+		break;
+	case Pentagonal:
+		subdividePentagonal();
+		break;
+	case CubicPentagonal:
+		subdivideCubicPentagonal();
+		break;
+	case DualPentagonal:
+		subdivideDualPentagonal();
+		break;
+	case LoopStyle:
+		subdivideLoopStyle();
+		break;
+	case Loop:
+		subdivideLoop();
+		break;
+	case Root4:
+		subdivideRoot4();
+		break;
+	case DualLoop:
+		subdivideDualLoop();
+		break;
+	case GlobalCubicExtrude:
+		// cout << "NOT YET IMPLEMENTED!!!" << endl;
+		break;
+	case CheckerBoard:
+		subdivideCheckerBoard();
+		break;
+	case DualGlobalCubicExtrude:
+		// cout << "NOT YET IMPLEMENTED!!!" << endl;
+		break;
+	case DualCheckerBoard:
+		subdivideDualCheckerBoard();
+		break;
+	case PentagonPreserving:
+		subdividePentagonPreserving();
+		break;
+	case DualPentagonPreserving:
+		subdivideDualPentagonPreserving();
+		break;
+	case HexagonPreserving:
+		subdivideRoot4();
+		break;
+	case DualHexagonPreserving:
+		subdivideDualHexagonPreserving();
+		break;
+	case Fractal:
+		subdivideFractal();
+		break;
+	case ModifiedDoubleStellate:
+		subStellate2();
+		break;
+	case Dome:
+		subdivideDome();
+		break;
+	case DooSabinBC:
+		subdivideDooSabinBC();
+		break;
+	case DooSabinBCNew:
+		subdivideDooSabinBCNew();
+		break;
+	}
+	setMode(mOperationMode);
 	redraw();
 }
 
-void MainWindow::performExtrusion(){
-	if ( active->numSelectedFaces() < 1 )
+void MainWindow::performExtrusion()
+{
+	if ( mActiveViewport->numSelectedFaces() < 1 )
 	{
 		return;
 	}
 
-	DLFLFacePtrArray& sfptrarr = active->getSelectedFaces();
+	DLFLFacePtrArray& sfptrarr = mActiveViewport->getSelectedFaces();
 	if (sfptrarr[0])
 	{
 		undoPush();
 		setModified(true);
 		for (auto sfPtr : sfptrarr)
 		{
-			switch (extrusionmode)
+			switch (mExtrusionMode)
 			{
 			case DooSabinExtrude:
-				DLFL::extrudeFaceDS(&object, sfPtr, extrude_dist, num_extrusions, ds_ex_twist, extrude_scale);
+				DLFL::extrudeFaceDS(&mObject, sfPtr, sExtrudeDist, sNumExtrusions, sDooSabinExtrusionTwist, sExtrudeScale);
 				break;
 			case CubicalExtrude:
-				DLFL::extrudeFace(&object, sfPtr, extrude_dist, num_extrusions, extrude_rot, extrude_scale);
+				DLFL::extrudeFace(&mObject, sfPtr, sExtrudeDist, sNumExtrusions, sExtrudeRot, sExtrudeScale);
 				break;
 				// case IcosahedralExtrude: DLFL::extrudeFaceIcosa(&object,sfPtr,extrude_dist,num_extrusions, ds_ex_twist,extrude_scale);
 			case IcosahedralExtrude:
 				// std::cout<< extrude_angle_icosa  << "\t" << num_extrusions  << "\t" << extrude_length1_icosa  << "\t" << extrude_length2_icosa << "\t" << extrude_length3_icosa <<"\n";
-				DLFL::extrudeFaceIcosa(&object, sfPtr, extrude_angle_icosa, num_extrusions, extrude_length1_icosa, extrude_length2_icosa, extrude_length3_icosa);
+				DLFL::extrudeFaceIcosa(&mObject, sfPtr, sExtrudeAngle_iCosA, sNumExtrusions, sExtrudeLength1_iCosA, sExtrudeLength2_iCosA, sExtrudeLength3_iCosA);
 				// DLFL::extrudeFaceCubOcta(&object, sfPtr, extrude_angle_icosa,num_extrusions, extrude_length1_icosa,extrude_length2_icosa,extrude_length3_icosa);
 				break;
 				// DLFLFacePtr extrudeFaceDodeca(DLFLObjectPtr obj, DLFLFacePtr fptr, double angle, int num, double ex_dist1, double ex_dist2, double ex_dist3, bool hexagonalize);
 			case DodecahedralExtrude:
-				DLFL::extrudeFaceDodeca(&object, sfPtr, extrude_angle, num_extrusions, extrude_length1, extrude_length2, extrude_length3, hexagonalize_dodeca_extrude);
+				DLFL::extrudeFaceDodeca(&mObject, sfPtr, sExtrudeAngle, sNumExtrusions, sExtrudeLength1, sExtrudeLength2, sExtrudeLength3, sHexagonalizeDodecaExtrude);
 				// case DodecahedralExtrude: DLFL::extrudeFaceDodeca(&object,sfPtr,extrude_dist,num_extrusions, ds_ex_twist,extrude_scale, hexagonalize_dodeca_extrude);
 				// DLFL::extrudeFaceSmallRhombiCubOcta(&object,sfPtr,extrude_angle,num_extrusions, extrude_length1,extrude_length2,extrude_length3);
 				break;
 			case OctahedralExtrude:
-				DLFL::extrudeDualFace(&object, sfPtr, extrude_dist, num_extrusions, extrude_rot, extrude_scale, dual_mesh_edges_check);
+				DLFL::extrudeDualFace(&mObject, sfPtr, sExtrudeDist, sNumExtrusions, sExtrudeRot, sExtrudeScale, sDualMeshEdgesCheck);
 				break;
 			case StellateExtrude:
-				DLFL::stellateFace(&object, sfPtr, extrude_dist);
+				DLFL::stellateFace(&mObject, sfPtr, sExtrudeDist);
 				break;
 			case DoubleStellateExtrude:
-				DLFL::doubleStellateFace(&object, sfPtr, extrude_dist);
+				DLFL::doubleStellateFace(&mObject, sfPtr, sExtrudeDist);
 				break;
 			case DomeExtrude:
-				DLFL::extrudeFaceDome(&object, sfPtr, domeExtrudeLength_factor, domeExtrudeRotation_factor, domeExtrudeScale_factor);
+				DLFL::extrudeFaceDome(&mObject, sfPtr, sDomeExtrudeLengthFactor, sDomeExtrudeRotationFactor, sDomeExtrudeScaleFactor);
 				break;
 			default:
-				DLFL::extrudeFace(&object, sfPtr, extrude_dist, num_extrusions, extrude_rot, extrude_scale);
+				DLFL::extrudeFace(&mObject, sfPtr, sExtrudeDist, sNumExtrusions, sExtrudeRot, sExtrudeScale);
 				break;
 			};
 		}
-		active->recomputePatches();
-		active->recomputeNormals();
+		mActiveViewport->recomputePatches();
+		mActiveViewport->recomputeNormals();
 	}
-	active->clearSelectedFaces();
+	mActiveViewport->clearSelectedFaces();
 	redraw();
 }
 
 // Change the renderer for all viewports
-void MainWindow::setRenderer(DLFLRendererPtr rp) {
-	active->setRenderer(rp);
+void MainWindow::setRenderer(DLFLRendererPtr rp)
+{
+	mActiveViewport->setRenderer(rp);
 }
 
 // Return pointer to the active GLWidget
-GLWidget *MainWindow::getActive() {
-	return active;
+GLWidget *MainWindow::getActive()
+{
+	return mActiveViewport;
 }
 
 // Override redraw() method to mark subwindows also for redraw
-void MainWindow::redraw() {
-	active->redraw();
+void MainWindow::redraw()
+{
+	mActiveViewport->redraw();
 }
 
 //--- Methods to perform various operations ---//
 
 // Switch to specified operating mode
-void MainWindow::setMode(Mode m) {
-	mode = m;
-	
-	switch ( mode )	{
-		// case BezierMode: // brianb
-		//       object.bezierDefaults();
-		//       break;
-	case EditVertex :    // brianb
-	case SelectVertex :
-	case MultiSelectVertex :
-	case CutVertex :
-	case MarkVertex :
+void MainWindow::setMode(Mode m)
+{
+	mOperationMode = m;
+
+	switch (mOperationMode)
+	{
+		/*case BezierMode: // brianb
+		object.bezierDefaults();
+		break;*/
+	case EditVertex:    // brianb
+	case SelectVertex:
+	case MultiSelectVertex:
+	case CutVertex:
+	case MarkVertex:
 		setSelectionMask(MainWindow::MaskVertices);
-		MainWindow::num_sel_verts = 0;
-		break; 
-	case SelectEdge :
-	case SelectEdgeLoop :
-	case SelectEdgeRing :
-	case MultiSelectEdge :
-	case DeleteEdge :
-	case SubdivideEdge :
-	case CollapseEdge :
-	case ConnectEdges :
-	case CutEdge :
-	case TruncateEdge :
-	case MarkEdge :
+		MainWindow::sNumSelVerts = 0;
+		break;
+	case SelectEdge:
+	case SelectEdgeLoop:
+	case SelectEdgeRing:
+	case MultiSelectEdge:
+	case DeleteEdge:
+	case SubdivideEdge:
+	case CollapseEdge:
+	case ConnectEdges:
+	case CutEdge:
+	case TruncateEdge:
+	case MarkEdge:
 		setSelectionMask(MainWindow::MaskEdges);
 		// MainWindow::num_sel_edges = 0;
 		break;
-	case SelectFace :
-	case SelectFaceLoop :
-	case MultiSelectFace :
-	case SelectCheckerboard :
-	case ExtrudeFace :
-	case ExtrudeFaceDS :
-	case ExtrudeDualFace :
-	case ExtrudeFaceDodeca :
-	case ExtrudeFaceIcosa :
-	case ExtrudeMultipleFaces :
-	case StellateFace :
-	case DoubleStellateFace :
-	case ExtrudeFaceDome :
-	case ConnectFaces :
-	case ReorderFace :
-	case SubdivideFace :
-	case CrustModeling :
-	case CutFace :
+	case SelectFace:
+	case SelectFaceLoop:
+	case MultiSelectFace:
+	case SelectCheckerboard:
+	case ExtrudeFace:
+	case ExtrudeFaceDS:
+	case ExtrudeDualFace:
+	case ExtrudeFaceDodeca:
+	case ExtrudeFaceIcosa:
+	case ExtrudeMultipleFaces:
+	case StellateFace:
+	case DoubleStellateFace:
+	case ExtrudeFaceDome:
+	case ConnectFaces:
+	case ReorderFace:
+	case SubdivideFace:
+	case CrustModeling:
+	case CutFace:
 	case SelectFacesByArea:
 	case SelectFacesByColor:
 	case PaintFace:
@@ -4140,349 +4219,402 @@ void MainWindow::setMode(Mode m) {
 		// MainWindow::num_sel_faces = 0;
 		break;
 	case SelectSimilar:
-	//do nothing...
-	break;
-	// case SelectSimilar :
-	// switch(selectionmask){
-	// 	case MaskEdges: 
-	// 	break;
-	// 	case MaskFaces:
-	// 	break;
-	// 	case MaskVertices:
-	// 	
-	// 	break;
-	// 	default:
-	// 	break;
-	// };
-	// break;
-	case SelectCorner :
-	case MultiSelectCorner :
-	case InsertEdge :
-	case SpliceCorners :
-	case ConnectFaceVertices :
-	case BezierConnectFaces :
-	case HermiteConnectFaces :
+		//do nothing...
+		break;
+	/*case SelectSimilar:
+	{
+		switch (selectionmask)
+		{
+		case MaskEdges:
+			break;
+		case MaskFaces:
+			break;
+		case MaskVertices:
+
+			break;
+		default:
+			break;
+		};
+		break;
+	}*/
+	case SelectCorner:
+	case MultiSelectCorner:
+	case InsertEdge:
+	case SpliceCorners:
+	case ConnectFaceVertices:
+	case BezierConnectFaces:
+	case HermiteConnectFaces:
 		setSelectionMask(MainWindow::MaskCorners);
 		// MainWindow::num_sel_faceverts = 0;
 		break;
 	case SelectionWindow:
 		// set
-	break;
+		break;
 	case NormalMode:
 		setSelectionMask(MainWindow::MaskNone);
-	default :
+	default:
 		// Nothing to be done for other modes except clearing selection lists
-		setSelectionMask(MainWindow::MaskNone);									
+		setSelectionMask(MainWindow::MaskNone);
 		// MainWindow::clearSelected();
 		break;
 	}
 	// if (mode != MultiSelectFace)
 		// active->hideBrush();
-	// else active->showBrush();	
-	
+	// else active->showBrush();
+
 	QString s;
 	//this switch statement is for setting the string for the Heads up display
-	switch (mode){
-		case NormalMode: s = tr("Normal Mode");
+	switch (mOperationMode)
+	{
+	case NormalMode: s = tr("Normal Mode");
 		break;
-		case SelectVertex: s = tr("Select Vertex");
+	case SelectVertex: s = tr("Select Vertex");
 		break;
-		case SelectEdge: s = tr("Select Edge");
+	case SelectEdge: s = tr("Select Edge");
 		break;
-		case SelectFace: s = tr("Select Face");
+	case SelectFace: s = tr("Select Face");
 		break;
-		case SelectCorner: s = tr("Select Corner");
+	case SelectCorner: s = tr("Select Corner");
 		break;
-		case MultiSelectVertex: s = tr("Multi-Select Vertex");
+	case MultiSelectVertex: s = tr("Multi-Select Vertex");
 		break;
-		case MultiSelectEdge: s = tr("Multi-Select Edge");
+	case MultiSelectEdge: s = tr("Multi-Select Edge");
 		break;
-		case MultiSelectFace: s = tr("Multi-Select Face");
+	case MultiSelectFace: s = tr("Multi-Select Face");
 		break;
-		case MultiSelectCorner: s = tr("Multi-Select Corner");
+	case MultiSelectCorner: s = tr("Multi-Select Corner");
 		break;
-		case SelectCheckerboard: s = tr("Select Checkerboard");
+	case SelectCheckerboard: s = tr("Select Checkerboard");
 		break;
-		case InsertEdge: s = tr("Insert Edge");
+	case InsertEdge: s = tr("Insert Edge");
 		break;
-		case DeleteEdge: s = tr("Delete Edge");
+	case DeleteEdge: s = tr("Delete Edge");
 		break;
-		case SubdivideEdge: s = tr("Subdivide Edge");
+	case SubdivideEdge: s = tr("Subdivide Edge");
 		break;
-		case CollapseEdge: s = tr("Collapse Edge");
+	case CollapseEdge: s = tr("Collapse Edge");
 		break;
-		case SpliceCorners: s = tr("Splice Corners");
+	case SpliceCorners: s = tr("Splice Corners");
 		break;
-		case ConnectEdges: s = tr("Connect Edges");
+	case ConnectEdges: s = tr("Connect Edges");
 		break;
-		case ExtrudeFace: s = tr("Cubical Extrusion");
+	case ExtrudeFace: s = tr("Cubical Extrusion");
 		break;
-		case ExtrudeFaceDS: s = tr("Doo Sabin Extrusion");
+	case ExtrudeFaceDS: s = tr("Doo Sabin Extrusion");
 		break;
-		case ExtrudeDualFace: s = tr("Dual Extrusion");
+	case ExtrudeDualFace: s = tr("Dual Extrusion");
 		break;
-		case ExtrudeFaceDodeca: s = tr("Dodecahedral Extrusion");
+	case ExtrudeFaceDodeca: s = tr("Dodecahedral Extrusion");
 		break;
-		case ExtrudeFaceIcosa: s = tr("Icosahedral Extrusion");
+	case ExtrudeFaceIcosa: s = tr("Icosahedral Extrusion");
 		break;
-		case ExtrudeMultipleFaces: s = tr("Extrude Multiple Faces");
+	case ExtrudeMultipleFaces: s = tr("Extrude Multiple Faces");
 		break;
-		case StellateFace: s = tr("Stellate Face");
+	case StellateFace: s = tr("Stellate Face");
 		break;
-		case DoubleStellateFace : s = tr("Double Stellate Face");
+	case DoubleStellateFace: s = tr("Double Stellate Face");
 		break;
-		case ExtrudeFaceDome : s = tr("Dome Extrusion");
+	case ExtrudeFaceDome: s = tr("Dome Extrusion");
 		break;
-		case ConnectFaceVertices: s = tr("Connect Corners");
+	case ConnectFaceVertices: s = tr("Connect Corners");
 		break;
-		case ConnectFaces: s = tr("Connect Faces");
+	case ConnectFaces: s = tr("Connect Faces");
 		break;
-		case BezierConnectFaces: s = tr("Bezier Connect Faces");
+	case BezierConnectFaces: s = tr("Bezier Connect Faces");
 		break;
-		case HermiteConnectFaces: s = tr("Hermite Connect Faces");
+	case HermiteConnectFaces: s = tr("Hermite Connect Faces");
 		break;
-		case ReorderFace: s = tr("Reorder Face");
+	case ReorderFace: s = tr("Reorder Face");
 		break;
-		case SubdivideFace: s = tr("Subdivide Face");
+	case SubdivideFace: s = tr("Subdivide Face");
 		break;
-		case CrustModeling: s = tr("Crust Modeling");
+	case CrustModeling: s = tr("Crust Modeling");
 		break;
-		case CutEdge: s = tr("Cut Edge");
+	case CutEdge: s = tr("Cut Edge");
 		break;
-		case CutVertex: s = tr("Cut Vertex");
+	case CutVertex: s = tr("Cut Vertex");
 		break;
-		case CutEdgeandVertex : s = tr("Cut Edge and Vertex");
+	case CutEdgeandVertex: s = tr("Cut Edge and Vertex");
 		break;
-		case CutFace : s = tr("Cut Face");
+	case CutFace: s = tr("Cut Face");
 		break;
-		case TruncateEdge: s = tr("Truncate Edge");
+	case TruncateEdge: s = tr("Truncate Edge");
 		break;
-		case MarkEdge: s = tr("Mark Edge");
+	case MarkEdge: s = tr("Mark Edge");
 		break;
-		case MarkVertex: s = tr("Mark Vertex");
+	case MarkVertex: s = tr("Mark Vertex");
 		break;
-		case ConvexHullMode: s = tr("Convex Hull Mode");
+	case ConvexHullMode: s = tr("Convex Hull Mode");
 		break;
-		case EditVertex: s = tr("Edit Vertex");
+	case EditVertex: s = tr("Edit Vertex");
 		break;
-		case SelectEdgeLoop: s = tr("Select Edge Loop");
+	case SelectEdgeLoop: s = tr("Select Edge Loop");
 		break;
-		case SelectEdgeRing: s = tr("Select Edge Ring");
+	case SelectEdgeRing: s = tr("Select Edge Ring");
 		break;
-		case SelectFaceLoop: s = tr("Select Face Loop");
+	case SelectFaceLoop: s = tr("Select Face Loop");
 		break;
-		case SelectSimilar: s = tr("Select Similar");
+	case SelectSimilar: s = tr("Select Similar");
 		break;
-		case SelectFacesByArea: s = tr("Select Faces By Surf. Area");
+	case SelectFacesByArea: s = tr("Select Faces By Surf. Area");
 		break;
-		case SelectionWindow: s = tr("Selection Window");
+	case SelectionWindow: s = tr("Selection Window");
 		break;
-		default:	s = tr("-");
+	default:	s = tr("-");
 		break;
-	};
-	active->setModeString(s);
+	}
+	mActiveViewport->setModeString(s);
 	redraw();
 }
 
-void MainWindow::setExtrusionMode(ExtrusionMode m){
-	extrusionmode = m;
-	QString s;
-	switch(m){
-		case DooSabinExtrude: s = "Doo Sabin";
+void MainWindow::setExtrusionMode(ExtrusionMode mode){
+	mExtrusionMode = mode;
+	QString modeStr;
+	switch(mode){
+	case DooSabinExtrude:
+		modeStr = "Doo Sabin";
 		break;
-		case CubicalExtrude: s = "Cubical";
+	case CubicalExtrude:
+		modeStr = "Cubical";
 		break;
-		case DodecahedralExtrude: s = "Dodecahedral";
+	case DodecahedralExtrude:
+		modeStr = "Dodecahedral";
 		break;
-		case IcosahedralExtrude: s = "Icosahedral";
+	case IcosahedralExtrude:
+		modeStr = "Icosahedral";
 		break;
-		case OctahedralExtrude: s = "Octahedral";
+	case OctahedralExtrude:
+		modeStr = "Octahedral";
 		break;
 		// case Dual:
 		// break;
-		case StellateExtrude: s = "Stellate";
+	case StellateExtrude:
+		modeStr = "Stellate";
 		break;
-		case DoubleStellateExtrude: s = "Double Stellate";
+	case DoubleStellateExtrude:
+		modeStr = "Double Stellate";
 		break;
-		case DomeExtrude: s = "Dome";
+	case DomeExtrude:
+		modeStr = "Dome";
 		break;
-		default:
+	default:
 		break;
-	};
-	active->setExtrusionModeString(s);
+	}
+	mActiveViewport->setExtrusionModeString(modeStr);
 }
 
-void MainWindow::setSelectionMask(SelectionMask m){
-	if (selectionmask != m){
-		selectionmask = m;
-	
-		// active->clearSelected();
-		active->repaint();
-		//make sure we clear all other selected objects here...
-		switch(selectionmask){
-		case MaskVertices : 
-		active->clearSelectedEdges();
-		active->clearSelectedFaces();
-		active->clearSelectedCorners();
+void MainWindow::setSelectionMask(SelectionMask mask)
+{
+	if (mSelectionMask == mask)
+	{
+		return;
+	}
+
+	mSelectionMask = mask;
+	// active->clearSelected();
+	mActiveViewport->repaint();
+	//make sure we clear all other selected objects here...
+	switch (mSelectionMask)
+	{
+	case MaskVertices:
+		mActiveViewport->clearSelectedEdges();
+		mActiveViewport->clearSelectedFaces();
+		mActiveViewport->clearSelectedCorners();
 		// mSelectVerticesMaskAct->activate(QAction::Trigger);
 		mSelectVerticesMaskAct->setChecked(true);
 		mSelectEdgesMaskAct->setChecked(false);
 		mSelectFacesMaskAct->setChecked(false);
 		mSelectCornersMaskAct->setChecked(false);
-		active->setSelectionMaskString(tr("Vertices"));
+		mActiveViewport->setSelectionMaskString(tr("Vertices"));
 		break;
-		case MaskEdges :	
-		active->clearSelectedVertices();
-		active->clearSelectedFaces();
-		active->clearSelectedCorners();
+	case MaskEdges:
+		mActiveViewport->clearSelectedVertices();
+		mActiveViewport->clearSelectedFaces();
+		mActiveViewport->clearSelectedCorners();
 		// mSelectEdgesMaskAct->activate(QAction::Trigger);
 		mSelectVerticesMaskAct->setChecked(false);
 		mSelectEdgesMaskAct->setChecked(true);
 		mSelectFacesMaskAct->setChecked(false);
 		mSelectCornersMaskAct->setChecked(false);
-		active->setSelectionMaskString(tr("Edges"));
+		mActiveViewport->setSelectionMaskString(tr("Edges"));
 		break;
-		case MaskFaces :	
-		active->clearSelectedEdges();
-		active->clearSelectedVertices();
-		active->clearSelectedCorners();
+	case MaskFaces:
+		mActiveViewport->clearSelectedEdges();
+		mActiveViewport->clearSelectedVertices();
+		mActiveViewport->clearSelectedCorners();
 		// mSelectFacesMaskAct->activate(QAction::Trigger);
 		mSelectVerticesMaskAct->setChecked(false);
 		mSelectEdgesMaskAct->setChecked(false);
 		mSelectFacesMaskAct->setChecked(true);
 		mSelectCornersMaskAct->setChecked(false);
-		active->setSelectionMaskString(tr("Faces"));
+		mActiveViewport->setSelectionMaskString(tr("Faces"));
 		break;
-		case MaskCorners :	
-		active->clearSelectedEdges();
-		active->clearSelectedFaces();
-		active->clearSelectedVertices();
+	case MaskCorners:
+		mActiveViewport->clearSelectedEdges();
+		mActiveViewport->clearSelectedFaces();
+		mActiveViewport->clearSelectedVertices();
 		// mSelectCornersMaskAct->activate(QAction::Trigger);
 		mSelectVerticesMaskAct->setChecked(false);
 		mSelectEdgesMaskAct->setChecked(false);
 		mSelectFacesMaskAct->setChecked(false);
 		mSelectCornersMaskAct->setChecked(true);
-		active->setSelectionMaskString(tr("Corners"));
+		mActiveViewport->setSelectionMaskString(tr("Corners"));
 		break;
-		default:
-		active->clearSelectedEdges();
-		active->clearSelectedVertices();
-		active->clearSelectedCorners();
-		active->clearSelectedFaces();
+	default:
+		mActiveViewport->clearSelectedEdges();
+		mActiveViewport->clearSelectedVertices();
+		mActiveViewport->clearSelectedCorners();
+		mActiveViewport->clearSelectedFaces();
 		mSelectVerticesMaskAct->setChecked(false);
 		mSelectEdgesMaskAct->setChecked(false);
 		mSelectFacesMaskAct->setChecked(false);
 		mSelectCornersMaskAct->setChecked(false);
-		active->setSelectionMaskString(tr("None"));
-		
+		mActiveViewport->setSelectionMaskString(tr("None"));
+
 		break;
-		}
-	}
-	else {
-		
 	}
 }
 
-void MainWindow::setRemeshingScheme(RemeshingScheme scheme) {
-	remeshingscheme = scheme;
+void MainWindow::setRemeshingScheme(RemeshingScheme scheme)
+{
+	mRemeshingScheme = scheme;
 	QString s;
-	
-	switch (remeshingscheme){		
-		case Dual : s = tr("Dual");
+
+	switch (mRemeshingScheme)
+	{
+	case Dual:
+		s = tr("Dual");
 		break;
-		case Root3 : s = tr("Root-3");
+	case Root3:
+		s = tr("Root-3");
 		break;
-		case DualVertexTrunc : s = tr("Dual Vertex Truncation");
+	case DualVertexTrunc:
+		s = tr("Dual Vertex Truncation");
 		break;
-		case GlobalStellate : s = tr("Global Stellate");
+	case GlobalStellate:
+		s = tr("Global Stellate");
 		break;
-		case Star : s = tr("Star");
+	case Star:
+		s = tr("Star");
 		break;
-		case Generic1264 : s = tr("Generic 12.6.4");
+	case Generic1264:
+		s = tr("Generic 12.6.4");
 		break;
-		case Honeycomb : s = tr("Honeycomb");
+	case Honeycomb:
+		s = tr("Honeycomb");
 		break;
-		case VertexTrunc : s = tr("Vertex Truncation");
+	case VertexTrunc:
+		s = tr("Vertex Truncation");
 		break;
-		case DualGeneric1264 : s = tr("Dual Generic 12.6.4");
+	case DualGeneric1264:
+		s = tr("Dual Generic 12.6.4");
 		break;
-		case LinearVertexInsertion : s = tr("Linear Vertex Truncation");
+	case LinearVertexInsertion:
+		s = tr("Linear Vertex Truncation");
 		break;
-		case CatmullClark : s = tr("Catmull-Clark");
+	case CatmullClark:
+		s = tr("Catmull-Clark");
 		break;
-		case ModifiedStellate : s = tr("Modified Stellate");
+	case ModifiedStellate:
+		s = tr("Modified Stellate");
 		break;
-		case DooSabin : s = tr("Doo Sabin");
+	case DooSabin:
+		s = tr("Doo Sabin");
 		break;
-		case CornerCutting : s = tr("Corner Cutting");
+	case CornerCutting:
+		s = tr("Corner Cutting");
 		break;
-		case ModifiedCornerCutting : s = tr("Modified Corner Cutting");
+	case ModifiedCornerCutting:
+		s = tr("Modified Corner Cutting");
 		break;
-		case Simplest : s = tr("Simplest");
+	case Simplest:
+		s = tr("Simplest");
 		break;
-		case Pentagonal : s = tr("Pentagonal");
+	case Pentagonal:
+		s = tr("Pentagonal");
 		break;
-		case CubicPentagonal : s = tr("Cubic Pentagonal");
+	case CubicPentagonal:
+		s = tr("Cubic Pentagonal");
 		break;
-		case DualPentagonal : s = tr("Dual Pentagonal");
+	case DualPentagonal:
+		s = tr("Dual Pentagonal");
 		break;
-		case LoopStyle : s = tr("Loop Style");
+	case LoopStyle:
+		s = tr("Loop Style");
 		break;
-		case Loop : s = tr("Loop");
+	case Loop:
+		s = tr("Loop");
 		break;
-		case Root4 : s = tr("Root4");
+	case Root4:
+		s = tr("Root4");
 		break;
-		case DualLoop : s = tr("Dual Loop");
+	case DualLoop:
+		s = tr("Dual Loop");
 		break;
-		case GlobalCubicExtrude : s = tr("Global Cubic Extrude");
+	case GlobalCubicExtrude:
+		s = tr("Global Cubic Extrude");
 		break;
-		case CheckerBoard : s = tr("Checkerboard");
+	case CheckerBoard:
+		s = tr("Checkerboard");
 		break;
-		case DualGlobalCubicExtrude : s = tr("Dual Global Cubic Extrude");
+	case DualGlobalCubicExtrude:
+		s = tr("Dual Global Cubic Extrude");
 		break;
-		case DualCheckerBoard : s = tr("Dual Checkerboard");
+	case DualCheckerBoard:
+		s = tr("Dual Checkerboard");
 		break;
-		case PentagonPreserving : s = tr("Pentagon Preserving");
+	case PentagonPreserving:
+		s = tr("Pentagon Preserving");
 		break;
-		case DualPentagonPreserving : s = tr("Dual Pentagon Preserving");
+	case DualPentagonPreserving:
+		s = tr("Dual Pentagon Preserving");
 		break;
-		case HexagonPreserving : s = tr("Hexagon Preserving");
+	case HexagonPreserving:
+		s = tr("Hexagon Preserving");
 		break;
-		case DualHexagonPreserving : s = tr("Dual Hexagon Preserving");
+	case DualHexagonPreserving:
+		s = tr("Dual Hexagon Preserving");
 		break;
-		case Fractal : s = tr("Fractal");
+	case Fractal:
+		s = tr("Fractal");
 		break;
-		case ModifiedDoubleStellate : s = tr("Modified Double Stellate");
+	case ModifiedDoubleStellate:
+		s = tr("Modified Double Stellate");
 		break;
-		case Dome : s = tr("Dome");
+	case Dome:
+		s = tr("Dome");
 		break;
-		case DooSabinBC : s = tr("Doo Sabin BC");
+	case DooSabinBC:
+		s = tr("Doo Sabin BC");
 		break;
-		case DooSabinBCNew :  s = tr("Doo Sabin BC New");
+	case DooSabinBCNew:
+		s = tr("Doo Sabin BC New");
 		break;
-		default: s = tr("None");
+	default: s = tr("None");
 		break;
-	};
-	active->setRemeshingSchemeString(s);
+	}
+	mActiveViewport->setRemeshingSchemeString(s);
 }
 
 // Read the DLFL object from a file
-void MainWindow::readObject(const char * filename, const char *mtlfilename) {
-	active->clearSelected();
+void MainWindow::readObject(const char * filename, const char *mtlfilename)
+{
+	mActiveViewport->clearSelected();
 	ifstream file, mtlfile;
 	file.open(filename);
 	mtlfile.open(mtlfilename);
-		
-	if ( strstr(filename,".dlfl") || strstr(filename,".DLFL") )
-		object.readDLFL(file, mtlfile);
-	else if ( strstr(filename,".obj") || strstr(filename,".OBJ") )
-		object.readObject(file, mtlfile);
+
+	if (strstr(filename, ".dlfl") || strstr(filename, ".DLFL"))
+		mObject.readDLFL(file, mtlfile);
+	else if (strstr(filename, ".obj") || strstr(filename, ".OBJ"))
+		mObject.readObject(file, mtlfile);
 	file.close();
 }
 
 // Read the DLFL object from a file
-void MainWindow::readObjectQFile(QString filename) {
-	active->clearSelected();
+void MainWindow::readObjectQFile(const QString &filename)
+{
+	mActiveViewport->clearSelected();
 	QFile file(filename);
 	file.open(QIODevice::ReadOnly | QIODevice::Text);
 
@@ -4490,28 +4622,29 @@ void MainWindow::readObjectQFile(QString filename) {
 	const char *filecontents = ba.data();
 	string str(filecontents);
 	istringstream filestring(str);
-	
+
 	ifstream mtlfile;
 	// mtlfile = 0;
 
-	if ( filename.indexOf(".dlfl") == filename.length()-4 || filename.indexOf(".dlfl") == filename.length()-4 )
-		object.readDLFL(filestring, mtlfile);
-	else if ( filename.indexOf(".OBJ") == filename.length()-4 || filename.indexOf(".obj") == filename.length()-4 )
-		object.readObject(filestring, mtlfile);
+	if (filename.endsWith(".dlfl", Qt::CaseInsensitive))
+		mObject.readDLFL(filestring, mtlfile);
+	else if (filename.endsWith(".obj", Qt::CaseInsensitive))
+		mObject.readObject(filestring, mtlfile);
 	file.close();
 
 #ifdef WITH_PYTHON
-	DLFLObjectPtr obj = &object;
-	if( obj )
-		emit loadedObject(obj,filename);
+	DLFLObjectPtr obj = &mObject;
+	if (obj)
+		emit loadedObject(obj, filename);
 #endif
-	active->createPatchObject( );
-	
+	mActiveViewport->createPatchObject();
+
 	// std::cout << "readObjectQFile end\n";
 }
 
 // Read the DLFL object from a file - use alternate OBJ reader for OBJ files
-void MainWindow::readObjectAlt(const char * filename) {
+void MainWindow::readObjectAlt(const char * filename)
+{
 	// active->clearSelected();
 	// ifstream file;
 	// file.open(filename);
@@ -4523,55 +4656,66 @@ void MainWindow::readObjectAlt(const char * filename) {
 }
 
 // Write the DLFL object to a file
-void MainWindow::writeObject(const char * filename, const char* mtlfilename, bool with_normals, bool with_tex_coords) {
+void MainWindow::writeObject(
+	const char * filename, const char* mtlfilename,
+	bool with_normals, bool with_tex_coords)
+{
 	ofstream file;
 	ofstream mtlfile;
 	file.open(filename);
 	mtlfile.open(mtlfilename);
 
 	std::cout << mtlfilename << " = mtlfilename in writeObject function\n";
-	
-	if ( strstr(filename,".dlfl") || strstr(filename,".DLFL") )
-		object.writeDLFL(file, mtlfile);
-	else if ( strstr(filename,".obj") || strstr(filename,".OBJ") ){
-		object.writeObject(file, mtlfile, with_normals,with_tex_coords);
+
+	if (strstr(filename, ".dlfl") || strstr(filename, ".DLFL"))
+	{
+		mObject.writeDLFL(file, mtlfile);
+	}
+	else if (strstr(filename, ".obj") || strstr(filename, ".OBJ"))
+	{
+		mObject.writeObject(file, mtlfile, with_normals, with_tex_coords);
 	}
 	file.close();
 	mtlfile.close();
 }
 
 // Write the DLFL object to a file
-void MainWindow::writeMTL(const char * filename) {
+void MainWindow::writeMTL(const char * filename)
+{
 	ofstream file;
 	file.open(filename);
-	object.writeMTL(file);
+	mObject.writeMTL(file);
 	file.close();
 }
 
 /* stuart - bezier export */
-void MainWindow::writePatchOBJ( const char *filename ) {
-	if( active->patchobject() != nullptr ) {
+void MainWindow::writePatchOBJ(const char *filename)
+{
+	if (mActiveViewport->patchobject() != nullptr)
+	{
 		ofstream file;
 		file.open(filename);
-		active->patchobject()->objPatchWrite(file);
+		mActiveViewport->patchobject()->objPatchWrite(file);
 	}
 }
 
 /* dave - lg3d export */
-void MainWindow::writeLG3d( const char *filename, bool selected ) {
+void MainWindow::writeLG3d(const char *filename, bool selected)
+{
 	// if( active->patchobject() != nullptr ) {
 	ofstream file;
 	file.open(filename);
-	object.writeLG3d(file, selected);
+	mObject.writeLG3d(file, selected);
 	file.close();
 	// }
 }
 
 /* dave - lg3d export */
-void MainWindow::writeSTL( const char *filename) {
+void MainWindow::writeSTL(const char *filename)
+{
 	ofstream file;
 	file.open(filename);
-	object.writeSTL(file);
+	mObject.writeSTL(file);
 	file.close();
 }
 
@@ -4583,12 +4727,17 @@ void MainWindow::writeSTL( const char *filename) {
 // }
 
 // File handling
-void MainWindow::openFile(void) {
-	QString fileName = QFileDialog::getOpenFileName(this, tr("Open File..."),
-																									mSaveDirectory, tr("All Supported Files (*.obj *.dlfl);;Wavefront OBJ Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"),
-																									0, QFileDialog::DontUseSheet);
-	if (!fileName.isEmpty()){
-		if (!curFile.isEmpty()){
+void MainWindow::openFile(void)
+{
+	QString fileName = QFileDialog::getOpenFileName(
+		this, tr("Open File..."), mSaveDirectory,
+		tr("All Supported Files (*.obj *.dlfl);;Wavefront OBJ Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"),
+		0, QFileDialog::DontUseSheet);
+
+	if (!fileName.isEmpty())
+	{
+		if (!mCurFilename.isEmpty())
+		{
 			undoPush();
 			setModified(false);
 		}
@@ -4596,55 +4745,60 @@ void MainWindow::openFile(void) {
 		const char *filename = ba.data();
 		mWasPrimitive = false;
 		mIsPrimitive = false;
-		
+
 		mSaveDirectory = QFileInfo(fileName).absoluteDir().absolutePath();
 		QByteArray ba2 = mSaveDirectory.toLatin1();
 		const char *dirname = ba2.data();
-		object.setDirname( dirname );
+		mObject.setDirname(dirname);
 
 		QString mtlfile = mSaveDirectory + "/" + QFileInfo(fileName).baseName() + ".mtl";
 		QByteArray ba3 = mtlfile.toLatin1();
 		const char *mtlfilename = ba3.data();
-		
-		setCurrentFile(fileName);	
+
+		setCurrentFile(fileName);
 		std::cout << "filename for DLFL reading = " << filename << endl;
 		readObject(filename, mtlfilename);
-		
+
 #ifdef WITH_PYTHON
 		// Emit and send to python script editor
-		DLFLObjectPtr obj = &object;
-		if( obj )
-			emit loadedObject(obj,fileName);
+		DLFLObjectPtr obj = &mObject;
+		if (obj)
+			emit loadedObject(obj, fileName);
 #endif
-		active->recomputePatches();
-		active->recomputeNormals();
-		active->redraw();
+		mActiveViewport->recomputePatches();
+		mActiveViewport->recomputeNormals();
+		mActiveViewport->redraw();
 	}
 }
 
+bool MainWindow::saveFile(bool with_normals, bool with_tex_coords)
+{
+	if (mCurFilename != "untitled")
+	{
+		statusBar()->showMessage(tr("Saving File..."), 3000);
+		QString curFileTemp(mCurFilename);
 
-bool MainWindow::saveFile(bool with_normals, bool with_tex_coords) {
-	if (curFile != "untitled"){
-		statusBar()->showMessage(tr("Saving File..."),3000);	
-		QString curFileTemp(curFile);
-	
-		if (!curFile.isEmpty() ){
-			if (mIncrementalSave){
-				if (incremental_save_count >= mIncrementalSaveMax){
+		if (!mCurFilename.isEmpty())
+		{
+			if (mIncrementalSave)
+			{
+				if (sIncrementalSaveCount >= mIncrementalSaveMax)
+				{
 					//go back to zero, start overwriting files...
-					incremental_save_count = 0;
+					sIncrementalSaveCount = 0;
 					//insert 00 at the end of hte name before the last dot
 					if (curFileTemp.lastIndexOf(".") > -1)
-						curFileTemp.insert(curFileTemp.lastIndexOf("."),"000");
+						curFileTemp.insert(curFileTemp.lastIndexOf("."), "000");
 					else curFileTemp.append("000");
 				}
-				else {
+				else
+				{
 					//add the leading zeros for numbers less than 10
 					QString t;
-					if (incremental_save_count < 10)
-						t = QString("00%1").arg(incremental_save_count);
-					else t = QString("0%1").arg(incremental_save_count);
-					curFileTemp.insert(curFileTemp.lastIndexOf("."),t);
+					if (sIncrementalSaveCount < 10)
+						t = QString("00%1").arg(sIncrementalSaveCount);
+					else t = QString("0%1").arg(sIncrementalSaveCount);
+					curFileTemp.insert(curFileTemp.lastIndexOf("."), t);
 				}
 			}
 			//add in the directory name
@@ -4654,61 +4808,66 @@ bool MainWindow::saveFile(bool with_normals, bool with_tex_coords) {
 
 			//materials test dave 11.07
 			QString mtlFileName = fullpath;
-			mtlFileName.replace(QString(".obj"),QString(".mtl"),Qt::CaseInsensitive);
-			mtlFileName.replace(QString(".dlfl"),QString(".mtl"),Qt::CaseInsensitive);
+			mtlFileName.replace(QString(".obj"), QString(".mtl"), Qt::CaseInsensitive);
+			mtlFileName.replace(QString(".dlfl"), QString(".mtl"), Qt::CaseInsensitive);
 			QByteArray ba2 = mtlFileName.toLatin1();
 			const char *mtlfilename = ba2.data();
 			// writeMTL(mtlfilename);
 
 			writeObject(filename, mtlfilename, with_normals, with_tex_coords);
-			
-				
+
+
 			if (mIncrementalSave)
-				incremental_save_count++;
+				sIncrementalSaveCount++;
 			setModified(false);
 			// statusBar()->clearMessage();
 			return true;
 		}
-		else {
-			QString fileName = QFileDialog::getSaveFileName(this,
-																											tr("Save File As..."),
-																											mSaveDirectory + "/" + curFileTemp,
-																											tr("All Supported Files (*.obj *.dlfl);;Wavefront OBJ Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"),
-																											0, QFileDialog::DontUseSheet);
-			if (!fileName.isEmpty()){
+		else
+		{
+			QString fileName = QFileDialog::getSaveFileName(
+				this, tr("Save File As..."),
+				mSaveDirectory + "/" + curFileTemp,
+				tr("All Supported Files (*.obj *.dlfl);;Wavefront OBJ Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"),
+				0, QFileDialog::DontUseSheet);
+
+			if (!fileName.isEmpty())
+			{
 				//for incremental save test - dave
-				incremental_save_count = 0;
-				if (mIncrementalSave){
+				sIncrementalSaveCount = 0;
+				if (mIncrementalSave)
+				{
 					//insert 000's
-					std::cout<<fileName.toLatin1().data() <<"\n";
+					std::cout << fileName.toLatin1().data() << "\n";
 					if (fileName.lastIndexOf(".") > -1)
-						fileName.insert(fileName.lastIndexOf("."),"000");
+						fileName.insert(fileName.lastIndexOf("."), "000");
 					else fileName.append("000");
 				}
-			
-				if (!fileName.indexOf(".obj") || !fileName.indexOf(".dlfl") || !fileName.indexOf(".OBJ") || !fileName.indexOf(".DLFL"))
+
+				if (!fileName.endsWith(".obj", Qt::CaseInsensitive) ||
+					!fileName.endsWith(".dlfl", Qt::CaseInsensitive))
 					fileName.append(".obj");
-				setCurrentFile(fileName);	
-			
+				setCurrentFile(fileName);
+
 				mSaveDirectory = QFileInfo(fileName).absoluteDir().absolutePath();
 				mPreferencesDialog->setSaveDirectory(mSaveDirectory);
-			
+
 				QByteArray ba = fileName.toLatin1();
 				const char *filename = ba.data();
 
 				//materials test dave 11.07
 				QString mtlFileName = fileName;
-				mtlFileName.replace(QString(".obj"),QString(".mtl"),Qt::CaseInsensitive);
-				mtlFileName.replace(QString(".dlfl"),QString(".mtl"),Qt::CaseInsensitive);
+				mtlFileName.replace(QString(".obj"), QString(".mtl"), Qt::CaseInsensitive);
+				mtlFileName.replace(QString(".dlfl"), QString(".mtl"), Qt::CaseInsensitive);
 				QByteArray ba2 = mtlFileName.toLatin1();
 				const char *mtlfilename = ba2.data();
 				// writeMTL(mtlfilename);
 
-				writeObject(filename, mtlfilename, with_normals,with_tex_coords);
-				
-				
+				writeObject(filename, mtlfilename, with_normals, with_tex_coords);
+
+
 				if (mIncrementalSave)
-					incremental_save_count++;
+					sIncrementalSaveCount++;
 				setModified(false);
 				// statusBar()->clearMessage();
 				return true;
@@ -4719,89 +4878,98 @@ bool MainWindow::saveFile(bool with_normals, bool with_tex_coords) {
 	return false;
 }
 
-bool MainWindow::saveFileAs(bool with_normals, bool with_tex_coords) {
-	
-	statusBar()->showMessage(tr("Saving File..."));	
-	
-	QString fileName = QFileDialog::getSaveFileName(this,
-																									tr("Save File As..."),
-																									mSaveDirectory + "/" + curFile,
-																									tr("All Supported Files (*.obj *.dlfl);;Wavefront OBJ Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"),
-																									0, QFileDialog::DontUseSheet );
-	if (!fileName.isEmpty()){
+bool MainWindow::saveFileAs(bool with_normals, bool with_tex_coords)
+{
+
+	statusBar()->showMessage(tr("Saving File..."));
+
+	QString fileName = QFileDialog::getSaveFileName(
+		this, tr("Save File As..."),
+		mSaveDirectory + "/" + mCurFilename,
+		tr("All Supported Files (*.obj *.dlfl);;Wavefront OBJ Files (*.obj);;DLFL Files (*.dlfl);;All Files (*)"),
+		0, QFileDialog::DontUseSheet);
+
+	if (!fileName.isEmpty())
+	{
 		//reset the incremental save count no matter what...?
-		incremental_save_count = 0;
-		if (mIncrementalSave){
+		sIncrementalSaveCount = 0;
+		if (mIncrementalSave)
+		{
 			//account for leading zeros for digits 0-9
 			if (fileName.lastIndexOf(".") > -1)
-				fileName.insert(fileName.lastIndexOf("."),"000");
+				fileName.insert(fileName.lastIndexOf("."), "000");
 			else fileName.append("000");
 		}
-		if (!fileName.indexOf(".obj") || !fileName.indexOf(".dlfl") || !fileName.indexOf(".OBJ") || !fileName.indexOf(".DLFL"))
+		if (!fileName.endsWith(".obj", Qt::CaseInsensitive) ||
+			!fileName.endsWith(".dlfl", Qt::CaseInsensitive))
 			fileName.append(".dlfl");
-		setCurrentFile(fileName);		
+		setCurrentFile(fileName);
 
 		mSaveDirectory = QFileInfo(fileName).absoluteDir().absolutePath();
 		mPreferencesDialog->setSaveDirectory(mSaveDirectory);
-				
+
 		QByteArray ba = fileName.toLatin1();
 		const char *filename = ba.data();
 
 		//materials test dave 11.07
 		QString mtlFileName = fileName;
-		mtlFileName.replace(QString(".obj"),QString(".mtl"),Qt::CaseInsensitive);
-		mtlFileName.replace(QString(".dlfl"),QString(".mtl"),Qt::CaseInsensitive);
+		mtlFileName.replace(QString(".obj"), QString(".mtl"), Qt::CaseInsensitive);
+		mtlFileName.replace(QString(".dlfl"), QString(".mtl"), Qt::CaseInsensitive);
 		QByteArray ba2 = mtlFileName.toLatin1();
 		const char *mtlfilename = ba2.data();
 		// writeMTL(mtlfilename);
 
-		writeObject(filename, mtlfilename, with_normals,with_tex_coords);
+		writeObject(filename, mtlfilename, with_normals, with_tex_coords);
 
 		if (mIncrementalSave)
-			incremental_save_count++;
-		
-		statusBar()->clearMessage();	
+			sIncrementalSaveCount++;
+
+		statusBar()->clearMessage();
 		return true;
 	}
 	statusBar()->clearMessage();
 	return false;
 }
 
-void MainWindow::setCurrentFile(QString fileName) {
+void MainWindow::setCurrentFile(const QString &fileName)
+{
 
-	curFile = QFileInfo(fileName).fileName();
+	mCurFilename = QFileInfo(fileName).fileName();
 
 	//dir name for mtl loading...??? dave 11.07
 	QString dirName = QFileInfo(fileName).absolutePath();
 	QByteArray ba2 = dirName.toLatin1();
 	const char *dirname = ba2.data();
-	object.setDirname(dirname);
+	mObject.setDirname(dirname);
 
 	//base file name for the mtllib thing...
 	QString baseName = QFileInfo(fileName).baseName();
 	QByteArray ba = baseName.toLatin1();
 	const char *filename = ba.data();
-	object.setFilename(filename);
+	mObject.setFilename(filename);
 
 	QString shownName;
-	if (curFile.isEmpty())
+	if (mCurFilename.isEmpty())
 		shownName = "untitled.obj";
 	else
-		shownName = curFile;
+		shownName = mCurFilename;
 
-	setWindowTitle( tr("%1[*] - %2").arg(shownName).arg(tr("TopMod")));
+	setWindowTitle(tr("%1[*] - %2").arg(shownName).arg(tr("TopMod")));
 	setModified(false);
 }
 
 
 /* stuart - bezier export */
-bool MainWindow::saveFileBezierOBJ( ) {
-	QString fileName = QFileDialog::getSaveFileName(this,
-																									tr("Save Bezier Patch (OBJ)..."),
-																									mSaveDirectory+ "/" + curFile,
-																									tr("Wavefront OBJ Files (*.obj);;All Files (*)"),
-																									0, QFileDialog::DontUseSheet);
-	if (!fileName.isEmpty()){
+bool MainWindow::saveFileBezierOBJ()
+{
+	QString fileName = QFileDialog::getSaveFileName(
+		this, tr("Save Bezier Patch (OBJ)..."),
+		mSaveDirectory + "/" + mCurFilename,
+		tr("Wavefront OBJ Files (*.obj);;All Files (*)"),
+		0, QFileDialog::DontUseSheet);
+
+	if (!fileName.isEmpty())
+	{
 		QByteArray ba = fileName.toLatin1();
 		const char *filename = ba.data();
 		writePatchOBJ(filename);
@@ -4811,13 +4979,15 @@ bool MainWindow::saveFileBezierOBJ( ) {
 }
 
 /* dave - lg3d export */
-bool MainWindow::saveFileLG3d( ) {
-	QString fileName = QFileDialog::getSaveFileName(this,
-																									tr("Export to LiveGraphics3D  (M)..."),
-																									mSaveDirectory+ "/" + curFile,
-																									tr("Mathematica Graphics3D Files (*.m);;All Files (*)"),
-																									0, QFileDialog::DontUseSheet);
-	if (!fileName.isEmpty()){
+bool MainWindow::saveFileLG3d()
+{
+	QString fileName = QFileDialog::getSaveFileName(
+		this, tr("Export to LiveGraphics3D  (M)..."),
+		mSaveDirectory + "/" + mCurFilename,
+		tr("Mathematica Graphics3D Files (*.m);;All Files (*)"),
+		0, QFileDialog::DontUseSheet);
+	if (!fileName.isEmpty())
+	{
 		QByteArray ba = fileName.toLatin1();
 		const char *filename = ba.data();
 		writeLG3d(filename, false);
@@ -4826,14 +4996,15 @@ bool MainWindow::saveFileLG3d( ) {
 	return false;
 }
 
-
-bool MainWindow::saveFileLG3dSelected( ) {
-	QString fileName = QFileDialog::getSaveFileName(this,
-																									tr("Export Selected Faces to LiveGraphics3D  (M)..."),
-																									mSaveDirectory+ "/" + curFile,
-																									tr("Mathematica Graphics3D Files (*.m);;All Files (*)"),
-																									0, QFileDialog::DontUseSheet);
-	if (!fileName.isEmpty()){
+bool MainWindow::saveFileLG3dSelected()
+{
+	QString fileName = QFileDialog::getSaveFileName(
+		this, tr("Export Selected Faces to LiveGraphics3D  (M)..."),
+		mSaveDirectory + "/" + mCurFilename,
+		tr("Mathematica Graphics3D Files (*.m);;All Files (*)"),
+		0, QFileDialog::DontUseSheet);
+	if (!fileName.isEmpty())
+	{
 		QByteArray ba = fileName.toLatin1();
 		const char *filename = ba.data();
 		writeLG3d(filename, true);
@@ -4843,19 +5014,21 @@ bool MainWindow::saveFileLG3dSelected( ) {
 }
 
 /* dave - stl export */
-bool MainWindow::saveFileSTL( ) {
-	
-	//triangulate the mesh first - this isn't the best solution but will work for now.
-	// globalStellate();
-	//testing out a custom triangulate function
+bool MainWindow::saveFileSTL()
+{
+
+//triangulate the mesh first - this isn't the best solution but will work for now.
+// globalStellate();
+//testing out a custom triangulate function
 	triangulate();
-	
-	QString fileName = QFileDialog::getSaveFileName(this,
-																									tr("Export STL..."),
-																									mSaveDirectory+ "/" + curFile,
-																									tr("STL Files (*.stl);;All Files (*)"),
-																									0, QFileDialog::DontUseSheet);
-	if (!fileName.isEmpty()){
+
+	QString fileName = QFileDialog::getSaveFileName(
+		this, tr("Export STL..."),
+		mSaveDirectory + "/" + mCurFilename,
+		tr("STL Files (*.stl);;All Files (*)"),
+		0, QFileDialog::DontUseSheet);
+	if (!fileName.isEmpty())
+	{
 		QByteArray ba = fileName.toLatin1();
 		const char *filename = ba.data();
 		writeSTL(filename);
@@ -4865,48 +5038,49 @@ bool MainWindow::saveFileSTL( ) {
 }
 
 /* dave - png opengl viewport screenshot export */
-bool MainWindow::viewportScreenshot( ) {
-	
+bool MainWindow::viewportScreenshot()
+{
 	// viewportPixmap = QPixmap::grabWidget(active,0,0,active->width(),active->height());
 	// viewportPixmap = QPixmap::grabWindow(active->winId(),/*mapToGlobal(active->pos()).x()*/0,/*mapToGlobal(active->pos()).y()*/0,active->width(),active->height());
-	QImage image = active->grabFrameBuffer(true);
+	QImage image = mActiveViewport->grabFrameBuffer(true);
 	QString format = "png";
 	QString initialPath = mSaveDirectory + tr("/untitled.") + format;
 
-	QString fileName = QFileDialog::getSaveFileName(this, tr("Save Viewport Screenshot As"),
-																									initialPath,
-																									tr("%1 Files (*.%2);;All Files (*)")
-																									.arg(format.toUpper())
-																									.arg(format),
-																									0, QFileDialog::DontUseSheet);
-	if (!fileName.isEmpty()){
+	QString fileName = QFileDialog::getSaveFileName(
+		this, tr("Save Viewport Screenshot As"),
+		initialPath,
+		tr("%1 Files (*.%2);;All Files (*)").arg(format.toUpper()).arg(format),
+		0, QFileDialog::DontUseSheet);
+	if (!fileName.isEmpty())
+	{
 		image.save(fileName, format.toLatin1());
 		return true;
 	}
 	return false;
 }
 
-bool MainWindow::appScreenshot(){
+bool MainWindow::appScreenshot()
+{
 	// appPixmap = QPixmap::grabWidget(this);
-	appPixmap = QPixmap::grabWindow(this->winId());
-	
+	mAppPixmap = QPixmap::grabWindow(this->winId());
+
 	QString format = "png";
 	QString initialPath = mSaveDirectory + tr("/untitled.") + format;
 
-	QString fileName = QFileDialog::getSaveFileName(this, tr("Save App Screenshot As"),
-																									initialPath,
-																									tr("%1 Files (*.%2);;All Files (*)")
-																									.arg(format.toUpper())
-																									.arg(format),
-																									0, QFileDialog::DontUseSheet);
-	if (!fileName.isEmpty()){
-		appPixmap.save(fileName, format.toLatin1());
+	QString fileName = QFileDialog::getSaveFileName(
+		this, tr("Save App Screenshot As"), initialPath,
+		tr("%1 Files (*.%2);;All Files (*)").arg(format.toUpper()).arg(format),
+		0, QFileDialog::DontUseSheet);
+	if (!fileName.isEmpty())
+	{
+		mAppPixmap.save(fileName, format.toLatin1());
 		return true;
 	}
 	return false;
 }
 
-void MainWindow::loadCube(){
+void MainWindow::loadCube()
+{
 	if (isModified())
 		undoPush();
 	setModified(false);
@@ -4914,22 +5088,23 @@ void MainWindow::loadCube(){
 	mWasPrimitive = true;
 	setCurrentFile(tr("cube.obj"));
 	readObjectQFile(":/cube.obj");
-	
+
 	//iterate through faces and color them red... just to test the renderer out...
 	// DLFLFacePtrArray fparray;
 	// object.getFaces(fparray);
 	// for (auto fPtr : fparray){
 	// 	fPtr->material()->setColor(1.0,0.0,0.0);
 	// }//end for loop
-	
-	
-	
+
+
+
 	//active->recomputePatches();
-	active->recomputeNormals();
-	active->redraw();
+	mActiveViewport->recomputeNormals();
+	mActiveViewport->redraw();
 }
 
-void MainWindow::loadOctahedron(){	
+void MainWindow::loadOctahedron()
+{
 	if (isModified())
 		undoPush();
 	setModified(false);
@@ -4938,11 +5113,12 @@ void MainWindow::loadOctahedron(){
 	setCurrentFile(tr("octahedron.obj"));
 	readObjectQFile(":/octahedron.obj");
 	//active->recomputePatches();
-	active->recomputeNormals();
-	active->redraw();
+	mActiveViewport->recomputeNormals();
+	mActiveViewport->redraw();
 }
 
-void MainWindow::loadTetrahedron(){	
+void MainWindow::loadTetrahedron()
+{
 	if (isModified())
 		undoPush();
 	setModified(false);
@@ -4951,11 +5127,12 @@ void MainWindow::loadTetrahedron(){
 	setCurrentFile(tr("tetrahedron.obj"));
 	readObjectQFile(":/tetrahedron.obj");
 	//active->recomputePatches();
-	active->recomputeNormals();
-	active->redraw();
+	mActiveViewport->recomputeNormals();
+	mActiveViewport->redraw();
 }
 
-void MainWindow::loadDodecahedron(){	
+void MainWindow::loadDodecahedron()
+{
 	if (isModified())
 		undoPush();
 	setModified(false);
@@ -4964,24 +5141,26 @@ void MainWindow::loadDodecahedron(){
 	setCurrentFile(tr("dodecahedron.obj"));
 	readObjectQFile(":/dodecahedron.obj");
 	//active->recomputePatches();
-	active->recomputeNormals();
-	active->redraw();
+	mActiveViewport->recomputeNormals();
+	mActiveViewport->redraw();
 }
 
-void MainWindow::loadIcosahedron(){	
+void MainWindow::loadIcosahedron()
+{
 	if (isModified())
 		undoPush();
-	setModified(false);	
+	setModified(false);
 	mIsPrimitive = true;
 	mWasPrimitive = true;
 	setCurrentFile(tr("icosahedron.obj"));
 	readObjectQFile(":/icosahedron.obj");
 	//active->recomputePatches();
-	active->recomputeNormals();
-	active->redraw();
+	mActiveViewport->recomputeNormals();
+	mActiveViewport->redraw();
 }
 
-void MainWindow::loadSoccerball(){	
+void MainWindow::loadSoccerball()
+{
 	if (isModified())
 		undoPush();
 	setModified(false);
@@ -4990,11 +5169,12 @@ void MainWindow::loadSoccerball(){
 	setCurrentFile(tr("soccerball.obj"));
 	readObjectQFile(":/soccerball.obj");
 	//active->recomputePatches();
-	active->recomputeNormals();
-	active->redraw();
+	mActiveViewport->recomputeNormals();
+	mActiveViewport->redraw();
 }
 
-void MainWindow::loadGeodesic(){	
+void MainWindow::loadGeodesic()
+{
 	if (isModified())
 		undoPush();
 	setModified(false);
@@ -5003,57 +5183,67 @@ void MainWindow::loadGeodesic(){
 	setCurrentFile(tr("geodesic.obj"));
 	readObjectQFile(":/geodesic.obj");
 	//active->recomputePatches();
-	active->recomputeNormals();
-	active->redraw();
+	mActiveViewport->recomputeNormals();
+	mActiveViewport->redraw();
 }
 
-bool MainWindow::isModified(){
+bool MainWindow::isModified()
+{
 	return mIsModified;
 }
 
-void MainWindow::setModified(bool isModified){
+void MainWindow::setModified(bool isModified)
+{
 	mIsModified = isModified;
-	setWindowModified(mIsModified);	
+	setWindowModified(mIsModified);
 }
 
-void MainWindow::switchPerspView(){
-	active->resetCamera();
+void MainWindow::switchPerspView()
+{
+	mActiveViewport->resetCamera();
 	// active->switchTo(VPPersp);
-	active->redraw();
+	mActiveViewport->redraw();
 }
 
-void MainWindow::switchTopView(){
+void MainWindow::switchTopView()
+{
 	// active->switchTo(VPTop);
-	active->redraw();
+	mActiveViewport->redraw();
 }
 
-void MainWindow::switchBottomView(){
+void MainWindow::switchBottomView()
+{
 	// active->switchTo(VPBottom);
-	active->redraw();
+	mActiveViewport->redraw();
 }
 
-void MainWindow::switchRightView(){
+void MainWindow::switchRightView()
+{
 	// active->switchTo(VPRight);
-	active->redraw();
+	mActiveViewport->redraw();
 }
 
-void MainWindow::switchLeftView(){
+void MainWindow::switchLeftView()
+{
 	// active->switchTo(VPLeft);
-	active->redraw();
+	mActiveViewport->redraw();
 }
 
-void MainWindow::switchFrontView(){
+void MainWindow::switchFrontView()
+{
 	// active->switchTo(VPFront);
-	active->redraw();
+	mActiveViewport->redraw();
 }
 
-void MainWindow::switchBackView(){
+void MainWindow::switchBackView()
+{
 	// active->switchTo(VPBack);
-	active->redraw();
+	mActiveViewport->redraw();
 }
 
 //recurse through selected faces to get a list of checkerboard selection for the entire object
-void MainWindow::getCheckerboardSelection(DLFLFacePtr selectedFacePtr) {
+void MainWindow::getCheckerboardSelection(DLFLFacePtr selectedFacePtr)
+{
 	if (selectedFacePtr)
 	{
 		int numShared = 0;
@@ -5061,18 +5251,18 @@ void MainWindow::getCheckerboardSelection(DLFLFacePtr selectedFacePtr) {
 		selectedFacePtr->getNeighboringFaces(fparray);
 		for (auto fPtr : fparray)
 		{
-			if (selectedFacePtr->sharesOneVertex(fPtr) && !active->isSelected(fPtr))
+			if (selectedFacePtr->sharesOneVertex(fPtr) && !mActiveViewport->isSelected(fPtr))
 			{
 				numShared++;
-				if (deselect_edges)
+				if (sDeselectEdges)
 				{
-					active->clearSelectedFace(fPtr);
-					num_sel_faces--;
+					mActiveViewport->clearSelectedFace(fPtr);
+					sNumSelFaces--;
 				}
 				else
 				{
-					active->setSelectedFace(fPtr);
-					num_sel_faces++;					
+					mActiveViewport->setSelectedFace(fPtr);
+					sNumSelFaces++;
 				}
 				getCheckerboardSelection(fPtr);
 			}
@@ -5080,29 +5270,35 @@ void MainWindow::getCheckerboardSelection(DLFLFacePtr selectedFacePtr) {
 	}
 }
 
-//recurse through selected edge to get a list of 
-void MainWindow::getEdgeLoopSelection(DLFLEdgePtr selectedEdgePtr) {
-	if (selectedEdgePtr){
+//recurse through selected edge to get a list of
+void MainWindow::getEdgeLoopSelection(DLFLEdgePtr selectedEdgePtr)
+{
+	if (selectedEdgePtr)
+	{
 		//first check to see if edge only connects to only three other edges
 		DLFLVertexPtr vp1, vp2;
 		DLFLEdgePtrArray eparray;
 		selectedEdgePtr->getVertexPointers(vp1, vp2);
-		if (vp1->valence() == 4 && vp2->valence() == 4){
+		if (vp1->valence() == 4 && vp2->valence() == 4)
+		{
 			//get edges connected to vertex 1
 			eparray.clear();
 			vp1->getEdges(eparray);
 			//loop through them to find the one that doesn't share a face
 			for (auto ePtr : eparray)
 			{
-				if ( !coFacial(ePtr, selectedEdgePtr) ){
-					if (deselect_edges){
-						active->clearSelectedEdge(ePtr);
-						num_sel_edges--;
+				if (!coFacial(ePtr, selectedEdgePtr))
+				{
+					if (sDeselectEdges)
+					{
+						mActiveViewport->clearSelectedEdge(ePtr);
+						sNumSelEdges--;
 						getEdgeLoopSelection(ePtr);
 					}
-					else if (!active->isSelected(ePtr)){
-						active->setSelectedEdge(ePtr);
-						num_sel_edges++;
+					else if (!mActiveViewport->isSelected(ePtr))
+					{
+						mActiveViewport->setSelectedEdge(ePtr);
+						sNumSelEdges++;
 						getEdgeLoopSelection(ePtr);
 					}
 				}
@@ -5113,15 +5309,18 @@ void MainWindow::getEdgeLoopSelection(DLFLEdgePtr selectedEdgePtr) {
 			//loop through them to find the one that doesn't share a face
 			for (auto ePtr : eparray)
 			{
-				if ( !coFacial(ePtr, selectedEdgePtr) ){
-					if (deselect_edges){
-						active->clearSelectedEdge(ePtr);
-						num_sel_edges--;
+				if (!coFacial(ePtr, selectedEdgePtr))
+				{
+					if (sDeselectEdges)
+					{
+						mActiveViewport->clearSelectedEdge(ePtr);
+						sNumSelEdges--;
 						getEdgeLoopSelection(ePtr);
 					}
-					else if (!active->isSelected(ePtr)){
-						active->setSelectedEdge(ePtr);
-						num_sel_edges++;
+					else if (!mActiveViewport->isSelected(ePtr))
+					{
+						mActiveViewport->setSelectedEdge(ePtr);
+						sNumSelEdges++;
 						getEdgeLoopSelection(ePtr);
 					}
 				}
@@ -5129,49 +5328,55 @@ void MainWindow::getEdgeLoopSelection(DLFLEdgePtr selectedEdgePtr) {
 			return;
 		}//end if vp->valence
 		return;
-	}	
+	}
 }
 
-//recurse through selected edge to get a list of 
+//recurse through selected edge to get a list of
 void MainWindow::getFaceLoopSelection(
 	DLFLEdgePtr selectedEdgePtr, bool start,
 	DLFLFacePtr face_loop_marker, bool select_face_loop)
 {
-	if ( (selectedEdgePtr == face_loop_start_edge) && !start) 
+	if ((selectedEdgePtr == sFaceLoopStartEdge) && !start)
 		return;
 
 	int idx = 0;
 	DLFLEdgePtrArray edges;
 	DLFLFacePtr fptr1, fptr2;
 	//get the two faces corresponding to this edge ptr
-	selectedEdgePtr->getFacePointers(fptr1,fptr2);
+	selectedEdgePtr->getFacePointers(fptr1, fptr2);
 	//check if the two faces are quads
-	if (fptr1 && fptr1->numFaceVertexes() == 4 && !(fptr1 == face_loop_marker) ){
-		if (!active->isSelected(fptr1)){
-			active->setSelectedFace(num_sel_faces,fptr1);
-			num_sel_faces++;
+	if (fptr1 && fptr1->numFaceVertexes() == 4 && !(fptr1 == face_loop_marker))
+	{
+		if (!mActiveViewport->isSelected(fptr1))
+		{
+			mActiveViewport->setSelectedFace(sNumSelFaces, fptr1);
+			sNumSelFaces++;
 		}
 		fptr1->getEdges(edges);
-		idx =0;
+		idx = 0;
 		for (auto ePtr : edges)
 		{
-			if (ePtr == selectedEdgePtr){
+			if (ePtr == selectedEdgePtr)
+			{
 				getFaceLoopSelection(edges[(idx + 2) % 4], false, fptr1, select_face_loop);
 			}
 			idx++;
 		}//end for loop
 	}
-	if (fptr2 && fptr2->numFaceVertexes() == 4 && !(fptr2 == face_loop_marker) ){
-		if (!active->isSelected(fptr2)){
-			active->setSelectedFace(num_sel_faces,fptr2);
-			num_sel_faces++;
+	if (fptr2 && fptr2->numFaceVertexes() == 4 && !(fptr2 == face_loop_marker))
+	{
+		if (!mActiveViewport->isSelected(fptr2))
+		{
+			mActiveViewport->setSelectedFace(sNumSelFaces, fptr2);
+			sNumSelFaces++;
 		}
 		fptr2->getEdges(edges);
-		idx =0;
+		idx = 0;
 		for (auto ePtr : edges)
 		{
-			if (ePtr == selectedEdgePtr){
-				getFaceLoopSelection(edges[(idx+2)%4], false, fptr2, select_face_loop);
+			if (ePtr == selectedEdgePtr)
+			{
+				getFaceLoopSelection(edges[(idx + 2) % 4], false, fptr2, select_face_loop);
 				// return;
 			}
 			idx++;
@@ -5179,132 +5384,154 @@ void MainWindow::getFaceLoopSelection(
 	}
 }
 
-//recurse through selected edge to get a list of 
+//recurse through selected edge to get a list of
 void MainWindow::getEdgeRingSelection(
 	DLFLEdgePtr selectedEdgePtr, bool start,
 	DLFLFacePtr face_loop_marker, bool select_face_loop)
 {
-	if ( (selectedEdgePtr == edge_ring_start_edge) && !start) 
+	if ((selectedEdgePtr == sEdgeRingStartEdge) && !start)
 		return;
 
 	int idx = 0;
 	DLFLEdgePtrArray edges;
 	DLFLFacePtr fptr1, fptr2;
-	if (!active->isSelected(selectedEdgePtr)){
-		active->setSelectedEdge(selectedEdgePtr);
-		num_sel_edges++;
+	if (!mActiveViewport->isSelected(selectedEdgePtr))
+	{
+		mActiveViewport->setSelectedEdge(selectedEdgePtr);
+		sNumSelEdges++;
 	}
 	//get the two faces corresponding to this edge ptr
-	selectedEdgePtr->getFacePointers(fptr1,fptr2);
+	selectedEdgePtr->getFacePointers(fptr1, fptr2);
 	//check if the two faces are quads
-	if (fptr1 && fptr1->numFaceVertexes() == 4 && !(fptr1 == face_loop_marker) ){
+	if (fptr1 && fptr1->numFaceVertexes() == 4 && !(fptr1 == face_loop_marker))
+	{
 		fptr1->getEdges(edges);
-		idx =0;
+		idx = 0;
 		for (auto ePtr : edges)
 		{
-			if (ePtr == selectedEdgePtr){
-				getEdgeRingSelection(edges[(idx+2)%4],false,fptr1, select_face_loop);
+			if (ePtr == selectedEdgePtr)
+			{
+				getEdgeRingSelection(edges[(idx + 2) % 4], false, fptr1, select_face_loop);
 			}
 			idx++;
 		}//end for loop
 	}
-	if (fptr2 && fptr2->numFaceVertexes() == 4 && !(fptr2 == face_loop_marker) ){
+	if (fptr2 && fptr2->numFaceVertexes() == 4 && !(fptr2 == face_loop_marker))
+	{
 		fptr2->getEdges(edges);
-		idx =0;
+		idx = 0;
 		for (auto ePtr : edges)
 		{
-			if (ePtr == selectedEdgePtr){
-				getEdgeRingSelection(edges[(idx+2)%4], false, fptr2, select_face_loop);
+			if (ePtr == selectedEdgePtr)
+			{
+				getEdgeRingSelection(edges[(idx + 2) % 4], false, fptr2, select_face_loop);
 			}
 			idx++;
 		}//end for loop
 	}
 }
 
-void MainWindow::setLanguageSpanish(){
+void MainWindow::setLanguageSpanish()
+{
 	changeLanguage("es");
 }
 
-void MainWindow::setLanguageFrench(){
+void MainWindow::setLanguageFrench()
+{
 	changeLanguage("fr");
 }
 
-void MainWindow::setLanguageGerman(){
+void MainWindow::setLanguageGerman()
+{
 	changeLanguage("de");
 }
 
-void MainWindow::setLanguageTurkish(){
+void MainWindow::setLanguageTurkish()
+{
 	changeLanguage("tr");
 }
 
-void MainWindow::setLanguageItalian(){
+void MainWindow::setLanguageItalian()
+{
 	changeLanguage("it");
 }
 
-void MainWindow::setLanguageHindi(){
+void MainWindow::setLanguageHindi()
+{
 	changeLanguage("hi");
 }
 
-void MainWindow::setLanguageCatalan(){
+void MainWindow::setLanguageCatalan()
+{
 	changeLanguage("ca");
 }
 
-void MainWindow::setLanguageEnglish(){
+void MainWindow::setLanguageEnglish()
+{
 	changeLanguage("en");
 }
 
-void MainWindow::changeLanguage(const QString & string){
-	
-	if(string == QString("es")) {
-		translator_es->load(QString(":lang/topmod_es"));
-		QCoreApplication::installTranslator(translator_es);
+void MainWindow::changeLanguage(const QString & string)
+{
+
+	if (string == QString("es"))
+	{
+		mTranslator_es->load(QString(":lang/topmod_es"));
+		QCoreApplication::installTranslator(mTranslator_es);
 	}
-	if(string == QString("fr")) {
-		translator_fr->load(QString(":lang/topmod_fr") );
-		QCoreApplication::installTranslator(translator_fr);
+	if (string == QString("fr"))
+	{
+		mTranslator_fr->load(QString(":lang/topmod_fr"));
+		QCoreApplication::installTranslator(mTranslator_fr);
 	}
-	if(string == QString("de")) {
-		translator_de->load(QString(":lang/topmod_de") );
-		QCoreApplication::installTranslator(translator_de);
+	if (string == QString("de"))
+	{
+		mTranslator_de->load(QString(":lang/topmod_de"));
+		QCoreApplication::installTranslator(mTranslator_de);
 	}
-	if(string == QString("tr")) {
-		translator_tr->load(QString(":lang/topmod_tr") );
-		QCoreApplication::installTranslator(translator_tr);
+	if (string == QString("tr"))
+	{
+		mTranslator_tr->load(QString(":lang/topmod_tr"));
+		QCoreApplication::installTranslator(mTranslator_tr);
 	}
-	if(string == QString("it")) {
-		translator_it->load(QString(":lang/topmod_it") );
-		QCoreApplication::installTranslator(translator_it);
+	if (string == QString("it"))
+	{
+		mTranslator_it->load(QString(":lang/topmod_it"));
+		QCoreApplication::installTranslator(mTranslator_it);
 	}
-	if(string == QString("hi")) {
-		translator_hi->load(QString(":lang/topmod_hi") );
-		QCoreApplication::installTranslator(translator_hi);
+	if (string == QString("hi"))
+	{
+		mTranslator_hi->load(QString(":lang/topmod_hi"));
+		QCoreApplication::installTranslator(mTranslator_hi);
 	}
-	if(string == QString("ca")) {
-		translator_ca->load(QString(":lang/topmod_ca") );
-		QCoreApplication::installTranslator(translator_ca);
+	if (string == QString("ca"))
+	{
+		mTranslator_ca->load(QString(":lang/topmod_ca"));
+		QCoreApplication::installTranslator(mTranslator_ca);
 	}
-	if(string == QString("en")){
-    QCoreApplication::removeTranslator(translator_es);
-    QCoreApplication::removeTranslator(translator_fr);
-    QCoreApplication::removeTranslator(translator_de);
-    QCoreApplication::removeTranslator(translator_tr);
-    QCoreApplication::removeTranslator(translator_it);
-    QCoreApplication::removeTranslator(translator_hi);
-    QCoreApplication::removeTranslator(translator_ca);
+	if (string == QString("en"))
+	{
+		QCoreApplication::removeTranslator(mTranslator_es);
+		QCoreApplication::removeTranslator(mTranslator_fr);
+		QCoreApplication::removeTranslator(mTranslator_de);
+		QCoreApplication::removeTranslator(mTranslator_tr);
+		QCoreApplication::removeTranslator(mTranslator_it);
+		QCoreApplication::removeTranslator(mTranslator_hi);
+		QCoreApplication::removeTranslator(mTranslator_ca);
 	}
 }
 
 /**
 * \brief realtime app translation function
-* 
-* \todo all translatable text will eventually go in this function, but that would take forever! we'll see if there's another 
-* way to handle that. it's probably going to be a matter of putting all the QAction->setText() and 
+*
+* \todo all translatable text will eventually go in this function, but that would take forever! we'll see if there's another
+* way to handle that. it's probably going to be a matter of putting all the QAction->setText() and
 * QAction->setTooltip() calls into one function. This is going to be a pain but could be beneficial in the long run
 * I'm testing it out right now. we'll see how this goes...
-* 
+*
 */
-void MainWindow::retranslateUi() {
-
+void MainWindow::retranslateUi()
+{
 	//retranslate all the operating mode classes
 	mBasicsMode->retranslateUi();
 	mExtrusionsMode->retranslateUi();
@@ -5313,21 +5540,21 @@ void MainWindow::retranslateUi() {
 	mHighgenusMode->retranslateUi();
 	mConicalMode->retranslateUi();
 	mExperimentalMode->retranslateUi();
-	
+
 	mStartupDialogDockWidget->setWindowTitle(tr("Learning Movies"));
 	mToolOptionsDockWidget->setWindowTitle(mToolOptionsDockWidget->windowTitle());
 
-	#ifdef WITH_PYTHON
+#ifdef WITH_PYTHON
 	mScriptEditor->retranslateUi();
 	mScriptEditorDockWidget->setWindowTitle(tr("Script Editor"));
-	mShowScriptEditorAct->setStatusTip( tr("Show the script editor to execute DLFL commands") );
-	#endif
+	mShowScriptEditorAct->setStatusTip(tr("Show the script editor to execute DLFL commands"));
+#endif
 
 	//from createMenus()
 	mFileMenu->setTitle(tr("&File"));
-	#ifdef WITH_VERSE
+#ifdef WITH_VERSE
 	mVerseMenu->setTitle(tr("&Verse"));
-	#endif
+#endif
 	mEditMenu->setTitle(tr("&Edit"));
 	mDisplayMenu->setTitle(tr("&Display"));
 	mRendererMenu->setTitle(tr("&Renderer"));
@@ -5355,25 +5582,32 @@ void MainWindow::retranslateUi() {
 	mSavePatchesAct->setText(tr("Save &Patch OBJ..."));
 	mSavePatchesAct->setStatusTip(tr("Save a bezier patch .obj file"));
 	mSaveLG3dAct->setText(tr("Export LiveGrahpics3D..."));
-	mSaveLG3dAct->setStatusTip(tr("Export a LiveGraphics3D (*.m) file for embedding into the TopMod Wiki, Warning: you cannot import this file back into TopMod"));
+	mSaveLG3dAct->setStatusTip(tr(
+		"Export a LiveGraphics3D (*.m) file for embedding into the TopMod Wiki, "\
+		"Warning: you cannot import this file back into TopMod"));
 	mSaveLG3dSelectedAct->setText(tr("Export LG3d (Sel. Faces)..."));
-	mSaveLG3dSelectedAct->setStatusTip(tr("Export a LiveGraphics3D (*.m) of the current selected faces file for embedding into the TopMod Wiki, Warning: you cannot import this file back into TopMod"));
+	mSaveLG3dSelectedAct->setStatusTip(tr(
+		"Export a LiveGraphics3D (*.m) of the current selected faces file "\
+		"for embedding into the TopMod Wiki, "\
+		"Warning: you cannot import this file back into TopMod"));
 	mExportSTLAct->setText(tr("Export STL..."));
-	mExportSTLAct->setStatusTip(tr("Export a stereolithography (*.stl) file for use with various rapid prototyping software and hardware"));
+	mExportSTLAct->setStatusTip(tr(
+		"Export a stereolithography (*.stl) file "
+		"for use with various rapid prototyping software and hardware"));
 	mScreenshotAppAct->setText(tr("Save App Screenshot..."));
 	mScreenshotAppAct->setStatusTip(tr("Save a screenshot of the entire main application window (*.png)"));
 	mScreenshotViewportAct->setText(tr("Save Viewport Screenshot..."));
 	mScreenshotViewportAct->setStatusTip(tr("Save a screenshot of the contents of the OpenGL viewport (*.png)"));
-	loadTextureAct->setText(tr("Load &Texture..."));
-	loadTextureAct->setStatusTip(tr("Load Texture from file"));
-	printInfoAct->setText(tr("Print &Information"));
-	printInfoAct->setStatusTip(tr("Print Information to the console"));
-	printFaceListAct->setText(tr("Print &Face List"));
-	printFaceListAct->setStatusTip(tr("Print Face List to the console"));
-	printVertexListAct->setText(tr("Print &Vertex List"));
-	printVertexListAct->setStatusTip(tr("Save the document under a new name"));
-	printEdgeListAct->setText(tr("Print &Edge List"));
-	printEdgeListAct->setStatusTip(tr("Print Edge list to the console"));
+	mLoadTextureAct->setText(tr("Load &Texture..."));
+	mLoadTextureAct->setStatusTip(tr("Load Texture from file"));
+	mPrintInfoAct->setText(tr("Print &Information"));
+	mPrintInfoAct->setStatusTip(tr("Print Information to the console"));
+	mPrintFaceListAct->setText(tr("Print &Face List"));
+	mPrintFaceListAct->setStatusTip(tr("Print Face List to the console"));
+	mPrintVertexListAct->setText(tr("Print &Vertex List"));
+	mPrintVertexListAct->setStatusTip(tr("Save the document under a new name"));
+	mPrintEdgeListAct->setText(tr("Print &Edge List"));
+	mPrintEdgeListAct->setStatusTip(tr("Print Edge list to the console"));
 	mPrintCVListAct->setText(tr("Print &CV List"));
 	mPrintCVListAct->setStatusTip(tr("Print CV list to the console"));
 	mExitAct->setText(tr("E&xit"));
@@ -5381,10 +5615,10 @@ void MainWindow::retranslateUi() {
 
 
 	//quick command quicksilver like interface
-	#ifdef QCOMPLETER
+#ifdef QCOMPLETER
 	mQuickCommandAct->setText(tr("Quick Command"));
 	mQuickCommandAct->setStatusTip(tr("Quick Command Access with Autocompletion"));
-	#endif		
+#endif
 	//Edit Menu Actions
 	mDeleteSelectedAct->setText(/*QIcon(":images/edit-undo.png"),*/ tr("&Delete Selected"));
 	mDeleteSelectedAct->setStatusTip(tr("Delete Selected"));
@@ -5392,9 +5626,9 @@ void MainWindow::retranslateUi() {
 	mRedoAct->setText(tr("&Redo"));
 	mClearUndoListAct->setText(tr("&Clear Undo List"));
 	//View Menu Actions
-	mPerspViewAct->setText( tr("&Reset Camera"));
-	mZoomOutAct->setText( tr("Zoom Out"));
-	mZoomInAct->setText( tr("Zoom In"));
+	mPerspViewAct->setText(tr("&Reset Camera"));
+	mZoomOutAct->setText(tr("Zoom Out"));
+	mZoomInAct->setText(tr("Zoom In"));
 	// mTopViewAct->setText( tr("&Top View"));
 	// 	mBottomViewAct->setText( tr("&Bottom View"));
 	// 	mFrontViewAct->setText( tr("&Front View"));
@@ -5405,126 +5639,126 @@ void MainWindow::retranslateUi() {
 	//Display Menu Actions
 	mFullscreenAct->setText(tr("&Full Screen"));
 	mFullscreenAct->setStatusTip(tr("Toggle Full Screen"));
-	showVerticesAct->setText(tr("Show &Vertices"));
+	mShowVerticesAct->setText(tr("Show &Vertices"));
 	mShowFaceIDsAct->setText(tr("Show &Face IDs"));
 	mShowEdgeIDsAct->setText(tr("Show &Edge IDs"));
 	mShowVertexIDsAct->setText(tr("Show &Vertex IDs"));
 	mShowSelectedIDsAct->setText(tr("Show &Selected IDs"));
-	showSilhouetteAct->setText(tr("Show &Silhouette"));
-	showWireframeAct->setText(tr("Show &Wireframe"));
-	showCoordinateAxesAct->setText(tr("Show &Coordinate Axes"));
-	objectOrientationAct->setText(tr("Reverse Object"));
+	mShowSilhouetteAct->setText(tr("Show &Silhouette"));
+	mShowWireframeAct->setText(tr("Show &Wireframe"));
+	mShowCoordinateAxesAct->setText(tr("Show &Coordinate Axes"));
+	mObjectOrientationAct->setText(tr("Reverse Object"));
 	mShowNormalsAct->setText(tr("Show &Normals"));
 	mShowFaceCentroidsAct->setText(tr("Show &Face Centroids"));
-	showHUDAct->setText(tr("Show &Heads Up Display"));
-	showHUDAct->setStatusTip(tr("Show the Heads Up Display"));
-	#ifdef GPU_OK
+	mShowHUDAct->setText(tr("Show &Heads Up Display"));
+	mShowHUDAct->setStatusTip(tr("Show the Heads Up Display"));
+#ifdef GPU_OK
 	mUseGPUAct->setText(tr("&Use GPU Shading"));
 	mUseGPUAct->setStatusTip(tr("Use GPU Shading"));
-	#endif
+#endif
 	mAntialiasingAct->setText(tr("Toggle &Antialiasing"));
 	mAntialiasingAct->setStatusTip(tr("Toggle Antialiasing"));
 
-	#ifdef WITH_PYTHON
-	mShowScriptEditorAct->setStatusTip( tr("Show the script editor to execute DLFL commands") );
-	#endif
-	#ifdef WITH_VERSE
-	mShowVerseDialogAct->setStatusTip( tr("Show the verse dialog to view verse server connection status") );
-	#endif	
+#ifdef WITH_PYTHON
+	mShowScriptEditorAct->setStatusTip(tr("Show the script editor to execute DLFL commands"));
+#endif
+#ifdef WITH_VERSE
+	mShowVerseDialogAct->setStatusTip(tr("Show the verse dialog to view verse server connection status"));
+#endif
 
-	mShowToolOptionsAct->setStatusTip( tr("Show the tool options window") );
-	mShowStartupDialogAct->setStatusTip( tr("Show the startup screen with links to video tutorials") );
-	mShowAnimatedHelpAct->setStatusTip( tr("Show/Hide the animated help window") );
+	mShowToolOptionsAct->setStatusTip(tr("Show the tool options window"));
+	mShowStartupDialogAct->setStatusTip(tr("Show the startup screen with links to video tutorials"));
+	mShowAnimatedHelpAct->setStatusTip(tr("Show/Hide the animated help window"));
 
 	//Renderer Menu Actions
-	wireframeRendererAct->setText(tr("&Wireframe Renderer"));
-	wireframeRendererAct->setStatusTip(tr("Switch the current renderer to Wireframe"));
-	normalRendererAct->setText(tr("&Normal Renderer"));
-	normalRendererAct->setStatusTip(tr("Switch the current renderer to Normal"));
-	lightedRendererAct->setText(tr("&Lighted Renderer"));
-	lightedRendererAct->setStatusTip(tr("Switch the current renderer to Lighted"));
-	texturedRendererAct->setText(tr("&Textured Renderer"));
-	texturedRendererAct->setStatusTip(tr("Switch the current renderer to Textured"));
-	texturedLightedAct->setText(tr("Te&xtured Lighted Renderer"));
-	texturedLightedAct->setStatusTip(tr("Switch the current renderer to Textured Lit"));
-	patchRendererAct->setText(tr("&Patch Renderer"));
-	patchRendererAct->setStatusTip(tr("Switch the current renderer to Patch"));
-	colorableRendererAct->setText(tr("&Colorable Renderer"));
-	colorableRendererAct->setStatusTip(tr("Switch the current renderer to Colorable"));
+	mWireframeRendererAct->setText(tr("&Wireframe Renderer"));
+	mWireframeRendererAct->setStatusTip(tr("Switch the current renderer to Wireframe"));
+	mNormalRendererAct->setText(tr("&Normal Renderer"));
+	mNormalRendererAct->setStatusTip(tr("Switch the current renderer to Normal"));
+	mLightedRendererAct->setText(tr("&Lighted Renderer"));
+	mLightedRendererAct->setStatusTip(tr("Switch the current renderer to Lighted"));
+	mTexturedRendererAct->setText(tr("&Textured Renderer"));
+	mTexturedRendererAct->setStatusTip(tr("Switch the current renderer to Textured"));
+	mTexturedLightedAct->setText(tr("Te&xtured Lighted Renderer"));
+	mTexturedLightedAct->setStatusTip(tr("Switch the current renderer to Textured Lit"));
+	mPatchRendererAct->setText(tr("&Patch Renderer"));
+	mPatchRendererAct->setStatusTip(tr("Switch the current renderer to Patch"));
+	mColorableRendererAct->setText(tr("&Colorable Renderer"));
+	mColorableRendererAct->setStatusTip(tr("Switch the current renderer to Colorable"));
 
 	//PRIMITIVES MENU ACTIONS
-	pCubeAct->setText(tr("&Cube"));
-	pCubeAct->setStatusTip(tr("Load a Cube"));
-	pOctahedronAct->setText(tr("&Octahedron"));
-	pOctahedronAct->setStatusTip(tr("Load an octahedron"));
-	pTetrahedronAct->setText(tr("&Tetrahedron"));
-	pTetrahedronAct->setStatusTip(tr("Load a tetrahedron"));
-	pDodecahedronAct->setText(tr("&Dodecahedron"));
-	pDodecahedronAct->setStatusTip(tr("Load a dodecahedron"));
-	pIcosahedronAct->setText(tr("&Icosahedron"));
-	pIcosahedronAct->setStatusTip(tr("Load an icosahedron"));
-	pSoccerBallAct->setText(tr("&Soccer ball"));
-	pSoccerBallAct->setStatusTip(tr("Load a soccer ball"));
-	pGeodesicAct->setText(tr("&Geodesic Dome"));
-	pGeodesicAct->setStatusTip(tr("Load a geodesic dome"));
+	mPrimCubeAct->setText(tr("&Cube"));
+	mPrimCubeAct->setStatusTip(tr("Load a Cube"));
+	mPrimOctahedronAct->setText(tr("&Octahedron"));
+	mPrimOctahedronAct->setStatusTip(tr("Load an octahedron"));
+	mPrimTetrahedronAct->setText(tr("&Tetrahedron"));
+	mPrimTetrahedronAct->setStatusTip(tr("Load a tetrahedron"));
+	mPrimDodecahedronAct->setText(tr("&Dodecahedron"));
+	mPrimDodecahedronAct->setStatusTip(tr("Load a dodecahedron"));
+	mPrimIcosahedronAct->setText(tr("&Icosahedron"));
+	mPrimIcosahedronAct->setStatusTip(tr("Load an icosahedron"));
+	mPrimSoccerBallAct->setText(tr("&Soccer ball"));
+	mPrimSoccerBallAct->setStatusTip(tr("Load a soccer ball"));
+	mPrimGeodesicAct->setText(tr("&Geodesic Dome"));
+	mPrimGeodesicAct->setStatusTip(tr("Load a geodesic dome"));
 	//Object Menu Actions
-	subdivideAllEdgesAct->setText(tr("Subdivide All &Edges"));
-	planarizeAllFacesAct->setText(tr("Planarize All &Faces"));
+	mSubdivideAllEdgesAct->setText(tr("Subdivide All &Edges"));
+	mPlanarizeAllFacesAct->setText(tr("Planarize All &Faces"));
 	makeObjectSphericalAct->setText(tr("Make &Object Spherical"));
 	mCleanup2gonsAct->setText(tr("Cleanup 2-gons"));
 	mCleanupWingedVerticesAct->setText(tr("Remove valence-2 vertices"));
 	mSplitValence2VerticesAct->setText(tr("Split valence-2 vertices"));
-	makeObjectSmoothAct->setText(tr("Make Object &Smooth"));
+	mMakeObjectSmoothAct->setText(tr("Make Object &Smooth"));
 	mPerformCuttingAct->setText(tr("Perform Cutting"));
 	mPerformCuttingAct->setStatusTip(tr("Cut selected faces, edges, or vertices based on the current selection mask"));
-	createCrustScalingAct->setText(tr("&Create Crust (Scaling)"));
-	createCrustScalingAct->setStatusTip(tr("Create a crust using the currently selected faces with scaling mode"));
-	createCrustThicknessAct->setText(tr("Create Crust (&Thickness)"));
-	createCrustThicknessAct->setStatusTip(tr("Create a crust using the currently selected faces with thickness mode"));
-	makeWireframeAct->setText(tr("Create Wireframe"));
-	makeWireframeAct->setStatusTip(tr("Create a wireframe model using the current options"));
-	makeColumnsAct->setText(tr("Create Columns"));
-	makeColumnsAct->setStatusTip(tr("Create a column model using the current options"));
-	makeSierpinskiAct->setText(tr("Create Sierpinski"));
-	makeSierpinskiAct->setStatusTip(tr("Create a sierpinski tetrahedra"));
-	computeLightingAct->setText(tr("Compute &Lighting"));
-	computeNormalsAndLightingAct->setText(tr("Compute &Normals and Lighting"));
-	assignTextureCoordinatesAct->setText(tr("Assign &Texture Coordinates"));
+	mCreateCrustScalingAct->setText(tr("&Create Crust (Scaling)"));
+	mCreateCrustScalingAct->setStatusTip(tr("Create a crust using the currently selected faces with scaling mode"));
+	mCreateCrustThicknessAct->setText(tr("Create Crust (&Thickness)"));
+	mCreateCrustThicknessAct->setStatusTip(tr("Create a crust using the currently selected faces with thickness mode"));
+	mMakeWireframeAct->setText(tr("Create Wireframe"));
+	mMakeWireframeAct->setStatusTip(tr("Create a wireframe model using the current options"));
+	mMakeColumnsAct->setText(tr("Create Columns"));
+	mMakeColumnsAct->setStatusTip(tr("Create a column model using the current options"));
+	mMakeSierpinskiAct->setText(tr("Create Sierpinski"));
+	mMakeSierpinskiAct->setStatusTip(tr("Create a sierpinski tetrahedra"));
+	mComputeLightingAct->setText(tr("Compute &Lighting"));
+	mComputeNormalsAndLightingAct->setText(tr("Compute &Normals and Lighting"));
+	mAssignTextureCoordinatesAct->setText(tr("Assign &Texture Coordinates"));
 	//SELECTION MENU ACTIONS
-	selectVertexAct->setText(tr("Select &Vertex"));
-	selectVertexAct->setStatusTip(tr("Select a Vertex"));
-	selectMultipleVerticesAct->setText(tr("Select Multiple Vertices"));
-	selectMultipleVerticesAct->setStatusTip(tr("Select multiple vertices"));
+	mSelectVertexAct->setText(tr("Select &Vertex"));
+	mSelectVertexAct->setStatusTip(tr("Select a Vertex"));
+	mSelectMultipleVerticesAct->setText(tr("Select Multiple Vertices"));
+	mSelectMultipleVerticesAct->setStatusTip(tr("Select multiple vertices"));
 	mEditVertexAct->setText(tr("Edit Verte&x"));
 	mEditVertexAct->setStatusTip(tr("Select and Move Vertices One at a time."));
-	selectFaceAct->setText(tr("Select &Face"));
-	selectFaceAct->setStatusTip(tr("Select One Face. Just for practice. :)"));
-	selectFaceLoopAct->setText(tr("Select Face Loo&p"));
-	selectFaceLoopAct->setStatusTip(tr("Select a Face Loop."));
-	selectEdgeRingAct->setText(tr("Select Edge &Ring"));
-	selectEdgeRingAct->setStatusTip(tr("Select an Edge Ring."));
-	selectMultipleFacesAct->setText(tr("Select &Multiple Faces"));
-	selectSimilarFacesAct->setText(tr("Select &Similar Faces"));
-	selectFacesByAreaAct->setText(tr("Select Faces By Surf. Area"));
-	selectFacesByColorAct->setText(tr("Select Faces By Color"));
+	mSelectFaceAct->setText(tr("Select &Face"));
+	mSelectFaceAct->setStatusTip(tr("Select One Face. Just for practice. :)"));
+	mSelectFaceLoopAct->setText(tr("Select Face Loo&p"));
+	mSelectFaceLoopAct->setStatusTip(tr("Select a Face Loop."));
+	mSelectEdgeRingAct->setText(tr("Select Edge &Ring"));
+	mSelectEdgeRingAct->setStatusTip(tr("Select an Edge Ring."));
+	mSelectMultipleFacesAct->setText(tr("Select &Multiple Faces"));
+	mSelectSimilarFacesAct->setText(tr("Select &Similar Faces"));
+	mSelectFacesByAreaAct->setText(tr("Select Faces By Surf. Area"));
+	mSelectFacesByColorAct->setText(tr("Select Faces By Color"));
 	mSelectionWindowAct->setText(tr("Selection Window"));
-	selectCheckerboardFacesAct->setText(tr("C&heckerboard Select Faces"));
-	selectAllAct->setText(tr("Select &All"));
+	mSelectCheckerboardFacesAct->setText(tr("C&heckerboard Select Faces"));
+	mSelectAllAct->setText(tr("Select &All"));
 	mGrowSelectionAct->setText(tr("Grow Selection"));
 	mShrinkSelectionAct->setText(tr("Shrink Selection"));
-	selectInverseAct->setText(tr("Select &Inverse"));
-	selectEdgeAct->setText(tr("Select &Edge"));
-	selectEdgeAct->setStatusTip(tr("Select one Edge"));
+	mSelectInverseAct->setText(tr("Select &Inverse"));
+	mSelectEdgeAct->setText(tr("Select &Edge"));
+	mSelectEdgeAct->setStatusTip(tr("Select one Edge"));
 	mCollapseSelectedEdgesAct->setText(tr("Collapse Selected Edges"));
 	mCollapseSelectedEdgesAct->setStatusTip(tr("Collapse Selected Edges"));
-	selectMultipleEdgesAct->setText(tr("Select Multiple Edges"));
-	selectMultipleEdgesAct->setStatusTip(tr("Select multiple edges"));
-	selectEdgeLoopAct->setText(tr("Select Edge &Loop"));
-	selectEdgeLoopAct->setStatusTip(tr("Select an Edge Loop"));
-	selectCornerAct->setText(tr("Select &Corner"));
-	selectCornerAct->setStatusTip(tr("Select a Corner"));
-	exitSelectionModeAct->setText(tr("E&xit Selection Mode"));
-	clearSelectedModeAct->setText(tr("&Clear Selected"));
+	mSelectMultipleEdgesAct->setText(tr("Select Multiple Edges"));
+	mSelectMultipleEdgesAct->setStatusTip(tr("Select multiple edges"));
+	mSelectEdgeLoopAct->setText(tr("Select Edge &Loop"));
+	mSelectEdgeLoopAct->setStatusTip(tr("Select an Edge Loop"));
+	mSelectCornerAct->setText(tr("Select &Corner"));
+	mSelectCornerAct->setStatusTip(tr("Select a Corner"));
+	mExitSelectionModeAct->setText(tr("E&xit Selection Mode"));
+	mClearSelectedModeAct->setText(tr("&Clear Selected"));
 	mSelectVerticesMaskAct->setText(tr("Select &Vertices"));
 	mSelectVerticesMaskAct->setStatusTip(tr("Select by Component type: Vertices"));
 	mSelectEdgesMaskAct->setText(tr("Select &Edges"));
@@ -5534,74 +5768,76 @@ void MainWindow::retranslateUi() {
 	mSelectCornersMaskAct->setText(tr("Select &Corner"));
 	mSelectCornersMaskAct->setStatusTip(tr("Select by Component type: Corners"));
 
-	//SETTINGS ACTIONS	
+	//SETTINGS ACTIONS
 	mPreferencesAct->setText(tr("&Preferences"));
 	mPreferencesAct->setStatusTip(tr("Open the Preferences Dialog"));
 
 	//LANGUAGE MENU BAR ACTIONS
-	englishAct->setText(tr("English"));
-	spanishAct->setText(tr("Spanish"));
-	germanAct->setText(tr("German"));
-	frenchAct->setText(tr("French"));
-	italianAct->setText(tr("Italian"));
-	turkishAct->setText(tr("Turkish"));
-	catalanAct->setText(tr("Catalan"));
-	hindiAct->setText(tr("Hindi"));
+	mEnglishAct->setText(tr("English"));
+	mSpanishAct->setText(tr("Spanish"));
+	mGermanAct->setText(tr("German"));
+	mFrenchAct->setText(tr("French"));
+	mItalianAct->setText(tr("Italian"));
+	mTurkishAct->setText(tr("Turkish"));
+	mCatalanAct->setText(tr("Catalan"));
+	mHindiAct->setText(tr("Hindi"));
 
-	#ifdef WITH_VERSE
+#ifdef WITH_VERSE
 	//verse menu actions
 	mVerseConnectLocalhostAct->setText(tr("Connect to localhost..."));
-	mVerseConnectLocalhostAct->setStatusTip( tr("Connect to localhost") );
+	mVerseConnectLocalhostAct->setStatusTip(tr("Connect to localhost"));
 	mVerseConnectAct->setText(tr("Connect to host..."));
-	mVerseConnectAct->setStatusTip( tr("Connect to host...") );
+	mVerseConnectAct->setStatusTip(tr("Connect to host..."));
 	mVerseDisconnectAct->setText(tr("Disconnect session"));
-	mVerseDisconnectAct->setStatusTip( tr("Disconnect Verse Session") );
+	mVerseDisconnectAct->setStatusTip(tr("Disconnect Verse Session"));
 	mVerseDisconnectAllAct->setText(tr("Disconnect All Sessions"));
-	mVerseDisconnectAllAct->setStatusTip( tr("Disconnect All Sessions") );
+	mVerseDisconnectAllAct->setStatusTip(tr("Disconnect All Sessions"));
 	mVerseStartServerAct->setText(tr("Start Verse Server"));
-	mVerseStartServerAct->setStatusTip( tr("Disconnect All Nodes") );
+	mVerseStartServerAct->setStatusTip(tr("Disconnect All Nodes"));
 	mVerseKillServerAct->setText(tr("Kill Verse Server"));
-	mVerseKillServerAct->setStatusTip( tr("Kill the Local Verse server process") );
-	#endif
+	mVerseKillServerAct->setStatusTip(tr("Kill the Local Verse server process"));
+#endif
 
 	mSubdivideSelectedFacesAct->setText(tr("Subdivide Selected Faces"));
-	mSubdivideSelectedFacesAct->setStatusTip( tr("Subdivide all Selected Faces") );
+	mSubdivideSelectedFacesAct->setStatusTip(tr("Subdivide all Selected Faces"));
 	mPaintSelectedFacesAct->setText(tr("Paint Selected Faces"));
-	mPaintSelectedFacesAct->setStatusTip( tr("Paint all Selected Faces") );
+	mPaintSelectedFacesAct->setStatusTip(tr("Paint all Selected Faces"));
 	mClearMaterialsAct->setText(tr("Clear Materials"));
-	mClearMaterialsAct->setStatusTip( tr("Clear Materials") );
+	mClearMaterialsAct->setStatusTip(tr("Clear Materials"));
 	mSubdivideSelectedEdgesAct->setText(tr("Subdivide Selected Edges"));
-	mSubdivideSelectedEdgesAct->setStatusTip( tr("Subdivide all Selected Edges") );
+	mSubdivideSelectedEdgesAct->setStatusTip(tr("Subdivide all Selected Edges"));
 	mPerformRemeshingAct->setText(tr("Perform Remeshing"));
-	mPerformRemeshingAct->setStatusTip( tr("Perform the current remeshing scheme") );
+	mPerformRemeshingAct->setStatusTip(tr("Perform the current remeshing scheme"));
 	mPerformExtrusionAct->setText(tr("Perform Extrusion"));
-	mPerformExtrusionAct->setStatusTip( tr("Perform the current extrusion operator on the selected faces") );
+	mPerformExtrusionAct->setStatusTip(tr("Perform the current extrusion operator on the selected faces"));
 	mExtrudeMultipleAct->setText(tr("Extrude Multiple Faces"));
-	mExtrudeMultipleAct->setStatusTip( tr("Check this if you want to be able to select multiple faces and then hit CTRL+X to extrude the selected faces") );
+	mExtrudeMultipleAct->setStatusTip(tr(
+		"Check this if you want to be able to select multiple faces "\
+		"and then hit CTRL+X to extrude the selected faces"));
 
 	//help menu actions
 	mHelpAct->setText(tr("&Online User Manual"));
-	mHelpAct->setStatusTip( tr("View the User Manual on the TopMod Wiki") );
+	mHelpAct->setStatusTip(tr("View the User Manual on the TopMod Wiki"));
 	mTopModWebAct->setText(tr("&TopMod on the Web"));
-	mTopModWebAct->setStatusTip( tr("Go to the TopMod web page") );
+	mTopModWebAct->setStatusTip(tr("Go to the TopMod web page"));
 	mVideoTutorialsAct->setText(tr("&TopMod Video Tutorials on blip.tv"));
-	mVideoTutorialsAct->setStatusTip( tr("Go to http://topmod.blip.tv") );
+	mVideoTutorialsAct->setStatusTip(tr("Go to http://topmod.blip.tv"));
 	mTopModResearchAct->setText(tr("&TopMod Research Papers"));
-	mTopModResearchAct->setStatusTip( tr("Go to the TopMod Research web page") );
+	mTopModResearchAct->setStatusTip(tr("Go to the TopMod Research web page"));
 	mCheckForUpdatesAct->setText(tr("&Check for Updates"));
-	mCheckForUpdatesAct->setStatusTip( tr("Check for updates to TopMod Online") );
+	mCheckForUpdatesAct->setStatusTip(tr("Check for updates to TopMod Online"));
 	mAboutAct->setText(tr("&About TopMod"));
-	mAboutAct->setStatusTip( tr("About TopMod") );
+	mAboutAct->setStatusTip(tr("About TopMod"));
 	mAboutQtAct->setText(tr("About &Qt"));
-	mAboutQtAct->setStatusTip( tr("About Qt") );
+	mAboutQtAct->setStatusTip(tr("About Qt"));
 	mHideToolBarsAct->setText(tr("Hide All ToolBars"));
-	mHideToolBarsAct->setStatusTip( tr("Hide All ToolBars") );
+	mHideToolBarsAct->setStatusTip(tr("Hide All ToolBars"));
 	mShowToolBarsAct->setText(tr("Show All ToolBars"));
-	mShowToolBarsAct->setStatusTip( tr("Show All ToolBars") );
+	mShowToolBarsAct->setStatusTip(tr("Show All ToolBars"));
 
 	//from createAnimatedHelp
-	
-	
+
+
 	//from creatToolbars()
 	mEditToolBar->setWindowTitle(tr("Edit"));
 	mSelectionMaskToolBar->setWindowTitle(tr("Selection Masks"));
@@ -5615,7 +5851,7 @@ void MainWindow::retranslateUi() {
 	mExperimentalToolBar->setWindowTitle(tr("Experimental Tools"));
 
 	//createStartupDialog
-	mTutorialNavigationAct->setText(tr("Navigation Basics"));	
+	mTutorialNavigationAct->setText(tr("Navigation Basics"));
 	mTutorialInterfaceAct->setText(tr("Interface Basics"));
 	mTutorialBasicAct->setText(tr("Basic Operations"));
 	mTutorialExtrusionAct->setText(tr("Extrusion Operations"));
@@ -5623,7 +5859,9 @@ void MainWindow::retranslateUi() {
 	mTutorialHighgenusAct->setText(tr("High genus Operations"));
 	mTutorialTexturingAct->setText(tr("Texturing Operations"));
 	mShowStartupDialogAtStartupCheckBox->setText(tr("Show this dialog at startup"));
-	quicktimeLabel->setText(tr("Quicktime 7.2 or greater recommended."));
-	downloadQuicktimeLabel->setText(tr("<h5>Quicktime 7.2 or greater recommended.<br /><a href=\"http://apple.com/quicktime/\">Download now.</a></h5>"));
+	mQuickTimeLabel->setText(tr("Quicktime 7.2 or greater recommended."));
+	mDownloadQuickTimeLabel->setText(tr(
+		"<h5>Quicktime 7.2 or greater recommended.<br />"\
+		"<a href=\"http://apple.com/quicktime/\">Download now.</a></h5>"));
 
 }//end retranslateUi

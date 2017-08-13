@@ -36,43 +36,43 @@
 // Controls for remeshing schemes
 void MainWindow::toggleDooSabinEdgeFlag(int state)
 {
-  MainWindow::doo_sabin_check = bool(state);
+	MainWindow::sDooSabinCheck = bool(state);
 }
 
 void MainWindow::changeRoot4Twist(double value)
 {
-  MainWindow::twist_factor = value;
+	MainWindow::sTwistFactor = value;
 }
 
 void MainWindow::changeRoot4Weight(double value)
 {
-  MainWindow::weight_factor = value;
+	MainWindow::sWeightFactor = value;
 }
 
 void MainWindow::changeVertexCuttingOffset(double value)
 {
-  MainWindow::vertex_cutting_offset = value;
+	MainWindow::sVertexCuttingOffset = value;
 }
 
 void MainWindow::changePentagonalOffset(double value)
 {
-  MainWindow::pentagonal_offset = value;
+	MainWindow::sPentagonalOffset = value;
 }
 
 void MainWindow::changePentagonalScaleFactor(double value)
 {
-  MainWindow::pentagonal_scale = value;
+	MainWindow::sPentagonalScale = value;
 }
 
 // Added by Doug
 void MainWindow::changeStarOffset(double value)
 {
-  MainWindow::star_offset = value;
+	MainWindow::sStarOffset = value;
 }
 
 void MainWindow::changeFractalOffset(double value)
 {
-  MainWindow::fractal_offset = value;
+	MainWindow::sFractalOffset = value;
 }
 
 // End additions by Doug
@@ -80,53 +80,53 @@ void MainWindow::changeFractalOffset(double value)
 // Added by Eric
 void MainWindow::changeSubStellateAmount(double value)
 {
-  MainWindow::substellate_height = value;
+	MainWindow::sSubstellateHeight = value;
 }
 
 void MainWindow::changeSubStellateCurve(double value)
 {
-  MainWindow::substellate_curve = value;
+	MainWindow::sSubstellateCurve = value;
 }
 
 // End additions by Eric
 void MainWindow::toggleAccurateDualFlag(int state)
 {
-  MainWindow::accurate_dual = !bool(state);
+	MainWindow::sAccurateDual = !bool(state);
 }
 
 void MainWindow::toggleUseQuadsFlag(int state)
 {
-  MainWindow::use_quads = bool(state);
+	MainWindow::sUseQuads = bool(state);
 }
 
 // Added by Bei & Cansin
 
 void MainWindow::changeDomeSubdivisionLength(double value)
 {
-  MainWindow::domeLength_factor = value;
+	MainWindow::sDomeLengthFactor = value;
 }
 
 void MainWindow::changeDomeSubdivisionScale(double value)
 {
-  MainWindow::domeScale_factor = value;
+	MainWindow::sDomeScaleFactor = value;
 }
 
 void MainWindow::changeDual1264Scale(double value)
 {
-  MainWindow::dual1264_scale_factor = value;
+	MainWindow::sDual1264ScaleFactor = value;
 }
 
 void MainWindow::changeDooSabinBCnewScale(double value)
 {
-  MainWindow::dooSabinBCnewScale_factor = value;
+	MainWindow::sDooSabinBCnewScaleFactor = value;
 }
 
 void MainWindow::changeDooSabinBCnewLength(double value)
 {
-  MainWindow::dooSabinBCnewLength_factor = value;
+	MainWindow::sDooSabinBCnewLengthFactor = value;
 }
 
 void MainWindow::changeLoopStyleSubdivisionLength(double value)
 {
-  MainWindow::loopLength_factor = value;
+	MainWindow::sLoopLengthFactor = value;
 }

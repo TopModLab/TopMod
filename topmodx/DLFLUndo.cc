@@ -37,124 +37,135 @@
 
 //-- Subroutines dealing with undo and redo for DLFLWindow --//
 
-void MainWindow::clearUndoList(void) {
-  StringStreamPtrList::iterator first, firstmtl, last;
-	firstmtl = undoMtlList.begin();
-  first = undoList.begin(); last = undoList.end();
-	while ( first != last ) {
+void MainWindow::clearUndoList(void)
+{
+	StringStreamPtrList::iterator first, firstmtl, last;
+	firstmtl = mUndoMtlList.begin();
+	first = mUndoList.begin(); last = mUndoList.end();
+	while (first != last)
+	{
 		StringStreamPtr temp = (*first); ++first;
 		StringStreamPtr tempmtl = (*firstmtl); ++firstmtl;
-		delete temp;	delete tempmtl;
-		temp = NULL; tempmtl = NULL;
+		delete temp;
+		delete tempmtl;
+		temp = nullptr;
+		tempmtl = nullptr;
 	}
-  undoList.clear();
-  undoMtlList.clear();
+	mUndoList.clear();
+	mUndoMtlList.clear();
 }
 
 void MainWindow::clearRedoList(void)
 {
 	StringStreamPtrList::iterator first, firstmtl, last;
-	firstmtl = redoMtlList.begin();
-	first = redoList.begin(); last = redoList.end();
-	while ( first != last ) {
+	firstmtl = mRedoMtlList.begin();
+	first = mRedoList.begin(); last = mRedoList.end();
+	while (first != last)
+	{
 		StringStreamPtr temp = (*first); ++first;
 		StringStreamPtr tempmtl = (*firstmtl); ++firstmtl;
-		delete temp;	delete tempmtl;
-		temp = NULL; tempmtl = NULL;
+		delete temp;
+		delete tempmtl;
+		temp = nullptr;
+		tempmtl = nullptr;
 	}
-	redoList.clear();
-	redoMtlList.clear();
+	mRedoList.clear();
+	mRedoMtlList.clear();
 }
 
 void MainWindow::undoPush(void)
 {
-     // Don't do anything unless undo is required
-  if ( useUndo == false ) return;
+	// Don't do anything unless undo is required
+	if (mUseUndo == false) return;
 
-     // Put current object on top of undo list
-     // Check if we have reached undo limit, in which case remove oldest state
-     // and add current state to end of list.
-  if ( undoList.size() > undolimit ) {
-		StringStreamPtr temp = undoList.front();
-		StringStreamPtr tempmtl = undoMtlList.front();
+	// Put current object on top of undo list
+	// Check if we have reached undo limit, in which case remove oldest state
+	// and add current state to end of list.
+	if (mUndoList.size() > mUndoLimit)
+	{
+		StringStreamPtr temp = mUndoList.front();
+		StringStreamPtr tempmtl = mUndoMtlList.front();
 		delete temp; delete tempmtl;
-		undoList.pop_front();
-  }
+		mUndoList.pop_front();
+	}
 
 	StringStreamPtr curobj = new StringStream;
 	StringStreamPtr curobjmtl = new StringStream;
-	
-	object.writeDLFL(*curobj, *curobjmtl);
+
+	mObject.writeDLFL(*curobj, *curobjmtl);
 	// object.writeMTL(*curobjmtl);
-	
-	undoList.push_back(curobj);
-	undoMtlList.push_back(curobjmtl);
+
+	mUndoList.push_back(curobj);
+	mUndoMtlList.push_back(curobjmtl);
 	// Evertime a new operation is done, previous state is put into UndoList
 	// At the same time the redo list should be cleared, because we have
 	// nothing to redo immediately after an operation.
 	clearRedoList();
 }
 
-void MainWindow::undo(void) {
-	
-	if ( !undoList.empty() ) {		
- 		// Restore previous object
+void MainWindow::undo(void)
+{
+	if (!mUndoList.empty())
+	{
+		// Restore previous object
 		// Put current object to end of redo list
 		// Take last element of undo list and re-create current object
 		StringStreamPtr curobj = new StringStream;
 		StringStreamPtr curobjmtl = new StringStream;
 
-		object.writeDLFL(*curobj, *curobjmtl);
+		mObject.writeDLFL(*curobj, *curobjmtl);
 		// object.writeMTL(*curobjmtl);
 
-		redoList.push_back(curobj);
-		redoMtlList.push_back(curobjmtl);
+		mRedoList.push_back(curobj);
+		mRedoMtlList.push_back(curobjmtl);
 
-		StringStreamPtr oldobj = undoList.back();
-		StringStreamPtr oldobjmtl = undoMtlList.back();
-		
-		object.readDLFL(*oldobj,*oldobjmtl,true);
+		StringStreamPtr oldobj = mUndoList.back();
+		StringStreamPtr oldobjmtl = mUndoMtlList.back();
+
+		mObject.readDLFL(*oldobj, *oldobjmtl, true);
 		// object.readMTL(*oldobj,true);
 
-		undoList.pop_back(); delete oldobj;
-		undoMtlList.pop_back(); delete oldobjmtl;
-		
-		active->recomputePatches();
-		active->recomputeNormals();
+		mUndoList.pop_back(); delete oldobj;
+		mUndoMtlList.pop_back(); delete oldobjmtl;
+
+		mActiveViewport->recomputePatches();
+		mActiveViewport->recomputeNormals();
 		// Clear selection lists to avoid dangling pointers
 		MainWindow::clearSelected();
 		redraw();
 		/* is document modified? - dave */
 		setModified(true);
-		mIsPrimitive = false; 
+		mIsPrimitive = false;
 	}
-	if (undoList.empty()) {
+	if (mUndoList.empty())
+	{
 		setModified(false);
 		if (mWasPrimitive)
 			mIsPrimitive = true;
 	}
 }
 
-void MainWindow::redo(void) {
-	
-  if ( !redoList.empty() ) {
+void MainWindow::redo(void)
+{
+	if (!mRedoList.empty())
+	{
 		// Redo previously undone operation
 		// Put current object to end of undo list
 		// Take last element of redo list and re-create current object
 		StringStreamPtr curobj = new StringStream;
 		StringStreamPtr curobjmtl = new StringStream;
-		object.writeDLFL(*curobj, *curobjmtl);
-		undoList.push_back(curobj);
-		undoMtlList.push_back(curobjmtl);
+		mObject.writeDLFL(*curobj, *curobjmtl);
+		mUndoList.push_back(curobj);
+		mUndoMtlList.push_back(curobjmtl);
 
-		StringStreamPtr newobj = redoList.back();
-		StringStreamPtr newobjmtl = redoMtlList.back();
-		object.readDLFL(*newobj, *newobjmtl);
-		redoList.pop_back(); delete newobj;
-		redoMtlList.pop_back(); delete newobjmtl;
+		StringStreamPtr newobj = mRedoList.back();
+		StringStreamPtr newobjmtl = mRedoMtlList.back();
+		mObject.readDLFL(*newobj, *newobjmtl);
+		mRedoList.pop_back(); delete newobj;
+		mRedoMtlList.pop_back(); delete newobjmtl;
 
-		active->recomputePatches();
-		active->recomputeNormals();
+		mActiveViewport->recomputePatches();
+		mActiveViewport->recomputeNormals();
 		// Clear selection lists to avoid dangling pointers
 		MainWindow::clearSelected();
 		redraw();

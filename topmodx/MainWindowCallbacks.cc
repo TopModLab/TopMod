@@ -38,26 +38,28 @@
 
 #include "MainWindow.h"
 
-void MainWindow::load_texture() {
-	QString fileName = QFileDialog::getOpenFileName(this,
-		tr("Open File..."),
-		"$HOME",
+void MainWindow::load_texture()
+{
+	QString fileName = QFileDialog::getOpenFileName(
+		this, tr("Open File..."), "$HOME",
 		tr("All Supported Files (*.jpg *.png);;JPEG Files (*.jpg);;PNG Files (*.png);;All Files (*)"),
 		0, QFileDialog::DontUseSheet);
-		
-	if (!fileName.isEmpty()){
+
+	if (!fileName.isEmpty())
+	{
 		// undoPush();
 		QByteArray ba = fileName.toLatin1();
 		const char *texfile = ba.data();
-		if (texfile != NULL){
-			textured->setTexture(texfile);
-			texturedlit->setTexture(texfile);
+		if (texfile != nullptr)
+		{
+			sTexturedRenderer->setTexture(texfile);
+			sTexturedLitRenderer->setTexture(texfile);
 			// getActive()->valid(0); // To ensure new texture is loaded into OpenGL
 			redraw();
 		}
 		// readObject(filename);
 		// active->recomputePatches();
- 		// active->recomputeNormals();
+		// active->recomputeNormals();
 		// //loadFile(fileName);
 		// active->redraw();
 	}
@@ -66,7 +68,7 @@ void MainWindow::load_texture() {
 // void DLFLAppWindow::load_texture(Fl_Menu_*, void*)
 // {
 //   char * texfile = fl_file_chooser("Load Texture","*.{jpg,png}","");
-//   if ( texfile != NULL )
+//   if (texfile != nullptr)
 //      {
 //        textured->setTexture(texfile);
 //        texturedlit->setTexture(texfile);
@@ -77,66 +79,77 @@ void MainWindow::load_texture() {
 // }
 
 //use a specific renderer...
-void MainWindow::useWireframeRenderer() {
-	setRenderer(wired);
+void MainWindow::useWireframeRenderer()
+{
+	setRenderer(sWiredRenderer);
 	redraw();
 }
 
-void MainWindow::useNormalRenderer() {
-	setRenderer(normal);
+void MainWindow::useNormalRenderer()
+{
+	setRenderer(sNormalRenderer);
 	redraw();
 }
 
-void MainWindow::useLightedRenderer() {
-	active->recomputeNormals();
-	setRenderer(lit);
+void MainWindow::useLightedRenderer()
+{
+	mActiveViewport->recomputeNormals();
+	setRenderer(sLitRenderer);
 	redraw();
 }
 
-void MainWindow::useTexturedRenderer() {
-	setRenderer(textured);
+void MainWindow::useTexturedRenderer()
+{
+	setRenderer(sTexturedRenderer);
 	redraw();
 }
 
-void MainWindow::useTexturedLitRenderer() {
-	setRenderer(texturedlit);
+void MainWindow::useTexturedLitRenderer()
+{
+	setRenderer(sTexturedLitRenderer);
 	redraw();
 }
 
-void MainWindow::usePatchRenderer() {
-	setRenderer(patch);
+void MainWindow::usePatchRenderer()
+{
+	setRenderer(sPatchRenderer);
 	redraw();
 }
 
-void MainWindow::useColorableRenderer() {
-	setRenderer(colorable);
+void MainWindow::useColorableRenderer()
+{
+	setRenderer(sColorableRendererr);
 	redraw();
 }
 
 //preference functions for topmodpreferences - dave
-void MainWindow::setAutoSave(int value){
+void MainWindow::setAutoSave(int value)
+{
 	//start the timer if it's ON
 	//stop timer if it's OFF
 	mAutoSave = bool(value);
 	if (mAutoSave)
 		mAutoSaveTimer->start();
-	else 
+	else
 		mAutoSaveTimer->stop();
 }
 
 //this value is sent in minutes... so multiply it by 6000!
-void MainWindow::setAutoSaveDelay(double value){
+void MainWindow::setAutoSaveDelay(double value)
+{
 	mAutoSaveDelay = value;
-	mAutoSaveTimer->setInterval(mAutoSaveDelay*60000);
+	mAutoSaveTimer->setInterval(mAutoSaveDelay * 60000);
 	// mAutoSaveTimer->setInterval(5000);
 }
 
 //incremental save will just save a new file each time...
-void MainWindow::setIncrementalSave(int value){
+void MainWindow::setIncrementalSave(int value)
+{
 	mIncrementalSave = (bool)value;
 }
 
-void MainWindow::setIncrementalSaveMax(double value){
+void MainWindow::setIncrementalSaveMax(double value)
+{
 	mIncrementalSaveMax = (int)value;
 }
 
@@ -144,111 +157,134 @@ void MainWindow::setSaveDirectory(QString s){
 	mSaveDirectory = s;
 }
 
-void MainWindow::checkSaveDirectory(){
+void MainWindow::checkSaveDirectory()
+{
 	QDir dir(mSaveDirectory);
-	if (dir.exists()){
+	if (dir.exists())
+	{
 		// std::cout<<"good job\n";
 	}
-	else {
-		QString s = QString("Directory\n\n%1\n\ndoes not exist, please type a different directory name.\n\nCheck to make sure there are no unnecessary spaces at the end.").arg(mSaveDirectory);
+	else
+	{
+		QString s = QString(
+			"Directory\n\n%1\n\ndoes not exist, "\
+			"please type a different directory name.\n\n"\
+			"Check to make sure there are no unnecessary spaces at the end.").arg(mSaveDirectory);
 		QMessageBox::about(this, tr("TopMod Error"), s);
 	}
 }
 
-void MainWindow::setCommandCompleterIndexToggle(int value){
+void MainWindow::setCommandCompleterIndexToggle(int value)
+{
 	//stuff here...?
 	// std::cout << "toggle command completer thing\n";
 	mCommandCompleterIndexToggle = (bool)value;
 }
 
 //dave
-void MainWindow::changeValence2SplitOffset(double value){
-	MainWindow::vertex_split_offset = value;
+void MainWindow::changeValence2SplitOffset(double value)
+{
+	MainWindow::sVertexSplitOffset = value;
 }
 
-void MainWindow::changeCornerCuttingAlpha(double value){
-	MainWindow::corner_cutting_alpha = value;
+void MainWindow::changeCornerCuttingAlpha(double value)
+{
+	MainWindow::sCornerCuttingAlpha = value;
 }
 
 void MainWindow::changeDomeExtrudeLength(double value)
 {
-  MainWindow::domeExtrudeLength_factor = value;
+  MainWindow::sDomeExtrudeLengthFactor = value;
 }
 
 void MainWindow::changeDooSabinExtrudeTwist(double value)
 {
-  MainWindow::ds_ex_twist = value;
+  MainWindow::sDooSabinExtrusionTwist = value;
 }
 
 void MainWindow::changeDomeExtrudeScale(double value)
 {
-  MainWindow::domeExtrudeScale_factor = value;
+  MainWindow::sDomeExtrudeScaleFactor = value;
 }
 
 void MainWindow::changeDomeExtrudeRotation(double value)
 {
-  MainWindow::domeExtrudeRotation_factor = value;
+  MainWindow::sDomeExtrudeRotationFactor = value;
 }
 
-void MainWindow::setSingleClickExtrude(int value){
+void MainWindow::setSingleClickExtrude(int value)
+{
 	mSingleClickExtrude = (bool)value;
 }
+
 // Selection Menu.
-void MainWindow::select_vertex() {
+void MainWindow::select_vertex()
+{
 	setMode(MainWindow::SelectVertex);
 }
 
-void MainWindow::edit_vertex() {
+void MainWindow::edit_vertex()
+{
 	setMode(MainWindow::EditVertex);
 }
 
-void MainWindow::select_face() {
+void MainWindow::select_face()
+{
 	setMode(MainWindow::SelectFace);
 }
 
-void MainWindow::select_face_loop() {
+void MainWindow::select_face_loop()
+{
 	setMode(MainWindow::SelectFaceLoop);
 }
 
-void MainWindow::select_edge_ring() {
+void MainWindow::select_edge_ring()
+{
 	setMode(MainWindow::SelectEdgeRing);
 }
 
-void MainWindow::select_multiple_faces() {
+void MainWindow::select_multiple_faces()
+{
 	setMode(MainWindow::MultiSelectFace);
 }
 
-void MainWindow::select_multiple() {
-	switch (selectionmask){
-		case MaskVertices:
+void MainWindow::select_multiple()
+{
+	switch (mSelectionMask)
+	{
+	case MaskVertices:
 		setMode(MainWindow::MultiSelectVertex);
 		break;
-		case MaskEdges: 
+	case MaskEdges:
 		setMode(MainWindow::MultiSelectEdge);
 		break;
-		case MaskFaces://face stuff
+	case MaskFaces://face stuff
 		setMode(MainWindow::MultiSelectFace);
 		break;
-		case MaskCorners:
+	case MaskCorners:
 		break;
-		default:
+	default:
 		break;
-	};
+	}
 }
 
-void MainWindow::select_multiple_edges() {
+void MainWindow::select_multiple_edges()
+{
 	setMode(MainWindow::MultiSelectEdge);
 }
 
-void MainWindow::select_multiple_vertices() {
+void MainWindow::select_multiple_vertices()
+{
 	setMode(MainWindow::MultiSelectVertex);
 }
 
-void MainWindow::select_similar_faces() {
+void MainWindow::select_similar_faces()
+{
 	// setMode(MainWindow::SelectSimilarFaces);
 }
 
-void MainWindow::select_similar() {
+void MainWindow::select_similar()
+{
 	// switch(selectionmask){
 	// 	case MaskFaces:
 	setMode(MainWindow::SelectSimilar);
@@ -264,347 +300,418 @@ void MainWindow::select_similar() {
 	// };
 }
 
-void MainWindow::select_faces_by_area() {
+void MainWindow::select_faces_by_area()
+{
 	setMode(MainWindow::SelectFacesByArea);
 }
 
-void MainWindow::select_faces_by_color() {
+void MainWindow::select_faces_by_color()
+{
 	setMode(MainWindow::SelectFacesByColor);
 }
 
-void MainWindow::selection_window() {
+void MainWindow::selection_window()
+{
 	setMode(MainWindow::SelectionWindow);
 }
 
-void MainWindow::select_checkerboard_faces() {
+void MainWindow::select_checkerboard_faces()
+{
 	setMode(MainWindow::SelectCheckerboard);
 }
 
-void MainWindow::select_edge() {
+void MainWindow::select_edge()
+{
 	setMode(MainWindow::SelectEdge);
 }
 
-void MainWindow::select_edge_loop() {
+void MainWindow::select_edge_loop()
+{
 	setMode(MainWindow::SelectEdgeLoop);
 }
 
-void MainWindow::select_corner() {
+void MainWindow::select_corner()
+{
 	setMode(MainWindow::SelectCorner);
 }
 
-void MainWindow::selectionMaskVertices() {
+void MainWindow::selectionMaskVertices()
+{
 	// setSelectionMask(MainWindow::MaskVertices);
 	setMode(MainWindow::SelectVertex);
 }
 
-void MainWindow::selectionMaskFaces() {
+void MainWindow::selectionMaskFaces()
+{
 	// setSelectionMask(MainWindow::MaskFaces);
 	setMode(MainWindow::SelectFace);
 }
 
-void MainWindow::selectionMaskEdges() {
+void MainWindow::selectionMaskEdges()
+{
 	// setSelectionMask(MainWindow::MaskEdges);
 	setMode(MainWindow::SelectEdge);
-	
 }
 
-void MainWindow::selectionMaskCorners() {
+void MainWindow::selectionMaskCorners()
+{
 	// setSelectionMask(MainWindow::MaskCorners);
 	setMode(MainWindow::SelectCorner);
-	
 }
 
-void MainWindow::selectAll(){
-	switch (selectionmask){
-		case MaskVertices:
-		active->selectAllVertices();
+void MainWindow::selectAll()
+{
+	switch (mSelectionMask)
+	{
+	case MaskVertices:
+		mActiveViewport->selectAllVertices();
 		break;
-		case MaskEdges:
-		active->selectAllEdges();
+	case MaskEdges:
+		mActiveViewport->selectAllEdges();
 		break;
-		case MaskFaces:
-		active->selectAllFaces();
+	case MaskFaces:
+		mActiveViewport->selectAllFaces();
 		break;
-		case MaskCorners:
+	case MaskCorners:
 		// active->selectAllCorners();
-		case MaskObject:
+	case MaskObject:
 		break;
-		default:
+	default:
 		// active->selectAllVertices();
 		break;
-	};
+	}
 }
 
-void MainWindow::selectInverse(){
-	switch (selectionmask){
-		case MaskVertices:
-		active->selectInverseVertices();
+void MainWindow::selectInverse()
+{
+	switch (mSelectionMask)
+	{
+	case MaskVertices:
+		mActiveViewport->selectInverseVertices();
 		break;
-		case MaskEdges:
-		active->selectInverseEdges();
+	case MaskEdges:
+		mActiveViewport->selectInverseEdges();
 		break;
-		case MaskFaces:
-		active->selectInverseFaces();
+	case MaskFaces:
+		mActiveViewport->selectInverseFaces();
 		break;
-		case MaskCorners:
-		active->selectInverseFaceVertices();
-		case MaskObject:
+	case MaskCorners:
+		mActiveViewport->selectInverseFaceVertices();
+	case MaskObject:
 		break;
-		default:
-		// active->selectInverseVertices();
+	default:
+	// active->selectInverseVertices();
 		break;
-	};
+	}
 }
-void MainWindow::exit_selection_mode() {
+
+void MainWindow::exit_selection_mode()
+{
 	setMode(MainWindow::NormalMode);
 	redraw();
 }
 
-void MainWindow::clear_selected(){
+void MainWindow::clear_selected()
+{
 	MainWindow::clearSelected();
 	redraw();
 }
 
 //dave
-void MainWindow::toggleWireframeSplit(int state) {
-	MainWindow::wireframe_split = bool(state);
+void MainWindow::toggleWireframeSplit(int state)
+{
+	MainWindow::sWireframeSplit = bool(state);
 }
-
 
 // Basics.
-void MainWindow::toggleDeleteEdgeCleanupFlag(int state) {
-	MainWindow::delete_edge_cleanup = bool(state);
+void MainWindow::toggleDeleteEdgeCleanupFlag(int state)
+{
+	MainWindow::sDeleteEdgeCleanup = bool(state);
 }
 
-void MainWindow::changeNumSubDivs(double value) {
-	MainWindow::num_e_subdivs = (int)value;
+void MainWindow::changeNumSubDivs(double value)
+{
+	MainWindow::sNumEdgeSubdiv = (int)value;
 }
 
-void MainWindow::changeFaceAreaTolerance(double value) {
-	MainWindow::face_area_tolerance = value;
+void MainWindow::changeFaceAreaTolerance(double value)
+{
+	MainWindow::sFaceAreaTolerance = value;
 }
 
-void MainWindow::changeTileTexNum(double value) {
-	MainWindow::tile_tex_n = (int)value;
+void MainWindow::changeTileTexNum(double value)
+{
+	MainWindow::sTileTexSize = (int)value;
 }
 
 // Extrusions.
-void MainWindow::changeExtrudeLength(double value) {
-	MainWindow::extrude_dist = value;
+void MainWindow::changeExtrudeLength(double value)
+{
+	MainWindow::sExtrudeDist = value;
 }
 
-void MainWindow::changeExtrudeRotation(double value) {
-	MainWindow::extrude_rot = (int)value;
+void MainWindow::changeExtrudeRotation(double value)
+{
+	MainWindow::sExtrudeRot = (int)value;
 }
 
-void MainWindow::changeExtrudeScale(double value) {
-	MainWindow::extrude_scale = value;
+void MainWindow::changeExtrudeScale(double value)
+{
+	MainWindow::sExtrudeScale = value;
 }
 
-void MainWindow::changeExtrudeLength1(double value) {
-	MainWindow::extrude_length1 = value;
+void MainWindow::changeExtrudeLength1(double value)
+{
+	MainWindow::sExtrudeLength1 = value;
 }
 
-void MainWindow::changeExtrudeLength2(double value) {
-	MainWindow::extrude_length2 = value;
+void MainWindow::changeExtrudeLength2(double value)
+{
+	MainWindow::sExtrudeLength2 = value;
 }
 
-void MainWindow::changeExtrudeLength3(double value) {
-	MainWindow::extrude_length3 = value;
+void MainWindow::changeExtrudeLength3(double value)
+{
+	MainWindow::sExtrudeLength3 = value;
 }
 
-void MainWindow::changeExtrudeAngle(double value){
-	MainWindow::extrude_angle = value;
+void MainWindow::changeExtrudeAngle(double value)
+{
+	MainWindow::sExtrudeAngle = value;
 }
 
-void MainWindow::changeExtrudeLength1Icosa(double value) {
-	MainWindow::extrude_length1_icosa = value;
+void MainWindow::changeExtrudeLength1Icosa(double value)
+{
+	MainWindow::sExtrudeLength1_iCosA = value;
 }
 
-void MainWindow::changeExtrudeLength2Icosa(double value) {
-	MainWindow::extrude_length2_icosa = value;
+void MainWindow::changeExtrudeLength2Icosa(double value)
+{
+	MainWindow::sExtrudeLength2_iCosA = value;
 }
 
-void MainWindow::changeExtrudeLength3Icosa(double value) {
-	MainWindow::extrude_length3_icosa = value;
+void MainWindow::changeExtrudeLength3Icosa(double value)
+{
+	MainWindow::sExtrudeLength3_iCosA = value;
 }
 
-void MainWindow::changeExtrudeAngleIcosa(double value){
-	MainWindow::extrude_angle_icosa = value;
+void MainWindow::changeExtrudeAngleIcosa(double value)
+{
+	MainWindow::sExtrudeAngle_iCosA = value;
 }
 
-void MainWindow::changeNumExtrusions(double value) {
-	MainWindow::num_extrusions = (int)value;
+void MainWindow::changeNumExtrusions(double value)
+{
+	MainWindow::sNumExtrusions = (int)value;
 }
 
-void MainWindow::toggleDualMeshEdgesFlag(int state) {
-	MainWindow::dual_mesh_edges_check = bool(state);
+void MainWindow::toggleDualMeshEdgesFlag(int state)
+{
+	MainWindow::sDualMeshEdgesCheck = bool(state);
 }
 
-void MainWindow::toggleHexagonalizeDodecaExtrudeFlag(int state) {
-	MainWindow::hexagonalize_dodeca_extrude = bool(state);
+void MainWindow::toggleHexagonalizeDodecaExtrudeFlag(int state)
+{
+	MainWindow::sHexagonalizeDodecaExtrude = bool(state);
 }
 
 // Stellation
-void MainWindow::changeStellateLength(double value) {
-	MainWindow::extrude_dist = value;
+void MainWindow::changeStellateLength(double value)
+{
+	MainWindow::sExtrudeDist = value;
 }
 
 // Holes and Handles.
-void MainWindow::changeMaxSegments(double value) {
-	MainWindow::max_segments = (int)value;
+void MainWindow::changeMaxSegments(double value)
+{
+	MainWindow::sMaxSegments = (int)value;
 }
 
-void MainWindow::changeNumSegments(double value) {
-	MainWindow::num_segments = (int)value;
+void MainWindow::changeNumSegments(double value)
+{
+	MainWindow::sNumSegments = (int)value;
 }
 
-void MainWindow::changeNumSegments2(double value){
+void MainWindow::changeNumSegments2(double value)
+{
 
 }
 
-void MainWindow::changeMaxSegments2(double value){
+void MainWindow::changeMaxSegments2(double value)
+{
 
 }
 
-void MainWindow::changeWeight1(double value) {
-	MainWindow::nwt1 = value;
+void MainWindow::changeWeight1(double value)
+{
+	MainWindow::sFaceNormalWeight1 = value;
 }
 
-void MainWindow::toggleSymmetricWeightsFlag(int state) {
-	MainWindow::symmetric_weights = bool(state);
+void MainWindow::toggleSymmetricWeightsFlag(int state)
+{
+	MainWindow::sSymmetricWeights = bool(state);
 }
 
-void MainWindow::changeWeight2(double value) {
-	MainWindow::nwt2 = value;
+void MainWindow::changeWeight2(double value)
+{
+	MainWindow::sFaceNormalWeight2 = value;
 }
 
-void MainWindow::changeExtraTwists(double value) {
-	MainWindow::num_extra_twists = (int)value;
+void MainWindow::changeExtraTwists(double value)
+{
+	MainWindow::sNumExtraTwists = (int)value;
 }
 
 //added by Ryan
-void MainWindow::changePinch(double value) {
-	MainWindow::pinching_factor = value;
+void MainWindow::changePinch(double value)
+{
+	MainWindow::sPinchingFactor = value;
 }
-void MainWindow::changePinchCenter(double value) {
-	MainWindow::pinch_center = value;
+void MainWindow::changePinchCenter(double value)
+{
+	MainWindow::sPinchCenter = value;
 }
-void MainWindow::changeBubble(double value) {
-	MainWindow::bubble_factor = value;
+void MainWindow::changeBubble(double value)
+{
+	MainWindow::sBubbleFactor = value;
 }
-void MainWindow::changeHoleHandlePinchValue(double value) {
-	MainWindow::holeHandle_pinching_factor = value;
+void MainWindow::changeHoleHandlePinchValue(double value)
+{
+	MainWindow::sHoleHandlePinchingFactor = value;
 }
-void MainWindow::changeHoleHandlePinchCenterValue(double value) {
-	MainWindow::holeHandle_pinch_center = value;
+void MainWindow::changeHoleHandlePinchCenterValue(double value)
+{
+	MainWindow::sHoleHandlePinchCenter = value;
 }
-void MainWindow::changeHoleHandlePinchWidthValue(double value) {
-	MainWindow::holeHandle_pinch_width = value;
+void MainWindow::changeHoleHandlePinchWidthValue(double value)
+{
+	MainWindow::sHoleHandlePinchWidth = value;
 }
 //end Ryan's stuff
 
 // Crust Modeling.
-void MainWindow::changeCrustScaleFactor(double value) {
-	MainWindow::crust_scale_factor = value;
+void MainWindow::changeCrustScaleFactor(double value)
+{
+	MainWindow::sCrustScaleFactor = value;
 }
 
-void MainWindow::changeCrustThickness(double value) {
-	MainWindow::crust_thickness = value;
+void MainWindow::changeCrustThickness(double value)
+{
+	MainWindow::sCrustThickness = value;
 }
 
-void MainWindow::toggleCrustCleanupFlag(int state) {
-	MainWindow::crust_cleanup = bool(state);
+void MainWindow::toggleCrustCleanupFlag(int state)
+{
+	MainWindow::sCrustCleanup = bool(state);
 }
 
-void MainWindow::crustModeling1() {
+void MainWindow::crustModeling1()
+{
 	setMode(MainWindow::CrustModeling);
 	createCrust(true);
 	redraw();
 }
 
-void MainWindow::crustModeling2() {
+void MainWindow::crustModeling2()
+{
 	setMode(MainWindow::CrustModeling);
 	createCrust(false);
 	redraw();
 }
 
-void MainWindow::crustModeling3() {
-// setMode(MainWindow::CrustModelingPainting);
+void MainWindow::crustModeling3()
+{
+	// setMode(MainWindow::CrustModelingPainting);
 	createCrust2(false);
 	redraw();
 }
 
-void MainWindow::crustModeling4() {
-// setMode(MainWindow::CrustModelingPainting);
+void MainWindow::crustModeling4()
+{
+	// setMode(MainWindow::CrustModelingPainting);
 	createCrust2(true);
 	redraw();
 }
 
 //for modified corner cutting scheme... it's the same as the first step in the wireframe process
-void MainWindow::changeModifiedCornerCuttingThickness(double value) {
-	MainWindow::modified_corner_cutting_thickness = value;
+void MainWindow::changeModifiedCornerCuttingThickness(double value)
+{
+	MainWindow::sModifiedCornerCuttingThickness = value;
 }
 
 //column modeling and wireframe modeling
-void MainWindow::changeWireframeThickness(double value) {
-	MainWindow::wireframe_thickness = value;
+void MainWindow::changeWireframeThickness(double value)
+{
+	MainWindow::sWireframeThickness = value;
 }
 
-void MainWindow::changeWireframe2Thickness(double value) {
-	MainWindow::wireframe2_thickness = value;
+void MainWindow::changeWireframe2Thickness(double value)
+{
+	MainWindow::sWireframe2Thickness = value;
 }
 
-void MainWindow::changeWireframe2Width(double value) {
-	MainWindow::wireframe2_width = value;
+void MainWindow::changeWireframe2Width(double value)
+{
+	MainWindow::sWireframe2Width = value;
 }
 
-void MainWindow::changeColumnThickness(double value) {
-	MainWindow::column_thickness = value;
+void MainWindow::changeColumnThickness(double value)
+{
+	MainWindow::sColumnThickness = value;
 }
 
-void MainWindow::changeColumnSegments(double value) {
-	MainWindow::column_segments = (int)value;
+void MainWindow::changeColumnSegments(double value)
+{
+	MainWindow::sColumnSegments = (int)value;
 }
 
 // Multi-face handle
-void MainWindow::mfh_use_closest_edge_algo() {
-	MainWindow::mfh_algo = MainWindow::ClosestEdge;
+void MainWindow::mfh_use_closest_edge_algo()
+{
+	MainWindow::sMfhAlgorithm = MainWindow::ClosestEdge;
 }
 
-void MainWindow::mfh_use_convex_hull_algo() {
-	MainWindow::mfh_algo = MainWindow::ConvexHull;
+void MainWindow::mfh_use_convex_hull_algo()
+{
+	MainWindow::sMfhAlgorithm = MainWindow::ConvexHull;
 }
 
-void MainWindow::changeMultiFaceHandleScaleFactor(double value) {
-	MainWindow::mfh_scale_factor = value;
+void MainWindow::changeMultiFaceHandleScaleFactor(double value)
+{
+	MainWindow::sMfhScaleFactor = value;
 }
 
-void MainWindow::changeMultiFaceHandleExtrudeDist(double value) {
-	MainWindow::mfh_extrude_dist = value;
+void MainWindow::changeMultiFaceHandleExtrudeDist(double value)
+{
+	MainWindow::sMfhExtrudeDist = value;
 }
 
-void MainWindow::toggleMultiFaceHandleUseMaxOffsetFlag(int state) {
-	MainWindow::mfh_use_max_offsets = bool(state);
+void MainWindow::toggleMultiFaceHandleUseMaxOffsetFlag(int state)
+{
+	MainWindow::sMfhUseMaxOffsets = bool(state);
 }
 
 //menger sponge operations
-void MainWindow::changeMengerSpongeThickness(double value) {
-	MainWindow::sponge_thickness = value;
+void MainWindow::changeMengerSpongeThickness(double value)
+{
+	MainWindow::sSpongeThickness = value;
 }
 
-void MainWindow::changeMengerSpongeCollapseThreshold(double value) {
-	MainWindow::sponge_collapse_threshold = value;
+void MainWindow::changeMengerSpongeCollapseThreshold(double value)
+{
+	MainWindow::sSpongeCollapseThreshold = value;
 }
 
-void MainWindow::toggleMengerSpongeFractionalThicknessFlag(int state) {
-	MainWindow::sponge_fractional_thickness = bool(state);
+void MainWindow::toggleMengerSpongeFractionalThicknessFlag(int state)
+{
+	MainWindow::sSpongeFractionalThickness = bool(state);
 }
 
 /* begin ozgur */
 //sculpting operations from ozgur
 //conical stuff from ozgur
-void MainWindow::performCutting() {
+void MainWindow::performCutting()
+{
 	// DLFLEdgePtrArray eparray;
 	// DLFLVertexPtrArray vparray;
 	// DLFLEdgePtrArray fparray;
@@ -613,185 +720,206 @@ void MainWindow::performCutting() {
 	setModified(true);
 	// void performCutting( DLFLObjectPtr obj, int type,float offsetE,float offsetV,bool global,bool selected) {
 	// DLFL::performCutting(&object, MainWindow::mode,MainWindow::cutOffsetE_factor,MainWindow::cutOffsetV_factor,MainWindow::global_cut,MainWindow::selected_cut);
-	switch (selectionmask){
-		case MaskEdges:
-		// std::cout << "cut by edge!\n";
-		// active->getSelectedEdges(eparray);
-		DLFL::cutSelectedEdges(&object, MainWindow::cutOffsetE_factor,MainWindow::cutOffsetV_factor, MainWindow::global_cut);
+	switch (mSelectionMask)
+	{
+	case MaskEdges:
+	// std::cout << "cut by edge!\n";
+	// active->getSelectedEdges(eparray);
+		DLFL::cutSelectedEdges(&mObject, MainWindow::sCutOffsetEdgeFactor, MainWindow::sCutOffsetVertFactor, MainWindow::sGlobalCut);
 		break;
-		case MaskVertices:
-		// std::cout << "cut by vertex!\n";
-		// active->getSelectedVertices(vparray);
-		DLFL::cutSelectedVertices(&object, MainWindow::cutOffsetE_factor,MainWindow::cutOffsetV_factor, MainWindow::global_cut);
+	case MaskVertices:
+	// std::cout << "cut by vertex!\n";
+	// active->getSelectedVertices(vparray);
+		DLFL::cutSelectedVertices(&mObject, MainWindow::sCutOffsetEdgeFactor, MainWindow::sCutOffsetVertFactor, MainWindow::sGlobalCut);
 		break;
-		case MaskFaces:
-		// std::cout << "cut by face!\n";
-		// active->getSelectedFaces(fparray);
-		DLFL::cutSelectedFaces(&object, MainWindow::cutOffsetE_factor,MainWindow::cutOffsetV_factor, MainWindow::global_cut);
+	case MaskFaces:
+	// std::cout << "cut by face!\n";
+	// active->getSelectedFaces(fparray);
+		DLFL::cutSelectedFaces(&mObject, MainWindow::sCutOffsetEdgeFactor, MainWindow::sCutOffsetVertFactor, MainWindow::sGlobalCut);
 		break;
-		default:
+	default:
 		break;
-	};
-	active->recomputePatches();
-	active->recomputeNormals();
+	}
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	redraw();
 }
 
-void MainWindow::createConvexHull() {
+void MainWindow::createConvexHull()
+{
 	undoPush();
 	setModified(true);
-	DLFL::createConvexHull(&object);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::createConvexHull(&mObject);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	redraw();
 }
 
-void MainWindow::createDualConvexHull() {
+void MainWindow::createDualConvexHull()
+{
 	undoPush();
 	setModified(true);
-	DLFL::createDualConvexHull(&object);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::createDualConvexHull(&mObject);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	redraw();
 }
 
-void MainWindow::changeCutOffsetE(double value) {
-	MainWindow::cutOffsetE_factor= value;
+void MainWindow::changeCutOffsetE(double value)
+{
+	MainWindow::sCutOffsetEdgeFactor = value;
 }
 
-void MainWindow::changeCutOffsetV(double value) {
-	MainWindow::cutOffsetV_factor= value;
+void MainWindow::changeCutOffsetV(double value)
+{
+	MainWindow::sCutOffsetVertFactor = value;
 }
 
-void MainWindow::changePNormalBendS(double value) {
-	MainWindow:: pnormalBendS_factor= value;
+void MainWindow::changePNormalBendS(double value)
+{
+	MainWindow::sPNormalBendS_Factor = value;
 }
 
-void MainWindow::changePNormalBendT(double value) {
-	MainWindow:: pnormalBendT_factor= value;
+void MainWindow::changePNormalBendT(double value)
+{
+	MainWindow::sPNormalBendT_Factor = value;
 }
 
-void MainWindow::toggleGlobalCut(int state){    //ozgur
-	MainWindow::global_cut = bool(state);	
+void MainWindow::toggleGlobalCut(int state)//ozgur
+{
+	MainWindow::sGlobalCut = bool(state);
 }
-void MainWindow::toggleSelectedCut(int state){  //ozgur
-	MainWindow::selected_cut = bool(state);
+void MainWindow::toggleSelectedCut(int state)//ozgur
+{
+	MainWindow::sSelectedCut = bool(state);
 }
 
-void MainWindow::changeTiltPlane1(double value){
-
+void MainWindow::changeTiltPlane1(double value)
+{
 }
-void MainWindow::changeTiltPlane2(double value){
-
+void MainWindow::changeTiltPlane2(double value)
+{
 }
 /* end ozgur */
 
 //dave 11.07
-void MainWindow::setPaintBucketColor(QColor c){
-	MainWindow::paint_bucket_color = c;
+void MainWindow::setPaintBucketColor(QColor c)
+{
+	MainWindow::sPaintBucketColor = c;
 }
 
-void MainWindow::paintSelectedFaces(){
+void MainWindow::paintSelectedFaces()
+{
 	//iterate through the selected faces and color them with object.addMaterial?
 	undoPush();
 	// DLFLFacePtrArray fparray;
 	// fparray.resize(active->numSelectedFaces());
-	for (int i=0; i < active->numSelectedFaces(); ++i)	{
-		active->getSelectedFace(i)->setMaterial(object.addMaterial(RGBColor(paint_bucket_color.redF(),paint_bucket_color.greenF(),paint_bucket_color.blueF())));
+	for (int i = 0; i < mActiveViewport->numSelectedFaces(); ++i)
+	{
+		mActiveViewport->getSelectedFace(i)->setMaterial(
+			mObject.addMaterial(
+				RGBColor(sPaintBucketColor.redF(), sPaintBucketColor.greenF(), sPaintBucketColor.blueF())));
 	}
 	MainWindow::clearSelected();
-	active->recomputePatches();
-	active->recomputeNormals();
-	redraw();
-
-}
-
-void MainWindow::clearMaterials(){
-	undoPush();
-	object.clearMaterials();
-	active->recomputePatches();
-	active->recomputeNormals();
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	redraw();
 }
 
-
-// Geometric transformations
-void MainWindow::translatex(double x) {
-	Vector3d oldtr = object.position;
-	object.position[0] = x;
-	object.tr.transform[0][3] = x;
-	redraw();
-}
-
-void MainWindow::translatey(double y) {
-	object.position[1] = y;
-	object.tr.transform[1][3] = y;
-	redraw();
-}
-
-void MainWindow::translatez(double z) {
-	object.position[2] = z;
-	object.tr.transform[2][3] = z;
-	redraw();
-}
-
-void MainWindow::scalex(double x) {
-	object.scale_factor[0] = x;
-	object.tr.transform[0][0] = x;
-	redraw();
-}
-
-void MainWindow::scaley(double y) {
-	object.scale_factor[1] = y;
-	object.tr.transform[1][1] = y;
-	redraw();
-}
-
-void MainWindow::scalez(double z) {
-	object.scale_factor[2] = z;
-	object.tr.transform[2][2] = z;
-	redraw();
-}
-
-void MainWindow::freezeTransforms() {
-	object.freezeTransformations();
-	object.position.reset();
-	object.scale_factor.set(1,1,1);
-	object.rotation.reset();
-	object.tr.reset();
-	active->recomputePatches();
-	active->recomputeLighting();
-	redraw();
-}
-
-// // Global operations (don't require selection)
-// void MainWindow::active->recomputeNormals(void)     // Recompute normals and lighting
-// {
-// 	object.computeNormals();
-// 	computeLighting( &object, patchObject, &plight);
-// }
-// 
-// void MainWindow::recomputeLighting(void)                // Recompute lighting
-// {
-// 	computeLighting( &object, patchObject, &plight);
-// }
-// 
-// void MainWindow::active->recomputePatches(void) // Recompute the patches for patch rendering
-// {
-//   if(patchObject)
-//     patchObject->updatePatches(&object);
-// }
-// 
-void MainWindow::subdivideAllEdges(void)              // Sub-divide all edges
+void MainWindow::clearMaterials()
 {
 	undoPush();
-	DLFL::subdivideAllEdges(&object,MainWindow::num_e_subdivs);
+	mObject.clearMaterials();
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
+	redraw();
+}
+
+// Geometric transformations
+void MainWindow::translatex(double x)
+{
+	Vector3d oldtr = mObject.position;
+	mObject.position[0] = x;
+	mObject.tr.transform[0][3] = x;
+	redraw();
+}
+
+void MainWindow::translatey(double y)
+{
+	mObject.position[1] = y;
+	mObject.tr.transform[1][3] = y;
+	redraw();
+}
+
+void MainWindow::translatez(double z)
+{
+	mObject.position[2] = z;
+	mObject.tr.transform[2][3] = z;
+	redraw();
+}
+
+void MainWindow::scalex(double x)
+{
+	mObject.scale_factor[0] = x;
+	mObject.tr.transform[0][0] = x;
+	redraw();
+}
+
+void MainWindow::scaley(double y)
+{
+	mObject.scale_factor[1] = y;
+	mObject.tr.transform[1][1] = y;
+	redraw();
+}
+
+void MainWindow::scalez(double z)
+{
+	mObject.scale_factor[2] = z;
+	mObject.tr.transform[2][2] = z;
+	redraw();
+}
+
+void MainWindow::freezeTransforms()
+{
+	mObject.freezeTransformations();
+	mObject.position.reset();
+	mObject.scale_factor.set(1, 1, 1);
+	mObject.rotation.reset();
+	mObject.tr.reset();
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeLighting();
+	redraw();
+}
+
+/*// Global operations (don't require selection)
+void MainWindow::active->recomputeNormals(void)     // Recompute normals and lighting
+{
+	object.computeNormals();
+	computeLighting( &object, patchObject, &plight);
+}
+
+void MainWindow::recomputeLighting(void)                // Recompute lighting
+{
+	computeLighting( &object, patchObject, &plight);
+}
+
+void MainWindow::active->recomputePatches(void) // Recompute the patches for patch rendering
+{
+	if(patchObject)
+		patchObject->updatePatches(&object);
+}*/
+
+// Sub-divide all edges
+void MainWindow::subdivideAllEdges(void)
+{
+	undoPush();
+	DLFL::subdivideAllEdges(&mObject, MainWindow::sNumEdgeSubdiv);
 	MainWindow::clearSelected();
-	active->recomputePatches();
-	active->recomputeNormals();
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	redraw();
 }
 
@@ -800,13 +928,13 @@ void MainWindow::subdivideSelectedEdges(void) // Subdivide all selected edges
 	undoPush();
 	// DLFLEdgePtrArray eparray;
 	// eparray.resize(active->numSelectedEdges());
-	for (int i=0; i < active->numSelectedEdges(); ++i)	{
-		subdivideEdge(&object,MainWindow::num_e_subdivs, active->getSelectedEdge(i));
-	}  
+	for (int i=0; i < mActiveViewport->numSelectedEdges(); ++i)	{
+		subdivideEdge(&mObject,MainWindow::sNumEdgeSubdiv, mActiveViewport->getSelectedEdge(i));
+	}
 	// DLFL::subdivideEdges(&object,fparray,use_quads);
 	MainWindow::clearSelected();
-	active->recomputePatches();
-	active->recomputeNormals();
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	redraw();
 }
 
@@ -814,50 +942,53 @@ void MainWindow::subdivideSelectedFaces(void) // Subdivide all selected faces
 {
 	undoPush();
 	DLFLFacePtrArray fparray;
-	fparray.resize(active->numSelectedFaces());
-	for (int i=0; i < active->numSelectedFaces(); ++i)	{
-		fparray[i] = active->getSelectedFace(i);
+	fparray.resize(mActiveViewport->numSelectedFaces());
+	for (int i = 0; i < mActiveViewport->numSelectedFaces(); ++i)
+	{
+		fparray[i] = mActiveViewport->getSelectedFace(i);
 	}
-	DLFL::subdivideFaces(&object,fparray,use_quads);
+	DLFL::subdivideFaces(&mObject, fparray, sUseQuads);
 	MainWindow::clearSelected();
-	active->recomputePatches();
-	active->recomputeNormals();
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	redraw();
 }
 
 void MainWindow::subdivideAllFaces(void) // Subdivide all the faces
 {
 	undoPush();
-	DLFL::subdivideAllFaces(&object,use_quads);
+	DLFL::subdivideAllFaces(&mObject,sUseQuads);
 	MainWindow::clearSelected();
-	active->recomputePatches();
-	active->recomputeNormals();
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	redraw();
 }
 
 void MainWindow::createMultiFaceHandle(void) // Create multi-face handle between selected faces
 {
-	int numsel = active->numSelectedFaces();
-	if ( numsel < 3 ) return;
+	int numsel = mActiveViewport->numSelectedFaces();
+	if (numsel < 3) return;
 	undoPush();
 	DLFLFacePtrArray sel_faces;
 	DLFLFacePtr sfptr;
-	for (int i=0; i < numsel; ++i)	{
-		sfptr = active->getSelectedFace(i);
-		if ( sfptr ) sel_faces.push_back(sfptr);
+	for (int i = 0; i < numsel; ++i)
+	{
+		sfptr = mActiveViewport->getSelectedFace(i);
+		if (sfptr) sel_faces.push_back(sfptr);
 	}
-	switch ( MainWindow::mfh_algo )	{
-		case ConvexHull :
-		DLFL::multiConnectFaces(&object,sel_faces,MainWindow::mfh_scale_factor,MainWindow::mfh_extrude_dist,MainWindow::mfh_use_max_offsets);
+	switch (MainWindow::sMfhAlgorithm)
+	{
+	case ConvexHull:
+		DLFL::multiConnectFaces(&mObject, sel_faces, MainWindow::sMfhScaleFactor, MainWindow::sMfhExtrudeDist, MainWindow::sMfhUseMaxOffsets);
 		break;
-		case ClosestEdge :
-		DLFL::multiConnectFaces(&object,sel_faces);
+	case ClosestEdge:
+		DLFL::multiConnectFaces(&mObject, sel_faces);
 		break;
-		default :
+	default:
 		break;
 	}
-	active->recomputePatches();
-	active->recomputeNormals();
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	redraw();
 }
@@ -866,9 +997,9 @@ void MainWindow::multiConnectMidpoints(void)
 {
 	// Multi-connect midpoints after simplest-subdivision without edge deletion
 	undoPush();
-	DLFL::multiConnectMidpoints(&object);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::multiConnectMidpoints(&mObject);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	redraw();
 }
@@ -877,9 +1008,9 @@ void MainWindow::multiConnectCrust(void)
 {
 	// Multi-connect after creating crust
 	undoPush();
-	DLFL::multiConnectCrust(&object);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::multiConnectCrust(&mObject);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	redraw();
 }
@@ -888,9 +1019,9 @@ void MainWindow::modifiedMultiConnectCrust(void)
 {
 	// Modified multi-connect after creating crust
 	undoPush();
-	DLFL::modifiedMultiConnectCrust(&object);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::modifiedMultiConnectCrust(&mObject);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	redraw();
 }
@@ -898,497 +1029,530 @@ void MainWindow::modifiedMultiConnectCrust(void)
 void MainWindow::createSponge(void)
 {
 	undoPush();
-	DLFL::createSponge(&object,MainWindow::sponge_thickness,
-		MainWindow::sponge_collapse_threshold);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::createSponge(&mObject,MainWindow::sSpongeThickness,
+		MainWindow::sSpongeCollapseThreshold);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	redraw();
 }
 
-void MainWindow::planarizeFaces(void)                  // Planarize all faces
+// Planarize all faces
+void MainWindow::planarizeFaces(void)
 {
 	undoPush();
-	DLFL::planarize(&object);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::planarize(&mObject);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	redraw();
 }
 
-void MainWindow::spheralizeObject(void)         // Spheralize object vertices
+// Spheralize object vertices
+void MainWindow::spheralizeObject(void)
 {
 	undoPush();
-	DLFL::spheralize(&object);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::spheralize(&mObject);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	redraw();
 }
 
-void MainWindow::smoothMesh(void)                          // Smooth the mesh
+// Smooth the mesh
+void MainWindow::smoothMesh(void)
 {
 	undoPush();
-	DLFL::meshsmooth(&object);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::meshsmooth(&mObject);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	redraw();
 }
 
-void MainWindow::subdivideCatmullClark(void)     // Catmull-Clark subdivision
+// Catmull-Clark subdivision
+void MainWindow::subdivideCatmullClark(void)
 {
 	undoPush();
-	DLFL::catmullClarkSubdivide(&object);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::catmullClarkSubdivide(&mObject);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	QString cmd( "subdivide(\"catmull-clark\")");
 	emit echoCommand( cmd );
 	// redraw();
 }
 
-void MainWindow::subdivideDooSabin(void)             // Doo-Sabin subdivision
+// Doo-Sabin subdivision
+void MainWindow::subdivideDooSabin(void)
 {
 	undoPush();
-	
+
 	// QProgressDialog *progress = new QProgressDialog("Performing Doo Sabin Remeshing...", "Cancel", 0, 1);
 	// progress->setMinimumDuration(2000);
 	// progress->setWindowModality(Qt::WindowModal);
-	
+
 	// DLFLObjectPtr t = object;
 	// active->setRenderingEnabled(false);
-	
+
 	// if (!DLFL::dooSabinSubdivide(&object, doo_sabin_check/* , progress*/) ){
-		// active->recomputePatches();
-		// active->recomputeNormals();
-		// undo();
-		// MainWindow::clearSelected();
-		// active->setRenderingEnabled(true);
+	// active->recomputePatches();
+	// active->recomputeNormals();
+	// undo();
+	// MainWindow::clearSelected();
+	// active->setRenderingEnabled(true);
 	// }
 	// else {
-		// object = t;
-		// delete t;
-		// active->setRenderingEnabled(true);
-		DLFL::dooSabinSubdivide(&object, doo_sabin_check/* , progress*/);
-		active->recomputePatches();
-		active->recomputeNormals();
-		MainWindow::clearSelected();
-		QString cmd( "subdivide(\"doo-sabin\",");
-		QString check("False");
-		if( doo_sabin_check )
-			check = QString("True");
-		cmd += check + QString(")");
-		emit echoCommand( cmd );
+	// object = t;
+	// delete t;
+	// active->setRenderingEnabled(true);
+	DLFL::dooSabinSubdivide(&mObject, sDooSabinCheck/* , progress*/);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
+	MainWindow::clearSelected();
+	QString cmd("subdivide(\"doo-sabin\",");
+	QString check("False");
+	if (sDooSabinCheck)
+		check = QString("True");
+	cmd += check + QString(")");
+	emit echoCommand(cmd);
 	// }
-	
+
 }
 
-void MainWindow::subdivideHoneycomb(void)            // Honeycomb subdivision
+// Honeycomb subdivision
+void MainWindow::subdivideHoneycomb(void)
 {
 	undoPush();
-	DLFL::honeycombSubdivide(&object);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::honeycombSubdivide(&mObject);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 
 	QString cmd("subdivide(\"honeycomb\")");
-	emit echoCommand( cmd );
+	emit echoCommand(cmd);
 }
 
-void MainWindow::subdivideRoot4(void)                   // Root-4 subdivision
+// Root-4 subdivision
+void MainWindow::subdivideRoot4(void)
 {
 	undoPush();
-	DLFL::root4Subdivide( &object, MainWindow::weight_factor,MainWindow::twist_factor);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::root4Subdivide(&mObject, MainWindow::sWeightFactor, MainWindow::sTwistFactor);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
-	QString cmd( "subdivide(\"root4\",");
-	cmd += QString().setNum(MainWindow::weight_factor) + QString(",");
-	cmd += QString().setNum(MainWindow::twist_factor) + QString(")");
-	emit echoCommand( cmd );
+	QString cmd("subdivide(\"root4\",");
+	cmd += QString().setNum(MainWindow::sWeightFactor) + QString(",");
+	cmd += QString().setNum(MainWindow::sTwistFactor) + QString(")");
+	emit echoCommand(cmd);
 }
 
-void MainWindow::subdivideCornerCutting(void)   // Corner-cutting subdivision
+// Corner-cutting subdivision
+void MainWindow::subdivideCornerCutting(void)
 {
 	undoPush();
-	DLFL::cornerCuttingSubdivide(&object, MainWindow::corner_cutting_alpha);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::cornerCuttingSubdivide(&mObject, MainWindow::sCornerCuttingAlpha);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	QString cmd("subdivide(\"corner-cut\")");
-	emit echoCommand( cmd );
+	emit echoCommand(cmd);
 }
 
-void MainWindow::subdivideModifiedCornerCutting(void)   // Modified Corner-cutting subdivision
+// Modified Corner-cutting subdivision
+void MainWindow::subdivideModifiedCornerCutting(void)
 {
 	undoPush();
-	DLFL::modifiedCornerCuttingSubdivide(&object,MainWindow::modified_corner_cutting_thickness);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::modifiedCornerCuttingSubdivide(&mObject, MainWindow::sModifiedCornerCuttingThickness);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	// QString cmd("subdivide(\"modified-corner-cut\")");
 	// emit echoCommand( cmd );
 }
 
-
-void MainWindow::subdivideLinearVertexInsertion(void) // Bi-linear Vertex-insertion remeshing
+// Bi-linear Vertex-insertion remeshing
+void MainWindow::subdivideLinearVertexInsertion(void)
 {
 	undoPush();
-	DLFL::subdivideAllFaces(&object,true);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::subdivideAllFaces(&mObject, true);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	QString cmd("subdivide(\"linear-vertex\",True)");
-	emit echoCommand( cmd );
+	emit echoCommand(cmd);
 }
 
-void MainWindow::subdivideSimplest(void)        // Corner-cutting subdivision
+// Corner-cutting subdivision
+void MainWindow::subdivideSimplest(void)
 {
 	undoPush();
-	DLFL::simplestSubdivide(&object);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::simplestSubdivide(&mObject);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	QString cmd("subdivide(\"simplest\")");
-	emit echoCommand( cmd );
+	emit echoCommand(cmd);
 }
 
-void MainWindow::subdivideVertexCutting(void)   // Vertex-cutting subdivision
+// Vertex-cutting subdivision
+void MainWindow::subdivideVertexCutting(void)
 {
 	undoPush();
-	DLFL::vertexCuttingSubdivide(&object,MainWindow::vertex_cutting_offset);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::vertexCuttingSubdivide(&mObject, MainWindow::sVertexCuttingOffset);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 
-	QString cmd = QString("subdivide(\"vertex-cut\"," )
-		+ QString().setNum(MainWindow::vertex_cutting_offset)
+	QString cmd = QString("subdivide(\"vertex-cut\",")
+		+ QString().setNum(MainWindow::sVertexCuttingOffset)
 		+ QString(")");
-	emit echoCommand( cmd );
+	emit echoCommand(cmd);
 }
 
-void MainWindow::subdividePentagonal(void)          // Pentagonal subdivision
+// Pentagonal subdivision
+void MainWindow::subdividePentagonal(void)
 {
 	undoPush();
-	DLFL::pentagonalSubdivide(&object,MainWindow::pentagonal_offset);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::pentagonalSubdivide(&mObject, MainWindow::sPentagonalOffset);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
-	QString cmd( "subdivide(\"pentagon\",");
-	cmd += QString().setNum(MainWindow::pentagonal_offset) + QString(")");
-	emit echoCommand( cmd );
+	QString cmd("subdivide(\"pentagon\",");
+	cmd += QString().setNum(MainWindow::sPentagonalOffset) + QString(")");
+	emit echoCommand(cmd);
 }
 
-void MainWindow::subdivideCubicPentagonal(void) // Cubic Pentagonal remeshing scheme
+// Cubic Pentagonal remeshing scheme
+void MainWindow::subdivideCubicPentagonal(void)
 {
 // Implemented as Pentagonal + Dual + Dual
 	undoPush();
-	DLFL::pentagonalSubdivide(&object,MainWindow::pentagonal_offset);
-	DLFL::createDual(&object,true); // Use accurate method
-	DLFL::createDual(&object,true); // Use accurate method
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::pentagonalSubdivide(&mObject, MainWindow::sPentagonalOffset);
+	DLFL::createDual(&mObject, true); // Use accurate method
+	DLFL::createDual(&mObject, true); // Use accurate method
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
-	QString cmd( "subdivide(\"pentagon\",");
-	cmd += QString().setNum(MainWindow::pentagonal_offset) + QString(")");
+	QString cmd("subdivide(\"pentagon\",");
+	cmd += QString().setNum(MainWindow::sPentagonalOffset) + QString(")");
 	cmd += QString("\ndual()\ndual()");
-	emit echoCommand( cmd );
+	emit echoCommand(cmd);
 }
 
-void MainWindow::subdivideDualPentagonal(void) // Dual-Pentagonal subdivision
+// Dual-Pentagonal subdivision
+void MainWindow::subdivideDualPentagonal(void)
 {
 // Implemented as Dual + Pentagonal + Dual
 	undoPush();
-	DLFL::createDual(&object,true); // Use accurate method
-	DLFL::pentagonalSubdivide(&object,MainWindow::pentagonal_offset);
-	DLFL::createDual(&object,true); // Use accurate method
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::createDual(&mObject, true); // Use accurate method
+	DLFL::pentagonalSubdivide(&mObject, MainWindow::sPentagonalOffset);
+	DLFL::createDual(&mObject, true); // Use accurate method
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
-	QString cmd( "dual()\nsubdivide(\"pentagon\",");
-	cmd += QString().setNum(MainWindow::pentagonal_offset) + QString(")");
+	QString cmd("dual()\nsubdivide(\"pentagon\",");
+	cmd += QString().setNum(MainWindow::sPentagonalOffset) + QString(")");
 	cmd += QString("\ndual()");
-	emit echoCommand( cmd );
+	emit echoCommand(cmd);
 }
 
-void MainWindow::subdividePentagonPreserving(void) // Pentagon preserving remeshing
+// Pentagon preserving remeshing
+void MainWindow::subdividePentagonPreserving(void)
 {
 	undoPush();
-	DLFL::pentagonalSubdivide2(&object,MainWindow::pentagonal_scale);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::pentagonalSubdivide2(&mObject, MainWindow::sPentagonalScale);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
-	QString cmd( "subdivide(\"pentagon-preserve\",");
-	cmd += QString().setNum(MainWindow::pentagonal_scale) + QString(")");
-	emit echoCommand( cmd );
+	QString cmd("subdivide(\"pentagon-preserve\",");
+	cmd += QString().setNum(MainWindow::sPentagonalScale) + QString(")");
+	emit echoCommand(cmd);
 }
 
-void MainWindow::subdivideDualPentagonPreserving(void) // Dual Pentagon preserving remeshing
+// Dual Pentagon preserving remeshing
+void MainWindow::subdivideDualPentagonPreserving(void)
 {
 // Implemented as Dual + Pentagonal + Dual
 	undoPush();
-	DLFL::createDual(&object,true); // Use accurate method
-	DLFL::pentagonalSubdivide2(&object,MainWindow::pentagonal_scale);
-	DLFL::createDual(&object,true); // Use accurate method
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::createDual(&mObject, true); // Use accurate method
+	DLFL::pentagonalSubdivide2(&mObject, MainWindow::sPentagonalScale);
+	DLFL::createDual(&mObject, true); // Use accurate method
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
-	QString cmd( "dual()\nsubdivide(\"pentagon-preserve\",");
-	cmd += QString().setNum(MainWindow::pentagonal_scale) + QString(")");
+	QString cmd("dual()\nsubdivide(\"pentagon-preserve\",");
+	cmd += QString().setNum(MainWindow::sPentagonalScale) + QString(")");
 	cmd += QString("\ndual()");
-	emit echoCommand( cmd );
+	emit echoCommand(cmd);
 }
 
-void MainWindow::subdivideDualHexagonPreserving(void) // Dual Hexagon Preserving remeshing
+// Dual Hexagon Preserving remeshing
+void MainWindow::subdivideDualHexagonPreserving(void)
 {
 // Implemented as Dual + Root4 + Dual
 	undoPush();
-	DLFL::createDual(&object,true); // Use accurate method
-	DLFL::root4Subdivide(&object,MainWindow::weight_factor,MainWindow::twist_factor);
-	DLFL::createDual(&object,true); // Use accurate method
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::createDual(&mObject, true); // Use accurate method
+	DLFL::root4Subdivide(&mObject, MainWindow::sWeightFactor, MainWindow::sTwistFactor);
+	DLFL::createDual(&mObject, true); // Use accurate method
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
-	QString cmd( "dual()\nsubdivide(\"root4\",");
-	cmd += QString().setNum(MainWindow::weight_factor) + QString(",");
-	cmd += QString().setNum(MainWindow::twist_factor) + QString(")");
+	QString cmd("dual()\nsubdivide(\"root4\",");
+	cmd += QString().setNum(MainWindow::sWeightFactor) + QString(",");
+	cmd += QString().setNum(MainWindow::sTwistFactor) + QString(")");
 	cmd += QString("\ndual()");
-	emit echoCommand( cmd );
+	emit echoCommand(cmd);
 }
 
-void MainWindow::subdivideRoot3(void)                     // Root-3 remeshing
+// Root-3 remeshing
+void MainWindow::subdivideRoot3(void)
 {
 // Implemented as Dual + Honeycomb + Dual
 	undoPush();
-	DLFL::createDual(&object,true); // Use accurate method
-	DLFL::honeycombSubdivide(&object);
-	DLFL::createDual(&object,true); // Use accurate method
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::createDual(&mObject, true); // Use accurate method
+	DLFL::honeycombSubdivide(&mObject);
+	DLFL::createDual(&mObject, true); // Use accurate method
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 
 	QString cmd = QString("dual()\n");
 	cmd += QString("subdivide(\"honeycomb\")\n");
 	cmd += QString("dual()");
-	emit echoCommand( cmd );
+	emit echoCommand(cmd);
 }
 
-void MainWindow::subdivideLoop(void)                      // Loop subdivision
+// Loop subdivision
+void MainWindow::subdivideLoop(void)
 {
 	undoPush();
-	DLFL::loopSubdivide(&object);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::loopSubdivide(&mObject);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 
 	QString cmd("subdivide(\"loop\")\n");
-	emit echoCommand( cmd );
+	emit echoCommand(cmd);
 }
 
-void MainWindow::subdivideDualLoop(void)          // Dual of Loop subdivision
+// Dual of Loop subdivision
+void MainWindow::subdivideDualLoop(void)
 {
-// Implemented as Dual + Loop + Dual
+	// Implemented as Dual + Loop + Dual
 	undoPush();
-	DLFL::createDual(&object,true); // Use accurate method
-	DLFL::loopSubdivide(&object);
-	DLFL::createDual(&object,true); // Use accurate method
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::createDual(&mObject, true); // Use accurate method
+	DLFL::loopSubdivide(&mObject);
+	DLFL::createDual(&mObject, true); // Use accurate method
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 
 	QString cmd = QString("dual()\n");
 	cmd += QString("subdivide(\"loop\")\n");
 	cmd += QString("dual()");
-	emit echoCommand( cmd );
+	emit echoCommand(cmd);
 }
 
-void MainWindow::subdivide1264(void)                      // 12-6-4 remeshing
+// 12-6-4 remeshing
+void MainWindow::subdivide1264(void)
 {
-// Implemented as Dual + Dual 12-6-4 + Dual
+	// Implemented as Dual + Dual 12-6-4 + Dual
 	undoPush();
-	DLFL::createDual(&object,true); // Use accurate method
-	DLFL::dual1264Subdivide(&object,MainWindow::dual1264_scale_factor);
-	DLFL::createDual(&object,true); // Use accurate method
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::createDual(&mObject, true); // Use accurate method
+	DLFL::dual1264Subdivide(&mObject, MainWindow::sDual1264ScaleFactor);
+	DLFL::createDual(&mObject, true); // Use accurate method
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 
 	QString cmd = QString("dual()\ndual()\n");
 	cmd += QString("subdivide(\"dual-12.6.4\",")
-		+ QString().setNum(MainWindow::dual1264_scale_factor) 
+		+ QString().setNum(MainWindow::sDual1264ScaleFactor)
 		+ QString(")\n");
 	cmd += QString("dual()");
 	emit echoCommand(cmd);
 }
 
-void MainWindow::subdivideDual1264(void) // Dual of 12-6-4 remeshing - Bei & Cansin
+// Dual of 12-6-4 remeshing - Bei & Cansin
+void MainWindow::subdivideDual1264(void)
 {
 	undoPush();
-	DLFL::dual1264Subdivide(&object,MainWindow::dual1264_scale_factor);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::dual1264Subdivide(&mObject, MainWindow::sDual1264ScaleFactor);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 
 	QString cmd("subdivide(\"dual-12.6.4\",");
-	cmd += QString().setNum(MainWindow::dual1264_scale_factor);
+	cmd += QString().setNum(MainWindow::sDual1264ScaleFactor);
 	cmd += QString(")");
 	emit echoCommand(cmd);
 }
 
-void MainWindow::subdivideCheckerBoard(void)       // Checker board remeshing
+// Checker board remeshing
+void MainWindow::subdivideCheckerBoard(void)
 {
 	undoPush();
-	DLFL::checkerBoardRemeshing(&object,MainWindow::checkerboard_thickness);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::checkerBoardRemeshing(&mObject, MainWindow::sCheckerboardThickness);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	QString cmd("subdivide(\"checker\",");
-	cmd += QString().setNum(MainWindow::checkerboard_thickness);
+	cmd += QString().setNum(MainWindow::sCheckerboardThickness);
 	cmd += QString(")");
 	emit echoCommand(cmd);
 }
 
-void MainWindow::subdivideDualCheckerBoard(void) // Dual Checker board remeshing
+// Dual Checker board remeshing
+void MainWindow::subdivideDualCheckerBoard(void)
 {
-// Implemented as Dual + Checker board + Dual
+	// Implemented as Dual + Checker board + Dual
 	undoPush();
 	setModified(true);
-	DLFL::createDual(&object,true); // Use accurate method
-	DLFL::checkerBoardRemeshing(&object,MainWindow::checkerboard_thickness);
-	DLFL::createDual(&object,true); // Use accurate method
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::createDual(&mObject, true); // Use accurate method
+	DLFL::checkerBoardRemeshing(&mObject, MainWindow::sCheckerboardThickness);
+	DLFL::createDual(&mObject, true); // Use accurate method
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	QString cmd("dual()\nsubdivide(\"checker\",");
-	cmd += QString().setNum(MainWindow::checkerboard_thickness);
+	cmd += QString().setNum(MainWindow::sCheckerboardThickness);
 	cmd += QString(")\ndual()");
 	emit echoCommand(cmd);
 }
 
-void MainWindow::subdivideStar(void)               // Star subdivision - Doug
+// Star subdivision - Doug
+void MainWindow::subdivideStar(void)
 {
 	undoPush();
 	setModified(true);
-	DLFL::starSubdivide(&object,MainWindow::star_offset);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::starSubdivide(&mObject, MainWindow::sStarOffset);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 
 	QString cmd = QString("subdivide(\"star\")");
-	emit echoCommand( cmd );
+	emit echoCommand(cmd);
 }
 
-void MainWindow::subdivideSqrt3(void)           // sqrt(3) subdivision - Doug
+// sqrt(3) subdivision - Doug
+void MainWindow::subdivideSqrt3(void)
 {
 	undoPush();
 	setModified(true);
-	DLFL::sqrt3Subdivide(&object);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::sqrt3Subdivide(&mObject);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 
 	QString cmd = QString("subdivide(\"sqrt3\")");
-	emit echoCommand( cmd );
+	emit echoCommand(cmd);
 }
 
-void MainWindow::subdivideFractal(void)                     // fractal - Doug
+// fractal - Doug
+void MainWindow::subdivideFractal(void)
 {
 	undoPush();
 	setModified(true);
-	DLFL::fractalSubdivide(&object,MainWindow::fractal_offset);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::fractalSubdivide(&mObject, MainWindow::sFractalOffset);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 
 	QString cmd("subdivide(\"fractal\",");
-	cmd += QString().setNum(MainWindow::fractal_offset);
+	cmd += QString().setNum(MainWindow::sFractalOffset);
 	cmd += QString(")");
 	emit echoCommand(cmd);
 }
 
-void MainWindow::subStellate1(void)            // stellate subdivision - Eric
+// stellate subdivision - Eric
+void MainWindow::subStellate1(void)
 {
 	undoPush();
 	setModified(true);
-	DLFL::stellateSubdivide(&object);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::stellateSubdivide(&mObject);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 
 	QString cmd = QString("subdivide(\"stellate\")");
-	emit echoCommand( cmd );
+	emit echoCommand(cmd);
 }
 
-void MainWindow::subStellate2(void)            // stellate subdivision - Eric
+// stellate subdivision - Eric
+void MainWindow::subStellate2(void)
 {
 	undoPush();
 	setModified(true);
-	DLFL::twostellateSubdivide(&object,MainWindow::substellate_height, MainWindow::substellate_curve);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::twostellateSubdivide(&mObject, MainWindow::sSubstellateHeight, MainWindow::sSubstellateCurve);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 
 	QString cmd = QString("subdivide(\"double-stellate\",");
-	cmd += QString().setNum(MainWindow::substellate_height) + QString(",");
-	cmd += QString().setNum(MainWindow::substellate_curve) + QString(")");
-	emit echoCommand( cmd );
+	cmd += QString().setNum(MainWindow::sSubstellateHeight) + QString(",");
+	cmd += QString().setNum(MainWindow::sSubstellateCurve) + QString(")");
+	emit echoCommand(cmd);
 }
 
-void MainWindow::subdivideDome(void)                          // Bei & Cansin
+// Bei & Cansin
+void MainWindow::subdivideDome(void)
 {
 	undoPush();
 	setModified(true);
-	DLFL::domeSubdivide(&object,MainWindow::domeLength_factor, MainWindow::domeScale_factor);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::domeSubdivide(&mObject, MainWindow::sDomeLengthFactor, MainWindow::sDomeScaleFactor);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 
 	QString cmd = QString("subdivide(\"dome\",");
-	cmd += QString().setNum(MainWindow::substellate_height) + QString(",");
-	cmd += QString().setNum(MainWindow::substellate_curve) + QString(")");
-	emit echoCommand( cmd );
+	cmd += QString().setNum(MainWindow::sSubstellateHeight) + QString(",");
+	cmd += QString().setNum(MainWindow::sSubstellateCurve) + QString(")");
+	emit echoCommand(cmd);
 }
 
-void MainWindow::subdivideDooSabinBC(void) // Doo-Sabin(BC) subdivision - Bei & Cansin
+// Doo-Sabin(BC) subdivision - Bei & Cansin
+void MainWindow::subdivideDooSabinBC(void)
 {
 	undoPush();
 	setModified(true);
-	DLFL::dooSabinSubdivideBC(&object,MainWindow::doo_sabin_check);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::dooSabinSubdivideBC(&mObject, MainWindow::sDooSabinCheck);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	QString check("False");
-	if(MainWindow::doo_sabin_check)
+	if (MainWindow::sDooSabinCheck)
 		check = QString("True");
 	QString cmd = QString("subdivide(\"doo-sabin-bc\",");
 	cmd += check + QString(")");
-	emit echoCommand( cmd );
+	emit echoCommand(cmd);
 }
 
-void MainWindow::subdivideDooSabinBCNew(void) // Doo-Sabin(BCNew) Bei & Cansin
+// Doo-Sabin(BCNew) Bei & Cansin
+void MainWindow::subdivideDooSabinBCNew(void)
 {
 	undoPush();
 	setModified(true);
-	DLFL::dooSabinSubdivideBCNew(&object,MainWindow::dooSabinBCnewScale_factor,
-		MainWindow::dooSabinBCnewLength_factor);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::dooSabinSubdivideBCNew(&mObject, MainWindow::sDooSabinBCnewScaleFactor,
+								 MainWindow::sDooSabinBCnewLengthFactor);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	QString cmd = QString("subdivide(\"doo-sabin-bc-new\",");
-	cmd += QString().setNum(MainWindow::dooSabinBCnewScale_factor) + QString(",");
-	cmd += QString().setNum(MainWindow::dooSabinBCnewLength_factor) + QString(")");
-	emit echoCommand( cmd );
+	cmd += QString().setNum(MainWindow::sDooSabinBCnewScaleFactor) + QString(",");
+	cmd += QString().setNum(MainWindow::sDooSabinBCnewLengthFactor) + QString(")");
+	emit echoCommand(cmd);
 }
 
-void MainWindow::subdivideLoopStyle(void)     // Loop-style subdivision - Bei
+// Loop-style subdivision - Bei
+void MainWindow::subdivideLoopStyle(void)
 {
 	undoPush();
 	setModified(true);
-	DLFL::loopStyleSubdivide(&object,MainWindow::loopLength_factor);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::loopStyleSubdivide(&mObject, MainWindow::sLoopLengthFactor);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	QString cmd = QString("subdivide(\"loop-style\",");
-	cmd += QString().setNum(MainWindow::loopLength_factor) + QString(")");
-	emit echoCommand( cmd );
+	cmd += QString().setNum(MainWindow::sLoopLengthFactor) + QString(")");
+	emit echoCommand(cmd);
 }
 
 void MainWindow::globalStellate(void)
@@ -1396,105 +1560,112 @@ void MainWindow::globalStellate(void)
 	// Does not use length parameter for now. Uses subdivideFace method with triangles
 	undoPush();
 	setModified(true);
-	DLFL::subdivideAllFaces(&object,false);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::subdivideAllFaces(&mObject, false);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 
 	QString cmd = QString("subdivide(\"allfaces\",False)");
-	emit echoCommand( cmd );
+	emit echoCommand(cmd);
 }
 
 void MainWindow::triangulate(void)
 {
 	undoPush();
 	setModified(true);
-	DLFL::triangulateAllFaces(&object);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::triangulateAllFaces(&mObject);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 
 	// QString cmd = QString("subdivide(\"triangulate\",False)");
 	// emit echoCommand( cmd );
 }
 
-void MainWindow::splitValence2Vertices(void)      // Split Valence 2 vertices
+// Split Valence 2 vertices
+void MainWindow::splitValence2Vertices(void)
 {
 	undoPush();
 	setModified(true);
-	DLFL::splitValence2Vertices(&object,MainWindow::vertex_split_offset);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::splitValence2Vertices(&mObject, MainWindow::sVertexSplitOffset);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	redraw();
 }
 
-void MainWindow::cleanup2gons(void)      // cleanup 2-gons
+// cleanup 2-gons
+void MainWindow::cleanup2gons(void)
 {
 	undoPush();
 	setModified(true);
-	DLFL::cleanup2gons(&object);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::cleanup2gons(&mObject);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	redraw();
 }
 
-void MainWindow::cleanupWingedVertices(void)     // Remove valence 2 vertices
+// Remove valence 2 vertices
+void MainWindow::cleanupWingedVertices(void)
 {
 	undoPush();
 	setModified(true);
-	DLFL::cleanupWingedVertices(&object);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::cleanupWingedVertices(&mObject);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	redraw();
 }
 
-void MainWindow::createDual(void)                       // Create dual object
+// Create dual object
+void MainWindow::createDual(void)
 {
 	undoPush();
 	setModified(true);
-	DLFL::createDual(&object,MainWindow::accurate_dual);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::createDual(&mObject, MainWindow::sAccurateDual);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 
 	QString cmd = QString("dual()");
-	emit echoCommand( cmd );
+	emit echoCommand(cmd);
 }
 
-void MainWindow::createCrust(bool use_scaling)        // Create a crust
+// Create a crust
+void MainWindow::createCrust(bool use_scaling)
 {
 	undoPush();
 	setModified(true);
-	if ( use_scaling ) 
-		DLFL::createCrustWithScaling(&object,MainWindow::crust_scale_factor);
-	else 
-		DLFL::createCrust(&object,MainWindow::crust_thickness);
-	active->recomputePatches();
-	active->recomputeNormals();
+	if (use_scaling)
+		DLFL::createCrustWithScaling(&mObject, MainWindow::sCrustScaleFactor);
+	else
+		DLFL::createCrust(&mObject, MainWindow::sCrustThickness);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	redraw();
 }
 
-
 //this function will tag all currently selected faces with the FTHole type
 //when the user presses the rind modeling button, and it will punch out all those faces
-void MainWindow::createCrust2(bool use_scaling) {
+void MainWindow::createCrust2(bool use_scaling)
+{
 	QString facelist("[");
 
 	undoPush();
 	setModified(true);
-	if ( use_scaling ) 
-		DLFL::createCrustWithScaling(&object,MainWindow::crust_scale_factor);
-	else 
-		DLFL::createCrust(&object,MainWindow::crust_thickness);
-	active->recomputePatches();
-	active->recomputeNormals();
-	if ( active->numSelectedFaces() >= 1 ) {
-		DLFLFacePtrArray sfptrarr = active->getSelectedFaces();
-		if ( sfptrarr[0] ) {
+	if (use_scaling)
+		DLFL::createCrustWithScaling(&mObject, MainWindow::sCrustScaleFactor);
+	else
+		DLFL::createCrust(&mObject, MainWindow::sCrustThickness);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
+	if (mActiveViewport->numSelectedFaces() >= 1)
+	{
+		DLFLFacePtrArray sfptrarr = mActiveViewport->getSelectedFaces();
+		if (sfptrarr[0])
+		{
 			for (auto sfPtr : sfptrarr)
 			{
 				sfPtr->setType(FTHole);
@@ -1502,19 +1673,19 @@ void MainWindow::createCrust2(bool use_scaling) {
 			}
 
 			facelist += QString("]");
-			DLFL::punchHoles(&object);
+			DLFL::punchHoles(&mObject);
 		}
 	}
-	active->recomputePatches();
-	active->recomputeNormals();
-	active->clearSelectedFaces();
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
+	mActiveViewport->clearSelectedFaces();
 	redraw();
 
-	QString cmd = QString("rind(") + 
-		facelist + QString(",True,") + 
-		MainWindow::crust_thickness +
+	QString cmd = QString("rind(") +
+		facelist + QString(",True,") +
+		MainWindow::sCrustThickness +
 		QString(")");
-	emit echoCommand( cmd );
+	emit echoCommand(cmd);
 }
 
 // Create a wireframe
@@ -1522,21 +1693,23 @@ void MainWindow::makeWireframe(void)
 {
 	undoPush();
 	setModified(true);
-	DLFL::makeWireframe(&object,MainWindow::wireframe_thickness,MainWindow::wireframe_split);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::makeWireframe(&mObject, MainWindow::sWireframeThickness, MainWindow::sWireframeSplit);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	redraw();
 }
 
-void MainWindow::makeWireframe2() {// Create a wireframe // dave {
+// Create a wireframe // dave
+void MainWindow::makeWireframe2()
+{
 	undoPush();
 	setModified(true);
 	DLFL::makeWireframe2(
-		&object,
-		MainWindow::wireframe2_thickness,
-		MainWindow::wireframe2_width,
-		MainWindow::wireframe_split);
+		&mObject,
+		MainWindow::sWireframe2Thickness,
+		MainWindow::sWireframe2Width,
+		MainWindow::sWireframeSplit);
 	// active->recomputePatches();
 	// active->recomputeNormals();
 	// if ( active->numSelectedFaces() >= 1 ) {
@@ -1549,22 +1722,24 @@ void MainWindow::makeWireframe2() {// Create a wireframe // dave {
 	// 		object.makeWireframe2(MainWindow::wireframe_thickness);
 	// 	}
 	// }
-	active->recomputePatches();
-	active->recomputeNormals();
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	redraw();
 }
 
-void MainWindow::makeWireframeWithColumns(void) // Create a wireframe using columns
+// Create a wireframe using columns
+void MainWindow::makeWireframeWithColumns(void)
 {
 	undoPush();
 	setModified(true);
-	DLFL::makeWireframeWithColumns(&object,MainWindow::column_thickness, MainWindow::column_segments);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::makeWireframeWithColumns(&mObject, MainWindow::sColumnThickness, MainWindow::sColumnSegments);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	redraw();
 }
+
 /*
 void MainWindow::makeUnitCube(double edgelength)
 {
@@ -1618,114 +1793,126 @@ void MainWindow::makeSierpinskiTetrahedron(int level)
 	MainWindow::clearSelected();
 }
 */
-void MainWindow::randomAssignTexCoords(void) // Randomly assign texture coordinates
+
+// Randomly assign texture coordinates
+void MainWindow::randomAssignTexCoords(void)
 {
-	object.randomAssignTexCoords();
+	mObject.randomAssignTexCoords();
 	redraw();
 }
 
-void MainWindow::assignTileTexCoords(void) // Assign texture coordinates for tile texturing
+// Assign texture coordinates for tile texturing
+void MainWindow::assignTileTexCoords(void)
 {
-	object.assignTileTexCoords(MainWindow::tile_tex_n);
+	mObject.assignTileTexCoords(MainWindow::sTileTexSize);
 	redraw();
 }
 
-void MainWindow::edgeCleanup(void) // Cleanup redundant edges
+// Cleanup redundant edges
+void MainWindow::edgeCleanup(void)
 {
 	undoPush();
 	setModified(true);
-	DLFL::edgeCleanup(&object);
-	active->recomputePatches();
-	active->recomputeNormals();
+	DLFL::edgeCleanup(&mObject);
+	mActiveViewport->recomputePatches();
+	mActiveViewport->recomputeNormals();
 	MainWindow::clearSelected();
 	redraw();
 }
 
-void MainWindow::printSummary(void)              // Print summary information
+// Print summary information
+void MainWindow::printSummary(void)
 {
-	object.print();
+	mObject.print();
 }
 
-void MainWindow::printVertexList(void)                   // Print vertex list
+// Print vertex list
+void MainWindow::printVertexList(void)
 {
-	object.printVertexList();
+	mObject.printVertexList();
 }
 
-void MainWindow::printEdgeList(void)                       // Print edge list
+// Print edge list
+void MainWindow::printEdgeList(void)
 {
-	object.printEdgeList();
+	mObject.printEdgeList();
 }
 
-void MainWindow::printCVList(void)                       // Print CV list
+// Print CV list
+void MainWindow::printCVList(void)
 {
-///object.printPatchCVList();
+	///object.printPatchCVList();
 }
 
-void MainWindow::printFaceList(void)                       // Print face list
+// Print face list
+void MainWindow::printFaceList(void)
 {
-	object.printFaces();
+	mObject.printFaces();
 }
 
-void MainWindow::getCommand(){
-	#ifdef QCOMPLETER
+void MainWindow::getCommand()
+{
+#ifdef QCOMPLETER
 	int i = mCommandCompleter->exec();
 	mCommandCompleter->setFocus(Qt::PopupFocusReason);
 	// QMessageBox::about(this, tr("%1").arg(text),tr("%1").arg(mCommandList.indexOf(text)));
 	if (i > -1)
 		mActionListWidget->actions().at(i)->activate(QAction::Trigger);
-	#endif
+#endif
 }
 
-void MainWindow::initializeAnimatedHelp(){
-	
+void MainWindow::initializeAnimatedHelp()
+{
 	mAnimatedHelpWidget = new QWidget(this);
 	// QSplashScreen *w = new QSplashScreen(this);
 	mAnimatedHelpLayout = new QVBoxLayout;
-	
+
 	mAnimatedHelpMovie = new QMovie(this);
 	mAnimatedHelpMovie->setCacheMode(QMovie::CacheAll);
-	mAnimatedHelpMovie->setBackgroundColor(QColor(255,255,255,255));
+	mAnimatedHelpMovie->setBackgroundColor(QColor(255, 255, 255, 255));
 
 	mAnimatedHelpLabel = new QLabel(tr("No movie loaded"));
 	mAnimatedHelpLabel->setAlignment(Qt::AlignCenter);
 	// mAnimatedHelpLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 	// mAnimatedHelpLabel->setBackgroundRole(QPalette::Dark);
 	// mAnimatedHelpLabel->setAutoFillBackground(true);
-	
+
 	mAnimatedHelpLayout->addWidget(mAnimatedHelpLabel);
 	mAnimatedHelpLayout->addStretch(1);
 	mAnimatedHelpLayout->setMargin(0);
 	mAnimatedHelpWidget->setLayout(mAnimatedHelpLayout);
-	
+
 	mAnimatedHelpMovie->stop();
-  mAnimatedHelpLabel->setMovie(mAnimatedHelpMovie);
-  // mAnimatedHelp->setFileName("images/insert_edge.mng");
+	mAnimatedHelpLabel->setMovie(mAnimatedHelpMovie);
+	// mAnimatedHelp->setFileName("images/insert_edge.mng");
 	// w->move(QCursor::pos());
 	// w->show();
-	
+
 	// create the dockwidget, set it to the right side
 	mAnimatedHelpDockWidget = new QDockWidget(tr("TopMod Animated Help"), this);
 	mAnimatedHelpDockWidget->setAllowedAreas(Qt::NoDockWidgetArea);
 	mAnimatedHelpDockWidget->setWidget(mAnimatedHelpWidget);
 	// addDockWidget(Qt::RightDockWidgetArea, mAnimatedHelpDockWidget);
-	mAnimatedHelpDockWidget->hide();	
+	mAnimatedHelpDockWidget->hide();
 	mAnimatedHelpDockWidget->setFloating(true);
 	mAnimatedHelpDockWidget->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetFloatable);
 	// mAnimatedHelpDockWidget->setResizeEnabled(false);
 	//sizing
-	mAnimatedHelpDockWidget->setMinimumSize(200,200);
-	mAnimatedHelpDockWidget->setMaximumSize(200,200);
-	
+	mAnimatedHelpDockWidget->setMinimumSize(200, 200);
+	mAnimatedHelpDockWidget->setMaximumSize(200, 200);
+
 	//fix positioning later
-	mAnimatedHelpDockWidget->move(width() , 150+mToolOptionsDockWidget->height()+200);
+	mAnimatedHelpDockWidget->move(width(), 150 + mToolOptionsDockWidget->height() + 200);
 }
 
-void MainWindow::setAnimatedHelpImage(){
-  mAnimatedHelpMovie->setFileName("images/insert_edge.mng");
-  mAnimatedHelpMovie->start();
+void MainWindow::setAnimatedHelpImage()
+{
+	mAnimatedHelpMovie->setFileName("images/insert_edge.mng");
+	mAnimatedHelpMovie->start();
 }
 
-void MainWindow::deleteSelected(){
+void MainWindow::deleteSelected()
+{
 	DLFLEdgePtrArray septrarr;
 	DLFLFacePtrArray sfptrarr;
 	DLFLVertexPtrArray svptrarr;
@@ -1733,32 +1920,32 @@ void MainWindow::deleteSelected(){
 
 	// undoPush();
 	// setModified(true);
-	switch (selectionmask)
+	switch (mSelectionMask)
 	{
 	case MaskEdges:
 	{
-		septrarr = active->getSelectedEdges();
+		septrarr = mActiveViewport->getSelectedEdges();
 		if (septrarr[0])
 		{
 			undoPush();
 			setModified(true);
 			for (auto sePtr : septrarr)
 			{
-				DLFL::deleteEdge(&object, sePtr, true);
+				DLFL::deleteEdge(&mObject, sePtr, true);
 				// DLFL::deleteEdge( &object, septr, MainWindow::delete_edge_cleanup);
 				// active->recomputePatches();
 				// active->recomputeNormals();
 			}
 		}
-		active->clearSelectedEdges();
-		active->recomputePatches();
-		active->recomputeNormals();
+		mActiveViewport->clearSelectedEdges();
+		mActiveViewport->recomputePatches();
+		mActiveViewport->recomputeNormals();
 		redraw();
 		break;
 	}
 	case MaskVertices:
 	{
-		svptrarr = active->getSelectedVertices();
+		svptrarr = mActiveViewport->getSelectedVertices();
 		if (svptrarr[0])
 		{
 			undoPush();
@@ -1768,21 +1955,21 @@ void MainWindow::deleteSelected(){
 				svPtr->getEdges(septrarr);
 				for (auto sePtr : septrarr)
 				{
-					DLFL::deleteEdge(&object, sePtr, true);
+					DLFL::deleteEdge(&mObject, sePtr, true);
 				}
 				// active->recomputePatches();
 				// active->recomputeNormals();
 			}
 		}
-		active->clearSelectedVertices();
-		active->recomputePatches();
-		active->recomputeNormals();
+		mActiveViewport->clearSelectedVertices();
+		mActiveViewport->recomputePatches();
+		mActiveViewport->recomputeNormals();
 		redraw();
 		break;
 	}
 	case MaskFaces:
 	{
-		sfptrarr = active->getSelectedFaces();
+		sfptrarr = mActiveViewport->getSelectedFaces();
 		if (sfptrarr[0])
 		{
 			undoPush();
@@ -1793,7 +1980,7 @@ void MainWindow::deleteSelected(){
 				sfPtr->getEdges(septrarr);
 				for (auto sePtr : septrarr)
 				{
-					DLFL::collapseEdge(&object, sePtr, MainWindow::delete_edge_cleanup);
+					DLFL::collapseEdge(&mObject, sePtr, MainWindow::sDeleteEdgeCleanup);
 				}
 				sfPtr->getCorners(sfvptrarr);
 				for (auto sfvPtr : sfvptrarr)
@@ -1806,16 +1993,16 @@ void MainWindow::deleteSelected(){
 							vptr->getEdges(septrarr);
 							for (auto sePtr : septrarr)
 							{
-								DLFL::deleteEdge(&object, sePtr, MainWindow::delete_edge_cleanup);
+								DLFL::deleteEdge(&mObject, sePtr, MainWindow::sDeleteEdgeCleanup);
 							}
 						}
 					}
 				} // end loop through corners of current face
 			} //end loop through selected faces
-			active->recomputePatches();
-			active->recomputeNormals();
+			mActiveViewport->recomputePatches();
+			mActiveViewport->recomputeNormals();
 		}
-		active->clearSelectedFaces();
+		mActiveViewport->clearSelectedFaces();
 		redraw();
 		break;
 	}
@@ -1825,30 +2012,33 @@ void MainWindow::deleteSelected(){
 		break;
 	default:
 		break;
-	};
+	}
 }
 
-void MainWindow::collapseSelectedEdges(){
-	DLFLEdgePtrArray septrarr = active->getSelectedEdges();
-	if ( septrarr[0] ) {
+void MainWindow::collapseSelectedEdges()
+{
+	DLFLEdgePtrArray septrarr = mActiveViewport->getSelectedEdges();
+	if (septrarr[0])
+	{
 		undoPush();
 		setModified(true);
 		for (auto sePtr : septrarr)
 		{
 			if (sePtr != nullptr)
 			{
-				DLFL::collapseEdge(&object, sePtr, MainWindow::delete_edge_cleanup);
-				active->recomputeNormals();
+				DLFL::collapseEdge(&mObject, sePtr, MainWindow::sDeleteEdgeCleanup);
+				mActiveViewport->recomputeNormals();
 			}
 		}
-		active->recomputePatches();
+		mActiveViewport->recomputePatches();
 	}
-	active->clearSelectedEdges();
+	mActiveViewport->clearSelectedEdges();
 	redraw();
 }
 
-void MainWindow::selectEdgesFromFaces(){
-	DLFLFacePtrArray& sfptrarr = active->getSelectedFaces();
+void MainWindow::selectEdgesFromFaces()
+{
+	DLFLFacePtrArray& sfptrarr = mActiveViewport->getSelectedFaces();
 	//loop through selected faces, get corresponding edges, select them
 	if (!sfptrarr.empty() && sfptrarr[0])
 	{
@@ -1858,24 +2048,25 @@ void MainWindow::selectEdgesFromFaces(){
 			sfPtr->getEdges(septrarr);
 			for (auto sePtr : septrarr)
 			{
-				if (!active->isSelected(sePtr))
+				if (!mActiveViewport->isSelected(sePtr))
 				{
-					active->setSelectedEdge(num_sel_edges, sePtr);
-					num_sel_edges++;
+					mActiveViewport->setSelectedEdge(sNumSelEdges, sePtr);
+					sNumSelEdges++;
 				}
 			}
 		}
-		active->recomputePatches();
-		active->recomputeNormals();
-	}			
+		mActiveViewport->recomputePatches();
+		mActiveViewport->recomputeNormals();
+	}
 	setMode(MainWindow::SelectEdge);
-	active->clearSelectedFaces();
-	redraw();		
+	mActiveViewport->clearSelectedFaces();
+	redraw();
 }
 
-void MainWindow::selectEdgesFromVertices(){
+void MainWindow::selectEdgesFromVertices()
+{
 	//loop through selected vertices, get corresponding edges, select them
-	DLFLVertexPtrArray& svptrarr = active->getSelectedVertices();
+	DLFLVertexPtrArray& svptrarr = mActiveViewport->getSelectedVertices();
 	if (svptrarr.size() > 0 && svptrarr[0])
 	{
 		for (auto svPtr : svptrarr)
@@ -1884,51 +2075,53 @@ void MainWindow::selectEdgesFromVertices(){
 			svPtr->getEdges(septrarr);
 			for (auto sePtr : septrarr)
 			{
-				if (!active->isSelected(sePtr))
+				if (!mActiveViewport->isSelected(sePtr))
 				{
-					active->setSelectedEdge(num_sel_edges, sePtr);
-					num_sel_edges++;
+					mActiveViewport->setSelectedEdge(sNumSelEdges, sePtr);
+					sNumSelEdges++;
 				}
 			}
 		}
-		active->recomputePatches();
-		active->recomputeNormals();
+		mActiveViewport->recomputePatches();
+		mActiveViewport->recomputeNormals();
 	}
 	setMode(MainWindow::SelectEdge);
-	active->clearSelectedVertices();
-	redraw();	
+	mActiveViewport->clearSelectedVertices();
+	redraw();
 }
 
-void MainWindow::selectFacesFromEdges(){
+void MainWindow::selectFacesFromEdges()
+{
 	DLFLFacePtr fptr1, fptr2;
 	//loop through selected faces, get corresponding vertices, select them
-	DLFLEdgePtrArray& septrarr = active->getSelectedEdges();
+	DLFLEdgePtrArray& septrarr = mActiveViewport->getSelectedEdges();
 	if (septrarr.size() > 0 && septrarr[0])
 	{
 		for (auto sePtr : septrarr)
 		{
 			sePtr->getFacePointers(fptr1, fptr2);
-			if (!active->isSelected(fptr1))
+			if (!mActiveViewport->isSelected(fptr1))
 			{
-				active->setSelectedFace(num_sel_faces, fptr1);
-				num_sel_faces++;
+				mActiveViewport->setSelectedFace(sNumSelFaces, fptr1);
+				sNumSelFaces++;
 			}
-			if (!active->isSelected(fptr2))
+			if (!mActiveViewport->isSelected(fptr2))
 			{
-				active->setSelectedFace(num_sel_faces, fptr2);
-				num_sel_faces++;
+				mActiveViewport->setSelectedFace(sNumSelFaces, fptr2);
+				sNumSelFaces++;
 			}
 		}
-		active->recomputePatches();
-		active->recomputeNormals();
+		mActiveViewport->recomputePatches();
+		mActiveViewport->recomputeNormals();
 	}
 	setMode(MainWindow::SelectFace);
-	active->clearSelectedEdges();
-	redraw();	
+	mActiveViewport->clearSelectedEdges();
+	redraw();
 }
 
-void MainWindow::selectFacesFromVertices(){
-	DLFLVertexPtrArray svptrarr = active->getSelectedVertices();
+void MainWindow::selectFacesFromVertices()
+{
+	DLFLVertexPtrArray svptrarr = mActiveViewport->getSelectedVertices();
 	//loop through selected faces, get corresponding edges, select them
 	if (svptrarr.size() > 0 && svptrarr[0])
 	{
@@ -1938,24 +2131,25 @@ void MainWindow::selectFacesFromVertices(){
 			svPtr->getFaces(sfptrarr);
 			for (auto sfPtr : sfptrarr)
 			{
-				if (!active->isSelected(sfPtr))
+				if (!mActiveViewport->isSelected(sfPtr))
 				{
-					active->setSelectedFace(num_sel_faces, sfPtr);
-					num_sel_faces++;
+					mActiveViewport->setSelectedFace(sNumSelFaces, sfPtr);
+					sNumSelFaces++;
 				}
 			}
 		}
-		active->recomputePatches();
-		active->recomputeNormals();
+		mActiveViewport->recomputePatches();
+		mActiveViewport->recomputeNormals();
 	}
 	setMode(MainWindow::SelectFace);
-	active->clearSelectedVertices();
-	redraw();			
+	mActiveViewport->clearSelectedVertices();
+	redraw();
 }
 
-void MainWindow::selectVerticesFromFaces(){
-	DLFLFacePtrArray& sfptrarr = active->getSelectedFaces();
-	
+void MainWindow::selectVerticesFromFaces()
+{
+	DLFLFacePtrArray& sfptrarr = mActiveViewport->getSelectedFaces();
+
 	//loop through selected faces, get corresponding vertices, select them
 	if (sfptrarr.size() > 0 && sfptrarr[0])
 	{
@@ -1966,23 +2160,24 @@ void MainWindow::selectVerticesFromFaces(){
 			for (auto sfvPtr : sfvptrarr)
 			{
 				DLFLVertexPtr vptr = sfvPtr->getVertexPtr();
-				if (!active->isSelected(vptr))
+				if (!mActiveViewport->isSelected(vptr))
 				{
-					active->setSelectedVertex(num_sel_verts, vptr);
-					num_sel_verts++;
+					mActiveViewport->setSelectedVertex(sNumSelVerts, vptr);
+					sNumSelVerts++;
 				}
 			}
 		}
-		active->recomputePatches();
-		active->recomputeNormals();
+		mActiveViewport->recomputePatches();
+		mActiveViewport->recomputeNormals();
 	}
 	setMode(MainWindow::SelectVertex);
-	active->clearSelectedFaces();
-	redraw();	
+	mActiveViewport->clearSelectedFaces();
+	redraw();
 }
 
-void MainWindow::selectVerticesFromEdges(){
-	DLFLEdgePtrArray septrarr = active->getSelectedEdges();
+void MainWindow::selectVerticesFromEdges()
+{
+	DLFLEdgePtrArray septrarr = mActiveViewport->getSelectedEdges();
 	//loop through selected faces, get corresponding vertices, select them
 	if (septrarr.size() > 0 && septrarr[0])
 	{
@@ -1990,34 +2185,33 @@ void MainWindow::selectVerticesFromEdges(){
 		{
 			DLFLVertexPtr vptr1, vptr2;
 			sePtr->getVertexPointers(vptr1, vptr2);
-			if (!active->isSelected(vptr1))
+			if (!mActiveViewport->isSelected(vptr1))
 			{
-				active->setSelectedVertex(num_sel_verts, vptr1);
-				num_sel_verts++;
+				mActiveViewport->setSelectedVertex(sNumSelVerts, vptr1);
+				sNumSelVerts++;
 			}
-			if (!active->isSelected(vptr2))
+			if (!mActiveViewport->isSelected(vptr2))
 			{
-				active->setSelectedVertex(num_sel_verts, vptr2);
-				num_sel_verts++;
+				mActiveViewport->setSelectedVertex(sNumSelVerts, vptr2);
+				sNumSelVerts++;
 			}
 		}
-		active->recomputePatches();
-		active->recomputeNormals();
+		mActiveViewport->recomputePatches();
+		mActiveViewport->recomputeNormals();
 	}
 	setMode(MainWindow::SelectVertex);
-	active->clearSelectedEdges();
-	redraw();	
+	mActiveViewport->clearSelectedEdges();
+	redraw();
 }
-
 
 void MainWindow::growSelection()
 {
-	switch (selectionmask)
+	switch (mSelectionMask)
 	{
 	case MaskVertices:
 	{
 		//loop through selected vertices, get corresponding edges
-		DLFLVertexPtrArray& svptrarr = active->getSelectedVertices();
+		DLFLVertexPtrArray& svptrarr = mActiveViewport->getSelectedVertices();
 		if (svptrarr.size() > 0 && svptrarr[0])
 		{
 			for (auto svPtr : svptrarr)
@@ -2030,15 +2224,15 @@ void MainWindow::growSelection()
 					DLFLVertexPtr vp1, vp2;
 					//get the two vertices for each edge, select them if they aren't already selected
 					sePtr->getVertexPointers(vp1, vp2);
-					if (!active->isSelected(vp1))
+					if (!mActiveViewport->isSelected(vp1))
 					{
-						active->setSelectedVertex(num_sel_verts, vp1);
-						num_sel_verts++;
+						mActiveViewport->setSelectedVertex(sNumSelVerts, vp1);
+						sNumSelVerts++;
 					}
-					if (!active->isSelected(vp2))
+					if (!mActiveViewport->isSelected(vp2))
 					{
-						active->setSelectedVertex(num_sel_verts, vp2);
-						num_sel_verts++;
+						mActiveViewport->setSelectedVertex(sNumSelVerts, vp2);
+						sNumSelVerts++;
 					}
 				}
 			}
@@ -2049,7 +2243,7 @@ void MainWindow::growSelection()
 	case MaskEdges:
 	{
 		//loop through selected edges, get vertices, then get those edges
-		DLFLEdgePtrArray& septrarr = active->getSelectedEdges();
+		DLFLEdgePtrArray& septrarr = mActiveViewport->getSelectedEdges();
 		if (septrarr.size() > 0 && septrarr[0])
 		{
 			for (auto sePtr : septrarr)
@@ -2062,20 +2256,20 @@ void MainWindow::growSelection()
 				vptr1->getEdges(eptrarray);
 				for (auto v1EdgePtr : eptrarray)
 				{
-					if (!active->isSelected(v1EdgePtr))
+					if (!mActiveViewport->isSelected(v1EdgePtr))
 					{
-						active->setSelectedEdge(num_sel_edges, v1EdgePtr);
-						num_sel_edges++;
+						mActiveViewport->setSelectedEdge(sNumSelEdges, v1EdgePtr);
+						sNumSelEdges++;
 					}
 				}
 				//get edges for vertex 2
 				vptr2->getEdges(eptrarray);
 				for (auto v2EdgePtr : eptrarray)
 				{
-					if (!active->isSelected(v2EdgePtr))
+					if (!mActiveViewport->isSelected(v2EdgePtr))
 					{
-						active->setSelectedEdge(num_sel_edges, v2EdgePtr);
-						num_sel_edges++;
+						mActiveViewport->setSelectedEdge(sNumSelEdges, v2EdgePtr);
+						sNumSelEdges++;
 					}
 				}
 			}
@@ -2085,7 +2279,7 @@ void MainWindow::growSelection()
 	}
 	case MaskFaces:
 	{
-		DLFLFacePtrArray& sfptrarr = active->getSelectedFaces();
+		DLFLFacePtrArray& sfptrarr = mActiveViewport->getSelectedFaces();
 		//loop through selected faces
 		if (sfptrarr.size() > 0 && sfptrarr[0])
 		{
@@ -2100,15 +2294,15 @@ void MainWindow::growSelection()
 					//get the 2 faces for the current edge,
 					//select them if they aren't already selected
 					faceEdgePtr->getFacePointers(fptr1, fptr2);
-					if (!active->isSelected(fptr1))
+					if (!mActiveViewport->isSelected(fptr1))
 					{
-						active->setSelectedFace(num_sel_faces, fptr1);
-						num_sel_faces++;
+						mActiveViewport->setSelectedFace(sNumSelFaces, fptr1);
+						sNumSelFaces++;
 					}
-					if (!active->isSelected(fptr2))
+					if (!mActiveViewport->isSelected(fptr2))
 					{
-						active->setSelectedFace(num_sel_faces, fptr2);
-						num_sel_faces++;
+						mActiveViewport->setSelectedFace(sNumSelFaces, fptr2);
+						sNumSelFaces++;
 					}
 				}
 			}
@@ -2122,7 +2316,7 @@ void MainWindow::growSelection()
 		break;
 	default:
 		break;
-	};
+	}
 }
 
 void MainWindow::shrinkSelection()
@@ -2131,12 +2325,12 @@ void MainWindow::shrinkSelection()
 
 	DLFLEdgePtrArray eptrarray;
 
-	switch (selectionmask)
+	switch (mSelectionMask)
 	{
 	case MaskVertices:
 	{
 		//loop through selected vertices, get corresponding edges
-		DLFLVertexPtrArray& svptrarr = active->getSelectedVertices();
+		DLFLVertexPtrArray& svptrarr = mActiveViewport->getSelectedVertices();
 		if (!svptrarr.empty() && svptrarr[0])
 		{
 			vector<bool> deselectvertices(svptrarr.size());
@@ -2151,7 +2345,7 @@ void MainWindow::shrinkSelection()
 					DLFLVertexPtr vp1, vp2;
 					//get the two vertices for each edge, select them if they aren't already selected
 					sePtr->getVertexPointers(vp1, vp2);
-					if (!active->isSelected(vp1) || !active->isSelected(vp2))
+					if (!mActiveViewport->isSelected(vp1) || !mActiveViewport->isSelected(vp2))
 						deselectvertices[i] = true;
 				}
 				i++;
@@ -2162,7 +2356,7 @@ void MainWindow::shrinkSelection()
 			{
 				//if it's flagged, deselect it
 				if (deselectvertices[i])
-					active->clearSelectedVertex(svPtr);
+					mActiveViewport->clearSelectedVertex(svPtr);
 				i++;
 			}
 		}
@@ -2172,7 +2366,7 @@ void MainWindow::shrinkSelection()
 	case MaskEdges:
 	{
 		//loop through selected edges, get vertices, then get those edges
-		DLFLEdgePtrArray& septrarr = active->getSelectedEdges();
+		DLFLEdgePtrArray& septrarr = mActiveViewport->getSelectedEdges();
 		if (!septrarr.empty() && septrarr[0])
 		{
 			vector<bool> deselectedges(septrarr.size());
@@ -2186,14 +2380,14 @@ void MainWindow::shrinkSelection()
 				deselectedges[i] = false;
 				for (auto v1EdgePtr : eptrarray)
 				{
-					if (!active->isSelected(v1EdgePtr))
+					if (!mActiveViewport->isSelected(v1EdgePtr))
 						deselectedges[i] = true;
 				}
 				//get edges for vertex 2
 				vptr2->getEdges(eptrarray);
 				for (auto v2EdgePtr : eptrarray)
 				{
-					if (!active->isSelected(v2EdgePtr))
+					if (!mActiveViewport->isSelected(v2EdgePtr))
 						deselectedges[i] = true;
 				}
 				i++;
@@ -2204,7 +2398,7 @@ void MainWindow::shrinkSelection()
 			{
 				//if it's flagged, deselect it
 				if (deselectedges[i])
-					active->clearSelectedEdge(sePtr);
+					mActiveViewport->clearSelectedEdge(sePtr);
 				i++;
 			}
 		}
@@ -2214,7 +2408,7 @@ void MainWindow::shrinkSelection()
 	case MaskFaces:
 	{
 		//loop through selected faces
-		DLFLFacePtrArray& sfptrarr = active->getSelectedFaces();
+		DLFLFacePtrArray& sfptrarr = mActiveViewport->getSelectedFaces();
 		if (!sfptrarr.empty() && sfptrarr[0])
 		{
 			vector<bool> deselectfaces(sfptrarr.size());
@@ -2230,7 +2424,7 @@ void MainWindow::shrinkSelection()
 					//get the 2 faces for the current edge,
 					//check if both of them are selected, flag the current face
 					faceEdgePtr->getFacePointers(fptr1, fptr2);
-					if (!active->isSelected(fptr1) || !active->isSelected(fptr2))
+					if (!mActiveViewport->isSelected(fptr1) || !mActiveViewport->isSelected(fptr2))
 						deselectfaces[i] = true;
 				}
 				i++;
@@ -2241,7 +2435,7 @@ void MainWindow::shrinkSelection()
 			{
 				//if it's flagged, deselect it
 				if (deselectfaces[i])
-					active->clearSelectedFace(sfPtr);
+					mActiveViewport->clearSelectedFace(sfPtr);
 				i++;
 			}
 		}
@@ -2249,15 +2443,16 @@ void MainWindow::shrinkSelection()
 		break;
 	}
 	case MaskCorners:
-	// active->selectAllCorners();
+		// active->selectAllCorners();
 	case MaskObject:
 		break;
 	default:
 		break;
-	};
+	}
 }
 
-void MainWindow::reorderSelectedFaces(){
+void MainWindow::reorderSelectedFaces()
+{
 	// DLFLFaceVertexPtrArray sfvptrarr;
 	// vector<DLFLFaceVertexPtr>::iterator fvit;
 	// DLFLFacePtrArray sfptrarr;
@@ -2275,15 +2470,17 @@ void MainWindow::reorderSelectedFaces(){
 	// 		}
 	// 	}
 	// 	active->recomputePatches();
-	// 	active->recomputeNormals();						
-	// }			
+	// 	active->recomputeNormals();
+	// }
 	// active->clearSelectedVertices();
-	// redraw();			
+	// redraw();
 }
 
-void MainWindow::toggleFullScreen(){
+void MainWindow::toggleFullScreen()
+{
 	// go back into normal screen mode
-	if (windowState() == Qt::WindowFullScreen && !mToolsToolBar->isVisible()) {
+	if (windowState() == Qt::WindowFullScreen && !mToolsToolBar->isVisible())
+	{
 		setWindowState(Qt::WindowNoState);
 		mEditToolBar->setVisible(true);
 		//mSelectionMaskToolBar->toggleViewAction();
@@ -2293,12 +2490,13 @@ void MainWindow::toggleFullScreen(){
 		//mConicalToolBar->toggleViewAction();
 		mHighgenusToolBar->setVisible(true);
 		mTexturingToolBar->setVisible(true);
-		// mRemeshingToolBar->setVisible(true);		
+		// mRemeshingToolBar->setVisible(true);
 		mStatusBar->show();
 	}
 	// go to full screen mode 2
-	else if (windowState() == Qt::WindowFullScreen) {
-		// setWindowState(windowState() ^ Qt::WindowFullScreen);	
+	else if (windowState() == Qt::WindowFullScreen)
+	{
+		// setWindowState(windowState() ^ Qt::WindowFullScreen);
 		mStatusBar->hide();
 		mEditToolBar->setVisible(false);
 		mPrimitivesToolBar->setVisible(false);
@@ -2306,12 +2504,11 @@ void MainWindow::toggleFullScreen(){
 		mExtrusionToolBar->setVisible(false);
 		mHighgenusToolBar->setVisible(false);
 		mTexturingToolBar->setVisible(false);
-		mRemeshingToolBar->setVisible(false);		
+		mRemeshingToolBar->setVisible(false);
 	}
 	//go into full screen mode 1
-	else {
-		setWindowState(windowState() ^ Qt::WindowFullScreen);		
+	else
+	{
+		setWindowState(windowState() ^ Qt::WindowFullScreen);
 	}
-	
-	
 }

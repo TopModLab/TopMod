@@ -28,7 +28,7 @@
 
 /******************************************
  * include.hh
- * 
+ *
  ******************************************/
 
 #ifndef MAINWINDOW_H
@@ -41,6 +41,7 @@
 #include "VerseTopMod.hh"
 
 #include <iostream>
+#include <array>
 #include <QMainWindow>
 #include <QWidget>
 #include <QComboBox>
@@ -118,71 +119,70 @@ using namespace DLFL;
 /*!
 	\file MainWindow.hh
 	\brief Definition of the MainWindow class
-	
+
 	\see MainWindow
 */
 
-class MainWindow : public QMainWindow {
+class MainWindow : public QMainWindow
+{
 	Q_OBJECT
 
 public:
-
 	/**
 	* Enumerations for the various operating modes.
 	*/
 	enum Mode
 	{
-		NormalMode = 0, 					/**< normal mode. does not allow any selection in the viewport. */
-		SelectVertex = 1, 				/**< select one vertex. */
-		SelectEdge = 2, 					/**< select one edge. */
-		SelectFace = 3, 					/**< select one face. */
-		SelectCorner = 4, 		/**< select one corner, which requires selection of a face and a vertex. */
-		MultiSelectVertex = 5,		/**< select multiple vertices. */
+		NormalMode = 0,					/**< normal mode. does not allow any selection in the viewport. */
+		SelectVertex = 1,				/**< select one vertex. */
+		SelectEdge = 2,					/**< select one edge. */
+		SelectFace = 3,					/**< select one face. */
+		SelectCorner = 4,				/**< select one corner, which requires selection of a face and a vertex. */
+		MultiSelectVertex = 5,			/**< select multiple vertices. */
 		MultiSelectEdge = 6,			/**< select multiple edges. */
 		MultiSelectFace = 7,			/**< . */
-		MultiSelectCorner = 8,/**< . */
-		SelectCheckerboard = 9, 	/**< select alternating faces forming a checkerboard pattern. works well after Doo Sabin Remeshing. */
-		SelectionWindow = 10, 		/**< crossing window selection  - dave. */
-		InsertEdge = 11,					/**< insert edge. */
-		DeleteEdge = 12,					/**< delete an edge. */
+		MultiSelectCorner = 8,			/**< . */
+		SelectCheckerboard = 9,			/**< select alternating faces forming a checkerboard pattern. works well after Doo Sabin Remeshing. */
+		SelectionWindow = 10,			/**< crossing window selection  - dave. */
+		InsertEdge = 11,				/**< insert edge. */
+		DeleteEdge = 12,				/**< delete an edge. */
 		SubdivideEdge = 13,				/**< subdivide an edge into n segments. */
 		CollapseEdge = 14,				/**< collapse an edge. */
 		SpliceCorners = 15,				/**< select two corners and collapse the face in between. */
 		ConnectEdges = 21,				/**< connect two half-edges. */
-		ExtrudeFace = 31,					/**< cubical extrusion. */
+		ExtrudeFace = 31,				/**< cubical extrusion. */
 		ExtrudeFaceDS = 32,				/**< doo sabin extrusion. */
 		ExtrudeDualFace = 33,			/**< dual of cubical extrusion. */
-		ExtrudeFaceDodeca = 34,		/**< dodecahedral extrusion. */
-		ExtrudeFaceIcosa = 35,		/**< icosahedral extrusion. */
-		ExtrudeMultipleFaces = 36,/**< cubical extrusion for multiple faces at once. */
+		ExtrudeFaceDodeca = 34,			/**< dodecahedral extrusion. */
+		ExtrudeFaceIcosa = 35,			/**< icosahedral extrusion. */
+		ExtrudeMultipleFaces = 36,		/**< cubical extrusion for multiple faces at once. */
 		StellateFace = 41,				/**< stellate extrusion. */
-		DoubleStellateFace = 42,/**< double stellate extrusion. */
-		ExtrudeFaceDome = 43,   /**< dome extrusion. dave */
-		ConnectFaceVertices = 51,	/**< add . */
+		DoubleStellateFace = 42,		/**< double stellate extrusion. */
+		ExtrudeFaceDome = 43,			/**< dome extrusion. dave */
+		ConnectFaceVertices = 51,		/**< add . */
 		ConnectFaces = 52,				/**< add hole/handle operation. */
-		BezierConnectFaces = 53,	/**< add handle operation. */
-		HermiteConnectFaces = 54,	/**< add handle operation. */
-		ReorderFace = 61,					/**< reorders the corners of a face. */
+		BezierConnectFaces = 53,		/**< add handle operation. */
+		HermiteConnectFaces = 54,		/**< add handle operation. */
+		ReorderFace = 61,				/**< reorders the corners of a face. */
 		SubdivideFace = 62,				/**< subdivides a face into n faces. */
 		CrustModeling = 71,				/**< create a crust of the current model and poke holes in it. */
-		CutEdge = 200,						/**< // ozgur. */
-		CutVertex = 201,					/**< // ozgur. */
-		CutEdgeandVertex = 202,	/**< // ozgur. */
+		CutEdge = 200,					/**< // ozgur. */
+		CutVertex = 201,				/**< // ozgur. */
+		CutEdgeandVertex = 202,			/**< // ozgur. */
 		CutFace = 203,					/**< // ozgur. */
 		TruncateEdge = 204,				/**< // ozgur. */
-		MarkEdge = 206,						/**< // ozgur. */
-		MarkVertex = 207,					/**< // ozgur. */
+		MarkEdge = 206,					/**< // ozgur. */
+		MarkVertex = 207,				/**< // ozgur. */
 		ConvexHullMode = 301,			/**< create a convex hull or dual convex hull // ozgur. */
-		EditVertex = 81,					/**< select and move individual vertices // brianb. */
+		EditVertex = 81,				/**< select and move individual vertices // brianb. */
 		SelectEdgeLoop = 82,			/**< select an edge loop. shift select for multiple. */
 		SelectEdgeRing = 85,			/**< select an edge ring. shift select for multiple. */
 		SelectFaceLoop = 83,			/**< allows user to select one edge in the viewport and selects the corresponding face loop. shift select for multiple. */
-		SelectSimilar = 84, 			/**< select all sub objects with the same number of verts edges or faces whatever... . */
-		SelectFacesByArea = 856,	/**< select all faces with the a similar surface area. */
-		SelectFacesByColor = 857,	/**< select all faces with the same color material. */
-		PaintFace = 858,		 			/**< paint a face as you click. */
-		EyeDropper = 859		 			/**< grab the color of the selected face. */
-
+		SelectSimilar = 84,				/**< select all sub objects with the same number of verts edges or faces whatever... . */
+		SelectFacesByArea = 856,		/**< select all faces with the a similar surface area. */
+		SelectFacesByColor = 857,		/**< select all faces with the same color material. */
+		PaintFace = 858,				/**< paint a face as you click. */
+		EyeDropper = 859				/**< grab the color of the selected face. */
 	};
 
 	/**
@@ -226,38 +226,38 @@ public:
 		Root3 = 10,									/**< . */
 		Triangulate = 15,							/**< . */
 		DualVertexTrunc = 11,						/**< . */
-		GlobalStellate = 12, 						/**< . */
-		Star = 13, 									/**< . */
+		GlobalStellate = 12,						/**< . */
+		Star = 13,									/**< . */
 		Generic1264 = 14,							/**< . */
-		Honeycomb = 20, 							/**< . */
-		VertexTrunc = 21, 							/**< . */
+		Honeycomb = 20,								/**< . */
+		VertexTrunc = 21,							/**< . */
 		DualGeneric1264 = 22,						/**< . */
-		LinearVertexInsertion = 30, 				/**< . */
-		CatmullClark = 31, 							/**< . */
+		LinearVertexInsertion = 30,					/**< . */
+		CatmullClark = 31,							/**< . */
 		ModifiedStellate = 32,						/**< . */
-		DooSabin = 40, 								/**< . */
-		CornerCutting = 41, 						/**< . */
-		ModifiedCornerCutting = 43, 				/**< . */
+		DooSabin = 40,								/**< . */
+		CornerCutting = 41,							/**< . */
+		ModifiedCornerCutting = 43,					/**< . */
 		Simplest = 42,								/**< . */
-		Pentagonal = 50, 							/**< . */
-		CubicPentagonal = 51, 						/**< . */
+		Pentagonal = 50,							/**< . */
+		CubicPentagonal = 51,						/**< . */
 		DualPentagonal = 52,						/**< . */
-		LoopStyle = 60, 							/**< . */
-		Loop = 61, 									/**< . */
-		Root4 = 62, 								/**< . */
+		LoopStyle = 60,								/**< . */
+		Loop = 61,									/**< . */
+		Root4 = 62,									/**< . */
 		DualLoop = 63,								/**< . */
-		GlobalCubicExtrude = 70, 					/**< . */
+		GlobalCubicExtrude = 70,					/**< . */
 		CheckerBoard = 71,							/**< . */
-		DualGlobalCubicExtrude = 80, 				/**< . */
+		DualGlobalCubicExtrude = 80,				/**< . */
 		DualCheckerBoard = 81,						/**< . */
-		PentagonPreserving = 90, 					/**< . */
+		PentagonPreserving = 90,					/**< . */
 		DualPentagonPreserving = 91,				/**< . */
-		HexagonPreserving = 100, 					/**< . */
+		HexagonPreserving = 100,					/**< . */
 		DualHexagonPreserving = 101,				/**< . */
-		Fractal = 110,	 							/**< . */
-		ModifiedDoubleStellate = 111, 				/**< . */
-		Dome = 112, 								/**< . */
-		DooSabinBC = 113, 							/**< . */
+		Fractal = 110,								/**< . */
+		ModifiedDoubleStellate = 111,				/**< . */
+		Dome = 112,									/**< . */
+		DooSabinBC = 113,							/**< . */
 		DooSabinBCNew = 114							/**< . */
 	};
 
@@ -275,203 +275,200 @@ public:
 	//-- Parameters used in various operations on the DLFL object --//
 
 	// face area tolerance - dave
-	static float face_area_tolerance;
+	static float sFaceAreaTolerance;
 	// face color tolerance - dave 11/07
-	static float face_color_tolerance;
+	static float sFaceColorTolerance;
 
 	// Edge deletion
-	static bool delete_edge_cleanup; //!< Flag for point-sphere cleanup after edge deletion
+	static bool sDeleteEdgeCleanup; //!< Flag for point-sphere cleanup after edge deletion
 
 	//!< Handles
-	static int num_segments; //!< No. of segments in a connection/handle
-	static int max_segments;       //!< Max. no. of segments to connect
-	static bool symmetric_weights;    //!< Use symmetric weight factors
-	static double nwt1;     //!< Weight factor for normal of first face
-	static double nwt2;    //!< Weight factor for normal of second face
-	static int num_extra_twists;    //!< No. of extra twists in handles
+	static int sNumSegments;			//!< No. of segments in a connection/handle
+	static int sMaxSegments;			//!< Max. no. of segments to connect
+	static bool sSymmetricWeights;		//!< Use symmetric weight factors
+	static double sFaceNormalWeight1;	//!< Weight factor for normal of first face
+	static double sFaceNormalWeight2;	//!< Weight factor for normal of second face
+	static int sNumExtraTwists;			//!< No. of extra twists in handles
 
 	//!< Extrusions
-	static double extrude_dist;            //!< Distance for an extrude
-	static double extrude_rot;             //!< Rotation for an extrude
-	static double extrude_scale;            //!< Scaling for an extrude
-	static int num_extrusions;      //!< No. of segments for an extrude
-	static double ds_ex_twist;  //!< Twist factor for doo-sabin extrude
-	static bool dual_mesh_edges_check; //!< Flag to check for removal of dual mesh edges
-	static bool hexagonalize_dodeca_extrude; //!< Flag to hexagonalize when doing dodeca extrude
-	static double extrude_length1;
-	static double extrude_length2;
-	static double extrude_length3;
-	static double extrude_angle;
-	static double extrude_length1_icosa;
-	static double extrude_length2_icosa;
-	static double extrude_length3_icosa;
-	static double extrude_angle_icosa;
+	static double sExtrudeDist;				//!< Distance for an extrude
+	static double sExtrudeRot;				//!< Rotation for an extrude
+	static double sExtrudeScale;			//!< Scaling for an extrude
+	static int sNumExtrusions;				//!< No. of segments for an extrude
+	static double sDooSabinExtrusionTwist;	//!< Twist factor for doo-sabin extrude
+	static bool sDualMeshEdgesCheck;		//!< Flag to check for removal of dual mesh edges
+	static bool sHexagonalizeDodecaExtrude;	//!< Flag to hexagonalize when doing dodeca extrude
+	static double sExtrudeLength1;
+	static double sExtrudeLength2;
+	static double sExtrudeLength3;
+	static double sExtrudeAngle;
+	static double sExtrudeLength1_iCosA;
+	static double sExtrudeLength2_iCosA;
+	static double sExtrudeLength3_iCosA;
+	static double sExtrudeAngle_iCosA;
 
 	//!< Edge subdivision
-	static int num_e_subdivs;      //!< No. of subdivisions for an edge
+	static int sNumEdgeSubdiv;			//!< No. of subdivisions for an edge
 
 	//!< Split valence 2 vertices
-	static double vertex_split_offset; //!< Half of distance between new vertices
+	static double sVertexSplitOffset;	//!< Half of distance between new vertices
 
 
 	//!< Crust modeling
-	static double crust_thickness;              //!< Thickness of crust
-	static double crust_scale_factor; //!< Scale factor for making crust
-	static bool crust_cleanup;     //!< Cleanup flag for crust modeling
+	static double sCrustThickness;		//!< Thickness of crust
+	static double sCrustScaleFactor;	//!< Scale factor for making crust
+	static bool sCrustCleanup;			//!< Cleanup flag for crust modeling
 
 	//!< Wire-frame modeling
-	static double wireframe_thickness; //!< Thickness of crust for wireframe
-	static double wireframe2_thickness; //!< depth of crust for wireframe2
-	static double wireframe2_width; //!< width of crust for wireframe2
-	static bool wireframe_split; //!< split valence-2 vertices or not?
-	static double corner_cutting_alpha;
+	static double sWireframeThickness;	//!< Thickness of crust for wireframe
+	static double sWireframe2Thickness;	//!< depth of crust for wireframe2
+	static double sWireframe2Width;		//!< width of crust for wireframe2
+	static bool sWireframeSplit;		//!< split valence-2 vertices or not?
+	static double sCornerCuttingAlpha;
 
 	//!< Column modeling
-	static double column_thickness; //!< Thickness of columns for column modeling
-	static int column_segments; //!< Number of segments in each column for column modeling
+	static double sColumnThickness;	//!< Thickness of columns for column modeling
+	static int sColumnSegments;		//!< Number of segments in each column for column modeling
 
 	//!< Subdivision
-	static double twist_factor;     //!< Twist factor for root-4 subdiv
-	static double weight_factor;   //!< Weight factor for root-4 subdiv
-	static bool doo_sabin_check; //!< Flag to check for repeating edges
-	static double vertex_cutting_offset; //!< Offset value for vertex cutting
-	static double pentagonal_offset; //!< Offset value for pentagonal subdivision (conversion)
-	static double pentagonal_scale; //!< Scale factor for pentagonal subdivision (preserving)
-	static bool accurate_dual; //!< Flag to indicate that accurate dual method should be used
-	static double checkerboard_thickness; //!< Fractional thickness for checkerboard remeshing
-	static double modified_corner_cutting_thickness; //!< for modified corner cutting scheme same as Thickness of crust for wireframe
+	static double sTwistFactor;				//!< Twist factor for root-4 subdiv
+	static double sWeightFactor;			//!< Weight factor for root-4 subdiv
+	static bool sDooSabinCheck;				//!< Flag to check for repeating edges
+	static double sVertexCuttingOffset;		//!< Offset value for vertex cutting
+	static double sPentagonalOffset;		//!< Offset value for pentagonal subdivision (conversion)
+	static double sPentagonalScale;			//!< Scale factor for pentagonal subdivision (preserving)
+	static bool sAccurateDual;				//!< Flag to indicate that accurate dual method should be used
+	static double sCheckerboardThickness;	//!< Fractional thickness for checkerboard remeshing
+	static double sModifiedCornerCuttingThickness; //!< for modified corner cutting scheme same as Thickness of crust for wireframe
 
 	//added by Ryan
-	static double pinching_factor;		//!< scaling factor for pinched handles
-	static double pinch_center;			//!< 0 to 1, the parametric cetner of the pinching factor
-	static double bubble_factor;		//!< 0 to 0.5, the offset from the pinch center to the bezier control points
+	static double sPinchingFactor;		//!< scaling factor for pinched handles
+	static double sPinchCenter;			//!< 0 to 1, the parametric cetner of the pinching factor
+	static double sBubbleFactor;		//!< 0 to 0.5, the offset from the pinch center to the bezier control points
 
-	static double holeHandle_pinching_factor;		//!< scaling factor for pinched handles
-	static double holeHandle_pinch_center;
-	static double holeHandle_pinch_width;	
-	
+	static double sHoleHandlePinchingFactor;		//!< scaling factor for pinched handles
+	static double sHoleHandlePinchCenter;
+	static double sHoleHandlePinchWidth;
+
 	//!< Added by Doug
-	static double star_offset; //!< Offset value for star subdivision
-	static double fractal_offset; //!< Offset value for fractal subdivision
+	static double sStarOffset;		//!< Offset value for star subdivision
+	static double sFractalOffset;	//!< Offset value for fractal subdivision
 
 	//!< Added by Eric
-	static double substellate_height; //amount of first stellation extrusion
-	static double substellate_curve; //amount of second stellation extrusion
+	static double sSubstellateHeight;	//amount of first stellation extrusion
+	static double sSubstellateCurve;	//amount of second stellation extrusion
 
 	//!< added by dave
-	static double domeExtrudeLength_factor;     //!< Length for dome extrusion  //dave
-	static double domeExtrudeScale_factor; 			//!< Scale factor for dome extrusion //dave
-	static double domeExtrudeRotation_factor; 			//!< Scale factor for dome extrusion //dave
-	
+	static double sDomeExtrudeLengthFactor;		//!< Length for dome extrusion  //dave
+	static double sDomeExtrudeScaleFactor;		//!< Scale factor for dome extrusion //dave
+	static double sDomeExtrudeRotationFactor;	//!< Scale factor for dome extrusion //dave
+
 	//!< Added by Bei & Cansin
-	static double domeLength_factor;     //!< Length for dome extrusion
-	static double domeScale_factor; //!< Scale factor for dome extrusion
-	static double dual1264_scale_factor; //!< Scale factor for Dual 12-6-4 remeshing
-	static double dooSabinBCnewScale_factor; //!< Scale factor for new Doo-Sabin remeshing scheme
-	static double dooSabinBCnewLength_factor; //!< Length factor for new Doo-Sabin remeshing scheme
-	static double loopLength_factor; //!< Length factor for Loop-style remeshing scheme
+	static double sDomeLengthFactor;			//!< Length for dome extrusion
+	static double sDomeScaleFactor;				//!< Scale factor for dome extrusion
+	static double sDual1264ScaleFactor;			//!< Scale factor for Dual 12-6-4 remeshing
+	static double sDooSabinBCnewScaleFactor;	//!< Scale factor for new Doo-Sabin remeshing scheme
+	static double sDooSabinBCnewLengthFactor;	//!< Length factor for new Doo-Sabin remeshing scheme
+	static double sLoopLengthFactor;			//!< Length factor for Loop-style remeshing scheme
 
 	//!< Face subdivision
-	static bool use_quads; //!< Flag indicating if face subdivision should use quads or triangles
+	static bool sUseQuads; //!< Flag indicating if face subdivision should use quads or triangles
 
 	//!< Tile texturing
-	static int tile_tex_n; //!< Tiling size for tile texturing
+	static int sTileTexSize; //!< Tiling size for tile texturing
 
 	//!< Multi-face handles
-	static MFHAlgo mfh_algo; //!< Algorithm to use for multi-face handle
-	static double mfh_scale_factor; //!< Scale factor for convex hull creation
-	static double mfh_extrude_dist; //!< Extrude distance for convex hull creation
-	static bool mfh_use_max_offsets; //!< Flag indicating whether to compute and use the max. offset distances
-	static double mfh_min_adj_factor; //!< Min. value of adjustment factor for iterative convex hull computation
-	static bool mfh_make_connections; //!< Should final connections be made or should we stop with convex hull?
+	static MFHAlgo sMfhAlgorithm;		//!< Algorithm to use for multi-face handle
+	static double sMfhScaleFactor;		//!< Scale factor for convex hull creation
+	static double sMfhExtrudeDist;		//!< Extrude distance for convex hull creation
+	static bool sMfhUseMaxOffsets;		//!< Flag indicating whether to compute and use the max. offset distances
+	static double sMfhMinAdjFactor;		//!< Min. value of adjustment factor for iterative convex hull computation
+	static bool sMfhMakeConnections;	//!< Should final connections be made or should we stop with convex hull?
 
 	//!< Menger Sponge creation
-	static double sponge_thickness; //!< Thickness for Menger Sponge
-	static double sponge_collapse_threshold; //!< Threshold angle for edge collapse
-	static bool sponge_fractional_thickness; //!< Consider thickness to be fractional
+	static double sSpongeThickness;			//!< Thickness for Menger Sponge
+	static double sSpongeCollapseThreshold;	//!< Threshold angle for edge collapse
+	static bool sSpongeFractionalThickness;	//!< Consider thickness to be fractional
 
 	//!< Conical Sculpting Variables from Ozgur
-	static double cutOffsetE_factor;
-	static double cutOffsetV_factor;
-	static double pnormalBendS_factor;
-	static double pnormalBendT_factor;
-	static bool global_cut;
-	static bool selected_cut;
-	static int numberofPeels;
-	static double extrude_bendT;
-	static double extrude_bendB;
+	static double sCutOffsetEdgeFactor;
+	static double sCutOffsetVertFactor;
+	static double sPNormalBendS_Factor;
+	static double sPNormalBendT_Factor;
+	static bool sGlobalCut;
+	static bool sSelectedCut;
+	static int sNumOfPeels;
+	static double sExtrudeBendT;
+	static double sExtrudeBendB;
 
-	static int incremental_save_count;
+	static int sIncrementalSaveCount;
 
 	//dave paint bucket tool - exp. 11.07
-	static QColor paint_bucket_color;
-	
-	QString curFile;
+	static QColor sPaintBucketColor;
+
+	QString mCurFilename;
 	//document modified
 	bool isModified();
 	void setModified(bool isModified);
 
-
 protected :
-
 	//-- Selection count, used as index into selection lists --//
-	static int num_sel_verts;        								    //!< No. of selected vertices
-	static int num_sel_edges;         						      //!< No. of selected edges
-	static int num_sel_faces;             						  //!< No. of selected faces
-	static int num_sel_faceverts;												//!< No. of selected face vertices
+	static int sNumSelVerts;			//!< No. of selected vertices
+	static int sNumSelEdges;			//!< No. of selected edges
+	static int sNumSelFaces;			//!< No. of selected faces
+	static int sNumSelFaceVerts;		//!< No. of selected face vertices
 
 	//-- should we deselect or select the current faces? --//
-	static bool deselect_verts;
-	static bool deselect_edges;
-	static bool deselect_faces;
-	static bool deselect_faceverts;
+	static bool sDeselectVerts;
+	static bool sDeselectEdges;
+	static bool sDeselectFaces;
+	static bool sDeselectFaceVerts;
 
-	static DLFLEdgePtr face_loop_start_edge; 						//!< face loop edge pointer
-	static DLFLEdgePtr edge_ring_start_edge; 						//!< edge ring edge pointer
-	static bool face_loop_start;												//!< face loop start
+	static DLFLEdgePtr sFaceLoopStartEdge;		//!< face loop edge pointer
+	static DLFLEdgePtr sEdgeRingStartEdge;		//!< edge ring edge pointer
+	static bool sFaceLoopStart;					//!< face loop start
 
-	GLWidget *active;															     	//!< Active viewport to handle events
+	GLWidget *mActiveViewport;					//!< Active viewport to handle events
 
-	DLFLObject object;                            //!< The DLFL object
-	//TMPatchObject *patchObject;										//!< the patch object
-	Mode mode;																		//!< Current operating mode
-	ExtrusionMode extrusionmode;														//!< Current operating mode
-	SelectionMask selectionmask;            			//!< Current selection mask
-	RemeshingScheme remeshingscheme;							//!< Current selected remeshing scheme
-	PointLight plight;														//!< Light used to compute lighting
+	DLFLObject mObject;							//!< The DLFL object
+	//TMPatchObject *patchObject;				//!< the patch object
+	Mode mOperationMode;						//!< Current operating mode
+	ExtrusionMode mExtrusionMode;				//!< Current operating mode
+	SelectionMask mSelectionMask;				//!< Current selection mask
+	RemeshingScheme mRemeshingScheme;			//!< Current selected remeshing scheme
+	PointLight mPointLight;						//!< Light used to compute lighting
 
-	StringStreamPtrList undoList;                 //!< List for Undo
-	StringStreamPtrList redoList;                 //!< List for Redo
-	StringStreamPtrList undoMtlList;                 //!< Mtl List for Undo
-	StringStreamPtrList redoMtlList;                 //!< Mtl List for Redo
-	int undolimit;                                //!< Limit for undo
-	bool useUndo;            											//!< Flag to indicate if undo will be used
+	StringStreamPtrList mUndoList;				//!< List for Undo
+	StringStreamPtrList mRedoList;				//!< List for Redo
+	StringStreamPtrList mUndoMtlList;			//!< Mtl List for Undo
+	StringStreamPtrList mRedoMtlList;			//!< Mtl List for Redo
+	int mUndoLimit;								//!< Limit for undo
+	bool mUseUndo;								//!< Flag to indicate if undo will be used
 
 	void initialize(int x, int y, int w, int h, DLFLRendererPtr rp);	//!< Initialize the viewports, etc.
 
 	// brianb
-	static int  drag_startx;
-	static int  drag_starty;
+	static int sDragStartX;
+	static int sDragStartY;
 	double mStartDragX;
 	double mStartDragY;
-	static bool is_editing;
+	static bool sIsEditing;
 
 public :
-
 	/**
 	* \brief Constructor
 	*/
-	MainWindow(char *filename = NULL);
-	
+	MainWindow(char *filename = nullptr);
+
 	/**
 	* \brief Destructor
 	*/
 	~MainWindow() {
 		clearUndoList();
 		clearRedoList();
-		delete active;
+		delete mActiveViewport;
 	}
-	
+
 	/**
 	* \brief translation function. see tutorial at http://trolltech.com/developer/knowledgebase/faq.2007-05-23.5871663589/
 	*/
@@ -481,15 +478,14 @@ public :
 		}
 		QMainWindow::changeEvent(event);
 	}
-	
+
 	void retranslateUi();
 
 	/**
 	* \brief clears all currently selected vertices, edges, faces, whatever is selected
 	*/
-//	void MainWindow::clearSelected()	{
 	void clearSelected()	{
-		active->clearSelected();
+		mActiveViewport->clearSelected();
 		MainWindow::clearNumSelected();
 	}
 
@@ -497,37 +493,36 @@ public :
 	* \brief current used for vertex editing, needs to be updated to allow generic and multiple subobject translation/rotation/scale editing
 	*/
 	static void startDrag(int x, int y) { // brianb
-		drag_startx = x;
-		drag_starty = y;
+		sDragStartX = x;
+		sDragStartY = y;
 	}
 
 	/**
 	* \brief resets all subobject num_selected variables to 0
 	*/
-//	static void MainWindow::clearNumSelected() {
 	static void clearNumSelected() {
-		num_sel_verts = 0;
-		num_sel_edges = 0;
-		num_sel_faces = 0;
-		num_sel_faceverts = 0;
+		sNumSelVerts = 0;
+		sNumSelEdges = 0;
+		sNumSelFaces = 0;
+		sNumSelFaceVerts = 0;
 	}
-	
-	void getCheckerboardSelection(DLFLFacePtr fptr);		//!< \todo  needs to be moved to DLFL namespace
-	void getEdgeLoopSelection(DLFLEdgePtr eptr);				//!< \todo  needs to be moved to DLFL namespace
+
+	void getCheckerboardSelection(DLFLFacePtr fptr);	//!< \todo  needs to be moved to DLFL namespace
+	void getEdgeLoopSelection(DLFLEdgePtr eptr);		//!< \todo  needs to be moved to DLFL namespace
 	void getFaceLoopSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr face_loop_marker, bool select_face_loop);	//!< \todo  needs to be moved to DLFL namespace
 	void getEdgeRingSelection(DLFLEdgePtr eptr, bool start, DLFLFacePtr face_loop_marker, bool select_face_loop);	//!< \todo  needs to be moved to DLFL namespace
 
-	void createRenderers();															//!< allocate memory for the renderer pointers
-	void destroyRenderers();														//!< delete memory allcated for the renderer pointers
+	void createRenderers();			//!< allocate memory for the renderer pointers
+	void destroyRenderers();		//!< delete memory allcated for the renderer pointers
 
-	void setMode(Mode m);																//!< Switch to specified operating mode
-	void setExtrusionMode(ExtrusionMode m);							//!< Switch to specified operating mode
-	Mode getMode(){ return mode; };											//!< returns the current operation mode enum... this needs to return a string eventually. don't know how to do that yet
-	void setRemeshingScheme(RemeshingScheme scheme);		//!< switch the current remeshing scheme
-	void setSelectionMask(SelectionMask m);							//!< set the current selection mask (verts, edges, faces, multiple?)
-	void setToolOptions(QWidget *optionsWidget);				//!< set the current tool option widget to be displayed in mToolOptionsDockWidget
-	void loadFile(QString fileName);										//!< load an OBJ or a DLFL file
-	
+	void setMode(Mode m);								//!< Switch to specified operating mode
+	void setExtrusionMode(ExtrusionMode m);				//!< Switch to specified operating mode
+	Mode getMode() { return mOperationMode; };			//!< returns the current operation mode enum... this needs to return a string eventually. don't know how to do that yet
+	void setRemeshingScheme(RemeshingScheme scheme);	//!< switch the current remeshing scheme
+	void setSelectionMask(SelectionMask m);				//!< set the current selection mask (verts, edges, faces, multiple?)
+	void setToolOptions(QWidget *optionsWidget);		//!< set the current tool option widget to be displayed in mToolOptionsDockWidget
+	void loadFile(QString fileName);					//!< load an OBJ or a DLFL file
+
 	/**
 	* \brief this will store pointers to the current mode's spinboxes so we can do keyboard interaction with them
 	*/
@@ -537,57 +532,57 @@ public :
 		QDoubleSpinBox *five = nullptr, QDoubleSpinBox *six = nullptr);
 
 #ifdef WITH_PYTHON
-	DLFLScriptEditor *mScriptEditor;							//!< ScriptEditor Object by Stuart
-	QDockWidget *mScriptEditorDockWidget;					//!< docked script editor window for Python Scripting interface by Stuart
+	DLFLScriptEditor *mScriptEditor;			//!< ScriptEditor Object by Stuart
+	QDockWidget *mScriptEditorDockWidget;		//!< docked script editor window for Python Scripting interface by Stuart
 #endif
 
 #ifdef WITH_VERSE
-	VerseTopMod *mVerseDialog;										//!< for a possible future implementation of the Verse protocol http://verse.blender.org
-	QDockWidget *mVerseDialogDockWidget;					//!< for a possible future implementation of the Verse protocol http://verse.blender.org
-#endif	
+	VerseTopMod *mVerseDialog;					//!< for a possible future implementation of the Verse protocol http://verse.blender.org
+	QDockWidget *mVerseDialogDockWidget;		//!< for a possible future implementation of the Verse protocol http://verse.blender.org
+#endif
 
-	QDockWidget *mToolOptionsDockWidget;					//!< the floating window that displays the current tool's options (spinboxes, checkboxes, etc...)
+	QDockWidget *mToolOptionsDockWidget;			//!< the floating window that displays the current tool's options (spinboxes, checkboxes, etc...)
 	QStackedWidget *mToolOptionsStackedWidget;		//!< the widget that references each tool option widget and handles switching the display
-	
+
 	QDockWidget *mStartupDialogDockWidget;
 	QWidget *mStartupDialogWidget;
 	QGridLayout *mStartupDialogLayout;
 	bool mShowStartupDialogAtStartup;
-	QLabel *quicktimeLabel;
-	QLabel *downloadQuicktimeLabel;
-	
-protected:
-	void closeEvent( QCloseEvent *event );				//!< what will execute when the main window is closed (on application exit/quit)
+	QLabel *mQuickTimeLabel;
+	QLabel *mDownloadQuickTimeLabel;
 
-	SpinBoxMode mSpinBoxMode;											//!< enum to store which spinbox mode we are in. e.g. 1, 2, 3, 4, 5, to allow mouse motion to update the values
+protected:
+	void closeEvent(QCloseEvent *event);		//!< what will execute when the main window is closed (on application exit/quit)
+
+	SpinBoxMode mSpinBoxMode;					//!< enum to store which spinbox mode we are in. e.g. 1, 2, 3, 4, 5, to allow mouse motion to update the values
 
 	// Renderers
-	static WireframeRendererPtr wired;            //!< WireframeRenderer
-	static NormalRendererPtr normal;              //!< Normal Renderer - white color - like a "hidden line" view
-	static LitRendererPtr lit;                    //!< Lit Renderer
-	static TexturedRendererPtr textured;          //!< Textured Renderer
-	static TexturedLitRendererPtr texturedlit; 		//!< Textured and Lit Renderer
-	static PatchRendererPtr patch;								//!< Bezier Patch Display
-	static ColorableRendererPtr colorable;				//!< face colors... new ... by dave... 11/07
+	static WireframeRendererPtr sWiredRenderer;			//!< WireframeRenderer
+	static NormalRendererPtr sNormalRenderer;			//!< Normal Renderer - white color - like a "hidden line" view
+	static LitRendererPtr sLitRenderer;					//!< Lit Renderer
+	static TexturedRendererPtr sTexturedRenderer;		//!< Textured Renderer
+	static TexturedLitRendererPtr sTexturedLitRenderer;	//!< Textured and Lit Renderer
+	static PatchRendererPtr sPatchRenderer;				//!< Bezier Patch Display
+	static ColorableRendererPtr sColorableRendererr;	//!< face colors... new ... by dave... 11/07
 
-	BasicsMode *mBasicsMode;											//!< widget that holds all displayable option widgets for basic operating modes (InsertEdge, DeleteEdge, CollapseEdge, ConnectEdges, etc...)
-	ExtrusionsMode *mExtrusionsMode;								//!< widget that holds all displayable option widgets for the extrusion operation modes
-	ConicalMode *mConicalMode;										//!< for future implementation of Ozgur's Conical/Planar modeling modes.
-	RemeshingMode *mRemeshingMode;								//!< widget that holds all displayable option widgets for all remeshing modes
-	HighgenusMode *mHighgenusMode;								//!< high genus operation options (e.g. wireframe, sierpinsky, add handle)
-	TexturingMode *mTexturingMode;								//!< \todo  texturing mode widgets (not working at the moment)
-	ExperimentalMode *mExperimentalMode;					//!< experimental mode widgets like the new paint bucket tool dave 11.07
+	BasicsMode *mBasicsMode;				//!< widget that holds all displayable option widgets for basic operating modes (InsertEdge, DeleteEdge, CollapseEdge, ConnectEdges, etc...)
+	ExtrusionsMode *mExtrusionsMode;		//!< widget that holds all displayable option widgets for the extrusion operation modes
+	ConicalMode *mConicalMode;				//!< for future implementation of Ozgur's Conical/Planar modeling modes.
+	RemeshingMode *mRemeshingMode;			//!< widget that holds all displayable option widgets for all remeshing modes
+	HighgenusMode *mHighgenusMode;			//!< high genus operation options (e.g. wireframe, sierpinsky, add handle)
+	TexturingMode *mTexturingMode;			//!< \todo  texturing mode widgets (not working at the moment)
+	ExperimentalMode *mExperimentalMode;	//!< experimental mode widgets like the new paint bucket tool dave 11.07
 
-	QShortcutManager *sm;													//!< Stuff for the shortcut manager test
-			
-	QStandardItemModel *mActionModel; 						//!< stores all the actions in topmod. sent to CommandCompleter class in order to create an index of the possible actions based on the text and icon associated with each action	
-	QWidget *mActionListWidget;										//!< widget that stores all actions availabe in topmod for CommandCompleter autocompletion functionality
-			
+	QShortcutManager *mShortcutManager;					//!< Stuff for the shortcut manager test
+
+	QStandardItemModel *mActionModel;		//!< stores all the actions in topmod. sent to CommandCompleter class in order to create an index of the possible actions based on the text and icon associated with each action
+	QWidget *mActionListWidget;				//!< widget that stores all actions availabe in topmod for CommandCompleter autocompletion functionality
+
 private:
 	//document modified
-	bool mIsModified;															//!< bool to stop program from exiting if file has been edited but not saved
-	bool mIsPrimitive;														//!< bool to stop program from exiting if file has been edited but not saved
-	bool mWasPrimitive;														//!< bool to stop program from exiting if file has been edited but not saved, used in DLFLUndo.cc
+	bool mIsModified;						//!< bool to stop program from exiting if file has been edited but not saved
+	bool mIsPrimitive;						//!< bool to stop program from exiting if file has been edited but not saved
+	bool mWasPrimitive;						//!< bool to stop program from exiting if file has been edited but not saved, used in DLFLUndo.cc
 	bool mAutoSave, mIncrementalSave;
 	int mIncrementalSaveMax;
 	QTimer *mAutoSaveTimer;
@@ -597,35 +592,35 @@ private:
 	bool mSingleClickExtrude;
 
 
-	void createActions();													//!< create all MainWindow actions for menu's and icons, also create operating mode actions in subclasses
-	void createMenus();														//!< create top-level QMenuBar and add actions to each QMenu
-	void createToolBars();												//!< create toolbars with large icons for one-click operations
-	void createStatusBar();												//!< status bar will display extra info about what different operations or buttons do in TopMod interface
-	bool maybeSave();															//!< save before exit?
-	void initializeHelp();												//!< initialize the help files / create index / load html files
+	void createActions();					//!< create all MainWindow actions for menu's and icons, also create operating mode actions in subclasses
+	void createMenus();						//!< create top-level QMenuBar and add actions to each QMenu
+	void createToolBars();					//!< create toolbars with large icons for one-click operations
+	void createStatusBar();					//!< status bar will display extra info about what different operations or buttons do in TopMod interface
+	bool maybeSave();						//!< save before exit?
+	void initializeHelp();					//!< initialize the help files / create index / load html files
 
- 	void createStartupDialog();										//!< initialize the startup screen that will show links to beginner video tutorials / will include link to quicktime website and "disable checkbox"
-	void initializeAnimatedHelp();								//!< initialize the in-context help animated screen captures. these will display in a small floatable window to the right 
+	void createStartupDialog();				//!< initialize the startup screen that will show links to beginner video tutorials / will include link to quicktime website and "disable checkbox"
+	void initializeAnimatedHelp();			//!< initialize the in-context help animated screen captures. these will display in a small floatable window to the right
 
-	//QAssistantClient *mAssistantClient;						//!< Qt help file viewer, will display html files created by DocBook xml transformation
+	//QAssistantClient *mAssistantClient;	//!< Qt help file viewer, will display html files created by DocBook xml transformation
 
 	//top level and sublevel menus
-	QMenuBar *menuBar;														//!< the main menubar pointer to which all qmenu's will be added
-	QMenu *mFileMenu;															//!< the file menu which contains save, save as, quit etc...
+	QMenuBar *mMenuBar;						//!< the main menubar pointer to which all qmenu's will be added
+	QMenu *mFileMenu;						//!< the file menu which contains save, save as, quit etc...
 	QMenu *mExportMenu;
-	QMenu *mEditMenu;															//!< undo, redo, clear undo list, and also preferences (except on os/x)
-	QMenu *mDisplayMenu;													//!< all viewport display functionality (HUD, IDs, renderer, verts, faces, normals, etc...)
-	QMenu *mViewMenu;															//!< probably going to remove... but could contain choices for which view to use (persp or left / right /top/ bottom etc...)
-	QMenu *mShowIDsMenu;													//!< submenu of mDisplayMenu
-	QMenu *mRendererMenu;													//!< now a submenu of mDisplayMenu
-	QMenu *mPrimitivesMenu;												//!< stores actions for one-click loading of primitive objects
-	QMenu *mNewMenu;															//!< stores same actions as the primitives menu plus a "new file" command that loads a blank object
-	QMenu *mObjectMenu;														//!< \todo  needs to be removed. not necessary
-	QMenu *mSelectionMenu;												//!< all different selection options
-	QMenu *mSelectionMaskMenu;										//!< \todo  figure out how to integrate a selection mask functionality into the current implementation of mode switching in TopMod
-	QMenu *mLanguageMenu;													//!< \todo  add multi-lingual support using Qt's Linguist application and make dynamic language changing possible... could be very difficult to do...
-	QMenu *mWindowMenu;														//!< menu choices for hiding and showing all floating windows and toolbars / also fullscreen mode
-	QMenu *mHelpMenu;															//!< about TopMod, about Qt, Local documentation, Online documentation
+	QMenu *mEditMenu;						//!< undo, redo, clear undo list, and also preferences (except on os/x)
+	QMenu *mDisplayMenu;					//!< all viewport display functionality (HUD, IDs, renderer, verts, faces, normals, etc...)
+	QMenu *mViewMenu;						//!< probably going to remove... but could contain choices for which view to use (persp or left / right /top/ bottom etc...)
+	QMenu *mShowIDsMenu;					//!< submenu of mDisplayMenu
+	QMenu *mRendererMenu;					//!< now a submenu of mDisplayMenu
+	QMenu *mPrimitivesMenu;					//!< stores actions for one-click loading of primitive objects
+	QMenu *mNewMenu;						//!< stores same actions as the primitives menu plus a "new file" command that loads a blank object
+	QMenu *mObjectMenu;						//!< \todo  needs to be removed. not necessary
+	QMenu *mSelectionMenu;					//!< all different selection options
+	QMenu *mSelectionMaskMenu;				//!< \todo  figure out how to integrate a selection mask functionality into the current implementation of mode switching in TopMod
+	QMenu *mLanguageMenu;					//!< \todo  add multi-lingual support using Qt's Linguist application and make dynamic language changing possible... could be very difficult to do...
+	QMenu *mWindowMenu;						//!< menu choices for hiding and showing all floating windows and toolbars / also fullscreen mode
+	QMenu *mHelpMenu;						//!< about TopMod, about Qt, Local documentation, Online documentation
 
 	QMenu *mRightClickMenu;
 
@@ -647,132 +642,132 @@ private:
 	QAction *mScreenshotViewportAct;
 	QAction *mScreenshotAppAct;
 	QAction *mSaveAsAct;
-	QAction *loadTextureAct;
-	QAction *printInfoAct;
-	QAction *printFaceListAct;
-	QAction *printVertexListAct;
-	QAction *printEdgeListAct;
+	QAction *mLoadTextureAct;
+	QAction *mPrintInfoAct;
+	QAction *mPrintFaceListAct;
+	QAction *mPrintVertexListAct;
+	QAction *mPrintEdgeListAct;
 	QAction *mPrintCVListAct;
 	QAction *mExitAct;
-			
+
 	QAction *mFullscreenAct;
 	QAction *mPerformRemeshingAct;
 	QAction *mPerformExtrusionAct;
 	QAction *mSubdivideSelectedFacesAct;
 	QAction *mPaintSelectedFacesAct;
 	QAction *mClearMaterialsAct;
-	QAction *mExtrudeMultipleAct; 					//!< temporary for now... not sure how to handle this in the future...
+	QAction *mExtrudeMultipleAct;			//!< temporary for now... not sure how to handle this in the future...
 	QAction *mQuickCommandAct;
 
 	//Edit Menu Actions
-	QAction *mDeleteSelectedAct;						//!< delete the selected objects.
-	QAction *mUndoAct;											//!< pop the previous model state off the undo stack
-	QAction *mRedoAct;											//!< push the model back onto the undo stack
-	QAction *mClearUndoListAct;							//!< clear the undo list to free up memory
+	QAction *mDeleteSelectedAct;			//!< delete the selected objects.
+	QAction *mUndoAct;						//!< pop the previous model state off the undo stack
+	QAction *mRedoAct;						//!< push the model back onto the undo stack
+	QAction *mClearUndoListAct;				//!< clear the undo list to free up memory
 
 	//view switching actions
-	QAction *mTopViewAct;										//!< switch to top view
-	QAction *mBottomViewAct;								//!< switch to bottom view
-	QAction *mLeftViewAct;									//!< switch to left view
-	QAction *mRightViewAct;									//!< switch to right view
-	QAction *mFrontViewAct;									//!< switch to front view
-	QAction *mBackViewAct;									//!< switch to back view
-	QAction *mPerspViewAct;									//!< switch to perspective view or reset the current one
+	QAction *mTopViewAct;					//!< switch to top view
+	QAction *mBottomViewAct;				//!< switch to bottom view
+	QAction *mLeftViewAct;					//!< switch to left view
+	QAction *mRightViewAct;					//!< switch to right view
+	QAction *mFrontViewAct;					//!< switch to front view
+	QAction *mBackViewAct;					//!< switch to back view
+	QAction *mPerspViewAct;					//!< switch to perspective view or reset the current one
 
 	QAction *mZoomInAct;
 	QAction *mZoomOutAct;
-	
+
 	//Display Menu Actions
-	QAction *showVerticesAct;								
+	QAction *mShowVerticesAct;
 	QAction *mShowFaceIDsAct;
 	QAction *mShowEdgeIDsAct;
 	QAction *mShowVertexIDsAct;
 	QAction *mShowSelectedIDsAct;
-	QAction *showSilhouetteAct;
-	QAction *showWireframeAct;
-	QAction *objectOrientationAct;
+	QAction *mShowSilhouetteAct;
+	QAction *mShowWireframeAct;
+	QAction *mObjectOrientationAct;
 	QAction *mShowNormalsAct;
-	QAction *showGridAct;
-	QAction *showHUDAct;
-	QAction *showCoordinateAxesAct;
-	#ifdef GPU_OK
+	QAction *mShowGridAct;
+	QAction *mShowHUDAct;
+	QAction *mShowCoordinateAxesAct;
+#ifdef GPU_OK
 	QAction *mUseGPUAct;
-	#endif
+#endif
 	QAction *mAntialiasingAct;
 
 	QAction *mShowFaceCentroidsAct;
 
 	//Renderer Menu Actions
-	QAction *wireframeRendererAct;
-	QAction *normalRendererAct;
-	QAction *shadedRendererAct;
-	QAction *lightedRendererAct;
-	QAction *texturedRendererAct;
-	QAction *texturedLightedAct;
-	QAction *patchRendererAct;	
-	QAction *colorableRendererAct;	
+	QAction *mWireframeRendererAct;
+	QAction *mNormalRendererAct;
+	QAction *mShadedRendererAct;
+	QAction *mLightedRendererAct;
+	QAction *mTexturedRendererAct;
+	QAction *mTexturedLightedAct;
+	QAction *mPatchRendererAct;
+	QAction *mColorableRendererAct;
 
 	//Primitives Menu Actions
-	QAction *pCubeAct;
-	QAction *pDodecahedronAct;
-	QAction *pIcosahedronAct;
-	QAction *pTetrahedronAct;
-	QAction *pSoccerBallAct;
-	QAction *pOctahedronAct;
-	QAction *pGeodesicAct;
+	QAction *mPrimCubeAct;
+	QAction *mPrimDodecahedronAct;
+	QAction *mPrimIcosahedronAct;
+	QAction *mPrimTetrahedronAct;
+	QAction *mPrimSoccerBallAct;
+	QAction *mPrimOctahedronAct;
+	QAction *mPrimGeodesicAct;
 
 	//Object Menu Actions
-	QAction *subdivideAllEdgesAct;
-	QAction *planarizeAllFacesAct;
+	QAction *mSubdivideAllEdgesAct;
+	QAction *mPlanarizeAllFacesAct;
 	QAction *makeObjectSphericalAct;
 	QAction *mCleanup2gonsAct;
 	QAction *mCleanupWingedVerticesAct;
 	QAction *mSplitValence2VerticesAct;
-	QAction *makeObjectSmoothAct;
-	QAction *makeWireframeAct;
-	QAction *makeColumnsAct;
-	QAction *makeSierpinskiAct;
-	QAction *createCrustThicknessAct;
-	QAction *createCrustScalingAct;
+	QAction *mMakeObjectSmoothAct;
+	QAction *mMakeWireframeAct;
+	QAction *mMakeColumnsAct;
+	QAction *mMakeSierpinskiAct;
+	QAction *mCreateCrustThicknessAct;
+	QAction *mCreateCrustScalingAct;
 	QAction *mPerformCuttingAct;
-	QAction *computeLightingAct;
-	QAction *computeNormalsAndLightingAct;
-	QAction *assignTextureCoordinatesAct;
+	QAction *mComputeLightingAct;
+	QAction *mComputeNormalsAndLightingAct;
+	QAction *mAssignTextureCoordinatesAct;
 
 	//Selection Menu Actions
-	QAction *selectVertexAct;
-	QAction *selectMultipleVerticesAct;
+	QAction *mSelectVertexAct;
+	QAction *mSelectMultipleVerticesAct;
 	QAction *mSelectMultipleAct;
 	QAction *mEditVertexAct;
-	QAction *selectFaceAct;
-	QAction *selectFaceLoopAct;
-	QAction *selectEdgeRingAct;
-	QAction *mSubdivideSelectedEdgesAct;					//!< subdivide the selected edges.
-	QAction *mCollapseSelectedEdgesAct;						//!< collapse the selected edges.
-	QAction *selectMultipleFacesAct;
-	QAction *selectSimilarFacesAct;
+	QAction *mSelectFaceAct;
+	QAction *mSelectFaceLoopAct;
+	QAction *mSelectEdgeRingAct;
+	QAction *mSubdivideSelectedEdgesAct;		//!< subdivide the selected edges.
+	QAction *mCollapseSelectedEdgesAct;			//!< collapse the selected edges.
+	QAction *mSelectMultipleFacesAct;
+	QAction *mSelectSimilarFacesAct;
 	QAction *mSelectSimilarAct;
-	QAction *selectFacesByAreaAct;
-	QAction *selectFacesByColorAct;
+	QAction *mSelectFacesByAreaAct;
+	QAction *mSelectFacesByColorAct;
 	QAction *mSelectionWindowAct;
-	QAction *selectCheckerboardFacesAct;
-	QAction *selectAllAct;
+	QAction *mSelectCheckerboardFacesAct;
+	QAction *mSelectAllAct;
 	QAction *mGrowSelectionAct;
 	QAction *mShrinkSelectionAct;
-	QAction *selectInverseAct;
-	QAction *selectEdgeAct;
-	QAction *selectMultipleEdgesAct;
-	QAction *selectEdgeLoopAct;
-	QAction *selectCornerAct;
-	QAction *clearSelectedModeAct;
-	QAction *exitSelectionModeAct;
-	QAction *selectEdgesFromFacesAct;
-	QAction *selectEdgesFromVerticesAct;
-	QAction *selectFacesFromEdgesAct;
-	QAction *selectFacesFromVerticesAct;
-	QAction *selectVerticesFromFacesAct;
-	QAction *selectVerticesFromEdgesAct;
-	
+	QAction *mSelectInverseAct;
+	QAction *mSelectEdgeAct;
+	QAction *mSelectMultipleEdgesAct;
+	QAction *mSelectEdgeLoopAct;
+	QAction *mSelectCornerAct;
+	QAction *mClearSelectedModeAct;
+	QAction *mExitSelectionModeAct;
+	QAction *mSelectEdgesFromFacesAct;
+	QAction *mSelectEdgesFromVerticesAct;
+	QAction *mSelectFacesFromEdgesAct;
+	QAction *mSelectFacesFromVerticesAct;
+	QAction *mSelectVerticesFromFacesAct;
+	QAction *mSelectVerticesFromEdgesAct;
+
 	//selection mask actions
 	QAction *mSelectVerticesMaskAct;
 	QAction *mSelectFacesMaskAct;
@@ -781,15 +776,15 @@ private:
 
 	//Language Menu actions;
 	QActionGroup *mLanguageActionGroup;
-	QAction *englishAct;
-	QAction *spanishAct;
-	QAction *germanAct;
-	QAction *frenchAct;
-	QAction *hindiAct;
-	QAction *italianAct;
-	QAction *turkishAct;
-	QAction *catalanAct;
-			
+	QAction *mEnglishAct;
+	QAction *mSpanishAct;
+	QAction *mGermanAct;
+	QAction *mFrenchAct;
+	QAction *mHindiAct;
+	QAction *mItalianAct;
+	QAction *mTurkishAct;
+	QAction *mCatalanAct;
+
 	//help menu
 	QAction *mAboutQtAct;
 	QAction *mHelpAct;
@@ -854,10 +849,10 @@ private:
 #ifdef WITH_VERSE
 	QAction *mShowVerseDialogAct;
 #endif
-			
+
 	QAction *mShowToolOptionsAct;
 	QAction *mShowStartupDialogAct;
-			
+
 	StyleSheetEditor *mStyleSheetEditor;
 	QAction *mEditStyleSheetAct;
 	TopModPreferences *mPreferencesDialog;
@@ -867,7 +862,7 @@ private:
 	CommandCompleter *mCommandCompleter;
 	#endif
 	QStringList mCommandList;
-			
+
 	//popup helper animations
 	QMovie *mAnimatedHelpMovie;
 	QLabel *mAnimatedHelpLabel;
@@ -875,9 +870,9 @@ private:
 	QVBoxLayout *mAnimatedHelpLayout;
 	QDockWidget *mAnimatedHelpDockWidget;
 	QAction *mShowAnimatedHelpAct;
-			
+
 	std::array<QDoubleSpinBox*, 6> mSpinBoxes = {};
-			
+
 	//startup dialog actions for loading movies
 	QAction *mTutorialNavigationAct;
 	QAction *mTutorialInterfaceAct;
@@ -885,7 +880,7 @@ private:
 	QAction *mTutorialExtrusionAct;
 	QAction *mTutorialRemeshingAct;
 	QAction *mTutorialHighgenusAct;
-	QAction *mTutorialTexturingAct;	
+	QAction *mTutorialTexturingAct;
 	//associated toolbuttons
 	QToolButton *mTutorialNavigationButton;
 	QToolButton *mTutorialInterfaceButton;
@@ -895,28 +890,28 @@ private:
 	QToolButton *mTutorialHighgenusButton;
 	QToolButton *mTutorialTexturingButton;
 	QCheckBox *mShowStartupDialogAtStartupCheckBox;
-	
+
 	//translation stuff for future
-	QTranslator *translator_es;							//!< \todo translation widget spanish
-  QTranslator *translator_fr;							//!< \todo translation widget french
-  QTranslator *translator_de;							//!< \todo translation widget german
-  QTranslator *translator_tr;							//!< \todo translation widget turkish
-	QTranslator *translator_ca;							//!< \todo translation widget catalan
-  QTranslator *translator_it;							//!< \todo translation widget italian
-  QTranslator *translator_hi;							//!< \todo translation widget hindi
+	QTranslator *mTranslator_es;		//!< \todo translation widget spanish
+	QTranslator *mTranslator_fr;		//!< \todo translation widget french
+	QTranslator *mTranslator_de;		//!< \todo translation widget german
+	QTranslator *mTranslator_tr;		//!< \todo translation widget turkish
+	QTranslator *mTranslator_ca;		//!< \todo translation widget catalan
+	QTranslator *mTranslator_it;		//!< \todo translation widget italian
+	QTranslator *mTranslator_hi;		//!< \todo translation widget hindi
 
 	//for screenshots
-	QPixmap viewportPixmap;
-	QPixmap appPixmap;
-	
+	QPixmap mViewportPixmap;
+	QPixmap mAppPixmap;
+
 	//paint bucket tool dave //11.07
 	// QColor mPaintBucketColor;
-	
+
 public slots:
 
 	bool viewportScreenshot(); //!< take a screenshot of just the opengl viewport
 	bool appScreenshot(); //!< take a screenshot of the whole app (for forum posting and bug reports)
-	
+
 	//brand new stuff - dave - 9/12/07
 	void setAutoSave(int value);
 	void setAutoSaveDelay(double value);
@@ -926,8 +921,8 @@ public slots:
 	void setIncrementalSaveMax(double value);
 	void setSaveDirectory(QString s);
 	void checkSaveDirectory();
-	
-	
+
+
 	// i18n stuff
 	void changeLanguage(const QString &string);
 	void setLanguageSpanish();
@@ -937,24 +932,24 @@ public slots:
 	void setLanguageItalian();
 	void setLanguageCatalan();
 	void setLanguageHindi();
-	void setLanguageEnglish();	
-	
-	void about(); 												//!< \todo  topmod developer credits 
-	void help(); 													//!< open the qtassistantclient help viewer
-	void checkForUpdates(); 							//!< check for updates on the topMod home page
-	void topModWeb(); 										//!< open the TopMod web page in the default browser
-	void topModBlip(); 										//!< open the http://topmod.blip.tv web page 
-	void topModResearch(); 								//!< open the TopMod research web page in the default browser
-	void documentWasModified();
-	void toggleFullScreen();							//!< fullscreen mode in the mainwindow class... this is a test...
+	void setLanguageEnglish();
 
-	void getCommand(); 										//!< this will open up the quicksilver like interface and accept a value from the user
+	void about();					//!< \todo  topmod developer credits
+	void help();					//!< open the qtassistantclient help viewer
+	void checkForUpdates();			//!< check for updates on the topMod home page
+	void topModWeb();				//!< open the TopMod web page in the default browser
+	void topModBlip();				//!< open the http://topmod.blip.tv web page
+	void topModResearch();			//!< open the TopMod research web page in the default browser
+	void documentWasModified();
+	void toggleFullScreen();		//!< fullscreen mode in the mainwindow class... this is a test...
+
+	void getCommand();				//!< this will open up the quicksilver like interface and accept a value from the user
 
 	void setAnimatedHelpImage();
 
 	void showAllToolBars();
 	void hideAllToolBars();
-	
+
 	bool getShowStartupDialogAtStartup();
 	void setShowStartupDialogAtStartup(int b);
 	//load the seven basic tutorial movies
@@ -964,8 +959,8 @@ public slots:
 	void loadExtrusionTutorial();
 	void loadRemeshingTutorial();
 	void loadHighgenusTutorial();
-	void loadTexturingTutorial();	
-	
+	void loadTexturingTutorial();
+
 	void load_texture();
 	//renderers
 	void useWireframeRenderer();
@@ -1015,9 +1010,9 @@ public slots:
 	void setPaintBucketColor(QColor c);
 	void paintSelectedFaces();
 	void clearMaterials();
-	
-	void deleteSelected();																						//!< delete selected objects
-	void collapseSelectedEdges();																			//!< collapse selected edges
+
+	void deleteSelected();				//!< delete selected objects
+	void collapseSelectedEdges();		//!< collapse selected edges
 
 	//Basics Widget
 	void toggleDeleteEdgeCleanupFlag(int state);
@@ -1028,7 +1023,7 @@ public slots:
 	void toggleUseQuadsFlag(int state);
 
 	void changeFaceAreaTolerance(double value);	//!< dave - facial area calculation
-	
+
 	// Extrusion
 	void changeExtrudeLength(double value);
 	void changeExtrudeRotation(double value);
@@ -1048,7 +1043,7 @@ public slots:
 
 	void changeValence2SplitOffset(double value);
 	void toggleWireframeSplit(int state);
-	
+
 	void changeNumSegments(double value);
 	void changeMaxSegments(double value);
 	void changeNumSegments2(double value);
@@ -1057,15 +1052,15 @@ public slots:
 	void toggleSymmetricWeightsFlag(int state);
 	void changeWeight2(double value);
 	void changeExtraTwists(double value);
-	
+
 	//pinching
-	void changePinch(double value); //Ryan
-	void changePinchCenter(double value); //Ryan
-	void changeBubble(double value); //Ryan
-	void changeHoleHandlePinchValue(double value); //Ryan
-	void changeHoleHandlePinchCenterValue(double value); //Ryan
-	void changeHoleHandlePinchWidthValue(double value); //Ryan
-	
+	void changePinch(double value);							//Ryan
+	void changePinchCenter(double value);					//Ryan
+	void changeBubble(double value);						//Ryan
+	void changeHoleHandlePinchValue(double value);			//Ryan
+	void changeHoleHandlePinchCenterValue(double value);	//Ryan
+	void changeHoleHandlePinchWidthValue(double value);		//Ryan
+
 	void changeCrustScaleFactor(double value);
 	void changeCrustThickness(double value);
 	void toggleCrustCleanupFlag(int state);
@@ -1075,8 +1070,8 @@ public slots:
 	void changeWireframe2Thickness(double value);
 	void changeModifiedCornerCuttingThickness(double value);
 
-			void changeColumnThickness(double value); // Esan
-			void changeColumnSegments(double value); // Esan
+	void changeColumnThickness(double value);	// Esan
+	void changeColumnSegments(double value);	// Esan
 
 	void changeMultiFaceHandleScaleFactor(double value);
 	void changeMultiFaceHandleExtrudeDist(double value);
@@ -1089,14 +1084,14 @@ public slots:
 	void on_editStyleAction_triggered(); // stylesheet editor
 	void openPreferences();
 
-	void changeCutOffsetE(double value);   //ozgur
-	void changeCutOffsetV(double value);   //ozgur
-	void changePNormalBendS(double value); //ozgur
-	void changePNormalBendT(double value); //ozgur
-	void toggleGlobalCut(int state);    //ozgur
-	void toggleSelectedCut(int state);  //ozgur
-	void changeTiltPlane1(double value); //dave
-	void changeTiltPlane2(double value); //dave
+	void changeCutOffsetE(double value);	//ozgur
+	void changeCutOffsetV(double value);	//ozgur
+	void changePNormalBendS(double value);	//ozgur
+	void changePNormalBendT(double value);	//ozgur
+	void toggleGlobalCut(int state);		//ozgur
+	void toggleSelectedCut(int state);		//ozgur
+	void changeTiltPlane1(double value);	//dave
+	void changeTiltPlane2(double value);	//dave
 
 	//remeshing slot functions
 	void toggleDooSabinEdgeFlag(int state);
@@ -1105,27 +1100,27 @@ public slots:
 	void changeVertexCuttingOffset(double value);
 	void changePentagonalOffset(double value);
 	void changePentagonalScaleFactor(double value);
-	void changeStarOffset(double value); // Doug
-	void changeFractalOffset(double value); // Doug
-	void changeSubStellateAmount(double value); // Eric
-	void changeSubStellateCurve(double value); // Eric
-	void changeDooSabinBCnewScale(double value); // Bei & Cansin
-	void changeDooSabinBCnewLength(double value); // Bei & Cansin
-	void changeLoopStyleSubdivisionLength(double value); // Bei & Cansin
-	void changeDual1264Scale(double value); // Bei & Cansin
-	void changeDomeSubdivisionLength(double value); // Bei & Cansin
-	void changeDomeSubdivisionScale(double value); // Bei & Cansin
-	void changeDomeExtrudeLength(double value); // dave
-	void changeDomeExtrudeRotation(double value); // dave
-	void changeDomeExtrudeScale(double value); // dave
-	void changeDooSabinExtrudeTwist(double value); // dave
+	void changeStarOffset(double value);					// Doug
+	void changeFractalOffset(double value);					// Doug
+	void changeSubStellateAmount(double value);				// Eric
+	void changeSubStellateCurve(double value);				// Eric
+	void changeDooSabinBCnewScale(double value);			// Bei & Cansin
+	void changeDooSabinBCnewLength(double value);			// Bei & Cansin
+	void changeLoopStyleSubdivisionLength(double value);	// Bei & Cansin
+	void changeDual1264Scale(double value);					// Bei & Cansin
+	void changeDomeSubdivisionLength(double value);			// Bei & Cansin
+	void changeDomeSubdivisionScale(double value);			// Bei & Cansin
+	void changeDomeExtrudeLength(double value);				// dave
+	void changeDomeExtrudeRotation(double value);			// dave
+	void changeDomeExtrudeScale(double value);				// dave
+	void changeDooSabinExtrudeTwist(double value);			// dave
 	void toggleAccurateDualFlag(int state);
 
 	//right click menu support coming soon...
 	void mousePressEvent(QMouseEvent * event);
 	void mouseReleaseEvent(QMouseEvent * event);
 	void mouseMoveEvent(QMouseEvent * event);
-			
+
 	void keyPressEvent(QKeyEvent *event);
 	void keyReleaseEvent(QKeyEvent *event);
 
@@ -1133,13 +1128,13 @@ public slots:
 	void dropEvent(QDropEvent *event);
 
 	void getRightClickMenu();
-			
+
 #ifdef WITH_VERSE
 	void verseConnected();
 	void verseDisconnected();
 	void verseStarted();
 	void verseKilled();
-#endif				
+#endif
 
 	void switchPerspView();
 	void switchTopView();
@@ -1148,17 +1143,17 @@ public slots:
 	void switchLeftView();
 	void switchFrontView();
 	void switchBackView();
-	
+
 	// void writeObjectOBJ(const char * filename, bool with_normals=false, bool with_tex_coords=false);
 	// void writeObjectDLFL(const char * filename);
 	void setUndoLimit(int limit);
 	void toggleUndo();
 
-	void clearUndoList();      // Erase all elements on Undo list
-	void clearRedoList();      // Erase all elements on Redo list
-	void undoPush();         // Put current object onto undo list
-	void undo();                           // Undo last operation
-	void redo();              // Redo previously undone operation
+	void clearUndoList();		// Erase all elements on Undo list
+	void clearRedoList();		// Erase all elements on Redo list
+	void undoPush();			// Put current object onto undo list
+	void undo();				// Undo last operation
+	void redo();				// Redo previously undone operation
 
 	// Change the renderer for all viewports
 	void setRenderer(DLFLRendererPtr rp);
@@ -1174,7 +1169,7 @@ public slots:
 	// Return pointer to the active GLWidget
 	GLWidget *getActive();
 
-	void redraw();				//!< Override redraw() method to mark subwindows also for redraw
+	void redraw();		//!< Override redraw() method to mark subwindows also for redraw
 
 	// Geometric transformations
 	void translatex(double x);
@@ -1189,9 +1184,9 @@ public slots:
 
 #ifdef WITH_PYTHON
 	// run after an operation is done via python
-	void recomputeAll() { 
-		active->recomputePatches();
-		active->recomputeNormals();
+	void recomputeAll() {
+		mActiveViewport->recomputePatches();
+		mActiveViewport->recomputeNormals();
 	};
 #endif
 
@@ -1208,12 +1203,12 @@ public slots:
 	void modifiedMultiConnectCrust();
 	void createSponge();
 	void planarizeFaces();
-	
+
 	void spheralizeObject();
 	void smoothMesh();
-	void performRemeshing(); //!< Generic method for all remeshing schemes
-	void performExtrusion(); //!< Generic method for all extrusion schemes on multiple faces
-	// void getExtrudeMultiple(); //!< are we in multi select mode or not?
+	void performRemeshing();	//!< Generic method for all remeshing schemes
+	void performExtrusion();	//!< Generic method for all extrusion schemes on multiple faces
+	//void getExtrudeMultiple();	//!< are we in multi select mode or not?
 	void subdivideCatmullClark();
 	void subdivideDooSabin();
 	void subdivideHoneycomb();
@@ -1272,10 +1267,10 @@ public slots:
 	void printEdgeList();
 	void printCVList();
 	void printFaceList();
-			
+
 	void mfh_use_closest_edge_algo();
 	void mfh_use_convex_hull_algo();
-	
+
 	//conical functions from ozgur
 	void performCutting();
 	void createConvexHull();
@@ -1283,21 +1278,21 @@ public slots:
 	void testConvexHull();
 
 	// File handling
-	void openFile(); 
-	void openFile(QString fileName);
-	bool saveFile(QString fileName);
+	void openFile();
+	void openFile(const QString &fileName);
+	bool saveFile(const QString &fileName);
 	void newFile();
 	bool saveFile(bool with_normals=true, bool with_tex_coords=true);
 	bool saveFileAs(bool with_normals=true, bool with_tex_coords=true);
-	void setCurrentFile(QString fileName);
+	void setCurrentFile(const QString &fileName);
 
 	// Read the DLFL object from a file
-	void readObject(const char * filename, const char *mtlfilename = NULL);
-	void readObjectQFile(QString file);
+	void readObject(const char * filename, const char *mtlfilename = nullptr);
+	void readObjectQFile(const QString &file);
 	// Read the DLFL object from a file - use alternate OBJ reader for OBJ files
 	void readObjectAlt(const char * filename);
 	// Write the DLFL object to a file
-	void writeObject(const char * filename, const char *mtlfilename = NULL, bool with_normals=true, bool with_tex_coords=true);
+	void writeObject(const char * filename, const char *mtlfilename = nullptr, bool with_normals=true, bool with_tex_coords=true);
 	void writeMTL(const char * filename);
 
 	//exporters
@@ -1307,7 +1302,7 @@ public slots:
 	bool saveFileSTL( );
 	void writePatchOBJ(const char *filename);
 	void writeLG3d(const char *filename, bool selected = false);
-	void writeSTL(const char *filename);	
+	void writeSTL(const char *filename);
 
 	//primitive slot functions finally work
 	void loadCube();
@@ -1317,7 +1312,7 @@ public slots:
 	void loadIcosahedron();
 	void loadSoccerball();
 	void loadGeodesic();
-	
+
 signals:
 #ifdef WITH_PYTHON
 	void loadedObject( DLFLObject *obj, QString fileName ); // echo command for loading object
