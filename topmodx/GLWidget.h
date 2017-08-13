@@ -510,7 +510,7 @@ public:
 
 	void resetLocator() // brianb
 	{
-		locatorPtr->setActiveVertex(NULL);
+		locatorPtr->setActiveVertex(nullptr);
 	}
 
 	//--- Initialize the selection lists ---//
@@ -525,7 +525,7 @@ public:
 		sel_lptr_array.reserve(num); // brianb
 	}
 
-	//--- Add items to the selection lists - check for NULL pointers ---//
+	//--- Add items to the selection lists - check for nullptr pointers ---//
 	void addToSelection(DLFLLocatorPtr lp) // brianb
 	{
 		if (lp) sel_lptr_array.push_back(lp);
@@ -727,25 +727,25 @@ public:
 	static DLFLLocatorPtr getSelectedLocator(int index) // brianb
 	{
 		if (index < sel_lptr_array.size()) return sel_lptr_array[index];
-		return NULL;
+		return nullptr;
 	}
 
 	DLFLVertexPtr getSelectedVertex(int index)
 	{
 		if ((uint)index < object->sel_vptr_array.size()) return object->sel_vptr_array[index];
-		return NULL;
+		return nullptr;
 	}
 
 	DLFLEdgePtr getSelectedEdge(int index)
 	{
 		if ((uint)index < object->sel_eptr_array.size()) return object->sel_eptr_array[index];
-		return NULL;
+		return nullptr;
 	}
 
 	DLFLFacePtr getSelectedFace(int index)
 	{
 		if ((uint)index < object->sel_fptr_array.size()) return object->sel_fptr_array[index];
-		return NULL;
+		return nullptr;
 	}
 
 	DLFLFacePtrArray& getSelectedFaces() { return object->sel_fptr_array; }
@@ -887,7 +887,7 @@ public:
 
 	// Subroutine to translate FLTK events to Viewport events
 	// static VPMouseEvent translateEvent(QMouseEvent *event) {
-	// 			// QMessageBox::about(NULL, tr("About TopMod"),tr("%1").arg(event->type()));
+	// 			// QMessageBox::about(nullptr, tr("About TopMod"),tr("%1").arg(event->type()));
 	// 	return ( (event->type() == 2/*QEvent::mouseButtonPress*/) ? VPPush :
 	// 	( (event->type() == 3/*QEvent::mouseButtonRelease*/) ? VPRelease :
 	// 	( (event->type() == 5/*QEvent::mouseMove*/) ? VPDrag : VPUnknown ) ) );

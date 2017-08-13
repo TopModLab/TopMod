@@ -43,8 +43,8 @@
 using namespace Cg;
 #endif // GPU_OK
 
-void computeLighting( DLFLFacePtr fp, LightPtr lightptr, bool usegpu = false);
-void computeLighting( DLFLObjectPtr obj, TMPatchObjectPtr po, LightPtr lightptr, bool usegpu = false );
+void computeLighting(DLFLFacePtr fp, LightPtr lightptr, bool usegpu = false);
+void computeLighting(DLFLObjectPtr obj, TMPatchObjectPtr po, LightPtr lightptr, bool usegpu = false);
 
 #endif /* #ifndef _DLFL_LIGHTING_HH_ */
 

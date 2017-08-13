@@ -31,28 +31,32 @@
 
 #include <QApplication>
 #include <QEvent>
-// 
+//
 #include "MainWindow.h"
 
-class TopMod : public QApplication {
+class TopMod : public QApplication
+{
 	Q_OBJECT
 
-private:
-		MainWindow *mainWindow;
-		// void loadFile(const QString &fileName);
-
 public:
-	TopMod( int & argc, char ** argv, bool GUIenabled );
+	TopMod(int & argc, char ** argv, bool GUIenabled);
 	~TopMod();
+
 	MainWindow *getMainWindow();
-	
-	// #ifdef __APPLE__
+
+//#ifdef __APPLE__
 	// bool macEventFilter( EventHandlerCallRef caller, EventRef event );
-	// #endif
-	
+//#endif
+
 protected:
 	bool event(QEvent *event);
-	
+
+private:
+	// void loadFile(const QString &fileName);
+
+private:
+	MainWindow *mainWindow;
+
 };
 
 #endif

@@ -33,13 +33,13 @@
 
 #include "TopMod.h"
 
-TopMod::~TopMod(){
-	
+TopMod::~TopMod()
+{
 }
 
-TopMod::TopMod(int & argc, char ** argv, bool GUIenabled )
-	: QApplication(argc,argv,GUIenabled){
-		
+TopMod::TopMod(int & argc, char ** argv, bool GUIenabled)
+	: QApplication(argc, argv, GUIenabled)
+{
 	setApplicationName("TopMod");
 
 	mainWindow = new MainWindow();
@@ -49,21 +49,23 @@ TopMod::TopMod(int & argc, char ** argv, bool GUIenabled )
 	translator.load(QString(":/topmod_") + locale);
 	installTranslator(&translator);
 
-	processEvents( );
+	processEvents();
 
-	mainWindow->resize( 1000, 800 );
+	mainWindow->resize(1000, 800);
 	mainWindow->show();
 }
 
-MainWindow *TopMod::getMainWindow(){
+MainWindow *TopMod::getMainWindow()
+{
 	return mainWindow;
 }
 
-bool TopMod::event(QEvent *event){
-
-	switch (event->type()) {
+bool TopMod::event(QEvent *event)
+{
+	switch (event->type())
+	{
 	case 116:// case QEvent::FileOpen:
-		mainWindow->loadFile(static_cast<QFileOpenEvent *>(event)->file());        
+		mainWindow->loadFile(static_cast<QFileOpenEvent *>(event)->file());
 		return true;
 	default:
 		return QApplication::event(event);

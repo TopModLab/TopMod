@@ -34,10 +34,10 @@
 using namespace DLFL;
 
 /*!
-	\file DLFLSelection.hh
-	\brief Code for selection of vertices, edges and faces
-	
-	\see MainWindow
+\file DLFLSelection.hh
+\brief Code for selection of vertices, edges and faces
+
+\see MainWindow
 */
 
 //!< Render the vertices for selection

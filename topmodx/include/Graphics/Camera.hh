@@ -58,7 +58,7 @@ public:
 		umin(-1), umax(1), vmin(-1), vmax(1),
 		fovy(45.0), aspect(aspratio),
 		projtype(Perspective), dist(50.0),
-		mousex(0), mousey(0), pickw(0), pickh(0), viewport(NULL), pickmode(false)
+		mousex(0), mousey(0), pickw(0), pickh(0), viewport(nullptr), pickmode(false)
 	{
 	}
 
@@ -68,7 +68,7 @@ public:
 		umin(cam.umin), umax(cam.umax), vmin(cam.vmin), vmax(cam.vmax),
 		fovy(cam.fovy), aspect(cam.aspect),
 		projtype(cam.projtype), dist(cam.dist),
-		mousex(0), mousey(0), pickw(0), pickh(0), viewport(NULL), pickmode(false)
+		mousex(0), mousey(0), pickw(0), pickh(0), viewport(nullptr), pickmode(false)
 	{
 	}
 
@@ -245,7 +245,7 @@ public:
 
 	void leaveSelectionMode(void)
 	{
-		pickmode = false; viewport = NULL;
+		pickmode = false; viewport = nullptr;
 	}
 
 	//--- Apply the camera transformation ---//

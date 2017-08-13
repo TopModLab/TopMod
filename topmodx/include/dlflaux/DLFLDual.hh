@@ -31,8 +31,9 @@
 
 #include <DLFLObject.hh>
 
-namespace DLFL {
-  void createDual(const DLFLObjectPtr obj, bool accurate = false);
+namespace DLFL
+{
+void createDual(const DLFLObjectPtr obj, bool accurate = false);
 }
 
 #endif // _DLFLDUAL_H_

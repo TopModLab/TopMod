@@ -41,16 +41,17 @@
 #include <QComboBox>
 
 /*!
-	\file TexturingMode.hh
-	\brief Definition of the TexturingMode class
-	
-	\see TexturingMode
+\file TexturingMode.hh
+\brief Definition of the TexturingMode class
+
+\see TexturingMode
 */
 
 #include "MainWindow.h"
 class MainWindow;
 
-class TexturingMode : public QWidget {
+class TexturingMode : public QWidget
+{
 	Q_OBJECT
 
 public:
@@ -60,14 +61,14 @@ public:
 	void retranslateUi();
 
 	QAction *mTileTexturingAction;
-	QWidget *mTileTexturingWidget;	
+	QWidget *mTileTexturingWidget;
 
 protected:
 	void setupTileTexturing();
 	QDoubleSpinBox *createDoubleSpinBox(QGridLayout *layout, QLabel *label, QString s, double low, double high, double step, double value, double decimals, int row, int col);
-	
-	
-public slots:
+
+
+	public slots:
 	void triggerTileTexturing();
 
 private:
@@ -77,9 +78,9 @@ private:
 	QDoubleSpinBox *tileTexturingNumTilesSpinBox;
 	QLabel *tileTexturingNumTilesLabel;
 	QPushButton *tileTexturingAssignButton;
-	
-	QGridLayout *mTileTexturingLayout;	
-	
+
+	QGridLayout *mTileTexturingLayout;
+
 };
 
 #endif

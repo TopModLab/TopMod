@@ -35,60 +35,25 @@
 #define HIGHGENUSMODE_H
 
 /*!
-	\file HighgenusMode.hh
-	\brief Definition of the HighgenusMode class
-	
-	\see HighgenusMode
+\file HighgenusMode.hh
+\brief Definition of the HighgenusMode class
+
+\see HighgenusMode
 */
 
 #include "MainWindow.h"
 class MainWindow;
 
-class HighgenusMode : public QWidget {
+class HighgenusMode : public QWidget
+{
 	Q_OBJECT
 
 public:
 	HighgenusMode(QWidget *parent, QShortcutManager *sm, QWidget *actionList);
+
 	void addActions(QActionGroup *actionGroup, QToolBar *toolBar, QStackedWidget *stackedWidget);
 	QMenu* getMenu();
 	void retranslateUi();
-	
-	QAction *mAddHoleHandleAction;
-	QAction *mAddHoleHandleCVAction;
-	QAction *mAddHandleSIAction;
-	QAction *mRindModelingScalingAction; 
-	QAction *mRindModelingThicknessAction;
-	QAction *mWireframeModelingAction; 
-	QAction *mWireframeModeling2Action; 
-	QAction *mColumnModelingAction;	
-	QAction *mSierpinskyAction;
-	QAction *mMultiFaceHandleAction;
-	QAction *mMengerSpongeAction;
-	
-	QWidget *mAddHoleHandleWidget;
-	QWidget *mAddHoleHandleCVWidget;
-	QWidget *mAddHandleSIWidget;
-	QWidget *mRindModelingScalingWidget; 
-	QWidget *mRindModelingThicknessWidget;
-	QWidget *mWireframeModelingWidget; 
-	QWidget *mWireframeModeling2Widget; 
-	QWidget *mColumnModelingWidget;	
-	QWidget *mSierpinskyWidget;
-	QWidget *mMultiFaceHandleWidget;
-	QWidget *mMengerSpongeWidget;
-	
-	QGridLayout *mAddHoleHandleLayout;
-	QGridLayout *mAddHoleHandleCVLayout;
-	QGridLayout *mAddHandleSILayout;
-	QGridLayout *mRindModelingScalingLayout;
-	QGridLayout *mRindModelingThicknessLayout;
-	QGridLayout *mWireframeModelingLayout;
-	QGridLayout *mWireframeModeling2Layout;
-	QGridLayout *mColumnModelingLayout; 
-	QGridLayout *mSierpinskyLayout;
-	QGridLayout *mMultiFaceHandleLayout; 
-	QGridLayout *mMengerSpongeLayout;
-	
 
 protected:
 	void setupAddHoleHandle();
@@ -102,19 +67,19 @@ protected:
 	void setupSierpinsky();
 	void setupMultiFaceHandle();
 	void setupMengerSponge();
-	
+
 	QDoubleSpinBox *createDoubleSpinBox(QGridLayout *layout, QLabel *label, QString s, double low, double high, double step, double value, double decimals, int row, int col);
-	
-public slots:
+
+	public slots:
 	void numSegmentsValueChanged(double value);
 	void changeMultiFaceAlgorithm(bool on);
 	void toggleMultiFaceHandleUseMaxOffsetFlag(int state);
 	void toggleSymmetricWeightsFlag(int state);
 	void toggleWireframeSplit(int state);
-	
+
 	void toggleCrustCleanupFlag(int state);
 	void numSegmentsConnectValueChanged(double value);
-	
+
 	void triggerAddHoleHandle();
 	void triggerAddHoleHandleCV();
 	void triggerAddHandleSI();
@@ -126,13 +91,49 @@ public slots:
 	void triggerSierpinsky();
 	void triggerMultiFaceHandle();
 	void triggerMengerSponge();
-	
+
 	void changeHoleHandlePinch(double value);
 	void changeHoleHandlePinchCenter(double value);
-	void changeHoleHandlePinchWidth(double value);	
+	void changeHoleHandlePinchWidth(double value);
+
+public:
+	QAction *mAddHoleHandleAction;
+	QAction *mAddHoleHandleCVAction;
+	QAction *mAddHandleSIAction;
+	QAction *mRindModelingScalingAction;
+	QAction *mRindModelingThicknessAction;
+	QAction *mWireframeModelingAction;
+	QAction *mWireframeModeling2Action;
+	QAction *mColumnModelingAction;
+	QAction *mSierpinskyAction;
+	QAction *mMultiFaceHandleAction;
+	QAction *mMengerSpongeAction;
+
+	QWidget *mAddHoleHandleWidget;
+	QWidget *mAddHoleHandleCVWidget;
+	QWidget *mAddHandleSIWidget;
+	QWidget *mRindModelingScalingWidget;
+	QWidget *mRindModelingThicknessWidget;
+	QWidget *mWireframeModelingWidget;
+	QWidget *mWireframeModeling2Widget;
+	QWidget *mColumnModelingWidget;
+	QWidget *mSierpinskyWidget;
+	QWidget *mMultiFaceHandleWidget;
+	QWidget *mMengerSpongeWidget;
+
+	QGridLayout *mAddHoleHandleLayout;
+	QGridLayout *mAddHoleHandleCVLayout;
+	QGridLayout *mAddHandleSILayout;
+	QGridLayout *mRindModelingScalingLayout;
+	QGridLayout *mRindModelingThicknessLayout;
+	QGridLayout *mWireframeModelingLayout;
+	QGridLayout *mWireframeModeling2Layout;
+	QGridLayout *mColumnModelingLayout;
+	QGridLayout *mSierpinskyLayout;
+	QGridLayout *mMultiFaceHandleLayout;
+	QGridLayout *mMengerSpongeLayout;
 
 private:
-	
 	QWidget *mParent;
 	QMenu *mHighgenusMenu;
 
@@ -159,12 +160,11 @@ private:
 	QLabel *mengerSpongeThicknessLabel;
 	QLabel *mengerSpongeThresholdLabel;
 	QLabel *columnModelingNumSegmentsLabel;
-	
-	
+
 	QGridLayout *mMultiFaceAlgorithmLayout;
-	
+
 	QButtonGroup *multiFaceAlgorithmButtonGroup;
-	
+
 	QCheckBox *rindModelingThicknessCleanupCheckBox;
 	QCheckBox *rindModelingScalingCleanupCheckBox;
 
@@ -175,22 +175,22 @@ private:
 	QDoubleSpinBox *addHoleHandlePinchingWidthConnectSpinBox; //Ryan
 	QDoubleSpinBox *addHandleSIBubbleConnectSpinBox; //Ryan
 	QDoubleSpinBox *addHandleSIPinchCenterConnectSpinBox; //Ryan
-	
+
 	QDoubleSpinBox *addHoleHandleCVNumSegmentsSpinBox;
 	QDoubleSpinBox *addHoleHandleCVNumSegmentsConnectSpinBox;
-	
+
 	QDoubleSpinBox *addHandleSINumSegmentsSpinBox;
 	QDoubleSpinBox *addHandleSINumSegmentsConnectSpinBox;
-	
+
 	QDoubleSpinBox *addHandleSITwistsConnectSpinBox;
 	QDoubleSpinBox *addHandleSIWeight1SpinBox;
 	QDoubleSpinBox *addHandleSIWeight2SpinBox;
-	
+
 	QDoubleSpinBox *addHandleSIPinchConnectSpinBox;//ryan
 	QLabel *addHandleSIPinchCenterConnectLabel;//ryan
 	QLabel *addHandleSIBubbleConnectLabel;//ryan
-	
-	
+
+
 	QDoubleSpinBox *rindModelingScalingSpinBox;
 	QDoubleSpinBox *rindModelingThicknessSpinBox;
 	QDoubleSpinBox *wireframeModelingThicknessSpinBox;
@@ -200,17 +200,17 @@ private:
 	QDoubleSpinBox *columnModelingNumSegmentsSpinBox;
 	QDoubleSpinBox *mengerSpongeThicknessSpinBox;
 	QDoubleSpinBox *mengerSpongeThresholdSpinBox;
-		
+
 	QCheckBox *wireframeSplitCheckBox;
 	QCheckBox *wireframe2SplitCheckBox;
-	
-	
+
+
 	QLabel *multiFaceHandleExtrudeDistanceLabel;
 	QLabel *multiFaceHandleScaleLabel;
 	QDoubleSpinBox *multiFaceHandleExtrudeDistanceSpinBox;
 	QCheckBox *multiFaceHandleMaxOffsetsCheckBox;
 	QDoubleSpinBox *multiFaceHandleScaleSpinBox;
-	
+
 	QCheckBox *addHandleSISymmetricWeightsCheckBox;
 	QPushButton *rindModelingScalingCreateCrustButton;
 	QPushButton *rindModelingThicknessCreateButton;
@@ -222,8 +222,7 @@ private:
 	QPushButton *multiFaceHandleButton;
 	QCheckBox *mengerSpongFractionalThicknessCheckBox;
 	QPushButton *mengerSpongeButton;
-	
-	
+
 };
 
 #endif

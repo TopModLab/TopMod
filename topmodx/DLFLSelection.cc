@@ -37,9 +37,9 @@
 /**!
 *
 * \brief functions for rendering edges, faces, vertices of DLFL Objects
-* 	
-*	\note 
-* 
+*
+*	\note
+*
 * \see DLFLSelection
 */
 

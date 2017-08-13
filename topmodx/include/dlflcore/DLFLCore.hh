@@ -37,111 +37,111 @@
 
 namespace DLFL {
 
-  /***************
-   * Insert Edge *
-   ***************/
+/***************
+* Insert Edge *
+***************/
 
-  int insertEdge( DLFLObjectPtr obj, 
-									uint &faceId1, uint &vertId1,
-									uint &faceId2, uint &vertId2,
-									uint &faceId1b, uint &vertId1b,
-									uint &faceId2b, uint &vertId2b,
-									bool check,
-									bool set_type = false );
+int insertEdge(
+	DLFLObjectPtr obj,
+	uint &faceId1, uint &vertId1,
+	uint &faceId2, uint &vertId2,
+	uint &faceId1b, uint &vertId1b,
+	uint &faceId2b, uint &vertId2b,
+	bool check, bool set_type = false);
 
-  /**
-   * The general case insertEdge subroutine. Calls one of the insertEdge implementations, 
-   * depending on whether the corners are cofacial or not. If the 2 corners are cofacial
-   * checks to see if the 2 pointers refer to the same corner, if so doesn't do insert.
-   */
-  DLFLEdgePtr insertEdge( DLFLObjectPtr obj, DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2, bool set_type = false, DLFLMaterialPtr matl = NULL  );
-  DLFLEdgePtr insertEdgeCoFacial( DLFLObjectPtr obj, DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2, bool set_type = false );
-  DLFLEdgePtr insertEdgeNonCoFacial( DLFLObjectPtr obj, DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2, DLFLMaterialPtr matl = NULL );
-  DLFLEdgePtr insertEdgeWithoutCheck( DLFLObjectPtr obj, DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2, bool set_type = false, DLFLMaterialPtr matl = NULL );
-  
-  /***************
-   * Delete Edge *
-   ***************/
+/**
+* The general case insertEdge subroutine. Calls one of the insertEdge implementations,
+* depending on whether the corners are cofacial or not. If the 2 corners are cofacial
+* checks to see if the 2 pointers refer to the same corner, if so doesn't do insert.
+*/
+DLFLEdgePtr insertEdge(DLFLObjectPtr obj, DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2, bool set_type = false, DLFLMaterialPtr matl = nullptr);
+DLFLEdgePtr insertEdgeCoFacial(DLFLObjectPtr obj, DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2, bool set_type = false);
+DLFLEdgePtr insertEdgeNonCoFacial(DLFLObjectPtr obj, DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2, DLFLMaterialPtr matl = nullptr);
+DLFLEdgePtr insertEdgeWithoutCheck(DLFLObjectPtr obj, DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2, bool set_type = false, DLFLMaterialPtr matl = nullptr);
 
-  // If the cleanup flag is true, any point-spheres created
-  // because of the edge deletion will be removed from the object
-	std::vector<int>  deleteEdgeID( DLFLObjectPtr obj, uint edgeId, bool cleanup = true );
-  void deleteEdge( DLFLObjectPtr obj, uint edge_index, bool cleanup = true );
-  DLFLFacePtrArray deleteEdge( DLFLObjectPtr obj, DLFLEdgePtr edgeptr, bool cleanup = true );
-  
-  /*****************
-   * Collapse Edge *
-   *****************/
+/***************
+* Delete Edge *
+***************/
 
-  int  collapseEdgeID( DLFLObjectPtr obj, const uint edgeId, bool cleanup = true );
-  void collapseEdge( DLFLObjectPtr obj, uint edge_index, bool cleanup = true );
-  DLFLVertexPtr collapseEdge( DLFLObjectPtr obj, DLFLEdgePtr edgeptr, bool cleanup = true );
+// If the cleanup flag is true, any point-spheres created
+// because of the edge deletion will be removed from the object
+std::vector<int>  deleteEdgeID(DLFLObjectPtr obj, uint edgeId, bool cleanup = true);
+void deleteEdge(DLFLObjectPtr obj, uint edge_index, bool cleanup = true);
+DLFLFacePtrArray deleteEdge(DLFLObjectPtr obj, DLFLEdgePtr edgeptr, bool cleanup = true);
 
-  /******************
-   * Subdivide Edge *
-   ******************/
+/*****************
+* Collapse Edge *
+*****************/
 
-  // Return pointer to the newly added vertex 
-  int subdivideEdgeID( DLFLObjectPtr obj, uint edgeId, bool set_type = false );
-  DLFLVertexPtr subdivideEdge( DLFLObjectPtr obj, DLFLEdgePtr edgeptr, bool set_type = false );
-  DLFLVertexPtr subdivideEdge( DLFLObjectPtr obj, uint edge_index );
+int  collapseEdgeID(DLFLObjectPtr obj, const uint edgeId, bool cleanup = true);
+void collapseEdge(DLFLObjectPtr obj, uint edge_index, bool cleanup = true);
+DLFLVertexPtr collapseEdge(DLFLObjectPtr obj, DLFLEdgePtr edgeptr, bool cleanup = true);
 
-  // Subdivide into multiple edges
-  vector<int> subdivideEdgeID( DLFLObjectPtr obj, int num_divs, uint edgeId, bool set_type = false );
-  DLFLVertexPtrArray subdivideEdge( DLFLObjectPtr obj, int num_divs, DLFLEdgePtr edgeptr, bool set_type = false );
-  void subdivideEdge( DLFLObjectPtr obj, int num_divs, uint edge_index );
+/******************
+* Subdivide Edge *
+******************/
 
-  // Trisect an edge - new points will be calculated based on scale factor
-  // with respect to mid point of edge OR offset from end points
-  // Boolean flag indicates if specified number is a scale factor or offset distance
-  // Offset distance is clamped to lie between 0.01 and edgelength/2 - 0.01
-  // Scale factor is clamped to lie between 0.01 and 0.99 (inclusive)
-  void trisectEdge( DLFLObjectPtr obj, DLFLEdgePtr edgeptr, double num, bool scale, bool set_type );
-  
-  // Subdivide all edges in the object
-  void subdivideAllEdges( DLFLObjectPtr obj, int num_divs = 2, bool set_type = false );
+// Return pointer to the newly added vertex
+int subdivideEdgeID(DLFLObjectPtr obj, uint edgeId, bool set_type = false);
+DLFLVertexPtr subdivideEdge(DLFLObjectPtr obj, DLFLEdgePtr edgeptr, bool set_type = false);
+DLFLVertexPtr subdivideEdge(DLFLObjectPtr obj, uint edge_index);
 
-  // Subdivide all edges in the object which are not self loops
-  void subdivideNonLoopingEdges( DLFLObjectPtr obj, int num_divs = 2, bool set_type = false );
+// Subdivide into multiple edges
+vector<int> subdivideEdgeID(DLFLObjectPtr obj, int num_divs, uint edgeId, bool set_type = false);
+DLFLVertexPtrArray subdivideEdge(DLFLObjectPtr obj, int num_divs, DLFLEdgePtr edgeptr, bool set_type = false);
+void subdivideEdge(DLFLObjectPtr obj, int num_divs, uint edge_index);
 
-  // Split valence 2 vertices into 2 vertices
-  void splitValence2Vertices( DLFLObjectPtr obj, double offset = -0.1 );
+// Trisect an edge - new points will be calculated based on scale factor
+// with respect to mid point of edge OR offset from end points
+// Boolean flag indicates if specified number is a scale factor or offset distance
+// Offset distance is clamped to lie between 0.01 and edgelength/2 - 0.01
+// Scale factor is clamped to lie between 0.01 and 0.99 (inclusive)
+void trisectEdge(DLFLObjectPtr obj, DLFLEdgePtr edgeptr, double num, bool scale, bool set_type);
 
-  // Splice two corners
-  // Insert edge and then collapse edge
-  void spliceCorners( DLFLObjectPtr obj, DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2 );
+// Subdivide all edges in the object
+void subdivideAllEdges(DLFLObjectPtr obj, int num_divs = 2, bool set_type = false);
 
-  /** 
-   * If both sides of an edge are co-planar, the edge will be removed.
-   * First version looks at all edges in the object.
-   * Second and third version looks at the specified list/array of edges 
-   */
-  void edgeCleanup( DLFLObjectPtr obj );
-  void edgeCleanup( DLFLObjectPtr obj, const DLFLEdgePtrList& edges );
-  void edgeCleanup( DLFLObjectPtr obj, const DLFLEdgePtrArray& edges );
+// Subdivide all edges in the object which are not self loops
+void subdivideNonLoopingEdges(DLFLObjectPtr obj, int num_divs = 2, bool set_type = false);
 
-  void cleanup2gons( DLFLObjectPtr obj );
-  /**
-   * Cleanup Valence 2 vertices (winged vertices)
-   * Removes all winged vertices
-   */
-  void cleanupWingedVertices( DLFLObjectPtr obj );
+// Split valence 2 vertices into 2 vertices
+void splitValence2Vertices(DLFLObjectPtr obj, double offset = -0.1);
 
-   /***********************
-    * Read In Object Data *
-    ***********************/
-  
-  /* Create a DLFL object from an input stream which should contain
-   * an object in OBJ format */
-  DLFLObject* readObjectFile( char* filename, char *mtlfilename =NULL);
-  bool writeObjectFile( DLFLObject *obj, char* filename = NULL, char *mtlfilename=NULL );
+// Splice two corners
+// Insert edge and then collapse edge
+void spliceCorners(DLFLObjectPtr obj, DLFLFaceVertexPtr fvptr1, DLFLFaceVertexPtr fvptr2);
 
-	/************************
-	 * Create/Remove Vertex *
-	 ************************/
+/**
+* If both sides of an edge are co-planar, the edge will be removed.
+* First version looks at all edges in the object.
+* Second and third version looks at the specified list/array of edges
+*/
+void edgeCleanup(DLFLObjectPtr obj);
+void edgeCleanup(DLFLObjectPtr obj, const DLFLEdgePtrList& edges);
+void edgeCleanup(DLFLObjectPtr obj, const DLFLEdgePtrArray& edges);
 
-	uint* createVertex( double x, double y, double z, DLFLObjectPtr &obj, bool set_type = false );
-	void removeVertex( const DLFLObjectPtr &obj, uint vertId, uint faceId );
+void cleanup2gons(DLFLObjectPtr obj);
+/**
+* Cleanup Valence 2 vertices (winged vertices)
+* Removes all winged vertices
+*/
+void cleanupWingedVertices(DLFLObjectPtr obj);
+
+/***********************
+* Read In Object Data *
+***********************/
+
+/* Create a DLFL object from an input stream which should contain
+* an object in OBJ format */
+DLFLObject* readObjectFile(char* filename, char *mtlfilename = nullptr);
+bool writeObjectFile(DLFLObject *obj, char* filename = nullptr, char *mtlfilename = nullptr);
+
+/************************
+* Create/Remove Vertex *
+************************/
+
+uint* createVertex(double x, double y, double z, DLFLObjectPtr &obj, bool set_type = false);
+void removeVertex(const DLFLObjectPtr &obj, uint vertId, uint faceId);
 
 } // end namespace DLFL
 

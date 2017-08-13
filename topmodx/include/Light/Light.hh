@@ -46,87 +46,92 @@
 
 #include <QColor>
 
-enum LightType { Ambient=0, Directional=1, PtLight=2, Spot=3 };
+enum LightType { Ambient = 0, Directional = 1, PtLight = 2, Spot = 3 };
 
 class Light;
 typedef Light * LightPtr;
 
 class Light : public BaseObject
 {
-  public :
+public:
+	// Default constructor
+	Light()
+		: BaseObject(), position(0, 0, 0),
+		warmcolor(1, 1, 1), coolcolor(1, 1, 1), color(warmcolor),
+		intensity(1), state(true)
+	{
+	}
 
-     Vector3d  position;                               // Position
+	// 1-arg constructor
+	Light(const Vector3d& pos)
+		: BaseObject(), position(pos),
+		warmcolor(1, 1, 1), coolcolor(1, 1, 1), color(warmcolor),
+		intensity(1), state(true)
+	{
+	}
 
-        /* NOTE: ORDER DEPENDENCY HERE! 'color' has to come *AFTER* warmcolor */
-     RGBColor  warmcolor;                              // Warm color - RGB
-     RGBColor  coolcolor;                              // Cool color - RGB
-     RGBColor& color;                                  // Reference to warm color
+	// 1-arg constructor. specifies color
+	Light(const RGBColor& col)
+		: BaseObject(), position(0, 0, 0),
+		warmcolor(col), coolcolor(col), color(warmcolor),
+		intensity(1), state(true)
+	{
+	}
 
-     double    intensity;                              // Intensity of color
+	// Copy constructor
+	Light(const Light& light)
+		: BaseObject(light), position(light.position),
+		warmcolor(light.warmcolor), coolcolor(light.coolcolor), color(warmcolor),
+		intensity(light.intensity), state(light.state)
+	{
+	}
 
-     bool      state;                                  // true/1 = on, false/0 = off
-     
-  public :
+	// Destructor
+	virtual ~Light()
+	{
+	}
 
-        // Default constructor
-     Light()
-       : BaseObject(), position(0,0,0),
-         warmcolor(1,1,1), coolcolor(1,1,1), color(warmcolor),
-         intensity(1), state(true)
-       {}
+	// Assignment operator
+	Light& operator = (const Light& light)
+	{
+		BaseObject::operator = (light);
+		position = light.position;
+		warmcolor = light.warmcolor; coolcolor = light.coolcolor;
+		intensity = light.intensity; state = light.state;
+		return (*this);
+	}
 
-        // 1-arg constructor
-     Light(const Vector3d& pos)
-       : BaseObject(), position(pos),
-         warmcolor(1,1,1), coolcolor(1,1,1), color(warmcolor),
-         intensity(1), state(true)
-       {}
+	// Return type of light.
+	virtual LightType type(void) const = 0;
 
-        // 1-arg constructor. specifies color
-     Light(const RGBColor& col)
-       : BaseObject(), position(0,0,0),
-         warmcolor(col), coolcolor(col), color(warmcolor),
-         intensity(1), state(true)
-       {}
+	// Does this light illuminate given point?
+	virtual bool illuminates(const Vector3d& p) const = 0;
 
-        // Copy constructor
-     Light(const Light& light)
-       : BaseObject(light), position(light.position),
-         warmcolor(light.warmcolor), coolcolor(light.coolcolor), color(warmcolor),
-         intensity(light.intensity), state(light.state)
-       {}
+	// Compute the cosine factor for given point/normal. Meaningful only for some lights
+	virtual double cosfactor(const Vector3d& p, const Vector3d& n) const = 0;
 
-        // Destructor
-     virtual ~Light()
-       {}
+	// Illuminate a given point with given normal using this light and return the color
+	virtual RGBColor illuminate(const Vector3d& p, const Vector3d& n) const = 0;
 
-        // Assignment operator
-     Light& operator = (const Light& light)
-       {
-         BaseObject::operator = (light);
-         position = light.position;
-         warmcolor = light.warmcolor; coolcolor = light.coolcolor;
-         intensity = light.intensity; state = light.state;
-         return (*this);
-       }
+	// Illuminate a given point with given normal using this light and return the color
+	// The eye position is also given to allow specular computations
+	virtual RGBColor illuminate(const Vector3d& p, const Vector3d& n, const Vector3d& e) const = 0;
 
-        // Return type of light.
-     virtual LightType type(void) const = 0;
 
-        // Does this light illuminate given point?
-     virtual bool illuminates(const Vector3d& p) const = 0;
+public:
+	Vector3d  position;			// Position
 
-        // Compute the cosine factor for given point/normal. Meaningful only for some lights
-     virtual double cosfactor(const Vector3d& p, const Vector3d& n) const = 0;
-     
-        // Illuminate a given point with given normal using this light and return the color
-     virtual RGBColor illuminate(const Vector3d& p, const Vector3d& n) const = 0;
+	/* NOTE: ORDER DEPENDENCY HERE! 'color' has to come *AFTER* warmcolor */
+	RGBColor  warmcolor;		// Warm color - RGB
+	RGBColor  coolcolor;		// Cool color - RGB
+	RGBColor& color;			// Reference to warm color
 
-        // Illuminate a given point with given normal using this light and return the color
-        // The eye position is also given to allow specular computations
-     virtual RGBColor illuminate(const Vector3d& p, const Vector3d& n, const Vector3d& e) const = 0;
+	double intensity;			// Intensity of color
+
+	bool state;					// true/1 = on, false/0 = off
+
 };
-     
+
 #endif // #ifndef _LIGHT_HH_
 
 /*
