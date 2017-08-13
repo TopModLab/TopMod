@@ -349,12 +349,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="shortcutdialog.ui">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="stylesheeteditor.ui">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="application.qrc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
@@ -405,6 +399,12 @@
     </CustomBuild>
     <CustomBuild Include="TopMod.h">
       <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="shortcutdialog.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="stylesheeteditor.ui">
+      <Filter>Form Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
