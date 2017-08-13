@@ -63,9 +63,9 @@
 #endif
 
 WireframeRendererPtr MainWindow::sWiredRenderer;				//!< WireframeRenderer Pointer
-NormalRendererPtr MainWindow::sNormalRenderer;				//!< NormalRenderer Pointer
+NormalRendererPtr MainWindow::sNormalRenderer;					//!< NormalRenderer Pointer
 LitRendererPtr MainWindow::sLitRenderer;						//!< LitRenderer Pointer
-TexturedRendererPtr MainWindow::sTexturedRenderer;			//!< TexturedRenderer Pointer
+TexturedRendererPtr MainWindow::sTexturedRenderer;				//!< TexturedRenderer Pointer
 TexturedLitRendererPtr MainWindow::sTexturedLitRenderer;		//!< TexturedLitRenderer Pointer
 PatchRendererPtr MainWindow::sPatchRenderer;					//!< PatchRenderer Pointer
 ColorableRendererPtr MainWindow::sColorableRendererr;			//!< ColorableRenderer Pointer
@@ -302,7 +302,7 @@ MainWindow::MainWindow(char *filename)
 	//store user's desktop size
 	QWidget *d = QApplication::desktop();
 	int w=d->width();  // returns screen width
-  int h=d->height(); // returns screen height
+	int h=d->height(); // returns screen height
 
 #ifdef WITH_PYTHON
 	//the script editor widget will be placed into a QDockWidget
@@ -1929,6 +1929,8 @@ void MainWindow::setToolOptions(QWidget *optionsWidget)
 {
 	mToolOptionsDockWidget->setWindowTitle(tr("Tool Options - ") + optionsWidget->windowTitle());
 	mToolOptionsStackedWidget->setCurrentWidget(optionsWidget);
+	// Adjust option layout to be tight
+	mToolOptionsStackedWidget->adjustSize();
 	// show or hide the dockwidget options
 	// if (optionsWidget->windowTitle() != "" && mToolOptionsDockWidget->isHidden())
 		// mToolOptionsDockWidget->show();
