@@ -41,6 +41,22 @@
 #endif
 #define slots
 
+/*
+* The macros below is defined as real functions in <locale>,
+* while <pyport.h> defines them as macros with a slightly different signature.
+* Though Python 2.7.13 fixed this issue,
+* in case user use lower version of Python, we undefined the macros manually.
+*/
+#ifdef _PY_PORT_CTYPE_UTF8_ISSUE
+#undef isalnum
+#undef isalpha
+#undef islower
+#undef isspace
+#undef isupper
+#undef tolower
+#undef toupper
+#endif
+
 #include <QWidget>
 #include <QMenuBar>
 #include <QToolBar>

@@ -52,16 +52,6 @@
 	\see MainWindow
 */
 
-#ifdef WITH_PYTHON
-#ifdef _DEBUG
-#undef _DEBUG
-#include <Python.h>
-#define _DEBUG
-#else
-#include <Python.h>
-#endif
-#endif
-
 WireframeRendererPtr MainWindow::sWiredRenderer;				//!< WireframeRenderer Pointer
 NormalRendererPtr MainWindow::sNormalRenderer;					//!< NormalRenderer Pointer
 LitRendererPtr MainWindow::sLitRenderer;						//!< LitRenderer Pointer
