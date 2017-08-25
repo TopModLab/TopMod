@@ -172,7 +172,8 @@ void TMPatchObject::createPatches(DLFLObjectPtr obj)
 	{
 		ep = (*efirst); ++efirst;
 		ep->getCorners(fvp1, fvp2);
-		pp1 = getPatchPtr(patchMap, fvp1); pp2 = getPatchPtr(patchMap, fvp2);
+		pp1 = patchMap.at(fvp1);
+		pp2 = patchMap.at(fvp2);
 
 		if (pp1 == nullptr || pp2 == nullptr)
 			return;
@@ -186,7 +187,8 @@ void TMPatchObject::createPatches(DLFLObjectPtr obj)
 		pp1->setControlPoint(3, 0, ip); pp2->setControlPoint(3, 0, ip);
 		pp1->updateGLPointArray(); pp2->updateGLPointArray();
 
-		pp1 = getPatchPtr(patchMap, fvp1->next()); pp2 = getPatchPtr(patchMap, fvp2->next());
+		pp1 = patchMap.at(fvp1->next());
+		pp2 = patchMap.at(fvp2->next());
 		pp1->setControlPoint(0, 3, ip); pp2->setControlPoint(0, 3, ip);
 		pp1->updateGLPointArray(); pp2->updateGLPointArray();
 	}
@@ -202,7 +204,8 @@ void TMPatchObject::createPatches(DLFLObjectPtr obj)
 		{
 			DLFLFaceVertexPtrArray vcorners;
 			vp->getOrderedCorners(vcorners);
-			pp1 = getPatchPtr(patchMap, vcorners[0]); pp2 = getPatchPtr(patchMap, vcorners[2]);
+			pp1 = patchMap.at(vcorners[0]);
+			pp2 = patchMap.at(vcorners[2]);
 
 			p00 = pp1->getControlPoint(1, 0); p01 = pp2->getControlPoint(1, 0);
 			p10 = pp1->getControlPoint(0, 1); p11 = pp2->getControlPoint(0, 1);
@@ -210,7 +213,7 @@ void TMPatchObject::createPatches(DLFLObjectPtr obj)
 
 			for (int i = 0; i < 4; ++i)
 			{
-				pp1 = getPatchPtr(patchMap, vcorners[i]);
+				pp1 = patchMap.at(vcorners[i]);
 				pp1->setControlPoint(0, 0, ip);
 				pp1->updateGLPointArray();
 			}

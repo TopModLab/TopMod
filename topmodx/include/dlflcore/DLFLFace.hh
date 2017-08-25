@@ -692,19 +692,11 @@ public:
 	friend ostream& operator << (ostream& o, const DLFLFace& face);
 
 protected:
-	//!< Generate a new unique ID
-	static uint newID(void)
-	{
-		uint temp = suLastID;
-		suLastID++;
-		return temp;
-	}
-
 	// Assign a unique ID for this instance
 	void assignID(void)
 	{
-		uID = DLFLFace::newID();
-		ismarked = 0;
+		uID = suLastID++;
+		isMarked = false;
 	}
 
 	// Advance the pointer by given number of nodes. Similar to STL advance algorithm
@@ -717,7 +709,7 @@ public:
 	Vector3d              centroid;                   //!< Centroid of this face (not always current)
 	Vector3d              normal;                     //!< Normal to this face. Not always correct/current
 	unsigned long         flags;                      //!< Variable for general use to store flags, etc.
-	uint ismarked;
+	bool isMarked;
 
 protected:
 	//!< Distinct ID for each instance

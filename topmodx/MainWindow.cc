@@ -3834,7 +3834,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 			// 		if ( septr )
 			// 			{
 			// 				undoPush();
-			// 				septr->ismarked = 1- septr->ismarked;
+			// 				septr->isMarked = 1- septr->isMarked;
 			// 				// DLFL::cutEdge( &object, septr, peelDistance_factor,pnormalBendS_factor,pnormalBendT_factor, peel_all_edges);
 			// 			}
 			// 		active->clearSelectedEdges();
@@ -3848,7 +3848,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 				if (septr)
 				{
 					undoPush();
-					septr->ismarked = 1 - septr->ismarked;
+					septr->isMarked = !septr->isMarked;
 					// DLFL::cutEdge( &object, septr, peelDistance_factor,pnormalBendS_factor,pnormalBendT_factor, peel_all_edges);
 				}
 				mActiveViewport->clearSelectedEdges();
@@ -3862,7 +3862,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 				if (svptr)
 				{
 					undoPush();
-					svptr->ismarked = 1 - svptr->ismarked;
+					svptr->isMarked = !svptr->isMarked;
 				}
 			// active->clearSelectedVertices();
 				redraw();
@@ -3879,7 +3879,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 					if (svptr)
 					{
 						undoPush();
-						septr->ismarked = 1 - septr->ismarked;
+						septr->isMarked = !septr->isMarked;
 						// DLFL::cutEdge( &object, septr, peelDistance_factor,pnormalBendS_factor,pnormalBendT_factor, peel_all_edges);
 					}
 				}
@@ -3895,7 +3895,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 				if (septr)
 				{
 					undoPush();
-					septr->ismarked = 1 - septr->ismarked;
+					septr->isMarked = !septr->isMarked;
 				}
 				mActiveViewport->clearSelectedEdges();
 				redraw();
@@ -3908,7 +3908,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 				if (svptr)
 				{
 					undoPush();
-					svptr->ismarked = 1 - svptr->ismarked;
+					svptr->isMarked = !svptr->isMarked;
 				}
 				mActiveViewport->clearSelectedVertices();
 				redraw();
@@ -3921,7 +3921,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 			// 		if ( sfptr )
 			// 			{
 			// 				undoPush();
-			// 				sfptr->ismarked = 1 - sfptr->ismarked;
+			// 				sfptr->isMarked = 1 - sfptr->isMarked;
 			// 			}
 			// 		active->clearSelectedFaces();
 			// 		redraw();

@@ -236,9 +236,6 @@ void clear(DLFLFacePtrList& fplist);
 void clear(DLFLObjectPtrList& oplist);
 void clear(DLFLMaterialPtrList& mplist);
 
-typedef unordered_set<unsigned int> Hash;
-typedef unordered_map<unsigned int, unsigned int> HashMap;
-
 } // end namespace
 
 #endif /* #ifndef _DLFL_COMMON_HH_ */

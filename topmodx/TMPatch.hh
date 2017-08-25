@@ -44,27 +44,29 @@ typedef TMPatch* TMPatchPtr;
 typedef vector<TMPatchPtr> TMPatchPtrArray;
 
 // This stuff is to map the patches to the face vertices by index
+/*
 struct compare
 {
 	bool operator()(DLFLFaceVertexPtr a, DLFLFaceVertexPtr b) const
 	{
 		return (a->getID() < b->getID());
 	}
-};
+};*/
 
-typedef	std::map<DLFLFaceVertexPtr, TMPatchPtr, compare> TMPatchMap;
+typedef	std::unordered_map<DLFLFaceVertexPtr, TMPatchPtr> TMPatchMap;
 
+/*
 static void setPatchPtr(TMPatchMap &map, TMPatchPtr p, DLFLFaceVertexPtr fvp)
 {
 	map[fvp] = p;
-};
+};*/
 
+/*
 static TMPatchPtr getPatchPtr(TMPatchMap &map, DLFLFaceVertexPtr fvp)
 {
-	std::map<DLFLFaceVertexPtr, TMPatchPtr, compare>::iterator it;
-	it = map.find(fvp);
+	auto it = map.find(fvp);
 	return (*it).second;
-};
+};*/
 
 static bool destroyPatchMap(TMPatchMap &map)
 {

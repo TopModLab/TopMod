@@ -64,10 +64,10 @@ class DLFLObject
 public:
 	/// Constructor
 	DLFLObject()
-		: position(), scale_factor(1), rotation(),
-		vertex_list(), edge_list(), face_list()/*, patch_list(), patchsize(4)*/
+		: uID(suLastID++), position()
+		, scale_factor(1), rotation()
+		, vertex_list(), edge_list(), face_list()/*, patch_list(), patchsize(4)*/
 	{
-		assignID();
 		// Add a default material
 		matl_list.push_back(new DLFLMaterial("default", 0.5, 0.5, 0.5));
 		mFilename = nullptr;
@@ -124,7 +124,7 @@ public:
 	//const DLFLFacePtrList& getFaceList( ) const { return face_list; };
 	DLFLFacePtrList& getFaceList() { return face_list; }; // needed not const for subdivideAllFaces
 
-														  //-- List based access to the 3 lists --//
+	//-- List based access to the 3 lists --//
 	DLFLVertexPtr firstVertex() { return vertex_list.front(); }
 	DLFLEdgePtr firstEdge() { return edge_list.front(); }
 	DLFLFacePtr firstFace() { return face_list.front(); }
@@ -259,37 +259,31 @@ public:
 	void makeVerticesUnique()
 	{
 		// Make vertices unique
-		DLFLVertexPtrList::iterator vfirst = vertex_list.begin(), vlast = vertex_list.end();
-		while (vfirst != vlast)
+		for (auto vertPtr : vertex_list)
 		{
-			(*vfirst)->makeUnique();
-			++vfirst;
+			vertPtr->makeUnique();
 		}
 	};
 
 	void makeEdgesUnique()
 	{
 		// Make edges unique
-		DLFLEdgePtrList::iterator efirst = edge_list.begin(), elast = edge_list.end();
-		while (efirst != elast)
+		for (auto edgePtr : edge_list)
 		{
-			edgeMap.erase((*efirst)->getID());
-			(*efirst)->makeUnique();
-			edgeMap[(*efirst)->getID()] = (unsigned int)(*efirst);
-			++efirst;
+			edgeMap.erase(edgePtr->getID());
+			edgePtr->makeUnique();
+			edgeMap[edgePtr->getID()] = edgePtr;
 		}
 	}
 
 	void makeFacesUnique()
 	{
 		// Make faces unique
-		DLFLFacePtrList::iterator ffirst = face_list.begin(), flast = face_list.end();
-		while (ffirst != flast)
+		for (auto facePtr : face_list)
 		{
-			faceMap.erase((*ffirst)->getID());
-			(*ffirst)->makeUnique();
-			faceMap[(*ffirst)->getID()] = (unsigned int)(*ffirst);
-			++ffirst;
+			faceMap.erase(facePtr->getID());
+			facePtr->makeUnique();
+			faceMap[facePtr->getID()] = facePtr;
 		}
 	};
 
@@ -336,7 +330,7 @@ public:
 		// Insert the pointer.
 		// **** WARNING!!! **** Pointer will be freed when list is deleted
 		edge_list.push_back(edgeptr);
-		edgeMap[edgeptr->getID()] = (unsigned int)edgeptr;
+		edgeMap[edgeptr->getID()] = edgeptr;
 	};
 
 	void addFace(const DLFLFace& face);               // Insert a copy
@@ -349,7 +343,7 @@ public:
 			// If Face doesn't have a material assigned to it, assign the default material
 			faceptr->setMaterial(matl_list.front());
 		face_list.push_back(faceptr);
-		faceMap[faceptr->getID()] = (unsigned int)faceptr;
+		faceMap[faceptr->getID()] = faceptr;
 	};
 
 	DLFLVertexPtr getVertexPtr(uint index) const
@@ -362,27 +356,23 @@ public:
 
 	DLFLVertexPtr getVertexPtrID(uint id) const
 	{
-		DLFLVertexPtrList::const_iterator first = vertex_list.begin(), last = vertex_list.end();
 		DLFLVertexPtr vptr = nullptr;
-		while (first != last)
+		for (auto vertPtr : vertex_list)
 		{
-			if ((*first)->getID() == id)
+			if (vertPtr->getID() == id)
 			{
-				vptr = (*first);
+				vptr = vertPtr;
 				break;
 			}
-			++first;
 		}
 		return vptr;
 	};
 
 	void updateEdgeList()
 	{
-		DLFLEdgePtrList::iterator first = edge_list.begin(), last = edge_list.end();
-		while (first != last)
+		for (auto edgePtr : edge_list)
 		{
-			(*first)->updateFaceVertices();
-			++first;
+			edgePtr->updateFaceVertices();
 		}
 	};
 
@@ -399,15 +389,13 @@ public:
 	// Check if a given edge exists in the edge list. If it does pointer is set to that edge
 	bool edgeExists(const DLFLEdge& e, DLFLEdgePtr& eptr)
 	{
-		DLFLEdgePtrList::iterator first = edge_list.begin(), last = edge_list.end();
-		while (first != last)
+		for (auto edgePtr : edge_list)
 		{
-			if ((*(*first)) == e)
+			if (*edgePtr == e)
 			{
-				eptr = *first;
+				eptr = edgePtr;
 				return true;
 			}
-			++first;
 		}
 		eptr = nullptr;
 		return false;
@@ -448,12 +436,10 @@ public:
 
 	void updateFaceList()
 	{
-		DLFLFacePtrList::iterator first = face_list.begin(), last = face_list.end();
-		while (first != last)
+		for (auto facePtr : face_list)
 		{
-			(*first)->updateFacePointers();
-			(*first)->addFaceVerticesToVertices();
-			++first;
+			facePtr->updateFacePointers();
+			facePtr->addFaceVerticesToVertices();
 		}
 	};
 
@@ -511,15 +497,13 @@ public:
 	DLFLMaterialPtr findMaterial(const RGBColor& color)
 	{
 		DLFLMaterialPtr matl = nullptr;
-		DLFLMaterialPtrList::iterator first, last;
-		first = matl_list.begin(); last = matl_list.end();
-		while (first != last)
+		for (auto matlPtr : matl_list)
 		{
-			if ((*first)->equals(color))
+			if (matlPtr->equals(color))
 			{
-				matl = (*first); break;
+				matl = matlPtr;
+				break;
 			}
-			++first;
 		}
 
 		return matl;
@@ -528,15 +512,13 @@ public:
 	DLFLMaterialPtr findMaterial(const char *mtlname)
 	{
 		DLFLMaterialPtr matl = nullptr;
-		DLFLMaterialPtrList::iterator first, last;
-		first = matl_list.begin(); last = matl_list.end();
-		while (first != last)
+		for (auto matlPtr : matl_list)
 		{
-			if (mtlname && !strcasecmp((*first)->name, mtlname))
+			if (mtlname && !strcasecmp(matlPtr->name, mtlname))
 			{
-				matl = (*first); break;
+				matl = matlPtr;
+				break;
 			}
-			++first;
 		}
 		return matl;
 	};
@@ -547,11 +529,9 @@ public:
 		// DLFLMaterialPtr mptr = new DLFLMaterial("default",0.5,0.5,0.5);
 		// setColor(RGBColor(0.5,0.5,0.5));
 
-		DLFLFacePtrList::iterator ffirst = face_list.begin(), flast = face_list.end();
-		while (ffirst != flast)
+		for (auto facePtr : face_list)
 		{
-			(*ffirst)->setMaterial(matl_list.front());
-			++ffirst;
+			facePtr->setMaterial(matl_list.front());
 		}
 		//clear materials
 		while (matl_list.size() > 1)
@@ -603,11 +583,10 @@ public:
 		tr.rotate(rotation);
 		tr.translate(position);
 		Matrix4x4 tmat = tr.matrix();
-		DLFLVertexPtrList::iterator vfirst = vertex_list.begin(), vlast = vertex_list.end();
 		DLFLVertexPtr vp;
-		while (vfirst != vlast)
+		for (auto vertPtr : vertex_list)
 		{
-			vp = (*vfirst); ++vfirst;
+			vp = vertPtr;
 			vp->transform(tmat);
 		}
 	}
@@ -637,16 +616,9 @@ public:
 
 
 protected:
-	// Generate a new unique ID
-	static uint newID()
-	{
-		uint temp = suLastID;
-		suLastID++;
-		return temp;
-	};
 
 	// Assign a unique ID for this instance
-	void assignID() { uID = DLFLObject::newID(); };
+	void assignID() { uID = suLastID++; };
 
 	// Free the memory allocated for the patches
 	/*void destroyPatches( ) {
@@ -715,8 +687,8 @@ public:
 	DLFLFacePtrArray sel_fptr_array;		// List of selected DLFLFace pointers
 	DLFLFaceVertexPtrArray sel_fvptr_array;	// List of selected DLFLFaceVertex pointers
 
-	HashMap faceMap;
-	HashMap edgeMap;
+	std::unordered_map<uint, DLFLFacePtr> faceMap;
+	std::unordered_map<uint, DLFLEdgePtr> edgeMap;
 
 	static DLFLVertexPtrArray vparray;		// For selection
 	static DLFLEdgePtrArray eparray;		// For selection
@@ -735,7 +707,7 @@ protected:
 
 	//TMPatchFacePtrList patch_list;		// List of patch faces
 	//int patchsize;						// Size of each patch
-	
+
 	// Distinct ID for each instance
 	static uint suLastID;
 

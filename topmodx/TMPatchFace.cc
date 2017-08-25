@@ -194,15 +194,15 @@ void TMPatchFace::createPatches(TMPatchMap &patchMap)
 		cn[2][2] = normalized(6 * cn[3][3] + cn[0][3] + cn[3][0]);
 
 		patcharray[i].calculatePatchPoints(cp, cn);
-		setPatchPtr(patchMap, &(patcharray[i]), corners[i]);
+		patchMap[corners[i]] = &patcharray[i];
 	}
 
 	// Make adjustment to face point for quadrilaterals
 	if (size == 4)
 	{
 		TMPatchPtr pptr1, pptr2;
-		pptr1 = getPatchPtr(patchMap, corners[0]);
-		pptr2 = getPatchPtr(patchMap, corners[2]);
+		pptr1 = patchMap.at(corners[0]);
+		pptr2 = patchMap.at(corners[2]);
 
 		if (pptr1 == nullptr || pptr2 == nullptr)
 			return;
@@ -214,7 +214,7 @@ void TMPatchFace::createPatches(TMPatchMap &patchMap)
 
 		for (int i = 0; i < size; ++i)
 		{
-			pptr1 = getPatchPtr(patchMap, corners[i]);
+			pptr1 = patchMap.at(corners[i]);
 			pptr1->setControlPoint(3, 3, ip);
 			pptr1->updateGLPointArray();
 		}
@@ -231,9 +231,9 @@ void TMPatchFace::adjustEdgePoints(TMPatchMap &patchMap)
 	Vector3d p00, p01, p10, p11, ip;
 	for (uint i = 0; i < corners.size(); ++i)
 	{
-		fvp = corners[i]; pptr = getPatchPtr(patchMap, fvp);
-		nfvp = corners[i]->getOppositeCorner(); npptr = getPatchPtr(patchMap, nfvp);
-		pfvp = corners[i]->prev()->vnext(); ppptr = getPatchPtr(patchMap, pfvp);
+		fvp = corners[i]; pptr = patchMap.at(fvp);
+		nfvp = corners[i]->getOppositeCorner(); npptr = patchMap.at(nfvp);
+		pfvp = corners[i]->prev()->vnext(); ppptr = patchMap.at(pfvp);
 
 		p00 = pptr->getControlPoint(2, 0); p01 = npptr->getControlPoint(2, 0);
 		p10 = pptr->getControlPoint(3, 1); p11 = npptr->getControlPoint(3, 1);

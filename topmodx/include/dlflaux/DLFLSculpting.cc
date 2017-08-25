@@ -267,8 +267,8 @@ void peelByPlane(DLFLObjectPtr obj, Vector3d normal, Vector3d P0)
 
 void visitVertex(DLFLObjectPtr obj, DLFLVertexPtr vp, DLFLEdgePtr from, Vector3d normal, Vector3d P0)
 {
-	if (vp->isvisited) return;
-	vp->isvisited = 1;
+	if (vp->isVisited) return;
+	vp->isVisited = true;
 	Vector3d p1 = vp->getCoords();
 	float d1 = normal*(p1 - P0);
 	//if (d1<0) return;
@@ -283,8 +283,8 @@ void visitVertex(DLFLObjectPtr obj, DLFLVertexPtr vp, DLFLEdgePtr from, Vector3d
 		{
 			DLFLEdgePtr ep = vedges.at(i);
 			if (ep == from) continue;
-			if (ep->isvisited) continue;
-			ep->isvisited = 1;
+			if (ep->isVisited) continue;
+			ep->isVisited = true;
 			DLFLVertexPtr evp1, evp2, vp2;
 			ep->getVertexPointers(evp1, evp2);
 			vp2 = (vp == evp1) ? evp2 : evp1;
@@ -345,10 +345,10 @@ void localCut(DLFLObjectPtr obj, DLFLVertexPtr vp, Vector3d normal, Vector3d P0)
 	obj->getEdges(edges);
 
 	for (int i = 0; i<verts.size(); i++)
-		verts.at(i)->isvisited = 0;
+		verts.at(i)->isVisited = 0;
 
 	for (int i = 0; i<edges.size(); i++)
-		edges.at(i)->isvisited = 0;
+		edges.at(i)->isVisited = 0;
 
 	int size = obj->num_edges();
 	newcorners = new DLFLFaceVertexPtr[size];
@@ -378,7 +378,7 @@ void localCut(DLFLObjectPtr obj, DLFLVertexPtr vp, Vector3d normal, Vector3d P0)
 	for (int i = 0; i<e2dsize; i++)
 	{
 		// printf("edge %d: %x\n",i,edges2del[i]);
-		edges2del[i]->isdummy = 0;
+		edges2del[i]->isDummy = false;
 	}
 
 	for (int i = 0; i<e2dsize; i++)
@@ -390,7 +390,7 @@ void localCut(DLFLObjectPtr obj, DLFLVertexPtr vp, Vector3d normal, Vector3d P0)
 			if (ep == edges2del[j])
 			{
 				// printf("ayni egde %d = %d = %x\n",i,j,ep);
-				ep->isdummy = 1;
+				ep->isDummy = true;
 			}
 		}
 	}
@@ -406,7 +406,7 @@ void localCut(DLFLObjectPtr obj, DLFLVertexPtr vp, Vector3d normal, Vector3d P0)
 // 	DLFLVertexPtrArray verts;
 //
 // 	// for(int i=0;i<verts.size();i++)
-// 	// 	verts.at(i)->isvisited=0;
+// 	// 	verts.at(i)->isVisited=0;
 //
 // 	int size = obj->num_edges();
 //  		newcorners = new DLFLFaceVertexPtr[size];
@@ -471,7 +471,7 @@ void performCutting(DLFLObjectPtr obj, int type, float offsetE, float offsetV, b
 		sverts[cutcount] = 0;
 
 		DLFLEdgePtr e = edges.at(i);
-		if (((selected) && (!e->ismarked)) || (type == 201)) continue;
+		if (((selected) && (!e->isMarked)) || (type == 201)) continue;
 
 		DLFLVertexPtr v1, v2, v;
 		e->getVertexPointers(v1, v2);
@@ -531,7 +531,8 @@ void performCutting(DLFLObjectPtr obj, int type, float offsetE, float offsetV, b
 		sverts[cutcount] = 0;
 
 		DLFLVertexPtr vp = verts.at(i);
-		if (((selected) && (!vp->ismarked)) || (type == 200)) continue;
+		if ((selected && !vp->isMarked) || (type == 200))
+			continue;
 
 		DLFLEdgePtrArray vedges;
 		vp->getEdges(vedges);
@@ -574,7 +575,8 @@ void performCutting(DLFLObjectPtr obj, int type, float offsetE, float offsetV, b
 			sverts[cutcount] = 0;
 
 			DLFLFacePtr fp = faces.at(i);
-			if (((selected) && (!fp->ismarked))) continue;
+			if (selected && !fp->isMarked)
+				continue;
 
 			DLFLVertexPtrArray fverts;
 			DLFLFaceVertexPtrArray fcorners;
@@ -946,17 +948,16 @@ void cutSelectedVertices(DLFLObjectPtr obj, float offsetE, float offsetV, bool g
 	delete[] sedges;
 }//end cutSelectedVertices Function
 
-int isMarked(DLFLVertexPtr vp)
+bool isMarked(DLFLVertexPtr vp)
 {
 	DLFLEdgePtrArray vedges;
-	DLFLEdgePtr ep;
 	vp->getEdges(vedges);
-	for (int j = 0; j<vedges.size(); j++)
+	for (int j = 0; j < vedges.size(); j++)
 	{
-		ep = vedges.at(j);
-		if (ep->isdummy) return 1;
+		if (vedges.at(j)->isDummy)
+			return true;
 	}
-	return 0;
+	return false;
 }
 
 void autoMarkEdges(DLFLObjectPtr obj)
@@ -981,7 +982,7 @@ void autoMarkEdges(DLFLObjectPtr obj)
 		{
 			e = sorted[j];
 			int i;
-			for (i = j - 1; (i >= 0) && (sorted[i]->length() < e->length()); i--)
+			for (i = j - 1; i >= 0 && sorted[i]->length() < e->length(); i--)
 				sorted[i + 1] = sorted[i];
 			sorted[i + 1] = e;
 		}
@@ -989,10 +990,13 @@ void autoMarkEdges(DLFLObjectPtr obj)
 		for (int i = 0; i<size; i++)
 		{
 			ep = sorted[i];
-			if (ep->isdummy) continue;
+			if (ep->isDummy)
+				continue;
 			ep->getVertexPointers(vp1, vp2);
-			if ((isMarked(vp1)) || (isMarked(vp2))) continue;
-			ep->isdummy = 1;
+			if (isMarked(vp1) || isMarked(vp2))
+				continue;
+
+			ep->isDummy = true;
 		}
 	}
 	else
@@ -1005,10 +1009,13 @@ void autoMarkEdges(DLFLObjectPtr obj)
 			for (int j = 0; j<vedges.size(); j++)
 			{
 				ep = vedges.at(j);
-				if (ep->isdummy) continue;
+				if (ep->isDummy)
+					continue;
 				ep->getVertexPointers(vp1, vp2);
-				if ((isMarked(vp1)) || (isMarked(vp2))) continue;
-				ep->isdummy = 1;
+				if (isMarked(vp1) || isMarked(vp2))
+					continue;
+
+				ep->isDummy = true;
 			}
 		}
 	}

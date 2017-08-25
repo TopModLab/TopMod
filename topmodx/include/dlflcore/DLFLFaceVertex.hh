@@ -290,19 +290,9 @@ public:
 	friend void glVertexOFVTp(DLFLFaceVertexPtr dfvp);*/
 
 protected:
-	static uint newID()
-	{
-		uint temp = suLastID;
-		suLastID++;
-		return temp;
-	};
-
 	void assignID()
 	{
-		// uID = DLFLFaceVertex::newID();
-		//std::cout << this;
-		uID = (unsigned int) this;
-		//std::cout << "->" << uID << std::endl;
+		uID = suLastID++;
 	};
 
 private:

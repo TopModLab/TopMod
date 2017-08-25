@@ -459,7 +459,7 @@ DLFLEdgePtr DLFLObject::findEdge(const uint eid)
 	}
 	++first;
 	}*/
-	sel = (DLFLEdgePtr)edgeMap[eid];
+	sel = edgeMap[eid];
 	return sel;
 }
 
@@ -475,7 +475,7 @@ DLFLFacePtr DLFLObject::findFace(const uint fid)
 	}
 	++first;
 	}*/
-	sel = (DLFLFacePtr)faceMap[fid];
+	sel = faceMap[fid];
 	return sel;
 }
 

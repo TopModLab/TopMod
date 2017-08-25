@@ -367,20 +367,12 @@ public:
 	void writeDLFLReverse(ostream& o) const;
 
 protected:
-	// Generate a new unique ID
-	static uint newID(void)
-	{
-		uint temp = suLastID;
-		suLastID++;
-		return temp;
-	}
-
 	// Assign a unique ID for this instance
 	void assignID(void)
 	{
-		uID = DLFLEdge::newID();
-		ismarked = 0;
-		isvisited = 0;
+		uID = suLastID++;
+		isMarked = false;
+		isVisited = false;
 	}
 
 	// Update the mid point for this edge
@@ -399,10 +391,10 @@ private:
 
 public:
 	unsigned long flags;			// Variable for general use to store flags, etc.
-	uint ismarked;
-	uint isdummy;
-	uint istodel;
-	uint isvisited;
+	bool isMarked;
+	bool isDummy;
+	bool isTodel;
+	bool isVisited;
 
 protected:
 	// Distinct ID for each instance

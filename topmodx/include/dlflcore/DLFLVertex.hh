@@ -405,28 +405,19 @@ public:
 	*/
 
 protected:
-	// Generate a new unique ID
-	static uint newID(void)
-	{
-		uint temp = suLastID;
-		suLastID++;
-		return temp;
-	};
-
 	// Assign a unique ID for this instance
 	void assignID(void)
 	{
-		uID = DLFLVertex::newID();
+		uID = suLastID++;
 		index = 0;
-		ismarked = 0;
-		isvisited = 0;
-
+		isMarked = false;
+		isVisited = false;
 	};
 
 public:
 	Vector3d coords;					// Coordinates of vertex
-	uint ismarked;
-	uint isvisited;						// flag for traverse - ozgur
+	bool isMarked;
+	bool isVisited;						// flag for traverse - ozgur
 	unsigned long flags;				// Variable for general use to store flags, etc.
 	uint CHullIndex;					// Index used for convex hull - Esan
 

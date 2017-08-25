@@ -61,7 +61,7 @@ void cutSelectedFaces(DLFLObjectPtr obj, float offsetE, float offsetV, bool glob
 void cutSelectedEdges(DLFLObjectPtr obj, float offsetE, float offsetV, bool global = false, bool selected = false);
 void cutSelectedVertices(DLFLObjectPtr obj, float offsetE, float offsetV, bool global = false, bool selected = false);
 
-int isMarked(DLFLVertexPtr vp);
+bool isMarked(DLFLVertexPtr vp);
 void autoMarkEdges(DLFLObjectPtr obj);
 int getCutIndex(DLFLVertexPtr vp);
 int getCutIndex(DLFLEdgePtr ep);
