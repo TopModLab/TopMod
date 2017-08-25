@@ -14,6 +14,7 @@ DEFINES += QT_VER=\"$${QT_VERSTR}\" # create a QT_VER macro containing the versi
 # main stuff
 QT += opengl xml
 CONFIG += qt debug warn_off link_prl
+CONFIG += c++11
 
 #QMAKE_CXXFLAGS_DEBUG += -pg
 #QMAKE_LFLAGS_DEBUG += -pg
@@ -21,7 +22,7 @@ CONFIG += qt debug warn_off link_prl
 # exclude verse python or spacenav drivers
 # or include them with CONFIG += 
 CONFIG -= WITH_PYTHON WITH_SPACENAV WITH_VERSE
-CONFIG += WITH_PYTHON 
+CONFIG += WITH_PYTHON
 
 # to include the popup command line interface leave the following line uncommented
 DEFINES *= QCOMPLETER
@@ -81,9 +82,9 @@ macx {
 	# either compile the mac version as an app bundle or a console app
 	# tell it to load a custom info.plist file here
 	QMAKE_INFO_PLIST    = Info.plist
-	MACOSX_DEPLOYMENT_TARGET = 10.2
+	#MACOSX_DEPLOYMENT_TARGET = 10.12
 	# compile release + universal binary 
-	CONFIG += x86 ppc
+	#CONFIG += x86 ppc
 
 	CONFIG(GPU_OK){# for cg gpu shading
 		INCLUDEPATH += /Library/Frameworks/Cg.framework/Versions/1.0
@@ -93,8 +94,8 @@ macx {
 
 	#QMAKE_LFLAGS += -F./lib
 	#LIBS += -framework vecmat -framework dlflcore -framework dlflaux
-	QMAKE_LFLAGS += -L./lib
-	LIBS += -lvecmat -ldlflcore -ldlflaux -framework CoreFoundation
+	#QMAKE_LFLAGS += -L./lib
+	LIBS += -L"$$PWD/lib" -lvecmat -ldlflcore -ldlflaux
 
 	#PRIVATE_FRAMEWORKS.files = ./lib/vecmat.framework ./lib/dlflcore.framework ./lib/dlflaux.framework
 	#PRIVATE_FRAMEWORKS.path = Contents/Frameworks
@@ -104,8 +105,8 @@ macx {
 	QMAKE_LFLAGS += -L/usr/lib
 
 	CONFIG(WITH_PYTHON){
-		INCLUDEPATH += /Library/Frameworks/Python.framework/Versions/2.7/include/python2.7
-		QMAKE_LFLAGS += -L/Library/Frameworks/Python.framework
+	INCLUDEPATH += /System/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7
+	QMAKE_LFLAGS += -L/System/Library/Frameworks/Python.framework
 		LIBS += -framework Python
 	}
 	CONFIG(WITH_SPACENAV){
@@ -178,7 +179,7 @@ HEADERS += \
 	include/Base/Constants.hh \
 	include/Base/Inlines.hh \
 	include/Base/StreamIO.hh \
-	include/Camera3.hh
+	include/Camera3.hh \
 	include/Graphics/Color.hh \
 	include/Graphics/Grid.hh \
 	include/Graphics/Texture.hh \
@@ -215,8 +216,8 @@ HEADERS += \
 	TMPatchFace.hh \
 	TMPatchObject.hh \
 	TopMod.h \
-	TopModPreferences.hh \
-	Viewport.hh \
+	TopModPreferences.h \
+	Viewport.hh
 
 FORMS += shortcutdialog.ui stylesheeteditor.ui
 
@@ -224,7 +225,7 @@ SOURCES += \
 	# DLFLSculpting.cc \
 	BasicsMode.cc \
 	CgData.cc \
-	CommandCompleter.cc
+	CommandCompleter.cc \
 	ConicalMode.cc \ 
 	DLFLLighting.cc \
 	DLFLLocator.cc \
@@ -253,7 +254,7 @@ SOURCES += \
 	TMPatchFace.cc \
 	TMPatchObject.cc \
 	TopMod.cc \
-	TopModPreferences.cc \
+	TopModPreferences.cc
 
 RESOURCES += application.qrc
 
