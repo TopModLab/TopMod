@@ -122,16 +122,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\dlflaux\DLFLCast.hh" />
-    <ClInclude Include="include\dlflaux\DLFLConnect.hh" />
-    <ClInclude Include="include\dlflaux\DLFLConvexHull.hh" />
-    <ClInclude Include="include\dlflaux\DLFLCrust.hh" />
-    <ClInclude Include="include\dlflaux\DLFLDual.hh" />
-    <ClInclude Include="include\dlflaux\DLFLExtrude.hh" />
-    <ClInclude Include="include\dlflaux\DLFLMeshSmooth.hh" />
-    <ClInclude Include="include\dlflaux\DLFLMultiConnect.hh" />
-    <ClInclude Include="include\dlflaux\DLFLSculpting.hh" />
-    <ClInclude Include="include\dlflaux\DLFLSubdiv.hh" />
+    <ClInclude Include="include\dlflaux\DLFLCast.h" />
+    <ClInclude Include="include\dlflaux\DLFLConnect.h" />
+    <ClInclude Include="include\dlflaux\DLFLConvexHull.h" />
+    <ClInclude Include="include\dlflaux\DLFLCrust.h" />
+    <ClInclude Include="include\dlflaux\DLFLDual.h" />
+    <ClInclude Include="include\dlflaux\DLFLExtrude.h" />
+    <ClInclude Include="include\dlflaux\DLFLMeshSmooth.h" />
+    <ClInclude Include="include\dlflaux\DLFLMultiConnect.h" />
+    <ClInclude Include="include\dlflaux\DLFLSculpting.h" />
+    <ClInclude Include="include\dlflaux\DLFLSubdiv.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\dlflaux\DLFLCast.cc" />

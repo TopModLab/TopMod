@@ -31,8 +31,8 @@
 *
 */
 
-#include "DLFLSelection.hh"
-#include "GeometryRenderer.hh"
+#include "DLFLSelection.h"
+#include "GeometryRenderer.h"
 
 /**!
 *

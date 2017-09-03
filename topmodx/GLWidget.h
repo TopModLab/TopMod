@@ -29,8 +29,8 @@
 #ifndef _GL_WIDGET_H
 #define _GL_WIDGET_H
 
-// #include "Viewport.hh"
-//#include "include/Graphics/Grid.hh"
+// #include "Viewport.h"
+//#include "include/Graphics/Grid.h"
 #include <QtOpenGL>
 #include <QGLContext>
 #include <QCursor>
@@ -44,18 +44,18 @@
 #include <QFont>
 #include <QPushButton>
 
-#include <DLFLObject.hh>
-#include "DLFLRenderer.hh"
-#include "TMPatchObject.hh"
+#include <DLFLObject.h>
+#include "DLFLRenderer.h"
+#include "TMPatchObject.h"
 
-#include "DLFLLighting.hh"
-#include <Light.hh>
-#include <SpotLight.hh>
-#include <PointLight.hh>
-#include <AmbientLight.hh>
+#include "DLFLLighting.h"
+#include <Light.h>
+#include <SpotLight.h>
+#include <PointLight.h>
+#include <AmbientLight.h>
 
-#include "Camera3.hh"
-#include "CgData.hh"
+#include "Camera3.h"
+#include "CgData.h"
 
 #ifdef GPU_OK
 using namespace Cg;
@@ -71,7 +71,7 @@ using namespace DLFL;
 class QCursor;
 class QImage;
 
-#include "DLFLLocator.hh"     // brianb
+#include "DLFLLocator.h"     // brianb
 
 class GLWidget : public QGLWidget
 {

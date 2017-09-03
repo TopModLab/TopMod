@@ -35,9 +35,9 @@
 
 // Definitions for non-inline functions in Vector2d.hh
 
-#include "Vector2d.hh"
-#include "Vector3d.hh"
-#include "Vector4d.hh"
+#include "Vector2d.h"
+#include "Vector3d.h"
+#include "Vector4d.h"
 
 void Vector2d::copyFrom(const Vector3d& vec)
 {

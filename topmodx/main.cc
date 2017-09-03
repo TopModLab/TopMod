@@ -75,7 +75,7 @@ Global G;
 #ifdef WITH_SPACENAV
 #ifdef __APPLE__
 /*
-#include "TdxDeviceWrappers.hh"
+#include "TdxDeviceWrappers.h"
 
 int TdxComputeAxes(const TdxDeviceAxes inArrayPtr)
 {

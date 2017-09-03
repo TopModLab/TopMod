@@ -1,6 +1,6 @@
 #ifdef WITH_PYTHON
 
-#include "DLFLScriptEditor.hh"
+#include "DLFLScriptEditor.h"
 
 #include <QtGui>
 #include <QVBoxLayout>

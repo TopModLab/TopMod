@@ -32,7 +32,7 @@
  */
 
 #include "GLWidget.h"
-#include "DLFLSelection.hh"
+#include "DLFLSelection.h"
 
 /*!
   \ingroup gui

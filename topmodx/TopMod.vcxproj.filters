@@ -251,94 +251,94 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Base\BaseObject.hh">
+    <ClInclude Include="include\Base\BaseObject.h">
       <Filter>Header Files\Base</Filter>
     </ClInclude>
-    <ClInclude Include="include\Base\Constants.hh">
+    <ClInclude Include="include\Base\Constants.h">
       <Filter>Header Files\Base</Filter>
     </ClInclude>
-    <ClInclude Include="include\Base\Inlines.hh">
+    <ClInclude Include="include\Base\Inlines.h">
       <Filter>Header Files\Base</Filter>
     </ClInclude>
-    <ClInclude Include="include\Base\StreamIO.hh">
+    <ClInclude Include="include\Base\StreamIO.h">
       <Filter>Header Files\Base</Filter>
     </ClInclude>
-    <ClInclude Include="include\Graphics\Camera.hh">
+    <ClInclude Include="include\Graphics\Camera.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="include\Graphics\Color.hh">
+    <ClInclude Include="include\Graphics\Color.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="include\Graphics\Grid.hh">
+    <ClInclude Include="include\Graphics\Grid.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="include\Graphics\Texture.hh">
+    <ClInclude Include="include\Graphics\Texture.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="include\Graphics\Transform.hh">
+    <ClInclude Include="include\Graphics\Transform.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="include\Graphics\VecMatGL.hh">
+    <ClInclude Include="include\Graphics\VecMatGL.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="include\Camera3.hh">
+    <ClInclude Include="include\Camera3.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Light\AmbientLight.hh">
+    <ClInclude Include="include\Light\AmbientLight.h">
       <Filter>Header Files\Light</Filter>
     </ClInclude>
-    <ClInclude Include="include\Light\Light.hh">
+    <ClInclude Include="include\Light\Light.h">
       <Filter>Header Files\Light</Filter>
     </ClInclude>
-    <ClInclude Include="include\Light\PointLight.hh">
+    <ClInclude Include="include\Light\PointLight.h">
       <Filter>Header Files\Light</Filter>
     </ClInclude>
-    <ClInclude Include="include\Light\SpotLight.hh">
+    <ClInclude Include="include\Light\SpotLight.h">
       <Filter>Header Files\Light</Filter>
     </ClInclude>
-    <ClInclude Include="CgData.hh">
+    <ClInclude Include="CgData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CommandCompleter.hh">
+    <ClInclude Include="CommandCompleter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DLFLLighting.hh">
+    <ClInclude Include="DLFLLighting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DLFLLocator.hh">
+    <ClInclude Include="DLFLLocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DLFLRenderer.hh">
+    <ClInclude Include="DLFLRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DLFLScriptEditor.hh">
+    <ClInclude Include="DLFLScriptEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DLFLSelection.hh">
+    <ClInclude Include="DLFLSelection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GeometryRenderer.hh">
+    <ClInclude Include="GeometryRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="qcumber.hh">
+    <ClInclude Include="qcumber.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TdxDeviceWrappers.hh">
+    <ClInclude Include="TdxDeviceWrappers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TMPatch.hh">
+    <ClInclude Include="TMPatch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TMPatchFace.hh">
+    <ClInclude Include="TMPatchFace.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TMPatchObject.hh">
+    <ClInclude Include="TMPatchObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VerseTopMod.hh">
+    <ClInclude Include="VerseTopMod.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Viewport.hh">
+    <ClInclude Include="Viewport.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_shortcutdialog.h">
@@ -347,25 +347,28 @@
     <ClInclude Include="GeneratedFiles\ui_stylesheeteditor.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\NormalRenderer.hh">
+    <ClInclude Include="include\NormalRenderer.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
-    <ClInclude Include="include\PatchRenderer.hh">
+    <ClInclude Include="include\PatchRenderer.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadedRenderer.hh">
+    <ClInclude Include="include\ShadedRenderer.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
-    <ClInclude Include="include\TexturedLitRenderer.hh">
+    <ClInclude Include="include\TexturedLitRenderer.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
-    <ClInclude Include="include\TexturedRenderer.hh">
+    <ClInclude Include="include\TexturedRenderer.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
-    <ClInclude Include="include\WireframeRenderer.hh">
+    <ClInclude Include="include\WireframeRenderer.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
-    <ClInclude Include="include\LitRenderer.hh">
+    <ClInclude Include="include\LitRenderer.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ColorableRenderer.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
   </ItemGroup>

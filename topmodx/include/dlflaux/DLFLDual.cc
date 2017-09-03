@@ -31,9 +31,9 @@
 *
 */
 
-#include "DLFLDual.hh"
-#include "DLFLSubdiv.hh"
-#include <DLFLCore.hh>
+#include "DLFLDual.h"
+#include "DLFLSubdiv.h"
+#include <DLFLCore.h>
 
 namespace DLFL
 {

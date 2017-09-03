@@ -33,9 +33,9 @@
 
 // Source code for DLFLConvexHull class
 
-#include "DLFLConvexHull.hh"
-#include "DLFLSubdiv.hh"
-#include <DLFLCore.hh>
+#include "DLFLConvexHull.h"
+#include "DLFLSubdiv.h"
+#include <DLFLCore.h>
 
 namespace DLFL
 {

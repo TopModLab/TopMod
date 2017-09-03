@@ -172,51 +172,51 @@ macx {
 
 # Input
 HEADERS += \
-	#include/Camera2.hh \
-	#include/Graphics/Camera.hh \
-	include/Base/BaseObject.hh \
-	include/Base/Constants.hh \
-	include/Base/Inlines.hh \
-	include/Base/StreamIO.hh \
-	include/Camera3.hh \
-	include/Graphics/Color.hh \
-	include/Graphics/Grid.hh \
-	include/Graphics/Texture.hh \
-	include/Graphics/Transform.hh \
-	include/Light/AmbientLight.hh \
-	include/Light/Light.hh \
-	include/Light/PointLight.hh \
-	include/Light/SpotLight.hh \
+	#include/Camera2.h \
+	#include/Graphics/Camera.h \
+	include/Base/BaseObject.h \
+	include/Base/Constants.h \
+	include/Base/Inlines.h \
+	include/Base/StreamIO.h \
+	include/Camera3.h \
+	include/Graphics/Color.h \
+	include/Graphics/Grid.h \
+	include/Graphics/Texture.h \
+	include/Graphics/Transform.h \
+	include/Light/AmbientLight.h \
+	include/Light/Light.h \
+	include/Light/PointLight.h \
+	include/Light/SpotLight.h \
 	BasicsMode.h \
-	CgData.hh \
-	CommandCompleter.hh \
+	CgData.h \
+	CommandCompleter.h \
 	ConicalMode.h \ 
-	DLFLLighting.hh \
-	DLFLLocator.hh \
-	DLFLRenderer.hh \
-	DLFLScriptEditor.hh \
-	DLFLSelection.hh \
+	DLFLLighting.h \
+	DLFLLocator.h \
+	DLFLRenderer.h \
+	DLFLScriptEditor.h \
+	DLFLSelection.h \
 	editor.h \
 	ExperimentalModes.h \
 	ExtrusionsMode.h \ 
-	GeometryRenderer.hh \
+	GeometryRenderer.h \
 	GLWidget.h \
 	HighgenusMode.h \
 	MainWindow.h \
 	PythonHighlighter.h \
-	qcumber.hh \
+	qcumber.h \
 	qshortcutdialog.h \
 	qshortcutmanager.h \
 	RemeshingMode.h \
 	stylesheeteditor.h \
-	TdxDeviceWrappers.hh \
+	TdxDeviceWrappers.h \
 	TexturingMode.h \
-	TMPatch.hh \
-	TMPatchFace.hh \
-	TMPatchObject.hh \
+	TMPatch.h \
+	TMPatchFace.h \
+	TMPatchObject.h \
 	TopMod.h \
 	TopModPreferences.h \
-	Viewport.hh
+	Viewport.h
 
 FORMS += shortcutdialog.ui stylesheeteditor.ui
 
@@ -292,7 +292,7 @@ HEADERS += \
 	include/verse/TLI_editVert.h \
 	include/verse/TLI_toplib.h \
 	include/verse/TLI_util.h \
-	VerseTopMod.hh
+	VerseTopMod.h
 
 SOURCES += \
 	include/verse/mallocn.cc \

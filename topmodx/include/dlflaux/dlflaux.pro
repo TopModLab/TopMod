@@ -25,16 +25,16 @@ macx {
 }
 
 HEADERS += \
-	DLFLCast.hh  \
-	DLFLConnect.hh  \
-	DLFLConvexHull.hh  \
-	DLFLCrust.hh  \
-	DLFLDual.hh  \
-	DLFLExtrude.hh  \
-	DLFLMeshSmooth.hh  \
-	DLFLMultiConnect.hh  \
+	DLFLCast.h  \
+	DLFLConnect.h  \
+	DLFLConvexHull.h  \
+	DLFLCrust.h  \
+	DLFLDual.h  \
+	DLFLExtrude.h  \
+	DLFLMeshSmooth.h  \
+	DLFLMultiConnect.h  \
 	DLFLSculpting \
-	DLFLSubdiv.hh
+	DLFLSubdiv.h
 
 SOURCES += \
 	DLFLCast.cc  \

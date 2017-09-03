@@ -158,8 +158,8 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
     </CustomBuild>
-    <ClInclude Include="CgData.hh" />
-    <ClInclude Include="CommandCompleter.hh" />
+    <ClInclude Include="CgData.h" />
+    <ClInclude Include="CommandCompleter.h" />
     <CustomBuild Include="ConicalMode.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing ConicalMode.h...</Message>
@@ -170,11 +170,11 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB "-I." "-I.\include" "-I.\include\Graphics" "-I.\include\Light" "-I.\include\vecmat" "-I.\include\dlflcore" "-I.\include\dlflaux" "-I.\include\verse" "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml"</Command>
     </CustomBuild>
-    <ClInclude Include="DLFLLighting.hh" />
-    <ClInclude Include="DLFLLocator.hh" />
-    <ClInclude Include="DLFLRenderer.hh" />
-    <ClInclude Include="DLFLScriptEditor.hh" />
-    <ClInclude Include="DLFLSelection.hh" />
+    <ClInclude Include="DLFLLighting.h" />
+    <ClInclude Include="DLFLLocator.h" />
+    <ClInclude Include="DLFLRenderer.h" />
+    <ClInclude Include="DLFLScriptEditor.h" />
+    <ClInclude Include="DLFLSelection.h" />
     <CustomBuild Include="editor.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing editor.h...</Message>
@@ -207,7 +207,7 @@
     </CustomBuild>
     <ClInclude Include="GeneratedFiles\ui_shortcutdialog.h" />
     <ClInclude Include="GeneratedFiles\ui_stylesheeteditor.h" />
-    <ClInclude Include="GeometryRenderer.hh" />
+    <ClInclude Include="GeometryRenderer.h" />
     <CustomBuild Include="GLWidget.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing GLWidget.h...</Message>
@@ -228,21 +228,22 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB "-I." "-I.\include" "-I.\include\Graphics" "-I.\include\Light" "-I.\include\vecmat" "-I.\include\dlflcore" "-I.\include\dlflaux" "-I.\include\verse" "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml"</Command>
     </CustomBuild>
-    <ClInclude Include="include\Base\BaseObject.hh" />
-    <ClInclude Include="include\Base\Constants.hh" />
-    <ClInclude Include="include\Base\Inlines.hh" />
-    <ClInclude Include="include\Base\StreamIO.hh" />
-    <ClInclude Include="include\Camera3.hh" />
-    <ClInclude Include="include\Graphics\Camera.hh" />
-    <ClInclude Include="include\Graphics\Color.hh" />
-    <ClInclude Include="include\Graphics\Grid.hh" />
-    <ClInclude Include="include\Graphics\Texture.hh" />
-    <ClInclude Include="include\Graphics\Transform.hh" />
-    <ClInclude Include="include\Graphics\VecMatGL.hh" />
-    <ClInclude Include="include\Light\AmbientLight.hh" />
-    <ClInclude Include="include\Light\Light.hh" />
-    <ClInclude Include="include\Light\PointLight.hh" />
-    <ClInclude Include="include\Light\SpotLight.hh" />
+    <ClInclude Include="include\Base\BaseObject.h" />
+    <ClInclude Include="include\Base\Constants.h" />
+    <ClInclude Include="include\Base\Inlines.h" />
+    <ClInclude Include="include\Base\StreamIO.h" />
+    <ClInclude Include="include\Camera3.h" />
+    <ClInclude Include="include\ColorableRenderer.h" />
+    <ClInclude Include="include\Graphics\Camera.h" />
+    <ClInclude Include="include\Graphics\Color.h" />
+    <ClInclude Include="include\Graphics\Grid.h" />
+    <ClInclude Include="include\Graphics\Texture.h" />
+    <ClInclude Include="include\Graphics\Transform.h" />
+    <ClInclude Include="include\Graphics\VecMatGL.h" />
+    <ClInclude Include="include\Light\AmbientLight.h" />
+    <ClInclude Include="include\Light\Light.h" />
+    <ClInclude Include="include\Light\PointLight.h" />
+    <ClInclude Include="include\Light\SpotLight.h" />
     <CustomBuild Include="MainWindow.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing MainWindow.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
@@ -263,14 +264,14 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB "-I." "-I.\include" "-I.\include\Graphics" "-I.\include\Light" "-I.\include\vecmat" "-I.\include\dlflcore" "-I.\include\dlflaux" "-I.\include\verse" "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml"</Command>
     </CustomBuild>
-    <ClInclude Include="include\LitRenderer.hh" />
-    <ClInclude Include="include\NormalRenderer.hh" />
-    <ClInclude Include="include\PatchRenderer.hh" />
-    <ClInclude Include="include\ShadedRenderer.hh" />
-    <ClInclude Include="include\TexturedLitRenderer.hh" />
-    <ClInclude Include="include\TexturedRenderer.hh" />
-    <ClInclude Include="include\WireframeRenderer.hh" />
-    <ClInclude Include="qcumber.hh" />
+    <ClInclude Include="include\LitRenderer.h" />
+    <ClInclude Include="include\NormalRenderer.h" />
+    <ClInclude Include="include\PatchRenderer.h" />
+    <ClInclude Include="include\ShadedRenderer.h" />
+    <ClInclude Include="include\TexturedLitRenderer.h" />
+    <ClInclude Include="include\TexturedRenderer.h" />
+    <ClInclude Include="include\WireframeRenderer.h" />
+    <ClInclude Include="qcumber.h" />
     <CustomBuild Include="qshortcutdialog.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing qshortcutdialog.h...</Message>
@@ -311,7 +312,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB "-I." "-I.\include" "-I.\include\Graphics" "-I.\include\Light" "-I.\include\vecmat" "-I.\include\dlflcore" "-I.\include\dlflaux" "-I.\include\verse" "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml"</Command>
     </CustomBuild>
-    <ClInclude Include="TdxDeviceWrappers.hh" />
+    <ClInclude Include="TdxDeviceWrappers.h" />
     <CustomBuild Include="TexturingMode.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing TexturingMode.h...</Message>
@@ -322,9 +323,9 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB "-I." "-I.\include" "-I.\include\Graphics" "-I.\include\Light" "-I.\include\vecmat" "-I.\include\dlflcore" "-I.\include\dlflaux" "-I.\include\verse" "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml"</Command>
     </CustomBuild>
-    <ClInclude Include="TMPatch.hh" />
-    <ClInclude Include="TMPatchFace.hh" />
-    <ClInclude Include="TMPatchObject.hh" />
+    <ClInclude Include="TMPatch.h" />
+    <ClInclude Include="TMPatchFace.h" />
+    <ClInclude Include="TMPatchObject.h" />
     <CustomBuild Include="TopMod.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing TopMod.h...</Message>
@@ -345,8 +346,8 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB "-I." "-I.\include" "-I.\include\Graphics" "-I.\include\Light" "-I.\include\vecmat" "-I.\include\dlflcore" "-I.\include\dlflaux" "-I.\include\verse" "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml"</Command>
     </CustomBuild>
-    <ClInclude Include="VerseTopMod.hh" />
-    <ClInclude Include="Viewport.hh" />
+    <ClInclude Include="VerseTopMod.h" />
+    <ClInclude Include="Viewport.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="shortcutdialog.ui">

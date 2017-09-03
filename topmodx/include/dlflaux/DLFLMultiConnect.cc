@@ -32,15 +32,15 @@
 */
 
 
-#include "DLFLMultiConnect.hh"
+#include "DLFLMultiConnect.h"
 
-#include <DLFLCore.hh>
-#include <DLFLCoreExt.hh>
-#include <DLFLObject.hh>
-#include "DLFLConvexHull.hh"
-#include "DLFLConnect.hh"
-#include "DLFLCrust.hh"
-#include "DLFLExtrude.hh"
+#include <DLFLCore.h>
+#include <DLFLCoreExt.h>
+#include <DLFLObject.h>
+#include "DLFLConvexHull.h"
+#include "DLFLConnect.h"
+#include "DLFLCrust.h"
+#include "DLFLExtrude.h"
 
 namespace DLFL
 {

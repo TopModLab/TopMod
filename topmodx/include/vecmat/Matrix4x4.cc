@@ -35,7 +35,7 @@
 
 // Non-inline source code for Matrix4x4 class
 
-#include "Matrix4x4.hh"
+#include "Matrix4x4.h"
 
 // Find the 3x3 sub-matrix which is the co-factor for the given element
 Matrix3_3 Matrix4x4::cofactor(uint r, uint c) const

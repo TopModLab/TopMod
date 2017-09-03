@@ -32,7 +32,7 @@
 */
 
 
-#include "DLFLCoreExt.hh"
+#include "DLFLCoreExt.h"
 
 namespace DLFL
 {

@@ -15,25 +15,25 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\vecmat\Vector4d.hh">
+    <ClInclude Include="include\vecmat\Vector4d.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\vecmat\Matrix3x3.hh">
+    <ClInclude Include="include\vecmat\Matrix3x3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\vecmat\Matrix4x4.hh">
+    <ClInclude Include="include\vecmat\Matrix4x4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\vecmat\Quaternion.hh">
+    <ClInclude Include="include\vecmat\Quaternion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\vecmat\Vector.hh">
+    <ClInclude Include="include\vecmat\Vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\vecmat\Vector2d.hh">
+    <ClInclude Include="include\vecmat\Vector2d.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\vecmat\Vector3d.hh">
+    <ClInclude Include="include\vecmat\Vector3d.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

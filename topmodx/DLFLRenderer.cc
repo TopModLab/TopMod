@@ -35,7 +35,7 @@
 
 // Non-inline function and static variable definitions for DLFLRenderer class
 
-#include "DLFLRenderer.hh"
+#include "DLFLRenderer.h"
 
 // int DLFLRenderer::render_flags = 0;
 bool DLFLRenderer::sReverseObject = false;

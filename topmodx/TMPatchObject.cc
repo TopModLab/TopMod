@@ -31,7 +31,7 @@
 *
 */
 
-#include "TMPatchObject.hh"
+#include "TMPatchObject.h"
 
 void TMPatchObject::updateForPatches(DLFLObjectPtr obj)
 {

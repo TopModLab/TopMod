@@ -31,7 +31,7 @@
 *
 */
 
-#include "DLFLObject.hh"
+#include "DLFLObject.h"
 #include <cstdio>
 
 namespace DLFL

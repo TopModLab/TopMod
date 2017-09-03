@@ -33,10 +33,10 @@
 
 /* $Id: Vector.cc,v 1.1 2000/04/30 02:50:51 vinod Exp $ */
 
-#include "Vector.hh"
-#include "Vector2d.hh"
-#include "Vector3d.hh"
-#include "Vector4d.hh"
+#include "Vector.h"
+#include "Vector2d.h"
+#include "Vector3d.h"
+#include "Vector4d.h"
 
 // Cross product between 2D vectors
 Vector3d operator % (const Vector2d& vec1, const Vector2d& vec2)

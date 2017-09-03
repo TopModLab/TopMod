@@ -48,7 +48,7 @@
 #ifndef _QSHORTCUT_MANAGER_H_
 #define _QSHORTCUT_MANAGER_H_
 
-#include "qcumber.hh"
+#include "qcumber.h"
 
 /*!
 \file qshortcutmanager.h

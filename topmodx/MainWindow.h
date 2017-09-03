@@ -37,8 +37,8 @@
 #include "stylesheeteditor.h"
 #include "qshortcutmanager.h"
 #include "qshortcutdialog.h"
-#include "DLFLScriptEditor.hh"
-#include "VerseTopMod.hh"
+#include "DLFLScriptEditor.h"
+#include "VerseTopMod.h"
 
 #include <iostream>
 #include <array>
@@ -64,33 +64,33 @@
 
 #ifdef QCOMPLETER
 //new command auto completion interface - like quicksilver inside topmod
-#include "CommandCompleter.hh"
+#include "CommandCompleter.h"
 #endif
 
-#include "DLFLLighting.hh"
-#include <DLFLObject.hh>
-#include <DLFLConvexHull.hh>
+#include "DLFLLighting.h"
+#include <DLFLObject.h>
+#include <DLFLConvexHull.h>
 
-#include "include/WireframeRenderer.hh"
-#include "include/NormalRenderer.hh"
-#include "include/LitRenderer.hh"
-#include "include/TexturedRenderer.hh"
-#include "include/TexturedLitRenderer.hh"
-#include "include/PatchRenderer.hh"
-#include "include/ColorableRenderer.hh"
+#include "include/WireframeRenderer.h"
+#include "include/NormalRenderer.h"
+#include "include/LitRenderer.h"
+#include "include/TexturedRenderer.h"
+#include "include/TexturedLitRenderer.h"
+#include "include/PatchRenderer.h"
+#include "include/ColorableRenderer.h"
 #include "TopModPreferences.h"
 
 // DLFLAux Library includes
-#include <DLFLCast.hh>
-#include <DLFLConnect.hh>
-#include <DLFLConvexHull.hh>
-#include <DLFLCrust.hh>
-#include <DLFLDual.hh>
-#include <DLFLExtrude.hh>
-#include <DLFLMeshSmooth.hh>
-#include <DLFLMultiConnect.hh>
-#include <DLFLSculpting.hh>
-#include <DLFLSubdiv.hh>
+#include <DLFLCast.h>
+#include <DLFLConnect.h>
+#include <DLFLConvexHull.h>
+#include <DLFLCrust.h>
+#include <DLFLDual.h>
+#include <DLFLExtrude.h>
+#include <DLFLMeshSmooth.h>
+#include <DLFLMultiConnect.h>
+#include <DLFLSculpting.h>
+#include <DLFLSubdiv.h>
 
 typedef StringStream * StringStreamPtr;
 typedef list<StringStreamPtr> StringStreamPtrList;

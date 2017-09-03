@@ -120,13 +120,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\vecmat\Matrix3x3.hh" />
-    <ClInclude Include="include\vecmat\Matrix4x4.hh" />
-    <ClInclude Include="include\vecmat\Quaternion.hh" />
-    <ClInclude Include="include\vecmat\Vector.hh" />
-    <ClInclude Include="include\vecmat\Vector2d.hh" />
-    <ClInclude Include="include\vecmat\Vector3d.hh" />
-    <ClInclude Include="include\vecmat\Vector4d.hh" />
+    <ClInclude Include="include\vecmat\Matrix3x3.h" />
+    <ClInclude Include="include\vecmat\Matrix4x4.h" />
+    <ClInclude Include="include\vecmat\Quaternion.h" />
+    <ClInclude Include="include\vecmat\Vector.h" />
+    <ClInclude Include="include\vecmat\Vector2d.h" />
+    <ClInclude Include="include\vecmat\Vector3d.h" />
+    <ClInclude Include="include\vecmat\Vector4d.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\vecmat\Matrix3x3.cc" />

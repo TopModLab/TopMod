@@ -35,7 +35,7 @@
  * \file DLFLObject.cc
  */
 
-#include "DLFLObject.hh"
+#include "DLFLObject.h"
 
 namespace DLFL
 {

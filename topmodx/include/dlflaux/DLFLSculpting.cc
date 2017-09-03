@@ -31,8 +31,8 @@
 	*
 */
 
-#include "DLFLSculpting.hh"
-#include "DLFLConnect.hh"
+#include "DLFLSculpting.h"
+#include "DLFLConnect.h"
 
 namespace DLFL
 {

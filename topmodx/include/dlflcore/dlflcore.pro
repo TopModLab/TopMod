@@ -28,15 +28,15 @@ else:win32 {
 }
 
 HEADERS += \
-	DLFLCommon.hh \
-	DLFLCore.hh \
-	DLFLCoreExt.hh \
-	DLFLEdge.hh \
-	DLFLFace.hh \
-	DLFLFaceVertex.hh \
-	DLFLMaterial.hh \
-	DLFLObject.hh \
-	DLFLVertex.hh
+	DLFLCommon.h \
+	DLFLCore.h \
+	DLFLCoreExt.h \
+	DLFLEdge.h \
+	DLFLFace.h \
+	DLFLFaceVertex.h \
+	DLFLMaterial.h \
+	DLFLObject.h \
+	DLFLVertex.h
 
 SOURCES += \
 	DLFLCommon.cc \

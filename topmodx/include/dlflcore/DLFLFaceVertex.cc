@@ -37,8 +37,8 @@
 
 // Non-inline function definitions for class DLFLFaceVertex
 
-#include "DLFLFaceVertex.hh"
-#include "DLFLFace.hh"
+#include "DLFLFaceVertex.h"
+#include "DLFLFace.h"
 
 namespace DLFL
 {

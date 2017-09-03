@@ -15,34 +15,34 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\dlflaux\DLFLConnect.hh">
+    <ClInclude Include="include\dlflaux\DLFLConnect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\dlflaux\DLFLConvexHull.hh">
+    <ClInclude Include="include\dlflaux\DLFLConvexHull.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\dlflaux\DLFLCrust.hh">
+    <ClInclude Include="include\dlflaux\DLFLCrust.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\dlflaux\DLFLDual.hh">
+    <ClInclude Include="include\dlflaux\DLFLDual.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\dlflaux\DLFLExtrude.hh">
+    <ClInclude Include="include\dlflaux\DLFLExtrude.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\dlflaux\DLFLMeshSmooth.hh">
+    <ClInclude Include="include\dlflaux\DLFLMeshSmooth.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\dlflaux\DLFLMultiConnect.hh">
+    <ClInclude Include="include\dlflaux\DLFLMultiConnect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\dlflaux\DLFLSculpting.hh">
+    <ClInclude Include="include\dlflaux\DLFLSculpting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\dlflaux\DLFLSubdiv.hh">
+    <ClInclude Include="include\dlflaux\DLFLSubdiv.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\dlflaux\DLFLCast.hh">
+    <ClInclude Include="include\dlflaux\DLFLCast.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

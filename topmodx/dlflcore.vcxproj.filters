@@ -47,31 +47,31 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\dlflcore\DLFLObject.hh">
+    <ClInclude Include="include\dlflcore\DLFLObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\dlflcore\DLFLVertex.hh">
+    <ClInclude Include="include\dlflcore\DLFLVertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\dlflcore\DLFLCommon.hh">
+    <ClInclude Include="include\dlflcore\DLFLCommon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\dlflcore\DLFLCore.hh">
+    <ClInclude Include="include\dlflcore\DLFLCore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\dlflcore\DLFLCoreExt.hh">
+    <ClInclude Include="include\dlflcore\DLFLCoreExt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\dlflcore\DLFLEdge.hh">
+    <ClInclude Include="include\dlflcore\DLFLEdge.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\dlflcore\DLFLFace.hh">
+    <ClInclude Include="include\dlflcore\DLFLFace.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\dlflcore\DLFLFaceVertex.hh">
+    <ClInclude Include="include\dlflcore\DLFLFaceVertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\dlflcore\DLFLMaterial.hh">
+    <ClInclude Include="include\dlflcore\DLFLMaterial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

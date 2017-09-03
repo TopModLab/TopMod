@@ -32,11 +32,11 @@
 */
 
 
-#include "DLFLSubdiv.hh"
-#include <DLFLCore.hh>
-#include <DLFLCoreExt.hh>
-#include "DLFLExtrude.hh"
-#include "DLFLConnect.hh"
+#include "DLFLSubdiv.h"
+#include <DLFLCore.h>
+#include <DLFLCoreExt.h>
+#include "DLFLExtrude.h"
+#include "DLFLConnect.h"
 
 namespace DLFL
 {

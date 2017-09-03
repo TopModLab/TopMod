@@ -36,7 +36,7 @@
 
 // Non-inline source code for Matrix3x3 class
 
-#include "Matrix3x3.hh"
+#include "Matrix3x3.h"
 
 // Invert the matrix, using elementary row operations
 void Matrix3x3::invert(void)

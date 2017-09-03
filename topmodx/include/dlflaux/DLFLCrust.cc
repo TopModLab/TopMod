@@ -35,13 +35,13 @@
 /*
   Crust modeling routines for DLFL
 */
-#include "DLFLCrust.hh"
+#include "DLFLCrust.h"
 
-#include <DLFLCore.hh>
-#include <DLFLCoreExt.hh>
-#include "DLFLConvexHull.hh"
-#include "DLFLConnect.hh"
-#include "DLFLSubdiv.hh"
+#include <DLFLCore.h>
+#include <DLFLCoreExt.h>
+#include "DLFLConvexHull.h"
+#include "DLFLConnect.h"
+#include "DLFLSubdiv.h"
 
 namespace DLFL
 {

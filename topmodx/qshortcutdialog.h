@@ -48,7 +48,7 @@
 #ifndef _QSHORTCUT_DIALOG_H_
 #define _QSHORTCUT_DIALOG_H_
 
-#include "qcumber.hh"
+#include "qcumber.h"
 
 #include "ui_shortcutdialog.h"
 

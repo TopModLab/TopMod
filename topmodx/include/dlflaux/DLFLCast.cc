@@ -31,8 +31,8 @@
 *
 */
 
-#include "DLFLCast.hh"
-#include <DLFLCoreExt.hh>
+#include "DLFLCast.h"
+#include <DLFLCoreExt.h>
 #include <cmath>
 #include <cassert>
 

@@ -21,13 +21,13 @@ macx {
 }
 
 HEADERS += \
-	Matrix3x3.hh \
-	Matrix4x4.hh \
-	Quaternion.hh \
-	Vector.hh \
-	Vector2d.hh \
-	Vector3d.hh \
-	Vector4d.hh
+	Matrix3x3.h \
+	Matrix4x4.h \
+	Quaternion.h \
+	Vector.h \
+	Vector2d.h \
+	Vector3d.h \
+	Vector4d.h
 
 SOURCES += \
 	Matrix3x3.cc \

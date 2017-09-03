@@ -32,7 +32,7 @@
 */
 
 
-#include "Camera3.hh"
+#include "Camera3.h"
 
 /* ***************** CAMERA *********************/
 Camera::Camera()
