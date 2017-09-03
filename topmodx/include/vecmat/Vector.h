@@ -38,10 +38,10 @@
 // of Vectors
 
 // Common include files
-#include "../Base/BaseObject.h"
-#include "../Base/StreamIO.h"
-#include "../Base/Constants.h"
-#include "../Base/Inlines.h"
+#include "Base/BaseObject.h"
+#include "Base/StreamIO.h"
+#include "Base/Constants.h"
+#include "Base/Inlines.h"
 
 #include <cstdlib>
 #include <cmath>

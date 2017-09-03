@@ -26,77 +26,73 @@
 * ***** END GPL LICENSE BLOCK *****
 */
 
-#ifndef _WIREFRAME_RENDERER_H_
-#define _WIREFRAME_RENDERER_H_
+#ifndef _SHADED_RENDERER_HH_
+#define _SHADED_RENDERER_HH_
 
-/**
- * WireframeRenderer
- * A renderer for DLFL objects, derived from DLFLRenderer
- * Renders with face-vertex wireframes only
+/*
+  ShadedRenderer
+  A renderer for DLFL objects, derived from DLFLRenderer
+  Renders with face-vertex normals, with material colors
 */
 
-#include "../DLFLRenderer.h"
+#include "DLFLRenderer.h"
 
-class WireframeRenderer;
-typedef WireframeRenderer *WireframeRendererPtr;
+class ShadedRenderer;
+typedef ShadedRenderer *ShadedRendererPtr;
 
-class WireframeRenderer : public DLFLRenderer
+class ShadedRenderer : public DLFLRenderer
 {
+
 public:
 	/* Default constructor */
-	WireframeRenderer() : DLFLRenderer() {};
+	ShadedRenderer() : DLFLRenderer() {}
 
-	WireframeRenderer(
-		QColor wc, double wt, QColor sc, double st,
-		QColor vc, double vt, QColor fc, double ft,
-		QColor nc, double nt)
-		: DLFLRenderer(wc, wt, sc, st, vc, vt, fc, ft, nc, nt)
+	ShadedRenderer(
+		QColor wc, double wt,
+		QColor sc, double st,
+		QColor vc, double vt)
+		: DLFLRenderer(wc, wt, sc, st, vc, vt)
 	{
 	}
 
 	/* Copy constructor */
-	WireframeRenderer(const WireframeRenderer& nr) : DLFLRenderer(nr) {};
-
-	/* Destructor */
-	virtual ~WireframeRenderer() {};
+	ShadedRenderer(const ShadedRenderer& nr)
+		: DLFLRenderer(nr)
+	{
+	}
 
 	/* Assignment operator */
-	WireframeRenderer& operator=(const WireframeRenderer& nr)
+	ShadedRenderer& operator = (const ShadedRenderer& nr)
 	{
 		DLFLRenderer::operator = (nr);
 		return (*this);
-	};
+	}
+
+	/* Destructor */
+	virtual ~ShadedRenderer() {}
 
 	/* Implement render function */
 	virtual int render(DLFLObjectPtr object)
 	{
 		glEnable(GL_CULL_FACE);
-		glEnable(GL_BLEND);										// Enable Blending
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);		// Type Of Blending To Use
-		if (DLFLRenderer::sAntialiasing)
-		{
-			glEnable(GL_LINE_SMOOTH);
-			glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);				// Set Line Antialiasing
-		}
-		else
-		{
-			glDisable(GL_LINE_SMOOTH);
-		}
-		//drawWireframe( object );
+		setCulling();
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		gr->render(object);
+		//object->render();
 		drawOverlays(object);
 		glDisable(GL_CULL_FACE);
 		return 0;
-	};
+	}
 
 	virtual void setState()
 	{
 		gr->useLighting = false;
 		gr->useColorable = false;
-		gr->useMaterial = false;
+		gr->useMaterial = true;
 		gr->useTexture = false;
 		gr->useOutline = false;
 	}
 
 };
 
-#endif // _WIREFRAME_RENDERER_H_
+#endif /* #ifndef _SHADED_RENDERER_HH_ */

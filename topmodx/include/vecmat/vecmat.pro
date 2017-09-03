@@ -20,6 +20,8 @@ macx {
  #QMAKE_BUNDLE_EXTENSION = .framework
 }
 
+INCLUDEPATH += ./..
+
 HEADERS += \
 	Matrix3x3.h \
 	Matrix4x4.h \

@@ -57,7 +57,8 @@ INCLUDEPATH += \
 	include/Graphics \
 	include/Light \
 	include/vecmat \
-	include/verse
+	include/verse \
+	src
 
 CONFIG(WITH_VERSE){
 	message("VERSE will be included")
@@ -187,73 +188,73 @@ HEADERS += \
 	include/Light/Light.h \
 	include/Light/PointLight.h \
 	include/Light/SpotLight.h \
-	BasicsMode.h \
-	CgData.h \
-	CommandCompleter.h \
-	ConicalMode.h \ 
-	DLFLLighting.h \
-	DLFLLocator.h \
-	DLFLRenderer.h \
-	DLFLScriptEditor.h \
-	DLFLSelection.h \
-	editor.h \
-	ExperimentalModes.h \
-	ExtrusionsMode.h \ 
-	GeometryRenderer.h \
-	GLWidget.h \
-	HighgenusMode.h \
-	MainWindow.h \
-	PythonHighlighter.h \
-	qcumber.h \
-	qshortcutdialog.h \
-	qshortcutmanager.h \
-	RemeshingMode.h \
-	stylesheeteditor.h \
-	TdxDeviceWrappers.h \
-	TexturingMode.h \
-	TMPatch.h \
-	TMPatchFace.h \
-	TMPatchObject.h \
-	TopMod.h \
-	TopModPreferences.h \
-	Viewport.h
+	src/Renderer/DLFLRenderer.h \
+	src/Renderer/GeometryRenderer.h \
+	src/BasicsMode.h \
+	src/CgData.h \
+	src/CommandCompleter.h \
+	src/ConicalMode.h \ 
+	src/DLFLLighting.h \
+	src/DLFLLocator.h \
+	src/DLFLScriptEditor.h \
+	src/DLFLSelection.h \
+	src/editor.h \
+	src/ExperimentalModes.h \
+	src/ExtrusionsMode.h \ 
+	src/GLWidget.h \
+	src/HighgenusMode.h \
+	src/MainWindow.h \
+	src/PythonHighlighter.h \
+	src/qcumber.h \
+	src/qshortcutdialog.h \
+	src/qshortcutmanager.h \
+	src/RemeshingMode.h \
+	src/stylesheeteditor.h \
+	src/TdxDeviceWrappers.h \
+	src/TexturingMode.h \
+	src/TMPatch.h \
+	src/TMPatchFace.h \
+	src/TMPatchObject.h \
+	src/TopMod.h \
+	src/TopModPreferences.h \
+	src/Viewport.h
 
 FORMS += shortcutdialog.ui stylesheeteditor.ui
 
 SOURCES += \
-	# DLFLSculpting.cc \
-	BasicsMode.cc \
-	CgData.cc \
-	CommandCompleter.cc \
-	ConicalMode.cc \ 
-	DLFLLighting.cc \
-	DLFLLocator.cc \
-	DLFLRenderer.cc \
-	DLFLScriptEditor.cc \
-	DLFLSelection.cc \
-	DLFLUndo.cc \
-	editor.cc \
-	ExperimentalModes.cc \
-	ExtrusionsMode.cc \
-	GeometryRenderer.cc \
-	GLWidget.cc \
-	HighgenusMode.cc \
 	include/Camera3.cc \
-	main.cc \
-	MainWindow.cc \
-	MainWindowCallbacks.cc \
-	MainWindowRemeshingCallbacks.cc \
-	PythonHighlighter.cc \
-	qshortcutdialog.cc \
-	qshortcutmanager.cc \
-	RemeshingMode.cc \ 
-	stylesheeteditor.cc \
-	TdxDeviceWrappers.cc \
-	TexturingMode.cc \
-	TMPatchFace.cc \
-	TMPatchObject.cc \
-	TopMod.cc \
-	TopModPreferences.cc
+	# DLFLSculpting.cc \
+	src/Renderer/DLFLRenderer.cc \
+	src/Renderer/GeometryRenderer.cc \
+	src/BasicsMode.cc \
+	src/CgData.cc \
+	src/CommandCompleter.cc \
+	src/ConicalMode.cc \ 
+	src/DLFLLighting.cc \
+	src/DLFLLocator.cc \
+	src/DLFLScriptEditor.cc \
+	src/DLFLSelection.cc \
+	src/DLFLUndo.cc \
+	src/editor.cc \
+	src/ExperimentalModes.cc \
+	src/ExtrusionsMode.cc \
+	src/GLWidget.cc \
+	src/HighgenusMode.cc \
+	src/main.cc \
+	src/MainWindow.cc \
+	src/MainWindowCallbacks.cc \
+	src/MainWindowRemeshingCallbacks.cc \
+	src/PythonHighlighter.cc \
+	src/qshortcutdialog.cc \
+	src/qshortcutmanager.cc \
+	src/RemeshingMode.cc \ 
+	src/stylesheeteditor.cc \
+	src/TdxDeviceWrappers.cc \
+	src/TexturingMode.cc \
+	src/TMPatchFace.cc \
+	src/TMPatchObject.cc \
+	src/TopMod.cc \
+	src/TopModPreferences.cc
 
 RESOURCES += application.qrc
 
@@ -292,7 +293,7 @@ HEADERS += \
 	include/verse/TLI_editVert.h \
 	include/verse/TLI_toplib.h \
 	include/verse/TLI_util.h \
-	VerseTopMod.h
+	src/VerseTopMod.h
 
 SOURCES += \
 	include/verse/mallocn.cc \
@@ -304,6 +305,6 @@ SOURCES += \
 	include/verse/verse_object.cc \
 	include/verse/verse_object_node.cc \
 	include/verse/verse_session.cc \
-	VerseTopMod.cc
+	src/VerseTopMod.cc
 
 }

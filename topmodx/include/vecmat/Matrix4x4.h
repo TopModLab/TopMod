@@ -37,7 +37,7 @@
 // is a Vector4d. This makes inversion easier, since elementary
 // row operations are simplified
 
-#include "../Base/BaseObject.h"
+#include "Base/BaseObject.h"
 #include "Vector3d.h"
 #include "Vector4d.h"
 #include "Matrix3x3.h"

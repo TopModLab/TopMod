@@ -35,7 +35,7 @@ A renderer for DLFL objects, derived from DLFLRenderer
 Renders using Bezier patches
 */
 
-#include "../DLFLRenderer.h"
+#include "DLFLRenderer.h"
 
 class PatchRenderer;
 typedef PatchRenderer *PatchRendererPtr;

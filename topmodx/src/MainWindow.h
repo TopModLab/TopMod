@@ -71,13 +71,13 @@
 #include <DLFLObject.h>
 #include <DLFLConvexHull.h>
 
-#include "include/WireframeRenderer.h"
-#include "include/NormalRenderer.h"
-#include "include/LitRenderer.h"
-#include "include/TexturedRenderer.h"
-#include "include/TexturedLitRenderer.h"
-#include "include/PatchRenderer.h"
-#include "include/ColorableRenderer.h"
+#include "Renderer/WireframeRenderer.h"
+#include "Renderer/NormalRenderer.h"
+#include "Renderer/LitRenderer.h"
+#include "Renderer/TexturedRenderer.h"
+#include "Renderer/TexturedLitRenderer.h"
+#include "Renderer/PatchRenderer.h"
+#include "Renderer/ColorableRenderer.h"
 #include "TopModPreferences.h"
 
 // DLFLAux Library includes

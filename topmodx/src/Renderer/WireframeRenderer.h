@@ -26,73 +26,77 @@
 * ***** END GPL LICENSE BLOCK *****
 */
 
-#ifndef _SHADED_RENDERER_HH_
-#define _SHADED_RENDERER_HH_
+#ifndef _WIREFRAME_RENDERER_H_
+#define _WIREFRAME_RENDERER_H_
 
-/*
-  ShadedRenderer
-  A renderer for DLFL objects, derived from DLFLRenderer
-  Renders with face-vertex normals, with material colors
+/**
+ * WireframeRenderer
+ * A renderer for DLFL objects, derived from DLFLRenderer
+ * Renders with face-vertex wireframes only
 */
 
-#include "../DLFLRenderer.h"
+#include "DLFLRenderer.h"
 
-class ShadedRenderer;
-typedef ShadedRenderer *ShadedRendererPtr;
+class WireframeRenderer;
+typedef WireframeRenderer *WireframeRendererPtr;
 
-class ShadedRenderer : public DLFLRenderer
+class WireframeRenderer : public DLFLRenderer
 {
-
 public:
 	/* Default constructor */
-	ShadedRenderer() : DLFLRenderer() {}
+	WireframeRenderer() : DLFLRenderer() {};
 
-	ShadedRenderer(
-		QColor wc, double wt,
-		QColor sc, double st,
-		QColor vc, double vt)
-		: DLFLRenderer(wc, wt, sc, st, vc, vt)
+	WireframeRenderer(
+		QColor wc, double wt, QColor sc, double st,
+		QColor vc, double vt, QColor fc, double ft,
+		QColor nc, double nt)
+		: DLFLRenderer(wc, wt, sc, st, vc, vt, fc, ft, nc, nt)
 	{
 	}
 
 	/* Copy constructor */
-	ShadedRenderer(const ShadedRenderer& nr)
-		: DLFLRenderer(nr)
-	{
-	}
+	WireframeRenderer(const WireframeRenderer& nr) : DLFLRenderer(nr) {};
+
+	/* Destructor */
+	virtual ~WireframeRenderer() {};
 
 	/* Assignment operator */
-	ShadedRenderer& operator = (const ShadedRenderer& nr)
+	WireframeRenderer& operator=(const WireframeRenderer& nr)
 	{
 		DLFLRenderer::operator = (nr);
 		return (*this);
-	}
-
-	/* Destructor */
-	virtual ~ShadedRenderer() {}
+	};
 
 	/* Implement render function */
 	virtual int render(DLFLObjectPtr object)
 	{
 		glEnable(GL_CULL_FACE);
-		setCulling();
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		gr->render(object);
-		//object->render();
+		glEnable(GL_BLEND);										// Enable Blending
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);		// Type Of Blending To Use
+		if (DLFLRenderer::sAntialiasing)
+		{
+			glEnable(GL_LINE_SMOOTH);
+			glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);				// Set Line Antialiasing
+		}
+		else
+		{
+			glDisable(GL_LINE_SMOOTH);
+		}
+		//drawWireframe( object );
 		drawOverlays(object);
 		glDisable(GL_CULL_FACE);
 		return 0;
-	}
+	};
 
 	virtual void setState()
 	{
 		gr->useLighting = false;
 		gr->useColorable = false;
-		gr->useMaterial = true;
+		gr->useMaterial = false;
 		gr->useTexture = false;
 		gr->useOutline = false;
 	}
 
 };
 
-#endif /* #ifndef _SHADED_RENDERER_HH_ */
+#endif // _WIREFRAME_RENDERER_H_

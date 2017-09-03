@@ -45,7 +45,7 @@
 #include <QPushButton>
 
 #include <DLFLObject.h>
-#include "DLFLRenderer.h"
+#include "Renderer/DLFLRenderer.h"
 #include "TMPatchObject.h"
 
 #include "DLFLLighting.h"
@@ -430,7 +430,7 @@ protected:
 	bool renderObject;
 
 	// Selection lists - these are shared by all viewports
-	static DLFLLocatorPtrArray sel_lptr_array; // List of selected DLFLLocator pointers  // brianb  
+	static DLFLLocatorPtrArray sel_lptr_array; // List of selected DLFLLocator pointers  // brianb
 	//static DLFLVertexPtrArray sel_vptr_array; // List of selected DLFLVertex pointers
 	//static DLFLEdgePtrArray sel_eptr_array; // List of selected DLFLEdge pointers
 	//static DLFLFacePtrArray sel_fptr_array; // List of selected DLFLFace pointers
@@ -1001,4 +1001,4 @@ private:
 
 };
 
-#endif 
+#endif

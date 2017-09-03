@@ -26,51 +26,49 @@
 * ***** END GPL LICENSE BLOCK *****
 */
 
-#ifndef _COLORABLE_RENDERER_HH_
-#define _COLORABLE_RENDERER_HH_
+#ifndef _LIT_RENDERER_HH_
+#define _LIT_RENDERER_HH_
 
 /*
-  ColorableRenderer
+  LitRenderer
   A renderer for DLFL objects, derived from DLFLRenderer
-  Renders with face-vertex normals, with material colors
+  Renders with face-vertex colors and normals.
+  Renders using light information.
 */
 
-#include "../DLFLRenderer.h"
+#include "DLFLRenderer.h"
 
-class ColorableRenderer;
-typedef ColorableRenderer * ColorableRendererPtr;
+class LitRenderer;
+typedef LitRenderer * LitRendererPtr;
 
-class ColorableRenderer : public DLFLRenderer
+class LitRenderer : public DLFLRenderer
 {
-
 public:
+
 	/* Default constructor */
-	ColorableRenderer() : DLFLRenderer() {}
+	LitRenderer() : DLFLRenderer() {}
 
-	ColorableRenderer(QColor wc, double wt, QColor sc, double st, QColor vc, double vt)
-	{
-	}//: DLFLRenderer(wc, wt, sc, st, vc, vt) { }
-
-	 /* Copy constructor */
-	ColorableRenderer(const ColorableRenderer& nr)
-		: DLFLRenderer(nr)
+	LitRenderer(QColor wc, double wt, QColor sc, double st, QColor vc, double vt, QColor fc, double ft, QColor nc, double nt)
+		: DLFLRenderer(wc, wt, sc, st, vc, vt, fc, ft, nc, nt)
 	{
 	}
 
+	/* Copy constructor */
+	LitRenderer(const LitRenderer& lr) : DLFLRenderer(lr) {}
+
 	/* Assignment operator */
-	ColorableRenderer& operator = (const ColorableRenderer& nr)
+	LitRenderer& operator=(const LitRenderer& lr)
 	{
-		DLFLRenderer::operator = (nr);
+		DLFLRenderer::operator=(lr);
 		return (*this);
 	}
 
 	/* Destructor */
-	virtual ~ColorableRenderer() {}
+	virtual ~LitRenderer() {}
 
 	/* Implement render function */
 	virtual int render(DLFLObjectPtr object)
 	{
-
 		glEnable(GL_CULL_FACE);
 		setCulling();
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -92,18 +90,17 @@ public:
 		drawOverlays(object);
 		glDisable(GL_CULL_FACE);
 		return 0;
-
 	}
 
 	virtual void setState()
 	{
-		gr->useLighting = false;
-		gr->useColorable = true;
-		gr->useMaterial = false;
+		gr->useLighting = true;
+		gr->useColorable = false;
+		gr->useMaterial = true;
 		gr->useTexture = false;
 		gr->useOutline = false;
 	}
 
 };
 
-#endif /* #ifndef _COLORABLE_RENDERER_HH_ */
+#endif /* #ifndef _LIT_RENDERER_HH_ */

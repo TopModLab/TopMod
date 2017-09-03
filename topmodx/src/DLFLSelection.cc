@@ -32,7 +32,7 @@
 */
 
 #include "DLFLSelection.h"
-#include "GeometryRenderer.h"
+#include "Renderer/GeometryRenderer.h"
 
 /**!
 *
