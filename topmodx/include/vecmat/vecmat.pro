@@ -6,7 +6,12 @@ CONFIG += staticlib #dll # build shared library
 # CONFIG += debug warn_off create_prl
 CONFIG += debug warn_off create_prl
 TARGET = vecmat
-DESTDIR = ../../lib
+CONFIG(debug, debug|release) {
+	LIB_CONF_SUB_DIR = Debug
+} else {
+	LIB_CONF_SUB_DIR = Debug
+}
+DESTDIR = ../../lib/$${LIB_CONF_SUB_DIR}
 
 macx {
  # compile release + universal binary

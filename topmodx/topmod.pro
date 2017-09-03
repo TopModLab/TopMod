@@ -41,13 +41,12 @@ OBJECTS_DIR = tmp
 # TopModd will be the name for the debug version,
 # and TopMod will be the release version
 CONFIG(debug, debug|release) {
- TARGET = TopMod# -$${VERSION}
+	TARGET = TopMod# -$${VERSION}
+	LIB_CONF_SUB_DIR = Debug
+	CONFIG += console
 } else {
- TARGET = TopMod# -$${VERSION}
-}
-CONFIG(debug)
-{
-CONFIG += console
+	TARGET = TopMod# -$${VERSION}
+	LIB_CONF_SUB_DIR = Debug
 }
 
 INCLUDEPATH += \
@@ -95,7 +94,7 @@ macx {
 	#QMAKE_LFLAGS += -F./lib
 	#LIBS += -framework vecmat -framework dlflcore -framework dlflaux
 	#QMAKE_LFLAGS += -L./lib
-	LIBS += -L"$$PWD/lib" -lvecmat -ldlflcore -ldlflaux
+	LIBS += -L"$$PWD/$${LIB_CONF_SUB_DIR}/lib" -lvecmat -ldlflcore -ldlflaux
 
 	#PRIVATE_FRAMEWORKS.files = ./lib/vecmat.framework ./lib/dlflcore.framework ./lib/dlflaux.framework
 	#PRIVATE_FRAMEWORKS.path = Contents/Frameworks
@@ -119,7 +118,7 @@ macx {
 	}
 } else:unix {
 	CONFIG -= WITH_SPACENAV WITH_VERSE
-	QMAKE_LFLAGS += -L./lib
+	QMAKE_LFLAGS += -L./lib/$${LIB_CONF_SUB_DIR}
 	LIBS += -lvecmat -ldlflcore -ldlflaux
 	DEFINES *= LINUX
 	
@@ -149,8 +148,8 @@ macx {
 
 	CONFIG -= WITH_SPACENAV
 
-	#QMAKE_LFLAGS += -L"$$PWD/lib"
-	LIBS += -L"$$PWD/lib" -lvecmat -ldlflcore -ldlflaux
+	#QMAKE_LFLAGS += -L"$$PWD/lib/$${LIB_CONF_SUB_DIR}"
+	LIBS += -L"$$PWD/lib/$${LIB_CONF_SUB_DIR}" -lvecmat -ldlflcore -ldlflaux
 	LIBS += -lopengl32 -lglu32
 
 	CONFIG(WITH_PYTHON){

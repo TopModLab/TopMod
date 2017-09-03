@@ -4,7 +4,14 @@ CONFIG += opengl
 CONFIG += static #dll # build shared library
 CONFIG += debug warn_off create_prl
 TARGET = arcball
-DESTDIR = ../../lib
+
+CONFIG(debug, debug|release) {
+	LIB_CONF_SUB_DIR = Debug
+} else {
+	LIB_CONF_SUB_DIR = Debug
+}
+DESTDIR = ../../lib/$${LIB_CONF_SUB_DIR}
+
 INCLUDEPATH += ../vecmat
 
 macx {
@@ -15,7 +22,7 @@ macx {
  #CONFIG += lib_bundle
  QMAKE_BUNDLE_EXTENSION = .framework
 #} else:unix {
- QMAKE_LFLAGS += -L/usr/local/lib -L../../lib
+ QMAKE_LFLAGS += -L/usr/local/lib -L../../lib/$${LIB_CONF_SUB_DIR}
  LIBS += -lvecmat
 }
 
