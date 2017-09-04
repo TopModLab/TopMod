@@ -278,11 +278,11 @@ void GLWidget::initCg()
 		checkForCgError("selecting fragment profile");
 		// Vertex Program
 		char *programName = new char[256];
-		sprintf(programName, "%s", "vertShader.cg");
+		sprintf(programName, "%s", "shaders/vertShader.cg");
 		cg->vertProgram = cgCreateProgramFromFile(cg->context, CG_SOURCE, programName, cg->vertProfile, nullptr, nullptr);
 		checkForCgError("creating vertex program from file");
 		// Fragment Program
-		sprintf(programName, "%s", "fragShader.cg");
+		sprintf(programName, "%s", "shaders/fragShader.cg");
 		cg->fragProgram = cgCreateProgramFromFile(cg->context, CG_SOURCE, programName, cg->fragProfile, nullptr, nullptr);
 		checkForCgError("creating fragment program from file");
 		delete[] programName;
