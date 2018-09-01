@@ -78,6 +78,7 @@ shortcuts of managed actions.
 
 #include <QDir>
 #include <QFile>
+#include <QAction>
 // #include "qtglogal.h"
 //typedef void* quintptr; // Has a previous declaration Qt 4.2
 
@@ -165,7 +166,7 @@ void QShortcutManager::apply(const QString& s, const QString& t)
 	e.setAttribute("shortcut", s);
 
 	// apply shortcut sequences to registered actions
-	foreach(QAction *a, m_actions[t])
+	for (QAction *a : m_actions[t])
 	{
 		a->setShortcut(s);
 	}

@@ -63,6 +63,7 @@
 */
 
 // #include <QA// pplication>
+#include <QAction>
 #include <QHash>
 #include <QLabel>
 #include <QString>
@@ -494,9 +495,7 @@ void QShortcutDialog::exec()
 	}
 	*/
 
-	QHash<QString, QList<QAction*> >::iterator i;
-
-	for (i = pManager->m_actions.begin(); i != pManager->m_actions.end(); i++)
+	for (auto i = pManager->m_actions.begin(); i != pManager->m_actions.end(); i++)
 	{
 		QStringList cxt = QString(i.key()).split("/");
 
